@@ -166,6 +166,10 @@ export class ProjectFormComponent implements OnInit {
         }
     }
 
+    /**
+     *
+     * @param project
+     */
     buildForm(project: Project): void {
         // if project is defined, we're in the edit mode
         // otherwise "create new project" mode is active
@@ -221,6 +225,11 @@ export class ProjectFormComponent implements OnInit {
             .subscribe(data => this.onValueChanged(data));
     }
 
+    /**
+     *
+     * @param data Data which changed.
+     * This method is for the form error handling
+     */
     onValueChanged(data?: any) {
 
         if (!this.form) {
@@ -373,6 +382,81 @@ export class ProjectFormComponent implements OnInit {
         } else {
             this._router.navigate(['/']);
         }
+    }
 
+    /**
+     * Delete / archive project
+     * @param ev Event
+     * @param id Project Iri
+     */
+    archiveProject(ev: Event, id: string) {
+        ev.preventDefault();
+        // TODO: "are you sure?"-dialog
+
+        // if true
+        this._projects.deleteProject(id).subscribe(
+            (res: Project) => {
+                // reload page
+                this.loading = false;
+                window.location.reload();
+            },
+            (error: ApiServiceError) => {
+                // const message: MessageData = error;
+                console.error(error);
+                /*
+                const errorRef = this._dialog.open(MessageDialogComponent, <MatDialogConfig>{
+                    data: {
+                        message: message
+                    }
+                });
+                */
+            }
+        );
+
+        // close dialog box
+
+        // else: cancel action
+    }
+
+    /**
+     * Activate already deleted project
+     *
+     * @param ev Event
+     * @param id Project Iri
+     */
+    activateProject(ev: Event, id: string) {
+        ev.preventDefault();
+        // TODO: "are you sure?"-dialog
+
+        this._projects.activateProject(id).subscribe(
+            (res: Project) => {
+                // reload page
+                window.location.reload();
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                // const message: MessageData = error;
+                console.error(error);
+                /*
+                const errorRef = this._dialog.open(MessageDialogComponent, <MatDialogConfig>{
+                    data: {
+                        message: message
+                    }
+                });
+                */
+            }
+        );
+    }
+
+    /**
+     * refresh the page after significant change (e.g. delete project)
+     */
+    refresh(): void {
+        // referesh the component
+        this.loading = true;
+        // update the cache
+        this._cache.del(this.projectcode);
+        this._cache.get(this.projectcode, this._projects.getProjectByShortcode(this.projectcode));
+        this.buildForm(this.project);
     }
 }

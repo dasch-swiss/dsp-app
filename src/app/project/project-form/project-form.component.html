@@ -157,18 +157,28 @@
         </div>
     </form>
 
+    <!-- button to delete / activate project-->
+    <div *ngIf="project">
+        <mat-divider></mat-divider>
+        <div class="form-content">
+            <div *ngIf="project.status">
+                <h3>Here you can archive your project</h3>
+                <div class="center">
+                    <button mat-button [color]="'warn'" (click)="archiveProject($event, project.id)">ARCHIVE</button>
+                </div>
+            </div>
+            <div *ngIf="!project.status">
+                <h3>This project is already archived. Do you want to reactivate it?</h3>
+                <div class="center">
+                    <button mat-button [color]="'primary'" (click)="activateProject($event, project.id)">ACTIVATE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
     <!--<kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>-->
 </ng-template>
-
-
-<!-- delete / activate button; previous it was in project view -->
-<!--
-<mat-card-actions class="center">
-    <button *ngIf="project.status" mat-button [color]="'warn'" (click)="delete()">DELETE</button>
-    <button *ngIf="!project.status" mat-button [color]="'primary'" (click)="activate()">ACTIVATE</button>
-</mat-card-actions>
--->
