@@ -385,7 +385,6 @@ export class ProjectFormComponent implements OnInit {
 
     /**
      * Delete / archive project
-     * @param ev Event
      * @param id Project Iri
      */
     archiveProject(id: string) {
@@ -420,10 +419,9 @@ export class ProjectFormComponent implements OnInit {
     /**
      * Activate already deleted project
      *
-     * @param ev Event
      * @param id Project Iri
      */
-    activateProject(ev: Event, id: string) {
+    activateProject(id: string) {
         ev.preventDefault();
         // TODO: "are you sure?"-dialog
 
