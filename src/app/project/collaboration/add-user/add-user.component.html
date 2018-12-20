@@ -20,12 +20,12 @@
             </button>
         -->
 
-        <button mat-button color="primary" matSuffix [disabled]="!selectUserForm.valid"
-                (click)="setSelected()">
-            {{ 'appLabels.form.action.add' | translate }}
+        <button mat-icon-button matSuffix *ngIf="selectUserForm.controls['username'].value"
+                (click)="resetInput($event)">
+            <mat-icon>close</mat-icon>
         </button>
 
-        <mat-autocomplete #user="matAutocomplete">
+        <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
             <mat-option *ngFor="let user of filteredUsers | async" [value]="user?.name"
                         (onSelectionChange)="resetSelected()">
                 {{ user?.label }}

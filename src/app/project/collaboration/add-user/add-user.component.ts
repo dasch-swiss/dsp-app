@@ -7,11 +7,11 @@ import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
-    selector: 'app-user-add',
-    templateUrl: './user-add.component.html',
-    styleUrls: ['./user-add.component.scss']
+    selector: 'app-add-user',
+    templateUrl: './add-user.component.html',
+    styleUrls: ['./add-user.component.scss']
 })
-export class UserAddComponent implements OnInit {
+export class AddUserComponent implements OnInit {
 
     /**
      * status for the progress indicator
@@ -27,7 +27,7 @@ export class UserAddComponent implements OnInit {
     /**
      * event emitter, when the selected user will be added to the list
      */
-    @Output() userAdded: EventEmitter<any> = new EventEmitter<any>();
+    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
     /**
      * form group
@@ -46,8 +46,6 @@ export class UserAddComponent implements OnInit {
      */
     validationMessages = {
         'username': {
-            'required': 'Email address is required.',
-            'pattern': 'This doesn\'t appear to be a valid email address.',
             'existingName': 'This user is already a member of the project. You can\'t add him.'
         }
     };
@@ -108,7 +106,7 @@ export class UserAddComponent implements OnInit {
     buildForm(): void {
 
         // set the cache
-        const allUsers = this._cache.get('allUsers', this._users.getAllUsers());
+        this._cache.get('allUsers', this._users.getAllUsers());
 
         // get all users; results from cache
         this._cache.get('allUsers', this._users.getAllUsers()).subscribe(
@@ -154,7 +152,7 @@ export class UserAddComponent implements OnInit {
                             i++;
                         }
 
-                        this.users.sort(function (u1, u2) {
+                        this.users.sort(function (u1: AutocompleteItem, u2: AutocompleteItem) {
                             if (u1.label < u2.label) {
                                 return -1;
                             } else if (u1.label > u2.label) {
@@ -181,7 +179,7 @@ export class UserAddComponent implements OnInit {
             'username': new FormControl({
                 value: '', disabled: false
             }, [
-                Validators.required,
+//                Validators.required,
 //                Validators.pattern(Utils.RegexEmail),
                 existingNamesValidator(this.existingUsernames),
                 existingNamesValidator(this.existingEmails)
@@ -329,6 +327,72 @@ export class UserAddComponent implements OnInit {
 
     resetSelected() {
         this.selectedUser = undefined;
+    }
+
+    /**
+     *
+     *
+     * @param val The value can be e-mail address or username
+     */
+    addUser(val: string) {
+        this._users.getUser(val).subscribe(
+            (result: User) => {
+                // case b) result in case the user exists
+                this.selectedUser = result;
+
+                // the following request should never start
+                this.isAlreadyMember = (!!result.projects.find(p => p.shortcode === this.projectcode));
+
+                if (!this.isAlreadyMember) {
+
+                    // get project iri by projectName
+                    this._cache.get(this.projectcode).subscribe(
+                        (p: Project) => {
+
+                            // add user to project
+                            this._users.addUserToProject(this.selectedUser.id, p.id).subscribe(
+                                (add: User) => {
+
+                                    // successful post
+                                    // reload the component
+                                    this.loading = true;
+                                    this.buildForm();
+                                    this.refreshParent.emit();
+
+                                },
+                                (error: any) => {
+                                    console.error(error);
+                                }
+                            );
+
+                        },
+                        (error: any) => {
+                            console.error(error);
+                        }
+                    );
+                }
+
+            },
+            (error: ApiServiceError) => {
+                if (error.status === 404) {
+                    // case c) user doesn't exist
+                    // create new user user-profile
+                    this.selectedUser = new User();
+
+                    this.selectedUser.email = val;
+
+                } else {
+                    // api error
+                    this.errorMessage = error;
+                }
+
+            }
+        );
+    }
+
+    resetInput(ev: Event) {
+        ev.preventDefault();
+        this.selectUserForm.controls['username'].reset('');
     }
 
 }

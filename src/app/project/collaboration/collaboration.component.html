@@ -1,5 +1,6 @@
 <!-- select user to add to the team -->
-<app-user-add [projectcode]="projectcode" (userAdded)="refresh()"></app-user-add>
+<!-- TODO: disable if project is not active! -->
+<app-add-user [projectcode]="projectcode" (refreshParent)="refresh()"></app-add-user>
 
 <!--<button mat-button (click)="openUserForm()">
     <mat-icon prefix>add</mat-icon>

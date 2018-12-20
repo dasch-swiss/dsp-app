@@ -25,6 +25,7 @@ import { NavigationComponent } from './main/navigation/navigation.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { MaterialModule } from './material-module';
 import { BoardComponent } from './project/board/board.component';
+import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { UserItemComponent } from './project/collaboration/user-item/user-item.component';
 import { UserListComponent } from './project/collaboration/user-list/user-list.component';
@@ -51,7 +52,6 @@ import { UserPasswordComponent } from './user/user-form/user-password/user-passw
 import { UserRoleComponent } from './user/user-form/user-role/user-role.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
-import { UserAddComponent } from './project/collaboration/user-add/user-add.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -66,6 +66,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         BoardComponent,
         ProjectFormComponent,
         CollaborationComponent,
+        AddUserComponent,
         UserListComponent,
         UserItemComponent,
         OntologyListComponent,
@@ -98,8 +99,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         LoginComponent,
         LoremIpsumComponent,
         AccountComponent,
-        SelectLanguageComponent,
-        UserAddComponent
+        SelectLanguageComponent
     ],
     imports: [
         AppRoutingModule,
