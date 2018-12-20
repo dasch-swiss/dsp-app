@@ -206,7 +206,6 @@ export class ProjectFormComponent implements OnInit {
             'description': new FormControl({
                 value: project.description[0].value, disabled: false
             }, [
-                Validators.required,
                 Validators.maxLength(this.descriptionMaxLength)
             ]),
 //            'institution': new FormControl({
@@ -389,8 +388,8 @@ export class ProjectFormComponent implements OnInit {
      * @param ev Event
      * @param id Project Iri
      */
-    archiveProject(ev: Event, id: string) {
-        ev.preventDefault();
+    archiveProject(id: string) {
+        // ev.preventDefault();
         // TODO: "are you sure?"-dialog
 
         // if true

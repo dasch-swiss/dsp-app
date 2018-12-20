@@ -164,13 +164,13 @@
             <div *ngIf="project.status">
                 <h3>Here you can archive your project</h3>
                 <div class="center">
-                    <button mat-button [color]="'warn'" (click)="archiveProject($event, project.id)">ARCHIVE</button>
+                    <button mat-button [color]="'warn'" (click)="archiveProject(project.id)">ARCHIVE</button>
                 </div>
             </div>
             <div *ngIf="!project.status">
                 <h3>This project is already archived. Do you want to reactivate it?</h3>
                 <div class="center">
-                    <button mat-button [color]="'primary'" (click)="activateProject($event, project.id)">ACTIVATE</button>
+                    <button mat-button [color]="'primary'" (click)="activateProject(project.id)">ACTIVATE</button>
                 </div>
             </div>
         </div>
