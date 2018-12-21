@@ -168,12 +168,17 @@ export class ProjectFormComponent implements OnInit {
 
     /**
      *
-     * @param project
+     * @param project Project data: "empty" means "create new proejct",
+     * but if there are project data, it means edit mode
      */
     buildForm(project: Project): void {
         // if project is defined, we're in the edit mode
         // otherwise "create new project" mode is active
-        const editMode = (!!project.id);
+        // edit mode is true, when a project id (iri) exists
+        const editMode: boolean = (!!project.id);
+
+        // disabled is true, if project status is false (= archived);
+        const disabled: boolean = (!project.status);
 
         // separate list of keywords
         this.keywords = project.keywords;
@@ -188,9 +193,8 @@ export class ProjectFormComponent implements OnInit {
                 existingNamesValidator(this.existingShortNames),
                 Validators.pattern(this.shortnameRegex)
             ]),
-
             'longname': new FormControl({
-                value: project.longname, disabled: false
+                value: project.longname, disabled: disabled
             }, [
                 Validators.required
             ]),
@@ -204,20 +208,22 @@ export class ProjectFormComponent implements OnInit {
                 Validators.pattern(this.shortcodeRegex)
             ]),
             'description': new FormControl({
-                value: project.description[0].value, disabled: false
+                value: project.description[0].value, disabled: disabled
             }, [
                 Validators.maxLength(this.descriptionMaxLength)
             ]),
 //            'institution': new FormControl({
-//                value: project.institution, disabled: false
+//                value: project.institution, disabled: disabled
 //            }),
             'logo': new FormControl({
-                value: project.logo, disabled: false
+                value: project.logo, disabled: disabled
             }),
             'id': [project.id],
             'status': [true],
             'selfjoin': [false],
-            'keywords': []          // must be empty (even in edit mode), because of the mat-chip-list
+            'keywords': new FormControl({
+                value: [], disabled: disabled
+            })          // must be empty (even in edit mode), because of the mat-chip-list
         });
 
         this.form.valueChanges
@@ -279,8 +285,6 @@ export class ProjectFormComponent implements OnInit {
      */
     removeKeyword(keyword: any): void {
 
-        console.log(keyword);
-
         const index = this.keywords.indexOf(keyword);
 
         if (index >= 0) {
@@ -296,6 +300,7 @@ export class ProjectFormComponent implements OnInit {
             this.keywords = [];
         }
         this.form.controls['keywords'].setValue(this.keywords);
+        // this.form.controls['keywords'].disabled = !this.project.status;
 
         // b) update description field / multi language preparation
         // FIXME: this is a quick (hardcoded) hack:
