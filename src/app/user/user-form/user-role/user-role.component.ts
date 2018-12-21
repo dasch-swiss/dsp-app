@@ -39,7 +39,7 @@ export class UserRoleComponent implements OnInit {
     errorMessage: any;
 
     // show the content after every service has loaded and the data is ready
-    isLoading = true;
+    loading = true;
 
     userRoleForm: FormGroup;
 
@@ -116,7 +116,7 @@ export class UserRoleComponent implements OnInit {
 
         this.buildForm(this.projectIri);
 
-        this.isLoading = false;
+        this.loading = false;
 
         // update the form on value change:
         // "selected project" status and the list of groups for this project

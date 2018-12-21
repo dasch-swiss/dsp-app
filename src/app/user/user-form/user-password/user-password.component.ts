@@ -33,7 +33,7 @@ export class UserPasswordComponent implements OnInit {
     loggedInUser: any;
 
     // show the content after every service has loaded and the data is ready
-    isLoading = true;
+    loading = true;
 
     userPasswordForm: FormGroup;
     newPasswordForm: FormGroup;
@@ -110,7 +110,7 @@ export class UserPasswordComponent implements OnInit {
         this.onValueChanged(this.newPasswordForm); // (re)set validation messages now
         this.onValueChanged(this.requesterPasswordForm); // (re)set validation messages now
 
-        this.isLoading = false;
+        this.loading = false;
 
         // get the user data only if a user is logged in
         this.loggedInUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -165,13 +165,13 @@ export class UserPasswordComponent implements OnInit {
         // reset old messages
         this.oldPasswordIsWrong = false;
 
-        this.isLoading = true;
+        this.loading = true;
 
         this._usersService.updateUser(this.userIri, this.userPasswordForm.value).subscribe(
             (result: User) => {
                 console.log(this.userPasswordForm.value);
                 this.success = true;
-                this.isLoading = false;
+                this.loading = false;
             },
             (error: ApiServiceError) => {
 
@@ -183,7 +183,7 @@ export class UserPasswordComponent implements OnInit {
                     this.errorMessage = error;
                 }
 
-                this.isLoading = false;
+                this.loading = false;
             }
         );
 
@@ -195,7 +195,7 @@ export class UserPasswordComponent implements OnInit {
         // reset old messages
         this.oldPasswordIsWrong = false;
 
-        this.isLoading = true;
+        this.loading = true;
 
         const requesterPassword = this.requesterPasswordForm.value.requesterPassword;
         const newPassword = this.newPasswordForm.value.newPassword;
@@ -212,7 +212,7 @@ export class UserPasswordComponent implements OnInit {
             (result: User) => {
                 // console.log(result);
                 this.success = true;
-                this.isLoading = false;
+                this.loading = false;
             },
             (error: ApiServiceError) => {
 
@@ -224,7 +224,7 @@ export class UserPasswordComponent implements OnInit {
                     this.errorMessage = error;
                 }
 
-                this.isLoading = false;
+                this.loading = false;
             }
         );
 

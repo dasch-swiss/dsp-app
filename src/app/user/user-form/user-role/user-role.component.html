@@ -1,9 +1,9 @@
 <div *ngIf="!errorMessage; else errorMsg">
 
-    <kui-progress-indicator *ngIf="isLoading"></kui-progress-indicator>
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
     <!-- content -->
-    <form *ngIf="!isLoading" [formGroup]="userRoleForm" class="form-content user-data">
+    <form *ngIf="!loading" [formGroup]="userRoleForm" class="form-content user-data">
 
         <mat-form-field class="medium">
             <mat-select placeholder="{{ 'appLabels.form.member.select.project' | translate }}" [formControl]="userRoleForm.controls['project']">
