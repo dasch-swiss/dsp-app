@@ -291,7 +291,7 @@ export class AddUserComponent implements OnInit {
                                         // reload the component
                                         this.loading = true;
                                         this.buildForm();
-                                        this.userAdded.emit();
+                                        this.refreshParent.emit();
 
                                     },
                                     (error: any) => {

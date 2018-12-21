@@ -422,7 +422,7 @@ export class ProjectFormComponent implements OnInit {
      * @param id Project Iri
      */
     activateProject(id: string) {
-        ev.preventDefault();
+        // ev.preventDefault();
         // TODO: "are you sure?"-dialog
 
         this._projects.activateProject(id).subscribe(
