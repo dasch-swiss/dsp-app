@@ -18,7 +18,10 @@
         <mat-card-actions class="flex-panel">
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-icon-button class="right" *ngIf="user.status" [routerLink]="'/account'">
+                <button mat-icon-button class="right" *ngIf="sysAdmin" [routerLink]="'edit'">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
                     <mat-icon>edit</mat-icon>
                 </button>
             </span>
