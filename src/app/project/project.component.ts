@@ -73,6 +73,7 @@ export class ProjectComponent implements OnInit {
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
             this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
 
+            // get the data from cache
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
                 (result: any) => {
                     this.project = result;
@@ -91,6 +92,11 @@ export class ProjectComponent implements OnInit {
         }
     }
 
+    /**
+     * Checks if the shortcode is valid: hexadecimal and length = 4
+     *
+     * @param code project shortcode which is a parameter in the route
+     */
     validateShortcode(code: string) {
         const regexp: any = /^[0-9A-Fa-f]+$/;
 

@@ -1,9 +1,10 @@
 <div *ngIf="list && !loading">
     <div class="list-header">
         <h4 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['member']}}
+<!--
             <span *ngIf="disabled"> | <span class="smaller">already deleted</span>
-                <!-- | <span class="smaller">{{'appLabels.form.user.title.deleted' | translate}}</span>-->
             </span>
+-->
         </h4>
         <span class="fill-remaining-space"></span>
         <span class="list-action">
@@ -48,7 +49,7 @@
             <td class="table-action">
                 <div class="hidden">
                     <button mat-icon-button
-                            *ngIf="item.status"
+                            *ngIf="!disabled"
                             (click)="removeUser(item.id)"
                             matTooltip="Remove {{item.username}} as a collaborator"
                             matTooltipPosition="above">

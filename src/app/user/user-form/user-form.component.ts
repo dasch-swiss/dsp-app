@@ -85,8 +85,8 @@ export class UserFormComponent implements OnInit {
 
     ngOnInit() {
 
-        const users: any = this._cache.get('allUsers', this._usersService.getAllUsers());
-        const projects: any = this._cache.get('allProjects', this._projectsService.getAllProjects());
+        this._cache.get('allUsers', this._usersService.getAllUsers());
+        this._cache.get('allProjects', this._projectsService.getAllProjects());
 
     }
 

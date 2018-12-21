@@ -1,6 +1,6 @@
 <!-- select user to add to the team -->
 <!-- TODO: disable if project is not active! -->
-<app-add-user [projectcode]="projectcode" (refreshParent)="refresh()"></app-add-user>
+<app-add-user [projectcode]="projectcode" (refreshParent)="refresh()" *ngIf="project?.status"></app-add-user>
 
 <!--<button mat-button (click)="openUserForm()">
     <mat-icon prefix>add</mat-icon>
@@ -18,12 +18,14 @@
 
     <div *ngIf="!loading">
         <!-- list of active users -->
-        <app-user-list [list]="active" (userRemoved)="refresh()"></app-user-list>
+        <mat-card-subtitle>Active</mat-card-subtitle>
+        <app-user-list [list]="active" (userRemoved)="refresh()" [disabled]="!project.status"></app-user-list>
 
         <br>
 
         <!-- list of inactive / deleted users -->
-        <app-user-list [list]="inactive" [disabled]="true"></app-user-list>
+        <mat-card-subtitle>Inactive</mat-card-subtitle>
+        <app-user-list [list]="inactive" [disabled]="!project.status"></app-user-list>
     </div>
 
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { ProjectsService, User } from '@knora/core';
+import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -14,6 +14,8 @@ export class CollaborationComponent implements OnInit {
     loading: boolean;
 
     projectcode: string;
+
+    project: Project;
 
     projectMembers: User[] = [];
 
@@ -37,6 +39,19 @@ export class CollaborationComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loading = true;
+
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
+            (result: any) => {
+                this.project = result;
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+                this.loading = false;
+            }
+        );
+
         this.initList();
     }
 
