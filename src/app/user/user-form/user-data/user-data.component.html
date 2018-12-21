@@ -1,9 +1,8 @@
 <div *ngIf="!errorMessage; else errorMsg">
-    <!-- <salsah-progress-indicator *ngIf="loading"></salsah-progress-indicator> -->
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
     <!-- success message after updating -->
-    <!--<salsah-message *ngIf="success" [message]="successMessage" [short]="true"></salsah-message>-->
+    <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
     <form *ngIf="!loading" [formGroup]="form" class="form-content user-data">
@@ -70,7 +69,7 @@
 
         </mat-form-field>
 
-        <div class="salsah-panel large-field" *ngIf="standalone; else stepperNav">
+        <div class="app-panel large-field" *ngIf="standalone; else stepperNav">
             <span class="fill-remaining-space"></span>
             <button mat-button type="button" color="primary" (click)="submitData()" [disabled]="!form.valid">
                 {{ 'appLabels.form.action.update' | translate }}
@@ -78,7 +77,7 @@
         </div>
 
         <ng-template #stepperNav>
-            <div class="salsah-panel large-field">
+            <div class="app-panel large-field">
                 <button mat-button matStepperPrevious>{{ 'appLabels.form.action.back' | translate }}</button>
                 <span class="fill-remaining-space"></span>
                 <button mat-button color="primary" matStepperNext [disabled]="!form.valid" (click)="submitData()">
@@ -92,5 +91,5 @@
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <!--<salsah-message *ngIf="errorMessage" [message]="errorMessage"></salsah-message>-->
+    <!--<kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>-->
 </ng-template>

@@ -85,9 +85,9 @@
 
         <!-- upload logo -->
         <!--
-        <salsah-file-uploader (uploadStatus)="sipiUpload($event)"></salsah-file-uploader>
+        <app-file-uploader (uploadStatus)="sipiUpload($event)"></app-file-uploader>
         <!-- the form needs an input field for the logo name
-            the following input will be hidden and it gets the file name from the salsah-file-uploader -->
+            the following input will be hidden and it gets the file name from the app-file-uploader -->
         <br>
         <!-- dev control for image uploader
                 <input matInput [hidden]="false"
@@ -96,7 +96,7 @@
                        formControlName="logo">
                        -->
         <!--
-                <div class="salsah-panel large" *ngIf="standalone; else stepperNav">
+                <div class="app-panel large" *ngIf="standalone; else stepperNav">
                     &lt;!&ndash; delete / activate buttons in case of edit &ndash;&gt;
                     <div *ngIf="edit">
                         &lt;!&ndash; delete project &ndash;&gt;
@@ -124,7 +124,7 @@
 
 
                 <ng-template #stepperNav>
-                    <div class="salsah-panel large">
+                    <div class="app-panel large">
                         <button mat-button matStepperPrevious>{{ 'appLabels.form.action.back' | translate }}</button>
                         <span class="fill-remaining-space"></span>
                         <button mat-button color="primary" matStepperNext [disabled]="!projectDataForm.valid"
@@ -134,7 +134,7 @@
                     </div>
                 </ng-template>
                 -->
-        <div class="salsah-panel form-action">
+        <div class="app-panel form-action">
             <span>
                 <button mat-button
                         (click)="cancel(projectcode)">
