@@ -21,7 +21,7 @@ interface CacheContent {
 export class CacheService {
     private cache: Map<string, CacheContent> = new Map<string, CacheContent>();
     private inFlightObservables: Map<string, Subject<any>> = new Map<string, Subject<any>>();
-    readonly DEFAULT_MAX_AGE: number = 300000;  // ms
+    readonly DEFAULT_MAX_AGE: number = 3600000;  // 3600000ms => 1 Stunde
 
     /**
      * Gets the value from cache if the key is provided.

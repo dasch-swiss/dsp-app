@@ -189,7 +189,7 @@ export class AddUserComponent implements OnInit {
         this.filteredUsers = this.selectUserForm.controls['username'].valueChanges
             .pipe(
                 startWith(this.selectUserForm.controls['username'].value),
-                map(user => user ? this.filter(this.users, user) : this.users.slice())
+                map(user => this.selectUserForm.controls['username'].value.length >= 1 ? this.filter(this.users, user) : this.users.slice())
             );
 
         this.selectUserForm.valueChanges
@@ -202,9 +202,9 @@ export class AddUserComponent implements OnInit {
 
     /**
      * filter a list while typing in auto complete input field
-     * @param {AutocompleteItem[]} list
-     * @param {string} name
-     * @returns {AutocompleteItem[]}
+     * @param {AutocompleteItem[]} list List of options
+     * @param {string} name Value to filter by
+     * @returns {AutocompleteItem[]} Filtered list of options
      */
     filter(list: AutocompleteItem[], name: string) {
         return list.filter(user =>
@@ -216,7 +216,7 @@ export class AddUserComponent implements OnInit {
     /**
      * set the error messages on value changed
      *
-     * @param data
+     * @param (data)
      */
     onValueChanged(data?: any) {
 
@@ -240,97 +240,8 @@ export class AddUserComponent implements OnInit {
         });
     }
 
-
     /**
-     * set selected user from auto complete
-     *
-     */
-    setSelected() {
-
-
-        // set selected has four possible scenarios
-        // a) the user selected one user from the auto-complete list, which gives us the user's IRI
-        // b) the user typed in an eMail address or username of a new user. It means the user doesn't exist yet
-        // c) the user typed in an eMail address of an existing user, but has not selected from the auto-complete list
-        // d) the user typed in something else, which is not a valid eMail address or valid username,
-        //    so the form isn't valid; the method for this case will never start
-
-        const username = this.selectUserForm.controls['username'].value;
-
-        if (this.selectedUser !== undefined) {
-            return;
-        }
-
-        console.log((username ? username : this.selectUserForm.controls['username'].value));
-
-        // which case do we have? option a - d?
-        const email = (username ? username : this.selectUserForm.controls['username'].value);
-
-
-        // get user by username (email)
-        this._users.getUser(email)
-            .subscribe(
-                (result: User) => {
-                    // case b) result in case the user exists
-                    this.selectedUser = result;
-
-                    // the following request should never start
-                    this.isAlreadyMember = (!!result.projects.find(p => p.shortcode === this.projectcode));
-
-                    if (!this.isAlreadyMember) {
-
-                        // get project iri by projectName
-                        this._cache.get(this.projectcode).subscribe(
-                            (p: Project) => {
-
-                                // add user to project
-                                this._users.addUserToProject(this.selectedUser.id, p.id).subscribe(
-                                    (add: User) => {
-
-                                        // successful post
-                                        // reload the component
-                                        this.loading = true;
-                                        this.buildForm();
-                                        this.refreshParent.emit();
-
-                                    },
-                                    (error: any) => {
-                                        console.error(error);
-                                    }
-                                );
-
-                            },
-                            (error: any) => {
-                                console.error(error);
-                            }
-                        );
-                    }
-
-                },
-                (error: ApiServiceError) => {
-                    if (error.status === 404) {
-                        // case c) user doesn't exist
-                        // create new user user-profile
-                        this.selectedUser = new User();
-
-                        this.selectedUser.email = email;
-
-                    } else {
-                        // api error
-                        this.errorMessage = error;
-                    }
-
-                }
-            );
-
-    }
-
-    resetSelected() {
-        this.selectedUser = undefined;
-    }
-
-    /**
-     *
+     * Add user to the project
      *
      * @param val The value can be e-mail address or username
      */
@@ -348,7 +259,6 @@ export class AddUserComponent implements OnInit {
                     // get project iri by projectName
                     this._cache.get(this.projectcode).subscribe(
                         (p: Project) => {
-
                             // add user to project
                             this._users.addUserToProject(this.selectedUser.id, p.id).subscribe(
                                 (add: User) => {
@@ -364,7 +274,6 @@ export class AddUserComponent implements OnInit {
                                     console.error(error);
                                 }
                             );
-
                         },
                         (error: any) => {
                             console.error(error);

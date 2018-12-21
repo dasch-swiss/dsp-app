@@ -17,8 +17,6 @@ export class ProjectListComponent implements OnInit {
     active: Project[] = [];
     inactive: Project[] = [];
 
-    selectedProject: Project;
-
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
                 private _router: Router,
@@ -35,6 +33,8 @@ export class ProjectListComponent implements OnInit {
 
     getUsersProjects() {
 
+        this.loading = true;
+
         const session: Session = JSON.parse(localStorage.getItem('session'));
 
         if (session && session.user.sysAdmin) {
@@ -42,8 +42,8 @@ export class ProjectListComponent implements OnInit {
             // he has access to every project
             this._projectsService.getAllProjects()
                 .subscribe(
-                    (result: Project[]) => {
-                        this.projects = result;
+                    (projects: Project[]) => {
+                        this.projects = projects;
                         for (const p of this.projects) {
 
                             if (p.status === true) {
@@ -52,6 +52,8 @@ export class ProjectListComponent implements OnInit {
                                 this.inactive.push(p);
                             }
                         }
+
+                        this.loading = false;
                     },
                     (error: ApiServiceError) => {
                         console.error(error);
@@ -62,8 +64,8 @@ export class ProjectListComponent implements OnInit {
             // he get only his own projects
             this._usersService.getUser(session.user.name)
                 .subscribe(
-                    (result: User) => {
-                        this.projects = result.projects;
+                    (user: User) => {
+                        this.projects = user.projects;
                         for (const p of this.projects) {
 
                             if (p.status === true) {
@@ -71,6 +73,7 @@ export class ProjectListComponent implements OnInit {
                             } else {
                                 this.inactive.push(p);
                             }
+                            this.loading = false;
                         }
                     },
                     (error: ApiServiceError) => {
