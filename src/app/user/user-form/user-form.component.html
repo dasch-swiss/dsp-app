@@ -1,173 +1,100 @@
-<div *ngIf="!isLoading && !errorMessage; else errorMsg" class="form">
+<div *ngIf="!errorMessage; else errorMsg">
+    <!-- <salsah-progress-indicator *ngIf="loading"></salsah-progress-indicator> -->
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <mat-vertical-stepper [linear]="isLinear" #stepper="matVerticalStepper">
+    <!-- success message after updating -->
+    <!--<salsah-message *ngIf="success" [message]="successMessage" [short]="true"></salsah-message>-->
 
+    <!-- content -->
+    <form *ngIf="!loading" [formGroup]="form" class="form-content user-data">
 
-        <!-- ------------------------------------------------------------------
-            1.  add' or 'create new' user starts always with the user's email address;
-                it's an auto complete form, which checks, if the user already exists
-        ------------------------------------------------------------------- -->
-        <!--
-        <mat-step [stepControl]="userFormGroup">
-            <ng-template matStepLabel>
+        <h3 class="large-field center">
+            <!--<span *ngIf="user?.id">{{ 'appLabels.form.user.title.edit' | translate }}</span>-->
+            <!--<span *ngIf="!user?.id">{{ 'appLabels.form.user.title.new' | translate }}</span>-->
+        </h3>
 
-                {{ 'appLabels.form.user.title.formWizard.step_1' | translate }}
-            </ng-template>
-            <div class="center form-content">
-                <app-select-user></app-select-user>
-            </div>
+        <!-- email -->
+        <mat-form-field class="large-field">
+            <input matInput type="email" [formControl]="form.controls['email']" placeholder="{{ 'appLabels.form.user.general.email' | translate }} *">
+            <mat-hint *ngIf="formErrors.email">
+                {{ formErrors.email }}
+            </mat-hint>
+        </mat-form-field>
 
-        </mat-step>
-        -->
-        <!-- -------------------------------------------------------------- -->
-        <!-- -------------------------------------------------------------- -->
+        <!-- username -->
+        <mat-form-field class="large-field">
+            <input matInput type="text" autocomplete="username"  [formControl]="form.controls['username']" placeholder="{{ 'appLabels.form.user.general.username' | translate }} *">
+            <mat-hint *ngIf="formErrors.username">
+                {{ formErrors.username }}
+            </mat-hint>
+        </mat-form-field>
 
-        <!-- ------------------------------------------------------------------
-            2. user data form:
-                a) edit form in case of existing user
-                b) empty form in case of unknown eMail = the user doesn't exist yet
-        ------------------------------------------------------------------- -->
+        <!-- given name -->
+        <mat-form-field class="small-field">
+            <input matInput [formControl]="form.controls['givenName']" placeholder="{{ 'appLabels.form.user.general.givenName' | translate }} *">
+            <mat-hint *ngIf="formErrors.givenName">
+                {{ formErrors.givenName }}
+            </mat-hint>
+        </mat-form-field>
 
-        <mat-step>
-            <ng-template matStepLabel>{{ 'appLabels.form.user.title.formWizard.step_2' | translate }}</ng-template>
-            <div class="center form-content">
-                <app-user-data [standalone]="false"></app-user-data>
-            </div>
+        <!-- family name -->
+        <mat-form-field class="medium-field">
+            <input matInput [formControl]="form.controls['familyName']" placeholder="{{ 'appLabels.form.user.general.familyName' | translate }} *">
+            <mat-hint *ngIf="formErrors.familyName">
+                {{ formErrors.familyName }}
+            </mat-hint>
+        </mat-form-field>
 
-        </mat-step>
-        <!-- -------------------------------------------------------------- -->
-        <!-- -------------------------------------------------------------- -->
+        <!-- password -->
+        <mat-form-field class="large-field">
+            <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password" [formControl]="form.controls['password']" placeholder="{{ 'appLabels.form.user.general.password' | translate }} *">
 
-        <!-- ------------------------------------------------------------------
-            3. set user's role in project:
-                a) in system view: select project and role
-                b) in project view: select role only
-        ------------------------------------------------------------------- -->
-        <mat-step [editable]="selectedUser">
-            <ng-template matStepLabel>
-                <!--{{ 'appLabels.form.user.title.formWizard.step_3' | translate }}-->
-            </ng-template>
+            <button mat-button matSuffix mat-icon-button class="input-icon" attr.aria-label="{{showPassword ? 'Hide password' : 'Show password'}}"
+                    (click)="toggleVisibility()">
+                <mat-icon>
+                    {{showPassword ? 'visibility_off' : 'visibility'}}
+                </mat-icon>
+            </button>
+            <mat-hint *ngIf="formErrors.password">
+                {{ formErrors.password }}
+            </mat-hint>
+        </mat-form-field>
 
-            <app-user-role *ngIf="selectedUser" [projectIri]="projectIri" [user]="selectedUser"
-                              (userRole)="getUserRole($event)" [standalone]="false">
-            </app-user-role>
+        <mat-form-field class="large-field">
 
-        </mat-step>
-        <!-- -------------------------------------------------------------- -->
-        <!-- -------------------------------------------------------------- -->
+            <mat-select [formControl]="form.controls['lang']" [placeholder]="'appLabels.form.user.general.language' | translate">
+                <mat-option *ngFor="let lang of languagesList" [value]="lang.id">
+                    {{ lang.name }}
+                </mat-option>
+            </mat-select>
 
-        <!-- ------------------------------------------------------------------
-            4. confirm the setup before submit
-        ------------------------------------------------------------------- -->
-        <mat-step [editable]="false">
+        </mat-form-field>
 
-            <ng-template matStepLabel>
-                <!--{{ 'appLabels.form.user.title.formWizard.step_4' | translate }}-->
-            </ng-template>
+        <div class="salsah-panel form-action">
+            <span>
+                <button mat-button
+                        (click)="cancel(projectcode)">
+                    {{ 'appLabels.form.action.cancel' | translate }}
+                </button>
 
-            <div class="form-content">
-                <mat-list class="form-overview">
+            </span>
+            <span class="fill-remaining-space"></span>
+            <span>
+                <button mat-raised-button
+                        type="button"
+                        color="primary"
+                        (click)="submitData()"
+                        [disabled]="!form.valid || !user.status">
+                    <span *ngIf="id">{{ 'appLabels.form.action.update' | translate }}</span>
+                    <span *ngIf="!id">{{ 'appLabels.form.action.submit' | translate }}</span>
+                </button>
+            </span>
+        </div>
 
-                    <!-- from step 1 and 2) user data -->
-                    <mat-list-item *ngIf="selectedUser">
-
-                        <kui-progress-indicator mat-list-avatar
-                                                [status]="submitUserStatus"></kui-progress-indicator>
-                        <h4 mat-line>
-                            <span *ngIf="selectedUser.id">
-                                <!--{{ 'appLabels.form.user.title.edit' | translate }}-->
-                            </span>
-                            <span *ngIf="!selectedUser.id">
-                                <!--{{ 'appLabels.form.user.title.new' | translate }}-->
-                            </span>
-                        </h4>
-                        <p mat-line>
-                            <span>
-                                {{selectedUser?.givenName}} {{selectedUser?.familyName}}, {{selectedUser?.email}}
-                            </span>
-                        </p>
-                        <mat-hint mat-line *ngIf="userErrorMessage" class="salsah-error-message">
-                            {{userErrorMessage?.statusText}}
-                        </mat-hint>
-                    </mat-list-item>
-
-                    <!-- from step 3a) membership in project -->
-                    <mat-list-item *ngIf="selectedProject">
-                        <!-- <salsah-progress-indicator mat-list-avatar class="salsah-avatar" [status]="submitMembershipStatus"></salsah-progress-indicator> -->
-                        <kui-progress-indicator mat-list-avatar class="salsah-avatar"
-                                                [status]="submitMembershipStatus"></kui-progress-indicator>
-                        <h4 mat-line>
-                            {{ 'appLabels.form.member.title.project' | translate }}
-                        </h4>
-                        <p mat-line>
-                            &bull; {{selectedProject?.name}}
-                        </p>
-                        <mat-hint mat-line *ngIf="isAlreadyMember" class="salsah-warning">
-                            <!--({{ 'appLabels.form.member.hint.alreadyMember' | translate }})-->
-                        </mat-hint>
-                        <mat-hint mat-line *ngIf="membershipErrorMessage" class="salsah-error-message">
-                            {{membershipErrorMessage?.statusText}}
-                        </mat-hint>
-                    </mat-list-item>
-
-                    <!-- from step 3b) project permission: groups -->
-                    <mat-list-item *ngIf="selectedProject && selectedGroups">
-                        <!-- <salsah-progress-indicator mat-list-avatar class="salsah-avatar" [status]="submitPermissionsStatus"></salsah-progress-indicator> -->
-                        <kui-progress-indicator mat-list-avatar class="salsah-avatar"
-                                                [status]="submitPermissionsStatus"></kui-progress-indicator>
-                        <h4 mat-line>
-                            <!--{{ 'appLabels.form.member.title.group' | translate}}-->
-                        </h4>
-                        <p mat-line>
-                            <span *ngFor="let group of selectedGroups; let last = last">&bull; {{group.name}}
-                                <br *ngIf="!last">
-                            </span>
-                        </p>
-                        <mat-hint mat-line *ngIf="permissionsErrorMessage" class="salsah-error-message">
-                            {{permissionsErrorMessage?.statusText}}
-                        </mat-hint>
-                    </mat-list-item>
-
-                </mat-list>
-
-
-                <div class="salsah-panel large">
-                    <button mat-button matStepperPrevious>
-                        {{ 'appLabels.form.action.back' | translate }}
-                    </button>
-                    <span class="fill-remaining-space"></span>
-                    <button mat-raised-button type="button" color="primary" (click)="submitData()"
-                            [disabled]="!selectedUser && !selectedProject && !selectedGroups">
-                        {{ 'appLabels.form.action.submit' | translate }}
-                    </button>
-                    <!-- after submit
-                    <button mat-button (click)="stepper.reset()">Add more user</button>
-                    -->
-                </div>
-            </div>
-        </mat-step>
-    </mat-vertical-stepper>
+    </form>
 </div>
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
     <!--<salsah-message *ngIf="errorMessage" [message]="errorMessage"></salsah-message>-->
 </ng-template>
-
-
-<!--
- the user form is a step by step form, which will be used in system and project admin
- to create new user, to edit existing users or/and to add user to or remove from projects
-
- the steps (depending on the usage / route) are as follow:
-    1) user user-profile
-        a) in case of project admin: select existing user OR create new user user-profile => b)
-        b) in case of system and project admin: create new user user-profile and edit old one
-
-    2) project membership
-        a) in case of system admin: select project AND set the permissions => b)
-        b) in case of project and system admin: set permissions incl. system permissions (if the logged in user is sys admin)
-
-    3) special stuff like "add the user to system project" and set system permissions
-
--->
