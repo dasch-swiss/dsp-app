@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import { ApiServiceError, AutocompleteItem, KnoraConstants, ProjectsService, User, UsersService, Utils } from '@knora/core';
+import { ApiServiceError, AutocompleteItem, KnoraConstants, Project, ProjectsService, User, UsersService, Utils } from '@knora/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../main/cache/cache.service';
@@ -12,7 +12,16 @@ import { CacheService } from '../../main/cache/cache.service';
     templateUrl: './user-form.component.html',
     styleUrls: ['./user-form.component.scss']
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent implements OnInit, OnChanges {
+
+    // the user form can be used in several cases:
+    // a) guest --> register: create new user
+    // b) system admin or project admin --> add: create new user
+    // c) system admin or project admin --> edit: edit (not own) user
+    // d) logged-in user --> edit: edit own user data
+    // => so, this component has to know who is who and who is doing what;
+    // the form needs then some permission checks
+
     public readonly RegexUsername = /^[a-zA-Z0-9]+$/;
 
     /**
@@ -24,7 +33,7 @@ export class UserFormComponent implements OnInit {
      * user iri, email or username: in case of edit
      *
      */
-    @Input() id?: string;
+    @Input() username?: string;
 
     /**
      * user data
@@ -32,17 +41,10 @@ export class UserFormComponent implements OnInit {
     user: User;
 
     /**
-     * Is the form a standalone or embedded in a step by step form wizard?
-     *
-     */
-    @Input() standalone = true;
-
-    /**
      *  send user data to parent component;
-     *  in case of standalone = false
+     *  in case of dialog box?
      */
     @Output() userData = new EventEmitter<User>();
-
 
     /**
      * username should be unique
@@ -151,6 +153,7 @@ export class UserFormComponent implements OnInit {
     ];
 
     constructor(private _route: ActivatedRoute,
+                private _router: Router,
                 private _cache: CacheService,
                 private _users: UsersService,
                 private _formBuilder: FormBuilder) {
@@ -160,14 +163,14 @@ export class UserFormComponent implements OnInit {
 
         this.loading = true;
 
-        if (this.id) {
+        if (this.username) {
 
             // set the cache first: user data to edit
-            this._cache.get(this.id, this._users.getUser(this.id));
+            this._cache.get(this.username, this._users.getUser(this.username));
             /**
              * edit mode: get user data from cache
              */
-            this._cache.get(this.id, this._users.getUser(this.id)).subscribe(
+            this._cache.get(this.username, this._users.getUser(this.username)).subscribe(
                 (response: User) => {
                     this.user = response;
                     this.loading = !this.buildForm(this.user);
@@ -258,8 +261,13 @@ export class UserFormComponent implements OnInit {
             ]),
             'lang': new FormControl({
                 value: (user.lang ? user.lang : 'en'), disabled: false
+            }),
+            'status': new FormControl({
+                value: (user.status ? user.status : true), disabled: false
+            }),
+            'systemAdmin': new FormControl({
+                value: (user.systemAdmin ? user.systemAdmin : false), disabled: false
             })
-            //            'status': user.userData.status,
             //            'systemAdmin': this.sysAdminPermission,
             //            'group': null
         });
@@ -304,7 +312,8 @@ export class UserFormComponent implements OnInit {
     /**
      * toggle the visibility of the password
      */
-    toggleVisibility() {
+    toggleVisibility(ev: Event) {
+        ev.preventDefault();
         this.showPassword = (!this.showPassword);
     }
 
@@ -313,10 +322,11 @@ export class UserFormComponent implements OnInit {
      */
     submitData(): void {
 
-        if (this.standalone) {
-            this.loading = true;
-            // this method is only used in standalone user data form
-            // to edit user user-profile
+        this.loading = true;
+
+        if (this.username) {
+            // edit update user data
+
             this._users.updateUser(this.user.id, this.form.value).subscribe(
                 (result: User) => {
                     this.user = result;
@@ -331,7 +341,28 @@ export class UserFormComponent implements OnInit {
                 }
             );
         } else {
-            this.userData.emit(this.form.value);
+            // create new project
+            this._users.createUser(this.form.value).subscribe(
+                (user: User) => {
+                    this.user = user;
+                    this.buildForm(this.user);
+
+                    // go to user's profile page
+                    this.loading = false;
+                    // redirect to (new) project page
+                    this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
+                        this._router.navigate(['/user/' + this.form.controls['username'].value])
+                    );
+
+                    // TODO: OR go to next step and add user to project?
+                },
+                (error: ApiServiceError) => {
+                    this.errorMessage = error;
+                    this.loading = false;
+                }
+
+            );
+
         }
     }
 }
