@@ -75,11 +75,31 @@ a,
 // card
 .mat-card {
 
+  .mat-card-title,
+  .mat-card-subtitle {
+    display: flex;
+  }
+
   &.no-shadow {
     box-shadow: none !important;
   }
   .mat-card-actions {
     text-align: right;
+  }
+}
+
+// --------------------------------------
+
+//
+// status badge
+.status {
+  padding: 4px 6px;
+  font-weight: bolder;
+  border-radius: 4px;
+  color: white;
+  background: $warn;
+  &.active {
+    background: $active;
   }
 }
 

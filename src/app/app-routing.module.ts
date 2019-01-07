@@ -11,7 +11,6 @@ import { OntologyComponent } from './project/ontology/ontology.component';
 import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
 import { ProfileComponent } from './user/profile/profile.component';
-import { UserDataComponent } from './user/user-form/user-data/user-data.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
 

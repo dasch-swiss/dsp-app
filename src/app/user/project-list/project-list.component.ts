@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
@@ -13,9 +13,21 @@ export class ProjectListComponent implements OnInit {
 
     loading: boolean;
 
+    @Input() username?: string;
+
+    sysAdmin: boolean = false;
+
     projects: Project[] = [];
     active: Project[] = [];
     inactive: Project[] = [];
+
+    // i18n setup
+    itemPluralMapping = {
+        'project': {
+            '=1': 'Project',
+            'other': 'Projects'
+        }
+    };
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
@@ -23,21 +35,30 @@ export class ProjectListComponent implements OnInit {
                 private _usersService: UsersService,
                 private _titleService: Title) {
         // set the page title
-        this._titleService.setTitle('Your projects');
+        // this._titleService.setTitle('Your projects');
     }
 
     ngOnInit() {
 
-        this.getUsersProjects();
+        if (this.username) {
+            // get user specific projects
+            this.getUsersProjects(this.username);
+        } else {
+            // get logged in user projects
+            this.getUsersProjects();
+        }
+
     }
 
-    getUsersProjects() {
+    getUsersProjects(name?: string) {
 
         this.loading = true;
 
         const session: Session = JSON.parse(localStorage.getItem('session'));
 
-        if (session && session.user.sysAdmin) {
+        // this.sysAdmin = (!this.username && (session && session.user.sysAdmin));
+
+        if (!name && (session && session.user.sysAdmin)) {
             // the logged-in user is system administrator;
             // he has access to every project
             this._projectsService.getAllProjects()
@@ -62,24 +83,32 @@ export class ProjectListComponent implements OnInit {
         } else {
             // the logged-in user has no system admin rights;
             // he get only his own projects
-            this._usersService.getUser(session.user.name)
-                .subscribe(
-                    (user: User) => {
-                        this.projects = user.projects;
-                        for (const p of this.projects) {
 
-                            if (p.status === true) {
-                                this.active.push(p);
-                            } else {
-                                this.inactive.push(p);
-                            }
-                            this.loading = false;
+            name = (name ? name : session.user.name);
+
+            this._cache.get(this.username, this._usersService.getUser(name)).subscribe(
+                (user: User) => {
+                    this.projects = user.projects;
+
+                    for (const p of this.projects) {
+                        if (p.status === true) {
+                            this.active.push(p);
+                        } else {
+                            this.inactive.push(p);
                         }
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
                     }
-                );
+
+
+                    console.log(this.active.length);
+
+                    this.loading = false;
+
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+
         }
 
         // TODO: in case of sys admin: is it possible to mix all projects with user's projects to mark them somehow in the list?!

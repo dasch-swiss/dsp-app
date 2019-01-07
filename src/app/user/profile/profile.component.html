@@ -1,35 +1,40 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<kui-progress-indicator *ngIf="loading && !user"></kui-progress-indicator>
 
-<div *ngIf="user && !loading">
-
+<div *ngIf="!loading && user" class="content">
+    <!-- user profile header -->
     <mat-card class="no-shadow">
-        <!--<mat-card-header>-->
-        <mat-card-subtitle>User</mat-card-subtitle>
+        <mat-card-subtitle>
+            User | {{user.username}}
+            <span class="fill-remaining-space"></span>
+            <span class="badge status" [class.active]="user.status">
+                        <span *ngIf="user.status">Active</span>
+                        <span *ngIf="!user.status">Archived</span>
+                    </span>
+        </mat-card-subtitle>
         <mat-card-title>{{user.familyName}}, {{user.givenName}}</mat-card-title>
-        <!--</mat-card-header>-->
+    </mat-card>
 
-
+    <!-- short profile info -->
+    <mat-card class="no-shadow">
+        <!-- description -->
         <mat-card-content>
-            <!-- todo: add more user information here -->
-
+            <p></p>
+            <!--<p>{{user.email}}</p>-->
         </mat-card-content>
 
-        <!-- action panel: edit -->
-        <mat-card-actions class="flex-panel">
-            <span class="fill-remaining-space"></span>
-            <span>
-                <button mat-icon-button class="right" *ngIf="sysAdmin" [routerLink]="'edit'">
-                    <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </span>
+        <mat-card-actions>
+            <button mat-icon-button class="right" *ngIf="sysAdmin" [routerLink]="'edit'">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
+                <mat-icon>edit</mat-icon>
+            </button>
         </mat-card-actions>
     </mat-card>
 
     <mat-divider></mat-divider>
 
-    <!-- todo: add list of projects, collections etc. (user dashboard style)-->
+    <!-- member in the following projects -->
+    <app-project-list [username]="user.username"></app-project-list>
 
 </div>

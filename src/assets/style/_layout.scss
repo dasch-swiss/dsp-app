@@ -163,6 +163,17 @@
   font-size: small;
 }
 
+.content {
+  margin: 0 auto;
+  max-width: 80%;
+
+  padding: 48px;
+
+  @media (max-width: map-get($grid-breakpoints, phone)) {
+    max-width: 100%;
+  }
+}
+
 // --------------------------------------
 
 //
