@@ -40,13 +40,7 @@ export class ProjectListComponent implements OnInit {
 
     ngOnInit() {
 
-        if (this.username) {
-            // get user specific projects
-            this.getUsersProjects(this.username);
-        } else {
-            // get logged in user projects
-            this.getUsersProjects();
-        }
+        this.getUsersProjects(this.username);
 
     }
 
@@ -97,9 +91,6 @@ export class ProjectListComponent implements OnInit {
                             this.inactive.push(p);
                         }
                     }
-
-
-                    console.log(this.active.length);
 
                     this.loading = false;
 
