@@ -400,8 +400,8 @@ export class ProjectFormComponent implements OnInit {
         this._projects.deleteProject(id).subscribe(
             (res: Project) => {
                 // reload page
-                this.loading = false;
-                window.location.reload();
+                this.loading = true;
+                this.refresh();
             },
             (error: ApiServiceError) => {
                 // const message: MessageData = error;
@@ -427,14 +427,12 @@ export class ProjectFormComponent implements OnInit {
      * @param id Project Iri
      */
     activateProject(id: string) {
-        // ev.preventDefault();
-        // TODO: "are you sure?"-dialog
 
         this._projects.activateProject(id).subscribe(
             (res: Project) => {
                 // reload page
-                window.location.reload();
-                this.loading = false;
+                this.loading = true;
+                this.refresh();
             },
             (error: ApiServiceError) => {
                 // const message: MessageData = error;
@@ -454,11 +452,13 @@ export class ProjectFormComponent implements OnInit {
      * refresh the page after significant change (e.g. delete project)
      */
     refresh(): void {
-        // referesh the component
+        // refresh the component
         this.loading = true;
         // update the cache
         this._cache.del(this.projectcode);
         this._cache.get(this.projectcode, this._projects.getProjectByShortcode(this.projectcode));
         this.buildForm(this.project);
+        window.location.reload();
+        this.loading = false;
     }
 }

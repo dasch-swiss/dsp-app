@@ -157,7 +157,7 @@
     </form>
 
     <!-- button to delete / activate project-->
-    <div *ngIf="projectcode">
+    <div *ngIf="projectcode && project">
         <mat-divider></mat-divider>
         <div class="form-content">
             <div *ngIf="project.status">

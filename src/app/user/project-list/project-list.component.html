@@ -6,7 +6,7 @@
 
         <mat-card-subtitle>Member of</mat-card-subtitle>
         <mat-card-title>
-            <span>{{active.length}} active {{inactive.length | i18nPlural: itemPluralMapping['project']}}</span>
+            <span>{{active.length}} active {{active.length | i18nPlural: itemPluralMapping['project']}}</span>
             <span class="fill-remaining-space"></span>
             <span>
             <button mat-button color="primary" routerLink="/project/new" *ngIf="!username">
@@ -21,7 +21,8 @@
             <div fxLayout="row wrap"
                  fxFlexFill
                  fxLayout.xs="column"
-                 fxLayoutGap="grid">
+                 fxLayoutGap="grid"
+                 fxLayoutAlign="stretch">
 
                 <div fxFlex="33.3" *ngFor="let project of active | kuiSortBy: 'shortname'" class="preview">
                     <mat-card (click)="setProject(project.id)" class="link active">
@@ -53,7 +54,8 @@
             <div fxLayout="row wrap"
                  fxFlexFill
                  fxLayout.xs="column"
-                 fxLayoutGap="grid">
+                 fxLayoutGap="grid"
+                 fxLayoutAlign="stretch">
 
                 <div fxFlex="33.3" *ngFor="let project of inactive | kuiSortBy: 'shortname'" class="preview">
                     <mat-card (click)="setProject(project.id)" class="link archived">
