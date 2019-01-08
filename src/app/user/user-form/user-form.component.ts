@@ -238,7 +238,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     buildForm(user: User): boolean {
 
         // get info about system admin permission
-        if (user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]) {
+        if (user.id && user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]) {
             // this user is member of the system project. does he has admin rights?
             this.sysAdminPermission = user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI].includes(KnoraConstants.SystemAdminGroupIRI);
         }
