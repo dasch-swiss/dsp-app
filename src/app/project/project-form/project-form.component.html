@@ -148,7 +148,7 @@
                         type="button"
                         color="primary"
                         (click)="submitData()"
-                        [disabled]="!form.valid || !project.status">
+                        [disabled]="!form.valid || (projectcode && !project.status)">
                     <span *ngIf="projectcode">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectcode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>

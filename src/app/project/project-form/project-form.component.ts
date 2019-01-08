@@ -168,7 +168,7 @@ export class ProjectFormComponent implements OnInit {
 
     /**
      *
-     * @param project Project data: "empty" means "create new proejct",
+     * @param project Project data: "empty" means "create new project",
      * but if there are project data, it means edit mode
      */
     buildForm(project: Project): void {
@@ -178,7 +178,7 @@ export class ProjectFormComponent implements OnInit {
         const editMode: boolean = (!!project.id);
 
         // disabled is true, if project status is false (= archived);
-        const disabled: boolean = (!project.status);
+        const disabled: boolean = (project.id !== undefined && !project.status);
 
         // separate list of keywords
         this.keywords = project.keywords;

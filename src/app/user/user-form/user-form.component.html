@@ -7,10 +7,12 @@
     <!-- content -->
     <form *ngIf="!loading" [formGroup]="form" class="form-content user-data">
 
-        <h3 class="large-field center">
+        <!--
+        <h3 class="large-field">
             <span *ngIf="username">{{ 'appLabels.form.user.title.edit' | translate }}</span>
             <span *ngIf="!username">{{ 'appLabels.form.user.title.new' | translate }}</span>
         </h3>
+        -->
 
         <!-- email -->
         <mat-form-field class="large-field">
