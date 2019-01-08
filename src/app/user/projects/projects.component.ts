@@ -1,15 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
-    selector: 'app-project-list',
-    templateUrl: './project-list.component.html',
-    styleUrls: ['./project-list.component.scss']
+    selector: 'app-projects',
+    templateUrl: './projects.component.html',
+    styleUrls: ['./projects.component.scss']
 })
-export class ProjectListComponent implements OnInit {
+export class ProjectsComponent implements OnInit {
 
     loading: boolean;
 
@@ -21,30 +20,24 @@ export class ProjectListComponent implements OnInit {
     active: Project[] = [];
     inactive: Project[] = [];
 
-    // i18n setup
-    itemPluralMapping = {
-        'project': {
-            '=1': 'Project',
-            'other': 'Projects'
-        }
-    };
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
-                private _router: Router,
                 private _usersService: UsersService,
                 private _titleService: Title) {
         // set the page title
-        // this._titleService.setTitle('Your projects');
+        this._titleService.setTitle('Your projects');
     }
 
     ngOnInit() {
+        this.getProjects(this.username);
 
-        this.getUsersProjects(this.username);
-
+        if (this.sysAdmin) {
+            this.getProjects();
+        }
     }
 
-    getUsersProjects(name?: string) {
+    getProjects(name?: string) {
 
         this.loading = true;
 
@@ -105,26 +98,4 @@ export class ProjectListComponent implements OnInit {
         // TODO: in case of sys admin: is it possible to mix all projects with user's projects to mark them somehow in the list?!
     }
 
-    /**
-     *
-     * @param id
-     */
-    setProject(id: string) {
-        // get project by id
-        // by searching in the list of projects
-        // instead of an additional api request
-        this.projects.filter(project => {
-
-            if (project.id === id) {
-
-                this._router.navigateByUrl('/refresh', {skipLocationChange: true}).then(() =>
-                    this._router.navigate(['/project/' + project.shortcode])
-                );
-
-                // this._router.navigate(['/project/' + project.shortname + '/dashboard']);
-
-                // location.reload(true);
-            }
-        });
-    }
 }

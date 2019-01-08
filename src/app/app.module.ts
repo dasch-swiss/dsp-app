@@ -43,7 +43,8 @@ import { AccountComponent } from './user/account/account.component';
 import { CollectionListComponent } from './user/collection-list/collection-list.component';
 import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { ProfileComponent } from './user/profile/profile.component';
-import { ProjectListComponent } from './user/project-list/project-list.component';
+import { ProjectsComponent } from './user/projects/projects.component';
+import { ProjectListComponent } from './user/projects/project-list/project-list.component';
 import { GroupSelectComponent } from './user/user-form/group-select/group-select.component';
 import { SelectUserComponent } from './user/user-form/select-user/select-user.component';
 import { UserDataComponent } from './user/user-form/user-data/user-data.component';
@@ -99,7 +100,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         LoginComponent,
         LoremIpsumComponent,
         AccountComponent,
-        SelectLanguageComponent
+        SelectLanguageComponent,
+        ProjectsComponent
     ],
     imports: [
         AppRoutingModule,

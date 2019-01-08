@@ -29,7 +29,7 @@
             <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
 
             <!-- user's projects -->
-            <app-project-list *ngSwitchCase="'projects'"></app-project-list>
+            <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
             <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>

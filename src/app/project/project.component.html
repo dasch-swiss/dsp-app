@@ -28,7 +28,7 @@
                 <mat-card-subtitle>
                     Project {{project.shortcode}} | {{project.shortname | uppercase}}
                     <span class="fill-remaining-space"></span>
-                    <span class="badge project-status" [class.active]="project.status">
+                    <span class="badge status" [class.active]="project.status">
                         <span *ngIf="project.status">Active</span>
                         <span *ngIf="!project.status">Archived</span>
                     </span>

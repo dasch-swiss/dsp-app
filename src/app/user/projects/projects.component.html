@@ -1,0 +1,9 @@
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+<div class="select-project-from-list"  *ngIf="!loading">
+    <app-project-list [list]="active" type="active"></app-project-list>
+
+    <mat-divider></mat-divider>
+
+    <app-project-list [list]="inactive" type="archived"></app-project-list>
+</div>
