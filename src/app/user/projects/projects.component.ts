@@ -14,12 +14,14 @@ export class ProjectsComponent implements OnInit {
 
     @Input() username?: string;
 
+    session: Session;
     sysAdmin: boolean = false;
 
-    projects: Project[] = [];
     active: Project[] = [];
     inactive: Project[] = [];
 
+    systemActive: Project[] = [];
+    systemInactive: Project[] = [];
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
@@ -32,32 +34,30 @@ export class ProjectsComponent implements OnInit {
     ngOnInit() {
         this.getProjects(this.username);
 
-        if (this.sysAdmin) {
+        this.session = JSON.parse(localStorage.getItem('session'));
+
+        if ((this.username === this.session.user.name) && this.session.user.sysAdmin) {
+            // the logged-in user is system administrator
+            // additional, get all projects
             this.getProjects();
         }
     }
 
     getProjects(name?: string) {
-
         this.loading = true;
 
-        const session: Session = JSON.parse(localStorage.getItem('session'));
-
-        // this.sysAdmin = (!this.username && (session && session.user.sysAdmin));
-
-        if (!name && (session && session.user.sysAdmin)) {
+        if (!name) {
             // the logged-in user is system administrator;
             // he has access to every project
             this._projectsService.getAllProjects()
                 .subscribe(
                     (projects: Project[]) => {
-                        this.projects = projects;
-                        for (const p of this.projects) {
+                        for (const p of projects) {
 
                             if (p.status === true) {
-                                this.active.push(p);
+                                this.systemActive.push(p);
                             } else {
-                                this.inactive.push(p);
+                                this.systemInactive.push(p);
                             }
                         }
 
@@ -71,13 +71,10 @@ export class ProjectsComponent implements OnInit {
             // the logged-in user has no system admin rights;
             // he get only his own projects
 
-            name = (name ? name : session.user.name);
-
             this._cache.get(this.username, this._usersService.getUser(name)).subscribe(
                 (user: User) => {
-                    this.projects = user.projects;
 
-                    for (const p of this.projects) {
+                    for (const p of user.projects) {
                         if (p.status === true) {
                             this.active.push(p);
                         } else {
