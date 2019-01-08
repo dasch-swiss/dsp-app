@@ -74,7 +74,6 @@ export class UserListComponent implements OnInit {
 
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
-                console.log(result);
                 this.userRemoved.emit();
             },
             (error: ApiServiceError) => {
