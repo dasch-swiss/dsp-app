@@ -9,7 +9,7 @@ import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
 })
 export class UserPasswordComponent implements OnInit {
 
-    @Input() userIri: string;
+    @Input() username: string;
 
     // visibility of password
     showOldPassword = false;
@@ -113,7 +113,7 @@ export class UserPasswordComponent implements OnInit {
         this.loading = false;
 
         // get the user data only if a user is logged in
-        this.loggedInUser = JSON.parse(localStorage.getItem('currentUser'));
+        this.loggedInUser = JSON.parse(localStorage.getItem('session')).user;
 
 
     }
@@ -167,7 +167,7 @@ export class UserPasswordComponent implements OnInit {
 
         this.loading = true;
 
-        this._usersService.updateUser(this.userIri, this.userPasswordForm.value).subscribe(
+        this._usersService.updateUser(this.username, this.userPasswordForm.value).subscribe(
             (result: User) => {
                 console.log(this.userPasswordForm.value);
                 this.success = true;

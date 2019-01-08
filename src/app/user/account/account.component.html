@@ -5,7 +5,7 @@
     <!-- data -->
     <mat-card class="no-shadow">
 
-        <app-user-form></app-user-form>
+        <app-user-form [username]="username"></app-user-form>
 
     </mat-card>
 
@@ -13,6 +13,8 @@
 
     <!-- password -->
     <mat-card class="no-shadow">
+
+        <app-user-password [username]="username"></app-user-password>
 
     </mat-card>
 

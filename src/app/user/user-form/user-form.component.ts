@@ -2,7 +2,17 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angu
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import { ApiServiceError, AutocompleteItem, KnoraConstants, Project, ProjectsService, User, UsersService, Utils } from '@knora/core';
+import {
+    ApiServiceError,
+    AutocompleteItem,
+    KnoraConstants,
+    Project,
+    ProjectsService,
+    Session,
+    User,
+    UsersService,
+    Utils
+} from '@knora/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../main/cache/cache.service';
@@ -45,6 +55,11 @@ export class UserFormComponent implements OnInit, OnChanges {
      *  in case of dialog box?
      */
     @Output() userData = new EventEmitter<User>();
+
+    /**
+     * define, if the user has system administration permission
+     */
+    sysAdminPermission: boolean = false;
 
     /**
      * username should be unique
@@ -222,6 +237,12 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     buildForm(user: User): boolean {
 
+        // get info about system admin permission
+        if (user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]) {
+            // this user is member of the system project. does he has admin rights?
+            this.sysAdminPermission = user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI].includes(KnoraConstants.SystemAdminGroupIRI);
+        }
+
         // if user is defined, we're in the edit mode
         // otherwise "create new user" mode is active
         const editMode: boolean = (!!user.id);
@@ -263,10 +284,10 @@ export class UserFormComponent implements OnInit, OnChanges {
                 value: (user.lang ? user.lang : 'en'), disabled: false
             }),
             'status': new FormControl({
-                value: (user.status ? user.status : true), disabled: false
+                value: (user.status ? user.status : true), disabled: editMode
             }),
             'systemAdmin': new FormControl({
-                value: (user.systemAdmin ? user.systemAdmin : false), disabled: false
+                value: (this.sysAdminPermission), disabled: editMode
             })
             //            'systemAdmin': this.sysAdminPermission,
             //            'group': null
@@ -325,12 +346,21 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.loading = true;
 
         if (this.username) {
-            // edit update user data
-
+            // edit mode: update user data
             this._users.updateUser(this.user.id, this.form.value).subscribe(
                 (result: User) => {
                     this.user = result;
                     this.buildForm(this.user);
+                    // update cache
+                    const session: Session = JSON.parse(localStorage.getItem('session'));
+                    if (session.user.name === this.username) {
+                        // update logged in user session
+                        session.user.lang = this.form.controls['lang'].value;
+                        localStorage.setItem('session', JSON.stringify(session));
+                    }
+
+                    this._cache.set(this.username, result);
+
                     this.loading = false;
                     this.success = true;
                 },
@@ -341,7 +371,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                 }
             );
         } else {
-            // create new project
+            // new: create user
             this._users.createUser(this.form.value).subscribe(
                 (user: User) => {
                     this.user = user;
