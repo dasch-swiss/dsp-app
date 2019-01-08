@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
@@ -42,6 +43,9 @@ export class UserListComponent implements OnInit {
             label: 'E-mail'
         }
     ];
+
+    projectRole = new FormControl();
+    permissionGroups: string[] = ['Admin'];
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,

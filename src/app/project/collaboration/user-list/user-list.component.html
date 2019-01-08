@@ -36,15 +36,22 @@
             </td>
             <!-- role -->
             <td>
+
+                    <mat-form-field>
+                        <mat-select placeholder="Role" [formControl]="projectRole" multiple>
+                            <mat-option *ngFor="let group of permissionGroups" [value]="group">{{group}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+<!--
                 <p>
-                    <!-- TODO: add selection -->
+                    &lt;!&ndash; TODO: add selection &ndash;&gt;
                 <span *ngIf="item.permissions.groupsPerProject[project.id]">
                     <span *ngFor="let iri of item.permissions.groupsPerProject[project.id]">
                         <span color="primary" selected="true"
                               *ngIf="iri === 'http://www.knora.org/ontology/knora-base#ProjectAdmin'">admin</span>
                     </span>
                 </span>
-                </p>
+                </p>-->
             </td>
             <!-- action: remove -->
             <td class="table-action">
