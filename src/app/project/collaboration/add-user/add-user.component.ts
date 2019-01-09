@@ -63,7 +63,7 @@ export class AddUserComponent implements OnInit {
     /**
      * filter users while typing (autocomplete)
      */
-    filteredUsers: Observable<any>;
+    filteredUsers: Observable<AutocompleteItem[]>;
 
     /**
      * list of usernames to prevent duplicate entries
@@ -213,8 +213,8 @@ export class AddUserComponent implements OnInit {
 
         this.filteredUsers = this.selectUserForm.controls['username'].valueChanges
             .pipe(
-                startWith(this.selectUserForm.controls['username'].value),
-                map(user => this.selectUserForm.controls['username'].value.length >= 1 ? this.filter(this.users, user) : this.users.slice())
+                startWith(''),
+                map(user => user.length >= 2 ? this.filter(this.users, user) : [])
             );
 
         this.selectUserForm.valueChanges
@@ -254,14 +254,19 @@ export class AddUserComponent implements OnInit {
 
         // check if the form is valid
         Object.keys(this.selectUserErrors).map(field => {
+
             this.selectUserErrors[field] = '';
             const control = this.selectUserForm.get(field);
-            if (control && control.dirty && !control.valid) {
-                const messages = this.validationMessages[field];
-                Object.keys(control.errors).map(key => {
-                    this.selectUserErrors[field] += messages[key] + ' ';
-                });
+            if (control.value.length >= 2) {
+                if (control && control.dirty && !control.valid) {
+                    console.log('form used');
+                    const messages = this.validationMessages[field];
+                    Object.keys(control.errors).map(key => {
+                        this.selectUserErrors[field] += messages[key] + ' ';
+                    });
+                }
             }
+
         });
     }
 
@@ -272,8 +277,6 @@ export class AddUserComponent implements OnInit {
      */
     addUser(val: string) {
 
-        this.loading = true;
-
         this._users.getUser(val).subscribe(
             (result: User) => {
                 // case b) result in case the user exists
@@ -283,6 +286,8 @@ export class AddUserComponent implements OnInit {
                 this.isAlreadyMember = (!!result.projects.find(p => p.shortcode === this.projectcode));
 
                 if (!this.isAlreadyMember) {
+
+                    this.loading = true;
 
                     // get project iri by projectName
                     this._cache.get(this.projectcode).subscribe(
