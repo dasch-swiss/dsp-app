@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterStateSnapshot } from '@angular/router';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, UsersService, Utils } from '@knora/core';
+import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
@@ -12,7 +12,7 @@ import { CacheService } from '../../../main/cache/cache.service';
     templateUrl: './add-user.component.html',
     styleUrls: ['./add-user.component.scss']
 })
-export class AddUserComponent implements OnInit, OnChanges {
+export class AddUserComponent implements OnInit {
 
     /**
      * status for the progress indicator
@@ -335,7 +335,13 @@ export class AddUserComponent implements OnInit, OnChanges {
     }
 
     createUser() {
-        this._router.navigate(['/user/new'], {queryParams: {returnUrl: this._router.url, project: this.projectcode, value: this.selectUserForm.controls['username'].value}});
+        this._router.navigate(['/user/new'], {
+            queryParams: {
+                returnUrl: this._router.url,
+                project: this.projectcode,
+                value: this.selectUserForm.controls['username'].value
+            }
+        });
     }
 
     resetInput(ev: Event) {
