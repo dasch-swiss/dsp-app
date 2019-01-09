@@ -1,22 +1,24 @@
-<div *ngIf="!errorMessage; else errorMsg">
+<mat-card class="no-shadow form-container" *ngIf="!errorMessage; else errorMsg">
+
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+    <mat-card-subtitle>User</mat-card-subtitle>
+
+    <mat-card-title>
+        <span *ngIf="username">{{ 'appLabels.form.user.title.edit' | translate }}</span>
+        <span *ngIf="!username">{{ 'appLabels.form.user.title.new' | translate }}</span>
+    </mat-card-title>
 
     <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content user-data">
-
-        <!--
-        <h3 class="large-field">
-            <span *ngIf="username">{{ 'appLabels.form.user.title.edit' | translate }}</span>
-            <span *ngIf="!username">{{ 'appLabels.form.user.title.new' | translate }}</span>
-        </h3>
-        -->
+    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content user-data">
 
         <!-- email -->
         <mat-form-field class="large-field">
-            <input matInput type="email" [formControl]="form.controls['email']" placeholder="{{ 'appLabels.form.user.general.email' | translate }} *" autocomplete="email">
+            <input matInput type="email" [formControl]="form.controls['email']"
+                   placeholder="{{ 'appLabels.form.user.general.email' | translate }} *" autocomplete="email">
             <mat-hint *ngIf="formErrors.email">
                 {{ formErrors.email }}
             </mat-hint>
@@ -24,7 +26,8 @@
 
         <!-- username -->
         <mat-form-field class="large-field">
-            <input matInput type="text" [formControl]="form.controls['username']" placeholder="{{ 'appLabels.form.user.general.username' | translate }} *" autocomplete="username">
+            <input matInput type="text" [formControl]="form.controls['username']"
+                   placeholder="{{ 'appLabels.form.user.general.username' | translate }} *" autocomplete="username">
             <mat-hint *ngIf="formErrors.username">
                 {{ formErrors.username }}
             </mat-hint>
@@ -32,7 +35,8 @@
 
         <!-- given name -->
         <mat-form-field class="small-field">
-            <input matInput [formControl]="form.controls['givenName']" placeholder="{{ 'appLabels.form.user.general.givenName' | translate }} *" autocomplete="givenname">
+            <input matInput [formControl]="form.controls['givenName']"
+                   placeholder="{{ 'appLabels.form.user.general.givenName' | translate }} *" autocomplete="givenname">
             <mat-hint *ngIf="formErrors.givenName">
                 {{ formErrors.givenName }}
             </mat-hint>
@@ -40,7 +44,8 @@
 
         <!-- family name -->
         <mat-form-field class="medium-field">
-            <input matInput [formControl]="form.controls['familyName']" placeholder="{{ 'appLabels.form.user.general.familyName' | translate }} *" autocomplete="name">
+            <input matInput [formControl]="form.controls['familyName']"
+                   placeholder="{{ 'appLabels.form.user.general.familyName' | translate }} *" autocomplete="name">
             <mat-hint *ngIf="formErrors.familyName">
                 {{ formErrors.familyName }}
             </mat-hint>
@@ -48,9 +53,12 @@
 
         <!-- password -->
         <mat-form-field class="large-field">
-            <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password" [formControl]="form.controls['password']" placeholder="{{ 'appLabels.form.user.general.password' | translate }} *">
+            <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password"
+                   [formControl]="form.controls['password']"
+                   placeholder="{{ 'appLabels.form.user.general.password' | translate }} *">
 
-            <button mat-button matSuffix mat-icon-button class="input-icon" attr.aria-label="{{showPassword ? 'Hide password' : 'Show password'}}"
+            <button mat-button matSuffix mat-icon-button class="input-icon"
+                    attr.aria-label="{{showPassword ? 'Hide password' : 'Show password'}}"
                     (click)="toggleVisibility($event)">
                 <mat-icon>
                     {{showPassword ? 'visibility_off' : 'visibility'}}
@@ -63,7 +71,8 @@
 
         <mat-form-field class="large-field">
 
-            <mat-select [formControl]="form.controls['lang']" [placeholder]="'appLabels.form.user.general.language' | translate">
+            <mat-select [formControl]="form.controls['lang']"
+                        [placeholder]="'appLabels.form.user.general.language' | translate">
                 <mat-option *ngFor="let lang of languagesList" [value]="lang.id">
                     {{ lang.name }}
                 </mat-option>
@@ -74,7 +83,7 @@
         <div class="app-panel form-action">
             <span>
                 <button mat-button
-                        (click)="cancel(projectcode)">
+                        (click)="cancel(username)">
                     {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
 
@@ -93,7 +102,7 @@
         </div>
 
     </form>
-</div>
+</mat-card>
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>

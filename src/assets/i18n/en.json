@@ -69,8 +69,8 @@
           "language": "Default language"
         },
         "title": {
-          "new": "Create user",
-          "edit": "Update user",
+          "new": "Create new",
+          "edit": "Update profile",
           "editSuccess": "You have successfully updated the user profile.",
           "delete": "Delete user",
           "deleteHint": "You're sure to delete this user?",
@@ -104,8 +104,8 @@
           "keywords": "Keywords"
         },
         "title": {
-          "new": "Create project",
-          "edit": "Update project",
+          "new": "Create new",
+          "edit": "Update",
           "editSuccess": "You have successfully updated this project.",
           "delete": "Delete project",
           "deleteHint": "You're sure to delete this project?",

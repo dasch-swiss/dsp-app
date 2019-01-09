@@ -1,11 +1,21 @@
-<div *ngIf="!errorMessage; else errorMsg">
+<mat-card class="no-shadow form-container" *ngIf="!errorMessage; else errorMsg">
+
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <!-- success message after updating -->
+    <mat-card-subtitle>Project</mat-card-subtitle>
+
+    <mat-card-title>
+        <span *ngIf="projectcode">{{ 'appLabels.form.project.title.edit' | translate }}</span>
+        <span *ngIf="!projectcode">{{ 'appLabels.form.project.title.new' | translate }}</span>
+    </mat-card-title>
+
+    <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content project-data">
+    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content project-data">
+
+
         <!-- short and long name -->
         <mat-form-field class="small-field">
             <input matInput
@@ -86,7 +96,7 @@
         <!-- upload logo -->
         <!--
         <app-file-uploader (uploadStatus)="sipiUpload($event)"></app-file-uploader>
-        <!-- the form needs an input field for the logo name
+        <!- the form needs an input field for the logo name
             the following input will be hidden and it gets the file name from the app-file-uploader -->
         <br>
         <!-- dev control for image uploader
@@ -175,7 +185,7 @@
         </div>
     </div>
 
-</div>
+</mat-card>
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>

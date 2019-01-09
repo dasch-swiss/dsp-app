@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
 import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, UsersService, Utils } from '@knora/core';
 import { Observable } from 'rxjs';
@@ -104,6 +105,7 @@ export class AddUserComponent implements OnInit {
     isAlreadyMember = false;
 
     constructor(private _cache: CacheService,
+                private _router: Router,
                 private _projects: ProjectsService,
                 private _users: UsersService,
                 private _formBuilder: FormBuilder) {
@@ -259,7 +261,6 @@ export class AddUserComponent implements OnInit {
             const control = this.selectUserForm.get(field);
             if (control.value.length >= 2) {
                 if (control && control.dirty && !control.valid) {
-                    console.log('form used');
                     const messages = this.validationMessages[field];
                     Object.keys(control.errors).map(key => {
                         this.selectUserErrors[field] += messages[key] + ' ';
@@ -330,6 +331,10 @@ export class AddUserComponent implements OnInit {
 
             }
         );
+    }
+
+    createUser() {
+        this._router.navigate(['/user/new'], {queryParams: {returnUrl: this._router.url}});
     }
 
     resetInput(ev: Event) {

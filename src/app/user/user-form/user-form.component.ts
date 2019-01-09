@@ -379,12 +379,13 @@ export class UserFormComponent implements OnInit, OnChanges {
 
                     // go to user's profile page
                     this.loading = false;
-                    // redirect to (new) project page
+                    const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/user/' + this.form.controls['username'].value];
+
+                    // redirect to (new) user page
                     this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
-                        this._router.navigate(['/user/' + this.form.controls['username'].value])
+                        this._router.navigate([returnUrl])
                     );
 
-                    // TODO: OR go to next step and add user to project?
                 },
                 (error: ApiServiceError) => {
                     this.errorMessage = error;
@@ -393,6 +394,20 @@ export class UserFormComponent implements OnInit, OnChanges {
 
             );
 
+        }
+    }
+
+    /**
+     * Cancel resets the form and brings you back to the previous page
+     */
+    cancel(name?: string) {
+
+        if (name) {
+            // go back to the user profile page
+            this._router.navigate(['/user/' + name]);
+        } else {
+            const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/';
+            this._router.navigate([returnUrl]);
         }
     }
 }
