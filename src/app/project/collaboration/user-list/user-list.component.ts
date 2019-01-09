@@ -21,13 +21,6 @@ export class UserListComponent implements OnInit {
     projectcode: string;
 
     project: Project;
-    itemPluralMapping = {
-        'member': {
-            // '=0': '0 Members',
-            '=1': '1 Member',
-            'other': '# Members'
-        }
-    };
 
     sortProps: any = [
         {
@@ -41,8 +34,14 @@ export class UserListComponent implements OnInit {
         {
             key: 'email',
             label: 'E-mail'
+        },
+        {
+            key: 'username',
+            label: 'Username'
         }
     ];
+
+    sortBy: string = 'email';
 
     projectRole = new FormControl();
     permissionGroups: string[] = ['Admin'];

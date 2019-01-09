@@ -83,7 +83,8 @@
             "step_4": "Confirm",
             "more": "Add more users"
           },
-          "select": "Add user to the project by typing e-mail address or username",
+          "add2project": "Add user",
+          "select": "Search by username or email address",
           "deleted": "already deleted"
         }
       },

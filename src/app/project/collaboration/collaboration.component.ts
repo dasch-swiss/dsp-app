@@ -24,6 +24,14 @@ export class CollaborationComponent implements OnInit {
     // list of inactive (deleted) users
     inactive: User[] = [];
 
+    itemPluralMapping = {
+        'member': {
+            // '=0': '0 Members',
+            '=1': '1 Member',
+            'other': '# Members'
+        }
+    };
+
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,

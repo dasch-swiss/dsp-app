@@ -71,6 +71,12 @@ export class AddUserComponent implements OnInit {
     existingUsernames: [RegExp] = [
         new RegExp('anEmptyRegularExpressionWasntPossible')
     ];
+    /**
+     * list of usernames of project members to prevent duplicate entries
+     */
+    existingUsernameInProject: [RegExp] = [
+        new RegExp('anEmptyRegularExpressionWasntPossible')
+    ];
 
     /**
      * list of emails to prevent duplicate entries
@@ -78,6 +84,14 @@ export class AddUserComponent implements OnInit {
     existingEmails: [RegExp] = [
         new RegExp('anEmptyRegularExpressionWasntPossible')
     ];
+
+    /**
+     * list of emails of project members to prevent duplicate entries
+     */
+    existingEmailInProject: [RegExp] = [
+        new RegExp('anEmptyRegularExpressionWasntPossible')
+    ];
+
 
     /**
      * selected user object
@@ -126,11 +140,11 @@ export class AddUserComponent implements OnInit {
 
                             // if the user is already member of the project
                             // add the email to the list of existing
-                            this.existingEmails.push(
+                            this.existingEmailInProject.push(
                                 new RegExp('(?:^|\W)' + m.email.toLowerCase() + '(?:$|\W)')
                             );
                             // add username to the list of existing
-                            this.existingUsernames.push(
+                            this.existingUsernameInProject.push(
                                 new RegExp('(?:^|\W)' + m.username.toLowerCase() + '(?:$|\W)')
                             );
                         }
@@ -138,16 +152,27 @@ export class AddUserComponent implements OnInit {
                         let i: number = 1;
                         for (const u of response) {
 
-                            let exists: string = '';
+                            // if the user is already member of the project
+                            // add the email to the list of existing
+                            this.existingEmails.push(
+                                new RegExp('(?:^|\W)' + u.email.toLowerCase() + '(?:$|\W)')
+                            );
+                            // add username to the list of existing
+                            this.existingUsernames.push(
+                                new RegExp('(?:^|\W)' + u.username.toLowerCase() + '(?:$|\W)')
+                            );
+
+
+                            let existsInProject: string = '';
 
                             if (members && members.indexOf(u.id) > -1) {
-                                exists = '* ';
+                                existsInProject = '* ';
                             }
 
                             this.users[i] = {
                                 iri: u.id,
                                 name: u.email,
-                                label: exists + u.username + ' | ' + u.email + ' | ' + u.givenName + ' ' + u.familyName
+                                label: existsInProject + u.username + ' | ' + u.email + ' | ' + u.givenName + ' ' + u.familyName
                             };
                             i++;
                         }
@@ -179,10 +204,10 @@ export class AddUserComponent implements OnInit {
             'username': new FormControl({
                 value: '', disabled: false
             }, [
-//                Validators.required,
-//                Validators.pattern(Utils.RegexEmail),
                 existingNamesValidator(this.existingUsernames),
-                existingNamesValidator(this.existingEmails)
+                existingNamesValidator(this.existingUsernameInProject),
+                existingNamesValidator(this.existingEmails),
+                existingNamesValidator(this.existingEmailInProject)
             ])
         });
 
@@ -246,6 +271,10 @@ export class AddUserComponent implements OnInit {
      * @param val The value can be e-mail address or username
      */
     addUser(val: string) {
+
+
+        console.log('add user: ', val);
+
         this._users.getUser(val).subscribe(
             (result: User) => {
                 // case b) result in case the user exists
