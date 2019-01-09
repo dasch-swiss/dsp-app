@@ -1,13 +1,15 @@
-<mat-card class="no-shadow form-container" *ngIf="!errorMessage; else errorMsg">
+<div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
+    <!--
     <mat-card-subtitle>User</mat-card-subtitle>
 
     <mat-card-title>
         <span *ngIf="username">{{ 'appLabels.form.user.title.edit' | translate }}</span>
         <span *ngIf="!username">{{ 'appLabels.form.user.title.new' | translate }}</span>
     </mat-card-title>
+    -->
 
     <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
@@ -102,7 +104,7 @@
         </div>
 
     </form>
-</mat-card>
+</div>
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>

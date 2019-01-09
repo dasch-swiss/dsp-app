@@ -46,6 +46,11 @@ export class UserFormComponent implements OnInit, OnChanges {
     @Input() username?: string;
 
     /**
+     * if the form was built to add new user to project, we get a project shortcode from the url parameters
+     */
+    projectcode: string;
+
+    /**
      * user data
      */
     user: User;
@@ -171,6 +176,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                 private _router: Router,
                 private _cache: CacheService,
                 private _users: UsersService,
+                private _projectsService: ProjectsService,
                 private _formBuilder: FormBuilder) {
     }
 
@@ -179,12 +185,13 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.loading = true;
 
         if (this.username) {
-
-            // set the cache first: user data to edit
-            this._cache.get(this.username, this._users.getUser(this.username));
             /**
              * edit mode: get user data from cache
              */
+
+            // set the cache first: user data to edit
+            this._cache.get(this.username, this._users.getUser(this.username));
+            // get user data from cache
             this._cache.get(this.username, this._users.getUser(this.username)).subscribe(
                 (response: User) => {
                     this.user = response;
@@ -195,11 +202,12 @@ export class UserFormComponent implements OnInit, OnChanges {
                 }
             );
         } else {
-            // set the cache first: all users to avoid same email-address / username twice
-            this._cache.get('allUsers', this._users.getAllUsers());
             /**
              * create mode: empty form for new user
              */
+
+            // set the cache first: all users to avoid same email-address / username twice
+            this._cache.get('allUsers', this._users.getAllUsers());
             // get existing users to avoid same usernames and email addresses
             this._cache.get('allUsers', this._users.getAllUsers())
                 .subscribe(
@@ -218,7 +226,18 @@ export class UserFormComponent implements OnInit, OnChanges {
                             );
                         }
 
-                        this.loading = !this.buildForm(new User());
+                        // get parameters from url, if they exist
+                        this.projectcode = this._route.snapshot.queryParams['project'];
+                        const name: string = this._route.snapshot.queryParams['value'];
+                        const newUser: User = new User();
+
+                        if (Utils.RegexEmail.test(name)) {
+                            newUser.email = name;
+                        } else {
+                            newUser.username = name;
+                        }
+                        // build the form
+                        this.loading = !this.buildForm(newUser);
                     }
                 );
         }
@@ -295,12 +314,8 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         //        this.loading = false;
 
-
         this.form.valueChanges
             .subscribe(data => this.onValueChanged(data));
-
-        //        this.onValueChanged(); // (re)set validation messages now
-
         return true;
 
     }
@@ -377,14 +392,50 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this.user = user;
                     this.buildForm(this.user);
 
-                    // go to user's profile page
-                    this.loading = false;
-                    const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/user/' + this.form.controls['username'].value];
+                    const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/user/' + this.form.controls['username'].value;
 
-                    // redirect to (new) user page
-                    this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
-                        this._router.navigate([returnUrl])
-                    );
+                    if (this.projectcode) {
+                        // if a projectcode exists, add the user to the project
+                        // get project iri by projectcode
+                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
+                            (p: Project) => {
+                                // add user to project
+                                this._users.addUserToProject(this.user.id, p.id).subscribe(
+                                    (add: User) => {
+
+                                        // update project cache and member of project cache
+                                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+                                        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+
+                                        // redirect to project collaborator's page
+                                        this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
+                                            this._router.navigate([returnUrl])
+                                        );
+                                        this.loading = false;
+
+                                    },
+                                    (error: any) => {
+                                        console.error(error);
+                                    }
+                                );
+                            },
+                            (error: any) => {
+                                console.error(error);
+                            }
+                        );
+                    } else {
+                        // go to user's profile page
+                        this.loading = false;
+                        // redirect to (new) user's page
+                        this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
+                            this._router.navigate([returnUrl])
+                        );
+                    }
+
+
+
+
 
                 },
                 (error: ApiServiceError) => {

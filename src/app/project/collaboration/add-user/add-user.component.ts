@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterStateSnapshot } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
@@ -12,7 +12,7 @@ import { CacheService } from '../../../main/cache/cache.service';
     templateUrl: './add-user.component.html',
     styleUrls: ['./add-user.component.scss']
 })
-export class AddUserComponent implements OnInit {
+export class AddUserComponent implements OnInit, OnChanges {
 
     /**
      * status for the progress indicator
@@ -113,13 +113,14 @@ export class AddUserComponent implements OnInit {
 
     ngOnInit() {
 
-        /**
-         * build form on start
-         */
+        // build the form
         this.buildForm();
     }
 
     buildForm(): void {
+
+        // clean autocomplete list
+        this.users = [];
 
         // set the cache
         this._cache.get('allUsers', this._users.getAllUsers());
@@ -132,6 +133,7 @@ export class AddUserComponent implements OnInit {
                 const members: string[] = [];
 
                 // empty the list of existingUserNames
+                this._cache.del('members_of_' + this.projectcode);
                 this._cache.get('members_of_' + this.projectcode, this._projects.getProjectMembersByShortcode(this.projectcode));
 
                 // get all members of this project; results from cache
@@ -151,7 +153,7 @@ export class AddUserComponent implements OnInit {
                             );
                         }
 
-                        let i: number = 1;
+                        let i: number = 0;
                         for (const u of response) {
 
                             // if the user is already member of the project
@@ -163,7 +165,6 @@ export class AddUserComponent implements OnInit {
                             this.existingUsernames.push(
                                 new RegExp('(?:^|\W)' + u.username.toLowerCase() + '(?:$|\W)')
                             );
-
 
                             let existsInProject: string = '';
 
@@ -290,7 +291,7 @@ export class AddUserComponent implements OnInit {
 
                     this.loading = true;
 
-                    // get project iri by projectName
+                    // get project iri by projectcode
                     this._cache.get(this.projectcode).subscribe(
                         (p: Project) => {
                             // add user to project
@@ -334,7 +335,7 @@ export class AddUserComponent implements OnInit {
     }
 
     createUser() {
-        this._router.navigate(['/user/new'], {queryParams: {returnUrl: this._router.url}});
+        this._router.navigate(['/user/new'], {queryParams: {returnUrl: this._router.url, project: this.projectcode, value: this.selectUserForm.controls['username'].value}});
     }
 
     resetInput(ev: Event) {

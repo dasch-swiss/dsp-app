@@ -220,10 +220,9 @@ $form-width: 472;
 $gc-large: decimal-floor($form-width / 1.618, 0) - 2;
 $gc-small: $form-width - $gc-large - 4;
 
-.form-container,
 .form-content {
   margin: 24px auto;
-//  padding: 0 20px;
+  padding: 0 20px;
   width: $form-width + px;
 
 
