@@ -28,7 +28,7 @@
         <mat-card-subtitle>Inactive</mat-card-subtitle>
         <mat-card-title>{{inactive.length | i18nPlural: itemPluralMapping['member']}}</mat-card-title>
         <mat-card-content>
-            <app-user-list [list]="inactive" [disabled]="!project.status"></app-user-list>
+            <app-user-list [list]="inactive" (userRemoved)="refresh()" [disabled]="!project.status"></app-user-list>
         </mat-card-content>
     </mat-card>
 

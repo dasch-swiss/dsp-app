@@ -272,8 +272,7 @@ export class AddUserComponent implements OnInit {
      */
     addUser(val: string) {
 
-
-        console.log('add user: ', val);
+        this.loading = true;
 
         this._users.getUser(val).subscribe(
             (result: User) => {
@@ -294,9 +293,9 @@ export class AddUserComponent implements OnInit {
 
                                     // successful post
                                     // reload the component
-                                    this.loading = true;
                                     this.buildForm();
                                     this.refreshParent.emit();
+                                    this.loading = false;
 
                                 },
                                 (error: any) => {
