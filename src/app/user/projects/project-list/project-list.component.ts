@@ -63,4 +63,12 @@ export class ProjectListComponent implements OnInit {
             }
         });
     }
+
+    createProject() {
+        this._router.navigate(['/project/new'], {
+            queryParams: {
+                returnUrl: this._router.url
+            }
+        });
+    }
 }

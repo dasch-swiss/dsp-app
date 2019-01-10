@@ -384,7 +384,8 @@ export class ProjectFormComponent implements OnInit {
             // go back to the project dashboard
             this._router.navigate(['/project/' + name]);
         } else {
-            this._router.navigate(['/']);
+            const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/';
+            this._router.navigate([returnUrl]);
         }
     }
 
