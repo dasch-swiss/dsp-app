@@ -31,11 +31,11 @@
             <!-- role -->
             <td>
 
-                <mat-form-field>
-                    <mat-select placeholder="Role" [formControl]="projectRole" multiple>
-                        <mat-option *ngFor="let group of permissionGroups" [value]="group">{{group}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
+                    <mat-form-field>
+                        <mat-select placeholder="Role" [formControl]="projectRole" multiple>
+                            <mat-option *ngFor="let group of permissionGroups" [value]="group">{{group}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
             </td>
             <!-- action: remove -->

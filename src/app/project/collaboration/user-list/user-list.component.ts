@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 
@@ -16,7 +16,7 @@ export class UserListComponent implements OnInit {
     @Input() list: User[];
     @Input() disabled?: boolean;
 
-    @Output() userRemoved: EventEmitter<any> = new EventEmitter<any>();
+    @Output() userUpdate: EventEmitter<any> = new EventEmitter<any>();
 
     projectcode: string;
 
@@ -49,8 +49,8 @@ export class UserListComponent implements OnInit {
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
                 private _usersService: UsersService,
-                private _route: ActivatedRoute,
-                private _router: Router) {
+                private _route: ActivatedRoute
+    ) {
 
         // get the shortcode of the current project
         this.projectcode = this._route.parent.snapshot.params.shortcode;
@@ -73,17 +73,33 @@ export class UserListComponent implements OnInit {
         this.loading = false;
     }
 
+    getProjectRoles() {
+
+    }
+
+    /**
+     * remove user from project
+     * @param id user iri
+     */
     removeUser(id: string) {
 
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
-                this.userRemoved.emit();
+                this.userUpdate.emit();
             },
             (error: ApiServiceError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }
         );
+
+    }
+
+    /**
+     * set user's permission in this project
+     * @param id user iri
+     */
+    setPermissionUser(id: string) {
 
     }
 
