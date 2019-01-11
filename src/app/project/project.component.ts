@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { ApiServiceError, Project, ProjectsService } from '@knora/core';
+import { ApiServiceError, GroupsService, Project, ProjectsService } from '@knora/core';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
 
@@ -51,6 +51,7 @@ export class ProjectComponent implements OnInit {
     constructor(private _cache: CacheService,
                 private _route: ActivatedRoute,
                 private _projectsService: ProjectsService,
+                private _groupsService: GroupsService,
                 private _titleService: Title) {
 
         // get the shortcode of the current project
@@ -69,9 +70,10 @@ export class ProjectComponent implements OnInit {
 
             this.loading = true;
             // set the cache here:
-            // current project data
+            // current project data, project members and project groups
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
             this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+            this._cache.get('groups_of_' + this.projectcode, this._groupsService.getAllGroups());
 
             // get the data from cache
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ApiServiceError, Project, ProjectsService, User, UsersService } from '@knora/core';
+import { ApiServiceError, KnoraConstants, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
@@ -43,9 +43,6 @@ export class UserListComponent implements OnInit {
 
     sortBy: string = 'email';
 
-    projectRole = new FormControl();
-    permissionGroups: string[] = ['Admin'];
-
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
                 private _usersService: UsersService,
@@ -58,6 +55,7 @@ export class UserListComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.loading = true;
 
         // get project data from cache
@@ -71,10 +69,6 @@ export class UserListComponent implements OnInit {
         );
 
         this.loading = false;
-    }
-
-    getProjectRoles() {
-
     }
 
     /**
@@ -92,15 +86,26 @@ export class UserListComponent implements OnInit {
                 console.error(error);
             }
         );
-
     }
 
     /**
      * set user's permission in this project
-     * @param id user iri
+     * @param user User object
+     * @param groups List of selected groups Iris
      */
-    setPermissionUser(id: string) {
+    setPermission(user: User, groups: string[]) {
 
+        if (groups.indexOf(KnoraConstants.ProjectAdminGroupIRI) > -1 ) {
+            this._usersService.addUserToProjectAdmin(user.id, this.project.id).subscribe(
+                (result: User) => {
+                    console.log(result);
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+        }
+        // TODO: update the @knora/core usersService with the following methods: addUserToGroup, removeUserFromGroup
     }
 
 }

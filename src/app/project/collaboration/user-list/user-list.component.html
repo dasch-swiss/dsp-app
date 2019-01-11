@@ -7,11 +7,12 @@
                              [(sortKey)]="sortBy"
                              [position]="'right'">
             </kui-sort-button>
+            &nbsp;
         </span>
     </div>
 
     <table class="table">
-        <tr *ngFor="let item of list | kuiSortBy: sortBy; let last = last;" [class.no-border]="last">
+        <tr *ngFor="let item of list; let last = last;" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img kuiAdminImage [image]="item.email" [type]="'user'" class="avatar-image link" [routerLink]="'/user/' + item.username" />
@@ -22,20 +23,10 @@
                 <p class="mat-subheading-1 link" [routerLink]="'/user/' + item.username">
                     {{item.username}} | {{item.email}} <!-- TODO: question: how public should the email address be? -->
                 </p>
-                <!--
-                <p class="mat-subheading-1">
-                    <span>{{item.id}}</span>
-                </p>
-                -->
             </td>
             <!-- role -->
             <td>
-
-                    <mat-form-field>
-                        <mat-select placeholder="Role" [formControl]="projectRole" multiple>
-                            <mat-option *ngFor="let group of permissionGroups" [value]="group">{{group}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                <app-select-group [projectcode]="projectcode" [permissions]="item.permissions.groupsPerProject[project.id]" (groupChange)="setPermission(item, $event)"></app-select-group>
 
             </td>
             <!-- action: remove -->
