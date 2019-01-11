@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, UsersService } from '@knora/core';
+import { ApiServiceError, AutocompleteItem, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
@@ -281,7 +281,7 @@ export class AddUserComponent implements OnInit {
 
         this._users.getUser(val).subscribe(
             (result: User) => {
-                // case b) result in case the user exists
+                // case b) result if the user exists
                 this.selectedUser = result;
 
                 // the following request should never start
@@ -302,6 +302,14 @@ export class AddUserComponent implements OnInit {
                                     // reload the component
                                     this.buildForm();
                                     this.refreshParent.emit();
+
+                                    // update own user profile, if the added user is the same as the logged-in user
+                                    // get logged-in user name
+                                    const session: Session = JSON.parse(localStorage.getItem('session'));
+                                    if (add.username === session.user.name) {
+                                        this._cache.del(add.username);
+                                        this._cache.get(add.username, this._users.getUser(add.username));
+                                    }
                                     this.loading = false;
 
                                 },
