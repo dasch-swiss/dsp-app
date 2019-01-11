@@ -1,3 +1,29 @@
+$header-height: 64px;
+
+//
+// general app layout
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  .app-header {
+    height: $header-height;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+
+  .app-content {
+    flex: 1;
+    height: calc(100vh - #{$header-height});
+    overflow: auto;
+  }
+}
+
 //
 // component content container
 .wrapper {
@@ -173,6 +199,19 @@
     max-width: 100%;
   }
 }
+
+//
+// dialog: not the one from material, it's a fullframe dialog box
+.window.fullframe {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  padding: 48px;
+}
+
 
 // --------------------------------------
 

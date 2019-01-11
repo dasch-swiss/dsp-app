@@ -14,7 +14,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
-import { ConfirmComponent } from './main/dialog/confirm/confirm.component';
+import { ConfirmDialogComponent } from './main/dialog/confirm-dialog/confirm-dialog.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { ErrorComponent } from './main/error/error.component';
 import { HeaderComponent } from './main/header/header.component';
@@ -54,6 +54,7 @@ import { UserRoleComponent } from './user/user-form/user-role/user-role.componen
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
+import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -96,14 +97,15 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         NavigationComponent,
         NavigationItemComponent,
         DialogComponent,
-        ConfirmComponent,
+        ConfirmDialogComponent,
         ErrorComponent,
         LoginComponent,
         LoremIpsumComponent,
         AccountComponent,
         SelectLanguageComponent,
         ProjectsComponent,
-        SelectGroupComponent
+        SelectGroupComponent,
+        FullframeDialogComponent
     ],
     imports: [
         AppRoutingModule,
@@ -128,6 +130,10 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
                 deps: [HttpClient]
             }
         })
+    ],
+    entryComponents: [
+        ConfirmDialogComponent,
+        FullframeDialogComponent
     ],
     providers: [
         {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
