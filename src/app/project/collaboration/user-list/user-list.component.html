@@ -26,7 +26,10 @@
             </td>
             <!-- role -->
             <td>
-                <app-select-group [projectcode]="projectcode" [permissions]="item.permissions.groupsPerProject[project.id]" (groupChange)="setPermission(item, $event)"></app-select-group>
+                <app-select-group [projectcode]="projectcode"
+                                  [permissions]="item.permissions.groupsPerProject[project.id]"
+                                  [disabled]="disabled"
+                                  (groupChange)="setPermission(item, $event)"></app-select-group>
 
             </td>
             <!-- action: remove -->

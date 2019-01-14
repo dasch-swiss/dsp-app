@@ -33,23 +33,24 @@ export class SelectGroupComponent implements OnInit {
     // users permissions from User data
     @Input() permissions: any;
 
+    // disable the selection; in case a user doesn't have the rights to change the permission
+    @Input() disabled?: boolean = false;
+
     // send the changes to the parent
     @Output() groupChange: EventEmitter<any> = new EventEmitter<any>();
 
 
     // default system groups and project specific groups
     projectGroups: AutocompleteItem[] = [
-        // {
-        //     iri: KnoraConstants.ProjectMemberGroupIRI,
-        //     name: 'Member'
-        // },
+        {
+            iri: KnoraConstants.ProjectMemberGroupIRI,
+            name: 'Member'
+        },
         {
             iri: KnoraConstants.ProjectAdminGroupIRI,
             name: 'Admin'
         }
     ];
-
-    form: FormGroup;
 
     groupCtrl = new FormControl(
         // {value: this.permissions.groupsPerProject}
@@ -57,22 +58,15 @@ export class SelectGroupComponent implements OnInit {
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
-                private _groupsService: GroupsService,
-                private _fb: FormBuilder) {
+                private _groupsService: GroupsService) {
 
     }
 
     ngOnInit() {
-        //
-        // this.form = this._fb.group({
-        //     'groups': new FormControl({
-        //         // value: [this.permissions]
-        //     })
-        // });
 
         this.groupCtrl.setValue(this.permissions);
 
-        console.log(this.permissions);
+        // console.log(this.permissions);
 
         // get project data from cache
         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
@@ -86,9 +80,6 @@ export class SelectGroupComponent implements OnInit {
 
         // build list of groups: default and project-specific
         this.setList();
-
-
-
 
     }
 
@@ -115,7 +106,20 @@ export class SelectGroupComponent implements OnInit {
     }
 
     onGroupChange() {
+
+        // get the selected values onOpen and onClose
+        // console.log('onGroupChange, value', this.groupCtrl.value);
+
+        // and compare them with the current values from user profile
+        // console.log('onGroupChange, permissions', this.permissions);
+
+        // compare the selected data with the permissions data
+        this.sendData = this.compare(this.permissions, this.groupCtrl.value);
+
+        // console.log('sendData? ', this.sendData);
+
         if (this.sendData) {
+            this.permissions = this.groupCtrl.value;
             this.groupChange.emit(this.groupCtrl.value);
             console.log('Group changed: ', this.groupCtrl.value);
         }
@@ -125,49 +129,41 @@ export class SelectGroupComponent implements OnInit {
         // if change is true, the onGroupChange is active
         // with this method we prevent to submit data already by opening the selection
         // it should emit the data when closing the selection and if the data has changed!
-        this.sendData = true;
+        // this.sendData = (this.groupCtrl.value !== this.permissions);
     }
 
-    /*
-        add(event: MatChipInputEvent): void {
-            const input = event.input;
-            const value = event.value;
+    /**
+     * compare two arrays and return true, if they are different
+     * @param arr_1 string array
+     * @param arr_2 string array
+     */
+    compare(arr_1: string[], arr_2: string[]): boolean {
 
-            // Add our fruit
-            if ((value || '').trim()) {
-                // find value in label of allGroups
-                // value.trim()
-                // and add it to the user's groups (to send it later to the api)
-                // this.groups.push(value.trim());
+        arr_1 = arr_1.sort((n1, n2) => {
+            if (n1 > n2) {
+                return 1;
             }
 
-            // Reset the input value
-            if (input) {
-                input.value = '';
+            if (n1 < n2) {
+                return -1;
             }
 
-            this.groupCtrl.setValue(null);
-        }
+            return 0;
+        });
 
-        remove(group: AutocompleteItem): void {
-            const index = this.groups.indexOf(group);
-
-            if (index >= 0) {
-                this.groups.splice(index, 1);
+        arr_2 = arr_2.sort((n1, n2) => {
+            if (n1 > n2) {
+                return 1;
             }
-        }
 
-        selected(event: MatAutocompleteSelectedEvent): void {
-            // this.groups.push(event.option.viewValue);
-            this.fruitInput.nativeElement.value = '';
-            this.groupCtrl.setValue(null);
-        }
+            if (n1 < n2) {
+                return -1;
+            }
 
-        private _filter(value: string): AutocompleteItem[] {
-            const filterValue = value.toLowerCase();
+            return 0;
+        });
 
-            return this.allGroups.filter(group => group.name.toLowerCase().indexOf(filterValue) === 0);
-        }
-    */
+        return (JSON.stringify(arr_1) !== JSON.stringify(arr_2));
 
+    }
 }

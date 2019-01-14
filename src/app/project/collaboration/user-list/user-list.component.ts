@@ -95,10 +95,20 @@ export class UserListComponent implements OnInit {
      */
     setPermission(user: User, groups: string[]) {
 
+        // TODO: write update permission method instead of add and remove!
         if (groups.indexOf(KnoraConstants.ProjectAdminGroupIRI) > -1 ) {
             this._usersService.addUserToProjectAdmin(user.id, this.project.id).subscribe(
                 (result: User) => {
-                    console.log(result);
+                    // console.log(result);
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+        } else {
+            this._usersService.removeUserFromProjectAdmin(user.id, this.project.id).subscribe(
+                (result: User) => {
+                    // console.log(result);
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
