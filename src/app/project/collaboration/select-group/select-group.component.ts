@@ -121,7 +121,7 @@ export class SelectGroupComponent implements OnInit {
         if (this.sendData) {
             this.permissions = this.groupCtrl.value;
             this.groupChange.emit(this.groupCtrl.value);
-            console.log('Group changed: ', this.groupCtrl.value);
+            // console.log('Group changed: ', this.groupCtrl.value);
         }
     }
 
