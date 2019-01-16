@@ -77,13 +77,12 @@ const routes: Routes = [
     {
         path: 'user/:name',
         component: ProfileComponent,
-        children: [
-            {
-                path: 'edit',
-                component: UserFormComponent,
-                canActivate: [AuthGuard]
-            }
-        ]
+    },
+    {
+        path: 'user/:name/edit',
+        component: FullframeDialogComponent,
+        canActivate: [AuthGuard],
+        data: {component: UserFormComponent}
     },
     {
         path: 'profile',

@@ -1,6 +1,8 @@
 <div class="window fullframe">
 
     <div [ngSwitch]="content">
+
+        <!-- user -->
         <div *ngSwitchCase="'UserFormComponent'" class="form-content">
 
             <mat-card-subtitle>User</mat-card-subtitle><br>
@@ -9,6 +11,7 @@
             <app-user-form></app-user-form>
         </div>
 
+        <!-- project -->
         <div *ngSwitchCase="'ProjectFormComponent'" class="form-content">
 
             <mat-card-subtitle>Project</mat-card-subtitle><br>

@@ -178,6 +178,12 @@ export class UserFormComponent implements OnInit, OnChanges {
                 private _users: UsersService,
                 private _projectsService: ProjectsService,
                 private _formBuilder: FormBuilder) {
+
+        // get username from url
+        if (this._route.snapshot.params.name  && (this._route.snapshot.params.name.length > 3)) {
+            this.username = this._route.snapshot.params.name;
+
+        }
     }
 
     ngOnInit() {
@@ -360,6 +366,8 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         this.loading = true;
 
+        const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/user/' + this.form.controls['username'].value;
+
         if (this.username) {
             // edit mode: update user data
             this._users.updateUser(this.user.id, this.form.value).subscribe(
@@ -376,8 +384,12 @@ export class UserFormComponent implements OnInit, OnChanges {
 
                     this._cache.set(this.username, result);
 
-                    this.loading = false;
                     this.success = true;
+
+                    this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
+                        this._router.navigate([returnUrl])
+                    );
+                    this.loading = false;
                 },
                 (error: ApiServiceError) => {
                     this.errorMessage = error;
@@ -391,8 +403,6 @@ export class UserFormComponent implements OnInit, OnChanges {
                 (user: User) => {
                     this.user = user;
                     this.buildForm(this.user);
-
-                    const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/user/' + this.form.controls['username'].value;
 
                     if (this.projectcode) {
                         // if a projectcode exists, add the user to the project

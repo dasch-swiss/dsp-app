@@ -68,4 +68,12 @@ export class ProfileComponent implements OnInit {
         );
     }
 
+    editUser() {
+        this._router.navigate(['user/' + this.username + '/edit'], {
+            queryParams: {
+                returnUrl: this._router.url
+            }
+        });
+    }
+
 }

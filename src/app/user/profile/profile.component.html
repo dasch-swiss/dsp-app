@@ -23,7 +23,7 @@
         </mat-card-content>
 
         <mat-card-actions>
-            <button mat-icon-button class="right" *ngIf="sysAdmin" [routerLink]="'edit'">
+            <button mat-icon-button class="right" *ngIf="sysAdmin" (click)="editUser()">
                 <mat-icon>edit</mat-icon>
             </button>
             <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
@@ -32,9 +32,12 @@
         </mat-card-actions>
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="more-space"></mat-divider>
 
     <!-- member in the following projects -->
     <!--<app-project-list [username]="user.username"></app-project-list>-->
 
 </div>
+
+<!-- router outlet for the edit form-->
+<router-outlet></router-outlet>
