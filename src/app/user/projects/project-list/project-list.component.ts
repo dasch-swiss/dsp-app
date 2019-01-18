@@ -33,14 +33,6 @@ export class ProjectListComponent implements OnInit {
         ['inactive']: []
     };
 
-
-    /**
-     * This could be 'active' or 'archived'
-     * or something similar to project type;
-     * This info will be used in the component header
-     */
-    @Input() type: string;
-
     // i18n setup
     itemPluralMapping = {
         'project': {

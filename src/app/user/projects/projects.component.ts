@@ -10,15 +10,17 @@ import { CacheService } from '../../main/cache/cache.service';
 })
 export class ProjectsComponent implements OnInit {
 
-    loading: boolean;
-
     @Input() username?: string;
 
     session: Session;
-    sysAdmin: boolean = false;
 
     projects: Project[];
+    loadProjects: boolean;
+
     systemProjects: Project[];
+    loadSystem: boolean;
+
+    ownProfile: boolean = false;
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
@@ -29,56 +31,53 @@ export class ProjectsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.session = JSON.parse(localStorage.getItem('session'));
 
-        if ((this.username === this.session.user.name) && this.session.user.sysAdmin) {
-            // the logged-in user is system administrator
-            // additional, get all projects
-            this.getProjects();
-        }
-
-        // get user's own projects
-        this.getProjects(this.username);
-    }
-
-    getProjects(name?: string) {
-        this.loading = true;
-
-        if (!name) {
-            // the logged-in user is system administrator;
-            // he has access to every project
-            this._projectsService.getAllProjects()
-                .subscribe(
-                    (projects: Project[]) => {
-
-                        this.systemProjects = projects;
-
-                        this.loading = false;
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
-        } else {
-            // the logged-in user has no system admin rights;
-            // he get only his own projects
-
-            this._cache.get(this.username, this._usersService.getUser(name)).subscribe(
+        if (this.username) {
+            this.loadProjects = true;
+            // get user's projects
+            this._cache.get(this.username, this._usersService.getUser(this.username)).subscribe(
                 (user: User) => {
 
                     this.projects = user.projects;
 
-                    this.loading = false;
-
+                    this.loadProjects = false;
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
                 }
             );
-
         }
 
-        // TODO: in case of sys admin: is it possible to mix all projects with user's projects to mark them somehow in the list?!
+        // check if the logged-in user is system admin
+        this.session = JSON.parse(localStorage.getItem('session'));
+
+        if (this.session && (this.username === this.session.user.name)) {
+            this.ownProfile = true;
+
+            if (this.session.user.sysAdmin) {
+
+                this.loadSystem = true;
+                // the logged-in user is system administrator
+                // additional, get all projects
+                this._projectsService.getAllProjects()
+                    .subscribe(
+                        (projects: Project[]) => {
+                            this.systemProjects = projects;
+
+                            this.loadSystem = false;
+                        },
+                        (error: ApiServiceError) => {
+                            console.error(error);
+                        }
+                    );
+            }
+        }
+
+
+
+
+
     }
+
 
 }

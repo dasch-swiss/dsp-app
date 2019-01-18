@@ -1,21 +1,20 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
-<div *ngIf="!loading">
+
     <!-- system administrator has an additional tab, to get access to all projects -->
     <mat-tab-group *ngIf="session.user.sysAdmin">
         <mat-tab label="Own" class="content">
-
-            <app-project-list [projects]="projects"></app-project-list>
+            <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
+            <app-project-list *ngIf="!loadProjects" [projects]="projects"></app-project-list>
 
         </mat-tab>
         <mat-tab label="System" class="content">
-
-            <app-project-list [projects]="systemProjects"></app-project-list>
+            <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
+            <app-project-list *ngIf="!loadSystem" [projects]="systemProjects"></app-project-list>
 
         </mat-tab>
     </mat-tab-group>
 
     <!-- no system admin rights -->
     <div *ngIf="!session.user.sysAdmin" class="content">
-        <app-project-list [projects]="projects"></app-project-list>
+        <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
+        <app-project-list *ngIf="!loadProjects" [projects]="projects" [public]="!ownProfile"></app-project-list>
     </div>
-</div>

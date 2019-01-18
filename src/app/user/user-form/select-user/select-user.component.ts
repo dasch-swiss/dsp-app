@@ -78,8 +78,6 @@ export class SelectUserComponent implements OnInit {
         this._cache.get('allUsers', this._users.getAllUsers()).subscribe(
             (response: any) => {
 
-                // console.log(response);
-
                 // if a user is already member of the team, show a hint about it
                 const members: string[] = [];
 

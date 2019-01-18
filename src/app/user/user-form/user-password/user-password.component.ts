@@ -169,7 +169,7 @@ export class UserPasswordComponent implements OnInit {
 
         this._usersService.updateUser(this.username, this.userPasswordForm.value).subscribe(
             (result: User) => {
-                console.log(this.userPasswordForm.value);
+                // console.log(this.userPasswordForm.value);
                 this.success = true;
                 this.loading = false;
             },
