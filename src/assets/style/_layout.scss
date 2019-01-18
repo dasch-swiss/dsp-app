@@ -97,10 +97,19 @@ $header-height: 64px;
     .content {
       padding: 48px;
       max-width: calc(1000px - (2 * 48px));
+
+      //&.profile {
+      //
+      //  .mat-divider {
+      //    margin-top: 78px !important;
+      //    margin-bottom: 48px !important;
+      //  }
+      //}
     }
 
   }
 }
+
 // --------------------------------------
 
 //
@@ -141,7 +150,7 @@ $header-height: 64px;
     }
 
     .active-link {
-      background: rgba(33,33,33,.1);
+      background: rgba(33, 33, 33, .1);
 
       .mat-icon.suffix {
         display: block;

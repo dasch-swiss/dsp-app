@@ -1,15 +1,17 @@
-<mat-card class="no-shadow">
+<mat-card class="no-shadow" *ngFor="let group of list | kuiKey">
 
-    <mat-card-subtitle>Member of</mat-card-subtitle>
-    <mat-card-title>
-        <span>{{list.length}} {{type}} {{list.length | i18nPlural: itemPluralMapping['project']}}</span>
+    <mat-card-subtitle *ngIf="!public">
+        Member of
         <span class="fill-remaining-space"></span>
         <span>
-            <button mat-button color="primary" (click)="createProject()" *ngIf="type !== 'archived'">
+            <button mat-button color="primary" (click)="createProject()" *ngIf="group.key !== 'inactive'">
                 <mat-icon>add</mat-icon>
                 NEW
             </button>
         </span>
+    </mat-card-subtitle>
+    <mat-card-title>
+        <span>{{group.value.length}} {{group.key}} {{group.value.length | i18nPlural: itemPluralMapping['project']}}</span>
     </mat-card-title>
 
     <mat-card-content>
@@ -20,8 +22,8 @@
              fxLayoutGap="grid"
              fxLayoutAlign="stretch">
 
-            <div fxFlex="33.3" *ngFor="let project of list | kuiSortBy: 'shortname'" class="preview">
-                <mat-card (click)="setProject(project.id)" class="link active">
+            <div fxFlex="33.3" *ngFor="let project of group.value | kuiSortBy: 'shortname'" class="preview">
+                <mat-card (click)="setProject(project.id, group.key)" class="link active">
 
                     <mat-card-subtitle>{{project.shortcode}} | {{project.shortname}}</mat-card-subtitle>
                     <mat-card-title>{{project.longname}}</mat-card-title>
@@ -35,42 +37,3 @@
         </div>
     </mat-card-content>
 </mat-card>
-
-<!--
-    <mat-divider></mat-divider>
-
-    <mat-card class="no-shadow">
-
-        <mat-card-subtitle>Member of</mat-card-subtitle>
-        <mat-card-title>
-            {{inactive.length}} archived {{inactive.length | i18nPlural: itemPluralMapping['project']}}
-        </mat-card-title>
-
-        <mat-card-content>
-            <!-- list of archived projects --
-            <div fxLayout="row wrap"
-                 fxFlexFill
-                 fxLayout.xs="column"
-                 fxLayoutGap="grid"
-                 fxLayoutAlign="stretch">
-
-                <div fxFlex="33.3" *ngFor="let project of inactive | kuiSortBy: 'shortname'" class="preview">
-                    <mat-card (click)="setProject(project.id)" class="link archived">
-
-                        <mat-card-subtitle>{{project.shortcode}} | {{project.shortname}}</mat-card-subtitle>
-                        <mat-card-title>{{project.longname}}</mat-card-title>
-
-                        <mat-card-content>
-                            {{project.description.value}}
-                        </mat-card-content>
-
-                    </mat-card>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-
-</div>
-
--->
-

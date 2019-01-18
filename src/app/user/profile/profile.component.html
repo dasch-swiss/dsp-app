@@ -11,31 +11,45 @@
                         <span *ngIf="!user.status">Archived</span>
                     </span>
         </mat-card-subtitle>
-        <mat-card-title>{{user.familyName}}, {{user.givenName}}</mat-card-title>
+        <mat-card-title>
+            {{user.familyName}}, {{user.givenName}}
+            <span class="fill-remaining-space"></span>
+            <span class="action">
+                <button mat-icon-button class="right" *ngIf="sysAdmin" (click)="editUser()">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </span>
+
+        </mat-card-title>
     </mat-card>
 
     <!-- short profile info -->
+<!--
+
     <mat-card class="no-shadow">
-        <!-- description -->
+        &lt;!&ndash; description &ndash;&gt;
         <mat-card-content>
             <p></p>
-            <!--<p>{{user.email}}</p>-->
+            &lt;!&ndash;<p>{{user.email}}</p>&ndash;&gt;
         </mat-card-content>
 
         <mat-card-actions>
-            <button mat-icon-button class="right" *ngIf="sysAdmin" (click)="editUser()">
-                <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
-                <mat-icon>edit</mat-icon>
-            </button>
+
         </mat-card-actions>
     </mat-card>
+-->
 
     <mat-divider class="more-space"></mat-divider>
 
     <!-- member in the following projects -->
-    <!--<app-project-list [username]="user.username"></app-project-list>-->
+    <mat-card class="no-shadow">
+
+        <app-project-list [projects]="user.projects" [public]="false"></app-project-list>
+
+    </mat-card>
 
 </div>
 

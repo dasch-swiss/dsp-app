@@ -15,12 +15,18 @@ export class FullframeDialogComponent implements OnInit {
 
     @Input() content?: string;
 
+    /**
+     * mode can be "edit" or "new"
+     */
+    mode: string;
+
     constructor(private _route: ActivatedRoute) {
         this._route.data.subscribe(
             (data: any) => {
                 this.content = data.component.name;
             }
         );
+        this.mode = this._route.snapshot.url[this._route.snapshot.url.length - 1].path;
     }
 
     ngOnInit() {

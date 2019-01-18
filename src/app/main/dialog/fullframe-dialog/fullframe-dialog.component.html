@@ -6,7 +6,7 @@
         <div *ngSwitchCase="'UserFormComponent'" class="form-content">
 
             <mat-card-subtitle>User</mat-card-subtitle><br>
-            <mat-card-title>{{'appLabels.form.user.title.new' | translate}}</mat-card-title>
+            <mat-card-title>{{'appLabels.form.user.title.' + mode | translate}}</mat-card-title>
 
             <app-user-form></app-user-form>
         </div>

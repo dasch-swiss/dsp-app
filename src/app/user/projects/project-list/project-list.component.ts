@@ -11,10 +11,28 @@ import { CacheService } from '../../../main/cache/cache.service';
 })
 export class ProjectListComponent implements OnInit {
 
+    loading: boolean = true;
+
     /**
      * List of projects
      */
-    @Input() list: Project[];
+    @Input() projects: Project[];
+
+    /**
+     * Is the list public and not the list of a logged-in user?
+     * Then the "Create new Project"-button is disabled
+     */
+    @Input() public?: boolean = true;
+
+
+    active: Project[] = [];
+    inactive: Project[] = [];
+
+    list: { [type: string]: Project[] } = {
+        ['active']: [],
+        ['inactive']: []
+    };
+
 
     /**
      * This could be 'active' or 'archived'
@@ -37,19 +55,33 @@ export class ProjectListComponent implements OnInit {
 
     ngOnInit() {
 
-    }
+        this.loading = true;
 
+        for (const item of this.projects) {
+
+            if (item.status === true) {
+                this.list['active'].push(item);
+
+            } else {
+                this.list['inactive'].push(item);
+            }
+
+        }
+        this.loading = false;
+
+    }
 
 
     /**
      *
-     * @param id
+     * @param id    project id
+     * @param key   key is the type of the list: 'active', 'inactive'
      */
-    setProject(id: string) {
+    setProject(id: string, key: string) {
         // get project by id
         // by searching in the list of projects
         // instead of an additional api request
-        this.list.filter(project => {
+        this.list[key].filter(project => {
 
             if (project.id === id) {
 

@@ -1,34 +1,34 @@
 <!-- system administrator has an additional tab, to get access to all projects -->
 <mat-tab-group *ngIf="session.user.sysAdmin">
-    <mat-tab label="Own">
+    <mat-tab label="Own" class="content">
         <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-        <app-project-list [list]="active" type="active"></app-project-list>
+        <app-project-list [projects]="active" type="active"></app-project-list>
 
         <mat-divider class="more-space"></mat-divider>
 
-        <app-project-list [list]="inactive" type="archived"></app-project-list>
+        <app-project-list [projects]="inactive" type="archived"></app-project-list>
 
     </mat-tab>
-    <mat-tab label="System">
+    <mat-tab label="System" class="content">
         <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-        <app-project-list [list]="systemActive" type="active"></app-project-list>
+        <app-project-list [projects]="systemActive" type="active"></app-project-list>
 
         <mat-divider class="more-space"></mat-divider>
 
-        <app-project-list [list]="systemInactive" type="archived"></app-project-list>
+        <app-project-list [projects]="systemInactive" type="archived"></app-project-list>
     </mat-tab>
 </mat-tab-group>
 
 <!-- no system admin rights -->
-<div *ngIf="!session.user.sysAdmin">
+<div *ngIf="!session.user.sysAdmin" class="content">
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <app-project-list [list]="active" type="active"></app-project-list>
+    <app-project-list [projects]="active" type="active"></app-project-list>
 
     <mat-divider class="more-space"></mat-divider>
 
-    <app-project-list [list]="inactive" type="archived"></app-project-list>
+    <app-project-list [projects]="inactive" type="archived"></app-project-list>
 </div>

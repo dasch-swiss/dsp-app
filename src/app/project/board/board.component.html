@@ -1,6 +1,6 @@
 <kui-progress-indicator *ngIf="loading && (!project && !projectMembers)"></kui-progress-indicator>
 
-<div *ngIf="!loading && (project && projectMembers)">
+<div *ngIf="!loading && (project && projectMembers)" class="content">
     <!-- project header with shortcode, shortname and project long name -->
     <mat-card class="no-shadow">
         <mat-card-subtitle>
