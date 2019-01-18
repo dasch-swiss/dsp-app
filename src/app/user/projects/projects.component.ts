@@ -17,11 +17,8 @@ export class ProjectsComponent implements OnInit {
     session: Session;
     sysAdmin: boolean = false;
 
-    active: Project[] = [];
-    inactive: Project[] = [];
-
-    systemActive: Project[] = [];
-    systemInactive: Project[] = [];
+    projects: Project[];
+    systemProjects: Project[];
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
@@ -32,8 +29,6 @@ export class ProjectsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getProjects(this.username);
-
         this.session = JSON.parse(localStorage.getItem('session'));
 
         if ((this.username === this.session.user.name) && this.session.user.sysAdmin) {
@@ -41,6 +36,9 @@ export class ProjectsComponent implements OnInit {
             // additional, get all projects
             this.getProjects();
         }
+
+        // get user's own projects
+        this.getProjects(this.username);
     }
 
     getProjects(name?: string) {
@@ -52,14 +50,8 @@ export class ProjectsComponent implements OnInit {
             this._projectsService.getAllProjects()
                 .subscribe(
                     (projects: Project[]) => {
-                        for (const p of projects) {
 
-                            if (p.status === true) {
-                                this.systemActive.push(p);
-                            } else {
-                                this.systemInactive.push(p);
-                            }
-                        }
+                        this.systemProjects = projects;
 
                         this.loading = false;
                     },
@@ -74,13 +66,7 @@ export class ProjectsComponent implements OnInit {
             this._cache.get(this.username, this._usersService.getUser(name)).subscribe(
                 (user: User) => {
 
-                    for (const p of user.projects) {
-                        if (p.status === true) {
-                            this.active.push(p);
-                        } else {
-                            this.inactive.push(p);
-                        }
-                    }
+                    this.projects = user.projects;
 
                     this.loading = false;
 
