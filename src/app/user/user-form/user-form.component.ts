@@ -459,16 +459,13 @@ export class UserFormComponent implements OnInit, OnChanges {
     }
 
     /**
-     * Cancel resets the form and brings you back to the previous page
+     * Reset the form
      */
-    cancel(name?: string) {
+    reset(user?: User) {
 
-        if (name) {
-            // go back to the user profile page
-            this._router.navigate(['/user/' + name]);
-        } else {
-            const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/';
-            this._router.navigate([returnUrl]);
-        }
+        user = (user ? user : new User());
+
+        this.buildForm(user);
+
     }
 }

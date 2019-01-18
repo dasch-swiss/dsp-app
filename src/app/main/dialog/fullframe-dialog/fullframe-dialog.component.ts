@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * this is a pseudo dialog box;
@@ -20,7 +20,8 @@ export class FullframeDialogComponent implements OnInit {
      */
     mode: string;
 
-    constructor(private _route: ActivatedRoute) {
+    constructor(private _route: ActivatedRoute,
+                private _router: Router) {
         this._route.data.subscribe(
             (data: any) => {
                 this.content = data.component.name;
@@ -30,6 +31,11 @@ export class FullframeDialogComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    close() {
+        const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/';
+        this._router.navigate([returnUrl]);
     }
 
 }

@@ -144,6 +144,7 @@ export class ProjectFormComponent implements OnInit {
 
             if (this.project === undefined) {
                 this.project = new Project();
+                this.project.status = true;
             }
             this.buildForm(this.project);
 
@@ -376,20 +377,6 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Cancel resets the form and brings you back to the previous page
-     */
-    cancel(name?: string) {
-
-        if (name) {
-            // go back to the project dashboard
-            this._router.navigate(['/project/' + name]);
-        } else {
-            const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/';
-            this._router.navigate([returnUrl]);
-        }
-    }
-
-    /**
      * Delete / archive project
      * @param id Project Iri
      */
@@ -461,5 +448,19 @@ export class ProjectFormComponent implements OnInit {
         this.buildForm(this.project);
         window.location.reload();
         this.loading = false;
+    }
+
+    /**
+     * Reset the form
+     */
+    reset(project?: Project) {
+
+        project = (project ? project : new Project());
+
+        this.buildForm(project);
+
+        // TODO: fix "set value" for keywords field
+//        this.form.controls['keywords'].setValue(this.keywords);
+
     }
 }
