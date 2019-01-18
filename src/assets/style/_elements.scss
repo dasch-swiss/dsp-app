@@ -22,8 +22,6 @@
 }
 // --------------------------------------
 
-
-
 //
 // Link
 a {
@@ -45,6 +43,14 @@ a,
     padding: 12px 0;
   }
 
+}
+// --------------------------------------
+
+//
+// rules and dividers
+.mat-divider.more-space {
+  margin-top: 78px !important;
+  margin-bottom: 48px !important;
 }
 // --------------------------------------
 
@@ -75,11 +81,31 @@ a,
 // card
 .mat-card {
 
+  .mat-card-title,
+  .mat-card-subtitle {
+    display: flex;
+  }
+
   &.no-shadow {
     box-shadow: none !important;
   }
   .mat-card-actions {
     text-align: right;
+  }
+}
+
+// --------------------------------------
+
+//
+// status badge
+.status {
+  padding: 4px 6px;
+  font-weight: bolder;
+  border-radius: 4px;
+  color: white;
+  background: $warn;
+  &.active {
+    background: $active;
   }
 }
 
@@ -116,7 +142,9 @@ a,
 
 .list-header {
   display: flex;
-  padding: 24px 0 24px 12px;
+  margin-top: -48px;
+  padding-bottom: 24px;
+//  padding: 24px 0 24px 12px;
 
   .smaller {
     font-size: small;
@@ -145,13 +173,17 @@ a,
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     height: 88px;
 
+    &.no-border {
+      border-bottom: none;
+    }
+
     .hidden {
       display: none;
     }
 
     //    &:not(:first-child):hover {
     &:hover {
-      background-color: darken(#fff, 25%);
+      background-color: darken(#fff, 15%);
 
       .hidden {
         display: block;
@@ -223,7 +255,7 @@ $gc-small: $form-width - $gc-large - 4;
     color: $black-60-opacity;
   }
 
-  .salsah-panel {
+  .form-panel {
     width: $form-width + px;
 
     &.form-action {

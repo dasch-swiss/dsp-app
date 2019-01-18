@@ -1,32 +1,57 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<kui-progress-indicator *ngIf="loading && !user"></kui-progress-indicator>
 
-<div *ngIf="user && !loading">
-
+<div *ngIf="!loading && user" class="content">
+    <!-- user profile header -->
     <mat-card class="no-shadow">
-        <!--<mat-card-header>-->
-        <mat-card-subtitle>User</mat-card-subtitle>
-        <mat-card-title>{{user.familyName}}, {{user.givenName}}</mat-card-title>
-        <!--</mat-card-header>-->
-
-
-        <mat-card-content>
-            <!-- todo: add more user information here -->
-
-        </mat-card-content>
-
-        <!-- action panel: edit -->
-        <mat-card-actions class="flex-panel">
+        <mat-card-subtitle>
+            User | {{user.username}}
             <span class="fill-remaining-space"></span>
-            <span>
-                <button mat-icon-button class="right" *ngIf="user.status" [routerLink]="'/account'">
+            <span class="badge status" [class.active]="user.status">
+                        <span *ngIf="user.status">Active</span>
+                        <span *ngIf="!user.status">Archived</span>
+                    </span>
+        </mat-card-subtitle>
+        <mat-card-title>
+            {{user.familyName}}, {{user.givenName}}
+            <span class="fill-remaining-space"></span>
+            <span class="action">
+                <button mat-icon-button class="right" *ngIf="sysAdmin" (click)="editUser()">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="right" *ngIf="loggedInUser" [routerLink]="'/account'">
                     <mat-icon>edit</mat-icon>
                 </button>
             </span>
-        </mat-card-actions>
+
+        </mat-card-title>
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <!-- short profile info -->
+<!--
 
-    <!-- todo: add list of projects, collections etc. (user dashboard style)-->
+    <mat-card class="no-shadow">
+        &lt;!&ndash; description &ndash;&gt;
+        <mat-card-content>
+            <p></p>
+            &lt;!&ndash;<p>{{user.email}}</p>&ndash;&gt;
+        </mat-card-content>
+
+        <mat-card-actions>
+
+        </mat-card-actions>
+    </mat-card>
+-->
+
+    <mat-divider class="more-space"></mat-divider>
+
+    <!-- member in the following projects -->
+    <mat-card class="no-shadow">
+
+        <app-project-list [projects]="user.projects" [public]="true"></app-project-list>
+
+    </mat-card>
 
 </div>
+
+<!-- router outlet for the edit form-->
+<router-outlet></router-outlet>

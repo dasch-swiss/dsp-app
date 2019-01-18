@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { AppModule } from '../../../app.module';
 
 import { UserRoleComponent } from './user-role.component';
-import { AppModule } from '../../../../../app.module';
+
 import { GroupsService, ProjectsService } from '@knora/core';
 
 describe('UserRoleComponent', () => {

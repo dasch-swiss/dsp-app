@@ -23,19 +23,6 @@
         <!-- main content: router outlet -->
         <div class="content" *ngIf="!loading">
 
-            <!-- project header with shortcode, shortname and project long name -->
-            <mat-card class="no-shadow">
-                <mat-card-subtitle>
-                    Project {{project.shortcode}} | {{project.shortname | uppercase}}
-                    <span class="fill-remaining-space"></span>
-                    <span class="badge project-status" [class.active]="project.status">
-                        <span *ngIf="project.status">Active</span>
-                        <span *ngIf="!project.status">Archived</span>
-                    </span>
-                </mat-card-subtitle>
-                <mat-card-title>{{project.longname}}</mat-card-title>
-            </mat-card>
-
             <router-outlet></router-outlet>
 
         </div>

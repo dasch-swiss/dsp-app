@@ -1,0 +1,52 @@
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+<form [formGroup]="selectUserForm" class="form select-user" *ngIf="!loading">
+
+    <!-- auto complete list to select user -->
+    <div class="form-content">
+        <mat-form-field class="large">
+            <!--<span matPrefix><mat-icon>add</mat-icon>&nbsp;</span>-->
+
+            <input matInput [matAutocomplete]="user" [formControl]="selectUserForm.controls['username']"
+                   [placeholder]="'appLabels.form.user.title.select' | translate">
+
+            <!--
+                  <input matInput [formControl]="selectUserForm.controls['username']"
+                         [placeholder]="'appLabels.form.user.title.select' | translate">
+
+                <button mat-button color="primary" matSuffix matStepperNext [disabled]="!selectUserForm.valid"
+                        (click)="setSelected()">
+                  {{ 'appLabels.form.action.next' | translate }}
+                </button>
+            -->
+
+            <button mat-icon-button matSuffix *ngIf="selectUserForm.controls['username'].value"
+                    (click)="resetInput($event)" type="button">
+                <mat-icon>close</mat-icon>
+            </button>
+
+            <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
+                <mat-option *ngFor="let user of filteredUsers | async" [value]="user?.name">
+                    {{ user?.label }}
+                </mat-option>
+            </mat-autocomplete>
+
+            <mat-hint *ngIf="selectUserErrors.username">
+                {{ selectUserErrors.username }}
+            </mat-hint>
+
+        </mat-form-field>
+
+        <div *ngIf="selectUserForm.valid" class="form-panel form-action">
+            <span class="comment">
+                If the user does not exist yet:
+            </span>
+            <span class="fill-remaining-space"></span>
+            <span>
+            <button mat-stroked-button (click)="createUser()">Create new one</button>
+        </span>
+        </div>
+    </div>
+
+
+</form>

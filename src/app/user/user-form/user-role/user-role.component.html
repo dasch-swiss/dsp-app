@@ -1,9 +1,9 @@
 <div *ngIf="!errorMessage; else errorMsg">
-    <!-- <salsah-progress-indicator *ngIf="isLoading"></salsah-progress-indicator> -->
-    <kui-progress-indicator *ngIf="isLoading"></kui-progress-indicator>
+
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
     <!-- content -->
-    <form *ngIf="!isLoading" [formGroup]="userRoleForm" class="form-content user-data">
+    <form *ngIf="!loading" [formGroup]="userRoleForm" class="form-content user-data">
 
         <mat-form-field class="medium">
             <mat-select placeholder="{{ 'appLabels.form.member.select.project' | translate }}" [formControl]="userRoleForm.controls['project']">
@@ -13,12 +13,9 @@
             </mat-select>
         </mat-form-field>
 
-        <!--
-        <salsah-progress-indicator *ngIf="isLoadingGroups"></salsah-progress-indicator>
-        -->
         <app-group-select [projectIri]="projectIri" [permissions]="user.permissions"></app-group-select>
 
-        <div class="salsah-panel large" *ngIf="standalone; else stepperNav">
+        <div class="form-panel large" *ngIf="standalone; else stepperNav">
             <span class="fill-remaining-space"></span>
             <button mat-button type="button" color="primary" (click)="submitData()" [disabled]="!userRoleForm.valid">
                 {{ 'appLabels.form.action.submit' | translate }}
@@ -26,7 +23,7 @@
         </div>
 
         <ng-template #stepperNav>
-            <div class="salsah-panel large" *ngIf="!standalone">
+            <div class="form-panel large" *ngIf="!standalone">
                 <button mat-button matStepperPrevious>
                     {{ 'appLabels.form.action.back' | translate }}
                 </button>
@@ -42,5 +39,5 @@
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <!--<salsah-message *ngIf="errorMessage" [message]="errorMessage"></salsah-message>-->
+    <!--<kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>-->
 </ng-template>

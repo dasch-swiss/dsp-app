@@ -1,11 +1,23 @@
-<div *ngIf="!errorMessage; else errorMsg">
+<div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
+
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <!-- success message after updating -->
+    <!--
+
+    <mat-card-subtitle>Project</mat-card-subtitle>
+
+    <mat-card-title>
+        <span *ngIf="projectcode">{{ 'appLabels.form.project.title.edit' | translate }}</span>
+        <span *ngIf="!projectcode">{{ 'appLabels.form.project.title.new' | translate }}</span>
+    </mat-card-title>
+    -->
+
+    <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content project-data">
+    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content project-data">
+
         <!-- short and long name -->
         <mat-form-field class="small-field">
             <input matInput
@@ -60,14 +72,13 @@
             </mat-hint>
         </mat-form-field>
         -->
-
         <!-- keywords -->
         <mat-form-field class="large-field">
             <mat-chip-list #chipList>
                 <mat-chip *ngFor="let tag of keywords" [selectable]="selectable"
-                          [removable]="removable" (removed)="removeKeyword(tag)">
+                          [removable]="project.status" (removed)="removeKeyword(tag)">
                     {{tag}}
-                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
                 <input [placeholder]=" 'appLabels.form.project.general.keywords' | translate "
                        [formControl]="form.controls['keywords']"
@@ -86,9 +97,9 @@
 
         <!-- upload logo -->
         <!--
-        <salsah-file-uploader (uploadStatus)="sipiUpload($event)"></salsah-file-uploader>
-        <!-- the form needs an input field for the logo name
-            the following input will be hidden and it gets the file name from the salsah-file-uploader -->
+        <app-file-uploader (uploadStatus)="sipiUpload($event)"></app-file-uploader>
+        <!- the form needs an input field for the logo name
+            the following input will be hidden and it gets the file name from the app-file-uploader -->
         <br>
         <!-- dev control for image uploader
                 <input matInput [hidden]="false"
@@ -97,7 +108,7 @@
                        formControlName="logo">
                        -->
         <!--
-                <div class="salsah-panel large" *ngIf="standalone; else stepperNav">
+                <div class="form-panel large" *ngIf="standalone; else stepperNav">
                     &lt;!&ndash; delete / activate buttons in case of edit &ndash;&gt;
                     <div *ngIf="edit">
                         &lt;!&ndash; delete project &ndash;&gt;
@@ -125,7 +136,7 @@
 
 
                 <ng-template #stepperNav>
-                    <div class="salsah-panel large">
+                    <div class="form-panel large">
                         <button mat-button matStepperPrevious>{{ 'appLabels.form.action.back' | translate }}</button>
                         <span class="fill-remaining-space"></span>
                         <button mat-button color="primary" matStepperNext [disabled]="!projectDataForm.valid"
@@ -135,11 +146,11 @@
                     </div>
                 </ng-template>
                 -->
-        <div class="salsah-panel form-action">
+        <div class="form-panel form-action">
             <span>
                 <button mat-button
-                        (click)="cancel(projectcode)">
-                    {{ 'appLabels.form.action.cancel' | translate }}
+                        (click)="reset(project)">
+                    {{ 'appLabels.form.action.reset' | translate }}
                 </button>
 
             </span>
@@ -149,7 +160,7 @@
                         type="button"
                         color="primary"
                         (click)="submitData()"
-                        [disabled]="!form.valid">
+                        [disabled]="!form.valid || (projectcode && !project.status)">
                     <span *ngIf="projectcode">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectcode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>
@@ -158,19 +169,19 @@
     </form>
 
     <!-- button to delete / activate project-->
-    <div *ngIf="project">
-        <mat-divider></mat-divider>
+    <div *ngIf="projectcode && project">
+        <mat-divider class="more-space"></mat-divider>
         <div class="form-content">
             <div *ngIf="project.status">
-                <h3>Here you can archive your project</h3>
+                <h3>Archive this project</h3>
                 <div class="center">
-                    <button mat-button [color]="'warn'" (click)="archiveProject($event, project.id)">ARCHIVE</button>
+                    <button mat-button [color]="'warn'" (click)="archiveProject(project.id)">ARCHIVE</button>
                 </div>
             </div>
             <div *ngIf="!project.status">
                 <h3>This project is already archived. Do you want to reactivate it?</h3>
                 <div class="center">
-                    <button mat-button [color]="'primary'" (click)="activateProject($event, project.id)">ACTIVATE</button>
+                    <button mat-button [color]="'primary'" (click)="activateProject(project.id)">ACTIVATE</button>
                 </div>
             </div>
         </div>

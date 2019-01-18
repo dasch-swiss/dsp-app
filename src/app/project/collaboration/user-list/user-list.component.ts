@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ApiServiceError, Project, ProjectsService, User, UsersService } from '@knora/core';
+import { FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { ApiServiceError, KnoraConstants, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
@@ -15,18 +16,11 @@ export class UserListComponent implements OnInit {
     @Input() list: User[];
     @Input() disabled?: boolean;
 
-    @Output() userRemoved: EventEmitter<any> = new EventEmitter<any>();
+    @Output() userUpdate: EventEmitter<any> = new EventEmitter<any>();
 
     projectcode: string;
 
     project: Project;
-    itemPluralMapping = {
-        'member': {
-            // '=0': '0 Members',
-            '=1': '1 Member',
-            'other': '# Members'
-        }
-    };
 
     sortProps: any = [
         {
@@ -40,14 +34,20 @@ export class UserListComponent implements OnInit {
         {
             key: 'email',
             label: 'E-mail'
+        },
+        {
+            key: 'username',
+            label: 'Username'
         }
     ];
+
+    sortBy: string = 'email';
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
                 private _usersService: UsersService,
-                private _route: ActivatedRoute,
-                private _router: Router) {
+                private _route: ActivatedRoute
+    ) {
 
         // get the shortcode of the current project
         this.projectcode = this._route.parent.snapshot.params.shortcode;
@@ -55,6 +55,7 @@ export class UserListComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.loading = true;
 
         // get project data from cache
@@ -70,19 +71,51 @@ export class UserListComponent implements OnInit {
         this.loading = false;
     }
 
+    /**
+     * remove user from project
+     * @param id user iri
+     */
     removeUser(id: string) {
 
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
-                console.log(result);
-                this.userRemoved.emit();
+                this.userUpdate.emit();
             },
             (error: ApiServiceError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }
         );
+    }
 
+    /**
+     * set user's permission in this project
+     * @param user User object
+     * @param groups List of selected groups Iris
+     */
+    setPermission(user: User, groups: string[]) {
+
+        // TODO: write update permission method instead of add and remove!
+        if (groups.indexOf(KnoraConstants.ProjectAdminGroupIRI) > -1 ) {
+            this._usersService.addUserToProjectAdmin(user.id, this.project.id).subscribe(
+                (result: User) => {
+                    // console.log(result);
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+        } else {
+            this._usersService.removeUserFromProjectAdmin(user.id, this.project.id).subscribe(
+                (result: User) => {
+                    // console.log(result);
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+        }
+        // TODO: update the @knora/core usersService with the following methods: addUserToGroup, removeUserFromGroup
     }
 
 }

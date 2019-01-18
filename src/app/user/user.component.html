@@ -1,4 +1,5 @@
 <mat-sidenav-container class="sidenav-container full-size" [autosize]="true">
+
     <mat-sidenav #sidenav mode="side" [opened]="true" [class.wide]="open" [class.narrow]="!open"
                  class="sidenav border-right">
         <!-- side nav list: navigation and tools -->
@@ -29,7 +30,7 @@
             <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
 
             <!-- user's projects -->
-            <app-project-list *ngSwitchCase="'projects'"></app-project-list>
+            <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
             <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
@@ -37,4 +38,5 @@
         </div>
 
     </mat-sidenav-content>
+
 </mat-sidenav-container>

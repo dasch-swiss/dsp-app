@@ -1,3 +1,29 @@
+$header-height: 64px;
+
+//
+// general app layout
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  .app-header {
+    height: $header-height;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+
+  .app-content {
+    flex: 1;
+    height: calc(100vh - #{$header-height});
+    overflow: auto;
+  }
+}
+
 //
 // component content container
 .wrapper {
@@ -71,10 +97,19 @@
     .content {
       padding: 48px;
       max-width: calc(1000px - (2 * 48px));
+
+      //&.profile {
+      //
+      //  .mat-divider {
+      //    margin-top: 78px !important;
+      //    margin-bottom: 48px !important;
+      //  }
+      //}
     }
 
   }
 }
+
 // --------------------------------------
 
 //
@@ -115,7 +150,7 @@
     }
 
     .active-link {
-      background: rgba(33,33,33,.1);
+      background: rgba(33, 33, 33, .1);
 
       .mat-icon.suffix {
         display: block;
@@ -162,6 +197,29 @@
 .smaller {
   font-size: small;
 }
+
+.content {
+  margin: 0 auto;
+  max-width: 80%;
+
+  padding: 48px;
+
+  @media (max-width: map-get($grid-breakpoints, phone)) {
+    max-width: 100%;
+  }
+}
+
+//
+// dialog: not the one from material, it's a fullframe dialog box
+.window.fullframe {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+}
+
 
 // --------------------------------------
 

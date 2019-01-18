@@ -1,15 +1,4 @@
 @import '../../assets/style/config';
 
-.mat-card-subtitle {
- display: flex;
-}
-.project-status {
-  padding: 4px 6px;
-  font-weight: bolder;
-  border-radius: 4px;
-  color: white;
-  background: $warn;
-  &.active {
-    background: $active;
-  }
-}
+
+

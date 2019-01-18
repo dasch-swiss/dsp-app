@@ -1,0 +1,35 @@
+<div class="window fullframe">
+
+    <div class="content">
+        <div class="flex-panel">
+            <span class="fill-remaining-space"></span>
+            <button mat-icon-button (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <div [ngSwitch]="content">
+
+            <!-- user -->
+            <div *ngSwitchCase="'UserFormComponent'" class="form-content">
+
+                <mat-card-subtitle>User</mat-card-subtitle><br>
+                <mat-card-title>{{'appLabels.form.user.title.' + mode | translate}}</mat-card-title>
+
+                <app-user-form></app-user-form>
+            </div>
+
+            <!-- project -->
+            <div *ngSwitchCase="'ProjectFormComponent'" class="form-content">
+
+                <mat-card-subtitle>Project</mat-card-subtitle><br>
+                <mat-card-title>{{'appLabels.form.project.title.new' | translate}}</mat-card-title>
+
+                <app-project-form></app-project-form>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

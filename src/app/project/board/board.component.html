@@ -1,6 +1,18 @@
 <kui-progress-indicator *ngIf="loading && (!project && !projectMembers)"></kui-progress-indicator>
 
-<div *ngIf="!loading && (project && projectMembers)">
+<div *ngIf="!loading && (project && projectMembers)" class="content">
+    <!-- project header with shortcode, shortname and project long name -->
+    <mat-card class="no-shadow">
+        <mat-card-subtitle>
+            Project {{project.shortcode}} | {{project.shortname | uppercase}}
+            <span class="fill-remaining-space"></span>
+            <span class="badge status" [class.active]="project.status">
+                        <span *ngIf="project.status">Active</span>
+                        <span *ngIf="!project.status">Archived</span>
+                    </span>
+        </mat-card-subtitle>
+        <mat-card-title>{{project.longname}}</mat-card-title>
+    </mat-card>
 
     <!-- description, keywords and other infos -->
     <mat-card class="no-shadow">
@@ -21,13 +33,13 @@
         </mat-card-content>
 
         <mat-card-actions>
-            <button mat-icon-button class="right" *ngIf="project.status" [routerLink]="'../edit'">
+            <button mat-icon-button class="right" [routerLink]="'../edit'">
                 <mat-icon>edit</mat-icon>
             </button>
         </mat-card-actions>
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="more-space"></mat-divider>
 
     <!-- # project members -->
     <mat-card class="no-shadow link" routerLink="../collaboration">
@@ -44,7 +56,7 @@
         </mat-card-title>
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="more-space"></mat-divider>
 
     <!-- # project ontologies -->
     <mat-card class="no-shadow link" routerLink="../ontologies">
@@ -61,6 +73,6 @@
         </mat-card-title>
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="more-space"></mat-divider>
 
 </div>

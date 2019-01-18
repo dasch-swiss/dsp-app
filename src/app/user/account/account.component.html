@@ -1,28 +1,52 @@
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-<div *ngIf="user && !loading">
+<div *ngIf="user && !loading" class="content">
 
     <!-- data -->
     <mat-card class="no-shadow">
 
-        <app-user-form></app-user-form>
+        <mat-card-subtitle>
+            <!--User | {{user.username}}-->
+        </mat-card-subtitle>
+        <mat-card-title>
+            <span>Update user data</span>
+            <span class="fill-remaining-space"></span>
+            <span></span>
+        </mat-card-title>
+
+        <mat-card-content>
+            <app-user-form [username]="username"></app-user-form>
+        </mat-card-content>
 
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="more-space"></mat-divider>
 
     <!-- password -->
     <mat-card class="no-shadow">
+        <mat-card-subtitle>
+            <!--User | {{user.username}}-->
+        </mat-card-subtitle>
+        <mat-card-title>
+            <span>{{ 'appLabels.form.user.title.password' | translate }}</span>
+            <span class="fill-remaining-space"></span>
+            <span></span>
+        </mat-card-title>
+
+        <mat-card-content>
+            <app-user-password [username]="username"></app-user-password>
+        </mat-card-content>
 
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider class="more-space"></mat-divider>
 
     <!-- delete -->
     <mat-card class="no-shadow">
-        <mat-card-subtitle>Status</mat-card-subtitle>
-        <mat-card-title *ngIf="user.status">Active</mat-card-title>
-        <mat-card-title *ngIf="!user.status">Deleted</mat-card-title>
+        <!--<mat-card-subtitle>Status</mat-card-subtitle>-->
+        <mat-card-title>Change status</mat-card-title>
+        <!--<mat-card-title *ngIf="user.status">Active</mat-card-title>-->
+        <!--<mat-card-title *ngIf="!user.status">Deleted</mat-card-title>-->
         <mat-card-actions class="center">
             <button *ngIf="user.status" mat-button [color]="'warn'" (click)="delete()">DELETE ACCOUNT</button>
             <button *ngIf="!user.status" mat-button [color]="'primary'" (click)="activate()">ACTIVATE ACCOUNT</button>

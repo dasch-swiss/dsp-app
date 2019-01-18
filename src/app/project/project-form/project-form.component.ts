@@ -144,6 +144,7 @@ export class ProjectFormComponent implements OnInit {
 
             if (this.project === undefined) {
                 this.project = new Project();
+                this.project.status = true;
             }
             this.buildForm(this.project);
 
@@ -168,12 +169,17 @@ export class ProjectFormComponent implements OnInit {
 
     /**
      *
-     * @param project
+     * @param project Project data: "empty" means "create new project",
+     * but if there are project data, it means edit mode
      */
     buildForm(project: Project): void {
         // if project is defined, we're in the edit mode
         // otherwise "create new project" mode is active
-        const editMode = (!!project.id);
+        // edit mode is true, when a project id (iri) exists
+        const editMode: boolean = (!!project.id);
+
+        // disabled is true, if project status is false (= archived);
+        const disabled: boolean = (project.id !== undefined && !project.status);
 
         // separate list of keywords
         this.keywords = project.keywords;
@@ -188,9 +194,8 @@ export class ProjectFormComponent implements OnInit {
                 existingNamesValidator(this.existingShortNames),
                 Validators.pattern(this.shortnameRegex)
             ]),
-
             'longname': new FormControl({
-                value: project.longname, disabled: false
+                value: project.longname, disabled: disabled
             }, [
                 Validators.required
             ]),
@@ -204,21 +209,22 @@ export class ProjectFormComponent implements OnInit {
                 Validators.pattern(this.shortcodeRegex)
             ]),
             'description': new FormControl({
-                value: project.description[0].value, disabled: false
+                value: project.description[0].value, disabled: disabled
             }, [
-                Validators.required,
                 Validators.maxLength(this.descriptionMaxLength)
             ]),
 //            'institution': new FormControl({
-//                value: project.institution, disabled: false
+//                value: project.institution, disabled: disabled
 //            }),
             'logo': new FormControl({
-                value: project.logo, disabled: false
+                value: project.logo, disabled: disabled
             }),
             'id': [project.id],
             'status': [true],
             'selfjoin': [false],
-            'keywords': []          // must be empty (even in edit mode), because of the mat-chip-list
+            'keywords': new FormControl({
+                value: [], disabled: disabled
+            })          // must be empty (even in edit mode), because of the mat-chip-list
         });
 
         this.form.valueChanges
@@ -280,8 +286,6 @@ export class ProjectFormComponent implements OnInit {
      */
     removeKeyword(keyword: any): void {
 
-        console.log(keyword);
-
         const index = this.keywords.indexOf(keyword);
 
         if (index >= 0) {
@@ -297,6 +301,7 @@ export class ProjectFormComponent implements OnInit {
             this.keywords = [];
         }
         this.form.controls['keywords'].setValue(this.keywords);
+        // this.form.controls['keywords'].disabled = !this.project.status;
 
         // b) update description field / multi language preparation
         // FIXME: this is a quick (hardcoded) hack:
@@ -372,33 +377,19 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Cancel resets the form and brings you back to the previous page
-     */
-    cancel(name?: string) {
-
-        if (name) {
-            // go back to the project dashboard
-            this._router.navigate(['/project/' + name]);
-        } else {
-            this._router.navigate(['/']);
-        }
-    }
-
-    /**
      * Delete / archive project
-     * @param ev Event
      * @param id Project Iri
      */
-    archiveProject(ev: Event, id: string) {
-        ev.preventDefault();
+    archiveProject(id: string) {
+        // ev.preventDefault();
         // TODO: "are you sure?"-dialog
 
         // if true
         this._projects.deleteProject(id).subscribe(
             (res: Project) => {
                 // reload page
-                this.loading = false;
-                window.location.reload();
+                this.loading = true;
+                this.refresh();
             },
             (error: ApiServiceError) => {
                 // const message: MessageData = error;
@@ -421,18 +412,15 @@ export class ProjectFormComponent implements OnInit {
     /**
      * Activate already deleted project
      *
-     * @param ev Event
      * @param id Project Iri
      */
-    activateProject(ev: Event, id: string) {
-        ev.preventDefault();
-        // TODO: "are you sure?"-dialog
+    activateProject(id: string) {
 
         this._projects.activateProject(id).subscribe(
             (res: Project) => {
                 // reload page
-                window.location.reload();
-                this.loading = false;
+                this.loading = true;
+                this.refresh();
             },
             (error: ApiServiceError) => {
                 // const message: MessageData = error;
@@ -452,11 +440,27 @@ export class ProjectFormComponent implements OnInit {
      * refresh the page after significant change (e.g. delete project)
      */
     refresh(): void {
-        // referesh the component
+        // refresh the component
         this.loading = true;
         // update the cache
         this._cache.del(this.projectcode);
         this._cache.get(this.projectcode, this._projects.getProjectByShortcode(this.projectcode));
         this.buildForm(this.project);
+        window.location.reload();
+        this.loading = false;
+    }
+
+    /**
+     * Reset the form
+     */
+    reset(project?: Project) {
+
+        project = (project ? project : new Project());
+
+        this.buildForm(project);
+
+        // TODO: fix "set value" for keywords field
+//        this.form.controls['keywords'].setValue(this.keywords);
+
     }
 }

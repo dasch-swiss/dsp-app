@@ -1,29 +1,36 @@
-<!-- select user to add to the team -->
-<app-user-add [projectcode]="projectcode" (userAdded)="refresh()"></app-user-add>
+<mat-card class="no-shadow">
+    <!-- select user to add to the team -->
+    <mat-card-subtitle>Collaboration</mat-card-subtitle>
+    <mat-card-title>{{"appLabels.form.user.title.add2project" | translate}}</mat-card-title>
 
-<!--<button mat-button (click)="openUserForm()">
-    <mat-icon prefix>add</mat-icon>
-    Add new member
-</button>
-
-<div *ngIf="!addMember">
-    <app-select-user [projectIri]="project.id"></app-select-user>
-</div>-->
+    <app-add-user [projectcode]="projectcode" (refreshParent)="refresh()" *ngIf="project?.status" #addUser></app-add-user>
+</mat-card>
 
 <mat-divider></mat-divider>
 
-<div class="simple-list">
-    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <div *ngIf="!loading">
-        <!-- list of active users -->
-        <app-user-list [list]="active" (userRemoved)="refresh()"></app-user-list>
+<div *ngIf="!loading" class="content">
 
-        <br>
+    <!-- list of active users -->
+    <mat-card class="no-shadow simple-list">
+        <mat-card-subtitle>Active</mat-card-subtitle>
+        <mat-card-title>{{active.length | i18nPlural: itemPluralMapping['member']}}</mat-card-title>
+        <mat-card-content>
+            <app-user-list [list]="active" (userUpdate)="refresh()" [disabled]="!project.status"></app-user-list>
+        </mat-card-content>
+    </mat-card>
 
-        <!-- list of inactive / deleted users -->
-        <app-user-list [list]="inactive" [disabled]="true"></app-user-list>
-    </div>
+    <mat-divider class="more-space"></mat-divider>
+
+    <!-- list of active users -->
+    <mat-card class="no-shadow simple-list">
+        <mat-card-subtitle>Inactive</mat-card-subtitle>
+        <mat-card-title>{{inactive.length | i18nPlural: itemPluralMapping['member']}}</mat-card-title>
+        <mat-card-content>
+            <app-user-list [list]="inactive" (userUpdate)="refresh()" [disabled]="true"></app-user-list>
+        </mat-card-content>
+    </mat-card>
 
 </div>
 

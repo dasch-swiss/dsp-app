@@ -14,7 +14,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
-import { ConfirmComponent } from './main/dialog/confirm/confirm.component';
+import { ConfirmDialogComponent } from './main/dialog/confirm-dialog/confirm-dialog.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { ErrorComponent } from './main/error/error.component';
 import { HeaderComponent } from './main/header/header.component';
@@ -25,6 +25,7 @@ import { NavigationComponent } from './main/navigation/navigation.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { MaterialModule } from './material-module';
 import { BoardComponent } from './project/board/board.component';
+import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { UserItemComponent } from './project/collaboration/user-item/user-item.component';
 import { UserListComponent } from './project/collaboration/user-list/user-list.component';
@@ -42,7 +43,8 @@ import { AccountComponent } from './user/account/account.component';
 import { CollectionListComponent } from './user/collection-list/collection-list.component';
 import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { ProfileComponent } from './user/profile/profile.component';
-import { ProjectListComponent } from './user/project-list/project-list.component';
+import { ProjectsComponent } from './user/projects/projects.component';
+import { ProjectListComponent } from './user/projects/project-list/project-list.component';
 import { GroupSelectComponent } from './user/user-form/group-select/group-select.component';
 import { SelectUserComponent } from './user/user-form/select-user/select-user.component';
 import { UserDataComponent } from './user/user-form/user-data/user-data.component';
@@ -51,7 +53,8 @@ import { UserPasswordComponent } from './user/user-form/user-password/user-passw
 import { UserRoleComponent } from './user/user-form/user-role/user-role.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
-import { UserAddComponent } from './project/collaboration/user-add/user-add.component';
+import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
+import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -66,6 +69,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         BoardComponent,
         ProjectFormComponent,
         CollaborationComponent,
+        AddUserComponent,
         UserListComponent,
         UserItemComponent,
         OntologyListComponent,
@@ -93,13 +97,15 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         NavigationComponent,
         NavigationItemComponent,
         DialogComponent,
-        ConfirmComponent,
+        ConfirmDialogComponent,
         ErrorComponent,
         LoginComponent,
         LoremIpsumComponent,
         AccountComponent,
         SelectLanguageComponent,
-        UserAddComponent
+        ProjectsComponent,
+        SelectGroupComponent,
+        FullframeDialogComponent
     ],
     imports: [
         AppRoutingModule,
@@ -124,6 +130,10 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
                 deps: [HttpClient]
             }
         })
+    ],
+    entryComponents: [
+        ConfirmDialogComponent,
+        FullframeDialogComponent
     ],
     providers: [
         {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
