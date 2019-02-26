@@ -196,9 +196,9 @@ export class UserFormComponent implements OnInit, OnChanges {
              */
 
             // set the cache first: user data to edit
-            this._cache.get(this.username, this._users.getUser(this.username));
+            this._cache.get(this.username, this._users.getUserByUsername(this.username));
             // get user data from cache
-            this._cache.get(this.username, this._users.getUser(this.username)).subscribe(
+            this._cache.get(this.username, this._users.getUserByUsername(this.username)).subscribe(
                 (response: User) => {
                     this.user = response;
                     this.loading = !this.buildForm(this.user);

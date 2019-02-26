@@ -222,7 +222,7 @@ export class SelectUserComponent implements OnInit {
 
 
         // get user by username (email)
-        this._users.getUser(this.email)
+        this._users.getUserByEmail(this.email)
             .subscribe(
                 (result: User) => {
                     // case b) result in case the user exists

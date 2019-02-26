@@ -346,7 +346,7 @@ export class ProjectFormComponent implements OnInit {
 
                     // add logged-in user to the project
                     // who am I?
-                    this._users.getUser(JSON.parse(localStorage.getItem('session')).user.name).subscribe(
+                    this._users.getUserByUsername(JSON.parse(localStorage.getItem('session')).user.name).subscribe(
                         (user: User) => {
                             this._users.addUserToProject(user.id, project.id).subscribe(
                                 (add: User) => {

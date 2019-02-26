@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
-import { JwtInterceptor, KuiAuthenticationModule } from '@knora/authentication';
+import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreModule } from '@knora/core';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -134,9 +134,6 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     entryComponents: [
         ConfirmDialogComponent,
         FullframeDialogComponent
-    ],
-    providers: [
-        {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
     ],
     bootstrap: [AppComponent]
 })

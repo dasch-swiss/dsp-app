@@ -35,7 +35,7 @@ export class ProjectsComponent implements OnInit {
         if (this.username) {
             this.loadProjects = true;
             // get user's projects
-            this._cache.get(this.username, this._usersService.getUser(this.username)).subscribe(
+            this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
                 (user: User) => {
 
                     this.projects = user.projects;

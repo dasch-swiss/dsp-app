@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
         // get username from route and set the cache
         if (this._route.snapshot.params.name  && (this._route.snapshot.params.name.length > 3)) {
             this.username = this._route.snapshot.params.name;
-            this._cache.get(this.username, this._usersService.getUser(this.username));
+            this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
             if (localStorage.getItem('session') && !this.loggedInUser) {
                 if (this.username === JSON.parse(localStorage.getItem('session')).user.name) {
                     // redirect to logged-in user profile
@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
 
-        this._cache.get(this.username, this._usersService.getUser(this.username)).subscribe(
+        this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
             (response: any) => {
                 this.user = response;
 

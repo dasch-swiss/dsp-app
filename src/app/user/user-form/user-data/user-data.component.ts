@@ -163,7 +163,7 @@ export class UserDataComponent implements OnInit, OnChanges {
             /**
              * edit mode: get user data from cache
              */
-            this._cache.get(this.id, this._users.getUser(this.id)).subscribe(
+            this._cache.get(this.id, this._users.getUserByIri(this.id)).subscribe(
                 (response: User) => {
                     this.user = response;
                     this.loading = !this.buildForm(this.user);
