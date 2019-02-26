@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -122,6 +123,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
             app: environment.appUrl,
         }),
         MaterialModule,
+        DragDropModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({
             loader: {
