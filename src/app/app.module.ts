@@ -1,16 +1,16 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
-import { KuiCoreModule } from '@knora/core';
+import { KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { environment } from '../environments/environment';
+import { AppInitService } from './app-init.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -61,6 +61,12 @@ import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullfra
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
+}
+
+export function initializeApp(appInitService: AppInitService) {
+    return (): Promise<any> => {
+        return appInitService.Init();
+    };
 }
 
 @NgModule({
@@ -116,12 +122,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         HttpClientModule,
         KuiActionModule,
         KuiAuthenticationModule,
-        KuiCoreModule.forRoot({
-            name: environment.appName,
-            api: environment.apiUrl,
-            media: environment.iiifUrl,
-            app: environment.appUrl,
-        }),
+        KuiCoreModule,
         MaterialModule,
         DragDropModule,
         ReactiveFormsModule,
@@ -136,6 +137,15 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     entryComponents: [
         ConfirmDialogComponent,
         FullframeDialogComponent
+    ],
+    providers: [
+        AppInitService,
+        {
+            provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppInitService], multi: true
+        },
+        {
+            provide: KuiCoreConfigToken, useFactory: () => AppInitService.coreConfig
+        }
     ],
     bootstrap: [AppComponent]
 })
