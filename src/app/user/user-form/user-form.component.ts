@@ -370,9 +370,7 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         if (this.username) {
             // edit mode: update user data
-            // TODO: update user doesn't exist anymore in user service :(
-            /*
-            this._users.updateUser(this.user.id, this.form.value).subscribe(
+            this._users.updateBasicUserInformation(this.user.id, this.form.value).subscribe(
                 (result: User) => {
                     this.user = result;
                     this.buildForm(this.user);
@@ -399,7 +397,6 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this.success = false;
                 }
             );
-            */
         } else {
             // new: create user
             this._users.createUser(this.form.value).subscribe(

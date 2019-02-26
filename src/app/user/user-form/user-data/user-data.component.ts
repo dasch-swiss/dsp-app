@@ -311,9 +311,8 @@ export class UserDataComponent implements OnInit, OnChanges {
             this.loading = true;
             // this method is only used in standalone user data form
             // to edit user user-profile
-            // TODO: update user doesn't exist anymore in user service :(
-            /*
-            this._users.updateUser(this.user.id, this.form.value).subscribe(
+
+            this._users.updateBasicUserInformation(this.user.id, this.form.value).subscribe(
                 (result: User) => {
                     this.user = result;
                     this.buildForm(this.user);
@@ -326,7 +325,6 @@ export class UserDataComponent implements OnInit, OnChanges {
                     this.success = false;
                 }
             );
-            */
         } else {
             this.userData.emit(this.form.value);
         }
