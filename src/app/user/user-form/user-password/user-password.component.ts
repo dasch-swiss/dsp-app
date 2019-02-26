@@ -166,7 +166,9 @@ export class UserPasswordComponent implements OnInit {
         this.oldPasswordIsWrong = false;
 
         this.loading = true;
-
+        // TODO: update user doesn't exist anymore in user service
+        // TODO: fix update password for own user and for other users
+        /*
         this._usersService.updateUser(this.username, this.userPasswordForm.value).subscribe(
             (result: User) => {
                 // console.log(this.userPasswordForm.value);
@@ -186,6 +188,7 @@ export class UserPasswordComponent implements OnInit {
                 this.loading = false;
             }
         );
+        */
 
         this.oldPswd = !this.oldPswd;
 
@@ -208,6 +211,9 @@ export class UserPasswordComponent implements OnInit {
         // console.log(this.userIri);
         // console.log(this.requesterPasswordForm.value);
         // console.log(this.pswdData);
+        // TODO: update user doesn't exist anymore in user service
+        // TODO: fix update password for own user and for other users
+        /*
         this._usersService.updateUser(this.username, this.pswdData).subscribe(
             (result: User) => {
                 // console.log(result);
@@ -227,6 +233,7 @@ export class UserPasswordComponent implements OnInit {
                 this.loading = false;
             }
         );
+        */
 
         this.oldPswd = !this.oldPswd;
 
