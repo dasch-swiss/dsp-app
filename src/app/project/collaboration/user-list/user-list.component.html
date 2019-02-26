@@ -29,7 +29,7 @@
                 <app-select-group [projectcode]="projectcode"
                                   [permissions]="item.permissions.groupsPerProject[project.id]"
                                   [disabled]="disabled"
-                                  (groupChange)="setPermission(item, $event)"></app-select-group>
+                                  (groupChange)="updatePermission(item, $event)"></app-select-group>
 
             </td>
             <!-- action: remove -->

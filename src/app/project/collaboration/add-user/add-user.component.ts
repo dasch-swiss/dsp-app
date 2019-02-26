@@ -280,6 +280,7 @@ export class AddUserComponent implements OnInit {
     addUser(val: string) {
 
         // TODO: add getUserByEmail
+        // you can type username or email. We have to check, what we have now
         this._users.getUserByUsername(val).subscribe(
             (result: User) => {
                 // case b) result if the user exists

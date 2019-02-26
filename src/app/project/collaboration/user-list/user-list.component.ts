@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ApiServiceError, KnoraConstants, Project, ProjectsService, User, UsersService } from '@knora/core';
+import { forEach } from '@angular/router/src/utils/collection';
+import { ApiServiceError, Group, KnoraConstants, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
@@ -93,9 +94,28 @@ export class UserListComponent implements OnInit {
      * @param user User object
      * @param groups List of selected groups Iris
      */
-    setPermission(user: User, groups: string[]) {
+    updatePermission(user: User, groups: string[]) {
 
-        // TODO: write update permission method instead of add and remove!
+
+        // TODO: update user group membership
+        /*
+        this._usersService.getUsersGroupMemberships(encodeURIComponent(user.id)).subscribe(
+            (result: Group[]) => {
+                console.log(result);
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+            }
+        );
+
+        groups.forEach((group: string) => {
+            if (group === KnoraConstants.ProjectAdminGroupIRI) {
+
+            }
+        });
+        */
+
+        // TODO: write update permission method instead of add and remove! This should be done in knora-ui module
         if (groups.indexOf(KnoraConstants.ProjectAdminGroupIRI) > -1 ) {
             this._usersService.addUserToProjectAdmin(user.id, this.project.id).subscribe(
                 (result: User) => {
@@ -115,7 +135,7 @@ export class UserListComponent implements OnInit {
                 }
             );
         }
-        // TODO: update the @knora/core usersService with the following methods: addUserToGroup, removeUserFromGroup
+
     }
 
 }
