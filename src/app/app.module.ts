@@ -56,6 +56,7 @@ import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
 import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
+import { ResourceTypeComponent } from './project/ontology/resource-type/resource-type.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -112,7 +113,8 @@ export function initializeApp(appInitService: AppInitService) {
         SelectLanguageComponent,
         ProjectsComponent,
         SelectGroupComponent,
-        FullframeDialogComponent
+        FullframeDialogComponent,
+        ResourceTypeComponent
     ],
     imports: [
         AppRoutingModule,
@@ -136,7 +138,8 @@ export function initializeApp(appInitService: AppInitService) {
     ],
     entryComponents: [
         ConfirmDialogComponent,
-        FullframeDialogComponent
+        FullframeDialogComponent,
+        ResourceTypeComponent
     ],
     providers: [
         AppInitService,

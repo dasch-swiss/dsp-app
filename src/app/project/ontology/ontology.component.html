@@ -1,3 +1,31 @@
-<div class="example-box" cdkDrag>
-    Drag me around
+
+
+
+
+
+
+<div class="ontology-container">
+    <div id="ontology-editor" class="ontology-editor" >
+        Create your data model first:
+        - Drag'n'drop your source types from the list on the right hand side.
+        - You can customize the predefined sources to your needs later.
+        <mat-accordion #ontologyEditor>
+            <app-resource-type></app-resource-type>
+        </mat-accordion>
+
+    </div>
+
+    <div class="ontology-default-elements" cdkDropList>
+
+        <div
+            id="list-of-source-types"
+            class="example-list">
+            <div
+              class="source-type-item"
+              *ngFor="let st of sourcetypes"
+              (click)="loadComponent()">{{st}}
+            </div>
+          </div>
+
+    </div>
 </div>

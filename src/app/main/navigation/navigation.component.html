@@ -2,12 +2,9 @@
     <div *ngFor="let item of navigation">
         <app-navigation-item [item]="item"></app-navigation-item>
 
-
         <div *ngIf="item.children" class="nav-item-children">
             <app-navigation-item *ngFor="let child of item.children" [item]="child"></app-navigation-item>
         </div>
-
-        <mat-divider></mat-divider>
 
     </div>
 </mat-list>

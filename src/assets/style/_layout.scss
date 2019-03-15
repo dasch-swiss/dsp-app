@@ -150,7 +150,7 @@ $header-height: 64px;
     }
 
     .active-link {
-      background: rgba(33, 33, 33, .1);
+      background: rgba($accent, 1);
 
       .mat-icon.suffix {
         display: block;

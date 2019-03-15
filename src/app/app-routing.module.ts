@@ -55,7 +55,7 @@ const routes: Routes = [
             },
             {
                 path: 'ontologies',
-                component: OntologyListComponent
+                component: OntologyComponent
             },
             {
                 path: 'ontology/:id',
