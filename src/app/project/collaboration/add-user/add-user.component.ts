@@ -281,7 +281,7 @@ export class AddUserComponent implements OnInit {
 
         // TODO: add getUserByEmail
         // you can type username or email. We have to check, what we have now
-        this._users.getUserByUsername(val).subscribe(
+        this._users.getUserByEmail(val).subscribe(
             (result: User) => {
                 // case b) result if the user exists
                 this.selectedUser = result;
@@ -310,7 +310,7 @@ export class AddUserComponent implements OnInit {
                                     const session: Session = JSON.parse(localStorage.getItem('session'));
                                     if (add.username === session.user.name) {
                                         this._cache.del(add.username);
-                                        this._cache.get(add.username, this._users.getUserByUsername(add.username));
+                                        this._cache.get(add.username, this._users.getUserByEmail(add.username));
                                     }
                                     this.loading = false;
 
