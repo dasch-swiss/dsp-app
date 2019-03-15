@@ -15,15 +15,15 @@
 
     </div>
 
-    <div class="ontology-default-elements" cdkDropList>
+    <div class="ontology-default-elements">
+        Select your source types from this list:<br><br>
 
-        <div
-            id="list-of-source-types"
-            class="example-list">
-            <div
-              class="source-type-item"
+        <div class="default-source-types">
+            <div class="list-item"
               *ngFor="let st of sourcetypes"
-              (click)="loadComponent()">{{st}}
+              (click)="loadComponent()">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+                  {{st}}
             </div>
           </div>
 

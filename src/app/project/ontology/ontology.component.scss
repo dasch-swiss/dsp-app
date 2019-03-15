@@ -4,24 +4,30 @@
     width: 100%;
 
     .ontology-editor {
-        // width:
-//        position: fixed;
         overflow: hidden;
     }
 
     .ontology-default-elements {
-      width: 320px;
+      width: 220px;
       // TODO: fix height
-      height: calc(100vh - 150px);
-      background: #ccc;
+      height: 100vh;
+      position: fixed;
+      right: 0;
+      top: 0;
+      padding: 72px 6px 6px;
+      background: rgb(255, 255, 255);
+
+      .list-item {
+        border: 1px solid black;
+        padding: 6px;
+        margin: 6px;
+      }
 
       ul {
           padding-inline-start: 0;
           li {
               list-style-type: none;
-              border: 1px solid black;
-              padding: 6px;
-              margin: 6px;
+
           }
       }
 

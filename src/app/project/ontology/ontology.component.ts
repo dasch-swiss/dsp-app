@@ -3,7 +3,6 @@ import { ApplicationRef, Component, ComponentFactoryResolver, EmbeddedViewRef, I
 import { Title } from '@angular/platform-browser';
 import { SelectListComponent } from './select-list/select-list.component';
 import { ResourceTypeComponent } from './resource-type/resource-type.component';
-import { type } from 'os';
 import { ComponentFactory } from '@angular/core/src/render3';
 
 @Directive({
