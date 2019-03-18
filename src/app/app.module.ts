@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { KuiSearchModule } from '@knora/search';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppInitService } from './app-init.service';
@@ -125,6 +126,7 @@ export function initializeApp(appInitService: AppInitService) {
         KuiActionModule,
         KuiAuthenticationModule,
         KuiCoreModule,
+        KuiSearchModule,
         MaterialModule,
         DragDropModule,
         ReactiveFormsModule,

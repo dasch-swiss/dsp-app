@@ -2,14 +2,47 @@
     <span class="logo">
         <button mat-button routerLink="/">
             <mat-icon svgIcon="kuirl_banner" class="large"></mat-icon>
-            <mat-icon svgIcon="kuirl_icon" class="small"></mat-icon>
+            <!-- <mat-icon svgIcon="kuirl_icon" class="small"></mat-icon> -->
         </button>
+    </span>
+
+
+
+<!--     <span>
+        <mat-form-field>
+            <mat-select placeholder="Project">
+                <mat-option [value]="project-shortcode">Incunabula</mat-option>
+                <mat-option [value]="project-shortcode">BEOL</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </span>
+ -->
+
+
+    <span class="fill-remaining-space"></span>
+
+    <span class="">
+        <button mat-button [matMenuTriggerFor]="appMenu" style="font-size: inherit; padding-left: 6px; padding-right: 6px;">
+            <mat-icon mat-input-suffix>keyboard_arrow_down</mat-icon>
+            Project
+        </button>
+        <mat-menu #appMenu="matMenu">
+            <button mat-menu-item>Incunbula</button>
+            <button mat-menu-item>BEOL</button>
+        </mat-menu>
+    </span>
+
+    <span class="action">
+        <kui-fulltext-search></kui-fulltext-search>
+<!--         <button mat-button>
+            <mat-icon>search</mat-icon>
+        </button> -->
     </span>
 
     <span class="fill-remaining-space"></span>
 
     <span class="action">
-        <app-select-language></app-select-language>
+        <!-- <app-select-language></app-select-language> -->
         <button mat-raised-button color="primary" routerLink="/login" *ngIf="!session" class="login">LOGIN</button>
         <app-user-menu *ngIf="session"></app-user-menu>
     </span>
