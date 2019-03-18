@@ -1,6 +1,6 @@
 <kui-progress-indicator *ngIf="loading && (!project && !projectMembers)"></kui-progress-indicator>
 
-<div *ngIf="!loading && (project && projectMembers)" class="content">
+<div *ngIf="!loading && (project && projectMembers)" class="content large middle">
     <!-- project header with shortcode, shortname and project long name -->
     <mat-card class="no-shadow">
         <mat-card-subtitle>
@@ -39,9 +39,8 @@
         </mat-card-actions>
     </mat-card>
 
-    <mat-divider class="more-space"></mat-divider>
-
     <!-- # project members -->
+    <!--
     <mat-card class="no-shadow link" routerLink="../collaboration">
 
         <mat-card-subtitle>Collaboration</mat-card-subtitle>
@@ -57,8 +56,9 @@
     </mat-card>
 
     <mat-divider class="more-space"></mat-divider>
-
+    -->
     <!-- # project ontologies -->
+    <!--
     <mat-card class="no-shadow link" routerLink="../ontologies">
 
         <mat-card-subtitle>Data model</mat-card-subtitle>
@@ -74,5 +74,5 @@
     </mat-card>
 
     <mat-divider class="more-space"></mat-divider>
-
+    -->
 </div>

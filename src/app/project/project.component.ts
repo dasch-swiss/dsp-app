@@ -24,7 +24,7 @@ export class ProjectComponent implements OnInit {
 
     navigation: MenuItem[] = [
         {
-            label: 'Project',
+            label: 'Project information',
             route: 'board',
             icon: 'assignment'
         },
@@ -81,7 +81,7 @@ export class ProjectComponent implements OnInit {
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
                 (result: any) => {
                     this.project = result;
-                    this.navigation[0].label = result.shortname.toUpperCase();
+                    // this.navigation[0].label = result.shortname.toUpperCase();
                     this.loading = false;
                 },
                 (error: ApiServiceError) => {

@@ -1,5 +1,3 @@
-$header-height: 64px;
-
 //
 // general app layout
 .app {
@@ -25,29 +23,34 @@ $header-height: 64px;
 }
 
 //
-// component content container
-.wrapper {
-  max-width: 960px;
-  padding: 48px 24px;
-  width: 80%;
+// content wrapper
+.content {
 
-  &.narrow {
-    width: 320px;
+  &.small,
+  &.medium,
+  &.large {
+    padding: 48px;
   }
 
-  &.wide {
-    width: 640px;
+  &.small {
+    max-width: 320px;
   }
 
-  &.center {
-    margin: 0 auto;
+  &.medium {
+    max-width: 560px;
   }
+
+  &.large {
+    max-width: 940px;
+  }
+
 }
+
 
 // --------------------------------------
 
 //
-// sidenav
+// sidenav (not used anymore...? 2019-03-18)
 .sidenav-container {
   .sidenav {
     background-color: lighten($primary, 50%);
@@ -55,7 +58,7 @@ $header-height: 64px;
     width: 36px;
 
     &.wide {
-      width: 180px;
+      width: 240px;
     }
 
     &.narrow {
@@ -113,7 +116,7 @@ $header-height: 64px;
 // --------------------------------------
 
 //
-// navigation
+// navigation (not used anymore...? 2019-03-18)
 .navigation {
 
   padding-top: 0 !important;
@@ -163,16 +166,7 @@ $header-height: 64px;
 // --------------------------------------
 
 //
-// size and position
-.full-size {
-  height: 100%;
-  width: 100%;
-}
-
-.left {
-  left: 0;
-  text-align: left;
-}
+// positions
 
 // center an element
 .middle {
@@ -184,30 +178,35 @@ $header-height: 64px;
 .center {
   text-align: center !important;
 }
-
+.left {
+  left: 0;
+  text-align: left;
+}
 .right {
   right: 0;
   text-align: right;
 }
 
+// --------------------------------------
+
+
+
+
+// ?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
+// TODO: clean up the following classes
+// ?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
+
 .flex-panel {
   display: flex !important;
 }
+
+// font sizes
 
 .smaller {
   font-size: small;
 }
 
-.content {
-  margin: 0 auto;
-  max-width: 80%;
 
-  padding: 48px;
-
-  @media (max-width: map-get($grid-breakpoints, phone)) {
-    max-width: 100%;
-  }
-}
 
 //
 // dialog: not the one from material, it's a fullframe dialog box

@@ -1,6 +1,21 @@
+@import '../../../assets/style/config';
+
+.ontology-editor {
+  height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 49px);
+}
+
+.resource-type {
+  width: 240px;
+  height: auto;
+  border: 1px solid black;
+}
+
+
+
+
 .ontology-container {
-    display: flex;
-    flex-direction: row;
+    // display: flex;
+    // flex-direction: row;
     width: 100%;
 
     .ontology-editor {
