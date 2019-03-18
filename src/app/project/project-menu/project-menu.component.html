@@ -1,0 +1,7 @@
+<button mat-button class="project-menu" [matMenuTriggerFor]="appMenu" style="font-size: inherit; padding-left: 6px; padding-right: 6px;">
+    {{label}}
+    <mat-icon mat-input-suffix>keyboard_arrow_down</mat-icon>
+</button>
+<mat-menu #appMenu="matMenu">
+    <button mat-menu-item *ngFor="let project of projects" (click)="setProject(project.shortname)">{{project.shortname}}</button>
+</mat-menu>

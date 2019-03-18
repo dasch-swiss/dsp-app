@@ -8,7 +8,7 @@
 
 
 
-<!--     <span>
+    <!--     <span>
         <mat-form-field>
             <mat-select placeholder="Project">
                 <mat-option [value]="project-shortcode">Incunabula</mat-option>
@@ -21,20 +21,13 @@
 
     <span class="fill-remaining-space"></span>
 
-    <span class="">
-        <button mat-button [matMenuTriggerFor]="appMenu" style="font-size: inherit; padding-left: 6px; padding-right: 6px;">
-            <mat-icon mat-input-suffix>keyboard_arrow_down</mat-icon>
-            Project
-        </button>
-        <mat-menu #appMenu="matMenu">
-            <button mat-menu-item>Incunbula</button>
-            <button mat-menu-item>BEOL</button>
-        </mat-menu>
+    <span class="action">
+        <app-project-menu></app-project-menu>
     </span>
 
     <span class="action">
         <kui-fulltext-search></kui-fulltext-search>
-<!--         <button mat-button>
+        <!--         <button mat-button>
             <mat-icon>search</mat-icon>
         </button> -->
     </span>

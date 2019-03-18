@@ -61,6 +61,7 @@ import { ResourceTypeComponent } from './project/ontology/resource-type/resource
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
+import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -121,7 +122,8 @@ export function initializeApp(appInitService: AppInitService) {
         ResourceTypeComponent,
         WorkspaceComponent,
         DesignQuestionComponent,
-        DashboardComponent
+        DashboardComponent,
+        ProjectMenuComponent
     ],
     imports: [
         AppRoutingModule,
