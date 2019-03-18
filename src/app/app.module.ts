@@ -59,6 +59,7 @@ import { SelectGroupComponent } from './project/collaboration/select-group/selec
 import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
 import { ResourceTypeComponent } from './project/ontology/resource-type/resource-type.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
+import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -117,7 +118,8 @@ export function initializeApp(appInitService: AppInitService) {
         SelectGroupComponent,
         FullframeDialogComponent,
         ResourceTypeComponent,
-        WorkspaceComponent
+        WorkspaceComponent,
+        DesignQuestionComponent
     ],
     imports: [
         AppRoutingModule,
