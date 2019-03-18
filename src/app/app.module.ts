@@ -60,6 +60,7 @@ import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullfra
 import { ResourceTypeComponent } from './project/ontology/resource-type/resource-type.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
+import { DashboardComponent } from './user/dashboard/dashboard.component';
 
 
 // Translate: AoT requires an exported function for factories
@@ -119,7 +120,8 @@ export function initializeApp(appInitService: AppInitService) {
         FullframeDialogComponent,
         ResourceTypeComponent,
         WorkspaceComponent,
-        DesignQuestionComponent
+        DesignQuestionComponent,
+        DashboardComponent
     ],
     imports: [
         AppRoutingModule,

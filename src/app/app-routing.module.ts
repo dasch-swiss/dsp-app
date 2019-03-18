@@ -15,6 +15,7 @@ import { ProjectComponent } from './project/project.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
+import { DashboardComponent } from './user/dashboard/dashboard.component';
 
 const routes: Routes = [
     {
@@ -24,6 +25,11 @@ const routes: Routes = [
     {
         path: 'login',
         component: LoginComponent
+    },
+    {
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'project/new',

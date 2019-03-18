@@ -1,0 +1,12 @@
+<div class="content large middle">
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+    <div *ngIf="!loading" class="content">
+        <h1 class="mat-headline">Welcome back {{user?.givenName}}</h1>
+
+        <h2 class="mat-title">Here you will find your latest work and your projects</h2>
+
+        <mat-divider class="more-space"></mat-divider>
+        <app-projects [username]="user.username"></app-projects>
+    </div>
+</div>
