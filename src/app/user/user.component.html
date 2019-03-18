@@ -1,11 +1,43 @@
+<nav mat-tab-nav-bar mat-align-tabs="center" class="tab-bar">
+    <a mat-tab-link
+        *ngFor="let link of navigation"
+        [routerLink]="link.route"
+        routerLinkActive #rla="routerLinkActive"
+        [active]="rla.isActive">
+        {{link.label}}
+    </a>
+</nav>
+
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<app-error *ngIf="error"></app-error>
+
+<!-- main content: router outlet -->
+<div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
+
+    <!-- user profile -->
+    <app-profile [username]="username" *ngSwitchCase="'profile'"></app-profile>
+
+    <!-- edit user data -->
+    <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
+
+    <!-- user's projects -->
+    <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
+
+    <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
+    <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
+
+</div>
+
+
+<!--
 <mat-sidenav-container class="sidenav-container full-size" [autosize]="true">
 
     <mat-sidenav #sidenav mode="side" [opened]="true" [class.wide]="open" [class.narrow]="!open"
                  class="sidenav border-right">
-        <!-- side nav list: navigation and tools -->
+        <!-- side nav list: navigation and tools --
         <div class="side-nav-content scroll-y-only">
 
-            <!-- the navigation depends on the route -->
+            <!-- the navigation depends on the route --
             <app-navigation [navigation]="navigation"></app-navigation>
 
         </div>
@@ -20,23 +52,9 @@
     <mat-sidenav-content>
         <kui-progress-indicator *ngIf="loading && !route"></kui-progress-indicator>
 
-        <!-- main content: router outlet -->
-        <div class="content" [ngSwitch]="route" *ngIf="!loading && route">
 
-            <!-- user profile -->
-            <app-profile [username]="username" *ngSwitchCase="'profile'"></app-profile>
-
-            <!-- edit user data -->
-            <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
-
-            <!-- user's projects -->
-            <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
-
-            <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
-            <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
-
-        </div>
 
     </mat-sidenav-content>
 
 </mat-sidenav-container>
+-->

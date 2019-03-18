@@ -27,11 +27,11 @@ export class UserComponent implements OnInit {
             route: '/projects',
             icon: 'assignment'
         },
-        // {
-        //     label: 'Collections',
-        //     route: '/collections',
-        //     icon: 'bookmark_outline'
-        // },
+        {
+            label: 'Collections',
+            route: '/collections',
+            icon: 'bookmark_outline'
+        },
         {
             label: 'Profile',
             route: '/profile',

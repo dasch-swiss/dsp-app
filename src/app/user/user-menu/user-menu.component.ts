@@ -17,11 +17,11 @@ export class UserMenuComponent implements OnInit {
             route: '/projects',
             icon: 'assignment'
         },
-        // {
-        //     label: 'Collections',
-        //     route: '/collections',
-        //     icon: 'bookmark_outline'
-        // },
+        {
+            label: 'Collections',
+            route: '/collections',
+            icon: 'star'
+        },
         {
             label: 'Profile',
             route: '/profile',
