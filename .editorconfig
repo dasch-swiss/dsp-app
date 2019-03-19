@@ -16,3 +16,5 @@ indent_size = 2
 
 [*.ts]
 spaces_around_brackets = inside
+singleQuote = true
+indent_size = 4

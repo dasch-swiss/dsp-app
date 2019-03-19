@@ -329,10 +329,8 @@
   dependencies:
     tslib "^1.9.0"
 
-"@knora/core@7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/core/-/core-7.0.0.tgz#53191918c1e60268b4fe113b0627d7b59b9703e3"
-  integrity sha512-YQptcOUxJhN3SHn0KGk+efwacCC3CpSKNWKYt82il8f3UkC29saPKQJZRWLH1QARFxS/g2Agzu4aOirFCWwlfA==
+"@knora/core@file:.yalc/@knora/core":
+  version "7.0.0-25f12333"
   dependencies:
     tslib "^1.9.0"
 

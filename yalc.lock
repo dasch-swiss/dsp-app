@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@knora/core": {
+      "signature": "4ad35587d87afefc962a8bdc032af038",
+      "file": true,
+      "replaced": "7.0.0"
+    }
+  }
+}

@@ -42,10 +42,12 @@ export class SelectGroupComponent implements OnInit {
 
     // default system groups and project specific groups
     projectGroups: AutocompleteItem[] = [
+        /*
         {
             iri: KnoraConstants.ProjectMemberGroupIRI,
             name: 'Member'
         },
+        */
         {
             iri: KnoraConstants.ProjectAdminGroupIRI,
             name: 'Admin'
