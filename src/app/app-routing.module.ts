@@ -1,20 +1,28 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@knora/authentication';
+// main
 import { DialogComponent } from './main/dialog/dialog.component';
 import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
 import { ErrorComponent } from './main/error/error.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
+// project
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
+// user
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
+// workspace
+import { WorkspaceComponent } from './workspace/workspace.component';
+import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
+import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
+import { ResultsComponent } from './workspace/results/results.component';
 
 const routes: Routes = [
     {
@@ -29,7 +37,7 @@ const routes: Routes = [
         path: 'project/new',
         component: FullframeDialogComponent,
         canActivate: [AuthGuard],
-        data: {component: ProjectFormComponent}
+        data: { component: ProjectFormComponent }
     },
     {
         path: 'project/:shortcode',
@@ -64,7 +72,7 @@ const routes: Routes = [
             {
                 path: '**',
                 component: ErrorComponent,
-                data: {status: 404}
+                data: { status: 404 }
             }
         ]
     },
@@ -72,7 +80,7 @@ const routes: Routes = [
         path: 'user/new',
         component: FullframeDialogComponent,
         canActivate: [AuthGuard],
-        data: {component: UserFormComponent}
+        data: { component: UserFormComponent }
     },
     {
         path: 'user/:name',
@@ -82,7 +90,25 @@ const routes: Routes = [
         path: 'user/:name/edit',
         component: FullframeDialogComponent,
         canActivate: [AuthGuard],
-        data: {component: UserFormComponent}
+        data: { component: UserFormComponent }
+    },
+    {
+        path: 'search',
+        component: WorkspaceComponent,
+        children: [
+            {
+                path: 'advanced',
+                component: AdvancedSearchComponent
+            },
+            {
+                path: 'expert',
+                component: ExpertSearchComponent
+            },
+            {
+                path: ':mode/:q',
+                component: ResultsComponent
+            }
+        ]
     },
     {
         path: 'profile',
@@ -107,7 +133,7 @@ const routes: Routes = [
     {
         path: '**',
         component: ErrorComponent,
-        data: {status: 404}
+        data: { status: 404 }
     }
 ];
 

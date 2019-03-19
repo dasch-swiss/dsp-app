@@ -8,7 +8,7 @@
 
 
 
-<!--     <span>
+    <!--     <span>
         <mat-form-field>
             <mat-select placeholder="Project">
                 <mat-option [value]="project-shortcode">Incunabula</mat-option>
@@ -21,26 +21,48 @@
 
     <span class="fill-remaining-space"></span>
 
-    <span class="">
-        <button mat-button [matMenuTriggerFor]="appMenu" style="font-size: inherit; padding-left: 6px; padding-right: 6px;">
+    <span class="project-selector">
+        <button mat-button [matMenuTriggerFor]="appMenu">
             <mat-icon mat-input-suffix>keyboard_arrow_down</mat-icon>
-            Project
+            Search in all projects
+        </button>
+        <mat-menu #appMenu="matMenu">
+            <button mat-menu-item>Search in Incunbula</button>
+            <button mat-menu-item>Search in BEOL</button>
+        </mat-menu>
+    </span>
+
+    <span class="action">
+        <kui-fulltext-search [route]="'/search'"></kui-fulltext-search>
+    </span>
+
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/search/advanced">
+            <span>Advanced</span>
+        </button>
+        <button mat-menu-item routerLink="/search/expert">
+            <span>Expert</span>
+        </button>
+    </mat-menu>
+
+    <!--  <button mat-button color="primary" routerLink="/search/advanced">Advanced</button>
+    <button mat-button color="primary" routerLink="/search/expert">Expert</button> -->
+
+    <span class="fill-remaining-space"></span>
+
+    <span class="project-selector">
+        <button mat-button [matMenuTriggerFor]="appMenu" class="ps-btn">
+            All your projects
+            <mat-icon mat-input-suffix>keyboard_arrow_down</mat-icon>
         </button>
         <mat-menu #appMenu="matMenu">
             <button mat-menu-item>Incunbula</button>
             <button mat-menu-item>BEOL</button>
         </mat-menu>
     </span>
-
-    <span class="action">
-        <kui-fulltext-search></kui-fulltext-search>
-<!--         <button mat-button>
-            <mat-icon>search</mat-icon>
-        </button> -->
-    </span>
-
-    <span class="fill-remaining-space"></span>
-
     <span class="action">
         <app-select-language></app-select-language>
         <button mat-raised-button color="primary" routerLink="/login" *ngIf="!session" class="login">LOGIN</button>
