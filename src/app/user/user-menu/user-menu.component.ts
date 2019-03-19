@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '@knora/authentication';
 import { MenuItem } from '../../main/declarations/menu-item';
+import { AppGlobal } from 'src/app/app-global';
 
 @Component({
   selector: 'app-user-menu',
@@ -11,28 +12,7 @@ export class UserMenuComponent implements OnInit {
 
     username: string;
 
-    items: MenuItem[] = [
-        {
-            label: 'Projects',
-            route: '/projects',
-            icon: 'assignment'
-        },
-        {
-            label: 'Collections',
-            route: '/collections',
-            icon: 'star'
-        },
-        {
-            label: 'Profile',
-            route: '/profile',
-            icon: 'fingerprint'
-        },
-        {
-            label: 'Account',
-            route: '/account',
-            icon: 'settings'
-        }
-    ];
+    items: MenuItem[] = AppGlobal.userNav;
 
 
     constructor(private _auth: AuthenticationService) {

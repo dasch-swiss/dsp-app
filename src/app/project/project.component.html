@@ -1,12 +1,4 @@
-<nav mat-tab-nav-bar mat-align-tabs="center" class="tab-bar">
-    <a mat-tab-link
-        *ngFor="let link of navigation"
-        [routerLink]="link.route"
-        routerLinkActive #rla="routerLinkActive"
-        [active]="rla.isActive">
-        {{link.label}}
-    </a>
-</nav>
+<app-navigation [navigation]="navigation"></app-navigation>
 
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 <app-error *ngIf="error"></app-error>

@@ -1,10 +1,7 @@
-<mat-list class="navigation">
-    <div *ngFor="let item of navigation">
-        <app-navigation-item [item]="item"></app-navigation-item>
-
-        <div *ngIf="item.children" class="nav-item-children">
-            <app-navigation-item *ngFor="let child of item.children" [item]="child"></app-navigation-item>
-        </div>
-
-    </div>
-</mat-list>
+<nav mat-tab-nav-bar mat-align-tabs="center" class="tab-bar" animationDuration="0ms">
+    <a mat-tab-link *ngFor="let link of navigation" [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive"
+       [active]="rla.isActive">
+        <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
+        {{link.label}}
+    </a>
+</nav>

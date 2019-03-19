@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UsersService } from '@knora/core';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
+import { AppGlobal } from '../app-global';
 
 @Component({
     selector: 'app-user',
@@ -13,6 +14,7 @@ import { MenuItem } from '../main/declarations/menu-item';
 export class UserComponent implements OnInit {
 
     loading: boolean;
+    error: boolean;
 
     username: string;
 
@@ -21,28 +23,7 @@ export class UserComponent implements OnInit {
     // for the sidenav
     open: boolean = true;
 
-    navigation: MenuItem[] = [
-        {
-            label: 'Projects',
-            route: '/projects',
-            icon: 'assignment'
-        },
-        {
-            label: 'Collections',
-            route: '/collections',
-            icon: 'bookmark_outline'
-        },
-        {
-            label: 'Profile',
-            route: '/profile',
-            icon: 'fingerprint'
-        },
-        {
-            label: 'Account',
-            route: '/account',
-            icon: 'settings'
-        }
-    ];
+    navigation: MenuItem[] = AppGlobal.userNav;
 
     constructor(private _cache: CacheService,
                 private _route: ActivatedRoute,

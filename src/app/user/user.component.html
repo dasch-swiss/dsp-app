@@ -1,12 +1,4 @@
-<nav mat-tab-nav-bar mat-align-tabs="center" class="tab-bar">
-    <a mat-tab-link
-        *ngFor="let link of navigation"
-        [routerLink]="link.route"
-        routerLinkActive #rla="routerLinkActive"
-        [active]="rla.isActive">
-        {{link.label}}
-    </a>
-</nav>
+<app-navigation [navigation]="navigation"></app-navigation>
 
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 <app-error *ngIf="error"></app-error>
@@ -27,34 +19,3 @@
     <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
 
 </div>
-
-
-<!--
-<mat-sidenav-container class="sidenav-container full-size" [autosize]="true">
-
-    <mat-sidenav #sidenav mode="side" [opened]="true" [class.wide]="open" [class.narrow]="!open"
-                 class="sidenav border-right">
-        <!-- side nav list: navigation and tools --
-        <div class="side-nav-content scroll-y-only">
-
-            <!-- the navigation depends on the route --
-            <app-navigation [navigation]="navigation"></app-navigation>
-
-        </div>
-        <div class="side-nav-footer">
-            <button mat-button (click)="open = !open">
-                <mat-icon *ngIf="!open">keyboard_arrow_right</mat-icon>
-                <mat-icon *ngIf="open">keyboard_arrow_left</mat-icon>
-            </button>
-        </div>
-    </mat-sidenav>
-
-    <mat-sidenav-content>
-        <kui-progress-indicator *ngIf="loading && !route"></kui-progress-indicator>
-
-
-
-    </mat-sidenav-content>
-
-</mat-sidenav-container>
--->

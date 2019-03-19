@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiServiceError, GroupsService, Project, ProjectsService } from '@knora/core';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
+import { AppGlobal } from '../app-global';
 
 @Component({
     selector: 'app-project',
@@ -22,32 +23,7 @@ export class ProjectComponent implements OnInit {
     // for the sidenav
     open: boolean = true;
 
-    navigation: MenuItem[] = [
-        {
-            label: 'Project information',
-            route: 'board',
-            icon: 'assignment'
-        },
-        {
-            label: 'Collaboration',
-            route: 'collaboration',
-            icon: 'group'
-        },
-        {
-            label: 'Data model',
-            route: 'ontologies',
-            icon: 'timeline',
-            /*
-            children: [
-                {
-                    label: 'gaga',
-                    route: 'gaga',
-                    icon: 'dash',
-                }
-            ]
-            */
-        }
-    ];
+    navigation: MenuItem[] = AppGlobal.projectNav;
 
 
     constructor(private _cache: CacheService,
@@ -81,7 +57,7 @@ export class ProjectComponent implements OnInit {
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
                 (result: any) => {
                     this.project = result;
-                    // this.navigation[0].label = result.shortname.toUpperCase();
+                    this.navigation[0].label = 'Project: ' + result.shortname.toUpperCase();
                     this.loading = false;
                 },
                 (error: ApiServiceError) => {
