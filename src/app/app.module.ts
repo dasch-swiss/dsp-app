@@ -1,4 +1,3 @@
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -25,7 +24,7 @@ import { MainComponent } from './main/main.component';
 import { NavigationItemComponent } from './main/navigation/navigation-item/navigation-item.component';
 import { NavigationComponent } from './main/navigation/navigation.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
-import { MaterialModule } from './material-module';
+import { MaterialModule } from './material.module';
 import { BoardComponent } from './project/board/board.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
@@ -62,7 +61,6 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
-
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -136,7 +134,6 @@ export function initializeApp(appInitService: AppInitService) {
         KuiCoreModule,
         KuiSearchModule,
         MaterialModule,
-        DragDropModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({
             loader: {
@@ -154,13 +151,16 @@ export function initializeApp(appInitService: AppInitService) {
     providers: [
         AppInitService,
         {
-            provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppInitService], multi: true
+            provide: APP_INITIALIZER,
+            useFactory: initializeApp,
+            deps: [AppInitService],
+            multi: true
         },
         {
-            provide: KuiCoreConfigToken, useFactory: () => AppInitService.coreConfig
+            provide: KuiCoreConfigToken,
+            useFactory: () => AppInitService.coreConfig
         }
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}
