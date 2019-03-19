@@ -27,8 +27,16 @@ export class ProjectMenuComponent implements OnInit {
     );
     }
 
-    setProject(name: string) {
-      this.label = name;
+    setProject(name?: string) {
+
+      if (!name) {
+        // set default project: none
+        this.label = "Project";
+      } else {
+        this.label = name;
+        // get project by shortname
+
+      }
 
     }
 

@@ -1,3 +1,6 @@
 .project-menu {
     margin-right: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 180px;
 }

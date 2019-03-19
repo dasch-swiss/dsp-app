@@ -3,5 +3,7 @@
     <mat-icon mat-input-suffix>keyboard_arrow_down</mat-icon>
 </button>
 <mat-menu #appMenu="matMenu">
+    <button mat-menu-item (click)="setProject()">none</button>
+    <mat-divider></mat-divider>
     <button mat-menu-item *ngFor="let project of projects" (click)="setProject(project.shortname)">{{project.shortname}}</button>
 </mat-menu>
