@@ -1,0 +1,19 @@
+.user-profile {
+
+    .user-profile-image {
+        width: 100%;
+
+        &:after {
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+    }
+
+    .user-profile-headline {
+        h3.mat-subheading-2 {
+            font-size: 18px;
+            margin-top: -18px;
+        }
+    }
+}

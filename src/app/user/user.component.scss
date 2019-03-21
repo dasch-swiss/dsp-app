@@ -1,0 +1,14 @@
+.content {
+    display: flex;
+    flex-direction: row;
+
+    .content-sidebar {
+        width: 25%;
+        padding-right: 16px;
+    }
+
+    .content-container {
+        width: 75%;
+
+    }
+}

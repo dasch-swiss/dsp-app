@@ -27,11 +27,13 @@ export class AppGlobal {
 
     // user navigation
     public static userNav: MenuItem[] = [
+        /*
         {
             label: 'Dashboard',
             route: '/dashboard',
             icon: 'dashboard'
         },
+        */
         {
             label: 'Projects',
             route: '/projects',
@@ -41,11 +43,6 @@ export class AppGlobal {
             label: 'Collections',
             route: '/collections',
             icon: 'star'
-        },
-        {
-            label: 'Profile',
-            route: '/profile',
-            icon: 'account_box'
         },
         {
             label: 'Account',

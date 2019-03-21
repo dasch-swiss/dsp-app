@@ -12,7 +12,7 @@ export class UserMenuComponent implements OnInit {
 
     username: string;
 
-    items: MenuItem[] = AppGlobal.userNav;
+    navigation: MenuItem[] = AppGlobal.userNav;
 
 
     constructor(private _auth: AuthenticationService) {

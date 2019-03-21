@@ -1,21 +1,38 @@
-<app-navigation [navigation]="navigation"></app-navigation>
-
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 <app-error *ngIf="error"></app-error>
 
-<!-- main content: router outlet -->
-<div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
+<div class="content large middle" *ngIf="!loading">
+    <div class="content-sidebar user-data">
+        <app-profile [username]="username"></app-profile>
+    </div>
 
-    <!-- user profile -->
-    <app-profile [username]="username" *ngSwitchCase="'profile'"></app-profile>
+    <div class="content-container">
+        <nav mat-tab-nav-bar mat-align-tabs="left" class="tab-bar" animationDuration="0ms">
+            <a mat-tab-link *ngFor="let link of navigation" [routerLink]="link.route" routerLinkActive="active-tab"
+               #rla="routerLinkActive" [active]="rla.isActive">
+                <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
+                {{link.label}}
+            </a>
+        </nav>
 
-    <!-- edit user data -->
-    <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
+        <!-- main content: router outlet -->
+        <div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
 
-    <!-- user's projects -->
-    <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
+            <!-- user profile -->
+            <app-profile [username]="username" *ngSwitchCase="'profile'"></app-profile>
 
-    <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
-    <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
+            <!-- edit user data -->
+            <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
+
+            <!-- user's projects -->
+            <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
+
+            <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
+            <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
+
+        </div>
+    </div>
+
+
 
 </div>
