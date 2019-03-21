@@ -91,11 +91,6 @@ const routes: Routes = [
         data: {component: UserFormComponent}
     },
     {
-        path: 'profile',
-        component: UserComponent,
-        canActivate: [AuthGuard]
-    },
-    {
         path: 'account',
         component: UserComponent,
         canActivate: [AuthGuard]

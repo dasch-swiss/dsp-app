@@ -1,6 +1,7 @@
 <kui-progress-indicator *ngIf="loading && !user"></kui-progress-indicator>
 
-<div *ngIf="!loading && user" class="user-profile">
+<!-- own user profile (logged-in user) -->
+<div *ngIf="!loading && user && loggedInUser" class="user-profile">
     <img kuiAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
     <div class="user-profile-headline">
         <!-- user names -->
@@ -10,16 +11,31 @@
         <mat-divider></mat-divider>
 
         <!-- user profile info: status, description etc.? -->
-        <div class="user-profile-info">
+        <ul class="user-profile-info">
             <br>
-            <span class="badge status" [class.active]="user.status">
+            <li><mat-icon>flag</mat-icon>{{user.lang}}</li>
+            <li class="status text-only" [class.active]="user.status">
+                <mat-icon>info</mat-icon>
                 <span *ngIf="user.status">Active</span>
                 <span *ngIf="!user.status">Archived</span>
-            </span>
-        </div>
+            </li>
+        </ul>
     </div>
 
-    <mat-divider class="more-space"></mat-divider>
+    <mat-divider></mat-divider>
+    <br>
     <!-- edit button -->
+    <button mat-raised-button [routerLink]="'/account'" style="width: 100%;">
+        Edit
+    </button>
+</div>
+
+<!-- different view for public user profile -->
+<div *ngIf="!loading && user && !loggedInUser" class="content large middle user-profile">
+
+
+        <h2 class="mat-title">{{user.givenName}}<br>{{user.familyName}}</h2>
+        <h3 class="mat-subheading-2 mat-card-subtitle">{{user.username}}</h3>
+
 
 </div>

@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
 
     @Input() username: string;
 
-    loggedInUser: boolean = false;
+    @Input() loggedInUser?: boolean = false;
 
     sysAdmin: boolean = false;
 
@@ -39,8 +39,8 @@ export class ProfileComponent implements OnInit {
                 }
             }
         }
-        // in case of route /profile, it's the logged in user's profile
-        this.loggedInUser = (this._route.snapshot.routeConfig.path === 'profile');
+        // DEPRECATED! in case of route /profile, it's the logged in user's profile
+        // this.loggedInUser = (this._route.snapshot.routeConfig.path === 'profile');
 
         // get info about the logged-in user: does he have the right to change user's profile?
         if (localStorage.getItem('session') && !this.loggedInUser) {
