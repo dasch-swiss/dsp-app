@@ -22,7 +22,7 @@ import { HeaderComponent } from './main/header/header.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
-import { MaterialModule } from './material.module';
+import { MaterialModule } from './material-module';
 import { BoardComponent } from './project/board/board.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
