@@ -1,6 +1,6 @@
 <mat-toolbar class="app-header">
     <span class="logo">
-        <button mat-button routerLink="/">
+        <button mat-button routerLink="/" class="main-toolbar-button home-button">
             <mat-icon svgIcon="kuirl_banner" class="large"></mat-icon>
             <!-- <mat-icon svgIcon="kuirl_icon" class="small"></mat-icon> -->
         </button>
@@ -20,13 +20,13 @@
 
 
     <span class="fill-remaining-space"></span>
-
+<!--
     <span class="action">
         <app-project-menu></app-project-menu>
     </span>
-
+ -->
     <span class="action">
-        <kui-fulltext-search></kui-fulltext-search>
+        <kui-fulltext-search [projectfilter]="true"></kui-fulltext-search>
         <!--         <button mat-button>
             <mat-icon>search</mat-icon>
         </button> -->

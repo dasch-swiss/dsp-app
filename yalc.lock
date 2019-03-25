@@ -5,6 +5,11 @@
       "signature": "4ad35587d87afefc962a8bdc032af038",
       "file": true,
       "replaced": "7.0.0"
+    },
+    "@knora/search": {
+      "signature": "6b6d06b4fa7bee9fd4f9f06e3455b195",
+      "file": true,
+      "replaced": "7.0.1"
     }
   }
 }

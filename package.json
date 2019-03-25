@@ -26,7 +26,7 @@
     "@knora/action": "7.0.1",
     "@knora/authentication": "7.0.1",
     "@knora/core": "7.0.1",
-    "@knora/search": "7.0.1",
+    "@knora/search": "file:.yalc/@knora/search",
     "@knora/viewer": "7.0.1",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
