@@ -26,7 +26,6 @@ import { MaterialModule } from './material-module';
 import { BoardComponent } from './project/board/board.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
-import { UserItemComponent } from './project/collaboration/user-item/user-item.component';
 import { UserListComponent } from './project/collaboration/user-list/user-list.component';
 import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
@@ -80,7 +79,6 @@ export function initializeApp(appInitService: AppInitService) {
         CollaborationComponent,
         AddUserComponent,
         UserListComponent,
-        UserItemComponent,
         OntologyListComponent,
         OntologyComponent,
         PropertyListComponent,
