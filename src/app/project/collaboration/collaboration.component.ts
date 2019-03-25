@@ -33,7 +33,7 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
         }
     };
 
-    @ViewChild(AddUserComponent) addUser: AddUserComponent;
+    @ViewChild('addUserComponent') addUser: AddUserComponent;
 
 
     constructor(private _cache: CacheService,
@@ -69,7 +69,10 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        /*
+        console.log(this.addUser);
         this.addUser.buildForm();
+        */
     }
 
     /**

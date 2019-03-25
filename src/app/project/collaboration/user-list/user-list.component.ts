@@ -9,7 +9,8 @@ import {
     Project,
     ProjectsService,
     User,
-    UsersService
+    UsersService,
+    PermissionData
 } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 
@@ -26,10 +27,16 @@ export class UserListComponent implements OnInit {
 
     @Output() userUpdate: EventEmitter<any> = new EventEmitter<any>();
 
+    // knora admin group iri
+    adminGroupIri: string = KnoraConstants.ProjectAdminGroupIRI;
+
+    // project shortcode; as identifier in project cache service
     projectcode: string;
 
+    // project data
     project: Project;
 
+    // sort properties
     sortProps: any = [
         {
             key: 'familyName',
@@ -49,6 +56,7 @@ export class UserListComponent implements OnInit {
         }
     ];
 
+    // ... and sort by 'email'
     sortBy: string = 'email';
 
     constructor(
@@ -83,10 +91,125 @@ export class UserListComponent implements OnInit {
     }
 
     /**
-     * remove user from project
-     * @param id user iri
+     * returns true, when the user is project admin
+     *
+     * @param  permissions user's permissions
+     * @returns boolean
      */
-    removeUser(id: string) {
+    isProjectAdmin(permissions: PermissionData): boolean {
+        return (
+            permissions.groupsPerProject[this.project.id].indexOf(
+                KnoraConstants.ProjectAdminGroupIRI
+            ) > -1
+        );
+    }
+
+    updateGroupsMembership(id: string, groups: string[]): void {
+        const currentUserGroups: string[] = [];
+
+        this._usersService.getUsersGroupMemberships(id).subscribe(
+            (result: Group[]) => {
+                for (const group of result) {
+                    currentUserGroups.push(group.id);
+                }
+
+                if (currentUserGroups.length === 0) {
+                    // add user to group
+                    // console.log('add user to group');
+                    for (const newGroup of groups) {
+                        this._usersService
+                            .addUserToGroup(id, newGroup)
+                            .subscribe(
+                                (ngResult: User) => {},
+                                (ngError: ApiServiceError) => {
+                                    console.error(ngError);
+                                }
+                            );
+                    }
+                } else {
+                    // which one is deselected?
+                    // find id in groups --> if not exists: remove from group
+                    for (const oldGroup of currentUserGroups) {
+                        if (groups.indexOf(oldGroup) > -1) {
+                            // already member of this group
+                        } else {
+                            // console.log('remove from group', oldGroup);
+                            // the old group is not anymore one of the selected groups --> remove user from group
+                            this._usersService
+                                .removeUserFromGroup(id, oldGroup)
+                                .subscribe(
+                                    (ngResult: User) => {},
+                                    (ngError: ApiServiceError) => {
+                                        console.error(ngError);
+                                    }
+                                );
+                        }
+                    }
+                    for (const newGroup of groups) {
+                        if (currentUserGroups.indexOf(newGroup) > -1) {
+                            // already member of this group
+                        } else {
+                            // console.log('add user to group');
+                            this._usersService
+                                .addUserToGroup(id, newGroup)
+                                .subscribe(
+                                    (ngResult: User) => {},
+                                    (ngError: ApiServiceError) => {
+                                        console.error(ngError);
+                                    }
+                                );
+                        }
+                    }
+                }
+            },
+            (error: ApiServiceError) => {
+                console.error('getUsersGroupMemberships ', error);
+            }
+        );
+    }
+
+    updateAdminMembership(id: string, permissions: PermissionData): void {
+        if (this.isProjectAdmin(permissions)) {
+            // true = user is already project admin --> remove from admin rights
+            this._usersService
+                .removeUserFromProjectAdmin(id, this.project.id)
+                .subscribe(
+                    (result: User) => {
+                        // console.log(result);
+                        this.userUpdate.emit();
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            // false: user isn't project admin yet --> add admin rights
+            this._usersService
+                .addUserToProjectAdmin(id, this.project.id)
+                .subscribe(
+                    (result: User) => {
+                        // console.log(result);
+                        this.userUpdate.emit();
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
+        }
+    }
+
+    editUserData(id: string): void {
+        alert(
+            'TODO: only visible for system admins; open dialog with edit user form'
+        );
+    }
+    /**
+     * remove user from project and update list of users
+     *
+     * @param  {string} id user's IRI
+     * @returns void
+     */
+    removeUserFromProject(id: string): void {
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
                 this.userUpdate.emit();
@@ -104,7 +227,6 @@ export class UserListComponent implements OnInit {
      * @param groups List of selected groups Iris
      */
     updatePermission(user: User, groups: string[]) {
-
         console.log(user);
 
         for (const g of groups) {
@@ -113,7 +235,6 @@ export class UserListComponent implements OnInit {
             } else {
                 // remove from admin group
             }
-
 
             if (user.groups.length > 0) {
                 // user is already in groups
@@ -125,7 +246,6 @@ export class UserListComponent implements OnInit {
                 */
             } else {
                 // user is not yet in a group
-
             }
             console.log(g);
         }
@@ -145,33 +265,28 @@ export class UserListComponent implements OnInit {
                     // check if the user is already in the selected group or not
                     if (currentUserGroups.length > 0) {
                         for (const cg of currentUserGroups) {
-
-                            if ( groups.indexOf(cg.id) > -1 ) {
+                            if (groups.indexOf(cg.id) > -1) {
                                 // user is already member of this group
                                 // do nothing
                                 console.log('do nothing ', cg.id);
                             } else {
                                 // add user to group
-                                console.log('user is not yet group member ', cg.id);
+                                console.log(
+                                    'user is not yet group member ',
+                                    cg.id
+                                );
                                 // this._usersService.addUserToGroup(user.id, )
                             }
                         }
                     } else {
-
                     }
-
-
                 },
                 (error: ApiServiceError) => {
                     console.error('getUsersGroupMemberships ', error);
                 }
             );
 
-
-
-
-
-            /*
+        /*
         if (groups && groups.length > 0) {
             groups.forEach(function(value: string) {
                 // this._usersService.addUserToGroup(user.id, value)
@@ -179,7 +294,6 @@ export class UserListComponent implements OnInit {
             });
         }
         */
-
 
         /*
         groups.forEach((group: string) => {

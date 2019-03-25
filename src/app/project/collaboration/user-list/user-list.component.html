@@ -2,51 +2,102 @@
     <div class="list-header">
         <span class="fill-remaining-space"></span>
         <span class="list-action">
-            <kui-sort-button *ngIf="list.length > 1"
-                             [sortProps]="sortProps"
-                             [(sortKey)]="sortBy"
-                             [position]="'right'">
+            <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'">
             </kui-sort-button>
             &nbsp;
         </span>
     </div>
 
     <table class="table">
-        <tr *ngFor="let item of list; let last = last;" [class.no-border]="last">
+        <tr>
+            <td class="avatar-cell">avatar</td>
+            <td>name</td>
+            <td>admin</td>
+            <td>group</td>
+            <td>more...</td>
+        </tr>
+
+        <tr *ngFor="let user of list;">
             <!-- avatar -->
             <td class="avatar-cell">
-                <img kuiAdminImage [image]="item.email" [type]="'user'" class="avatar-image link" [routerLink]="'/user/' + item.username" />
+                <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image link"
+                     [routerLink]="'/user/' + user.username" />
             </td>
+
             <!-- name and e-mail address -->
             <td>
-                <h5 class="mat-subheading-2 link" [routerLink]="'/user/' + item.username">{{item.givenName}} {{item.familyName}}</h5>
-                <p class="mat-subheading-1 link" [routerLink]="'/user/' + item.username">
-                    {{item.username}} | {{item.email}} <!-- TODO: question: how public should the email address be? -->
+                <h5 class="mat-subheading-2 link" [routerLink]="'/user/' + user.username">{{user.givenName}}
+                    {{user.familyName}}</h5>
+                <p class="mat-subheading-1 link" [routerLink]="'/user/' + user.username">
+                    {{user.username}} | {{user.email}}
+                    <!-- TODO: question: how public should the email address be? -->
                 </p>
             </td>
-            <!-- role -->
-            <td>
-                <app-select-group [projectcode]="projectcode"
-                                  [permissions]="item.permissions.groupsPerProject[project.id]"
-                                  [disabled]="disabled"
-                                  (groupChange)="updatePermission(item, $event)"></app-select-group>
 
+            <!-- admin -->
+            <td>
+                <mat-chip-list>
+                    <mat-chip *ngIf="isProjectAdmin(user.permissions)">Admin</mat-chip>
+                </mat-chip-list>
             </td>
+
+            <!-- group -->
+            <td>
+                <app-select-group [projectcode]="project.shortcode" [projectid]="project.id"
+                                  [permissions]="user.permissions.groupsPerProject[project.id]" [disabled]="disabled"
+                                  (groupChange)="updateGroupsMembership(user.id, $event)"></app-select-group>
+            </td>
+
             <!-- action: remove -->
+            <!--
             <td class="table-action">
                 <div class="hidden">
-                    <button mat-icon-button
-                            *ngIf="!disabled"
-                            (click)="removeUser(item.id)"
-                            matTooltip="Remove {{item.username}} as a collaborator"
-                            matTooltipPosition="above">
+                    <button mat-icon-button *ngIf="!disabled" (click)="removeUserFromProject(user.id)"
+                            matTooltip="Remove {{user.username}} as a collaborator" matTooltipPosition="above">
                         <mat-icon>close</mat-icon>
                     </button>
                 </div>
             </td>
+            -->
+
+            <!-- OR menu with:
+                - toggle admin role
+                - edit user (in case of system admin; will open dialog box)
+                - remove user from project
+            -->
+            <td class="table-action">
+                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu">
+                    <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
+                    <button mat-menu-item (click)="updateAdminMembership(user.id, user.permissions)">
+                        <span *ngIf="!isProjectAdmin(user.permissions)">Add</span>
+                        <span *ngIf="isProjectAdmin(user.permissions)">Remove</span>
+                        <span>&nbsp;as project admin</span>
+                    </button>
+                    <button mat-menu-item (click)="editUserData(user.id)">
+                        Edit user
+                    </button>
+                    <button mat-menu-item (click)="removeUserFromProject(user.id)">
+                        Remove user from project
+                    </button>
+                </mat-menu>
+            </td>
         </tr>
+        <!--
+        <tr>
+            <th>avatar</th>
+            <th>name</th>
+            <th>admin</th>
+            <th>group</th>
+            <th>delete OR</th>
+            <th>more...</th>
+        </tr>
+         -->
+        <!--
+        <tr *ngFor="let item of list; let last = last;" [class.no-border]="last">
+            <app-user-item [user]="item" [project]="project" [disabled]="disabled"></app-user-item>
+        </tr>
+         -->
     </table>
 </div>
-
-
-

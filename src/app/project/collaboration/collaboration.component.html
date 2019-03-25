@@ -4,7 +4,7 @@
         <mat-card-subtitle>Collaboration</mat-card-subtitle>
         <mat-card-title>{{"appLabels.form.user.title.add2project" | translate}}</mat-card-title>
 
-        <app-add-user [projectcode]="projectcode" (refreshParent)="refresh()" *ngIf="project?.status" #addUser></app-add-user>
+        <app-add-user [projectcode]="projectcode" (refreshParent)="refresh()" *ngIf="project?.status" #addUserComponent></app-add-user>
     </mat-card>
 
     <mat-divider></mat-divider>

@@ -17,7 +17,7 @@
 }
 
 .menu-header {
-  background-color: #ebebeb;
+  background-color: $primary;
   border-bottom: 1px solid rgba($primary, .1);
   border-top-left-radius: $border-radius;
   border-top-right-radius: $border-radius;
@@ -51,6 +51,13 @@
   border-top: 1px solid rgba($primary, .1);
 
   .menu-action.logout {
-    // height: 48px;
+    background: #ebebeb;
+    height: 48px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    &:hover {
+      background: $warn;
+    }
   }
 }
