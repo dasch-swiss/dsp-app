@@ -101,6 +101,11 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'system',
+        component: UserComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'collections',
         component: UserComponent,
         canActivate: [AuthGuard]

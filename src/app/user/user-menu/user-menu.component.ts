@@ -12,6 +12,8 @@ export class UserMenuComponent implements OnInit {
 
     username: string;
 
+    sysAdmin: boolean = false;
+
     navigation: MenuItem[] = AppGlobal.userNav;
 
 
@@ -20,6 +22,14 @@ export class UserMenuComponent implements OnInit {
 
     ngOnInit() {
         this.username = JSON.parse(localStorage.getItem('session')).user.name;
+        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+        if (this.sysAdmin) {
+            this.navigation.push({
+                    label: 'System',
+                    route: '/system',
+                    icon: 'all_inbox'
+            });
+        }
     }
 
     logout() {

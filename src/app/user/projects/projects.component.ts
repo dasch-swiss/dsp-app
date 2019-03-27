@@ -12,6 +12,8 @@ export class ProjectsComponent implements OnInit {
 
     @Input() username?: string;
 
+    @Input() system?: boolean = false;
+
     session: Session;
 
     projects: Project[];

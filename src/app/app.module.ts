@@ -42,7 +42,7 @@ import { CollectionListComponent } from './user/collection-list/collection-list.
 import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { ProjectsComponent } from './user/projects/projects.component';
-import { ProjectListComponent } from './user/projects/project-list/project-list.component';
+import { ProjectsListComponent } from './user/projects/projects-list/projects-list.component';
 import { GroupSelectComponent } from './user/user-form/group-select/group-select.component';
 import { SelectUserComponent } from './user/user-form/select-user/select-user.component';
 import { UserDataComponent } from './user/user-form/user-data/user-data.component';
@@ -89,7 +89,7 @@ export function initializeApp(appInitService: AppInitService) {
         SelectItemComponent,
         UserComponent,
         ProfileComponent,
-        ProjectListComponent,
+        ProjectsListComponent,
         UserFormComponent,
         GroupSelectComponent,
         SelectUserComponent,

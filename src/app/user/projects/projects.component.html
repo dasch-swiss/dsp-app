@@ -11,8 +11,51 @@
 </form>
  -->
 
+<!--
+ <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
+ <mat-list *ngIf="!loadProjects">
+     <mat-list-item *ngFor="let project of projects">
+         <p matLine>{{project.shortcode}} | {{project.shortname}}</p>
+         <h3 matLine>{{project.longname}}</h3>
+         <p matLine [innerHTML]="project.description[0].value"></p>
+     </mat-list-item>
+ </mat-list>
+
+ <mat-divider></mat-divider>
+ <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
+ <mat-list *ngIf="!loadProjects">
+     <mat-list-item *ngFor="let project of systemProjects">
+         <p matLine>{{project.shortcode}} | {{project.shortname}}</p>
+         <h3 matLine>{{project.longname}}</h3>
+         <p matLine [innerHTML]="project.description[0].value"></p>
+     </mat-list-item>
+ </mat-list>
+-->
+<!--
+<div class="content">
+    <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
+    <app-project-list *ngIf="!loadProjects" [projects]="projects"></app-project-list>
+</div>
+-->
+
+<div *ngIf="!system" class="content">
+    <!-- <mat-divider></mat-divider> -->
+    <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
+    <app-projects-list *ngIf="!loadSystem" [projects]="projects" [private]></app-projects-list>
+</div>
+
+<div *ngIf="system" class="content">
+    <!-- <mat-divider></mat-divider> -->
+    <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
+    <app-projects-list *ngIf="!loadSystem" [projects]="systemProjects" [private]></app-projects-list>
+</div>
+
+
+
+
 
 <!-- system administrator has an additional tab, to get access to all projects -->
+<!--
 <mat-tab-group *ngIf="session.user.sysAdmin">
     <mat-tab label="Own" class="content">
         <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
@@ -25,9 +68,12 @@
 
     </mat-tab>
 </mat-tab-group>
+-->
 
 <!-- no system admin rights -->
+<!--
 <div *ngIf="!session.user.sysAdmin" class="content">
     <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
     <app-project-list *ngIf="!loadProjects" [projects]="projects" [public]="!ownProfile"></app-project-list>
 </div>
+ -->

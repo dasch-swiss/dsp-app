@@ -5,11 +5,11 @@ import { ApiServiceError, Project, ProjectsService, Session, User, UsersService 
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
-    selector: 'app-project-list',
-    templateUrl: './project-list.component.html',
-    styleUrls: ['./project-list.component.scss']
+    selector: 'app-projects-list',
+    templateUrl: './projects-list.component.html',
+    styleUrls: ['./projects-list.component.scss']
 })
-export class ProjectListComponent implements OnInit {
+export class ProjectsListComponent implements OnInit {
 
     loading: boolean = true;
 
@@ -22,15 +22,11 @@ export class ProjectListComponent implements OnInit {
      * Is the list public and not the list of a logged-in user?
      * Then the "Create new Project"-button is disabled
      */
-    @Input() public?: boolean = true;
-
-
-    active: Project[] = [];
-    inactive: Project[] = [];
+    @Input() private?: boolean = false;
 
     list: { [type: string]: Project[] } = {
         ['active']: [],
-        ['inactive']: []
+        ['archived']: []
     };
 
     // i18n setup
@@ -55,7 +51,7 @@ export class ProjectListComponent implements OnInit {
                 this.list['active'].push(item);
 
             } else {
-                this.list['inactive'].push(item);
+                this.list['archived'].push(item);
             }
 
         }

@@ -1,0 +1,77 @@
+<mat-list>
+    <div *ngFor="let group of list | kuiKey">
+        <h3 mat-subheader>{{group.value.length}} {{group.key}} {{group.value.length | i18nPlural: itemPluralMapping['project']}}</h3>
+
+        <mat-list-item *ngFor="let project of group.value" class="link" [class.archived]="group.key === 'archived'" (click)="setProject(project.id, group.key)">
+            <mat-icon mat-list-icon>
+                <span *ngIf="group.key === 'active'">inbox</span>
+                <span *ngIf="group.key === 'archived'">lock</span>
+            </mat-icon>
+            <h4 mat-line>{{project.longname}}</h4>
+            <p mat-line> {{project.shortcode}} | {{project.shortname}} </p>
+        </mat-list-item>
+
+        <mat-divider *ngIf="group.key === 'active'"></mat-divider>
+    </div>
+</mat-list>
+
+<!--
+
+<div class="flex-container" *ngFor="let group of list | kuiKey">
+    <div fxFlex fxLayout="row wrap" fxLayout.sm="column" fxlayout.xs="column" fxFlexFill>
+
+        <div fxFlex *ngFor="let project of group.value | kuiSortBy: 'shortname'" class="preview">
+            <mat-card class="link" [class.archived]="group.key === 'inactive'" fxFlex
+                      (click)="setProject(project.id, group.key)" class="link active">
+                <mat-card-subtitle>{{project.shortcode}} | {{project.shortname}}</mat-card-subtitle>
+                <mat-card-title>{{project.longname}}</mat-card-title>
+
+                <mat-card-content>
+                    {{project.description.value}}
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+
+</div>
+<!--
+
+<br>
+<hr>
+<mat-card class="no-shadow" *ngFor="let group of list | kuiKey">
+
+    <mat-card-subtitle *ngIf="!public">
+        Member of
+        <span class="fill-remaining-space"></span>
+        <span>
+            <button mat-button color="primary" (click)="createProject()" *ngIf="group.key !== 'inactive'">
+                <mat-icon>add</mat-icon>
+                NEW
+            </button>
+        </span>
+    </mat-card-subtitle>
+    <mat-card-title>
+        <span>{{group.value.length}} {{group.key}}
+            {{group.value.length | i18nPlural: itemPluralMapping['project']}}</span>
+    </mat-card-title>
+
+    <mat-card-content>
+        <!-- list of active projects --
+        <div fxLayout="row wrap" fxFlexFill fxLayout.xs="column" fxLayoutGap="grid" fxLayoutAlign="stretch">
+
+            <div fxFlex="33.3" *ngFor="let project of group.value | kuiSortBy: 'shortname'" class="preview">
+                <mat-card (click)="setProject(project.id, group.key)" class="link active">
+
+                    <mat-card-subtitle>{{project.shortcode}} | {{project.shortname}}</mat-card-subtitle>
+                    <mat-card-title>{{project.longname}}</mat-card-title>
+
+                    <mat-card-content>
+                        {{project.description.value}}
+                    </mat-card-content>
+
+                </mat-card>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+ -->

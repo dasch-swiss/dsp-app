@@ -9,15 +9,8 @@
     </div>
 
     <table class="table">
-        <tr>
-            <td class="avatar-cell">avatar</td>
-            <td>name</td>
-            <td>admin</td>
-            <td>group</td>
-            <td>more...</td>
-        </tr>
 
-        <tr *ngFor="let user of list;">
+        <tr *ngFor="let user of list">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image link"
