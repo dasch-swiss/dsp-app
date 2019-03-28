@@ -25,7 +25,7 @@
         <mat-list class="navigation">
             <mat-list-item *ngFor="let item of navigation; let i = index;" class="nav-item">
 
-                <button mat-button [routerLink]="item.route" routerLinkActive="active-link" class="nav-item button">
+                <button mat-button [routerLink]="item.route" routerLinkActive="active-link" class="nav-item button" [class.border-top]="i === 3">
                     <mat-icon class="prefix">{{item.icon}}</mat-icon>
                     <span class="label">{{item.label}}</span>
                 </button>
@@ -44,7 +44,7 @@
             </mat-grid-tile>
         </mat-grid-list>-->
 
-    <div class="menu-footer">
+    <div class="menu-footer border-top">
         <button mat-button class="menu-action logout" (click)="logout()">
             <mat-icon>power_settings_new</mat-icon>
             Logout

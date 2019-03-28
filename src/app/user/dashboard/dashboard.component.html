@@ -7,6 +7,14 @@
         <h2 class="mat-title">Here you will find your latest work and your projects</h2>
 
         <mat-divider class="more-space"></mat-divider>
+        <h3>These are your projects</h3>
         <app-projects [username]="user.username"></app-projects>
+
+        <div *ngIf="sysAdmin">
+            <mat-divider class="more-space"></mat-divider>
+            <h3>As a system admin you have access to all projects</h3>
+            <app-projects [username]="user.username" [system]="sysAdmin"></app-projects>
+        </div>
+
     </div>
 </div>

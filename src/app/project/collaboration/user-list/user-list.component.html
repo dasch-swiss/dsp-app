@@ -13,15 +13,15 @@
         <tr *ngFor="let user of list">
             <!-- avatar -->
             <td class="avatar-cell">
-                <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image link"
-                     [routerLink]="'/user/' + user.username" />
+                <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image link" (click)="gotoUserProfile(user.username)" />
             </td>
 
             <!-- name and e-mail address -->
             <td>
-                <h5 class="mat-subheading-2 link" [routerLink]="'/user/' + user.username">{{user.givenName}}
-                    {{user.familyName}}</h5>
-                <p class="mat-subheading-1 link" [routerLink]="'/user/' + user.username">
+                <h5 class="mat-subheading-2 link" (click)="gotoUserProfile(user.username)">
+                    {{user.givenName}} {{user.familyName}}
+                </h5>
+                <p class="mat-subheading-1 link" (click)="gotoUserProfile(user.username)">
                     {{user.username}} | {{user.email}}
                     <!-- TODO: question: how public should the email address be? -->
                 </p>

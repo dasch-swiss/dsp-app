@@ -32,15 +32,15 @@ export class ProfileComponent implements OnInit {
         if (this._route.snapshot.params.name  && (this._route.snapshot.params.name.length > 3)) {
             this.username = this._route.snapshot.params.name;
             this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+            /*
             if (localStorage.getItem('session') && !this.loggedInUser) {
                 if (this.username === JSON.parse(localStorage.getItem('session')).user.name) {
                     // redirect to logged-in user profile
                     this._router.navigate(['/profile']);
                 }
             }
+            */
         }
-        // DEPRECATED! in case of route /profile, it's the logged in user's profile
-        // this.loggedInUser = (this._route.snapshot.routeConfig.path === 'profile');
 
         // get info about the logged-in user: does he have the right to change user's profile?
         if (localStorage.getItem('session') && !this.loggedInUser) {

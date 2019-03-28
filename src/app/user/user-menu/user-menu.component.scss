@@ -4,7 +4,6 @@
   height: 40px;
 }
 
-
 .menu-header,
 .menu-content,
 .menu-footer {
@@ -47,8 +46,11 @@
 
 }
 
-.menu-footer {
+.border-top {
   border-top: 1px solid rgba($primary, .1);
+}
+
+.menu-footer {
 
   .menu-action.logout {
     background: #ebebeb;

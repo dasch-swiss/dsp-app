@@ -1,17 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { forEach } from '@angular/router/src/utils/collection';
-import {
-    ApiServiceError,
-    Group,
-    KnoraConstants,
-    Project,
-    ProjectsService,
-    User,
-    UsersService,
-    PermissionData
-} from '@knora/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ApiServiceError, Group, KnoraConstants, PermissionData, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
@@ -63,7 +52,8 @@ export class UserListComponent implements OnInit {
         private _cache: CacheService,
         private _projectsService: ProjectsService,
         private _usersService: UsersService,
-        private _route: ActivatedRoute
+        private _route: ActivatedRoute,
+        private _router: Router
     ) {
         // get the shortcode of the current project
         this.projectcode = this._route.parent.snapshot.params.shortcode;
@@ -326,6 +316,14 @@ export class UserListComponent implements OnInit {
                         console.error(error);
                     }
                 );
+        }
+    }
+
+    gotoUserProfile(name: string) {
+        if (name === JSON.parse(localStorage.getItem('session')).user.name) {
+            this._router.navigate(['/projects']);
+        } else {
+            this._router.navigate(['/user/' + name]);
         }
     }
 }

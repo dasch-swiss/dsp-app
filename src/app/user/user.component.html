@@ -19,17 +19,17 @@
         <div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
 
             <!-- user profile -->
-            <app-profile [username]="username" *ngSwitchCase="'profile'"></app-profile>
+            <app-projects [username]="username" *ngSwitchCase="'profile'"></app-projects>
 
             <!-- edit user data -->
             <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
 
             <!-- user's projects -->
-            <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
+            <app-projects class="full-width" [username]="username" *ngSwitchCase="'projects'"></app-projects>
 
             <!-- system's projects -->
             <!-- TODO: this should be available only, when the user has system admin rights -->
-            <app-projects [username]="username" [system]="true" *ngSwitchCase="'system'"></app-projects>
+            <app-projects class="full-width" [username]="username" [system]="true" *ngSwitchCase="'system'"></app-projects>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
             <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>

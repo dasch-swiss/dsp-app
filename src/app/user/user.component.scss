@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: row;
 
+    .full-width {
+        width: 100%;
+    }
+
     .content-sidebar {
         width: 25%;
         padding-right: 16px;
