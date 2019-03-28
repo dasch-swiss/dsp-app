@@ -35,12 +35,12 @@ export class AppGlobal {
         },
         */
         {
-            label: 'Projects',
+            label: 'Your Projects',
             route: '/projects',
             icon: 'all_inbox'
         },
         {
-            label: 'Collections',
+            label: 'Your Collections',
             route: '/collections',
             icon: 'star'
         },
