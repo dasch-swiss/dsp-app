@@ -40,8 +40,8 @@
 
 <div *ngIf="!system" class="content">
     <!-- <mat-divider></mat-divider> -->
-    <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
-    <app-projects-list *ngIf="!loadSystem" [projects]="projects" [private]></app-projects-list>
+    <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
+    <app-projects-list *ngIf="!loadProjects" [projects]="projects" [private]></app-projects-list>
 </div>
 
 <div *ngIf="system" class="content">
