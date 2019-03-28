@@ -23,7 +23,7 @@
     "@angular/platform-browser": "~7.2.8",
     "@angular/platform-browser-dynamic": "~7.2.8",
     "@angular/router": "~7.2.8",
-    "@knora/action": "7.1.0",
+    "@knora/action": "file:.yalc/@knora/action",
     "@knora/authentication": "7.1.0",
     "@knora/core": "7.1.0",
     "@knora/search": "7.1.0",
