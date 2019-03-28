@@ -1,6 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators
+} from '@angular/forms';
 import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
+import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
     selector: 'app-user-password',
@@ -8,8 +14,9 @@ import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
     styleUrls: ['./user-password.component.scss']
 })
 export class UserPasswordComponent implements OnInit {
-
     @Input() username: string;
+
+    user: User;
 
     // visibility of password
     showOldPassword = false;
@@ -43,68 +50,102 @@ export class UserPasswordComponent implements OnInit {
 
     // error checking on the following fields
     formErrors = {
-        'requesterPassword': '',
-        'newPassword': ''
+        requesterPassword: '',
+        newPassword: ''
     };
 
     // ...and the error hints
     validationMessages = {
-        'requesterPassword': {
-            'required': 'The old password is required'
+        requesterPassword: {
+            required: 'The old password is required'
         },
-        'newPassword': {
-            'required': 'A new password is needed, if you want to change it.',
-            'minlength': 'Use at least 8 characters.',
-            'pattern': 'The password should have at least one uppercase letter and one number.'
+        newPassword: {
+            required: 'A new password is needed, if you want to change it.',
+            minlength: 'Use at least 8 characters.',
+            pattern:
+                'The password should have at least one uppercase letter and one number.'
         }
     };
 
-
-    constructor(private _usersService: UsersService,
-        private _formBuilder: FormBuilder) {
-    }
+    constructor(
+        private _cache: CacheService,
+        private _usersService: UsersService,
+        private _formBuilder: FormBuilder
+    ) {}
 
     ngOnInit() {
+        this.username = JSON.parse(localStorage.getItem('session')).user.name;
+        this._cache
+            .get(
+                this.username,
+                this._usersService.getUserByUsername(this.username)
+            )
+            .subscribe(
+                (response: User) => {
+                    this.user = response;
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
 
         this.userPasswordForm = this._formBuilder.group({
-            'requesterPassword': new FormControl({
-                value: '', disabled: false
-            }, [
-                    Validators.required
-                ]),
-            'newPassword': new FormControl({
-                value: '', disabled: false
-            }, [
+            username: new FormControl({
+                value: this.username,
+                disabled: true
+            }),
+            requesterPassword: new FormControl(
+                {
+                    value: '',
+                    disabled: false
+                },
+                [Validators.required]
+            ),
+            newPassword: new FormControl(
+                {
+                    value: '',
+                    disabled: false
+                },
+                [
                     Validators.required,
                     Validators.minLength(8),
                     Validators.pattern(Utils.RegexPassword)
-
-                ])
+                ]
+            )
         });
         this.requesterPasswordForm = this._formBuilder.group({
-            'requesterPassword': new FormControl({
-                value: '', disabled: false
-            }, [
-                Validators.required
-            ])
+            requesterPassword: new FormControl(
+                {
+                    value: '',
+                    disabled: false
+                },
+                [Validators.required]
+            )
         });
 
         this.newPasswordForm = this._formBuilder.group({
-            'newPassword': new FormControl({
-                value: '', disabled: false
-            }, [
-                Validators.required,
-                Validators.minLength(8),
-                Validators.pattern(Utils.RegexPassword)
-            ])
+            newPassword: new FormControl(
+                {
+                    value: '',
+                    disabled: false
+                },
+                [
+                    Validators.required,
+                    Validators.minLength(8),
+                    Validators.pattern(Utils.RegexPassword)
+                ]
+            )
         });
 
-        this.userPasswordForm.valueChanges
-            .subscribe(data => this.onValueChanged(this.userPasswordForm, data));
-        this.newPasswordForm.valueChanges
-            .subscribe(data => this.onValueChanged(this.newPasswordForm, data));
-        this.requesterPasswordForm.valueChanges
-            .subscribe(data => this.onValueChanged(this.requesterPasswordForm, data));
+        this.userPasswordForm.valueChanges.subscribe(data =>
+            this.onValueChanged(this.userPasswordForm, data)
+        );
+        this.newPasswordForm.valueChanges.subscribe(data =>
+            this.onValueChanged(this.newPasswordForm, data)
+        );
+        this.requesterPasswordForm.valueChanges.subscribe(data =>
+            this.onValueChanged(this.requesterPasswordForm, data)
+        );
 
         this.onValueChanged(this.userPasswordForm); // (re)set validation messages now
         this.onValueChanged(this.newPasswordForm); // (re)set validation messages now
@@ -114,12 +155,9 @@ export class UserPasswordComponent implements OnInit {
 
         // get the user data only if a user is logged in
         this.loggedInUser = JSON.parse(localStorage.getItem('session')).user;
-
-
     }
 
     onValueChanged(form: FormGroup, data?: any) {
-
         // const form = this.userPasswordForm;
 
         Object.keys(this.formErrors).map(field => {
@@ -130,11 +168,9 @@ export class UserPasswordComponent implements OnInit {
                 Object.keys(control.errors).map(key => {
                     this.formErrors[field] += messages[key] + ' ';
                 });
-
             }
         });
     }
-
 
     /**
      * toggle the visibility of the password
@@ -143,11 +179,10 @@ export class UserPasswordComponent implements OnInit {
         ev.preventDefault();
 
         if (password === 'old') {
-            this.showOldPassword = (!this.showOldPassword);
+            this.showOldPassword = !this.showOldPassword;
         } else {
-            this.showNewPassword = (!this.showNewPassword);
+            this.showNewPassword = !this.showNewPassword;
         }
-
     }
 
     /**
@@ -157,7 +192,6 @@ export class UserPasswordComponent implements OnInit {
         this.oldPswd = !this.oldPswd;
     }
 
-
     /**
      *
      */
@@ -166,6 +200,30 @@ export class UserPasswordComponent implements OnInit {
         this.oldPasswordIsWrong = false;
 
         this.loading = true;
+        this._usersService
+            .updateOwnPassword(
+                this.user.id,
+                this.userPasswordForm.controls['requesterPassword'].value,
+                this.userPasswordForm.controls['newPassword'].value
+            )
+            .subscribe(
+                (result: User) => {
+                    // console.log(this.userPasswordForm.value);
+                    this.success = true;
+                    this.loading = false;
+                },
+                (error: ApiServiceError) => {
+                    if (error.status === 403) {
+                        // the old password is wrong
+                        this.oldPasswordIsWrong = true;
+                        this.success = false;
+                    } else {
+                        this.errorMessage = error;
+                    }
+
+                    this.loading = false;
+                }
+            );
         // TODO: update user doesn't exist anymore in user service
         // TODO: fix update password for own user and for other users
         /*
@@ -191,7 +249,6 @@ export class UserPasswordComponent implements OnInit {
         */
 
         this.oldPswd = !this.oldPswd;
-
     }
 
     submitSysAdminData(): void {
@@ -200,7 +257,8 @@ export class UserPasswordComponent implements OnInit {
 
         this.loading = true;
 
-        const requesterPassword = this.requesterPasswordForm.value.requesterPassword;
+        const requesterPassword = this.requesterPasswordForm.value
+            .requesterPassword;
         const newPassword = this.newPasswordForm.value.newPassword;
 
         this.pswdData = {
@@ -236,7 +294,5 @@ export class UserPasswordComponent implements OnInit {
         */
 
         this.oldPswd = !this.oldPswd;
-
     }
-
 }
