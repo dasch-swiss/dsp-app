@@ -10,7 +10,7 @@
 
     <table class="table">
 
-        <tr *ngFor="let user of list">
+        <tr *ngFor="let user of list; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image link" (click)="gotoUserProfile(user.username)" />

@@ -33,7 +33,7 @@
         </mat-card-content>
 
         <mat-card-actions>
-            <button mat-icon-button class="right" [routerLink]="'../edit'">
+            <button mat-icon-button class="right" [routerLink]="'../edit'" *ngIf="project.status">
                 <mat-icon>edit</mat-icon>
             </button>
         </mat-card-actions>

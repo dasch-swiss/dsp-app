@@ -18,8 +18,6 @@ export class HeaderComponent implements OnInit {
                 private _matIconRegistry: MatIconRegistry,
                 private _router: Router) {
 
-                    console.log(this._router);
-
         // kuirl icon with text
         this._matIconRegistry.addSvgIcon(
             'kuirl_banner',

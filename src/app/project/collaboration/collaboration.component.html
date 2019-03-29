@@ -1,13 +1,13 @@
 <div class="content large middle">
-    <mat-card class="no-shadow">
+    <mat-card class="no-shadow" *ngIf="project?.status">
         <!-- select user to add to the team -->
         <mat-card-subtitle>Collaboration</mat-card-subtitle>
         <mat-card-title>{{"appLabels.form.user.title.add2project" | translate}}</mat-card-title>
 
-        <app-add-user [projectcode]="projectcode" (refreshParent)="refresh()" *ngIf="project?.status" #addUserComponent></app-add-user>
+        <app-add-user [projectcode]="projectcode" (refreshParent)="refresh()" #addUserComponent></app-add-user>
     </mat-card>
 
-    <mat-divider></mat-divider>
+    <mat-divider *ngIf="project?.status" ></mat-divider>
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
