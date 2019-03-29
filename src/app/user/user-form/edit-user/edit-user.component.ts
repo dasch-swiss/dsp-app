@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { UserFormComponent } from '../user-form.component';
+import { ConfirmDialogComponent } from 'src/app/main/dialog/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-edit-user',
@@ -17,7 +18,7 @@ export class EditUserComponent implements OnInit {
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(UserFormComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '250px'
     });
   }
