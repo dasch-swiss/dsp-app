@@ -36,7 +36,7 @@
 
     <span class="action">
         <app-select-language></app-select-language>
-        <button mat-raised-button color="primary" routerLink="/login" *ngIf="!session" class="login">LOGIN</button>
+        <button mat-raised-button color="primary" *ngIf="!session" class="login" (click)="goToLogin()">LOGIN</button>
         <app-user-menu *ngIf="session"></app-user-menu>
     </span>
 </mat-toolbar>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NavigationStart, Router } from '@angular/router';
-import { AuthenticationService } from '@knora/authentication';
+import { NavigationStart, Router, ActivatedRoute } from '@angular/router';
+import { AuthenticationService, AuthGuard } from '@knora/authentication';
 
 @Component({
     selector: 'app-header',
@@ -14,9 +15,14 @@ export class HeaderComponent implements OnInit {
     session: boolean;
 
     constructor(private _auth: AuthenticationService,
+                private _guard: AuthGuard,
                 private _domSanitizer: DomSanitizer,
                 private _matIconRegistry: MatIconRegistry,
+                private _location: Location,
+                private _route: ActivatedRoute,
                 private _router: Router) {
+
+                    console.log(this._router);
 
         // kuirl icon with text
         this._matIconRegistry.addSvgIcon(
@@ -38,6 +44,14 @@ export class HeaderComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    goToLogin() {
+        this._router.navigate(['login'], {
+            queryParams: {
+                returnUrl: this._router.url
+            }
+        });
     }
 
 }
