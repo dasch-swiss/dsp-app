@@ -14,6 +14,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
     styleUrls: ['./user-password.component.scss']
 })
 export class UserPasswordComponent implements OnInit {
+
     @Input() username: string;
 
     user: User;
@@ -113,6 +114,7 @@ export class UserPasswordComponent implements OnInit {
                 ]
             )
         });
+
         this.requesterPasswordForm = this._formBuilder.group({
             requesterPassword: new FormControl(
                 {
@@ -224,7 +226,7 @@ export class UserPasswordComponent implements OnInit {
                     this.loading = false;
                 }
             );
-        // TODO: update user doesn't exist anymore in user service
+        // TODO: updateUser doesn't exist anymore in user service
         // TODO: fix update password for own user and for other users
         /*
         this._usersService.updateUser(this.username, this.userPasswordForm.value).subscribe(

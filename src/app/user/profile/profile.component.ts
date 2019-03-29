@@ -13,6 +13,7 @@ export class ProfileComponent implements OnInit {
 
     loading: boolean;
     error: boolean;
+    errorMessage: any;
 
     @Input() username: string;
 
@@ -64,6 +65,8 @@ export class ProfileComponent implements OnInit {
             },
             (error: any) => {
                 console.error(error);
+                this.errorMessage = error;
+                this.loading = false;
             }
         );
     }

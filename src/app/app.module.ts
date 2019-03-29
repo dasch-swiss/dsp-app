@@ -58,6 +58,8 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
+import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -115,7 +117,8 @@ export function initializeApp(appInitService: AppInitService) {
         WorkspaceComponent,
         DesignQuestionComponent,
         DashboardComponent,
-        ProjectMenuComponent
+        ProjectMenuComponent,
+        EditUserComponent
     ],
     imports: [
         AppRoutingModule,
@@ -140,6 +143,7 @@ export function initializeApp(appInitService: AppInitService) {
     entryComponents: [
         ConfirmDialogComponent,
         FullframeDialogComponent,
+        EditUserComponent,
         ResourceTypeComponent
     ],
     providers: [
@@ -153,7 +157,8 @@ export function initializeApp(appInitService: AppInitService) {
         {
             provide: KuiCoreConfigToken,
             useFactory: () => AppInitService.coreConfig
-        }
+        },
+        {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
     ],
     bootstrap: [AppComponent]
 })

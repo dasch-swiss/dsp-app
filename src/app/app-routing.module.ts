@@ -16,6 +16,7 @@ import { ProfileComponent } from './user/profile/profile.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
+import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
 
 const routes: Routes = [
     {
@@ -86,9 +87,8 @@ const routes: Routes = [
     },
     {
         path: 'user/:name/edit',
-        component: FullframeDialogComponent,
-        canActivate: [AuthGuard],
-        data: {component: UserFormComponent}
+        component: EditUserComponent,       // just for testing
+        canActivate: [AuthGuard]
     },
     {
         path: 'profile',

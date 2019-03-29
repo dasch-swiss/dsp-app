@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { AuthenticationService } from '@knora/authentication';
 import { ApiServiceError, User, UsersService } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { MenuItem } from '../../main/declarations/menu-item';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-user-menu',
@@ -17,41 +19,36 @@ export class UserMenuComponent implements OnInit {
 
     sysAdmin: boolean = false;
 
-    navigation: MenuItem[] = AppGlobal.userNav;
+    navigation: MenuItem[];
 
     constructor(
         private _auth: AuthenticationService,
-        private _cache: CacheService,
-        private _usersService: UsersService
+        private _location: Location,
+        private _router: Router
     ) {}
 
     ngOnInit() {
+        this.navigation = AppGlobal.userNav;
         this.username = JSON.parse(localStorage.getItem('session')).user.name;
-        this._cache
-            .get(
-                this.username,
-                this._usersService.getUserByUsername(this.username)
-            )
-            .subscribe(
-                (response: User) => {
-                    this.user = response;
-                    if (this.user.systemAdmin) {
-                        this.navigation.push({
-                            label: 'System',
-                            route: '/system',
-                            icon: 'all_inbox'
-                        });
-                    }
-                },
-                (error: ApiServiceError) => {
-                    console.error(error);
-                }
-            );
+        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+
+        if (this.sysAdmin) {
+            this.navigation.push({
+                label: 'System',
+                route: '/system',
+                icon: 'all_inbox'
+            });
+        }
     }
 
     logout() {
         this._auth.logout();
-        // TODO: location.reload is deprecated... find new solution to refresh the whole page
-        location.reload(true);
+        // reload the page
+        this._router.navigate([this._location.path()]);
+//        this._location.go(this._location.path());
+/*
+this._router.navigateByUrl('/refresh', {skipLocationChange: true}).then(() =>
+this._router.navigate(['/project/' + project.shortcode])
+); */
     }
 }

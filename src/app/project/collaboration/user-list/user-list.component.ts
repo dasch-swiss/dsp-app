@@ -193,6 +193,16 @@ export class UserListComponent implements OnInit {
             'TODO: only visible for system admins; open dialog with edit user form'
         );
     }
+
+
+
+    editUserPassword(id: string): void {
+        alert(
+            'TODO: only visible for system admins; open dialog with user-password form'
+        );
+    }
+
+
     /**
      * remove user from project and update list of users
      *
