@@ -20,7 +20,6 @@ export class MaterialDialogComponent implements OnInit {
     ngOnInit() {}
 
     closeDialog(data: any): void {
-      console.log('hello world', data);
       this.dialogRef.close();
     }
 }

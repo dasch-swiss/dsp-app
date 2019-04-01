@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import {
     ApiServiceError,
     Group,
@@ -12,7 +13,6 @@ import {
 } from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
 import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
-import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'app-user-list',
@@ -25,7 +25,7 @@ export class UserListComponent implements OnInit {
     @Input() list: User[];
     @Input() disabled?: boolean;
 
-    @Output() userUpdate: EventEmitter<any> = new EventEmitter<any>();
+    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
     // knora admin group iri
     adminGroupIri: string = KnoraConstants.ProjectAdminGroupIRI;
@@ -178,7 +178,7 @@ export class UserListComponent implements OnInit {
                 .subscribe(
                     (result: User) => {
                         // console.log(result);
-                        this.userUpdate.emit();
+                        this.refreshParent.emit();
                     },
                     (error: ApiServiceError) => {
                         console.error(error);
@@ -191,7 +191,7 @@ export class UserListComponent implements OnInit {
                 .subscribe(
                     (result: User) => {
                         // console.log(result);
-                        this.userUpdate.emit();
+                        this.refreshParent.emit();
                     },
                     (error: ApiServiceError) => {
                         console.error(error);
@@ -207,31 +207,7 @@ export class UserListComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
-            // update the view
-        });
-    }
-
-    editUserData(name: string): void {
-        const dialogRef = this._dialog.open(MaterialDialogComponent, {
-            width: '560px',
-            data: { name: name, component: 'editUser' }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
-            // update the view
-        });
-    }
-
-    editUserPassword(name: string): void {
-        const dialogRef = this._dialog.open(MaterialDialogComponent, {
-            // width: '250px',
-            data: { name: name, component: 'editPassword' }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
+            this.refreshParent.emit();
             // update the view
         });
     }
@@ -245,7 +221,7 @@ export class UserListComponent implements OnInit {
     removeUserFromProject(id: string): void {
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
-                this.userUpdate.emit();
+                this.refreshParent.emit();
             },
             (error: ApiServiceError) => {
                 // this.errorMessage = error;
