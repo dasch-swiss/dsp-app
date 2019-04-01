@@ -17,6 +17,7 @@ import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
+import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 
 const routes: Routes = [
     {
@@ -114,6 +115,10 @@ const routes: Routes = [
         path: 'collections',
         component: UserComponent,
         canActivate: [AuthGuard]
+    },
+    {
+        path: 'dev',
+        component: DesignQuestionComponent
     },
     {
         path: '**',
