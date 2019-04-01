@@ -68,10 +68,10 @@
                         <span *ngIf="isProjectAdmin(user.permissions)">Remove</span>
                         <span>&nbsp;as project admin</span>
                     </button>
-                    <button mat-menu-item (click)="editUserData(user.id)">
+                    <button mat-menu-item (click)="openDialog('editUser', user.username)">
                         Edit user
                     </button>
-                    <button mat-menu-item (click)="editUserPassword(user.id)">
+                    <button mat-menu-item (click)="openDialog('editPassword', user.username)">
                         Change user's password
                     </button>
                     <button mat-menu-item (click)="removeUserFromProject(user.id)">

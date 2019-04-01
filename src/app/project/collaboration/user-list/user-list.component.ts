@@ -1,7 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiServiceError, Group, KnoraConstants, PermissionData, Project, ProjectsService, User, UsersService } from '@knora/core';
+import {
+    ApiServiceError,
+    Group,
+    KnoraConstants,
+    PermissionData,
+    Project,
+    ProjectsService,
+    User,
+    UsersService
+} from '@knora/core';
 import { CacheService } from '../../../main/cache/cache.service';
+import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'app-user-list',
@@ -50,6 +61,7 @@ export class UserListComponent implements OnInit {
 
     constructor(
         private _cache: CacheService,
+        private _dialog: MatDialog,
         private _projectsService: ProjectsService,
         private _usersService: UsersService,
         private _route: ActivatedRoute,
@@ -188,20 +200,41 @@ export class UserListComponent implements OnInit {
         }
     }
 
-    editUserData(id: string): void {
-        alert(
-            'TODO: only visible for system admins; open dialog with edit user form'
-        );
+    openDialog(mode: string, name: string): void {
+        const dialogRef = this._dialog.open(MaterialDialogComponent, {
+            width: '560px',
+            data: { name: name, mode: mode }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            // update the view
+        });
     }
 
+    editUserData(name: string): void {
+        const dialogRef = this._dialog.open(MaterialDialogComponent, {
+            width: '560px',
+            data: { name: name, component: 'editUser' }
+        });
 
-
-    editUserPassword(id: string): void {
-        alert(
-            'TODO: only visible for system admins; open dialog with user-password form'
-        );
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            // update the view
+        });
     }
 
+    editUserPassword(name: string): void {
+        const dialogRef = this._dialog.open(MaterialDialogComponent, {
+            // width: '250px',
+            data: { name: name, component: 'editPassword' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            // update the view
+        });
+    }
 
     /**
      * remove user from project and update list of users

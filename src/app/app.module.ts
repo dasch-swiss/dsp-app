@@ -145,7 +145,8 @@ export function initializeApp(appInitService: AppInitService) {
     entryComponents: [
         ConfirmDialogComponent,
         FullframeDialogComponent,
-        ResourceTypeComponent
+        ResourceTypeComponent,
+        MaterialDialogComponent
     ],
     providers: [
         AppInitService,

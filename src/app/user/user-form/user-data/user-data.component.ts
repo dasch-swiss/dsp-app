@@ -23,7 +23,7 @@ export class UserDataComponent implements OnInit, OnChanges {
      * user iri, email or username: in case of edit
      *
      */
-    @Input() id?: string;
+    @Input() username?: string;
 
     /**
      * user data
@@ -159,10 +159,11 @@ export class UserDataComponent implements OnInit, OnChanges {
 
         this.loading = true;
 
+        /*
         if (this.id) {
             /**
              * edit mode: get user data from cache
-             */
+             *
             this._cache.get(this.id, this._users.getUserByIri(this.id)).subscribe(
                 (response: User) => {
                     this.user = response;
@@ -175,7 +176,7 @@ export class UserDataComponent implements OnInit, OnChanges {
         } else {
             /**
              * create mode: empty form for new user
-             */
+             *
             // get existing users to avoid same usernames and email addresses
             this._cache.get('allUsers', this._users.getAllUsers())
                 .subscribe(
@@ -197,7 +198,7 @@ export class UserDataComponent implements OnInit, OnChanges {
                         this.loading = !this.buildForm(new User());
                     }
                 );
-        }
+        } */
     }
 
     ngOnChanges() {

@@ -82,14 +82,14 @@
 
         <div class="form-panel form-action">
             <span>
-                <button mat-button (click)="reset(user)">
+                <button mat-button type="reset" (click)="resetForm($event, user)">
                     {{ 'appLabels.form.action.reset' | translate }}
                 </button>
 
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="button" color="primary" (click)="submitData()" [disabled]="!form.valid">
+                <button mat-raised-button type="submit" color="primary" (click)="submitData()" [disabled]="!form.valid">
                     <span *ngIf="username">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!username">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>

@@ -1,3 +1,15 @@
-<p>
-  material-dialog works!
-</p>
+<div [ngSwitch]="data.mode">
+
+    <!-- Update user profile data -->
+    <div *ngSwitchCase="'editUser'">
+        <app-user-form [username]="data.name" (updateData)="closeDialog()"></app-user-form>
+    </div>
+
+    <!-- Edit password -->
+    <div *ngSwitchCase="'editPassword'">
+        <app-user-password [username]="data.name"></app-user-password>
+    </div>
+
+    <!-- Default dialog content component -->
+    <div *ngSwitchDefault>This component {{data.mode}} is not implemented yet.</div>
+</div>
