@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
+import { Session } from '@knora/authentication';
 
 @Component({
     selector: 'app-board',
@@ -10,59 +11,73 @@ import { CacheService } from '../../main/cache/cache.service';
     styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
-
     loading: boolean;
 
     projectcode: string;
 
     project: Project;
+    loggedInAdmin: boolean = false;
     projectMembers: User[] = [];
 
     // i18n setup
     itemPluralMapping = {
-        'member': {
+        member: {
             // '=0': '0 Members',
             '=1': '1 Member',
-            'other': '# Members'
+            other: '# Members'
         },
-        'ontology': {
+        ontology: {
             // '=0': '0 Ontologies',
             '=1': '1 Ontology',
-            'other': '# Ontologies'
+            other: '# Ontologies'
         },
-        'keyword': {
+        keyword: {
             // '=0': '0 Keywords',
             '=1': '1 Keyword',
-            'other': '# Keywords'
+            other: '# Keywords'
         }
     };
 
-    constructor(private _cache: CacheService,
-                private _route: ActivatedRoute,
-                private _projectsService: ProjectsService,
-                private _titleService: Title) {
-
+    constructor(
+        private _cache: CacheService,
+        private _route: ActivatedRoute,
+        private _projectsService: ProjectsService,
+        private _titleService: Title
+    ) {
         // get the shortcode of the current project
         this.projectcode = this._route.parent.snapshot.params.shortcode;
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode);
-
     }
 
     ngOnInit() {
         this.loading = true;
 
         // get project data from cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-            (response: any) => {
-                this.project = response;
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-            }
-        );
+        this._cache
+            .get(
+                this.projectcode,
+                this._projectsService.getProjectByShortcode(this.projectcode)
+            )
+            .subscribe(
+                (result: any) => {
+                    this.project = result;
 
+                    // is the logged-in user a project admin?
+                    const session: Session = JSON.parse(
+                        localStorage.getItem('session')
+                    );
+                    this.loggedInAdmin = session.user.projectAdmin.some(e => e === result.id);
+
+                    this.loading = false;
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+
+        /*
         this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode)).subscribe(
             (result: User[]) => {
                 this.projectMembers = result;
@@ -71,9 +86,8 @@ export class BoardComponent implements OnInit {
                 console.error(error);
             }
         );
+        */
 
         this.loading = false;
-
     }
-
 }

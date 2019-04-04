@@ -1,6 +1,6 @@
-<kui-progress-indicator *ngIf="loading && (!project && !projectMembers)"></kui-progress-indicator>
+<kui-progress-indicator *ngIf="loading && !project"></kui-progress-indicator>
 
-<div *ngIf="!loading && (project && projectMembers)" class="content large middle">
+<div *ngIf="!loading && project" class="content large middle">
     <!-- project header with shortcode, shortname and project long name -->
     <mat-card class="no-shadow">
         <mat-card-subtitle>
@@ -33,7 +33,7 @@
         </mat-card-content>
 
         <mat-card-actions>
-            <button mat-icon-button class="right" [routerLink]="'../edit'" *ngIf="project.status">
+            <button mat-icon-button class="right" [routerLink]="'../edit'" *ngIf="project.status && loggedInAdmin">
                 <mat-icon>edit</mat-icon>
             </button>
         </mat-card-actions>

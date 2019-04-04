@@ -1,4 +1,5 @@
 import { MenuItem } from './main/declarations/menu-item';
+import { Session } from '@knora/authentication';
 
 export class AppGlobal {
     // project navigation
@@ -51,5 +52,3 @@ export class AppGlobal {
         }
     ];
 }
-
-

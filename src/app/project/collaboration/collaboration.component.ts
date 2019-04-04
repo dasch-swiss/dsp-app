@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
+import { Session } from '@knora/authentication';
 
 @Component({
     selector: 'app-collaboration',
@@ -46,6 +47,17 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
+
+        // go back to project page, if the logged-in user has no admin rights
+        // is the logged-in user a project admin?
+        /*
+        const session: Session = JSON.parse(
+            localStorage.getItem('session')
+        );
+        this.loggedInAdmin = session.user.projectAdmin.some(
+            e => e === result.id
+        );
+        */
 
     }
 
