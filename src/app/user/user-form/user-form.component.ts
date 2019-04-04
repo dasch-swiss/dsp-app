@@ -4,17 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
 import {
     ApiServiceError,
-    AutocompleteItem,
     KnoraConstants,
     Project,
     ProjectsService,
-    Session,
     User,
     UsersService,
     Utils
 } from '@knora/core';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Session } from '@knora/authentication';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -321,7 +318,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         //        this.loading = false;
 
         this.form.valueChanges
-            .subscribe(data => this.onValueChanged(data));
+            .subscribe(data => this.onValueChanged());
         return true;
 
     }
@@ -330,7 +327,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      *
      * @param data
      */
-    onValueChanged(data?: any) {
+    onValueChanged() {
 
         if (!this.form) {
             return;
@@ -415,7 +412,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                             (p: Project) => {
                                 // add user to project
                                 this._users.addUserToProject(this.user.id, p.id).subscribe(
-                                    (add: User) => {
+                                    () => {
 
                                         // update project cache and member of project cache
                                         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));

@@ -315,38 +315,38 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@knora/action@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@knora/action/-/action-7.0.1.tgz#08e5b7989d6fb0bd31af9f05e8bf2cb490f26e96"
-  integrity sha512-3Q8TLaScMYzCtRe7SroF43cjkZXS2U10/WlJz5qr8QHaM7nz6azWthiIFGTHSRyHHybmDOQ+KL7/W+09kKP7pQ==
+"@knora/action@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@knora/action/-/action-7.3.0.tgz#06affa4f3ac8b14371a5ed6866f7c8a0df9e8484"
+  integrity sha512-BmbAWKTlYxr0PTYfJ9sKS4Cx+L29Zy2DOmaKTHHsECQAxnAR7Wq7fADBg/2hXZPtgWT7A8Ns6MeXvPk5Owg+Xg==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/authentication@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@knora/authentication/-/authentication-7.0.1.tgz#adde63fac5031b44ebc4a65dd47097bae2583dc5"
-  integrity sha512-ubNNddItaUGgSPvgnbK+22N1HRPZwlpspdHw2npODvy6jX90rndNyWaTTE1zk63TCh9xkO9ug9mhIE9CmJbKDg==
+"@knora/authentication@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@knora/authentication/-/authentication-7.3.0.tgz#c4f09cfa1071a29d0132f54be2252ab5ac95e983"
+  integrity sha512-z9QoxiMFkCEdg8viNcH2Bh8PrxDby65JNoZ6oq0v2Qxo0zjImM0X4FpKT4hXRkSk8Pyb20uxVxcGLfJm7POy9g==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/core@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@knora/core/-/core-7.0.1.tgz#bd6060908758e23ef9288aa901575cef3a6f386f"
-  integrity sha512-1Y9cymcw5sJDOVX3OQrBZZwVEBc7ZWDWZmWaCC5pgedEliK2c4OshPM1KBBaDj8FGBIfXFIafCm+BAh4krPPAQ==
+"@knora/core@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@knora/core/-/core-7.3.0.tgz#e50c15f57ea9d8e5f638f193e3a6f9e01030f99c"
+  integrity sha512-Cv7/xoRi9fAKZnO7IoHNXj5ep8TEzthyc78SnaB7gambIaI2vHZ+TrHayn9jRUuw3ZQzswqmCuZdSSfA2ATLBg==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/search@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@knora/search/-/search-7.0.1.tgz#bbe3d287ff525e35e64e86651587f59bd1dc8c3a"
-  integrity sha512-cLpOnm9w5e6oWZqAWZsGhPXB1rZTmzi3HCSIYSvVnV2xD5z0SZNu+EV+QzGRVwn0JvP2tb52HF+phCSLYftk8Q==
+"@knora/search@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@knora/search/-/search-7.3.0.tgz#e99feace48da5255a6e3686d3b84847f8ce689b1"
+  integrity sha512-95j17fBPcXLigqSUNnZxdX4NiRstZ563wttAVk8RjGX8hFuCVzVtcjUIW1GcR6FgqLzbc8+WAxu2kcAYdffMcA==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/viewer@7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-7.0.1.tgz#c5a152ccd5d823ecfd2944fc19aa541e95739444"
-  integrity sha512-7BN2N5L6F6pHeCDMJoX1DVRfCS7f1pO0c8Yn9UoZpKsfiH8AwiDDB4Lf31CDWPqJJrVDuZugIfq2vtARb8Qepg==
+"@knora/viewer@7.3.0":
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-7.3.0.tgz#70a1542653fe15bb42b1b39dfa341dffdcfdcd1a"
+  integrity sha512-5WzqxgBGgIL8ESbGH706oxXlHUgE0VSx9QsWOMD2DIqA3gPwN3BsPOpYenhXAB7M+eQTgle0V2XoJGPsUfRepQ==
   dependencies:
     tslib "^1.9.0"
 

@@ -1,8 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { ApiServiceError, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
-import { CacheService } from '../../../main/cache/cache.service';
+import { Project } from '@knora/core';
 
 @Component({
     selector: 'app-projects-list',
