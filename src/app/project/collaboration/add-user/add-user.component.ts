@@ -234,9 +234,9 @@ export class AddUserComponent implements OnInit {
 
     /**
      * filter a list while typing in auto complete input field
-     * @param {AutocompleteItem[]} list List of options
-     * @param {string} name Value to filter by
-     * @returns {AutocompleteItem[]} Filtered list of options
+     * @param list List of options
+     * @param name Value to filter by
+     * @returns Filtered list of options
      */
     filter(list: AutocompleteItem[], name: string) {
         return list.filter(user =>
