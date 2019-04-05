@@ -76,9 +76,19 @@ export class ProjectComponent implements OnInit {
                         const session: Session = JSON.parse(
                             localStorage.getItem('session')
                         );
-                        this.loggedInAdmin = session.user.projectAdmin.some(
-                            e => e === result.id
-                        );
+
+                        // use cache service to set permissions
+                        //
+                        if (session.user.sysAdmin) {
+                            // if the logged-in user is system admin, he's also projectAdmin
+                            this.loggedInAdmin = session.user.sysAdmin;
+                        } else {
+                            // logged-in user is not system admin; but is he projectAdmin?
+                            this.loggedInAdmin = session.user.projectAdmin.some(
+                                e => e === result.id
+                            );
+                        }
+                        this._cache.set('projectAdmin', this.loggedInAdmin);
 
                         if (this.loggedInAdmin) {
                             this._cache.get(

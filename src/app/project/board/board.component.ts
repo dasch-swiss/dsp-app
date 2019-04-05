@@ -64,11 +64,11 @@ export class BoardComponent implements OnInit {
                 (result: any) => {
                     this.project = result;
 
-                    // is the logged-in user a project admin?
-                    const session: Session = JSON.parse(
-                        localStorage.getItem('session')
+                    this._cache.get('projectAdmin').subscribe(
+                        (pa: boolean) => {
+                            this.loggedInAdmin = pa;
+                        }
                     );
-                    this.loggedInAdmin = session.user.projectAdmin.some(e => e === result.id);
 
                     this.loading = false;
                 },
