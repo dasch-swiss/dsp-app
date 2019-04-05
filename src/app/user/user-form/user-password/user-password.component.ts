@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import {
     FormBuilder,
     FormControl,
@@ -16,6 +16,8 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 export class UserPasswordComponent implements OnInit {
 
     @Input() username: string;
+
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
     loggedInUserName: string;
 
@@ -90,6 +92,10 @@ export class UserPasswordComponent implements OnInit {
             // update not own password, if logged-in user is system admin
             if (session.user.sysAdmin) {
                 this.updateOwnPassword = false;
+                this._cache.get(
+                    this.username,
+                    this._usersService.getUserByUsername(this.username)
+                );
             }
         }
 
@@ -108,7 +114,7 @@ export class UserPasswordComponent implements OnInit {
                     console.error(error);
                 }
             );
-
+        // form to change own password
         this.userPasswordForm = this._formBuilder.group({
             username: new FormControl({
                 value: this.username,
@@ -134,6 +140,7 @@ export class UserPasswordComponent implements OnInit {
             )
         });
 
+        // form to submit system admin password
         this.requesterPasswordForm = this._formBuilder.group({
             requesterPassword: new FormControl(
                 {
@@ -144,7 +151,12 @@ export class UserPasswordComponent implements OnInit {
             )
         });
 
+        // form to change other user's password
         this.newPasswordForm = this._formBuilder.group({
+            username: new FormControl({
+                value: this.username,
+                disabled: true
+            }),
             newPassword: new FormControl(
                 {
                     value: '',
@@ -175,7 +187,7 @@ export class UserPasswordComponent implements OnInit {
         this.loading = false;
 
         // get the user data only if a user is logged in
-        this.loggedInUser = JSON.parse(localStorage.getItem('session')).user;
+        // this.loggedInUser = JSON.parse(localStorage.getItem('session')).user;
     }
 
     onValueChanged(form: FormGroup, data?: any) {
@@ -221,30 +233,58 @@ export class UserPasswordComponent implements OnInit {
         this.oldPasswordIsWrong = false;
 
         this.loading = true;
-        this._usersService
-            .updateOwnPassword(
-                this.user.id,
-                this.userPasswordForm.controls['requesterPassword'].value,
-                this.userPasswordForm.controls['newPassword'].value
-            )
-            .subscribe(
-                (result: User) => {
-                    // console.log(this.userPasswordForm.value);
-                    this.success = true;
-                    this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    if (error.status === 403) {
-                        // the old password is wrong
-                        this.oldPasswordIsWrong = true;
-                        this.success = false;
-                    } else {
-                        this.errorMessage = error;
-                    }
 
-                    this.loading = false;
-                }
-            );
+        if (this.updateOwnPassword) {
+            this._usersService
+                .updateOwnPassword(
+                    this.user.id,
+                    this.userPasswordForm.controls['requesterPassword'].value,
+                    this.userPasswordForm.controls['newPassword'].value
+                )
+                .subscribe(
+                    (result: User) => {
+                        // console.log(this.userPasswordForm.value);
+                        this.success = true;
+                        this.loading = false;
+                    },
+                    (error: ApiServiceError) => {
+                        if (error.status === 403) {
+                            // the old password is wrong
+                            this.oldPasswordIsWrong = true;
+                            this.success = false;
+                        } else {
+                            this.errorMessage = error;
+                        }
+
+                        this.loading = false;
+                    }
+                );
+        } else {
+            this._usersService
+                .updateOwnPassword(
+                    this.user.id,
+                    this.requesterPasswordForm.controls['requesterPassword'].value,
+                    this.newPasswordForm.controls['newPassword'].value
+                )
+                .subscribe(
+                    (result: User) => {
+                        // console.log(this.userPasswordForm.value);
+                        this.success = true;
+                        this.loading = false;
+                    },
+                    (error: ApiServiceError) => {
+                        if (error.status === 403) {
+                            // the old password is wrong
+                            this.oldPasswordIsWrong = true;
+                            this.success = false;
+                        } else {
+                            this.errorMessage = error;
+                        }
+
+                        this.loading = false;
+                    }
+                );
+        }
         // TODO: updateUser doesn't exist anymore in user service
         // TODO: fix update password for own user and for other users
         /*
@@ -315,5 +355,9 @@ export class UserPasswordComponent implements OnInit {
         */
 
         this.oldPswd = !this.oldPswd;
+    }
+
+    closeMessage() {
+        this.closeDialog.emit();
     }
 }

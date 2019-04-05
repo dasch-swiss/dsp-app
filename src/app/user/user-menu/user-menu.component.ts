@@ -44,12 +44,10 @@ export class UserMenuComponent implements OnInit {
     logout() {
         this._auth.logout();
         // reset the user menu navigation
-        this.navigation = [];
-        this.navigation = AppGlobal.userNav;
+        this.navigation = undefined;
 
         // reload the page
         this._router.navigateByUrl('/refresh', {skipLocationChange: true}).then(() => {
-                console.log('hello world');
                 this._router.navigate([this._location.path()]);
             }
         );

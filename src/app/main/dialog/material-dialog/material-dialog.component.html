@@ -7,7 +7,7 @@
 
     <!-- Edit password -->
     <div *ngSwitchCase="'editPassword'">
-        <app-user-password [username]="data.name"></app-user-password>
+        <app-user-password [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-password>
     </div>
 
     <!-- Default dialog content component -->

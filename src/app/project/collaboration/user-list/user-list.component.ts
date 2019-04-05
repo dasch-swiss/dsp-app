@@ -90,6 +90,7 @@ export class UserListComponent implements OnInit {
             );
 
         this.loading = false;
+        // setTimeout(() => this.openDialog('editPassword', 'multiuser'), 10);
     }
 
     /**

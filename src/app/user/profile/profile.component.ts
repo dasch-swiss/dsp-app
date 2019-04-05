@@ -80,6 +80,7 @@ export class ProfileComponent implements OnInit {
     }
 
     openDialog(mode: string, name: string): void {
+        // todo: define the dialog config in a variable:
 //        const dialogConfig = new MatDialogConfig();
 
         const dialogRef = this._dialog.open(MaterialDialogComponent, {
