@@ -34,12 +34,6 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'project/new',
-        component: FullframeDialogComponent,
-        canActivate: [AuthGuard],
-        data: {component: ProjectFormComponent}
-    },
-    {
         path: 'project/:shortcode',
         component: ProjectComponent,
         canActivate: [AuthGuard],
@@ -52,10 +46,6 @@ const routes: Routes = [
             {
                 path: 'board',
                 component: BoardComponent
-            },
-            {
-                path: 'edit',
-                component: ProjectFormComponent
             },
             {
                 path: 'collaboration',
@@ -77,19 +67,8 @@ const routes: Routes = [
         ]
     },
     {
-        path: 'user/new',
-        component: FullframeDialogComponent,
-        canActivate: [AuthGuard],
-        data: {component: UserFormComponent}
-    },
-    {
         path: 'user/:name',
         component: ProfileComponent,
-    },
-    {
-        path: 'user/:name/edit',
-        component: EditUserComponent,       // just for testing
-        canActivate: [AuthGuard]
     },
     {
         path: 'profile',
@@ -117,7 +96,7 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'dev',
+        path: 'dev',        // developer test environment
         component: DesignQuestionComponent
     },
     {
