@@ -15,7 +15,7 @@
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content user-data">
+    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content user-data" (ngSubmit)="submitData()">
 
         <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
@@ -61,7 +61,7 @@
             <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password" [formControl]="form.controls['password']"
                 placeholder="{{ 'appLabels.form.user.general.password' | translate }} *">
 
-            <button mat-button matSuffix mat-icon-button class="input-icon" attr.aria-label="{{showPassword ? 'Hide password' : 'Show password'}}"
+            <button mat-button type="button" matSuffix mat-icon-button class="input-icon" attr.aria-label="{{showPassword ? 'Hide password' : 'Show password'}}"
                 (click)="toggleVisibility($event)">
                 <mat-icon>
                     {{showPassword ? 'visibility_off' : 'visibility'}}
@@ -91,7 +91,7 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" (click)="submitData()" [disabled]="!form.valid">
+                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
                     <span *ngIf="username">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!username">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>

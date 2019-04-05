@@ -16,7 +16,9 @@
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content project-data">
+    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content project-data" (ngSubmit)="submitData()">
+
+        <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
         <!-- short and long name -->
         <mat-form-field class="small-field">
@@ -148,19 +150,14 @@
                 -->
         <div class="form-panel form-action">
             <span>
-                <button mat-button
-                        (click)="reset(project)">
+                <button mat-button type="reset" (click)="resetForm($event, project)">
                     {{ 'appLabels.form.action.reset' | translate }}
                 </button>
 
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button
-                        type="button"
-                        color="primary"
-                        (click)="submitData()"
-                        [disabled]="!form.valid || (projectcode && !project.status)">
+                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" [disabled]="!form.valid || (projectcode && !project.status)">
                     <span *ngIf="projectcode">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectcode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>

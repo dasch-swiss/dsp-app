@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import {
     ApiServiceError,
     Group,
@@ -202,14 +202,19 @@ export class UserListComponent implements OnInit {
     }
 
     openDialog(mode: string, name: string): void {
-        const dialogRef = this._dialog.open(MaterialDialogComponent, {
+        const dialogConfig: MatDialogConfig = {
             width: '560px',
+            position: {
+                top: '112px'
+            },
             data: { name: name, mode: mode }
-        });
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
-            this.refreshParent.emit();
             // update the view
+            this.refreshParent.emit();
         });
     }
 

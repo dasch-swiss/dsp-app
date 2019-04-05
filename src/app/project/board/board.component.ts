@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { Session } from '@knora/authentication';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-board',
@@ -40,6 +42,7 @@ export class BoardComponent implements OnInit {
 
     constructor(
         private _cache: CacheService,
+        private _dialog: MatDialog,
         private _route: ActivatedRoute,
         private _projectsService: ProjectsService,
         private _titleService: Title
@@ -52,6 +55,10 @@ export class BoardComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getProject();
+    }
+
+    getProject() {
         this.loading = true;
 
         // get project data from cache
@@ -89,5 +96,22 @@ export class BoardComponent implements OnInit {
         */
 
         this.loading = false;
+    }
+
+    openDialog(mode: string, name: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { name: name, mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.getProject();
+        });
     }
 }

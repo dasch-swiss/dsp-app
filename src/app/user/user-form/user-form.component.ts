@@ -462,14 +462,6 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.buildForm(user);
     }
 
-    reset(user?: User) {
-
-        user = (user ? user : new User());
-
-        this.buildForm(user);
-
-    }
-
     closeMessage() {
         this.updateData.emit(this.user);
     }

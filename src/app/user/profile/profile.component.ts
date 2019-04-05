@@ -80,16 +80,15 @@ export class ProfileComponent implements OnInit {
     }
 
     openDialog(mode: string, name: string): void {
-        // todo: define the dialog config in a variable:
-//        const dialogConfig = new MatDialogConfig();
-
-        const dialogRef = this._dialog.open(MaterialDialogComponent, {
+        const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
                 top: '112px'
             },
             data: { name: name, mode: mode }
-        });
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view

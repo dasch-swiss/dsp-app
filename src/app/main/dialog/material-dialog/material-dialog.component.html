@@ -10,6 +10,11 @@
         <app-user-password [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-password>
     </div>
 
+    <!-- Edit project -->
+    <div *ngSwitchCase="'editProject'">
+        <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
+    </div>
+
     <!-- Default dialog content component -->
     <div *ngSwitchDefault>This component {{data.mode}} is not implemented yet.</div>
 </div>

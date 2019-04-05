@@ -91,6 +91,8 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
      * build the list of members
      */
     initList(): void {
+        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+
         this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode)).subscribe(
             (response: any) => {
                 this.projectMembers = response;
@@ -125,7 +127,6 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
         this.loading = true;
         // update the cache
         this._cache.del('members_of_' + this.projectcode);
-        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
         this.initList();
         // refresh child component: add user
         if (this.addUser) {

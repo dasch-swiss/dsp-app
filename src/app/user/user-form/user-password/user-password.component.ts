@@ -287,4 +287,10 @@ export class UserPasswordComponent implements OnInit {
         this.failed = false;
         this.oldPswd = true;
     }
+
+    resetForm() {
+        this.success = false;
+        this.failed = false;
+        this.userPasswordForm.reset();
+    }
 }

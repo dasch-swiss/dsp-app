@@ -33,7 +33,7 @@
         </mat-card-content>
 
         <mat-card-actions>
-            <button mat-icon-button class="right" [routerLink]="'../edit'" *ngIf="project.status && loggedInAdmin">
+            <button mat-icon-button class="right" (click)="openDialog('editProject', project.shortcode)" *ngIf="project.status && loggedInAdmin">
                 <mat-icon>edit</mat-icon>
             </button>
         </mat-card-actions>
