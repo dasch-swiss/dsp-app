@@ -2,26 +2,6 @@
 
 <div *ngIf="user && !loading" class="content">
 
-    <!-- data -->
-    <mat-card class="no-shadow">
-
-        <mat-card-subtitle>
-            <!--User | {{user.username}}-->
-        </mat-card-subtitle>
-        <mat-card-title>
-            <span>Update user data</span>
-            <span class="fill-remaining-space"></span>
-            <span></span>
-        </mat-card-title>
-
-        <mat-card-content>
-            <app-user-form [username]="username"></app-user-form>
-        </mat-card-content>
-
-    </mat-card>
-
-    <mat-divider class="more-space"></mat-divider>
-
     <!-- password -->
     <mat-card class="no-shadow">
         <mat-card-subtitle>

@@ -1,8 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
+import { MatDialog } from '@angular/material';
+import { MaterialDialogComponent } from '../../main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-profile',
@@ -19,11 +21,14 @@ export class ProfileComponent implements OnInit {
 
     @Input() loggedInUser?: boolean = false;
 
+    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
+
     sysAdmin: boolean = false;
 
     user: User;
 
     constructor(private _cache: CacheService,
+                private _dialog: MatDialog,
                 private _route: ActivatedRoute,
                 private _router: Router,
                 private _usersService: UsersService,
@@ -51,12 +56,15 @@ export class ProfileComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getUser();
+    }
+
+    getUser() {
         this.loading = true;
 
         this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
             (response: any) => {
                 this.user = response;
-
 
                 // set the page title
                 this._titleService.setTitle(this.user.username + ' (' + this.user.givenName + ' ' + this.user.familyName + ')');
@@ -71,11 +79,15 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    editUser() {
-        this._router.navigate(['user/' + this.username + '/edit'], {
-            queryParams: {
-                returnUrl: this._router.url
-            }
+    openDialog(mode: string, name: string): void {
+        const dialogRef = this._dialog.open(MaterialDialogComponent, {
+            width: '560px',
+            data: { name: name, mode: mode }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.getUser();
         });
     }
 

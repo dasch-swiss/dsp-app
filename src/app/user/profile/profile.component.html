@@ -25,7 +25,7 @@
     <mat-divider></mat-divider>
     <br>
     <!-- edit button -->
-    <button mat-raised-button [routerLink]="'/account'" style="width: 100%;">
+    <button mat-raised-button (click)="openDialog('editUser', user.username)" style="width: 100%;">
         Edit
     </button>
 </div>
