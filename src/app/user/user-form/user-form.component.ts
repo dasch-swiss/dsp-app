@@ -1,5 +1,17 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    Output
+} from '@angular/core';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
 import {
@@ -20,7 +32,6 @@ import { CacheService } from '../../main/cache/cache.service';
     styleUrls: ['./user-form.component.scss']
 })
 export class UserFormComponent implements OnInit, OnChanges {
-
     // the user form can be used in several cases:
     // a) guest --> register: create new user
     // b) system admin or project admin --> add: create new user
@@ -43,9 +54,12 @@ export class UserFormComponent implements OnInit, OnChanges {
     @Input() username?: string;
 
     /**
-     * if the form was built to add new user to project, we get a project shortcode from the url parameters
+     * if the form was built to add new user to project,
+     * we get a project shortcode and a name (e-mail or username)
+     * from the "add-user-autocomplete" input
      */
-    projectcode: string;
+    @Input() projectcode?: string;
+    @Input() name?: string;
 
     /**
      * user data
@@ -87,40 +101,47 @@ export class UserFormComponent implements OnInit, OnChanges {
      * error checking on the following fields
      */
     formErrors = {
-        'givenName': '',
-        'familyName': '',
-        'email': '',
-        'username': '',
-        'password': ''
+        givenName: '',
+        familyName: '',
+        email: '',
+        username: '',
+        password: ''
     };
 
     /**
      * error hints
      */
     validationMessages = {
-        'givenName': {
-            'required': 'First name is required.'
+        givenName: {
+            required: 'First name is required.'
         },
-        'familyName': {
-            'required': 'Last name is required.'
+        familyName: {
+            required: 'Last name is required.'
         },
-        'email': {
-            'required': 'Email address is required.',
-            'pattern': 'This doesn\'t appear to be a valid email address.',
-            'existingName': 'This user exists already. If you want to edit it, ask a system administrator.',
-            'member': 'This user is already a member of the project.'
+        email: {
+            required: 'Email address is required.',
+            pattern: "This doesn't appear to be a valid email address.",
+            existingName:
+                'This user exists already. If you want to edit it, ask a system administrator.',
+            member: 'This user is already a member of the project.'
         },
-        'username': {
-            'required': 'Username is required.',
-            'pattern': 'Spaces and special characters are not allowed in username',
-            'minlength': 'Username must be at least ' + this.usernameMinLength + ' characters long.',
-            'existingName': 'This user exists already. If you want to edit it, ask a system administrator.',
-            'member': 'This user is already a member of the project.'
+        username: {
+            required: 'Username is required.',
+            pattern:
+                'Spaces and special characters are not allowed in username',
+            minlength:
+                'Username must be at least ' +
+                this.usernameMinLength +
+                ' characters long.',
+            existingName:
+                'This user exists already. If you want to edit it, ask a system administrator.',
+            member: 'This user is already a member of the project.'
         },
-        'password': {
-            'required': 'A password is required.',
-            'minlength': 'Use at least 8 characters.',
-            'pattern': 'The password should have at least one uppercase letter and one number.',
+        password: {
+            required: 'A password is required.',
+            minlength: 'Use at least 8 characters.',
+            pattern:
+                'The password should have at least one uppercase letter and one number.'
         }
     };
 
@@ -134,7 +155,6 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     showPassword = false;
 
-
     /**
      * success of sending data
      */
@@ -144,7 +164,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     successMessage: any = {
         status: 200,
-        statusText: 'You have successfully updated user\'s profile data.'
+        statusText: "You have successfully updated user's profile data."
     };
 
     /**
@@ -169,22 +189,24 @@ export class UserFormComponent implements OnInit, OnChanges {
         }
     ];
 
-    constructor(private _route: ActivatedRoute,
-                private _router: Router,
-                private _cache: CacheService,
-                private _users: UsersService,
-                private _projectsService: ProjectsService,
-                private _formBuilder: FormBuilder) {
-
+    constructor(
+        private _route: ActivatedRoute,
+        private _router: Router,
+        private _cache: CacheService,
+        private _users: UsersService,
+        private _projectsService: ProjectsService,
+        private _formBuilder: FormBuilder
+    ) {
         // get username from url
-        if (this._route.snapshot.params.name  && (this._route.snapshot.params.name.length > 3)) {
+        if (
+            this._route.snapshot.params.name &&
+            this._route.snapshot.params.name.length > 3
+        ) {
             this.username = this._route.snapshot.params.name;
-
         }
     }
 
     ngOnInit() {
-
         this.loading = true;
 
         if (this.username) {
@@ -193,17 +215,25 @@ export class UserFormComponent implements OnInit, OnChanges {
              */
 
             // set the cache first: user data to edit
-            this._cache.get(this.username, this._users.getUserByUsername(this.username));
-            // get user data from cache
-            this._cache.get(this.username, this._users.getUserByUsername(this.username)).subscribe(
-                (response: User) => {
-                    this.user = response;
-                    this.loading = !this.buildForm(this.user);
-                },
-                (error: any) => {
-                    console.error(error);
-                }
+            this._cache.get(
+                this.username,
+                this._users.getUserByUsername(this.username)
             );
+            // get user data from cache
+            this._cache
+                .get(
+                    this.username,
+                    this._users.getUserByUsername(this.username)
+                )
+                .subscribe(
+                    (response: User) => {
+                        this.user = response;
+                        this.loading = !this.buildForm(this.user);
+                    },
+                    (error: any) => {
+                        console.error(error);
+                    }
+                );
         } else {
             /**
              * create mode: empty form for new user
@@ -212,37 +242,41 @@ export class UserFormComponent implements OnInit, OnChanges {
             // set the cache first: all users to avoid same email-address / username twice
             this._cache.get('allUsers', this._users.getAllUsers());
             // get existing users to avoid same usernames and email addresses
-            this._cache.get('allUsers', this._users.getAllUsers())
-                .subscribe(
-                    (result: User[]) => {
-
-                        for (const user of result) {
-                            // The email address of the user should be unique.
-                            // Therefore we create a list of existing email addresses to avoid multiple use of user names
-                            this.existingEmails.push(
-                                new RegExp('(?:^|\W)' + user.email.toLowerCase() + '(?:$|\W)')
-                            );
-                            // The username should also be unique.
-                            // Therefore we create a list of existingUsernames to avoid multiple use of user names
-                            this.existingUsernames.push(
-                                new RegExp('(?:^|\W)' + user.username.toLowerCase() + '(?:$|\W)')
-                            );
-                        }
-
-                        // get parameters from url, if they exist
-                        this.projectcode = this._route.snapshot.queryParams['project'];
-                        const name: string = this._route.snapshot.queryParams['value'];
-                        const newUser: User = new User();
-
-                        if (Utils.RegexEmail.test(name)) {
-                            newUser.email = name;
-                        } else {
-                            newUser.username = name;
-                        }
-                        // build the form
-                        this.loading = !this.buildForm(newUser);
+            this._cache
+                .get('allUsers', this._users.getAllUsers())
+                .subscribe((result: User[]) => {
+                    for (const user of result) {
+                        // The email address of the user should be unique.
+                        // Therefore we create a list of existing email addresses to avoid multiple use of user names
+                        this.existingEmails.push(
+                            new RegExp(
+                                '(?:^|W)' + user.email.toLowerCase() + '(?:$|W)'
+                            )
+                        );
+                        // The username should also be unique.
+                        // Therefore we create a list of existingUsernames to avoid multiple use of user names
+                        this.existingUsernames.push(
+                            new RegExp(
+                                '(?:^|W)' +
+                                    user.username.toLowerCase() +
+                                    '(?:$|W)'
+                            )
+                        );
                     }
-                );
+
+                    // get parameters from url, if they exist
+                    // this.projectcode = this._route.snapshot.queryParams['project'];
+                    // const name: string = this._route.snapshot.queryParams['value'];
+                    const newUser: User = new User();
+
+                    if (Utils.RegexEmail.test(this.name)) {
+                        newUser.email = this.name;
+                    } else {
+                        newUser.username = this.name;
+                    }
+                    // build the form
+                    this.loading = !this.buildForm(newUser);
+                });
         }
     }
 
@@ -252,64 +286,86 @@ export class UserFormComponent implements OnInit, OnChanges {
         }
     }
 
-
     /**
      * build the whole form
      *
      */
     buildForm(user: User): boolean {
-
         // get info about system admin permission
-        if (user.id && user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]) {
+        if (
+            user.id &&
+            user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]
+        ) {
             // this user is member of the system project. does he has admin rights?
-            this.sysAdminPermission = user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI].includes(KnoraConstants.SystemAdminGroupIRI);
+            this.sysAdminPermission = user.permissions.groupsPerProject[
+                KnoraConstants.SystemProjectIRI
+            ].includes(KnoraConstants.SystemAdminGroupIRI);
         }
 
         // if user is defined, we're in the edit mode
         // otherwise "create new user" mode is active
-        const editMode: boolean = (!!user.id);
+        const editMode: boolean = !!user.id;
 
         this.form = this._formBuilder.group({
-            'givenName': new FormControl({
-                value: user.givenName, disabled: false
-            }, [
-                Validators.required
-            ]),
-            'familyName': new FormControl({
-                value: user.familyName, disabled: false
-            }, [
-                Validators.required
-            ]),
-            'email': new FormControl({
-                value: user.email, disabled: editMode
-            }, [
-                Validators.required,
-                Validators.pattern(Utils.RegexEmail),
-                existingNamesValidator(this.existingEmails)
-            ]),
-            'username': new FormControl({
-                value: user.username, disabled: editMode
-            }, [
-                Validators.required,
-                Validators.minLength(4),
-                Validators.pattern(this.RegexUsername),
-                existingNamesValidator(this.existingUsernames)
-            ]),
-            'password': new FormControl({
-                value: user.password, disabled: editMode
-            }, [
-                Validators.required,
-                Validators.minLength(8),
-                Validators.pattern(Utils.RegexPassword)
-            ]),
-            'lang': new FormControl({
-                value: (user.lang ? user.lang : 'en'), disabled: false
+            givenName: new FormControl(
+                {
+                    value: user.givenName,
+                    disabled: false
+                },
+                [Validators.required]
+            ),
+            familyName: new FormControl(
+                {
+                    value: user.familyName,
+                    disabled: false
+                },
+                [Validators.required]
+            ),
+            email: new FormControl(
+                {
+                    value: user.email,
+                    disabled: editMode
+                },
+                [
+                    Validators.required,
+                    Validators.pattern(Utils.RegexEmail),
+                    existingNamesValidator(this.existingEmails)
+                ]
+            ),
+            username: new FormControl(
+                {
+                    value: user.username,
+                    disabled: editMode
+                },
+                [
+                    Validators.required,
+                    Validators.minLength(4),
+                    Validators.pattern(this.RegexUsername),
+                    existingNamesValidator(this.existingUsernames)
+                ]
+            ),
+            password: new FormControl(
+                {
+                    value: user.password,
+                    disabled: editMode
+                },
+                [
+                    Validators.required,
+                    Validators.minLength(8),
+                    Validators.pattern(Utils.RegexPassword)
+                ]
+            ),
+            lang: new FormControl({
+                value: user.lang ? user.lang : 'en',
+                disabled: false
             }),
-            'status': new FormControl({
-                value: (user.status ? user.status : true), disabled: editMode
+            status: new FormControl({
+                value: user.status ? user.status : true,
+                disabled: editMode
             }),
-            'systemAdmin': new FormControl({
-                value: (this.sysAdminPermission), disabled: editMode
+            systemAdmin: new FormControl({
+                value: this.sysAdminPermission,
+                disabled: editMode
             })
             //            'systemAdmin': this.sysAdminPermission,
             //            'group': null
@@ -317,10 +373,8 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         //        this.loading = false;
 
-        this.form.valueChanges
-            .subscribe(data => this.onValueChanged());
+        this.form.valueChanges.subscribe(data => this.onValueChanged());
         return true;
-
     }
 
     /**
@@ -328,7 +382,6 @@ export class UserFormComponent implements OnInit, OnChanges {
      * @param data
      */
     onValueChanged() {
-
         if (!this.form) {
             return;
         }
@@ -352,44 +405,54 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     toggleVisibility(ev: Event) {
         ev.preventDefault();
-        this.showPassword = (!this.showPassword);
+        this.showPassword = !this.showPassword;
     }
 
     /**
      *
      */
     submitData(): void {
-
         this.loading = true;
 
-        const returnUrl: string = this._route.snapshot.queryParams['returnUrl'] || '/user/' + this.form.controls['username'].value;
+        const returnUrl: string =
+            this._route.snapshot.queryParams['returnUrl'] ||
+            '/user/' + this.form.controls['username'].value;
 
         if (this.username) {
             // edit mode: update user data
-            this._users.updateBasicUserInformation(this.user.id, this.form.value).subscribe(
-                (result: User) => {
-                    this.user = result;
-                    this.buildForm(this.user);
-                    // update cache
-                    const session: Session = JSON.parse(localStorage.getItem('session'));
-                    if (session.user.name === this.username) {
-                        // update logged in user session
-                        session.user.lang = this.form.controls['lang'].value;
-                        localStorage.setItem('session', JSON.stringify(session));
+            this._users
+                .updateBasicUserInformation(this.user.id, this.form.value)
+                .subscribe(
+                    (result: User) => {
+                        this.user = result;
+                        this.buildForm(this.user);
+                        // update cache
+                        const session: Session = JSON.parse(
+                            localStorage.getItem('session')
+                        );
+                        if (session.user.name === this.username) {
+                            // update logged in user session
+                            session.user.lang = this.form.controls[
+                                'lang'
+                            ].value;
+                            localStorage.setItem(
+                                'session',
+                                JSON.stringify(session)
+                            );
+                        }
+
+                        this._cache.set(this.username, result);
+
+                        this.success = true;
+
+                        this.loading = false;
+                    },
+                    (error: ApiServiceError) => {
+                        this.errorMessage = error;
+                        this.loading = false;
+                        this.success = false;
                     }
-
-                    this._cache.set(this.username, result);
-
-                    this.success = true;
-
-                    this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    this.errorMessage = error;
-                    this.loading = false;
-                    this.success = false;
-                }
-            );
+                );
         } else {
             // new: create user
             this._users.createUser(this.form.value).subscribe(
@@ -400,54 +463,82 @@ export class UserFormComponent implements OnInit, OnChanges {
                     if (this.projectcode) {
                         // if a projectcode exists, add the user to the project
                         // get project iri by projectcode
-                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
-                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-                            (p: Project) => {
-                                // add user to project
-                                this._users.addUserToProject(this.user.id, p.id).subscribe(
-                                    () => {
-
-                                        // update project cache and member of project cache
-                                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
-                                        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
-
-                                        // redirect to project collaborator's page
-                                        this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
-                                            this._router.navigate([returnUrl])
-                                        );
-                                        this.loading = false;
-
-                                    },
-                                    (error: any) => {
-                                        console.error(error);
-                                    }
-                                );
-                            },
-                            (error: any) => {
-                                console.error(error);
-                            }
+                        this._cache.get(
+                            this.projectcode,
+                            this._projectsService.getProjectByShortcode(
+                                this.projectcode
+                            )
                         );
+                        this._cache
+                            .get(
+                                this.projectcode,
+                                this._projectsService.getProjectByShortcode(
+                                    this.projectcode
+                                )
+                            )
+                            .subscribe(
+                                (p: Project) => {
+                                    // add user to project
+                                    this._users
+                                        .addUserToProject(this.user.id, p.id)
+                                        .subscribe(
+                                            () => {
+                                                // update project cache and member of project cache
+                                                this._cache.get(
+                                                    this.projectcode,
+                                                    this._projectsService.getProjectByShortcode(
+                                                        this.projectcode
+                                                    )
+                                                );
+                                                this._cache.get(
+                                                    'members_of_' +
+                                                        this.projectcode,
+                                                    this._projectsService.getProjectMembersByShortcode(
+                                                        this.projectcode
+                                                    )
+                                                );
+
+                                                // redirect to project collaborator's page
+                                                /*
+                                                this._router
+                                                    .navigateByUrl('/user', {
+                                                        skipLocationChange: true
+                                                    })
+                                                    .then(() =>
+                                                        this._router.navigate([
+                                                            returnUrl
+                                                        ])
+                                                    );
+                                                    */
+
+                                                this.closeMessage();
+                                                this.loading = false;
+                                            },
+                                            (error: any) => {
+                                                console.error(error);
+                                            }
+                                        );
+                                },
+                                (error: any) => {
+                                    console.error(error);
+                                }
+                            );
                     } else {
                         // go to user's profile page
                         this.loading = false;
                         // redirect to (new) user's page
-                        this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
-                            this._router.navigate([returnUrl])
-                        );
+                        this._router
+                            .navigateByUrl('/user', {
+                                skipLocationChange: true
+                            })
+                            .then(() => this._router.navigate([returnUrl]));
                     }
-
-
-
-
-
                 },
                 (error: ApiServiceError) => {
                     this.errorMessage = error;
                     this.loading = false;
                 }
-
             );
-
         }
     }
 
@@ -457,7 +548,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     resetForm(ev: Event, user?: User) {
         ev.preventDefault();
 
-        user = (user ? user : new User());
+        user = user ? user : new User();
 
         this.buildForm(user);
     }

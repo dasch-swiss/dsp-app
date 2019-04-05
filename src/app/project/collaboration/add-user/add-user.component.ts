@@ -7,6 +7,8 @@ import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, User
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-add-user',
@@ -106,6 +108,7 @@ export class AddUserComponent implements OnInit {
     isAlreadyMember = false;
 
     constructor(private _cache: CacheService,
+                private _dialog: MatDialog,
                 private _router: Router,
                 private _projects: ProjectsService,
                 private _users: UsersService,
@@ -345,12 +348,29 @@ export class AddUserComponent implements OnInit {
         );
     }
 
-    createUser() {
+    openDialog(mode: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { project: this.projectcode, name: this.selectUserForm.controls['username'].value, mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.refreshParent.emit();
+        });
+    }
+
+    addNew() {
         this._router.navigate(['/user/new'], {
             queryParams: {
                 returnUrl: this._router.url,
                 project: this.projectcode,
-                value: this.selectUserForm.controls['username'].value
+                name: this.selectUserForm.controls['username'].value
             }
         });
     }

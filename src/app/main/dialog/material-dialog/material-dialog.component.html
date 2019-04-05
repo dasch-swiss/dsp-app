@@ -1,5 +1,10 @@
 <div [ngSwitch]="data.mode">
 
+    <!-- Create new user profile -->
+    <div *ngSwitchCase="'createUser'">
+        <app-user-form [name]="data.name" [projectcode]="data.project" (updateData)="dialogRef.close()"></app-user-form>
+    </div>
+
     <!-- Update user profile data -->
     <div *ngSwitchCase="'editUser'">
         <app-user-form [username]="data.name" (updateData)="closeDialog()"></app-user-form>
