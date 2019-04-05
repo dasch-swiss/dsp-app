@@ -17,6 +17,8 @@ export class UserPasswordComponent implements OnInit {
 
     @Input() username: string;
 
+    loggedInUserName: string;
+
     user: User;
 
     // visibility of password
@@ -38,7 +40,8 @@ export class UserPasswordComponent implements OnInit {
         statusText: 'You have successfully changed your password.'
     };
 
-    loggedInUser: any;
+    // do you want to update your own password?
+    updateOwnPassword: boolean;
 
     // show the content after every service has loaded and the data is ready
     loading = true;
@@ -75,7 +78,23 @@ export class UserPasswordComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.username = JSON.parse(localStorage.getItem('session')).user.name;
+
+        const session = JSON.parse(localStorage.getItem('session'));
+
+        this.loggedInUserName = session.user.name;
+
+        if (this.loggedInUserName === this.username) {
+            // update own password
+            this.updateOwnPassword = true;
+        } else {
+            // update not own password, if logged-in user is system admin
+            if (session.user.sysAdmin) {
+                this.updateOwnPassword = false;
+            }
+        }
+
+
+
         this._cache
             .get(
                 this.username,

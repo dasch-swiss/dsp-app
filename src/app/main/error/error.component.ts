@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -7,6 +7,8 @@ import { Title } from '@angular/platform-browser';
     styleUrls: ['./error.component.scss']
 })
 export class ErrorComponent implements OnInit {
+
+    @Input() status?: number = 404;
 
     constructor(private _titleService: Title) {
         // set the page title

@@ -3,7 +3,7 @@
 
 <div class="content large middle" *ngIf="!loading">
     <div class="content-sidebar user-data">
-        <app-profile [username]="username" [loggedInUser]="true"></app-profile>
+        <app-profile [username]="session.user.name" [loggedInUser]="true"></app-profile>
     </div>
 
     <div class="content-container">
@@ -19,17 +19,20 @@
         <div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
 
             <!-- user profile -->
-            <app-projects [username]="username" *ngSwitchCase="'profile'"></app-projects>
+            <app-projects [username]="session.user.name" *ngSwitchCase="'profile'"></app-projects>
 
             <!-- edit user data -->
-            <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
+            <app-account [username]="session.user.name" *ngSwitchCase="'account'"></app-account>
 
             <!-- user's projects -->
-            <app-projects class="full-width" [username]="username" *ngSwitchCase="'projects'"></app-projects>
+            <app-projects class="full-width" [username]="session.user.name" *ngSwitchCase="'projects'"></app-projects>
 
             <!-- system's projects -->
             <!-- TODO: this should be available only, when the user has system admin rights -->
-            <app-projects class="full-width" [username]="username" [system]="true" *ngSwitchCase="'system'"></app-projects>
+            <div *ngSwitchCase="'system'">
+                <app-projects class="full-width" [username]="session.user.name" [system]="true" *ngIf="session.user.sysAdmin"></app-projects>
+                <app-error *ngIf="!session.user.sysAdmin" [status]="403"></app-error>
+            </div>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
             <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>

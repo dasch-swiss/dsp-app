@@ -5,6 +5,7 @@ import { UsersService } from '@knora/core';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
 import { AppGlobal } from '../app-global';
+import { Session } from '@knora/authentication';
 
 @Component({
     selector: 'app-user',
@@ -16,7 +17,7 @@ export class UserComponent implements OnInit {
     loading: boolean;
     error: boolean;
 
-    username: string;
+    session: Session;
 
     route: string;
 
@@ -34,10 +35,10 @@ export class UserComponent implements OnInit {
         this.route = this._route.pathFromRoot[1].snapshot.url[0].path;
 
         // get username
-        this.username = JSON.parse(localStorage.getItem('session')).user.name;
+        this.session = JSON.parse(localStorage.getItem('session'));
 
         // set the page title
-        this._titleService.setTitle(this.username);
+        this._titleService.setTitle(this.session.user.name);
 
     }
 
@@ -48,7 +49,7 @@ export class UserComponent implements OnInit {
         /**
          * set the cache here for current/logged-in user
          */
-        this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+        this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
         this.loading = false;
     }
 

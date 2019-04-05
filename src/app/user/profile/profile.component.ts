@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { MaterialDialogComponent } from '../../main/dialog/material-dialog/material-dialog.component';
 
 @Component({
@@ -80,8 +80,13 @@ export class ProfileComponent implements OnInit {
     }
 
     openDialog(mode: string, name: string): void {
+//        const dialogConfig = new MatDialogConfig();
+
         const dialogRef = this._dialog.open(MaterialDialogComponent, {
             width: '560px',
+            position: {
+                top: '112px'
+            },
             data: { name: name, mode: mode }
         });
 
