@@ -56,7 +56,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      *  send user data to parent component;
      *  in case of dialog box?
      */
-    @Output() updateData = new EventEmitter<User>();
+    @Output() updateData: EventEmitter<any> = new EventEmitter<User>();
 
     /**
      * define, if the user has system administration permission
@@ -144,7 +144,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     successMessage: any = {
         status: 200,
-        statusText: 'You have successfully updated the user profile data.'
+        statusText: 'You have successfully updated user\'s profile data.'
     };
 
     /**
@@ -382,13 +382,6 @@ export class UserFormComponent implements OnInit, OnChanges {
 
                     this.success = true;
 
-
-                    this.updateData.emit(this.user);
-                    /*
-                    this._router.navigateByUrl('/user', {skipLocationChange: true}).then(() =>
-                        this._router.navigate([returnUrl])
-                    );
-                    */
                     this.loading = false;
                 },
                 (error: ApiServiceError) => {
@@ -475,5 +468,9 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         this.buildForm(user);
 
+    }
+
+    closeMessage() {
+        this.updateData.emit(this.user);
     }
 }
