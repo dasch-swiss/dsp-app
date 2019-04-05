@@ -368,6 +368,7 @@ export class ProjectFormComponent implements OnInit {
                                 (add: User) => {
 
                                     this.loading = false;
+                                    this.closeMessage();
                                     // redirect to (new) project page
                                     this._router.navigateByUrl('/project', {skipLocationChange: true}).then(() =>
                                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])

@@ -10,12 +10,17 @@
         <app-user-form [username]="data.name" (updateData)="closeDialog()"></app-user-form>
     </div>
 
-    <!-- Edit password -->
+    <!-- Update password -->
     <div *ngSwitchCase="'editPassword'">
         <app-user-password [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-password>
     </div>
 
-    <!-- Edit project -->
+    <!-- Create project -->
+    <div *ngSwitchCase="'createProject'">
+        <app-project-form (closeDialog)="dialogRef.close()"></app-project-form>
+    </div>
+
+    <!-- Update project information -->
     <div *ngSwitchCase="'editProject'">
         <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>

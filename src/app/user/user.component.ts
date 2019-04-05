@@ -6,6 +6,8 @@ import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
 import { AppGlobal } from '../app-global';
 import { Session } from '@knora/authentication';
+import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MaterialDialogComponent } from '../main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-user',
@@ -27,6 +29,7 @@ export class UserComponent implements OnInit {
     navigation: MenuItem[] = AppGlobal.userNav;
 
     constructor(private _cache: CacheService,
+                private _dialog: MatDialog,
                 private _route: ActivatedRoute,
                 private _usersService: UsersService,
                 private _titleService: Title) {
@@ -51,6 +54,23 @@ export class UserComponent implements OnInit {
          */
         this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
         this.loading = false;
+    }
+
+    openDialog(mode: string, name: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { name: name, mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            // this.getProject();
+        });
     }
 
 }

@@ -19,18 +19,37 @@
         <div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
 
             <!-- user profile -->
-            <app-projects [username]="session.user.name" *ngSwitchCase="'profile'"></app-projects>
+            <div *ngSwitchCase="'profile'" class="full-width">
+                <app-projects [username]="session.user.name"></app-projects>
+            </div>
 
             <!-- edit user data -->
-            <app-account [username]="session.user.name" *ngSwitchCase="'account'"></app-account>
+            <div *ngSwitchCase="'account'" class="full-width">
+                <app-account [username]="session.user.name"></app-account>
+            </div>
 
             <!-- user's projects -->
-            <app-projects class="full-width" [username]="session.user.name" *ngSwitchCase="'projects'"></app-projects>
+            <div *ngSwitchCase="'projects'" class="full-width">
+                <app-projects [username]="session.user.name"></app-projects>
+            </div>
 
             <!-- system's projects -->
             <!-- TODO: this should be available only, when the user has system admin rights -->
-            <div *ngSwitchCase="'system'">
-                <app-projects class="full-width" [username]="session.user.name" [system]="true" *ngIf="session.user.sysAdmin"></app-projects>
+            <div *ngSwitchCase="'system'" class="full-width">
+
+                <div *ngIf="session.user.sysAdmin">
+                    <div class="flex-panel">
+                        All projects in the system
+                        <span class="fill-remaining-space"></span>
+                        <span class="action">
+                            <button mat-fab [color]="'accent'" (click)="openDialog('createProject')">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </span>
+                    </div>
+                    <app-projects class="full-width" [username]="session.user.name" [system]="true"></app-projects>
+                </div>
+
                 <app-error *ngIf="!session.user.sysAdmin" [status]="403"></app-error>
             </div>
 
