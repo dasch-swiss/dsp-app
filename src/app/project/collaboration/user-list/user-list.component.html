@@ -4,12 +4,15 @@
     <div class="app-toolbar more-space-top" *ngIf="list.length > 0">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">{{title}}</h3>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action">
+                <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'"></kui-sort-button>
+            </span>
         </div>
         <div class="app-toolbar-row">
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['member']}}</h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-                <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'"></kui-sort-button>
             </span>
         </div>
     </div>
@@ -17,7 +20,7 @@
     <!-- list -->
     <table class="table">
 
-        <tr *ngFor="let user of list; let last = last" [class.no-border]="last">
+        <tr *ngFor="let user of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image link" (click)="gotoUserProfile(user.username)" />
