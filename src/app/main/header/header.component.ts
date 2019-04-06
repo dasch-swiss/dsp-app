@@ -40,4 +40,12 @@ export class HeaderComponent implements OnInit {
     ngOnInit() {
     }
 
+    goToLogin() {
+        this._router.navigate(['login'], {
+            queryParams: {
+                returnUrl: this._router.url
+            }
+        });
+    }
+
 }

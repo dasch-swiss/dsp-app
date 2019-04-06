@@ -50,7 +50,8 @@
         "reset": "Reset",
         "activate": "Activate",
         "deactivate": "Deactivate",
-        "confirm": "Yes"
+        "confirm": "Yes",
+        "danger": "Danger zone"
       },
       "user": {
         "general": {
@@ -70,12 +71,14 @@
         },
         "title": {
           "new": "Create new",
-          "edit": "Update profile",
+          "edit": "Edit profile",
+          "profile": "User profile",
           "editSuccess": "You have successfully updated the user profile.",
-          "delete": "Delete user",
+          "delete": "Deactivate user account",
           "deleteHint": "You're sure to delete this user?",
-          "password": "Change password",
-          "passwordSuccess": "You have successfully changed your password.",
+          "deleteButton": "Deactivate user account now",
+          "password": "Update password",
+          "passwordSuccess": "You have successfully updated your password.",
           "formWizard": {
             "step_1": "Start with username",
             "step_2": "User data",
@@ -83,8 +86,9 @@
             "step_4": "Confirm",
             "more": "Add more users"
           },
-          "add2project": "Add user",
-          "select": "Search by username or email address",
+          "add2project": "Add new member",
+          "select": "Select from list...",
+          "create": "or create new one",
           "deleted": "already deleted"
         }
       },
@@ -105,10 +109,12 @@
         },
         "title": {
           "new": "Create new",
-          "edit": "Update",
+          "edit": "Update project",
+          "profile": "Research project",
           "editSuccess": "You have successfully updated this project.",
-          "delete": "Delete project",
+          "delete": "Archive project",
           "deleteHint": "You're sure to delete this project?",
+          "deleteButton": "Archive project now",
           "formWizard": {
             "step_1": "Project data",
             "step_2": "Add project member",

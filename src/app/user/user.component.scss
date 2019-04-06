@@ -1,0 +1,18 @@
+.content {
+    display: flex;
+    flex-direction: row;
+
+    .full-width {
+        width: 100%;
+    }
+
+    .content-sidebar {
+        width: 25%;
+        padding-right: 48px;
+    }
+
+    .content-container {
+        width: 75%;
+
+    }
+}

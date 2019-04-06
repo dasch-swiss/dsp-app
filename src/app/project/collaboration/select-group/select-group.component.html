@@ -1,6 +1,12 @@
-<mat-form-field>
-    <mat-select placeholder="Role" [formControl]="groupCtrl" multiple (selectionChange)="onGroupSelect()" (openedChange)="onGroupChange()">
-        <mat-option *ngFor="let group of projectGroups; let first = first" [value]="group.iri" [disabled]="disabled || first">{{group.name}}</mat-option>
+<mat-form-field *ngIf="projectGroups.length > 0">
+    <mat-select placeholder="Group" [formControl]="groupCtrl" multiple (selectionChange)="onGroupSelect()"
+                (openedChange)="onGroupChange()">
+        <mat-option *ngFor="let group of projectGroups" [value]="group.iri" [disabled]="disabled">
+            {{group.name}}</mat-option>
     </mat-select>
 </mat-form-field>
 
+<div *ngIf="projectGroups.length === 0" class="center">
+    No group defined yet.
+    <!-- <button mat-button style="width: 100%">Create one</button> -->
+</div>

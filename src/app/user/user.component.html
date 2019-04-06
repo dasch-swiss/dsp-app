@@ -1,42 +1,56 @@
-<mat-sidenav-container class="sidenav-container full-size" [autosize]="true">
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<app-error *ngIf="error"></app-error>
 
-    <mat-sidenav #sidenav mode="side" [opened]="true" [class.wide]="open" [class.narrow]="!open"
-                 class="sidenav border-right">
-        <!-- side nav list: navigation and tools -->
-        <div class="side-nav-content scroll-y-only">
+<div class="content large middle" *ngIf="!loading">
 
-            <!-- the navigation depends on the route -->
-            <app-navigation [navigation]="navigation"></app-navigation>
+    <div class="content-sidebar user-data">
+        <app-profile [username]="session.user.name" [loggedInUser]="true"></app-profile>
+    </div>
 
-        </div>
-        <div class="side-nav-footer">
-            <button mat-button (click)="open = !open">
-                <mat-icon *ngIf="!open">keyboard_arrow_right</mat-icon>
-                <mat-icon *ngIf="open">keyboard_arrow_left</mat-icon>
-            </button>
-        </div>
-    </mat-sidenav>
-
-    <mat-sidenav-content>
-        <kui-progress-indicator *ngIf="loading && !route"></kui-progress-indicator>
+    <div class="content-container">
+        <nav mat-tab-nav-bar mat-align-tabs="left" class="tab-bar" animationDuration="0ms">
+            <a mat-tab-link *ngFor="let link of navigation" [routerLink]="link.route" routerLinkActive="active-tab"
+               #rla="routerLinkActive" [active]="rla.isActive">
+                <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
+                {{link.label}}
+            </a>
+        </nav>
 
         <!-- main content: router outlet -->
-        <div class="content" [ngSwitch]="route" *ngIf="!loading && route">
+        <div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
 
             <!-- user profile -->
-            <app-profile [username]="username" *ngSwitchCase="'profile'"></app-profile>
+            <div *ngSwitchCase="'profile'" class="full-width">
+                <app-projects [username]="session.user.name"></app-projects>
+            </div>
 
             <!-- edit user data -->
-            <app-account [username]="username" *ngSwitchCase="'account'"></app-account>
+            <div *ngSwitchCase="'account'" class="full-width">
+                <app-account [username]="session.user.name"></app-account>
+            </div>
 
             <!-- user's projects -->
-            <app-projects [username]="username" *ngSwitchCase="'projects'"></app-projects>
+            <div *ngSwitchCase="'projects'" class="full-width">
+                <app-projects [username]="session.user.name"></app-projects>
+            </div>
+
+            <!-- system's projects -->
+            <!-- TODO: this should be available only, when the user has system admin rights -->
+            <div *ngSwitchCase="'system'" class="full-width">
+
+                <div *ngIf="session.user.sysAdmin">
+                    <app-projects class="full-width" [username]="session.user.name" [system]="true"></app-projects>
+                </div>
+
+                <app-error *ngIf="!session.user.sysAdmin" [status]="403"></app-error>
+            </div>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
             <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
 
         </div>
+    </div>
 
-    </mat-sidenav-content>
 
-</mat-sidenav-container>
+
+</div>

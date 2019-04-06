@@ -1,0 +1,44 @@
+.user-profile {
+
+    .user-profile-image {
+        width: 100%;
+
+        &:after {
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+    }
+
+    .user-profile-headline {
+        h3.mat-subheading-2 {
+            font-size: 18px;
+            margin-top: -18px;
+        }
+    }
+
+    ul.user-profile-info {
+        margin-top: 48px;
+        padding-inline-start: 12px;
+
+        li {
+            list-style-type: none;
+//            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.5em;
+
+            &.status {
+                padding: 0;
+            }
+
+            .mat-icon {
+                margin-right: 8px;
+                vertical-align: middle;
+                position: relative;
+                // top: -1px;
+                font-size: 16px;
+                height: 18px;
+            }
+        }
+    }
+}

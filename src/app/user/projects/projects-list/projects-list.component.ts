@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { ApiServiceError, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
-import { CacheService } from '../../../main/cache/cache.service';
+import { Project } from '@knora/core';
+import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/material-dialog.component';
 
 @Component({
-    selector: 'app-project-list',
-    templateUrl: './project-list.component.html',
-    styleUrls: ['./project-list.component.scss']
+    selector: 'app-projects-list',
+    templateUrl: './projects-list.component.html',
+    styleUrls: ['./projects-list.component.scss']
 })
-export class ProjectListComponent implements OnInit {
+export class ProjectsListComponent implements OnInit {
 
     loading: boolean = true;
 
@@ -19,18 +19,14 @@ export class ProjectListComponent implements OnInit {
     @Input() projects: Project[];
 
     /**
-     * Is the list public and not the list of a logged-in user?
-     * Then the "Create new Project"-button is disabled
+     * If system is true: show the list of all projects
+     * Otherwise only the projects where the user is member of
      */
-    @Input() public?: boolean = true;
-
-
-    active: Project[] = [];
-    inactive: Project[] = [];
+    @Input() system?: boolean = false;
 
     list: { [type: string]: Project[] } = {
         ['active']: [],
-        ['inactive']: []
+        ['archived']: []
     };
 
     // i18n setup
@@ -41,7 +37,9 @@ export class ProjectListComponent implements OnInit {
         }
     };
 
-    constructor(private _router: Router) {
+    constructor(
+        private _router: Router,
+        private _dialog: MatDialog) {
 
     }
 
@@ -55,7 +53,7 @@ export class ProjectListComponent implements OnInit {
                 this.list['active'].push(item);
 
             } else {
-                this.list['inactive'].push(item);
+                this.list['archived'].push(item);
             }
 
         }
@@ -93,6 +91,24 @@ export class ProjectListComponent implements OnInit {
             queryParams: {
                 returnUrl: this._router.url
             }
+        });
+    }
+
+    openDialog(mode: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+
+
         });
     }
 }

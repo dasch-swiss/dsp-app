@@ -20,6 +20,42 @@
     border-radius: 6px;
   }
 }
+
+// --------------------------------------
+
+//
+// toolbar for content title, subtitle etc.
+.app-toolbar {
+  background: whitesmoke;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+//  margin: 48px 0 0;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  width: 100%;
+
+  &.transparent {
+    background: none;
+  }
+
+  .app-toolbar-row {
+    display: flex;
+    box-sizing: border-box;
+    padding: 0 16px;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 4px;
+}
+
 // --------------------------------------
 
 //
@@ -27,31 +63,35 @@
 a {
   color: $primary;
 }
+
 a,
 .link {
   cursor: pointer;
   text-decoration: none;
 }
+
 // --------------------------------------
 
 //
 // logo, action button
 .logo,
 .action {
-
-  .mat-button {
+  .mat-button.main-toolbar-button {
     padding: 12px 0;
   }
-
 }
+
 // --------------------------------------
 
 //
-// rules and dividers
-.mat-divider.more-space {
-  margin-top: 78px !important;
-  margin-bottom: 48px !important;
+// margin element
+.more-space-top {
+  margin-top: 48px !important;
 }
+.more-space-bottom {
+  margin-bottom: 24px !important;
+}
+
 // --------------------------------------
 
 //
@@ -67,15 +107,14 @@ a,
   padding: 0 !important;
 
   .menu-action {
-
     .mat-button-wrapper {
       line-height: unset !important;
     }
-
   }
 }
 
 // --------------------------------------
+
 
 //
 // card
@@ -89,6 +128,7 @@ a,
   &.no-shadow {
     box-shadow: none !important;
   }
+
   .mat-card-actions {
     text-align: right;
   }
@@ -98,15 +138,37 @@ a,
 
 //
 // status badge
-.status {
+.badge {
   padding: 4px 6px;
   font-weight: bolder;
   border-radius: 4px;
-  color: white;
-  background: $warn;
-  &.active {
-    background: $active;
+
+  &.status {
+    color: white;
+    background: $warn;
+
+    &.active {
+      background: $active;
+    }
   }
+}
+
+// status class alone is only for colorized text
+.status.text-only {
+  color: $warn;
+
+  &.active {
+    color: $active;
+  }
+}
+
+// --------------------------------------
+
+//
+// danger zone
+.app-danger-zone {
+  border: 1px solid $warn;
+  border-radius: $border-radius;
 }
 
 // --------------------------------------
@@ -114,11 +176,9 @@ a,
 //
 // list
 .simple-list {
-
   padding: 16px;
 
   .mat-list-item {
-
     .list-icon {
       width: 36px;
       height: 36px;
@@ -132,32 +192,7 @@ a,
       position: relative;
       left: 48px;
     }
-
-    .mat-list-action {
-
-    }
-
   }
-}
-
-.list-header {
-  display: flex;
-  margin-top: -48px;
-  padding-bottom: 24px;
-//  padding: 24px 0 24px 12px;
-
-  .smaller {
-    font-size: small;
-  }
-
-  .list-action {
-
-    .mat-icon-button {
-      margin: 0 0 16px !important;
-    }
-
-  }
-
 }
 
 // --------------------------------------
@@ -167,7 +202,7 @@ a,
 .table {
   border-collapse: collapse;
   width: 100%;
-  max-width: calc(1000px - 2 * 48px);
+  // max-width: calc(1000px - 2 * 48px);
 
   tr {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -192,13 +227,11 @@ a,
 
     td,
     th {
-
       &:not(:first-child) {
         min-width: 96px;
       }
 
       &.table-action {
-
         button {
           float: right;
         }
@@ -229,14 +262,14 @@ $gc-large: decimal-floor($form-width / 1.618, 0) - 2;
 $gc-small: $form-width - $gc-large - 4;
 
 .form-content {
-  margin: 24px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+//  padding: 0 20px;
   width: $form-width + px;
 
-
-
-  .small-field, .medium-field, .large-field {
-    margin: 0 2px 24px 0;
+  .small-field,
+  .medium-field,
+  .large-field {
+    margin-bottom: 24px;
   }
 
   .small-field {
@@ -256,6 +289,7 @@ $gc-small: $form-width - $gc-large - 4;
   }
 
   .form-panel {
+    display: inline-flex;
     width: $form-width + px;
 
     &.form-action {
@@ -270,13 +304,49 @@ $gc-small: $form-width - $gc-large - 4;
 // progress-indicator without default color
 
 .kui-progress-indicator {
-  .line > div {
+  .line>div {
     background-color: $primary_700 !important;
   }
 }
+
 // --------------------------------------
 
 // tab bar in project, user route
 .tab-bar {
-  margin-top: $tab-bar-margin;
+  &.margin-from-top {
+    margin-top: $tab-bar-margin;
+  }
+
+  .active-tab {
+    opacity: 1;
+  }
+
+  .tab-icon {
+    margin-right: 8px;
+  }
 }
+
+// --------------------------------------
+
+// notes and messages
+.note {
+  padding: 12px;
+
+  &.developer {
+    background-color: rgba(248, 166, 90, 0.5);
+  }
+
+  &.warning {
+    background-color: rgba($accent_100, 0.5);
+  }
+
+  &.error {
+    background-color: rgba($warn, 0.5);
+  }
+
+  &.success {
+    background-color: rgba($active, 0.5);
+  }
+}
+
+// --------------------------------------

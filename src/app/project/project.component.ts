@@ -1,9 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { ApiServiceError, GroupsService, Project, ProjectsService } from '@knora/core';
+import {
+    ApiServiceError,
+    GroupsService,
+    Project,
+    ProjectsService
+} from '@knora/core';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
+import { AppGlobal } from '../app-global';
+import { Session } from '@knora/authentication';
 
 @Component({
     selector: 'app-project',
@@ -11,7 +18,6 @@ import { MenuItem } from '../main/declarations/menu-item';
     styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
-
     loading: boolean;
     error: boolean;
 
@@ -19,43 +25,20 @@ export class ProjectComponent implements OnInit {
 
     project: Project;
 
+    loggedInAdmin: boolean = false;
+
     // for the sidenav
     open: boolean = true;
 
-    navigation: MenuItem[] = [
-        {
-            label: 'Project information',
-            route: 'board',
-            icon: 'assignment'
-        },
-        {
-            label: 'Collaboration',
-            route: 'collaboration',
-            icon: 'group'
-        },
-        {
-            label: 'Data model',
-            route: 'ontologies',
-            icon: 'timeline',
-            /*
-            children: [
-                {
-                    label: 'gaga',
-                    route: 'gaga',
-                    icon: 'dash',
-                }
-            ]
-            */
-        }
-    ];
+    navigation: MenuItem[] = AppGlobal.projectNav;
 
-
-    constructor(private _cache: CacheService,
-                private _route: ActivatedRoute,
-                private _projectsService: ProjectsService,
-                private _groupsService: GroupsService,
-                private _titleService: Title) {
-
+    constructor(
+        private _cache: CacheService,
+        private _route: ActivatedRoute,
+        private _projectsService: ProjectsService,
+        private _groupsService: GroupsService,
+        private _titleService: Title
+    ) {
         // get the shortcode of the current project
         this.projectcode = this._route.snapshot.params.shortcode;
 
@@ -63,33 +46,71 @@ export class ProjectComponent implements OnInit {
         this._titleService.setTitle('Project ' + this.projectcode);
 
         this.error = this.validateShortcode(this.projectcode);
-
     }
 
     ngOnInit() {
-
         if (!this.error) {
-
             this.loading = true;
             // set the cache here:
             // current project data, project members and project groups
-            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
-            this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
-            this._cache.get('groups_of_' + this.projectcode, this._groupsService.getAllGroups());
+            this._cache.get(
+                this.projectcode,
+                this._projectsService.getProjectByShortcode(this.projectcode)
+            );
 
             // get the data from cache
-            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-                (result: any) => {
-                    this.project = result;
-                    // this.navigation[0].label = result.shortname.toUpperCase();
-                    this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    console.error(error);
-                    this.error = true;
-                    this.loading = false;
-                }
-            );
+            this._cache
+                .get(
+                    this.projectcode,
+                    this._projectsService.getProjectByShortcode(
+                        this.projectcode
+                    )
+                )
+                .subscribe(
+                    (result: any) => {
+                        this.project = result;
+                        this.navigation[0].label =
+                            'Project: ' + result.shortname.toUpperCase();
+
+                        // is the logged-in user a project admin?
+                        const session: Session = JSON.parse(
+                            localStorage.getItem('session')
+                        );
+
+                        // use cache service to set permissions
+                        //
+                        if (session.user.sysAdmin) {
+                            // if the logged-in user is system admin, he's also projectAdmin
+                            this.loggedInAdmin = session.user.sysAdmin;
+                        } else {
+                            // logged-in user is not system admin; but is he projectAdmin?
+                            this.loggedInAdmin = session.user.projectAdmin.some(
+                                e => e === result.id
+                            );
+                        }
+                        this._cache.set('projectAdmin', this.loggedInAdmin);
+
+                        if (this.loggedInAdmin) {
+                            this._cache.get(
+                                'members_of_' + this.projectcode,
+                                this._projectsService.getProjectMembersByShortcode(
+                                    this.projectcode
+                                )
+                            );
+                            this._cache.get(
+                                'groups_of_' + this.projectcode,
+                                this._groupsService.getAllGroups()
+                            );
+                        }
+
+                        this.loading = false;
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                        this.error = true;
+                        this.loading = false;
+                    }
+                );
         } else {
             // shortcode isn't valid
             // TODO: show an error page
@@ -106,5 +127,4 @@ export class ProjectComponent implements OnInit {
 
         return !(regexp.test(code) && code.length === 4);
     }
-
 }

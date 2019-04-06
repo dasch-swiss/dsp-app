@@ -1,0 +1,33 @@
+<div class="content large middle">
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+    <div *ngIf="!loading" class="content">
+        <!--
+        <h1 class="mat-headline">Welcome back {{user?.givenName}}</h1>
+
+        <h2 class="mat-title">Here you'll find your latest work and your projects</h2>
+        -->
+        <div class="app-toolbar more-space-top">
+            <div class="app-toolbar-row">
+                <h3 class="mat-body subtitle" >List of projects</h3>
+            </div>
+            <div class="app-toolbar-row">
+                <h2 class="mat-title">
+                    <span *ngIf="!showSystemProjects">These are your projects</span>
+                    <span *ngIf="showSystemProjects && sysAdmin">As a system admin you have access to all projects</span>
+                </h2>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
+                    <button mat-button color="'primary'" *ngIf="sysAdmin" (click)="showSystemProjects = !showSystemProjects" class="toggle-view">
+                        <span *ngIf="showSystemProjects">Show only my projects</span>
+                        <span *ngIf="!showSystemProjects">Show all projects</span>
+                    </button>
+                </span>
+            </div>
+        </div>
+
+        <app-projects [username]="user.username" [system]="showSystemProjects"></app-projects>
+
+
+    </div>
+</div>

@@ -18,11 +18,16 @@ import { ProjectComponent } from './project/project.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
+import { DashboardComponent } from './user/dashboard/dashboard.component';
+import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
+
 // workspace
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { ResultsComponent } from './workspace/results/results.component';
+import { DesignQuestionComponent } from './dev/design-question/design-question.component';
+
 
 const routes: Routes = [
     {
@@ -34,10 +39,9 @@ const routes: Routes = [
         component: LoginComponent
     },
     {
-        path: 'project/new',
-        component: FullframeDialogComponent,
-        canActivate: [AuthGuard],
-        data: { component: ProjectFormComponent }
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'project/:shortcode',
@@ -52,10 +56,6 @@ const routes: Routes = [
             {
                 path: 'board',
                 component: BoardComponent
-            },
-            {
-                path: 'edit',
-                component: ProjectFormComponent
             },
             {
                 path: 'collaboration',
@@ -77,20 +77,33 @@ const routes: Routes = [
         ]
     },
     {
-        path: 'user/new',
-        component: FullframeDialogComponent,
-        canActivate: [AuthGuard],
-        data: { component: UserFormComponent }
-    },
-    {
         path: 'user/:name',
         component: ProfileComponent,
     },
     {
-        path: 'user/:name/edit',
-        component: FullframeDialogComponent,
-        canActivate: [AuthGuard],
-        data: { component: UserFormComponent }
+        path: 'profile',
+        component: UserComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'account',
+        component: UserComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'projects',
+        component: UserComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'system',
+        component: UserComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'collections',
+        component: UserComponent,
+        canActivate: [AuthGuard]
     },
     {
         path: 'search',
@@ -111,24 +124,8 @@ const routes: Routes = [
         ]
     },
     {
-        path: 'profile',
-        component: UserComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'account',
-        component: UserComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'projects',
-        component: UserComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path: 'collections',
-        component: UserComponent,
-        canActivate: [AuthGuard]
+        path: 'dev',        // developer test environment
+        component: DesignQuestionComponent
     },
     {
         path: '**',
@@ -138,7 +135,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
     exports: [RouterModule]
 })
 export class AppRoutingModule {

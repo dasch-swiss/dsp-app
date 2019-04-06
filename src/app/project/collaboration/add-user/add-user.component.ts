@@ -2,10 +2,13 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import { ApiServiceError, AutocompleteItem, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
+import { Session } from '@knora/authentication';
+import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-add-user',
@@ -105,6 +108,7 @@ export class AddUserComponent implements OnInit {
     isAlreadyMember = false;
 
     constructor(private _cache: CacheService,
+                private _dialog: MatDialog,
                 private _router: Router,
                 private _projects: ProjectsService,
                 private _users: UsersService,
@@ -174,7 +178,7 @@ export class AddUserComponent implements OnInit {
 
                             this.users[i] = {
                                 iri: u.id,
-                                name: u.email,
+                                name: u.username,
                                 label: existsInProject + u.username + ' | ' + u.email + ' | ' + u.givenName + ' ' + u.familyName
                             };
                             i++;
@@ -230,9 +234,9 @@ export class AddUserComponent implements OnInit {
 
     /**
      * filter a list while typing in auto complete input field
-     * @param {AutocompleteItem[]} list List of options
-     * @param {string} name Value to filter by
-     * @returns {AutocompleteItem[]} Filtered list of options
+     * @param list List of options
+     * @param name Value to filter by
+     * @returns Filtered list of options
      */
     filter(list: AutocompleteItem[], name: string) {
         return list.filter(user =>
@@ -281,7 +285,7 @@ export class AddUserComponent implements OnInit {
 
         // TODO: add getUserByEmail
         // you can type username or email. We have to check, what we have now
-        this._users.getUserByEmail(val).subscribe(
+        this._users.getUserByUsername(val).subscribe(
             (result: User) => {
                 // case b) result if the user exists
                 this.selectedUser = result;
@@ -310,7 +314,7 @@ export class AddUserComponent implements OnInit {
                                     const session: Session = JSON.parse(localStorage.getItem('session'));
                                     if (add.username === session.user.name) {
                                         this._cache.del(add.username);
-                                        this._cache.get(add.username, this._users.getUserByEmail(add.username));
+                                        this._cache.get(add.username, this._users.getUserByUsername(add.username));
                                     }
                                     this.loading = false;
 
@@ -344,13 +348,20 @@ export class AddUserComponent implements OnInit {
         );
     }
 
-    createUser() {
-        this._router.navigate(['/user/new'], {
-            queryParams: {
-                returnUrl: this._router.url,
-                project: this.projectcode,
-                value: this.selectUserForm.controls['username'].value
-            }
+    openDialog(mode: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { project: this.projectcode, name: this.selectUserForm.controls['username'].value, mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.refreshParent.emit();
         });
     }
 

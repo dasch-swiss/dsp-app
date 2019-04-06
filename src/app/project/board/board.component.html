@@ -1,78 +1,44 @@
-<kui-progress-indicator *ngIf="loading && (!project && !projectMembers)"></kui-progress-indicator>
+<kui-progress-indicator *ngIf="loading && !project"></kui-progress-indicator>
 
-<div *ngIf="!loading && (project && projectMembers)" class="content large middle">
-    <!-- project header with shortcode, shortname and project long name -->
-    <mat-card class="no-shadow">
-        <mat-card-subtitle>
-            Project {{project.shortcode}} | {{project.shortname | uppercase}}
+<div *ngIf="!loading && project" class="content large middle">
+
+    <div class="app-toolbar transparent more-space-bottom">
+        <div class="app-toolbar-row">
+            <h3 class="mat-body subtitle">
+                Project {{project.shortcode}} | {{project.shortname | uppercase}}
+            </h3>
             <span class="fill-remaining-space"></span>
-            <span class="badge status" [class.active]="project.status">
-                        <span *ngIf="project.status">Active</span>
-                        <span *ngIf="!project.status">Archived</span>
-                    </span>
-        </mat-card-subtitle>
-        <mat-card-title>{{project.longname}}</mat-card-title>
-    </mat-card>
-
-    <!-- description, keywords and other infos -->
-    <mat-card class="no-shadow">
-        <!-- description -->
-        <mat-card-content>
-            <div *ngFor="let description of project.description">
-                <div [innerHtml]="description.value"></div>
-            </div>
-        </mat-card-content>
-
-        <!-- keywords -->
-        <mat-card-content>
-            <mat-chip-list>
-                <mat-chip *ngFor="let k of project.keywords">
-                    {{k}}
-                </mat-chip>
-            </mat-chip-list>
-        </mat-card-content>
-
-        <mat-card-actions>
-            <button mat-icon-button class="right" [routerLink]="'../edit'">
-                <mat-icon>edit</mat-icon>
-            </button>
-        </mat-card-actions>
-    </mat-card>
-
-    <!-- # project members -->
-    <!--
-    <mat-card class="no-shadow link" routerLink="../collaboration">
-
-        <mat-card-subtitle>Collaboration</mat-card-subtitle>
-        <mat-card-title>
-            {{projectMembers.length | i18nPlural: itemPluralMapping['member']}}
+            <span class="app-toolbar-action">
+                <span class="badge status" [class.active]="project.status">
+                    <span *ngIf="project.status">Active</span>
+                    <span *ngIf="!project.status">Archived</span>
+                </span>
+            </span>
+        </div>
+        <div class="app-toolbar-row">
+            <h2 class="mat-title">
+                {{project.longname}}
+            </h2>
             <span class="fill-remaining-space"></span>
-            <span>
-                <button mat-icon-button class="right">
-                    <mat-icon>arrow_forward</mat-icon>
+            <span class="app-toolbar-action">
+                <button mat-icon-button class="right" (click)="openDialog('editProject', project.shortcode)"
+                        *ngIf="project.status && loggedInAdmin">
+                    <mat-icon>edit</mat-icon>
                 </button>
             </span>
-        </mat-card-title>
-    </mat-card>
+        </div>
+    </div>
 
-    <mat-divider class="more-space"></mat-divider>
-    -->
-    <!-- # project ontologies -->
-    <!--
-    <mat-card class="no-shadow link" routerLink="../ontologies">
+    <!-- description -->
+    <section class="project description" *ngFor="let description of project.description">
+        <div [innerHtml]="description.value"></div>
+    </section>
 
-        <mat-card-subtitle>Data model</mat-card-subtitle>
-        <mat-card-title>
-            {{project.ontologies.length | i18nPlural: itemPluralMapping['ontology']}}
-            <span class="fill-remaining-space"></span>
-            <span>
-                <button mat-icon-button class="right">
-                    <mat-icon>arrow_forward</mat-icon>
-                </button>
-            </span>
-        </mat-card-title>
-    </mat-card>
+    <!-- keywords -->
+    <section class="project keywords">
+        <mat-chip-list>
+            <mat-chip *ngFor="let k of project.keywords">{{k}}</mat-chip>
+        </mat-chip-list>
+    </section>
 
-    <mat-divider class="more-space"></mat-divider>
-    -->
 </div>

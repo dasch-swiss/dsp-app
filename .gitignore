@@ -7,6 +7,7 @@
 
 # dependencies
 /node_modules
+/.yalc
 
 # IDEs and editors
 /.idea

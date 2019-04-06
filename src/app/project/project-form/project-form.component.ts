@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material';
 import { Title } from '@angular/platform-browser';
@@ -20,6 +20,8 @@ export class ProjectFormComponent implements OnInit {
     errorMessage: any;
 
     @Input() projectcode: string;
+
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
     project: Project;
 
@@ -55,6 +57,18 @@ export class ProjectFormComponent implements OnInit {
     selectable = true;
     removable = true;
     addOnBlur = true;
+
+        /**
+     * success of sending data
+     */
+    success = false;
+    /**
+     * message after successful post
+     */
+    successMessage: any = {
+        status: 200,
+        statusText: 'You have successfully updated the project data.'
+    };
 
     /**
      * form group, errors and validation messages
@@ -110,14 +124,14 @@ export class ProjectFormComponent implements OnInit {
                 private _titleService: Title) {
 
         // set the page title
-        this._titleService.setTitle('New project');
+        // this._titleService.setTitle('New project');
 
-        this.projectcode = this._route.parent.snapshot.params.shortcode;
+        // this.projectcode = this._route.parent.snapshot.params.shortcode;
 
-        if (this.projectcode) {
+        /* if (this.projectcode) {
             // set the page title
             this._titleService.setTitle('Edit project ' + this.projectcode);
-        }
+        } */
     }
 
     ngOnInit() {
@@ -137,7 +151,7 @@ export class ProjectFormComponent implements OnInit {
                         }
                     },
                     (error: ApiServiceError) => {
-                        console.log(error);
+                        console.error(error);
                         this.errorMessage = error;
                     }
                 );
@@ -324,6 +338,8 @@ export class ProjectFormComponent implements OnInit {
                     // update cache
                     this._cache.set(this.form.controls['shortcode'].value, result);
 
+                    this.success = true;
+
                     this.loading = false;
 
                     // redirect to project page
@@ -352,6 +368,7 @@ export class ProjectFormComponent implements OnInit {
                                 (add: User) => {
 
                                     this.loading = false;
+                                    this.closeMessage();
                                     // redirect to (new) project page
                                     this._router.navigateByUrl('/project', {skipLocationChange: true}).then(() =>
                                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
@@ -380,7 +397,7 @@ export class ProjectFormComponent implements OnInit {
      * Delete / archive project
      * @param id Project Iri
      */
-    archiveProject(id: string) {
+    delete(id: string) {
         // ev.preventDefault();
         // TODO: "are you sure?"-dialog
 
@@ -414,7 +431,7 @@ export class ProjectFormComponent implements OnInit {
      *
      * @param id Project Iri
      */
-    activateProject(id: string) {
+    activate(id: string) {
 
         this._projects.activateProject(id).subscribe(
             (res: Project) => {
@@ -453,7 +470,8 @@ export class ProjectFormComponent implements OnInit {
     /**
      * Reset the form
      */
-    reset(project?: Project) {
+    resetForm(ev: Event, project?: Project) {
+        ev.preventDefault();
 
         project = (project ? project : new Project());
 
@@ -461,6 +479,9 @@ export class ProjectFormComponent implements OnInit {
 
         // TODO: fix "set value" for keywords field
 //        this.form.controls['keywords'].setValue(this.keywords);
+    }
 
+    closeMessage() {
+        this.closeDialog.emit();
     }
 }
