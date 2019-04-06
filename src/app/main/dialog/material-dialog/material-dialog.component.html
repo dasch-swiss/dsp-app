@@ -1,7 +1,66 @@
+<!-- header -->
+<div class="app-toolbar transparent more-space-bottom">
+    <div class="app-toolbar-row">
+        <h3 class="mat-body subtitle" [ngSwitch]="data.mode">
+            <span *ngSwitchCase="'createUser'">
+                {{ 'appLabels.form.user.title.new' | translate }}
+            </span>
+            <span *ngSwitchCase="'editUser'">
+                {{ 'appLabels.form.user.title.edit' | translate }}
+            </span>
+            <span *ngSwitchCase="'editPassword'">
+                {{ 'appLabels.form.user.title.password' | translate }}
+            </span>
+            <span *ngSwitchCase="'createProject'">
+                {{ 'appLabels.form.project.title.new' | translate }}
+            </span>
+            <span *ngSwitchCase="'editProject'">
+                {{ 'appLabels.form.project.title.edit' | translate }}
+            </span>
+            <span *ngSwitchDefault>
+                Not yet implemented
+            </span>
+        </h3>
+        <span class="fill-remaining-space"></span>
+        <span class="app-toolbar-action">
+            <button mat-icon-button (click)="dialogRef.close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </span>
+    </div>
+    <div class="app-toolbar-row">
+        <h2 class="mat-title" [ngSwitch]="data.mode">
+            <span *ngSwitchCase="'createUser'">
+                {{ 'appLabels.form.user.title.profile' | translate }}
+            </span>
+            <span *ngSwitchCase="'editUser'">
+                {{ data.name }}
+            </span>
+            <span *ngSwitchCase="'editPassword'">
+                {{ data.name }}
+            </span>
+            <span *ngSwitchCase="'createProject'">
+                {{ 'appLabels.form.user.title.profile' | translate }}
+            </span>
+            <span *ngSwitchCase="'editProject'">
+                {{ data.name }}
+            </span>
+            <span *ngSwitchDefault>
+                Error
+            </span>
+        </h2>
+        <span class="fill-remaining-space"></span>
+        <span class="app-toolbar-action">
+
+        </span>
+    </div>
+</div>
+<!-- form -->
 <div [ngSwitch]="data.mode">
     <!-- Create new user profile -->
     <div *ngSwitchCase="'createUser'">
-        <app-user-form [name]="data.name" [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-user-form>
+        <app-user-form [name]="data.name" [projectcode]="data.project" (closeDialog)="dialogRef.close()">
+        </app-user-form>
     </div>
 
     <!-- Update user profile data -->

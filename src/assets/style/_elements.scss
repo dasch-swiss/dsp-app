@@ -47,9 +47,6 @@
     white-space: nowrap;
   }
 
-  .app-toolbar-action {
-    margin-top: -22px;
-  }
 }
 
 .subtitle {
@@ -116,6 +113,7 @@ a,
 
 // --------------------------------------
 
+
 //
 // card
 .mat-card {
@@ -160,6 +158,14 @@ a,
   &.active {
     color: $active;
   }
+}
+
+// --------------------------------------
+
+//
+// danger zone
+.app-danger-zone {
+  border: 1px solid $warn;
 }
 
 // --------------------------------------

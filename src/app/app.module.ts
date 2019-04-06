@@ -59,7 +59,6 @@ import { DesignQuestionComponent } from './dev/design-question/design-question.c
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
 import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
-import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material';
 import { MaterialDialogComponent } from './main/dialog/material-dialog/material-dialog.component';
 
 // Translate: AoT requires an exported function for factories

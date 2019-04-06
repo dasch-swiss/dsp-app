@@ -66,6 +66,9 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     user: User;
 
+    title: string;
+    subtitle: string;
+
     /**
      *  send user data to parent component;
      *  in case of dialog box?
@@ -120,7 +123,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         },
         email: {
             required: 'Email address is required.',
-            pattern: "This doesn't appear to be a valid email address.",
+            pattern: 'This doesn\'t appear to be a valid email address.',
             existingName:
                 'This user exists already. If you want to edit it, ask a system administrator.',
             member: 'This user is already a member of the project.'
@@ -213,6 +216,9 @@ export class UserFormComponent implements OnInit, OnChanges {
             /**
              * edit mode: get user data from cache
              */
+
+             this.title = this.username;
+             this.subtitle = "'appLabels.form.user.title.edit' | translate";
 
             // set the cache first: user data to edit
             this._cache.get(
