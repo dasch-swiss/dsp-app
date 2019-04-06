@@ -2,20 +2,11 @@
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <!--
-    <mat-card-subtitle>User</mat-card-subtitle>
-
-    <mat-card-title>
-        <span *ngIf="username">{{ 'appLabels.form.user.title.edit' | translate }}</span>
-        <span *ngIf="!username">{{ 'appLabels.form.user.title.new' | translate }}</span>
-    </mat-card-title>
-    -->
-
     <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content user-data" (ngSubmit)="submitData()">
+    <form *ngIf="!loading" [formGroup]="form" class="form-content user-data" (ngSubmit)="submitData()">
 
         <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 

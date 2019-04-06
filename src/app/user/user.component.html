@@ -2,6 +2,7 @@
 <app-error *ngIf="error"></app-error>
 
 <div class="content large middle" *ngIf="!loading">
+
     <div class="content-sidebar user-data">
         <app-profile [username]="session.user.name" [loggedInUser]="true"></app-profile>
     </div>
@@ -38,15 +39,6 @@
             <div *ngSwitchCase="'system'" class="full-width">
 
                 <div *ngIf="session.user.sysAdmin">
-                    <div class="flex-panel">
-                        All projects in the system
-                        <span class="fill-remaining-space"></span>
-                        <span class="action">
-                            <button mat-fab [color]="'accent'" (click)="openDialog('createProject')">
-                                <mat-icon>add</mat-icon>
-                            </button>
-                        </span>
-                    </div>
                     <app-projects class="full-width" [username]="session.user.name" [system]="true"></app-projects>
                 </div>
 

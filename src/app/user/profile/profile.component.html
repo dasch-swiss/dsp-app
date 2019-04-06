@@ -6,7 +6,7 @@
     <div class="user-profile-headline">
         <!-- user names -->
         <h2 class="mat-title">{{user.givenName}}<br>{{user.familyName}}</h2>
-        <h3 class="mat-subheading-2 mat-card-subtitle">{{user.username}}</h3>
+        <h3 class="mat-body subtitle">{{user.username}}</h3>
 
         <mat-divider></mat-divider>
 
@@ -25,7 +25,7 @@
     <mat-divider></mat-divider>
     <br>
     <!-- edit button -->
-    <button mat-raised-button (click)="openDialog('editUser', user.username)" style="width: 100%;">
+    <button mat-button [color]="'primary'" (click)="openDialog('editUser', user.username)" style="width: 100%;">
         Edit
     </button>
 </div>
@@ -35,7 +35,7 @@
 
 
         <h2 class="mat-title">{{user.givenName}}<br>{{user.familyName}}</h2>
-        <h3 class="mat-subheading-2 mat-card-subtitle">{{user.username}}</h3>
+        <h3 class="mat-body subtitle">{{user.username}}</h3>
 
 
 </div>

@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Project } from '@knora/core';
+import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-projects-list',
@@ -17,10 +19,10 @@ export class ProjectsListComponent implements OnInit {
     @Input() projects: Project[];
 
     /**
-     * Is the list public and not the list of a logged-in user?
-     * Then the "Create new Project"-button is disabled
+     * If system is true: show the list of all projects
+     * Otherwise only the projects where the user is member of
      */
-    @Input() private?: boolean = false;
+    @Input() system?: boolean = false;
 
     list: { [type: string]: Project[] } = {
         ['active']: [],
@@ -35,7 +37,9 @@ export class ProjectsListComponent implements OnInit {
         }
     };
 
-    constructor(private _router: Router) {
+    constructor(
+        private _router: Router,
+        private _dialog: MatDialog) {
 
     }
 
@@ -87,6 +91,24 @@ export class ProjectsListComponent implements OnInit {
             queryParams: {
                 returnUrl: this._router.url
             }
+        });
+    }
+
+    openDialog(mode: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+
+
         });
     }
 }

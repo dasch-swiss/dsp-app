@@ -11,14 +11,14 @@
 </form>
  -->
 
-<div *ngIf="!system" class="content">
+<div *ngIf="!system">
     <!-- <mat-divider></mat-divider> -->
     <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
-    <app-projects-list *ngIf="!loadProjects" [projects]="projects" [private]></app-projects-list>
+    <app-projects-list *ngIf="!loadProjects" [projects]="projects"></app-projects-list>
 </div>
 
-<div *ngIf="system" class="content">
+<div *ngIf="system">
     <!-- <mat-divider></mat-divider> -->
     <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
-    <app-projects-list *ngIf="!loadSystem" [projects]="systemProjects" [private]></app-projects-list>
+    <app-projects-list *ngIf="!loadSystem" [projects]="systemProjects" [system]="system"></app-projects-list>
 </div>

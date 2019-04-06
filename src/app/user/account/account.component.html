@@ -2,7 +2,7 @@
 
 <div *ngIf="user && !loading" class="content">
 
-    <!-- password update form -->
+    <!-- password update: header -->
     <div class="app-toolbar transparent more-space-bottom">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
@@ -23,11 +23,12 @@
             </span>
         </div>
     </div>
-
+    <!-- password update: form -->
     <app-user-password [username]="username"></app-user-password>
 
     <!-- danger zone: delete account -->
     <div class="app-danger-zone more-space-top">
+        <!-- delete account: header -->
         <div class="app-toolbar more-space-bottom">
             <div class="app-toolbar-row">
                 <h3 class="mat-body subtitle">
@@ -48,7 +49,7 @@
                 </span>
             </div>
         </div>
-
+        <!-- delete account: button -->
         <div class="center more-space-top more-space-bottom">
             <button *ngIf="user.status" mat-button [color]="'warn'" (click)="delete()">
                 {{ 'appLabels.form.user.title.deleteButton' | translate | uppercase }}
@@ -56,7 +57,7 @@
 
             <button *ngIf="!user.status" mat-button [color]="'primary'" (click)="activate()">ACTIVATE ACCOUNT</button>
         </div>
-
     </div>
 
 </div>
+

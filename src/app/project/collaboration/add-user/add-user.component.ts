@@ -365,16 +365,6 @@ export class AddUserComponent implements OnInit {
         });
     }
 
-    addNew() {
-        this._router.navigate(['/user/new'], {
-            queryParams: {
-                returnUrl: this._router.url,
-                project: this.projectcode,
-                name: this.selectUserForm.controls['username'].value
-            }
-        });
-    }
-
     resetInput(ev: Event) {
         ev.preventDefault();
         this.selectUserForm.controls['username'].reset('');
