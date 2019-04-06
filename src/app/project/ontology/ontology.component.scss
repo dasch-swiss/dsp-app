@@ -1,13 +1,23 @@
+@import '~@angular/material/theming';
 @import '../../../assets/style/config';
 
 .ontology-editor {
-  height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 49px);
+    height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 49px);
 }
 
 .resource-type {
-  width: 240px;
-  min-height: 240px;
-  height: auto;
+    width: 240px;
+    min-height: 240px;
+    height: auto;
+    position: relative;
+    top: 48px;
+    left: 48px;
+    @include mat-elevation-transition;
+    @include mat-elevation(2);
+
+    &:active {
+      @include mat-elevation(8);
+    }
 }
 
 
@@ -23,28 +33,29 @@
     }
 
     .ontology-default-elements {
-      width: 220px;
-      // TODO: fix height
-      height: 100vh;
-      position: fixed;
-      right: 0;
-      top: 0;
-      padding: 72px 6px 6px;
-      background: rgb(255, 255, 255);
+        width: 220px;
+        // TODO: fix height
+        height: 100vh;
+        position: fixed;
+        right: 0;
+        top: 0;
+        padding: 72px 6px 6px;
+        background: rgb(255, 255, 255);
 
-      .list-item {
-        border: 1px solid black;
-        padding: 6px;
-        margin: 6px;
-      }
+        .list-item {
+            border: 1px solid black;
+            padding: 6px;
+            margin: 6px;
+        }
 
-      ul {
-          padding-inline-start: 0;
-          li {
-              list-style-type: none;
+        ul {
+            padding-inline-start: 0;
 
-          }
-      }
+            li {
+                list-style-type: none;
+
+            }
+        }
 
     }
 

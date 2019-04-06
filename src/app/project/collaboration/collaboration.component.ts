@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
+import { Session } from '@knora/authentication';
 
 @Component({
     selector: 'app-collaboration',
@@ -25,15 +26,7 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
     // list of inactive (deleted) users
     inactive: User[] = [];
 
-    itemPluralMapping = {
-        'member': {
-            // '=0': '0 Members',
-            '=1': '1 Member',
-            'other': '# Members'
-        }
-    };
-
-    @ViewChild(AddUserComponent) addUser: AddUserComponent;
+    @ViewChild('addUserComponent') addUser: AddUserComponent;
 
 
     constructor(private _cache: CacheService,
@@ -46,6 +39,17 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
+
+        // go back to project page, if the logged-in user has no admin rights
+        // is the logged-in user a project admin?
+        /*
+        const session: Session = JSON.parse(
+            localStorage.getItem('session')
+        );
+        this.loggedInAdmin = session.user.projectAdmin.some(
+            e => e === result.id
+        );
+        */
 
     }
 
@@ -69,13 +73,18 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        /*
+        console.log(this.addUser);
         this.addUser.buildForm();
+        */
     }
 
     /**
      * build the list of members
      */
     initList(): void {
+        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+
         this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode)).subscribe(
             (response: any) => {
                 this.projectMembers = response;
@@ -110,7 +119,6 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
         this.loading = true;
         // update the cache
         this._cache.del('members_of_' + this.projectcode);
-        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
         this.initList();
         // refresh child component: add user
         if (this.addUser) {

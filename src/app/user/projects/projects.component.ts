@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ApiServiceError, Project, ProjectsService, Session, User, UsersService } from '@knora/core';
+import { Session } from '@knora/authentication';
+import { ApiServiceError, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -11,6 +12,8 @@ import { CacheService } from '../../main/cache/cache.service';
 export class ProjectsComponent implements OnInit {
 
     @Input() username?: string;
+
+    @Input() system?: boolean = false;
 
     session: Session;
 

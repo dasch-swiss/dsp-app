@@ -29,7 +29,7 @@
   &.small,
   &.medium,
   &.large {
-    padding: 48px;
+    padding: 36px 48px;
   }
 
   &.small {
@@ -91,25 +91,10 @@
         }
       }
     }
-
   }
 
   .mat-sidenav-content {
     background: #fff;
-
-    .content {
-      padding: 48px;
-      max-width: calc(1000px - (2 * 48px));
-
-      //&.profile {
-      //
-      //  .mat-divider {
-      //    margin-top: 78px !important;
-      //    margin-bottom: 48px !important;
-      //  }
-      //}
-    }
-
   }
 }
 
@@ -178,10 +163,12 @@
 .center {
   text-align: center !important;
 }
+
 .left {
   left: 0;
   text-align: left;
 }
+
 .right {
   right: 0;
   text-align: right;

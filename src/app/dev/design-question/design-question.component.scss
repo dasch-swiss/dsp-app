@@ -1,8 +1,13 @@
+section {
+    padding: 24px 48px;
+}
+
 table {
     border-collapse: collapse;
 
-    td, th {
-      padding: 6px 36px;
-      border: 1px solid gray;
+    td,
+    th {
+        padding: 6px 36px;
+        border: 1px solid gray;
     }
-  }
+}

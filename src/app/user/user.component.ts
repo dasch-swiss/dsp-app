@@ -4,6 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { UsersService } from '@knora/core';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
+import { AppGlobal } from '../app-global';
+import { Session } from '@knora/authentication';
+import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MaterialDialogComponent } from '../main/dialog/material-dialog/material-dialog.component';
 
 @Component({
     selector: 'app-user',
@@ -13,38 +17,19 @@ import { MenuItem } from '../main/declarations/menu-item';
 export class UserComponent implements OnInit {
 
     loading: boolean;
+    error: boolean;
 
-    username: string;
+    session: Session;
 
     route: string;
 
     // for the sidenav
     open: boolean = true;
 
-    navigation: MenuItem[] = [
-        {
-            label: 'Projects',
-            route: '/projects',
-            icon: 'assignment'
-        },
-        // {
-        //     label: 'Collections',
-        //     route: '/collections',
-        //     icon: 'bookmark_outline'
-        // },
-        {
-            label: 'Profile',
-            route: '/profile',
-            icon: 'fingerprint'
-        },
-        {
-            label: 'Account',
-            route: '/account',
-            icon: 'settings'
-        }
-    ];
+    navigation: MenuItem[] = AppGlobal.userNav;
 
     constructor(private _cache: CacheService,
+                private _dialog: MatDialog,
                 private _route: ActivatedRoute,
                 private _usersService: UsersService,
                 private _titleService: Title) {
@@ -53,10 +38,10 @@ export class UserComponent implements OnInit {
         this.route = this._route.pathFromRoot[1].snapshot.url[0].path;
 
         // get username
-        this.username = JSON.parse(localStorage.getItem('session')).user.name;
+        this.session = JSON.parse(localStorage.getItem('session'));
 
         // set the page title
-        this._titleService.setTitle(this.username);
+        this._titleService.setTitle(this.session.user.name);
 
     }
 
@@ -67,8 +52,25 @@ export class UserComponent implements OnInit {
         /**
          * set the cache here for current/logged-in user
          */
-        this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+        this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
         this.loading = false;
+    }
+
+    openDialog(mode: string, name: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { name: name, mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            // this.getProject();
+        });
     }
 
 }

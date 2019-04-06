@@ -2,58 +2,62 @@
 
 <div *ngIf="user && !loading" class="content">
 
-    <!-- data -->
-    <mat-card class="no-shadow">
-
-        <mat-card-subtitle>
-            <!--User | {{user.username}}-->
-        </mat-card-subtitle>
-        <mat-card-title>
-            <span>Update user data</span>
+    <!-- password update: header -->
+    <div class="app-toolbar transparent more-space-bottom">
+        <div class="app-toolbar-row">
+            <h3 class="mat-body subtitle">
+                {{ 'appLabels.form.user.title.edit' | translate }}
+            </h3>
             <span class="fill-remaining-space"></span>
-            <span></span>
-        </mat-card-title>
+            <span class="app-toolbar-action">
 
-        <mat-card-content>
-            <app-user-form [username]="username"></app-user-form>
-        </mat-card-content>
-
-    </mat-card>
-
-    <mat-divider class="more-space"></mat-divider>
-
-    <!-- password -->
-    <mat-card class="no-shadow">
-        <mat-card-subtitle>
-            <!--User | {{user.username}}-->
-        </mat-card-subtitle>
-        <mat-card-title>
-            <span>{{ 'appLabels.form.user.title.password' | translate }}</span>
+            </span>
+        </div>
+        <div class="app-toolbar-row">
+            <h2 class="mat-title">
+                {{ 'appLabels.form.user.title.password' | translate }}
+            </h2>
             <span class="fill-remaining-space"></span>
-            <span></span>
-        </mat-card-title>
+            <span class="app-toolbar-action">
 
-        <mat-card-content>
-            <app-user-password [username]="username"></app-user-password>
-        </mat-card-content>
+            </span>
+        </div>
+    </div>
+    <!-- password update: form -->
+    <app-user-password [username]="username"></app-user-password>
 
-    </mat-card>
+    <!-- danger zone: delete account -->
+    <div class="app-danger-zone more-space-top">
+        <!-- delete account: header -->
+        <div class="app-toolbar more-space-bottom">
+            <div class="app-toolbar-row">
+                <h3 class="mat-body subtitle">
+                    {{ 'appLabels.form.action.danger' | translate }}
+                </h3>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
 
-    <mat-divider class="more-space"></mat-divider>
+                </span>
+            </div>
+            <div class="app-toolbar-row">
+                <h2 class="mat-title">
+                    {{ 'appLabels.form.user.title.delete' | translate }}
+                </h2>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
 
-    <!-- delete -->
-    <mat-card class="no-shadow">
-        <!--<mat-card-subtitle>Status</mat-card-subtitle>-->
-        <mat-card-title>Change status</mat-card-title>
-        <!--<mat-card-title *ngIf="user.status">Active</mat-card-title>-->
-        <!--<mat-card-title *ngIf="!user.status">Deleted</mat-card-title>-->
-        <mat-card-actions class="center">
-            <button *ngIf="user.status" mat-button [color]="'warn'" (click)="delete()">DELETE ACCOUNT</button>
+                </span>
+            </div>
+        </div>
+        <!-- delete account: button -->
+        <div class="center more-space-top more-space-bottom">
+            <button *ngIf="user.status" mat-button [color]="'warn'" (click)="delete()">
+                {{ 'appLabels.form.user.title.deleteButton' | translate | uppercase }}
+            </button>
+
             <button *ngIf="!user.status" mat-button [color]="'primary'" (click)="activate()">ACTIVATE ACCOUNT</button>
-        </mat-card-actions>
-    </mat-card>
+        </div>
+    </div>
 
 </div>
-
-
 

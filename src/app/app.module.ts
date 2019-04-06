@@ -1,4 +1,3 @@
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -17,19 +16,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
 import { ConfirmDialogComponent } from './main/dialog/confirm-dialog/confirm-dialog.component';
-import { DialogComponent } from './main/dialog/dialog.component';
+
 import { ErrorComponent } from './main/error/error.component';
 import { HeaderComponent } from './main/header/header.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
-import { NavigationItemComponent } from './main/navigation/navigation-item/navigation-item.component';
-import { NavigationComponent } from './main/navigation/navigation.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { MaterialModule } from './material-module';
 import { BoardComponent } from './project/board/board.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
-import { UserItemComponent } from './project/collaboration/user-item/user-item.component';
 import { UserListComponent } from './project/collaboration/user-list/user-list.component';
 import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
@@ -46,7 +42,7 @@ import { CollectionListComponent } from './user/collection-list/collection-list.
 import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { ProjectsComponent } from './user/projects/projects.component';
-import { ProjectListComponent } from './user/projects/project-list/project-list.component';
+import { ProjectsListComponent } from './user/projects/projects-list/projects-list.component';
 import { GroupSelectComponent } from './user/user-form/group-select/group-select.component';
 import { SelectUserComponent } from './user/user-form/select-user/select-user.component';
 import { UserDataComponent } from './user/user-form/user-data/user-data.component';
@@ -56,11 +52,14 @@ import { UserRoleComponent } from './user/user-form/user-role/user-role.componen
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
-import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
+
 import { ResourceTypeComponent } from './project/ontology/resource-type/resource-type.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
-
+import { DashboardComponent } from './user/dashboard/dashboard.component';
+import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
+import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
+import { MaterialDialogComponent } from './main/dialog/material-dialog/material-dialog.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -82,7 +81,6 @@ export function initializeApp(appInitService: AppInitService) {
         CollaborationComponent,
         AddUserComponent,
         UserListComponent,
-        UserItemComponent,
         OntologyListComponent,
         OntologyComponent,
         PropertyListComponent,
@@ -93,7 +91,7 @@ export function initializeApp(appInitService: AppInitService) {
         SelectItemComponent,
         UserComponent,
         ProfileComponent,
-        ProjectListComponent,
+        ProjectsListComponent,
         UserFormComponent,
         GroupSelectComponent,
         SelectUserComponent,
@@ -105,9 +103,7 @@ export function initializeApp(appInitService: AppInitService) {
         CreateMenuComponent,
         MainComponent,
         HeaderComponent,
-        NavigationComponent,
-        NavigationItemComponent,
-        DialogComponent,
+
         ConfirmDialogComponent,
         ErrorComponent,
         LoginComponent,
@@ -116,10 +112,14 @@ export function initializeApp(appInitService: AppInitService) {
         SelectLanguageComponent,
         ProjectsComponent,
         SelectGroupComponent,
-        FullframeDialogComponent,
+
         ResourceTypeComponent,
         WorkspaceComponent,
-        DesignQuestionComponent
+        DesignQuestionComponent,
+        DashboardComponent,
+        ProjectMenuComponent,
+        EditUserComponent,
+        MaterialDialogComponent
     ],
     imports: [
         AppRoutingModule,
@@ -132,7 +132,6 @@ export function initializeApp(appInitService: AppInitService) {
         KuiCoreModule,
         KuiSearchModule,
         MaterialModule,
-        DragDropModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({
             loader: {
@@ -144,19 +143,23 @@ export function initializeApp(appInitService: AppInitService) {
     ],
     entryComponents: [
         ConfirmDialogComponent,
-        FullframeDialogComponent,
-        ResourceTypeComponent
+
+        ResourceTypeComponent,
+        MaterialDialogComponent
     ],
     providers: [
         AppInitService,
         {
-            provide: APP_INITIALIZER, useFactory: initializeApp, deps: [AppInitService], multi: true
+            provide: APP_INITIALIZER,
+            useFactory: initializeApp,
+            deps: [AppInitService],
+            multi: true
         },
         {
-            provide: KuiCoreConfigToken, useFactory: () => AppInitService.coreConfig
+            provide: KuiCoreConfigToken,
+            useFactory: () => AppInitService.coreConfig
         }
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}
