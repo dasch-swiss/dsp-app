@@ -1,13 +1,20 @@
 <div *ngIf="list && !loading">
-    <div class="list-header">
-        <span class="fill-remaining-space"></span>
-        <span class="list-action">
-            <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'">
-            </kui-sort-button>
-            &nbsp;
-        </span>
+
+    <!-- header toolbar -->
+    <div class="app-toolbar more-space-top" *ngIf="list.length > 0">
+        <div class="app-toolbar-row">
+            <h3 class="mat-body subtitle">{{title}}</h3>
+        </div>
+        <div class="app-toolbar-row">
+            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['member']}}</h2>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action">
+                <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'"></kui-sort-button>
+            </span>
+        </div>
     </div>
 
+    <!-- list -->
     <table class="table">
 
         <tr *ngFor="let user of list; let last = last" [class.no-border]="last">
@@ -40,24 +47,7 @@
                                   [permissions]="user.permissions.groupsPerProject[project.id]" [disabled]="disabled"
                                   (groupChange)="updateGroupsMembership(user.id, $event)"></app-select-group>
             </td>
-
-            <!-- action: remove -->
-            <!--
-            <td class="table-action">
-                <div class="hidden">
-                    <button mat-icon-button *ngIf="!disabled" (click)="removeUserFromProject(user.id)"
-                            matTooltip="Remove {{user.username}} as a collaborator" matTooltipPosition="above">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                </div>
-            </td>
-            -->
-
-            <!-- OR menu with:
-                - toggle admin role
-                - edit user (in case of system admin; will open dialog box)
-                - remove user from project
-            -->
+            <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
                 <button mat-icon-button [matMenuTriggerFor]="projectUserMenu">
                     <mat-icon>more_horiz</mat-icon>
@@ -80,20 +70,6 @@
                 </mat-menu>
             </td>
         </tr>
-        <!--
-        <tr>
-            <th>avatar</th>
-            <th>name</th>
-            <th>admin</th>
-            <th>group</th>
-            <th>delete OR</th>
-            <th>more...</th>
-        </tr>
-         -->
-        <!--
-        <tr *ngFor="let item of list; let last = last;" [class.no-border]="last">
-            <app-user-item [user]="item" [project]="project" [disabled]="disabled"></app-user-item>
-        </tr>
-         -->
     </table>
+
 </div>

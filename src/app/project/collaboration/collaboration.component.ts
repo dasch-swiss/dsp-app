@@ -26,14 +26,6 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
     // list of inactive (deleted) users
     inactive: User[] = [];
 
-    itemPluralMapping = {
-        'member': {
-            // '=0': '0 Members',
-            '=1': '1 Member',
-            'other': '# Members'
-        }
-    };
-
     @ViewChild('addUserComponent') addUser: AddUserComponent;
 
 

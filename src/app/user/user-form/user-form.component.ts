@@ -70,7 +70,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      *  send user data to parent component;
      *  in case of dialog box?
      */
-    @Output() updateData: EventEmitter<any> = new EventEmitter<User>();
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<User>();
 
     /**
      * define, if the user has system administration permission
@@ -554,6 +554,6 @@ export class UserFormComponent implements OnInit, OnChanges {
     }
 
     closeMessage() {
-        this.updateData.emit(this.user);
+        this.closeDialog.emit(this.user);
     }
 }

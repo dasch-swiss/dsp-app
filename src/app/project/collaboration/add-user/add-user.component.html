@@ -1,52 +1,50 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<!-- select user to add to the team -->
 
-<form [formGroup]="selectUserForm" class="form select-user" *ngIf="!loading">
-
-    <!-- auto complete list to select user -->
-    <div class="form-content">
-        <mat-form-field class="large-field">
-            <!--<span matPrefix><mat-icon>add</mat-icon>&nbsp;</span>-->
-
-            <input matInput [matAutocomplete]="user" [formControl]="selectUserForm.controls['username']"
-                   [placeholder]="'appLabels.form.user.title.select' | translate">
-
-            <!--
-                  <input matInput [formControl]="selectUserForm.controls['username']"
-                         [placeholder]="'appLabels.form.user.title.select' | translate">
-
-                <button mat-button color="primary" matSuffix matStepperNext [disabled]="!selectUserForm.valid"
-                        (click)="setSelected()">
-                  {{ 'appLabels.form.action.next' | translate }}
-                </button>
-            -->
-
-            <button mat-icon-button matSuffix *ngIf="selectUserForm.controls['username'].value"
-                    (click)="resetInput($event)" type="button">
-                <mat-icon>close</mat-icon>
-            </button>
-
-            <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
-                <mat-option *ngFor="let user of filteredUsers | async" [value]="user?.name">
-                    {{ user?.label }}
-                </mat-option>
-            </mat-autocomplete>
-
-            <mat-hint *ngIf="selectUserErrors.username">
-                {{ selectUserErrors.username }}
-            </mat-hint>
-
-        </mat-form-field>
-
-        <div *ngIf="selectUserForm.valid" class="form-panel form-action">
-            <span class="comment">
-                If the user does not exist yet:
-            </span>
-            <span class="fill-remaining-space"></span>
-            <span>
-            <button mat-stroked-button (click)="openDialog('createUser')">Create new one</button>
-        </span>
-        </div>
+<!-- header toolbar -->
+<div class="app-toolbar transparent">
+    <div class="app-toolbar-row">
+        <h3 class="mat-body subtitle">Increase your team</h3>
     </div>
+    <div class="app-toolbar-row">
+        <h2 class="mat-title">{{"appLabels.form.user.title.add2project" | translate}}</h2>
+        <span class="fill-remaining-space"></span>
+        <span class="app-toolbar-action">
+            <form [formGroup]="selectUserForm" class="form" *ngIf="!loading">
 
 
-</form>
+                <!-- auto complete list to select user -->
+                <div class="form-content">
+                    <mat-form-field class="large-field select-user">
+                        <!--<span matPrefix><mat-icon>add</mat-icon>&nbsp;</span>-->
+
+                        <input matInput [matAutocomplete]="user" [formControl]="selectUserForm.controls['username']"
+                               [placeholder]="'appLabels.form.user.title.select' | translate">
+
+                        <button mat-icon-button matSuffix *ngIf="selectUserForm.controls['username'].value"
+                                (click)="resetInput($event)" type="button">
+                            <mat-icon>close</mat-icon>
+                        </button>
+
+                        <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
+                            <mat-option *ngFor="let user of filteredUsers | async" [value]="user?.name">
+                                {{ user?.label }}
+                            </mat-option>
+                        </mat-autocomplete>
+
+                        <mat-hint *ngIf="selectUserErrors.username">
+                            {{ selectUserErrors.username }}
+                        </mat-hint>
+
+                    </mat-form-field>
+
+                    <button mat-stroked-button *ngIf="selectUserForm.valid" class="add-new" (click)="openDialog('createUser')">Or create new one</button>
+
+                </div>
+
+            </form>
+        </span>
+
+    </div>
+</div>
+
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>

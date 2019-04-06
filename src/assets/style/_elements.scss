@@ -1,9 +1,9 @@
 //
 // flex layout helper
 .fill-remaining-space {
-    /* This fills the remaining space, by using flexbox.
+  /* This fills the remaining space, by using flexbox.
      Every toolbar row uses a flexbox row layout. */
-    flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 // --------------------------------------
@@ -11,14 +11,50 @@
 //
 // images, logos, avatars
 .avatar-image {
-    border-radius: 50%;
-    height: 36px;
-    width: 36px;
-    margin-right: 12px;
+  border-radius: 50%;
+  height: 36px;
+  width: 36px;
+  margin-right: 12px;
 
-    &.square {
-        border-radius: 6px;
-    }
+  &.square {
+    border-radius: 6px;
+  }
+}
+
+// --------------------------------------
+
+//
+// toolbar for content title, subtitle etc.
+.app-toolbar {
+  background: whitesmoke;
+//  margin: 48px 0 0;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  width: 100%;
+
+  &.transparent {
+    background: none;
+  }
+
+  .app-toolbar-row {
+    display: flex;
+    box-sizing: border-box;
+    padding: 0 16px;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .app-toolbar-action {
+    margin-top: -22px;
+  }
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 4px;
 }
 
 // --------------------------------------
@@ -26,13 +62,13 @@
 //
 // Link
 a {
-    color: $primary;
+  color: $primary;
 }
 
 a,
 .link {
-    cursor: pointer;
-    text-decoration: none;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 // --------------------------------------
@@ -41,20 +77,20 @@ a,
 // logo, action button
 .logo,
 .action {
-
-    .mat-button.main-toolbar-button {
-        padding: 12px 0;
-    }
-
+  .mat-button.main-toolbar-button {
+    padding: 12px 0;
+  }
 }
 
 // --------------------------------------
 
 //
-// rules and dividers
-.mat-divider.more-space {
-    margin-top: 48px !important;
-    margin-bottom: 24px !important;
+// margin element
+.more-space-top {
+  margin-top: 48px !important;
+}
+.more-space-bottom {
+  margin-bottom: 24px !important;
 }
 
 // --------------------------------------
@@ -69,15 +105,13 @@ a,
 */
 
 .mat-menu-content {
-    padding: 0 !important;
+  padding: 0 !important;
 
-    .menu-action {
-
-        .mat-button-wrapper {
-            line-height: unset !important;
-        }
-
+  .menu-action {
+    .mat-button-wrapper {
+      line-height: unset !important;
     }
+  }
 }
 
 // --------------------------------------
@@ -86,18 +120,18 @@ a,
 // card
 .mat-card {
 
-    .mat-card-title,
-    .mat-card-subtitle {
-        display: flex;
-    }
+  .mat-card-title,
+  .mat-card-subtitle {
+    display: flex;
+  }
 
-    &.no-shadow {
-        box-shadow: none !important;
-    }
+  &.no-shadow {
+    box-shadow: none !important;
+  }
 
-    .mat-card-actions {
-        text-align: right;
-    }
+  .mat-card-actions {
+    text-align: right;
+  }
 }
 
 // --------------------------------------
@@ -105,27 +139,27 @@ a,
 //
 // status badge
 .badge {
-    padding: 4px 6px;
-    font-weight: bolder;
-    border-radius: 4px;
+  padding: 4px 6px;
+  font-weight: bolder;
+  border-radius: 4px;
 
-    &.status {
-        color: white;
-        background: $warn;
+  &.status {
+    color: white;
+    background: $warn;
 
-        &.active {
-            background: $active;
-        }
+    &.active {
+      background: $active;
     }
+  }
 }
 
 // status class alone is only for colorized text
 .status.text-only {
-    color: $warn;
+  color: $warn;
 
-    &.active {
-        color: $active;
-    }
+  &.active {
+    color: $active;
+  }
 }
 
 // --------------------------------------
@@ -133,46 +167,23 @@ a,
 //
 // list
 .simple-list {
+  padding: 16px;
 
-    padding: 16px;
-
-    .mat-list-item {
-
-        .list-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            padding: 4px;
-            position: absolute;
-            left: 0;
-        }
-
-        .mat-list-text {
-            position: relative;
-            left: 48px;
-        }
-
-    }
-}
-
-.list-header {
-    display: flex;
-    margin-top: -48px;
-    padding-bottom: 24px;
-    //  padding: 24px 0 24px 12px;
-
-    .smaller {
-        font-size: small;
+  .mat-list-item {
+    .list-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      padding: 4px;
+      position: absolute;
+      left: 0;
     }
 
-    .list-action {
-
-        .mat-icon-button {
-            margin: 0 0 16px !important;
-        }
-
+    .mat-list-text {
+      position: relative;
+      left: 48px;
     }
-
+  }
 }
 
 // --------------------------------------
@@ -180,59 +191,57 @@ a,
 //
 // table
 .table {
-    border-collapse: collapse;
-    width: 100%;
-    max-width: calc(1000px - 2 * 48px);
+  border-collapse: collapse;
+  width: 100%;
+  // max-width: calc(1000px - 2 * 48px);
 
-    tr {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-        height: 88px;
+  tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    height: 88px;
 
-        &.no-border {
-            border-bottom: none;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        //    &:not(:first-child):hover {
-        &:hover {
-            background-color: darken(#fff, 15%);
-
-            .hidden {
-                display: block;
-            }
-        }
-
-        td,
-        th {
-
-            &:not(:first-child) {
-                min-width: 96px;
-            }
-
-            &.table-action {
-
-                button {
-                    float: right;
-                }
-            }
-
-            padding: 6px 12px;
-            text-align: left;
-
-            h5.mat-subheading-2,
-            p.mat-subheading-1 {
-                margin: 0;
-            }
-        }
+    &.no-border {
+      border-bottom: none;
     }
 
-    .avatar-cell {
-        text-align: center;
-        width: 48px;
+    .hidden {
+      display: none;
     }
+
+    //    &:not(:first-child):hover {
+    &:hover {
+      background-color: darken(#fff, 15%);
+
+      .hidden {
+        display: block;
+      }
+    }
+
+    td,
+    th {
+      &:not(:first-child) {
+        min-width: 96px;
+      }
+
+      &.table-action {
+        button {
+          float: right;
+        }
+      }
+
+      padding: 6px 12px;
+      text-align: left;
+
+      h5.mat-subheading-2,
+      p.mat-subheading-1 {
+        margin: 0;
+      }
+    }
+  }
+
+  .avatar-cell {
+    text-align: center;
+    width: 48px;
+  }
 }
 
 // --------------------------------------
@@ -244,42 +253,40 @@ $gc-large: decimal-floor($form-width / 1.618, 0) - 2;
 $gc-small: $form-width - $gc-large - 4;
 
 .form-content {
-    margin: 24px auto;
-    padding: 0 20px;
+  margin: 0 auto;
+//  padding: 0 20px;
+  width: $form-width + px;
+
+  .small-field,
+  .medium-field,
+  .large-field {
+    margin-bottom: 24px;
+  }
+
+  .small-field {
+    width: $gc-small + px;
+  }
+
+  .medium-field {
+    width: $gc-large + px;
+  }
+
+  .large-field {
+    min-width: $form-width + px;
+  }
+
+  .input-icon {
+    color: $black-60-opacity;
+  }
+
+  .form-panel {
+    display: inline-flex;
     width: $form-width + px;
 
-
-
-    .small-field,
-    .medium-field,
-    .large-field {
-        margin: 0 2px 24px 0;
+    &.form-action {
+      display: flex;
     }
-
-    .small-field {
-        width: $gc-small + px;
-    }
-
-    .medium-field {
-        width: $gc-large + px;
-    }
-
-    .large-field {
-        min-width: $form-width + px;
-    }
-
-    .input-icon {
-        color: $black-60-opacity;
-    }
-
-    .form-panel {
-        display: inline-flex;
-        width: $form-width + px;
-
-        &.form-action {
-            display: flex;
-        }
-    }
+  }
 }
 
 // --------------------------------------
@@ -288,52 +295,49 @@ $gc-small: $form-width - $gc-large - 4;
 // progress-indicator without default color
 
 .kui-progress-indicator {
-    .line>div {
-        background-color: $primary_700 !important;
-    }
+  .line>div {
+    background-color: $primary_700 !important;
+  }
 }
 
 // --------------------------------------
 
 // tab bar in project, user route
 .tab-bar {
+  &.margin-from-top {
+    margin-top: $tab-bar-margin;
+  }
 
-    &.margin-from-top {
-        margin-top: $tab-bar-margin;
-    }
+  .active-tab {
+    opacity: 1;
+  }
 
-    .active-tab {
-        opacity: 1;
-    }
-
-    .tab-icon {
-        margin-right: 8px;
-    }
+  .tab-icon {
+    margin-right: 8px;
+  }
 }
 
 // --------------------------------------
 
 // notes and messages
 .note {
+  padding: 12px;
 
-    padding: 12px;
+  &.developer {
+    background-color: rgba(248, 166, 90, 0.5);
+  }
 
-    &.developer {
-        background-color: rgba(248, 166, 90, 0.5);
-    }
+  &.warning {
+    background-color: rgba($accent_100, 0.5);
+  }
 
-    &.warning {
-        background-color: rgba($accent_100, 0.5);
-    }
+  &.error {
+    background-color: rgba($warn, 0.5);
+  }
 
-    &.error {
-        background-color: rgba($warn, 0.5);
-    }
-
-    &.success {
-        background-color: rgba($active, .5);
-    }
-
+  &.success {
+    background-color: rgba($active, 0.5);
+  }
 }
 
 // --------------------------------------

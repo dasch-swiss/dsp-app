@@ -22,10 +22,19 @@ import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/mat
 export class UserListComponent implements OnInit {
     loading: boolean;
 
+    @Input() title: string;
     @Input() list: User[];
     @Input() disabled?: boolean;
 
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
+
+    itemPluralMapping = {
+        'member': {
+            // '=0': '0 Members',
+            '=1': '1 Member',
+            'other': '# Members'
+        }
+    };
 
     // knora admin group iri
     adminGroupIri: string = KnoraConstants.ProjectAdminGroupIRI;
