@@ -27,6 +27,8 @@
 // toolbar for content title, subtitle etc.
 .app-toolbar {
   background: whitesmoke;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
 //  margin: 48px 0 0;
   display: flex;
   box-sizing: border-box;
@@ -166,6 +168,7 @@ a,
 // danger zone
 .app-danger-zone {
   border: 1px solid $warn;
+  border-radius: $border-radius;
 }
 
 // --------------------------------------

@@ -37,7 +37,7 @@
 
                     </mat-form-field>
 
-                    <button mat-stroked-button *ngIf="selectUserForm.valid" class="add-new" (click)="openDialog('createUser')">Or create new one</button>
+                    <button mat-stroked-button [disabled]="!selectUserForm.valid" class="add-new" (click)="openDialog('createUser')">Or create new one</button>
 
                 </div>
 
