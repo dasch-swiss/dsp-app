@@ -112,8 +112,9 @@
           "edit": "Update project",
           "profile": "Research project",
           "editSuccess": "You have successfully updated this project.",
-          "delete": "Delete project",
+          "delete": "Archive project",
           "deleteHint": "You're sure to delete this project?",
+          "deleteButton": "Archive project now",
           "formWizard": {
             "step_1": "Project data",
             "step_2": "Add project member",

@@ -16,16 +16,15 @@
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content project-data" (ngSubmit)="submitData()">
+    <form *ngIf="!loading" [formGroup]="form" class="form-content mat-card-content project-data"
+          (ngSubmit)="submitData()">
 
         <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
         <!-- short and long name -->
         <mat-form-field class="small-field">
-            <input matInput
-                   placeholder="{{'appLabels.form.project.general.shortcode' | translate}} * "
-                   [maxlength]="shortcodeMaxLength"
-                   [formControl]="form.controls['shortcode']">
+            <input matInput placeholder="{{'appLabels.form.project.general.shortcode' | translate}} * "
+                   [maxlength]="shortcodeMaxLength" [formControl]="form.controls['shortcode']">
             <mat-hint *ngIf="formErrors.shortcode">
                 {{ formErrors.shortcode }}
             </mat-hint>
@@ -33,8 +32,7 @@
 
         <!-- short name -->
         <mat-form-field class="medium-field">
-            <input matInput
-                   [maxlength]="shortnameMaxLength"
+            <input matInput [maxlength]="shortnameMaxLength"
                    placeholder="{{'appLabels.form.project.general.shortname' | translate}} * "
                    [formControl]="form.controls['shortname']">
             <mat-hint *ngIf="formErrors.shortname">
@@ -44,8 +42,7 @@
 
         <!-- long name -->
         <mat-form-field class="large-field">
-            <input matInput
-                   placeholder="{{'appLabels.form.project.general.longname' | translate}} *"
+            <input matInput placeholder="{{'appLabels.form.project.general.longname' | translate}} *"
                    [formControl]="form.controls['longname']">
             <mat-hint *ngIf="formErrors.longname">
                 {{ formErrors.longname }}
@@ -77,17 +74,15 @@
         <!-- keywords -->
         <mat-form-field class="large-field">
             <mat-chip-list #chipList>
-                <mat-chip *ngFor="let tag of keywords" [selectable]="selectable"
-                          [removable]="project.status" (removed)="removeKeyword(tag)">
+                <mat-chip *ngFor="let tag of keywords" [selectable]="selectable" [removable]="project.status"
+                          (removed)="removeKeyword(tag)">
                     {{tag}}
                     <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
                 <input [placeholder]=" 'appLabels.form.project.general.keywords' | translate "
-                       [formControl]="form.controls['keywords']"
-                       [matChipInputFor]="chipList"
-                       [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
-                       [matChipInputAddOnBlur]="addOnBlur"
-                       (matChipInputTokenEnd)="addKeyword($event)"/>
+                       [formControl]="form.controls['keywords']" [matChipInputFor]="chipList"
+                       [matChipInputSeparatorKeyCodes]="separatorKeyCodes" [matChipInputAddOnBlur]="addOnBlur"
+                       (matChipInputTokenEnd)="addKeyword($event)" />
             </mat-chip-list>
 
             <!--
@@ -102,52 +97,13 @@
         <app-file-uploader (uploadStatus)="sipiUpload($event)"></app-file-uploader>
         <!- the form needs an input field for the logo name
             the following input will be hidden and it gets the file name from the app-file-uploader -->
-        <br>
         <!-- dev control for image uploader
-                <input matInput [hidden]="false"
-                       [placeholder]=" 'appLabels.form.project.general.logo.name' | translate "
-                       [formControl]="projectDataForm.controls['logo']"
-                       formControlName="logo">
-                       -->
-        <!--
-                <div class="form-panel large" *ngIf="standalone; else stepperNav">
-                    &lt;!&ndash; delete / activate buttons in case of edit &ndash;&gt;
-                    <div *ngIf="edit">
-                        &lt;!&ndash; delete project &ndash;&gt;
-                        <button *ngIf="project.status"
-                                mat-button color="warn"
-                                (click)="deactivateProject($event, projectIri)">
-                            {{ 'appLabels.form.action.deactivate' | translate }}
-                        </button>
-                        &lt;!&ndash; activate project &ndash;&gt;
-                        <button *ngIf="!project.status"
-                                mat-button color="warn"
-                                (click)="activateProject($event, projectIri)">
-                            {{ 'appLabels.form.action.activate' | translate }}
-                        </button>
-                    </div>
+        <input matInput [hidden]="false"
+            [placeholder]=" 'appLabels.form.project.general.logo.name' | translate "
+            [formControl]="projectDataForm.controls['logo']"
+            formControlName="logo">
+        -->
 
-
-                    <span class="fill-remaining-space"></span>
-
-                    <button mat-button type="button" color="primary" (click)="submitData()" [disabled]="!projectDataForm.valid">
-                        <span *ngIf="edit">{{ 'appLabels.form.action.update' | translate }}</span>
-                        <span *ngIf="!edit">{{ 'appLabels.form.action.submit' | translate }}</span>
-                    </button>
-                </div>
-
-
-                <ng-template #stepperNav>
-                    <div class="form-panel large">
-                        <button mat-button matStepperPrevious>{{ 'appLabels.form.action.back' | translate }}</button>
-                        <span class="fill-remaining-space"></span>
-                        <button mat-button color="primary" matStepperNext [disabled]="!projectDataForm.valid"
-                                (click)="submitData()">
-                            {{ 'appLabels.form.action.next' | translate }}
-                        </button>
-                    </div>
-                </ng-template>
-                -->
         <div class="form-panel form-action">
             <span>
                 <button mat-button type="reset" (click)="resetForm($event, project)">
@@ -157,7 +113,8 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid" [disabled]="!form.valid || (projectcode && !project.status)">
+                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid"
+                        [disabled]="!form.valid || (projectcode && !project.status)">
                     <span *ngIf="projectcode">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectcode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>
@@ -165,23 +122,38 @@
         </div>
     </form>
 
-    <!-- button to delete / activate project-->
-    <div *ngIf="projectcode && project">
-        <mat-divider class="more-space"></mat-divider>
-        <div class="form-content">
-            <div *ngIf="project.status">
-                <h3>Archive this project</h3>
-                <div class="center">
-                    <button mat-button [color]="'warn'" (click)="archiveProject(project.id)">ARCHIVE</button>
-                </div>
+
+    <!-- danger zone: delete account -->
+    <div class="app-danger-zone more-space-top" *ngIf="projectcode && project">
+        <div class="app-toolbar more-space-bottom">
+            <div class="app-toolbar-row">
+                <h3 class="mat-body subtitle">
+                    {{ 'appLabels.form.action.danger' | translate }}
+                </h3>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
+
+                </span>
             </div>
-            <div *ngIf="!project.status">
-                <h3>This project is already archived. Do you want to reactivate it?</h3>
-                <div class="center">
-                    <button mat-button [color]="'primary'" (click)="activateProject(project.id)">ACTIVATE</button>
-                </div>
+            <div class="app-toolbar-row">
+                <h2 class="mat-title">
+                    {{ 'appLabels.form.project.title.delete' | translate }}
+                </h2>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
+
+                </span>
             </div>
         </div>
+
+        <div class="center more-space-top more-space-bottom">
+            <button *ngIf="project.status" mat-button [color]="'warn'" (click)="delete(project.id)">
+                {{ 'appLabels.form.project.title.deleteButton' | translate | uppercase }}
+            </button>
+
+            <button *ngIf="!project.status" mat-button [color]="'primary'" (click)="activate(project.id)">Activate again</button>
+        </div>
+
     </div>
 
 </div>

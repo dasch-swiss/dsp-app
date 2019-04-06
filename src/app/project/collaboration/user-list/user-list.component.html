@@ -52,7 +52,7 @@
             </td>
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu">
+                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="disabled">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
