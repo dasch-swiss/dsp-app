@@ -7,9 +7,7 @@
             </h3>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-                <button mat-raised-button [color]="'primary'" *ngIf="system && group.key === 'active'" class="add-new" (click)="openDialog('createProject')">
-                    NEW project
-                </button>
+
             </span>
         </div>
         <div class="app-toolbar-row">
@@ -18,7 +16,9 @@
             </h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-
+                <button mat-raised-button [color]="'primary'" *ngIf="system && group.key === 'active'" class="add-new" (click)="openDialog('createProject')">
+                    NEW project
+                </button>
             </span>
         </div>
     </div>

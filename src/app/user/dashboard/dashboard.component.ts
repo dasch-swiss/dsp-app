@@ -17,12 +17,16 @@ export class DashboardComponent implements OnInit {
   username: string;
   sysAdmin: boolean = false;
 
+  showSystemProjects: boolean = this.sysAdmin;
+
   constructor(private _cache: CacheService,
               private _usersService: UsersService,
               private _titleService: Title) {
       // get username
       this.username = JSON.parse(localStorage.getItem('session')).user.name;
       this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+
+      this.showSystemProjects = this.sysAdmin;
 
       // set the page title
       this._titleService.setTitle(this.username);
@@ -51,7 +55,6 @@ export class DashboardComponent implements OnInit {
       );
 
   }
-
 
 }
 
