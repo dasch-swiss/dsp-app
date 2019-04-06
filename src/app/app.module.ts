@@ -16,7 +16,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
 import { ConfirmDialogComponent } from './main/dialog/confirm-dialog/confirm-dialog.component';
-import { DialogComponent } from './main/dialog/dialog.component';
+
 import { ErrorComponent } from './main/error/error.component';
 import { HeaderComponent } from './main/header/header.component';
 import { LoginComponent } from './main/login/login.component';
@@ -52,7 +52,7 @@ import { UserRoleComponent } from './user/user-form/user-role/user-role.componen
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
-import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
+
 import { ResourceTypeComponent } from './project/ontology/resource-type/resource-type.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
@@ -103,7 +103,7 @@ export function initializeApp(appInitService: AppInitService) {
         CreateMenuComponent,
         MainComponent,
         HeaderComponent,
-        DialogComponent,
+
         ConfirmDialogComponent,
         ErrorComponent,
         LoginComponent,
@@ -112,7 +112,7 @@ export function initializeApp(appInitService: AppInitService) {
         SelectLanguageComponent,
         ProjectsComponent,
         SelectGroupComponent,
-        FullframeDialogComponent,
+
         ResourceTypeComponent,
         WorkspaceComponent,
         DesignQuestionComponent,
@@ -143,7 +143,7 @@ export function initializeApp(appInitService: AppInitService) {
     ],
     entryComponents: [
         ConfirmDialogComponent,
-        FullframeDialogComponent,
+
         ResourceTypeComponent,
         MaterialDialogComponent
     ],
