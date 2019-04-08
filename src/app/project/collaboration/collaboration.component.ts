@@ -21,6 +21,9 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
 
     projectMembers: User[] = [];
 
+    // is logged-in user system admin?
+    sysAdmin: boolean = false;
+
     // list of active users
     active: User[] = [];
     // list of inactive (deleted) users
@@ -55,6 +58,8 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.loading = true;
+
+        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
 
         this.refresh();
 
