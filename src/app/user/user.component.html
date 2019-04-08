@@ -17,7 +17,7 @@
         </nav>
 
         <!-- main content: router outlet -->
-        <div class="content large middle" [ngSwitch]="route" *ngIf="!loading && route">
+        <div class="content middle" [ngSwitch]="route" *ngIf="!loading && route">
 
             <!-- user profile -->
             <div *ngSwitchCase="'profile'" class="full-width">
@@ -35,7 +35,9 @@
             </div>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->
-            <app-collection-list *ngSwitchCase="'collections'"></app-collection-list>
+            <div *ngSwitchCase="'collections'" class="full-width">
+                <app-collection-list></app-collection-list>
+            </div>
 
         </div>
     </div>

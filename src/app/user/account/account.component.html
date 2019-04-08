@@ -1,9 +1,9 @@
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-<div *ngIf="user && !loading" class="content">
+<div *ngIf="user && !loading">
 
     <!-- password update: header -->
-    <div class="app-toolbar transparent more-space-bottom">
+    <div class="app-toolbar more-space-bottom">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 {{ 'appLabels.form.user.title.edit' | translate }}

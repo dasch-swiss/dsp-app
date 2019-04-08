@@ -50,13 +50,10 @@ export class ProjectsComponent implements OnInit {
 
                     let i: number = 0;
                     for (const project of user.projects) {
-                        console.log(project.id);
 
                         this._projectsService.getProjectByIri(project.id).subscribe(
                             (projectResponse: Project) => {
                                 this.projects.push(projectResponse);
-                                console.log(i);
-                                console.log(this.projects);
 
                             },
                             (projectError: ApiServiceError) => {
@@ -70,7 +67,7 @@ export class ProjectsComponent implements OnInit {
                     setTimeout(() => {
                         // console.log(this.resource);
                         this.loadProjects = false;
-                    }, 1000);
+                    }, 500);
 
                 },
                 (error: ApiServiceError) => {

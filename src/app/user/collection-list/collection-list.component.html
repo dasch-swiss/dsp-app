@@ -1,20 +1,24 @@
-<div class="app-toolbar transparent more-space-bottom">
-    <div class="app-toolbar-row">
-        <h3 class="mat-body subtitle">
-            Your stored resources
-        </h3>
-        <span class="fill-remaining-space"></span>
-        <span class="app-toolbar-action">
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-        </span>
-    </div>
-    <div class="app-toolbar-row">
-        <h2 class="mat-title">
-            0 Collections
-        </h2>
-        <span class="fill-remaining-space"></span>
-        <span class="app-toolbar-action">
+<div *ngIf="!loading">
+    <div class="app-toolbar more-space-bottom">
+        <div class="app-toolbar-row">
+            <h3 class="mat-body subtitle">
+                Your stored resources
+            </h3>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action">
 
-        </span>
+            </span>
+        </div>
+        <div class="app-toolbar-row">
+            <h2 class="mat-title">
+                0 Collections
+            </h2>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action">
+
+            </span>
+        </div>
     </div>
 </div>

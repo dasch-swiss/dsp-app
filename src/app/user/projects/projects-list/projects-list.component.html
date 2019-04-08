@@ -1,5 +1,5 @@
 <div *ngFor="let group of list | kuiKey; let first = first">
-    <div class="app-toolbar transparent" [class.more-space-top]="!first">
+    <div class="app-toolbar" [class.more-space-top]="!first">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span *ngIf="!system">Projects you are member of</span>
@@ -35,6 +35,4 @@
             <p mat-line> {{project.shortcode}} | {{project.shortname}} </p>
         </mat-list-item>
     </mat-list>
-
-    <mat-divider *ngIf="group.key === 'active'" class="more-space-top"></mat-divider>
 </div>
