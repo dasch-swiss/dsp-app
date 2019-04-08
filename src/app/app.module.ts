@@ -130,7 +130,7 @@ export function initializeApp(appInitService: AppInitService) {
         ResultsComponent,
         ResourceComponent,
         ExpertSearchComponent,
-        AdvancedSearchComponent
+        AdvancedSearchComponent,
 
         DashboardComponent,
         ProjectMenuComponent,
