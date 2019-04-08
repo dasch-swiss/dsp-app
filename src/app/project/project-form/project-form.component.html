@@ -6,7 +6,7 @@
     <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content project-data"
+    <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
           (ngSubmit)="submitData()">
 
         <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
@@ -113,8 +113,8 @@
     </form>
 
 
-    <!-- danger zone: delete account -->
-    <div class="app-danger-zone more-space-top" *ngIf="projectcode && project">
+    <!-- danger zone: delete project ... only for system admin! -->
+    <div class="app-danger-zone more-space-top" *ngIf="projectcode && project && project.status && sysAdmin">
         <div class="app-toolbar more-space-bottom">
             <div class="app-toolbar-row">
                 <h3 class="mat-body subtitle">
@@ -143,7 +143,16 @@
 
             <button *ngIf="!project.status" mat-button [color]="'primary'" (click)="activate(project.id)">Activate again</button>
         </div>
+    </div>
 
+    <!-- danger zone: reactivate project ... only for system admin -->
+    <div *ngIf="projectcode && project && !project.status && sysAdmin">
+
+        <div class="center more-space-top more-space-bottom">
+            <button *ngIf="!project.status" mat-raised-button [color]="'primary'" (click)="activate(project.id)">
+                {{ 'appLabels.form.project.title.activateButton' | translate | uppercase }}
+            </button>
+        </div>
     </div>
 
 </div>

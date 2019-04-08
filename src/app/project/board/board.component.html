@@ -22,9 +22,13 @@
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
                 <button mat-icon-button class="right" (click)="openDialog('editProject', project.shortcode)"
-                        *ngIf="project.status && loggedInAdmin">
+                        *ngIf="loggedInAdmin && project.status">
                     <mat-icon>edit</mat-icon>
                 </button>
+                <button mat-icon-button class="right" (click)="openDialog('activateProject', project.shortcode)"
+                *ngIf="sysAdmin && !project.status">
+            <mat-icon>edit</mat-icon>
+        </button>
             </span>
         </div>
     </div>

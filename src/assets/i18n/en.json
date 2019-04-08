@@ -51,7 +51,8 @@
         "activate": "Activate",
         "deactivate": "Deactivate",
         "confirm": "Yes",
-        "danger": "Danger zone"
+        "danger": "Danger zone",
+        "deleted": "Already deleted"
       },
       "user": {
         "general": {
@@ -115,6 +116,8 @@
           "delete": "Archive project",
           "deleteHint": "You're sure to delete this project?",
           "deleteButton": "Archive project now",
+          "activate": "Do you want to reactivate?",
+          "activateButton": "Reactivate project now",
           "formWizard": {
             "step_1": "Project data",
             "step_2": "Add project member",

@@ -18,7 +18,13 @@ export class BoardComponent implements OnInit {
     projectcode: string;
 
     project: Project;
+
+    // is the logged-in user a project admin?
     loggedInAdmin: boolean = false;
+
+    // is the logged-in user system admin?
+    sysAdmin: boolean = false;
+
     projectMembers: User[] = [];
 
     // i18n setup
@@ -55,6 +61,7 @@ export class BoardComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
         this.getProject();
     }
 

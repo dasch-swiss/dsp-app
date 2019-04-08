@@ -17,6 +17,9 @@
             <span *ngSwitchCase="'editProject'">
                 {{ 'appLabels.form.project.title.edit' | translate }}
             </span>
+            <span *ngSwitchCase="'activateProject'">
+                {{ 'appLabels.form.action.deleted' | translate }}
+            </span>
             <span *ngSwitchDefault>
                 Not yet implemented
             </span>
@@ -44,6 +47,9 @@
             </span>
             <span *ngSwitchCase="'editProject'">
                 {{ data.name }}
+            </span>
+            <span *ngSwitchCase="'activateProject'">
+                {{ 'appLabels.form.project.title.activate' | translate }}
             </span>
             <span *ngSwitchDefault>
                 Error
@@ -80,6 +86,10 @@
 
     <!-- Update project information -->
     <div *ngSwitchCase="'editProject'">
+        <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
+    </div>
+
+    <div *ngSwitchCase="'activateProject'">
         <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
