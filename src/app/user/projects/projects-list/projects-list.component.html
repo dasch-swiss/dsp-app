@@ -1,5 +1,38 @@
-<div *ngFor="let group of list | kuiKey; let first = first">
-    <div class="app-toolbar" [class.more-space-top]="!first">
+<div *ngIf="list">
+
+        <!-- header toolbar -->
+        <div class="app-toolbar more-space-top" *ngIf="list.length > 0">
+            <div class="app-toolbar-row">
+                <h3 class="mat-body subtitle">{{title}}</h3>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
+                    <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'"></kui-sort-button>
+                </span>
+            </div>
+            <div class="app-toolbar-row">
+                <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['project']}}</h2>
+                <span class="fill-remaining-space"></span>
+                <span class="app-toolbar-action">
+                </span>
+            </div>
+        </div>
+
+        <table class="table">
+
+                <tr *ngFor="let project of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
+                    <!-- avatar -->
+                    <td>
+                        {{project.shortcode}}
+                    </td>
+                </tr>
+        </table>
+
+</div>
+
+<!--
+<div *ngFor="let project of projects; let first = first">
+
+    <div class="app-toolbar more-space-top">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span *ngIf="!system">Projects you are member of</span>
@@ -7,26 +40,24 @@
             </h3>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-
+                <kui-sort-button *ngIf="projects.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'"></kui-sort-button>
             </span>
         </div>
         <div class="app-toolbar-row">
             <h2 class="mat-title">
-                {{group.value.length}} {{group.key}} {{group.value.length | i18nPlural: itemPluralMapping['project']}}
+                {{projects.length}} {{projects.length | i18nPlural: itemPluralMapping['project']}}
             </h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-                <button mat-raised-button [color]="'primary'" *ngIf="system && group.key === 'active'" class="add-new" (click)="openDialog('createProject')">
-                    NEW project
-                </button>
+
             </span>
         </div>
     </div>
 
 
     <mat-list>
-        <mat-list-item *ngFor="let project of group.value" class="link" [class.archived]="group.key === 'archived'"
-                       (click)="setProject(project.id, group.key)">
+        <mat-list-item *ngFor="let project of projects | kuiSortBy: sortBy" class="link" [class.archived]="group.key === 'archived'"
+                       (click)="setProject(project.id, project.id)">
             <mat-icon mat-list-icon>
                 <span *ngIf="group.key === 'active'">inbox</span>
                 <span *ngIf="group.key === 'archived'">lock</span>
@@ -36,3 +67,4 @@
         </mat-list-item>
     </mat-list>
 </div>
+ -->

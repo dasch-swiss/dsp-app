@@ -11,14 +11,23 @@
 </form>
  -->
 
-<div *ngIf="!system">
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+<div *ngIf="!loading">
     <!-- <mat-divider></mat-divider> -->
-    <kui-progress-indicator *ngIf="loadProjects"></kui-progress-indicator>
-    <app-projects-list *ngIf="!loadProjects" [projects]="projects"></app-projects-list>
+    <app-projects-list [title]="'Active'" [list]="active" (refreshParent)="refresh()" [disabled]="!username" [system]="!username"></app-projects-list>
+
+    <app-projects-list [title]="'Archived'" [list]="inactive" (refreshParent)="refresh()" [disabled]="true" [system]="!username"></app-projects-list>
 </div>
 
+<!--
 <div *ngIf="system">
-    <!-- <mat-divider></mat-divider> -->
+
+    <button mat-raised-button [color]="'primary'" class="add-new" (click)="openDialog('createProject')">
+            NEW project
+    </button>
     <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
-    <app-projects-list *ngIf="!loadSystem" [projects]="systemProjects" [system]="system"></app-projects-list>
+    <app-projects-list *ngIf="!loadSystem" [list]="active" [system]="system"></app-projects-list>
+    <app-projects-list *ngIf="!loadSystem" [list]="inactive" [system]="system"></app-projects-list>
 </div>
+ -->

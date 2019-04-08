@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Project } from '@knora/core';
 import { MatDialogConfig, MatDialog } from '@angular/material';
@@ -10,13 +10,16 @@ import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/ma
     styleUrls: ['./projects-list.component.scss']
 })
 export class ProjectsListComponent implements OnInit {
-
     loading: boolean = true;
 
     /**
      * List of projects
      */
-    @Input() projects: Project[];
+    @Input() list: Project[];
+    @Input() title: string;
+    @Input() disabled?: boolean;
+
+    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
     /**
      * If system is true: show the list of all projects
@@ -24,43 +27,45 @@ export class ProjectsListComponent implements OnInit {
      */
     @Input() system?: boolean = false;
 
+    /*
     list: { [type: string]: Project[] } = {
         ['active']: [],
         ['archived']: []
     };
+    */
 
     // i18n setup
     itemPluralMapping = {
-        'project': {
+        project: {
             '=1': 'Project',
-            'other': 'Projects'
+            other: 'Projects'
         }
     };
 
-    constructor(
-        private _router: Router,
-        private _dialog: MatDialog) {
+    // sort properties
+    sortProps: any = [
+        {
+            key: 'shortcode',
+            label: 'Short code'
+        },
+        {
+            key: 'shortname',
+            label: 'Short name'
+        },
+        {
+            key: 'longname',
+            label: 'Project name'
+        }
+    ];
 
-    }
+    // ... and sort by 'email'
+    sortBy: string = 'shortname';
+
+    constructor(private _router: Router, private _dialog: MatDialog) {}
 
     ngOnInit() {
-
-        this.loading = true;
-
-        for (const item of this.projects) {
-
-            if (item.status === true) {
-                this.list['active'].push(item);
-
-            } else {
-                this.list['archived'].push(item);
-            }
-
-        }
-        this.loading = false;
-
+        console.log(this.list);
     }
-
 
     /**
      *
@@ -72,12 +77,12 @@ export class ProjectsListComponent implements OnInit {
         // by searching in the list of projects
         // instead of an additional api request
         this.list[key].filter(project => {
-
             if (project.id === id) {
-
-                this._router.navigateByUrl('/refresh', {skipLocationChange: true}).then(() =>
-                    this._router.navigate(['/project/' + project.shortcode])
-                );
+                this._router
+                    .navigateByUrl('/refresh', { skipLocationChange: true })
+                    .then(() =>
+                        this._router.navigate(['/project/' + project.shortcode])
+                    );
 
                 // this._router.navigate(['/project/' + project.shortname + '/dashboard']);
 
@@ -94,21 +99,4 @@ export class ProjectsListComponent implements OnInit {
         });
     }
 
-    openDialog(mode: string): void {
-        const dialogConfig: MatDialogConfig = {
-            width: '560px',
-            position: {
-                top: '112px'
-            },
-            data: { mode: mode }
-        };
-
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(result => {
-            // update the view
-
-
-        });
-    }
 }
