@@ -1,6 +1,6 @@
-<nav mat-tab-nav-bar mat-align-tabs="center" class="tab-bar margin-from-top" animationDuration="0ms">
+<nav mat-tab-nav-bar mat-align-tabs="center" class="tab-bar margin-from-top" animationDuration="0ms" [color]="color">
     <a mat-tab-link *ngFor="let link of navigation; let first = first" [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive"
-       [active]="rla.isActive" [disabled]="!first && !loggedInAdmin">
+       [active]="rla.isActive" [disabled]="!first && !loggedInAdmin" [class.archived]="!project.status">
         <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
         {{link.label}}
     </a>

@@ -25,6 +25,8 @@ export class ProjectComponent implements OnInit {
 
     project: Project;
 
+    color: string = 'primary';
+
     loggedInAdmin: boolean = false;
 
     // for the sidenav
@@ -69,6 +71,11 @@ export class ProjectComponent implements OnInit {
                 .subscribe(
                     (result: any) => {
                         this.project = result;
+
+                        if (!this.project.status) {
+                            this.color = 'warn';
+                        }
+
                         this.navigation[0].label =
                             'Project: ' + result.shortname.toUpperCase();
 
