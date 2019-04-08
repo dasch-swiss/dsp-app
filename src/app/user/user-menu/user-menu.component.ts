@@ -31,14 +31,6 @@ export class UserMenuComponent implements OnInit {
         this.navigation = AppGlobal.userNav;
         this.username = JSON.parse(localStorage.getItem('session')).user.name;
         this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
-
-        if (this.sysAdmin) {
-            this.navigation.push({
-                label: 'System',
-                route: '/system',
-                icon: 'all_inbox'
-            });
-        }
     }
 
     logout() {

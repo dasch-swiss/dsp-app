@@ -31,18 +31,7 @@
 
             <!-- user's projects -->
             <div *ngSwitchCase="'projects'" class="full-width">
-                <app-projects [username]="session.user.name"></app-projects>
-            </div>
-
-            <!-- system's projects -->
-            <!-- TODO: this should be available only, when the user has system admin rights -->
-            <div *ngSwitchCase="'system'" class="full-width">
-
-                <div *ngIf="session.user.sysAdmin">
-                    <app-projects class="full-width" [username]="session.user.name" [system]="true"></app-projects>
-                </div>
-
-                <app-error *ngIf="!session.user.sysAdmin" [status]="403"></app-error>
+                <app-projects [username]="session.user.name" [system]="false"></app-projects>
             </div>
 
             <!-- user's collections (!!!NOT YET IMPLEMENTED!!!) -->

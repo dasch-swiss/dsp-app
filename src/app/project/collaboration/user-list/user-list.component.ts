@@ -84,7 +84,8 @@ export class UserListComponent implements OnInit {
         this.loading = true;
 
         // get project data from cache
-        this._cache
+        if (this.projectcode) {
+            this._cache
             .get(
                 this.projectcode,
                 this._projectsService.getProjectByShortcode(this.projectcode)
@@ -97,6 +98,8 @@ export class UserListComponent implements OnInit {
                     console.error(error);
                 }
             );
+
+        }
 
         this.loading = false;
         // setTimeout(() => this.openDialog('editPassword', 'multiuser'), 10);

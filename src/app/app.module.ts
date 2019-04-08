@@ -60,6 +60,9 @@ import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
 import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
 import { MaterialDialogComponent } from './main/dialog/material-dialog/material-dialog.component';
+import { SystemComponent } from './system/system.component';
+import { UsersComponent } from './system/users/users.component';
+import { StatusComponent } from './system/status/status.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -119,7 +122,10 @@ export function initializeApp(appInitService: AppInitService) {
         DashboardComponent,
         ProjectMenuComponent,
         EditUserComponent,
-        MaterialDialogComponent
+        MaterialDialogComponent,
+        SystemComponent,
+        UsersComponent,
+        StatusComponent
     ],
     imports: [
         AppRoutingModule,

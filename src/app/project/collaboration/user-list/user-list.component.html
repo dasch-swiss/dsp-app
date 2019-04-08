@@ -39,14 +39,14 @@
 
             <!-- admin -->
             <td>
-                <mat-chip-list>
+                <mat-chip-list *ngIf="projectcode" >
                     <mat-chip *ngIf="isProjectAdmin(user.permissions)">Admin</mat-chip>
                 </mat-chip-list>
             </td>
 
             <!-- group -->
             <td>
-                <app-select-group [projectcode]="project.shortcode" [projectid]="project.id"
+                <app-select-group *ngIf="projectcode" [projectcode]="project.shortcode" [projectid]="project.id"
                                   [permissions]="user.permissions.groupsPerProject[project.id]" [disabled]="disabled"
                                   (groupChange)="updateGroupsMembership(user.id, $event)"></app-select-group>
             </td>
@@ -56,7 +56,7 @@
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
-                    <button mat-menu-item (click)="updateAdminMembership(user.id, user.permissions)">
+                    <button mat-menu-item (click)="updateAdminMembership(user.id, user.permissions)" *ngIf="projectcode">
                         <span *ngIf="!isProjectAdmin(user.permissions)">Add</span>
                         <span *ngIf="isProjectAdmin(user.permissions)">Remove</span>
                         <span>&nbsp;as project admin</span>
@@ -67,7 +67,7 @@
                     <button mat-menu-item (click)="openDialog('editPassword', user.username)">
                         Change user's password
                     </button>
-                    <button mat-menu-item (click)="removeUserFromProject(user.id)">
+                    <button mat-menu-item (click)="removeUserFromProject(user.id)" *ngIf="projectcode">
                         Remove user from project
                     </button>
                 </mat-menu>

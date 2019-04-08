@@ -16,6 +16,10 @@ import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
+import { SystemComponent } from './system/system.component';
+import { ProjectsComponent } from './user/projects/projects.component';
+import { UsersComponent } from './system/users/users.component';
+import { StatusComponent } from './system/status/status.component';
 
 const routes: Routes = [
     {
@@ -84,14 +88,33 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'system',
+        path: 'collections',
         component: UserComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'collections',
-        component: UserComponent,
-        canActivate: [AuthGuard]
+        path: 'system',
+        component: SystemComponent,
+        canActivate: [AuthGuard],
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'projects'
+            },
+            {
+                path: 'projects',
+                component: ProjectsComponent
+            },
+            {
+                path: 'users',
+                component: UsersComponent
+            },
+            {
+                path: 'status',
+                component: StatusComponent
+            },
+        ]
     },
     {
         path: 'dev',        // developer test environment
