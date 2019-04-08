@@ -28,6 +28,8 @@ export class UserListComponent implements OnInit {
 
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
+    sysAdmin: boolean = false;
+
     itemPluralMapping = {
         'member': {
             // '=0': '0 Members',
@@ -82,6 +84,8 @@ export class UserListComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
+
+        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
 
         // get project data from cache
         if (this.projectcode) {
