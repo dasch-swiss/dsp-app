@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@knora/authentication';
-import { DialogComponent } from './main/dialog/dialog.component';
-import { FullframeDialogComponent } from './main/dialog/fullframe-dialog/fullframe-dialog.component';
 import { ErrorComponent } from './main/error/error.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
