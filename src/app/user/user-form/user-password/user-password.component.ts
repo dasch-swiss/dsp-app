@@ -269,6 +269,7 @@ export class UserPasswordComponent implements OnInit {
                         this.failed = true;
                     } else {
                         this.errorMessage = error;
+                        console.error(error);
                     }
 
                     this.loading = false;
