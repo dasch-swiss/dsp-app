@@ -11,33 +11,55 @@ import {
 import { CacheService } from '../../main/cache/cache.service';
 import { MatDialogConfig, MatDialog } from '@angular/material';
 import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { AdminPermissions } from 'src/app/main/declarations/admin-permissions';
 
+/**
+ * projects component handles the list of projects
+ * It's used in user-profile, on system-projects
+ * but also on the landing page
+ *
+ * We build to lists: one with active projects
+ * and another one with already archived (inactive) projects
+ *
+ */
 @Component({
     selector: 'app-projects',
     templateUrl: './projects.component.html',
     styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
-    loading: boolean;
 
+    /**
+     * general variables
+     */
+    loading: boolean;
+    error: any;
+
+    /**
+     * if username is definded: show only projects,
+     * where this user is member of;
+     * otherwise show all projects
+     */
     @Input() username?: string;
 
+
+
+
+    // do we still need this? NO!
     @Input() system?: boolean = true;
 
+    /**
+     * who is logged-in? does he have project-admin, system-admin or no rights?
+     * get the information from localstorage
+     */
     session: Session;
 
-    projects: Project[] = [];
-    loadProjects: boolean;
-
-    systemProjects: Project[];
-    loadSystem: boolean;
+    permissions: AdminPermissions;
 
     // list of active projects
     active: Project[] = [];
     // list of archived (deleted) projects
     inactive: Project[] = [];
-
-    ownProfile: boolean = false;
 
     constructor(
         private _cache: CacheService,
@@ -55,18 +77,54 @@ export class ProjectsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loading = true;
+
+        this.session = JSON.parse(localStorage.getItem('session'));
 
         this.initList();
     }
 
     initList() {
+        this.loading = true;
+
         if (this.username) {
             // logged-in user view: get all projects, where the user is member of
+            this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
+                (user: User) => {
+
+                    // get user's projects by iri
+                    for (const project of user.projects) {
+                        this._projectsService
+                            .getProjectByIri(project.id)
+                            .subscribe(
+                                (projectResponse: Project) => {
+                                    // this.projects.push(projectResponse);
+                                    if (projectResponse.status === true) {
+                                        this.active.push(projectResponse);
+                                    } else {
+                                        this.inactive.push(projectResponse);
+                                    }
+                                },
+                                (projectError: ApiServiceError) => {
+                                    console.error(projectError);
+                                }
+                            );
+                    }
+
+                    this.loading = false;
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
         } else {
-            // logged-in user is system admin: show all projects
+
+            // logged-in user is system admin (or guest): show all projects
             this._projectsService.getAllProjects().subscribe(
                 (projects: Project[]) => {
+
+                    // reset the lists:
+                    this.active = [];
+                    this.inactive = [];
 
                     for (const item of projects) {
                         if (item.status === true) {
@@ -84,7 +142,7 @@ export class ProjectsComponent implements OnInit {
             );
         }
     }
-
+/*
     initListBak() {
         if (this.username) {
             // get user's projects
@@ -188,7 +246,7 @@ export class ProjectsComponent implements OnInit {
             }
         }
     }
-
+ */
     openDialog(mode: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',

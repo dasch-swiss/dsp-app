@@ -10,12 +10,10 @@
     <div *ngIf="!loading" class="content">
 
         <!-- list of active users -->
-        <app-user-list [title]="'Active'" [list]="active" (refreshParent)="refresh()" [disabled]="!project.status"></app-user-list>
-
-        <!-- <mat-divider class="more-space"></mat-divider> -->
+        <app-users-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-users-list>
 
         <!-- list of inactive users -->
-        <app-user-list [title]="'Archived'" [list]="inactive" (refreshParent)="refresh()" [disabled]="true"></app-user-list>
+        <app-users-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-users-list>
 
     </div>
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { User, UsersService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { Title } from '@angular/platform-browser';
+import { Session } from '@knora/authentication';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +15,7 @@ export class DashboardComponent implements OnInit {
 
   user: User;
 
+  session: Session;
   username: string;
   sysAdmin: boolean = false;
 
@@ -23,8 +25,9 @@ export class DashboardComponent implements OnInit {
               private _usersService: UsersService,
               private _titleService: Title) {
       // get username
-      this.username = JSON.parse(localStorage.getItem('session')).user.name;
-      this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+      this.session = JSON.parse(localStorage.getItem('session'));
+      this.username = this.session.user.name;
+      this.sysAdmin = this.session.user.sysAdmin;
 
       this.showSystemProjects = this.sysAdmin;
 

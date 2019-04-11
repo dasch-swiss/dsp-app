@@ -3,7 +3,10 @@
 <div *ngIf="!loading" class="content">
 
     <!-- list of active users -->
+    <app-users-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-users-list>
+    <!--
     <app-user-list [title]="'Active'" [list]="active" (refreshParent)="refresh()"></app-user-list>
+    -->
 
     <!-- <mat-divider class="more-space"></mat-divider> -->
 

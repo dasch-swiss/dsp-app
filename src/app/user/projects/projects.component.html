@@ -15,9 +15,10 @@
 
 <div *ngIf="!loading">
     <!-- <mat-divider></mat-divider> -->
-    <app-projects-list [title]="'Active'" [list]="active" (refreshParent)="refresh()" [disabled]="!username" [system]="!username"></app-projects-list>
+    <app-projects-list [list]="active" (refreshParent)="refresh()" [sysAdmin]="session.user.sysAdmin"></app-projects-list>
 
-    <app-projects-list [title]="'Archived'" [list]="inactive" (refreshParent)="refresh()" [disabled]="true" [system]="!username"></app-projects-list>
+    <!-- already archived projects: disable the menu -->
+    <app-projects-list [list]="inactive" (refreshParent)="refresh()" [archived]="true" [sysAdmin]="session.user.sysAdmin"></app-projects-list>
 </div>
 
 <!--

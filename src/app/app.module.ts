@@ -63,6 +63,7 @@ import { MaterialDialogComponent } from './main/dialog/material-dialog/material-
 import { SystemComponent } from './system/system.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
+import { UsersListComponent } from './system/users/users-list/users-list.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -125,7 +126,8 @@ export function initializeApp(appInitService: AppInitService) {
         MaterialDialogComponent,
         SystemComponent,
         UsersComponent,
-        StatusComponent
+        StatusComponent,
+        UsersListComponent
     ],
     imports: [
         AppRoutingModule,

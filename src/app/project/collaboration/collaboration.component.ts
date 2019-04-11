@@ -11,26 +11,32 @@ import { Session } from '@knora/authentication';
     templateUrl: './collaboration.component.html',
     styleUrls: ['./collaboration.component.scss']
 })
-export class CollaborationComponent implements OnInit, AfterViewInit {
+export class CollaborationComponent implements OnInit {
 
+    // loading for progess indicator
     loading: boolean;
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
+
+    // project shortcode; as identifier in project cache service
     projectcode: string;
 
+    // project data
     project: Project;
 
+    // project members
     projectMembers: User[] = [];
 
-    // is logged-in user system admin?
-    sysAdmin: boolean = false;
-
+    // two lists of project members:
     // list of active users
     active: User[] = [];
     // list of inactive (deleted) users
     inactive: User[] = [];
 
     @ViewChild('addUserComponent') addUser: AddUserComponent;
-
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
@@ -59,29 +65,45 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.loading = true;
 
-        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
 
-        this.refresh();
+        // default value for projectAdmin
+        this.projectAdmin = this.sysAdmin;
 
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-            (result: any) => {
-                this.project = result;
-                this.loading = false;
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-                this.loading = false;
-            }
-        );
+        // get the project data from cache
+        this._cache
+                .get(
+                    this.projectcode,
+                    this._projectsService.getProjectByShortcode(
+                        this.projectcode
+                    )
+                )
+                .subscribe(
+                    (result: any) => {
+                        this.project = result;
 
-        this.initList();
-    }
+                        // is logged-in user projectAdmin?
+                        this.projectAdmin = this.sysAdmin
+                            ? this.sysAdmin
+                            : this.session.user.projectAdmin.some(e => e === this.project.id);
 
-    ngAfterViewInit(): void {
-        /*
-        console.log(this.addUser);
-        this.addUser.buildForm();
-        */
+                        // get from cache: list of project members and groups
+                        if (this.projectAdmin) {
+
+                            console.log('refresh page in case of project admin');
+                            this.refresh();
+                        }
+
+                        this.loading = false;
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                        this.loading = false;
+                    }
+                );
     }
 
     /**

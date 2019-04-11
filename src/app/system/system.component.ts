@@ -10,7 +10,6 @@ import { Title } from '@angular/platform-browser';
 })
 export class SystemComponent implements OnInit {
     loading: boolean = true;
-    error: boolean;
 
     sysAdmin: boolean = false;
 
@@ -22,8 +21,6 @@ export class SystemComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.sysAdmin = JSON.parse(
-            localStorage.getItem('session')
-        ).user.sysAdmin;
+        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
     }
 }

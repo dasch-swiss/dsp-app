@@ -10,29 +10,22 @@ import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/ma
     styleUrls: ['./projects-list.component.scss']
 })
 export class ProjectsListComponent implements OnInit {
+
     loading: boolean = true;
 
     /**
      * List of projects
      */
     @Input() list: Project[];
-    @Input() title: string;
-    @Input() disabled?: boolean;
 
+    // does the list contain archived objects?
+    @Input() archived: boolean = false;
+
+    // update parent (and so this list) in case of modifying an object in the list
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
-    /**
-     * If system is true: show the list of all projects
-     * Otherwise only the projects where the user is member of
-     */
-    @Input() system?: boolean = false;
-
-    /*
-    list: { [type: string]: Project[] } = {
-        ['active']: [],
-        ['archived']: []
-    };
-    */
+    // logged-in user permissions
+    @Input() sysAdmin?: boolean = false;
 
     // i18n setup
     itemPluralMapping = {
@@ -58,45 +51,38 @@ export class ProjectsListComponent implements OnInit {
         }
     ];
 
-    // ... and sort by 'email'
+    // ... and sort by 'shortname'
     sortBy: string = 'shortname';
 
-    constructor(private _router: Router, private _dialog: MatDialog) {}
+    constructor(
+        private _router: Router,
+        private _dialog: MatDialog) {}
 
     ngOnInit() {
-        console.log(this.list);
+
     }
 
-    /**
-     *
-     * @param id    project id
-     * @param key   key is the type of the list: 'active', 'inactive'
-     */
-    setProject(id: string, key: string) {
-        // get project by id
-        // by searching in the list of projects
-        // instead of an additional api request
-        this.list[key].filter(project => {
-            if (project.id === id) {
-                this._router
-                    .navigateByUrl('/refresh', { skipLocationChange: true })
-                    .then(() =>
-                        this._router.navigate(['/project/' + project.shortcode])
-                    );
+    gotoProjectBoard(code: string) {
+        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+            () => this._router.navigate(['/project/' + code])
+        );
+    }
 
-                // this._router.navigate(['/project/' + project.shortname + '/dashboard']);
 
-                // location.reload(true);
-            }
+    openDialog(mode: string, name: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            position: {
+                top: '112px'
+            },
+            data: { name: name, mode: mode }
+        };
+
+        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.refreshParent.emit();
         });
     }
-
-    createProject() {
-        this._router.navigate(['/project/new'], {
-            queryParams: {
-                returnUrl: this._router.url
-            }
-        });
-    }
-
 }

@@ -20,6 +20,9 @@
             <span *ngSwitchCase="'activateProject'">
                 {{ 'appLabels.form.action.deleted' | translate }}
             </span>
+            <span *ngSwitchCase="'deleteProject'">
+                {{ 'appLabels.form.action.deleted' | translate }}
+            </span>
             <span *ngSwitchDefault>
                 Not yet implemented
             </span>
@@ -51,6 +54,9 @@
             <span *ngSwitchCase="'activateProject'">
                 {{ 'appLabels.form.project.title.activate' | translate }}
             </span>
+            <span *ngSwitchCase="'deleteProject'">
+                {{ 'appLabels.form.project.title.delete' | translate }}
+            </span>
             <span *ngSwitchDefault>
                 Error
             </span>
@@ -63,13 +69,15 @@
 </div>
 <!-- form -->
 <div [ngSwitch]="data.mode">
+
+    <!-- all about USER -->
     <!-- Create new user profile -->
     <div *ngSwitchCase="'createUser'">
         <app-user-form [name]="data.name" [projectcode]="data.project" (closeDialog)="dialogRef.close()">
         </app-user-form>
     </div>
 
-    <!-- Update user profile data -->
+    <!-- Modify user data -->
     <div *ngSwitchCase="'editUser'">
         <app-user-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-form>
     </div>
@@ -79,20 +87,40 @@
         <app-user-password [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-password>
     </div>
 
+    <!-- Delete project -->
+    <div *ngSwitchCase="'deleteUser'">
+        Confirm dialog: you're sure? Delete user
+    </div>
+
+    <!-- Reactivate project -->
+    <div *ngSwitchCase="'activateUser'">
+        Confirm dialog: you're sure? Reactivate user
+    </div>
+
+    <!-- all about PROJECT -->
     <!-- Create project -->
     <div *ngSwitchCase="'createProject'">
         <app-project-form (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
-    <!-- Update project information -->
+    <!-- Modify project information -->
     <div *ngSwitchCase="'editProject'">
         <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
-    <div *ngSwitchCase="'activateProject'">
-        <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
+    <!-- Delete project -->
+    <div *ngSwitchCase="'deleteProject'">
+        Confirm dialog: you're sure? Delete project
+        <!-- <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form> -->
     </div>
 
+    <!-- Reactivate project -->
+    <div *ngSwitchCase="'activateProject'">
+        Confirm dialog: you're sure? Reactivate project
+        <!-- <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form> -->
+    </div>
+
+    <!-- Unknown method (or not yet defined) -->
     <!-- Default dialog content component -->
     <div *ngSwitchDefault>This component {{data.mode}} is not implemented yet.</div>
 </div>
