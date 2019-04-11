@@ -97,6 +97,7 @@ export class ProjectsComponent implements OnInit {
                             .getProjectByIri(project.id)
                             .subscribe(
                                 (projectResponse: Project) => {
+                                    console.log(projectResponse.shortcode);
                                     // this.projects.push(projectResponse);
                                     if (projectResponse.status === true) {
                                         this.active.push(projectResponse);

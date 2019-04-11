@@ -11,6 +11,6 @@
     <!-- <mat-divider class="more-space"></mat-divider> -->
 
     <!-- list of inactive users -->
-    <app-user-list [title]="'Archived'" [list]="inactive" (refreshParent)="refresh()" ></app-user-list>
+    <app-users-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-users-list>
 
 </div>

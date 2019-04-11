@@ -82,7 +82,7 @@ export class CollaborationComponent implements OnInit {
                     )
                 )
                 .subscribe(
-                    (result: any) => {
+                    (result: Project) => {
                         this.project = result;
 
                         // is logged-in user projectAdmin?
@@ -92,8 +92,6 @@ export class CollaborationComponent implements OnInit {
 
                         // get from cache: list of project members and groups
                         if (this.projectAdmin) {
-
-                            console.log('refresh page in case of project admin');
                             this.refresh();
                         }
 

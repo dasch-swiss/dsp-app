@@ -1,36 +1,39 @@
-<!-- show the list, if it exits -->
-<div *ngIf="list">
+<div *ngIf="list && !loading">
     <!-- header toolbar -->
     <div class="app-toolbar more-space-top" *ngIf="list.length > 0">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
-                <span *ngIf="!archived">Active</span>
-                <span *ngIf="archived">Archived</span>
+                <span *ngIf="status">Active</span>
+                <span *ngIf="!status">Archived</span>
             </h3>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-                <!-- sort button -->
-                <kui-sort-button *ngIf="list.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy"
-                                 [position]="'right'"></kui-sort-button>
+
             </span>
         </div>
         <div class="app-toolbar-row">
-            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['project']}}</h2>
+            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
             <span class="fill-remaining-space"></span>
-            <span class="app-toolbar-action">
+            <span class="app-toolbar-action button">
+                <!-- sort button if more than one item in the list -->
+                    <kui-sort-button
+                        *ngIf="list.length > 1" [icon]="'sort_by_alpha'"
+                        [sortProps]="sortProps" [(sortKey)]="sortBy"
+                        [position]="'right'">
+                    </kui-sort-button>
             </span>
         </div>
     </div>
 
-    <!-- table shows the list -->
-    <table class="table" [class.archived]="archived">
+    <!-- content: list -->
+    <table class="table" [class.archived]="!status">
 
         <tr *ngFor="let project of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
             <!-- logo -->
             <td class="avatar-cell">
                 <mat-icon mat-list-icon>
-                    <span *ngIf="!archived">inbox</span>
-                    <span *ngIf="archived">lock</span>
+                    <span *ngIf="status">inbox</span>
+                    <span *ngIf="!status">lock</span>
                 </mat-icon>
                 <!-- QUESTION: should we show the project logo
                 <img kuiAdminImage [image]="project.logo" [type]="'project'" class="avatar-image link"
@@ -47,15 +50,18 @@
             </td>
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectMenu" *ngIf="sysAdmin">
+                <button mat-icon-button [matMenuTriggerFor]="projectMenu" [disabled]="!sysAdmin && !userIsProjectAdmin(project.id)">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
                     <button mat-menu-item (click)="openDialog('editProject', project.shortcode)">
                         Edit project
                     </button>
-                    <button mat-menu-item (click)="openDialog('deleteProject', project.shortcode)">
+                    <button mat-menu-item *ngIf="status" (click)="openDialog('deleteProject', project.shortcode)">
                         Archive project
+                    </button>
+                    <button mat-menu-item *ngIf="!status" (click)="openDialog('activateProject', project.shortcode)">
+                        Reactivate project
                     </button>
                 </mat-menu>
             </td>

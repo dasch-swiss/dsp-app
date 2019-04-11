@@ -17,7 +17,7 @@
             <span class="app-toolbar-action button">
                 <!-- sort button if more than one item in the list -->
                     <kui-sort-button
-                        *ngIf="list.length > 1"
+                        *ngIf="list.length > 1" [icon]="'sort_by_alpha'"
                         [sortProps]="sortProps" [(sortKey)]="sortBy"
                         [position]="'right'">
                     </kui-sort-button>
@@ -26,7 +26,7 @@
     </div>
 
     <!-- content: list -->
-    <table class="table">
+    <table class="table" [class.archived]="!status">
         <tr *ngFor="let user of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
@@ -53,7 +53,7 @@
 
             <!-- group: only in project view -->
             <td>
-                <app-select-group *ngIf="projectAdmin"
+                <app-select-group *ngIf="projectAdmin && projectcode"
                     [projectcode]="project.shortcode"
                     [projectid]="project.id"
                     [permissions]="user.permissions.groupsPerProject[project.id]"
@@ -64,7 +64,7 @@
 
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="sysAdmin && projectAdmin">
+                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="!sysAdmin && !projectAdmin">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
@@ -88,6 +88,13 @@
                     <button mat-menu-item *ngIf="projectcode"
                         (click)="openDialog('removeFromProject', user.username, projectcode)">
                         Remove user from project
+                    </button>
+                    <!-- delete / reactivate user -->
+                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectcode" (click)="openDialog('deleteUser', user.username)">
+                            Delete user
+                    </button>
+                    <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectcode" (click)="openDialog('activateUser', user.username)">
+                        Reactivate user
                     </button>
                 </mat-menu>
             </td>

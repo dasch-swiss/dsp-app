@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Session, AuthenticationService } from '@knora/authentication';
 import {
     User,
@@ -82,18 +82,22 @@ export class UsersListComponent implements OnInit {
     sortBy: string = 'email';
 
     constructor(
+        private _auth: AuthenticationService,
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _projectsService: ProjectsService,
         private _usersService: UsersService,
         private _route: ActivatedRoute,
-        private _auth: AuthenticationService
+        private _router: Router
     ) {
         // get the shortcode of the current project
-        this.projectcode = this._route.parent.snapshot.params.shortcode;
+        if (this._route.parent.snapshot.params) {
+            this.projectcode = this._route.parent.snapshot.params.shortcode;
+        }
     }
 
     ngOnInit() {
+
         // get information about the logged-in user
         this.session = JSON.parse(localStorage.getItem('session'));
 
@@ -239,6 +243,10 @@ export class UsersListComponent implements OnInit {
                           // redirect to project page
                           // update the cache of logged-in user and the session
                           this._auth.updateSession(this.session.user.jwt, this.session.user.name);
+                          // go to project page
+                          this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                            () => this._router.navigate(['/project/' + this.projectcode])
+                        );
                         }
 
                     },

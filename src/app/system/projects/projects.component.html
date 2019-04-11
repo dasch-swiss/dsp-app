@@ -13,12 +13,12 @@
 
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-<div *ngIf="!loading">
+<div *ngIf="!loading" class="content">
     <!-- <mat-divider></mat-divider> -->
-    <app-projects-list [list]="active" (refreshParent)="refresh()" [sysAdmin]="session.user.sysAdmin"></app-projects-list>
+    <app-projects-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-projects-list>
 
     <!-- already archived projects: disable the menu -->
-    <app-projects-list [list]="inactive" (refreshParent)="refresh()" [archived]="true" [sysAdmin]="session.user.sysAdmin"></app-projects-list>
+    <app-projects-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-projects-list>
 </div>
 
 <!--

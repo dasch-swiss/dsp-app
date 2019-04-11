@@ -1,4 +1,4 @@
-<div class="content large middle">
+<div *ngIf="projectAdmin; else notAllowed" class="content large middle">
 
     <!-- add user to the project -->
     <app-add-user *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()" #addUserComponent></app-add-user>
@@ -18,3 +18,9 @@
     </div>
 
 </div>
+
+<ng-template #notAllowed>
+    <div class="content large middle">
+        <app-error [status]="403"></app-error>
+    </div>
+</ng-template>

@@ -1,8 +1,10 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { Project } from '@knora/core';
+import { Project, User, ProjectsService } from '@knora/core';
 import { MatDialogConfig, MatDialog } from '@angular/material';
 import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/material-dialog.component';
+import { Session } from '@knora/authentication';
+import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
     selector: 'app-projects-list',
@@ -10,26 +12,26 @@ import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/ma
     styleUrls: ['./projects-list.component.scss']
 })
 export class ProjectsListComponent implements OnInit {
+    // loading for progess indicator
+    loading: boolean;
 
-    loading: boolean = true;
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
 
-    /**
-     * List of projects
-     */
-    @Input() list: Project[];
+    // list of users: status active or inactive (deleted)
+    @Input() status: boolean;
 
-    // does the list contain archived objects?
-    @Input() archived: boolean = false;
+    // list of users: depending on the parent
+    @Input() list: User[];
 
-    // update parent (and so this list) in case of modifying an object in the list
+    // in case of modification
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
-    // logged-in user permissions
-    @Input() sysAdmin?: boolean = false;
-
-    // i18n setup
+    // i18n plural mapping
     itemPluralMapping = {
-        project: {
+        title: {
             '=1': 'Project',
             other: 'Projects'
         }
@@ -55,11 +57,31 @@ export class ProjectsListComponent implements OnInit {
     sortBy: string = 'shortname';
 
     constructor(
-        private _router: Router,
-        private _dialog: MatDialog) {}
+        private _cache: CacheService,
+        private _dialog: MatDialog,
+        private _projectsService: ProjectsService,
+        private _router: Router) {}
 
     ngOnInit() {
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
 
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+    }
+
+    /**
+     * returns true, when the user is project admin;
+     * when the parameter permissions is not set,
+     * it returns the value for the logged-in user
+     *
+     *
+     * @param  id project iri
+     * @returns boolean
+     */
+    userIsProjectAdmin(id: string): boolean {
+        // check if the logged-in user is project admin
+        return this.session.user.projectAdmin.some(e => e === id);
     }
 
     gotoProjectBoard(code: string) {

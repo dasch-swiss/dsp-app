@@ -49,6 +49,8 @@ export class UserComponent implements OnInit {
 
         this.loading = true;
 
+        this._cache.del(this.session.user.name);
+
         /**
          * set the cache here for current/logged-in user
          */
