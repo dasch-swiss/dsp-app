@@ -58,14 +58,18 @@ export class UserComponent implements OnInit {
         /**
          * set the cache here for current/logged-in user
          */
-        setTimeout(() => {
-            // console.log(this.resource);
-            this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
-            this.loading = false;
-        }, 500);
+        this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
+        this.loading = false;
 
     }
 
+    refresh() {
+        this.loading = true;
+        setTimeout(() => {
+            // console.log(this.resource);
+            this.initContent();
+        }, 500);
+    }
 
 
 }

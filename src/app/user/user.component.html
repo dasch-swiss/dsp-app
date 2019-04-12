@@ -26,7 +26,7 @@
 
             <!-- edit user data -->
             <div *ngSwitchCase="'account'" class="full-width">
-                <app-account [username]="session.user.name" (refreshParent)="initContent()"></app-account>
+                <app-account [username]="session.user.name" (refreshParent)="refresh()"></app-account>
             </div>
 
             <!-- user's projects -->
