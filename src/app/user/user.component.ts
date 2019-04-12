@@ -47,6 +47,10 @@ export class UserComponent implements OnInit {
 
     ngOnInit() {
 
+        this.initContent();
+    }
+
+    initContent() {
         this.loading = true;
 
         this._cache.del(this.session.user.name);
@@ -54,25 +58,14 @@ export class UserComponent implements OnInit {
         /**
          * set the cache here for current/logged-in user
          */
-        this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
-        this.loading = false;
+        setTimeout(() => {
+            // console.log(this.resource);
+            this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
+            this.loading = false;
+        }, 500);
+
     }
 
-    openDialog(mode: string, name: string): void {
-        const dialogConfig: MatDialogConfig = {
-            width: '560px',
-            position: {
-                top: '112px'
-            },
-            data: { name: name, mode: mode }
-        };
 
-        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(result => {
-            // update the view
-            // this.getProject();
-        });
-    }
 
 }
