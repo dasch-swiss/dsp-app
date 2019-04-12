@@ -86,19 +86,19 @@
                     </button>
                     <!-- remove user from project; only in project view -->
                     <button mat-menu-item *ngIf="projectcode"
-                        (click)="openDialog('removeFromProject', user.username, projectcode)">
+                        (click)="openDialog('removeFromProject', user.username, user.id)">
                         Remove user from project
                     </button>
                     <!-- add user to project; only in system view -->
-                    <button mat-menu-item *ngIf="sysAdmin"
+                    <button mat-menu-item *ngIf="sysAdmin && !projectcode"
                         (click)="openDialog('addUserToProject', user.username)">
                         Add user to project
                     </button>
                     <!-- delete / reactivate user -->
-                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectcode" (click)="openDialog('deleteUser', user.username)">
+                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectcode" (click)="openDialog('deleteUser', user.username, user.id)">
                         Delete user
                     </button>
-                    <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectcode" (click)="openDialog('activateUser', user.username)">
+                    <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectcode" (click)="openDialog('activateUser', user.username, user.id)">
                         Reactivate user
                     </button>
                 </mat-menu>

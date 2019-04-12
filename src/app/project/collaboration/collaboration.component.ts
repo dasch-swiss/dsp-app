@@ -144,7 +144,9 @@ export class CollaborationComponent implements OnInit {
         this.loading = true;
         // update the cache
         this._cache.del('members_of_' + this.projectcode);
+
         this.initList();
+
         // refresh child component: add user
         if (this.addUser) {
             this.addUser.buildForm();

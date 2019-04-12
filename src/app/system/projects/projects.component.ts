@@ -42,9 +42,6 @@ export class ProjectsComponent implements OnInit {
      */
     @Input() username?: string;
 
-
-
-
     // do we still need this? NO!
     @Input() system?: boolean = true;
 
@@ -97,7 +94,6 @@ export class ProjectsComponent implements OnInit {
                             .getProjectByIri(project.id)
                             .subscribe(
                                 (projectResponse: Project) => {
-                                    console.log(projectResponse.shortcode);
                                     // this.projects.push(projectResponse);
                                     if (projectResponse.status === true) {
                                         this.active.push(projectResponse);
@@ -275,7 +271,7 @@ export class ProjectsComponent implements OnInit {
         this.loading = true;
         // update the cache
         // this._cache.del('members_of_' + this.projectcode);
-        // this.initList();
+        this.initList();
 
         // refresh child component: add user
         /*

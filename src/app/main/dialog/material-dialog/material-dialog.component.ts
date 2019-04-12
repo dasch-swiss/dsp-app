@@ -3,8 +3,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 export interface DialogData {
     mode: string;
-    name?: string;
-    project?: string;
+    name?: string;      // main iri
+    project?: string;   // second iri or connected iri
+    confirm?: boolean;
 }
 
 @Component({
@@ -13,10 +14,12 @@ export interface DialogData {
     styleUrls: ['./material-dialog.component.scss']
 })
 export class MaterialDialogComponent implements OnInit {
+
+
     constructor(
         public dialogRef: MatDialogRef<MaterialDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData
-    ) {}
+    ) { }
 
     ngOnInit() {}
 

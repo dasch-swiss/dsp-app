@@ -57,10 +57,10 @@
                     <button mat-menu-item (click)="openDialog('editProject', project.shortcode)">
                         Edit project
                     </button>
-                    <button mat-menu-item *ngIf="status" (click)="openDialog('deleteProject', project.shortcode)">
+                    <button mat-menu-item *ngIf="status" (click)="openDialog('deleteProject', project.shortname, project.id)">
                         Archive project
                     </button>
-                    <button mat-menu-item *ngIf="!status" (click)="openDialog('activateProject', project.shortcode)">
+                    <button mat-menu-item *ngIf="!status" (click)="openDialog('activateProject', project.shortname, project.id)">
                         Reactivate project
                     </button>
                 </mat-menu>

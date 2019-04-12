@@ -26,7 +26,7 @@
                     <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button class="right" (click)="openDialog('activateProject', project.shortcode)"
-                *ngIf="sysAdmin && !project.status">
+                *ngIf="sysAdmin && project.status">
             <mat-icon>edit</mat-icon>
         </button>
             </span>

@@ -277,7 +277,7 @@ export class UsersListComponent implements OnInit {
      * delete and reactivate user
      *
      */
-    openDialog(mode: string, name: string): void {
+    openDialog(mode: string, name: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
@@ -292,8 +292,67 @@ export class UsersListComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe(result => {
-            // update the view
-            this.refreshParent.emit();
+            if (result === true) {
+                // get the mode
+                switch (mode) {
+                    case 'removeFromProject':
+                        this.removeUserFromProject(iri);
+                    break;
+                    case 'deleteUser':
+                        this.deleteUser(iri);
+                    break;
+
+                    case 'activateUser':
+                        this.activateUser(iri);
+                    break;
+                }
+            } else {
+                // update the view
+                this.refreshParent.emit();
+            }
         });
     }
+
+    /**
+     * remove user from project and update list of users
+     *
+     * @param  {string} id user's IRI
+     * @returns void
+     */
+    removeUserFromProject(id: string): void {
+        this._usersService.removeUserFromProject(id, this.project.id).subscribe(
+            (result: User) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
+            }
+        );
+    }
+
+    deleteUser(id: string) {
+        this._usersService.deleteUser(id).subscribe(
+            (result: User) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
+            }
+        );
+    }
+
+    activateUser(id: string) {
+        this._usersService.activateUser(id).subscribe(
+            (result: User) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
+            }
+        );
+    }
+
 }

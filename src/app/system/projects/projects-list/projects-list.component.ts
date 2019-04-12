@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { Project, User, ProjectsService } from '@knora/core';
+import { Project, User, ProjectsService, ApiServiceError } from '@knora/core';
 import { MatDialogConfig, MatDialog } from '@angular/material';
 import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/material-dialog.component';
 import { Session } from '@knora/authentication';
@@ -91,7 +91,7 @@ export class ProjectsListComponent implements OnInit {
     }
 
 
-    openDialog(mode: string, name: string): void {
+    openDialog(mode: string, name: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
@@ -103,8 +103,45 @@ export class ProjectsListComponent implements OnInit {
         const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
-            // update the view
-            this.refreshParent.emit();
+            if (result === true) {
+                // get the mode
+                switch (mode) {
+                    case 'deleteProject':
+                        this.deleteProject(iri);
+                    break;
+
+                    case 'activateProject':
+                        this.activateProject(iri);
+                    break;
+                }
+            } else {
+                // update the view
+                this.refreshParent.emit();
+            }
         });
+    }
+
+    deleteProject(id: string) {
+        this._projectsService.deleteProject(id).subscribe(
+            (result: Project) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
+            }
+        );
+    }
+
+    activateProject(id: string) {
+        this._projectsService.activateProject(id).subscribe(
+            (result: Project) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
+            }
+        );
     }
 }
