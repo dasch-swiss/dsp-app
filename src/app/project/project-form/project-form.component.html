@@ -114,6 +114,7 @@
 
 
     <!-- danger zone: delete project ... only for system admin! -->
+    <!--
     <div class="app-danger-zone more-space-top" *ngIf="projectcode && project && project.status && sysAdmin">
         <div class="app-toolbar more-space-bottom">
             <div class="app-toolbar-row">
@@ -144,8 +145,10 @@
             <button *ngIf="!project.status" mat-button [color]="'primary'" (click)="activate(project.id)">Activate again</button>
         </div>
     </div>
+    -->
 
     <!-- danger zone: reactivate project ... only for system admin -->
+    <!--
     <div *ngIf="projectcode && project && !project.status && sysAdmin">
 
         <div class="center more-space-top more-space-bottom">
@@ -154,7 +157,7 @@
             </button>
         </div>
     </div>
-
+    -->
 </div>
 
 <!-- in the case of an API error: show the error message -->

@@ -7,7 +7,7 @@ import { MenuItem } from '../main/declarations/menu-item';
 import { AppGlobal } from '../app-global';
 import { Session } from '@knora/authentication';
 import { MatDialogConfig, MatDialog } from '@angular/material';
-import { MaterialDialogComponent } from '../main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from '../main/dialog/dialog.component';
 
 @Component({
     selector: 'app-user',
@@ -67,7 +67,7 @@ export class UserComponent implements OnInit {
             data: { name: name, mode: mode }
         };
 
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view

@@ -12,7 +12,7 @@ import {
     Group
 } from '@knora/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
@@ -287,7 +287,7 @@ export class UsersListComponent implements OnInit {
         };
 
         const dialogRef = this._dialog.open(
-            MaterialDialogComponent,
+            DialogComponent,
             dialogConfig
         );
 

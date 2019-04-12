@@ -15,7 +15,6 @@ import { AppInitService } from './app-init.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
-import { ConfirmDialogComponent } from './main/dialog/confirm-dialog/confirm-dialog.component';
 
 import { ErrorComponent } from './main/error/error.component';
 import { HeaderComponent } from './main/header/header.component';
@@ -54,7 +53,7 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
-import { MaterialDialogComponent } from './main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from './main/dialog/dialog.component';
 import { SystemComponent } from './system/system.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
@@ -99,7 +98,6 @@ export function initializeApp(appInitService: AppInitService) {
         CreateMenuComponent,
         MainComponent,
         HeaderComponent,
-        ConfirmDialogComponent,
         ErrorComponent,
         LoginComponent,
         LoremIpsumComponent,
@@ -112,7 +110,7 @@ export function initializeApp(appInitService: AppInitService) {
         DesignQuestionComponent,
         DashboardComponent,
         ProjectMenuComponent,
-        MaterialDialogComponent,
+        DialogComponent,
         SystemComponent,
         UsersComponent,
         StatusComponent,
@@ -140,10 +138,8 @@ export function initializeApp(appInitService: AppInitService) {
         })
     ],
     entryComponents: [
-        ConfirmDialogComponent,
-
-        ResourceTypeComponent,
-        MaterialDialogComponent
+        DialogComponent,
+        ResourceTypeComponent
     ],
     providers: [
         AppInitService,

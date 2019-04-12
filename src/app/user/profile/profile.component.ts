@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { MaterialDialogComponent } from '../../main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from '../../main/dialog/dialog.component';
 
 @Component({
     selector: 'app-profile',
@@ -88,7 +88,7 @@ export class ProfileComponent implements OnInit {
             data: { name: name, mode: mode }
         };
 
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view

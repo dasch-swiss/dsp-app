@@ -10,14 +10,14 @@ export interface DialogData {
 
 @Component({
     selector: 'app-material-dialog',
-    templateUrl: './material-dialog.component.html',
-    styleUrls: ['./material-dialog.component.scss']
+    templateUrl: './dialog.component.html',
+    styleUrls: ['./dialog.component.scss']
 })
-export class MaterialDialogComponent implements OnInit {
+export class DialogComponent implements OnInit {
 
 
     constructor(
-        public dialogRef: MatDialogRef<MaterialDialogComponent>,
+        public dialogRef: MatDialogRef<DialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData
     ) { }
 

@@ -54,7 +54,7 @@
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-                    <button mat-menu-item (click)="openDialog('editProject', project.shortcode)">
+                    <button mat-menu-item *ngIf="status" (click)="openDialog('editProject', project.shortname, project.shortcode)">
                         Edit project
                     </button>
                     <button mat-menu-item *ngIf="status" (click)="openDialog('deleteProject', project.shortname, project.id)">

@@ -10,7 +10,7 @@ import {
 } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { MatDialogConfig, MatDialog } from '@angular/material';
-import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { AdminPermissions } from 'src/app/main/declarations/admin-permissions';
 
 /**
@@ -82,6 +82,10 @@ export class ProjectsComponent implements OnInit {
 
     initList() {
         this.loading = true;
+
+        // clean up list of projects
+        this.active = [];
+        this.inactive = [];
 
         if (this.username) {
             // logged-in user view: get all projects, where the user is member of
@@ -254,7 +258,7 @@ export class ProjectsComponent implements OnInit {
         };
 
         const dialogRef = this._dialog.open(
-            MaterialDialogComponent,
+            DialogComponent,
             dialogConfig
         );
 

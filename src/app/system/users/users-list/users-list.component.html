@@ -69,18 +69,18 @@
                 </button>
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
                     <!-- update user's admin group membership; only in project view -->
-                    <button mat-menu-item *ngIf="projectcode"
+                    <button mat-menu-item *ngIf="projectcode && user.status"
                         (click)="updateAdminMembership(user.id, user.permissions)" >
                         <span *ngIf="!userIsProjectAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsProjectAdmin(user.permissions)">Remove</span>
                         <span>&nbsp;as project admin</span>
                     </button>
                     <!-- update user's profile data; only for system admin -->
-                    <button mat-menu-item *ngIf="sysAdmin"
+                    <button mat-menu-item *ngIf="sysAdmin  && user.status"
                         (click)="openDialog('editUser', user.username)" >
                         Edit user
                     </button>
-                    <button mat-menu-item *ngIf="sysAdmin"
+                    <button mat-menu-item *ngIf="sysAdmin && user.status"
                         (click)="openDialog('editPassword', user.username)" >
                         Change user's password
                     </button>

@@ -5,7 +5,7 @@ import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { Session } from '@knora/authentication';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-board',
@@ -114,7 +114,7 @@ export class BoardComponent implements OnInit {
             data: { name: name, mode: mode }
         };
 
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view

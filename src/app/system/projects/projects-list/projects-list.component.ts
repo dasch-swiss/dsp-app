@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Project, User, ProjectsService, ApiServiceError } from '@knora/core';
 import { MatDialogConfig, MatDialog } from '@angular/material';
-import { MaterialDialogComponent } from '../../../main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from '../../../main/dialog/dialog.component';
 import { Session } from '@knora/authentication';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
@@ -97,10 +97,10 @@ export class ProjectsListComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { name: name, mode: mode }
+            data: { name: name, mode: mode, project: iri }
         };
 
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             if (result === true) {
