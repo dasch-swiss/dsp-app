@@ -85,7 +85,7 @@
           "deleteHint": "You're sure to delete this user?",
           "deleteButton": "Deactivate user account now",
           "password": "Update password",
-          "passwordSuccess": "You have successfully updated your password.",
+          "passwordSuccess": "You have successfully updated the password.",
           "formWizard": {
             "step_1": "Start with username",
             "step_2": "User data",

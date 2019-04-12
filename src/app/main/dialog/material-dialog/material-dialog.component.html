@@ -1,98 +1,31 @@
-<!-- header -->
-<div class="app-toolbar transparent more-space-bottom">
-    <div class="app-toolbar-row">
-        <h3 class="mat-body subtitle" [ngSwitch]="data.mode">
-            <span *ngSwitchCase="'createUser'">
-                {{ 'appLabels.form.user.title.new' | translate }}
-            </span>
-            <span *ngSwitchCase="'editUser'">
-                {{ 'appLabels.form.user.title.edit' | translate }}
-            </span>
-            <span *ngSwitchCase="'editPassword'">
-                {{ 'appLabels.form.user.title.password' | translate }}
-            </span>
-            <span *ngSwitchCase="'createProject'">
-                {{ 'appLabels.form.project.title.new' | translate }}
-            </span>
-            <span *ngSwitchCase="'editProject'">
-                {{ 'appLabels.form.project.title.edit' | translate }}
-            </span>
-            <span *ngSwitchCase="'activateProject'">
-                {{ 'appLabels.form.action.deleted' | translate }}
-            </span>
-            <span *ngSwitchCase="'deleteProject'">
-                {{ 'appLabels.form.action.deleted' | translate }}
-            </span>
-            <span *ngSwitchDefault>
-                Not yet implemented
-            </span>
-        </h3>
-        <span class="fill-remaining-space"></span>
-        <span class="app-toolbar-action">
-            <button mat-icon-button (click)="dialogRef.close()">
-                <mat-icon>close</mat-icon>
-            </button>
-        </span>
-    </div>
-    <div class="app-toolbar-row">
-        <h2 class="mat-title" [ngSwitch]="data.mode">
-            <span *ngSwitchCase="'createUser'">
-                {{ 'appLabels.form.user.title.profile' | translate }}
-            </span>
-            <span *ngSwitchCase="'editUser'">
-                {{ data.name }}
-            </span>
-            <span *ngSwitchCase="'editPassword'">
-                {{ data.name }}
-            </span>
-            <span *ngSwitchCase="'createProject'">
-                {{ 'appLabels.form.project.title.profile' | translate }}
-            </span>
-            <span *ngSwitchCase="'editProject'">
-                {{ data.name }}
-            </span>
-            <span *ngSwitchCase="'activateProject'">
-                {{ 'appLabels.form.project.title.activate' | translate }}
-            </span>
-            <span *ngSwitchCase="'deleteProject'">
-                {{ 'appLabels.form.project.title.delete' | translate }}
-            </span>
-            <span *ngSwitchDefault>
-                Error
-            </span>
-        </h2>
-        <span class="fill-remaining-space"></span>
-        <span class="app-toolbar-action">
-
-        </span>
-    </div>
-</div>
-<!-- form -->
 <div [ngSwitch]="data.mode">
 
     <!-- all about USER -->
     <!-- Create new user profile -->
     <div *ngSwitchCase="'createUser'">
+        <app-dialog-header [title]="'appLabels.form.user.title.profile' | translate" [subtitle]="'appLabels.form.user.title.new' | translate" (close)="dialogRef.close()"></app-dialog-header>
         <app-user-form [name]="data.name" [projectcode]="data.project" (closeDialog)="dialogRef.close()">
         </app-user-form>
     </div>
 
     <!-- Modify user data -->
     <div *ngSwitchCase="'editUser'">
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.edit' | translate" (close)="dialogRef.close()"></app-dialog-header>
         <app-user-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-form>
     </div>
 
     <!-- Update password -->
     <div *ngSwitchCase="'editPassword'">
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.password' | translate" (close)="dialogRef.close()"></app-dialog-header>
         <app-user-password [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-password>
     </div>
 
-    <!-- Delete project -->
+    <!-- Delete user -->
     <div *ngSwitchCase="'deleteUser'">
         Confirm dialog: you're sure? Delete user
     </div>
 
-    <!-- Reactivate project -->
+    <!-- Reactivate user -->
     <div *ngSwitchCase="'activateUser'">
         Confirm dialog: you're sure? Reactivate user
     </div>
@@ -100,27 +33,34 @@
     <!-- all about PROJECT -->
     <!-- Create project -->
     <div *ngSwitchCase="'createProject'">
+        <app-dialog-header [title]="'appLabels.form.project.title.profile' | translate" [subtitle]="'appLabels.form.project.title.new' | translate" (close)="dialogRef.close()"></app-dialog-header>
         <app-project-form (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Modify project information -->
     <div *ngSwitchCase="'editProject'">
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate" (close)="dialogRef.close()"></app-dialog-header>
         <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Delete project -->
     <div *ngSwitchCase="'deleteProject'">
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.delete' | translate" (close)="dialogRef.close()"></app-dialog-header>
         Confirm dialog: you're sure? Delete project
         <!-- <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form> -->
     </div>
 
     <!-- Reactivate project -->
     <div *ngSwitchCase="'activateProject'">
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.activate' | translate" (close)="dialogRef.close()"></app-dialog-header>
         Confirm dialog: you're sure? Reactivate project
         <!-- <app-project-form [projectcode]="data.name" (closeDialog)="dialogRef.close()"></app-project-form> -->
     </div>
 
     <!-- Unknown method (or not yet defined) -->
     <!-- Default dialog content component -->
-    <div *ngSwitchDefault>This component {{data.mode}} is not implemented yet.</div>
+    <div *ngSwitchDefault>
+        <app-dialog-header [title]="'Not yet implemented'" [subtitle]="'ERROR 400'"></app-dialog-header>
+        This component {{data.mode}} is not implemented yet.
+    </div>
 </div>

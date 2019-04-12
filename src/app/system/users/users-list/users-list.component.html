@@ -89,9 +89,14 @@
                         (click)="openDialog('removeFromProject', user.username, projectcode)">
                         Remove user from project
                     </button>
+                    <!-- add user to project; only in system view -->
+                    <button mat-menu-item *ngIf="sysAdmin"
+                        (click)="openDialog('addUserToProject', user.username)">
+                        Add user to project
+                    </button>
                     <!-- delete / reactivate user -->
                     <button mat-menu-item *ngIf="user.status && sysAdmin && !projectcode" (click)="openDialog('deleteUser', user.username)">
-                            Delete user
+                        Delete user
                     </button>
                     <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectcode" (click)="openDialog('activateUser', user.username)">
                         Reactivate user

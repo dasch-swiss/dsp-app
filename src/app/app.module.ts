@@ -59,6 +59,7 @@ import { SystemComponent } from './system/system.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
+import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -115,7 +116,8 @@ export function initializeApp(appInitService: AppInitService) {
         SystemComponent,
         UsersComponent,
         StatusComponent,
-        UsersListComponent
+        UsersListComponent,
+        DialogHeaderComponent
     ],
     imports: [
         AppRoutingModule,
