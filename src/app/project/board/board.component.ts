@@ -13,17 +13,20 @@ import { DialogComponent } from 'src/app/main/dialog/dialog.component';
     styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
+
+    // loading for progess indicator
     loading: boolean;
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
+
+    // project shortcode; as identifier in project cache service
     projectcode: string;
 
+    // project data
     project: Project;
-
-    // is the logged-in user a project admin?
-    loggedInAdmin: boolean = false;
-
-    // is the logged-in user system admin?
-    sysAdmin: boolean = false;
 
     projectMembers: User[] = [];
 
@@ -61,12 +64,20 @@ export class BoardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+        this.loading = true;
+
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // default value for projectAdmin
+        this.projectAdmin = this.sysAdmin;
+
         this.getProject();
     }
 
     getProject() {
-        this.loading = true;
 
         // get project data from cache
         this._cache
@@ -77,12 +88,6 @@ export class BoardComponent implements OnInit {
             .subscribe(
                 (result: any) => {
                     this.project = result;
-
-                    this._cache.get('projectAdmin').subscribe(
-                        (pa: boolean) => {
-                            this.loggedInAdmin = pa;
-                        }
-                    );
 
                     this.loading = false;
                 },
@@ -105,13 +110,13 @@ export class BoardComponent implements OnInit {
         this.loading = false;
     }
 
-    openDialog(mode: string, name: string): void {
+    openDialog(mode: string, name: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
                 top: '112px'
             },
-            data: { name: name, mode: mode }
+            data: { name: name, mode: mode, project: id }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

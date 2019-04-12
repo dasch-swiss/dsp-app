@@ -18,6 +18,7 @@ import { Session } from '@knora/authentication';
     styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
+
     // loading for progess indicator
     loading: boolean;
     // error in case of wrong project code
@@ -96,9 +97,6 @@ export class ProjectComponent implements OnInit {
 
                         this.navigation[0].label =
                             'Project: ' + result.shortname.toUpperCase();
-
-                        console.log(this.session.user.projectAdmin);
-                        console.log(this.project.id);
 
                         // is logged-in user projectAdmin?
                         this.projectAdmin = this.sysAdmin

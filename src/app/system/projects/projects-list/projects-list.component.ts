@@ -91,13 +91,13 @@ export class ProjectsListComponent implements OnInit {
     }
 
 
-    openDialog(mode: string, name: string, iri?: string): void {
+    openDialog(mode: string, name: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
                 top: '112px'
             },
-            data: { name: name, mode: mode, project: iri }
+            data: { name: name, mode: mode, project: id }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
@@ -107,11 +107,11 @@ export class ProjectsListComponent implements OnInit {
                 // get the mode
                 switch (mode) {
                     case 'deleteProject':
-                        this.deleteProject(iri);
+                        this.deleteProject(id);
                     break;
 
                     case 'activateProject':
-                        this.activateProject(iri);
+                        this.activateProject(id);
                     break;
                 }
             } else {

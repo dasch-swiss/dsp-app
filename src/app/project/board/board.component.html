@@ -21,14 +21,10 @@
             </h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
-                <button mat-icon-button class="right" (click)="openDialog('editProject', project.shortcode)"
-                        *ngIf="loggedInAdmin && project.status">
+                <button mat-icon-button class="right" (click)="openDialog('editProject', project.shortname, project.shortcode)"
+                        *ngIf="projectAdmin && project.status">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button class="right" (click)="openDialog('activateProject', project.shortcode)"
-                *ngIf="sysAdmin && project.status">
-            <mat-icon>edit</mat-icon>
-        </button>
             </span>
         </div>
     </div>
