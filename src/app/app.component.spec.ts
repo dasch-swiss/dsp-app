@@ -11,9 +11,6 @@ import { HeaderComponent } from './main/header/header.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 
-// const TRANSLATIONS_EN = require('../assets/i18n/en.json');
-// const TRANSLATIONS_FR = require('../assets/i18n/de.json');
-
 describe('AppComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
