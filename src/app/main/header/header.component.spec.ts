@@ -1,29 +1,51 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatIconModule, MatListModule, MatMenuModule, MatToolbarModule } from '@angular/material';
+import { RouterTestingModule } from '@angular/router/testing';
+import { KuiActionModule } from '@knora/action';
+import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KuiSearchModule } from '@knora/search';
+import { TranslateModule } from '@ngx-translate/core';
+import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
+import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
-import { MatIconModule } from '@angular/material';
 
 describe('HeaderComponent', () => {
-  let component: HeaderComponent;
-  let fixture: ComponentFixture<HeaderComponent>;
+    let component: HeaderComponent;
+    let fixture: ComponentFixture<HeaderComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ],
-      imports: [
-        MatIconModule
-      ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [
+                HeaderComponent,
+                SelectLanguageComponent,
+                UserMenuComponent
+            ],
+            imports: [
+                KuiActionModule,
+                KuiSearchModule,
+                MatIconModule,
+                MatListModule,
+                MatMenuModule,
+                MatToolbarModule,
+                RouterTestingModule,
+                TranslateModule.forRoot()
+            ],
+            providers: [
+                {
+                    provide: KuiCoreConfigToken,
+                    useValue: KuiCoreConfig
+                }
+            ]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(HeaderComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(HeaderComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

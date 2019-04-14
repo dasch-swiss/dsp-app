@@ -109,7 +109,6 @@ export class AddUserComponent implements OnInit {
 
     constructor(private _cache: CacheService,
                 private _dialog: MatDialog,
-                private _router: Router,
                 private _projects: ProjectsService,
                 private _users: UsersService,
                 private _formBuilder: FormBuilder) {
