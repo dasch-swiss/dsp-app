@@ -259,6 +259,7 @@ export class UserPasswordComponent implements OnInit {
                     // console.log(this.userPasswordForm.value);
                     this.success = true;
                     this.failed = false;
+                    this.userPasswordForm.reset();
                     this.loading = false;
                 },
                 (error: ApiServiceError) => {
@@ -267,8 +268,11 @@ export class UserPasswordComponent implements OnInit {
                         this.oldPasswordIsWrong = true;
                         this.success = false;
                         this.failed = true;
+                        this.userPasswordForm.reset();
+                        this.loading = false;
                     } else {
                         this.errorMessage = error;
+                        console.error(error);
                     }
 
                     this.loading = false;

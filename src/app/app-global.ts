@@ -1,5 +1,4 @@
 import { MenuItem } from './main/declarations/menu-item';
-import { Session } from '@knora/authentication';
 
 export class AppGlobal {
     // project navigation
@@ -49,6 +48,24 @@ export class AppGlobal {
             label: 'Account',
             route: '/account',
             icon: 'settings'
+        }
+    ];
+
+    public static systemNav: MenuItem[] = [
+        {
+            label: 'All projects',
+            route: 'projects',
+            icon: 'assignment'
+        },
+        {
+            label: 'All users',
+            route: 'users',
+            icon: 'group'
+        },
+        {
+            label: 'Api status',
+            route: 'status',
+            icon: 'network_check'
         }
     ];
 }

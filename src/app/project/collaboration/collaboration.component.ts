@@ -11,23 +11,32 @@ import { Session } from '@knora/authentication';
     templateUrl: './collaboration.component.html',
     styleUrls: ['./collaboration.component.scss']
 })
-export class CollaborationComponent implements OnInit, AfterViewInit {
+export class CollaborationComponent implements OnInit {
 
+    // loading for progess indicator
     loading: boolean;
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
+
+    // project shortcode; as identifier in project cache service
     projectcode: string;
 
+    // project data
     project: Project;
 
+    // project members
     projectMembers: User[] = [];
 
+    // two lists of project members:
     // list of active users
     active: User[] = [];
     // list of inactive (deleted) users
     inactive: User[] = [];
 
     @ViewChild('addUserComponent') addUser: AddUserComponent;
-
 
     constructor(private _cache: CacheService,
                 private _projectsService: ProjectsService,
@@ -56,27 +65,43 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.loading = true;
 
-        this.refresh();
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
 
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-            (result: any) => {
-                this.project = result;
-                this.loading = false;
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-                this.loading = false;
-            }
-        );
+        // default value for projectAdmin
+        this.projectAdmin = this.sysAdmin;
 
-        this.initList();
-    }
+        // get the project data from cache
+        this._cache
+                .get(
+                    this.projectcode,
+                    this._projectsService.getProjectByShortcode(
+                        this.projectcode
+                    )
+                )
+                .subscribe(
+                    (result: Project) => {
+                        this.project = result;
 
-    ngAfterViewInit(): void {
-        /*
-        console.log(this.addUser);
-        this.addUser.buildForm();
-        */
+                        // is logged-in user projectAdmin?
+                        this.projectAdmin = this.sysAdmin
+                            ? this.sysAdmin
+                            : this.session.user.projectAdmin.some(e => e === this.project.id);
+
+                        // get from cache: list of project members and groups
+                        if (this.projectAdmin) {
+                            this.refresh();
+                        }
+
+                        this.loading = false;
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                        this.loading = false;
+                    }
+                );
     }
 
     /**
@@ -119,7 +144,9 @@ export class CollaborationComponent implements OnInit, AfterViewInit {
         this.loading = true;
         // update the cache
         this._cache.del('members_of_' + this.projectcode);
+
         this.initList();
+
         // refresh child component: add user
         if (this.addUser) {
             this.addUser.buildForm();

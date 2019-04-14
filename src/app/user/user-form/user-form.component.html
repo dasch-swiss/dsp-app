@@ -2,13 +2,12 @@
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
-    <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
+    <!-- success message after updating -->
+    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
     <!-- content -->
     <form *ngIf="!loading" [formGroup]="form" class="form-content user-data" (ngSubmit)="submitData()">
 
-        <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
         <!-- username -->
         <mat-form-field [class.large-field]="!username" [class.small-field]="username">

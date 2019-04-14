@@ -18,14 +18,24 @@ import { Session } from '@knora/authentication';
     styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
+
+    // loading for progess indicator
     loading: boolean;
+    // error in case of wrong project code
     error: boolean;
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
+
+    // project shortcode; as identifier in project cache service
     projectcode: string;
 
+    // project data
     project: Project;
 
-    loggedInAdmin: boolean = false;
+    color: string = 'primary';
 
     // for the sidenav
     open: boolean = true;
@@ -45,10 +55,12 @@ export class ProjectComponent implements OnInit {
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode);
 
+        // error handling in case of wrong project shortcode
         this.error = this.validateShortcode(this.projectcode);
     }
 
     ngOnInit() {
+
         if (!this.error) {
             this.loading = true;
             // set the cache here:
@@ -58,7 +70,15 @@ export class ProjectComponent implements OnInit {
                 this._projectsService.getProjectByShortcode(this.projectcode)
             );
 
-            // get the data from cache
+            // get information about the logged-in user
+            this.session = JSON.parse(localStorage.getItem('session'));
+            // is the logged-in user system admin?
+            this.sysAdmin = this.session.user.sysAdmin;
+
+            // default value for projectAdmin
+            this.projectAdmin = this.sysAdmin;
+
+            // get the project data from cache
             this._cache
                 .get(
                     this.projectcode,
@@ -67,30 +87,25 @@ export class ProjectComponent implements OnInit {
                     )
                 )
                 .subscribe(
-                    (result: any) => {
+                    (result: Project) => {
                         this.project = result;
+
+                        if (!this.project.status) {
+                            this.color = 'warn';
+                        }
+
                         this.navigation[0].label =
                             'Project: ' + result.shortname.toUpperCase();
 
-                        // is the logged-in user a project admin?
-                        const session: Session = JSON.parse(
-                            localStorage.getItem('session')
-                        );
+                        // is logged-in user projectAdmin?
+                        this.projectAdmin = this.sysAdmin
+                            ? this.sysAdmin
+                            : (this.session.user.projectAdmin.some(e => e === this.project.id));
 
-                        // use cache service to set permissions
-                        //
-                        if (session.user.sysAdmin) {
-                            // if the logged-in user is system admin, he's also projectAdmin
-                            this.loggedInAdmin = session.user.sysAdmin;
-                        } else {
-                            // logged-in user is not system admin; but is he projectAdmin?
-                            this.loggedInAdmin = session.user.projectAdmin.some(
-                                e => e === result.id
-                            );
-                        }
-                        this._cache.set('projectAdmin', this.loggedInAdmin);
 
-                        if (this.loggedInAdmin) {
+
+                        // set the cache for project members and groups
+                        if (this.projectAdmin) {
                             this._cache.get(
                                 'members_of_' + this.projectcode,
                                 this._projectsService.getProjectMembersByShortcode(

@@ -2,14 +2,13 @@
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <!-- success message after updating TODO: kui-message doesn't exist yet in @knora/action -->
-    <!--<kui-message *ngIf="success" [message]="successMessage" [short]="true"></kui-message>-->
+    <!-- success message after updating -->
+    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
     <!-- content -->
-    <form *ngIf="!loading" [formGroup]="form" class="form-content project-data"
+    <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
           (ngSubmit)="submitData()">
 
-        <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
         <!-- short and long name -->
         <mat-form-field class="small-field">
@@ -112,43 +111,9 @@
         </div>
     </form>
 
-
-    <!-- danger zone: delete account -->
-    <div class="app-danger-zone more-space-top" *ngIf="projectcode && project">
-        <div class="app-toolbar more-space-bottom">
-            <div class="app-toolbar-row">
-                <h3 class="mat-body subtitle">
-                    {{ 'appLabels.form.action.danger' | translate }}
-                </h3>
-                <span class="fill-remaining-space"></span>
-                <span class="app-toolbar-action">
-
-                </span>
-            </div>
-            <div class="app-toolbar-row">
-                <h2 class="mat-title">
-                    {{ 'appLabels.form.project.title.delete' | translate }}
-                </h2>
-                <span class="fill-remaining-space"></span>
-                <span class="app-toolbar-action">
-
-                </span>
-            </div>
-        </div>
-
-        <div class="center more-space-top more-space-bottom">
-            <button *ngIf="project.status" mat-button [color]="'warn'" (click)="delete(project.id)">
-                {{ 'appLabels.form.project.title.deleteButton' | translate | uppercase }}
-            </button>
-
-            <button *ngIf="!project.status" mat-button [color]="'primary'" (click)="activate(project.id)">Activate again</button>
-        </div>
-
-    </div>
-
 </div>
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <!--<kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>-->
+    <kui-message *ngIf="errorMessage" [message]="errorMessage" ></kui-message>
 </ng-template>

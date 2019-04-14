@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
 
 @Component({
@@ -9,12 +9,13 @@ import { AuthenticationService } from '@knora/authentication';
     styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-
     session: boolean = false;
 
-    constructor(private _auth: AuthenticationService,
-                private _router: Router,
-                private _titleService: Title) {
+    constructor(
+        private _auth: AuthenticationService,
+        private _router: Router,
+        private _titleService: Title
+    ) {
         // set the page title
         this._titleService.setTitle('Knora User Interface | Research Layer');
 
@@ -30,5 +31,4 @@ export class MainComponent implements OnInit {
     }
 
     ngOnInit() {}
-
 }
