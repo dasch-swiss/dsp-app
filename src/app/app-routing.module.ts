@@ -6,16 +6,16 @@ import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
-import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
-import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
 import { ProfileComponent } from './user/profile/profile.component';
-import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
-import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
+import { SystemComponent } from './system/system.component';
+import { ProjectsComponent } from './system/projects/projects.component';
+import { UsersComponent } from './system/users/users.component';
+import { StatusComponent } from './system/status/status.component';
 
 const routes: Routes = [
     {
@@ -84,14 +84,33 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path: 'system',
+        path: 'collections',
         component: UserComponent,
         canActivate: [AuthGuard]
     },
     {
-        path: 'collections',
-        component: UserComponent,
-        canActivate: [AuthGuard]
+        path: 'system',
+        component: SystemComponent,
+        canActivate: [AuthGuard],
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'projects'
+            },
+            {
+                path: 'projects',
+                component: ProjectsComponent
+            },
+            {
+                path: 'users',
+                component: UsersComponent
+            },
+            {
+                path: 'status',
+                component: StatusComponent
+            },
+        ]
     },
     {
         path: 'dev',        // developer test environment

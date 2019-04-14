@@ -15,7 +15,6 @@ import { AppInitService } from './app-init.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
-import { ConfirmDialogComponent } from './main/dialog/confirm-dialog/confirm-dialog.component';
 
 import { ErrorComponent } from './main/error/error.component';
 import { HeaderComponent } from './main/header/header.component';
@@ -41,14 +40,10 @@ import { AccountComponent } from './user/account/account.component';
 import { CollectionListComponent } from './user/collection-list/collection-list.component';
 import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { ProfileComponent } from './user/profile/profile.component';
-import { ProjectsComponent } from './user/projects/projects.component';
-import { ProjectsListComponent } from './user/projects/projects-list/projects-list.component';
-import { GroupSelectComponent } from './user/user-form/group-select/group-select.component';
-import { SelectUserComponent } from './user/user-form/select-user/select-user.component';
-import { UserDataComponent } from './user/user-form/user-data/user-data.component';
+import { ProjectsComponent } from './system/projects/projects.component';
+import { ProjectsListComponent } from './system/projects/projects-list/projects-list.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserPasswordComponent } from './user/user-form/user-password/user-password.component';
-import { UserRoleComponent } from './user/user-form/user-role/user-role.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
@@ -58,8 +53,12 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
-import { EditUserComponent } from './user/user-form/edit-user/edit-user.component';
-import { MaterialDialogComponent } from './main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from './main/dialog/dialog.component';
+import { SystemComponent } from './system/system.component';
+import { UsersComponent } from './system/users/users.component';
+import { StatusComponent } from './system/status/status.component';
+import { UsersListComponent } from './system/users/users-list/users-list.component';
+import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -93,18 +92,12 @@ export function initializeApp(appInitService: AppInitService) {
         ProfileComponent,
         ProjectsListComponent,
         UserFormComponent,
-        GroupSelectComponent,
-        SelectUserComponent,
-        UserDataComponent,
         UserPasswordComponent,
-        UserRoleComponent,
         CollectionListComponent,
         UserMenuComponent,
         CreateMenuComponent,
         MainComponent,
         HeaderComponent,
-
-        ConfirmDialogComponent,
         ErrorComponent,
         LoginComponent,
         LoremIpsumComponent,
@@ -112,14 +105,17 @@ export function initializeApp(appInitService: AppInitService) {
         SelectLanguageComponent,
         ProjectsComponent,
         SelectGroupComponent,
-
         ResourceTypeComponent,
         WorkspaceComponent,
         DesignQuestionComponent,
         DashboardComponent,
         ProjectMenuComponent,
-        EditUserComponent,
-        MaterialDialogComponent
+        DialogComponent,
+        SystemComponent,
+        UsersComponent,
+        StatusComponent,
+        UsersListComponent,
+        DialogHeaderComponent
     ],
     imports: [
         AppRoutingModule,
@@ -142,10 +138,8 @@ export function initializeApp(appInitService: AppInitService) {
         })
     ],
     entryComponents: [
-        ConfirmDialogComponent,
-
-        ResourceTypeComponent,
-        MaterialDialogComponent
+        DialogComponent,
+        ResourceTypeComponent
     ],
     providers: [
         AppInitService,

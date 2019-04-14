@@ -12,9 +12,14 @@
       "replaced": "7.0.1"
     },
     "@knora/action": {
-      "signature": "cf921a709bc59e4d49a673cff81039e8",
+      "signature": "bf80ed15bb142c7e48eac218f5690e58",
       "file": true,
-      "replaced": "7.1.0"
+      "replaced": "7.3.0"
+    },
+    "@knora/authentication": {
+      "signature": "9cd2affc30d462bcc225894bf0b67e94",
+      "file": true,
+      "replaced": "7.3.0"
     }
   }
 }

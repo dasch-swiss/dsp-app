@@ -7,7 +7,7 @@ import { MenuItem } from '../main/declarations/menu-item';
 import { AppGlobal } from '../app-global';
 import { Session } from '@knora/authentication';
 import { MatDialogConfig, MatDialog } from '@angular/material';
-import { MaterialDialogComponent } from '../main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from '../main/dialog/dialog.component';
 
 @Component({
     selector: 'app-user',
@@ -47,30 +47,29 @@ export class UserComponent implements OnInit {
 
     ngOnInit() {
 
+        this.initContent();
+    }
+
+    initContent() {
         this.loading = true;
+
+        this._cache.del(this.session.user.name);
 
         /**
          * set the cache here for current/logged-in user
          */
         this._cache.get(this.session.user.name, this._usersService.getUserByUsername(this.session.user.name));
         this.loading = false;
+
     }
 
-    openDialog(mode: string, name: string): void {
-        const dialogConfig: MatDialogConfig = {
-            width: '560px',
-            position: {
-                top: '112px'
-            },
-            data: { name: name, mode: mode }
-        };
-
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(result => {
-            // update the view
-            // this.getProject();
-        });
+    refresh() {
+        this.loading = true;
+        setTimeout(() => {
+            // console.log(this.resource);
+            this.initContent();
+        }, 500);
     }
+
 
 }

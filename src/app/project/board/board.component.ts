@@ -5,7 +5,7 @@ import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { Session } from '@knora/authentication';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-board',
@@ -13,12 +13,21 @@ import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/mat
     styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
+
+    // loading for progess indicator
     loading: boolean;
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
+
+    // project shortcode; as identifier in project cache service
     projectcode: string;
 
+    // project data
     project: Project;
-    loggedInAdmin: boolean = false;
+
     projectMembers: User[] = [];
 
     // i18n setup
@@ -55,11 +64,20 @@ export class BoardComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loading = true;
+
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // default value for projectAdmin
+        this.projectAdmin = this.sysAdmin;
+
         this.getProject();
     }
 
     getProject() {
-        this.loading = true;
 
         // get project data from cache
         this._cache
@@ -70,12 +88,6 @@ export class BoardComponent implements OnInit {
             .subscribe(
                 (result: any) => {
                     this.project = result;
-
-                    this._cache.get('projectAdmin').subscribe(
-                        (pa: boolean) => {
-                            this.loggedInAdmin = pa;
-                        }
-                    );
 
                     this.loading = false;
                 },
@@ -98,16 +110,16 @@ export class BoardComponent implements OnInit {
         this.loading = false;
     }
 
-    openDialog(mode: string, name: string): void {
+    openDialog(mode: string, name: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
                 top: '112px'
             },
-            data: { name: name, mode: mode }
+            data: { name: name, mode: mode, project: id }
         };
 
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view

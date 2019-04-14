@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { MaterialDialogComponent } from 'src/app/main/dialog/material-dialog/material-dialog.component';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-add-user',
@@ -357,7 +357,7 @@ export class AddUserComponent implements OnInit {
             data: { project: this.projectcode, name: this.selectUserForm.controls['username'].value, mode: mode }
         };
 
-        const dialogRef = this._dialog.open(MaterialDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view
