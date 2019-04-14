@@ -37,7 +37,6 @@ import { ResourceTypeComponent } from './project/ontology/resource-type/resource
 import { SelectItemComponent } from './project/ontology/select-item/select-item.component';
 import { SelectListComponent } from './project/ontology/select-list/select-list.component';
 import { ProjectFormComponent } from './project/project-form/project-form.component';
-import { ProjectMenuComponent } from './project/project-menu/project-menu.component';
 import { ProjectComponent } from './project/project.component';
 import { ProjectsListComponent } from './system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from './system/projects/projects.component';
@@ -104,7 +103,6 @@ export function initializeApp(appInitService: AppInitService) {
         WorkspaceComponent,
         DesignQuestionComponent,
         DashboardComponent,
-        ProjectMenuComponent,
         DialogComponent,
         SystemComponent,
         UsersComponent,
