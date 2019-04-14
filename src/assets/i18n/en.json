@@ -5,6 +5,12 @@
       "secondParagraph": "SALSAH is one (generic) user interface to handle the data from the main repository called ",
       "projectsIntro": "Public projects in Knora"
     },
+    "list": {
+      "title": {
+        "active": "Active",
+        "inactive": "Archived"
+      }
+    },
     "frameworkForListings": {
       "project": {
         "list": {
@@ -51,7 +57,8 @@
         "activate": "Activate",
         "deactivate": "Deactivate",
         "confirm": "Yes",
-        "danger": "Danger zone"
+        "danger": "Danger zone",
+        "deleted": "Already deleted"
       },
       "user": {
         "general": {
@@ -78,7 +85,7 @@
           "deleteHint": "You're sure to delete this user?",
           "deleteButton": "Deactivate user account now",
           "password": "Update password",
-          "passwordSuccess": "You have successfully updated your password.",
+          "passwordSuccess": "You have successfully updated the password.",
           "formWizard": {
             "step_1": "Start with username",
             "step_2": "User data",
@@ -115,6 +122,8 @@
           "delete": "Archive project",
           "deleteHint": "You're sure to delete this project?",
           "deleteButton": "Archive project now",
+          "activate": "Do you want to reactivate?",
+          "activateButton": "Reactivate project now",
           "formWizard": {
             "step_1": "Project data",
             "step_2": "Add project member",

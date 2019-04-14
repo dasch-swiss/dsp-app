@@ -23,6 +23,7 @@ export class UserMenuComponent implements OnInit {
 
     constructor(
         private _auth: AuthenticationService,
+        private _cache: CacheService,
         private _location: Location,
         private _router: Router
     ) {}
@@ -31,20 +32,13 @@ export class UserMenuComponent implements OnInit {
         this.navigation = AppGlobal.userNav;
         this.username = JSON.parse(localStorage.getItem('session')).user.name;
         this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
-
-        if (this.sysAdmin) {
-            this.navigation.push({
-                label: 'System',
-                route: '/system',
-                icon: 'all_inbox'
-            });
-        }
     }
 
     logout() {
         this._auth.logout();
         // reset the user menu navigation
         this.navigation = undefined;
+        this._cache.destroy();
 
         // reload the page
         this._router.navigateByUrl('/refresh', {skipLocationChange: true}).then(() => {

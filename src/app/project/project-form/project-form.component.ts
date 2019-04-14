@@ -25,6 +25,9 @@ export class ProjectFormComponent implements OnInit {
 
     project: Project;
 
+    // is the logged-in user system admin?
+    sysAdmin: boolean = false;
+
     /**
      * shortcode and shortname must be unique
      */
@@ -112,9 +115,6 @@ export class ProjectFormComponent implements OnInit {
 //        }
     };
 
-
-
-
     constructor(private _cache: CacheService,
                 private _route: ActivatedRoute,
                 private _router: Router,
@@ -140,6 +140,7 @@ export class ProjectFormComponent implements OnInit {
         // the short name should be unique and with the array list, we can prevent
         // to have the same short name; proof it with the ForbiddenName directive
         if (!this.projectcode) {
+            // create new project
             this._projects.getAllProjects()
                 .subscribe(
                     (result: Project[]) => {
@@ -165,6 +166,8 @@ export class ProjectFormComponent implements OnInit {
             this.loading = false;
 
         } else {
+            // edit mode
+            this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
             this._projects.getProjectByShortcode(this.projectcode)
                 .subscribe(
                     (result: Project) => {
@@ -343,9 +346,11 @@ export class ProjectFormComponent implements OnInit {
                     this.loading = false;
 
                     // redirect to project page
+                    /*
                     this._router.navigateByUrl('/project', {skipLocationChange: true}).then(() =>
                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
                     );
+                    */
 
                 },
                 (error: ApiServiceError) => {

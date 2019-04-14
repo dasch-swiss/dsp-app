@@ -1,43 +1,53 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { Session, AuthenticationService } from '@knora/authentication';
 import {
-    ApiServiceError,
-    Group,
+    User,
     KnoraConstants,
-    PermissionData,
     Project,
     ProjectsService,
-    User,
-    UsersService
+    UsersService,
+    PermissionData,
+    ApiServiceError,
+    Group
 } from '@knora/core';
-import { CacheService } from '../../../main/cache/cache.service';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
-    selector: 'app-user-list',
-    templateUrl: './user-list.component.html',
-    styleUrls: ['./user-list.component.scss']
+    selector: 'app-users-list',
+    templateUrl: './users-list.component.html',
+    styleUrls: ['./users-list.component.scss']
 })
-export class UserListComponent implements OnInit {
+export class UsersListComponent implements OnInit {
+    // loading for progess indicator
     loading: boolean;
 
-    @Input() title: string;
-    @Input() list: User[];
-    @Input() disabled?: boolean;
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+    projectAdmin: boolean = false;
 
+    // list of users: status active or inactive (deleted)
+    @Input() status: boolean;
+
+    // list of users: depending on the parent
+    @Input() list: User[];
+
+    // in case of modification
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
-    sysAdmin: boolean = false;
-
+    // i18n plural mapping
     itemPluralMapping = {
-        'member': {
-            // '=0': '0 Members',
+        title: {
             '=1': '1 Member',
-            'other': '# Members'
+            other: '# Members'
         }
     };
 
+    //
+    // project view
     // knora admin group iri
     adminGroupIri: string = KnoraConstants.ProjectAdminGroupIRI;
 
@@ -47,6 +57,7 @@ export class UserListComponent implements OnInit {
     // project data
     project: Project;
 
+    //
     // sort properties
     sortProps: any = [
         {
@@ -71,6 +82,7 @@ export class UserListComponent implements OnInit {
     sortBy: string = 'email';
 
     constructor(
+        private _auth: AuthenticationService,
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _projectsService: ProjectsService,
@@ -79,50 +91,73 @@ export class UserListComponent implements OnInit {
         private _router: Router
     ) {
         // get the shortcode of the current project
-        this.projectcode = this._route.parent.snapshot.params.shortcode;
+        if (this._route.parent.snapshot.params) {
+            this.projectcode = this._route.parent.snapshot.params.shortcode;
+        }
     }
 
     ngOnInit() {
-        this.loading = true;
 
-        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
 
-        // get project data from cache
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // default value for projectAdmin
+        this.projectAdmin = this.sysAdmin;
+
         if (this.projectcode) {
+            // get project information
             this._cache
-            .get(
-                this.projectcode,
-                this._projectsService.getProjectByShortcode(this.projectcode)
-            )
-            .subscribe(
-                (response: any) => {
-                    this.project = response;
-                },
-                (error: ApiServiceError) => {
-                    console.error(error);
-                }
-            );
+                .get(
+                    this.projectcode,
+                    this._projectsService.getProjectByShortcode(
+                        this.projectcode
+                    )
+                )
+                .subscribe(
+                    (response: Project) => {
+                        this.project = response;
+                        // is logged-in user projectAdmin?
+                        this.projectAdmin = this.sysAdmin
+                            ? this.sysAdmin
+                            : this.userIsProjectAdmin();
 
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
         }
-
-        this.loading = false;
-        // setTimeout(() => this.openDialog('editPassword', 'multiuser'), 10);
     }
 
     /**
-     * returns true, when the user is project admin
+     * returns true, when the user is project admin;
+     * when the parameter permissions is not set,
+     * it returns the value for the logged-in user
      *
-     * @param  permissions user's permissions
+     *
+     * @param  [permissions] user's permissions
      * @returns boolean
      */
-    isProjectAdmin(permissions: PermissionData): boolean {
-        return (
-            permissions.groupsPerProject[this.project.id].indexOf(
-                KnoraConstants.ProjectAdminGroupIRI
-            ) > -1
-        );
+    userIsProjectAdmin(permissions?: PermissionData): boolean {
+        if (permissions) {
+            // check if this user is project admin
+            return (
+                permissions.groupsPerProject[this.project.id].indexOf(
+                    KnoraConstants.ProjectAdminGroupIRI
+                ) > -1
+            );
+        } else {
+            // check if the logged-in user is project admin
+            return this.session.user.projectAdmin.some(e => e === this.project.id);
+        }
     }
 
+    /**
+     * update user's group memebership
+     */
     updateGroupsMembership(id: string, groups: string[]): void {
         const currentUserGroups: string[] = [];
 
@@ -187,15 +222,33 @@ export class UserListComponent implements OnInit {
         );
     }
 
+    /**
+     * update user's admin-group membership
+     */
     updateAdminMembership(id: string, permissions: PermissionData): void {
-        if (this.isProjectAdmin(permissions)) {
+        if (this.userIsProjectAdmin(permissions)) {
             // true = user is already project admin --> remove from admin rights
             this._usersService
                 .removeUserFromProjectAdmin(id, this.project.id)
                 .subscribe(
                     (result: User) => {
                         // console.log(result);
-                        this.refreshParent.emit();
+                        // if this user is not the logged-in user
+                        if (this.session.user.name !== result.username) {
+                          this.refreshParent.emit();
+                        } else {
+                          // the logged-in user removed himself as project admin
+                          // the list is not available anymore;
+                          // open dialog to confirm and
+                          // redirect to project page
+                          // update the cache of logged-in user and the session
+                          this._auth.updateSession(this.session.user.jwt, this.session.user.name);
+                          // go to project page
+                          this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                            () => this._router.navigate(['/project/' + this.projectcode])
+                        );
+                        }
+
                     },
                     (error: ApiServiceError) => {
                         console.error(error);
@@ -217,7 +270,14 @@ export class UserListComponent implements OnInit {
         }
     }
 
-    openDialog(mode: string, name: string): void {
+    /**
+     * open dialog in every case of modification:
+     * edit user profile data, update user's password,
+     * remove user from project or toggle project admin membership,
+     * delete and reactivate user
+     *
+     */
+    openDialog(mode: string, name: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             position: {
@@ -226,11 +286,30 @@ export class UserListComponent implements OnInit {
             data: { name: name, mode: mode }
         };
 
-        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
 
         dialogRef.afterClosed().subscribe(result => {
-            // update the view
-            this.refreshParent.emit();
+            if (result === true) {
+                // get the mode
+                switch (mode) {
+                    case 'removeFromProject':
+                        this.removeUserFromProject(iri);
+                    break;
+                    case 'deleteUser':
+                        this.deleteUser(iri);
+                    break;
+
+                    case 'activateUser':
+                        this.activateUser(iri);
+                    break;
+                }
+            } else {
+                // update the view
+                this.refreshParent.emit();
+            }
         });
     }
 
@@ -252,119 +331,28 @@ export class UserListComponent implements OnInit {
         );
     }
 
-    /**
-     * set user's permission in this project
-     * @param user User object
-     * @param groups List of selected groups Iris
-     */
-    updatePermission(user: User, groups: string[]) {
-        console.log(user);
-
-        for (const g of groups) {
-            if (g === KnoraConstants.ProjectAdminGroupIRI) {
-                // add user to admin group
-            } else {
-                // remove from admin group
+    deleteUser(id: string) {
+        this._usersService.deleteUser(id).subscribe(
+            (result: User) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
             }
-
-            if (user.groups.length > 0) {
-                // user is already in groups
-                // compare with groups list
-                /*
-                if (user.groups.indexOf(g) > -1) {
-
-                }
-                */
-            } else {
-                // user is not yet in a group
-            }
-            console.log(g);
-        }
-
-        let currentUserGroups: Group[];
-
-        // TODO: update user group membership
-
-        // get user's group memberships and create an array of
-        this._usersService
-            .getUsersGroupMemberships(encodeURIComponent(user.id))
-            .subscribe(
-                (result: Group[]) => {
-                    currentUserGroups = result;
-
-                    console.log(currentUserGroups);
-                    // check if the user is already in the selected group or not
-                    if (currentUserGroups.length > 0) {
-                        for (const cg of currentUserGroups) {
-                            if (groups.indexOf(cg.id) > -1) {
-                                // user is already member of this group
-                                // do nothing
-                                console.log('do nothing ', cg.id);
-                            } else {
-                                // add user to group
-                                console.log(
-                                    'user is not yet group member ',
-                                    cg.id
-                                );
-                                // this._usersService.addUserToGroup(user.id, )
-                            }
-                        }
-                    } else {
-                    }
-                },
-                (error: ApiServiceError) => {
-                    console.error('getUsersGroupMemberships ', error);
-                }
-            );
-
-        /*
-        if (groups && groups.length > 0) {
-            groups.forEach(function(value: string) {
-                // this._usersService.addUserToGroup(user.id, value)
-                console.log('forEach ', value);
-            });
-        }
-        */
-
-        /*
-        groups.forEach((group: string) => {
-            if (group === KnoraConstants.ProjectAdminGroupIRI) {
-
-            }
-        });
-        */
-
-        // TODO: write update permission method instead of add and remove! This should be done in knora-ui module
-        if (groups.indexOf(KnoraConstants.ProjectAdminGroupIRI) > -1) {
-            this._usersService
-                .addUserToProjectAdmin(user.id, this.project.id)
-                .subscribe(
-                    (result: User) => {
-                        // console.log(result);
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
-        } else {
-            this._usersService
-                .removeUserFromProjectAdmin(user.id, this.project.id)
-                .subscribe(
-                    (result: User) => {
-                        // console.log(result);
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
-        }
+        );
     }
 
-    gotoUserProfile(name: string) {
-        if (name === JSON.parse(localStorage.getItem('session')).user.name) {
-            this._router.navigate(['/projects']);
-        } else {
-            this._router.navigate(['/user/' + name]);
-        }
+    activateUser(id: string) {
+        this._usersService.activateUser(id).subscribe(
+            (result: User) => {
+                this.refreshParent.emit();
+            },
+            (error: ApiServiceError) => {
+                // this.errorMessage = error;
+                console.error(error);
+            }
+        );
     }
+
 }

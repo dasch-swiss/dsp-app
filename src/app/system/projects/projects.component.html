@@ -1,0 +1,34 @@
+<!--
+<form [formGroup]="findProject" class="form" *ngIf="!loading">
+    <mat-form-field class="large">
+        <input matInput [placeholder]="Find project…" [formControl]="">
+    </mat-form-field>
+    <mat-autocomplete #user="matAutocomplete" (optionSelected)="selectProject()">
+            <mat-option *ngFor="let project of filteredProjects | async" [value]="project?.name">
+                {{ project?.label }}
+            </mat-option>
+        </mat-autocomplete>
+</form>
+ -->
+
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+<div *ngIf="!loading" class="content">
+    <!-- <mat-divider></mat-divider> -->
+    <app-projects-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-projects-list>
+
+    <!-- already archived projects: disable the menu -->
+    <app-projects-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-projects-list>
+</div>
+
+<!--
+<div *ngIf="system">
+
+    <button mat-raised-button [color]="'primary'" class="add-new" (click)="openDialog('createProject')">
+            NEW project
+    </button>
+    <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
+    <app-projects-list *ngIf="!loadSystem" [list]="active" [system]="system"></app-projects-list>
+    <app-projects-list *ngIf="!loadSystem" [list]="inactive" [system]="system"></app-projects-list>
+</div>
+ -->
