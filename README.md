@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/dhlab-basel/Kuirl.svg?style=svg)](https://circleci.com/gh/dhlab-basel/Kuirl)
+
 # Knora User Interface | Research Layer
 
 This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the Knora server application in the backend.
