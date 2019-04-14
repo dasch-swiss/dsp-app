@@ -31,7 +31,7 @@ jobs:
       - run: yarn build
 
       # Run unit tests!
-      - run: yarn test
+      - run: yarn ng test --watch=false --browsers=ChromeHeadless
 
       # Store build artefacts on circle
       - store_artifacts:
