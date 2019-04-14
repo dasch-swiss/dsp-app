@@ -8,7 +8,7 @@ import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { KuiSearchModule } from '@knora/search';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppInitService } from './app-init.service';
 import { AppRoutingModule } from './app-routing.module';
@@ -57,7 +57,8 @@ import { WorkspaceComponent } from './workspace/workspace.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
-    return new TranslateHttpLoader(httpClient);
+    return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
+//    return new TranslateHttpLoader(httpClient);
 }
 
 export function initializeApp(appInitService: AppInitService) {
@@ -122,7 +123,13 @@ export function initializeApp(appInitService: AppInitService) {
         KuiSearchModule,
         MaterialModule,
         ReactiveFormsModule,
-        TranslateModule.forRoot()
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })
     ],
     entryComponents: [DialogComponent, ResourceTypeComponent],
     providers: [
