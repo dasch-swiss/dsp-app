@@ -35,7 +35,6 @@ export class ProjectComponent implements OnInit {
     // project data
     project: Project;
 
-
     color: string = 'primary';
 
     // for the sidenav

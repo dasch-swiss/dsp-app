@@ -2,7 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResourceItemComponent } from './resource-item.component';
 
-describe('ResourceItemComponent', () => {
+// TODO: write test
+// component not yet implemented
+xdescribe('ResourceItemComponent', () => {
   let component: ResourceItemComponent;
   let fixture: ComponentFixture<ResourceItemComponent>;
 

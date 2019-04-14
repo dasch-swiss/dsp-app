@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OntologyComponent } from './ontology.component';
+import { MatCardModule } from '@angular/material';
 
 describe('OntologyComponent', () => {
   let component: OntologyComponent;
@@ -8,7 +9,10 @@ describe('OntologyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OntologyComponent ]
+      declarations: [ OntologyComponent ],
+      imports: [
+        MatCardModule
+      ]
     })
     .compileComponents();
   }));

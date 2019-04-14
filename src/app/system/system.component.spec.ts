@@ -1,25 +1,74 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatIconModule, MatTabsModule } from '@angular/material';
+import { RouterTestingModule } from '@angular/router/testing';
+import { KuiActionModule } from '@knora/action';
+import { Session } from '@knora/authentication';
+import { ErrorComponent } from '../main/error/error.component';
 import { SystemComponent } from './system.component';
 
 describe('SystemComponent', () => {
-  let component: SystemComponent;
-  let fixture: ComponentFixture<SystemComponent>;
+    let component: SystemComponent;
+    let fixture: ComponentFixture<SystemComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ SystemComponent ]
-    })
-    .compileComponents();
-  }));
+    const currentTestSession: Session = {
+        id: 1555226377250,
+        user: {
+            jwt: '',
+            lang: 'en',
+            name: 'root',
+            projectAdmin: [],
+            sysAdmin: false
+        }
+    };
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SystemComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [SystemComponent, ErrorComponent],
+            imports: [
+                KuiActionModule,
+                MatIconModule,
+                MatTabsModule,
+                RouterTestingModule
+            ]
+        }).compileComponents();
+    }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    // Mock localStorage
+    beforeEach(() => {
+        let store = {};
+
+        spyOn(localStorage, 'getItem').and.callFake(
+            (key: string): String => {
+                return store[key] || null;
+            }
+        );
+        spyOn(localStorage, 'removeItem').and.callFake(
+            (key: string): void => {
+                delete store[key];
+            }
+        );
+        spyOn(localStorage, 'setItem').and.callFake(
+            (key: string, value: string): string => {
+                return (store[key] = <any>value);
+            }
+        );
+        spyOn(localStorage, 'clear').and.callFake(() => {
+            store = {};
+        });
+    });
+
+    beforeEach(() => {
+        localStorage.setItem('session', JSON.stringify(currentTestSession));
+
+        fixture = TestBed.createComponent(SystemComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect<any>(localStorage.getItem('session')).toBe(
+            JSON.stringify(currentTestSession)
+        );
+        expect(component).toBeTruthy();
+    });
 });
