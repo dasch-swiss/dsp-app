@@ -62,7 +62,7 @@ import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
-    return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
+    return new TranslateHttpLoader(httpClient);
 }
 
 export function initializeApp(appInitService: AppInitService) {
@@ -129,13 +129,7 @@ export function initializeApp(appInitService: AppInitService) {
         KuiSearchModule,
         MaterialModule,
         ReactiveFormsModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
-            }
-        })
+        TranslateModule.forRoot()
     ],
     entryComponents: [
         DialogComponent,

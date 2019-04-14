@@ -1,35 +1,51 @@
-import { TestBed, async } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { async, TestBed } from '@angular/core/testing';
+import { MatIconModule, MatListModule, MatMenuModule, MatToolbarModule } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
+import { KuiActionModule } from '@knora/action';
+import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KuiSearchModule } from '@knora/search';
+import { TranslateModule } from '@ngx-translate/core';
 import { AppComponent } from './app.component';
+import { HeaderComponent } from './main/header/header.component';
+import { SelectLanguageComponent } from './main/select-language/select-language.component';
+import { UserMenuComponent } from './user/user-menu/user-menu.component';
+
+// const TRANSLATIONS_EN = require('../assets/i18n/en.json');
+// const TRANSLATIONS_FR = require('../assets/i18n/de.json');
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [
+                AppComponent,
+                HeaderComponent,
+                SelectLanguageComponent,
+                UserMenuComponent
+            ],
+            imports: [
+                HttpClientTestingModule,
+                MatIconModule,
+                MatListModule,
+                MatMenuModule,
+                MatToolbarModule,
+                KuiActionModule,
+                KuiSearchModule,
+                RouterTestingModule,
+                TranslateModule.forRoot()
+            ],
+            providers: [
+                {
+                    provide: KuiCoreConfigToken,
+                    useValue: KuiCoreConfig
+                }
+            ]
+        }).compileComponents();
+    }));
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'kuirl'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('kuirl');
-  });
-
-  it('should render title in a h1 tag', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to kuirl!');
-  });
+    it('should create the app', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.debugElement.componentInstance;
+        expect(app).toBeTruthy();
+    });
 });
