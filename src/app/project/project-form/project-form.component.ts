@@ -346,9 +346,11 @@ export class ProjectFormComponent implements OnInit {
                     this.loading = false;
 
                     // redirect to project page
+                    /*
                     this._router.navigateByUrl('/project', {skipLocationChange: true}).then(() =>
                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
                     );
+                    */
 
                 },
                 (error: ApiServiceError) => {
