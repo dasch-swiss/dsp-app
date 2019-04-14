@@ -9,6 +9,7 @@ import { Title } from '@angular/platform-browser';
     styleUrls: ['./system.component.scss']
 })
 export class SystemComponent implements OnInit {
+
     loading: boolean = true;
 
     sysAdmin: boolean = false;
