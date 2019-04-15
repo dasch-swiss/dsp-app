@@ -1,4 +1,4 @@
-<div class="app">
+<div class="app" *ngIf="session">
 
     <div class="app-header">
         <app-header></app-header>
@@ -8,4 +8,32 @@
         <router-outlet></router-outlet>
     </div>
 
+</div>
+
+<div class="app">
+        <mat-toolbar class="transparent">
+                <span class="logo">
+                    <button mat-button routerLink="/" class="main-toolbar-button home-button">
+                        <mat-icon svgIcon="kuirl_banner" class="large"></mat-icon>
+                        <!-- <mat-icon svgIcon="kuirl_icon" class="small"></mat-icon> -->
+                    </button>
+                </span>
+
+                <span class="fill-remaining-space"></span>
+
+                <span class="action">
+                    <kui-fulltext-search [projectfilter]="true"></kui-fulltext-search>
+                </span>
+
+                <span class="fill-remaining-space"></span>
+
+                <span class="action">
+                    <app-select-language></app-select-language>
+                    <button mat-raised-button color="primary" *ngIf="!session" class="login" (click)="goToLogin()">LOGIN</button>
+                    <app-user-menu *ngIf="session"></app-user-menu>
+                </span>
+            </mat-toolbar>
+
+
+    <router-outlet *ngIf="!session"></router-outlet>
 </div>

@@ -1,0 +1,107 @@
+@import '../../assets/style/config';
+
+/* Background Cover Image */
+@mixin background-cover($attachment: scroll) {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    z-index: -1;
+    background-image: linear-gradient(rgba(11, 11, 11, 0.2), rgba(11, 11, 11, 0.2));
+    background-position: 50% 50%;
+    background-attachment: $attachment;
+}
+
+.landing-page {
+    top: 0;
+    position: absolute;
+    overflow-x: scroll;
+    height: 100vh;
+    width: 100vw;
+}
+
+section {
+    min-height: 39vh;
+    width: 100%;
+
+    .parallax-wrapper {
+        @include background-cover(fixed);
+        padding: 30vh 0;
+        text-align: center;
+        background-image: url('/assets/images/intro.jpg');
+
+        .normalize {
+            display: block;
+            margin: 0 auto;
+            text-align: left;
+            width: 640px;
+
+            input {
+                height: 48px !important;
+            }
+        }
+
+    }
+
+
+    // width: 100vw;
+    // dev option
+    min-height: 50vh;
+
+
+    background-color: #fff;
+
+    // position: relative;
+
+    &.transparent {
+        background: none;
+    }
+
+    &.darken-bg {
+        background-color: $primary_50;
+    }
+}
+
+// first section with introduction, search panel and full-size background image
+.old-intro {
+    background-image: url('/assets/images/intro.jpg');
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    top: 0;
+    position: absolute;
+    // z-index: -10;
+    width: 100%;
+    height: 80vh;
+}
+
+
+
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80%;
+    z-index: -100;
+}
+.background img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    min-width: 50%;
+    min-height: 50%;
+    object-fit: cover;
+    width: 100vw;
+    height: 80vh;
+}
+
+@media (max-width: 1140px) {
+    .parallax-wrapper {
+        background-attachment: scroll !important;
+    }
+}
