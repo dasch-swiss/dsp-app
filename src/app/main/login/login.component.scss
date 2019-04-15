@@ -1,5 +1,15 @@
 @import '../../../assets/style/theme';
 
+.login-page {
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  position: absolute;
+
+  padding-top: 120px;
+}
+
 .content {
   margin: 96px auto;
   max-width: 80%;
