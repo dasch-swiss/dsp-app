@@ -7,9 +7,9 @@
       "replaced": "7.0.1"
     },
     "@knora/search": {
-      "signature": "b6dc2e17e51fd901cb29cd8220507fd3",
+      "signature": "e705f80174cab57ed1ce580495bb8a68",
       "file": true,
-      "replaced": "7.4.0"
+      "replaced": "^7.4.0"
     },
     "@knora/action": {
       "signature": "bf80ed15bb142c7e48eac218f5690e58",

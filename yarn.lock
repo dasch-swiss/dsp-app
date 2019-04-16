@@ -336,7 +336,7 @@
   dependencies:
     tslib "^1.9.0"
 
-"@knora/search@7.4.0":
+"@knora/search@^7.4.0":
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/@knora/search/-/search-7.4.0.tgz#ae406a03015ca73fa71d15a03cf5ce4b78ce5c2d"
   integrity sha512-SWzR/sG6jH29WpUOHUwFFeEh67uGe5aQUwX3kmMVRtzH5szd+BmquXwuvJgAXWirWXpGxfsVNblC7oYXFicByg==
