@@ -25,10 +25,11 @@ export class MainComponent implements OnInit {
             this.session = this._auth.session();
 
             if (this._auth.session()) {
-                this._router.navigate(['dashboard']);
+//                this._router.navigate(['dashboard']);
             }
         }
     }
 
     ngOnInit() {}
+
 }

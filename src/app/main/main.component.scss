@@ -1,7 +1,8 @@
 @import '../../assets/style/config';
+@import '../../assets/style/mixins';
 
 /* Background Cover Image */
-@mixin background-cover($attachment: scroll) {
+@mixin background-cover-new($attachment: scroll) {
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -15,7 +16,7 @@
 .landing-page {
     top: 0;
     position: absolute;
-    overflow-x: scroll;
+    // overflow-x: scroll;
     height: 100vh;
     width: 100vw;
 }
@@ -25,24 +26,10 @@ section {
     width: 100%;
 
     .parallax-wrapper {
-        @include background-cover(fixed);
         padding: 30vh 0;
         text-align: center;
-        background-image: url('/assets/images/intro.jpg');
-
-        .normalize {
-            display: block;
-            margin: 0 auto;
-            text-align: left;
-            width: 640px;
-
-            input {
-                height: 48px !important;
-            }
-        }
-
+        @include background-cover(fixed, url('/assets/images/intro.jpg'));
     }
-
 
     // width: 100vw;
     // dev option
@@ -54,7 +41,7 @@ section {
     // position: relative;
 
     &.transparent {
-        background: none;
+        background: none;;
     }
 
     &.darken-bg {
@@ -73,30 +60,6 @@ section {
     position: absolute;
     // z-index: -10;
     width: 100%;
-    height: 80vh;
-}
-
-
-
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80%;
-    z-index: -100;
-}
-.background img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    min-width: 50%;
-    min-height: 50%;
-    object-fit: cover;
-    width: 100vw;
     height: 80vh;
 }
 

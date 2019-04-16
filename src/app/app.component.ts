@@ -25,4 +25,5 @@ export class AppComponent implements OnInit {
         // in case of guest user show landing page without full header
 
     }
+
 }

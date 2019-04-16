@@ -8,7 +8,7 @@
 
   .app-header {
     height: $header-height;
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -17,8 +17,9 @@
 
   .app-content {
     flex: 1;
-    height: calc(100vh - #{$header-height});
-    overflow: auto;
+//    height: calc(100vh - #{$header-height});
+    margin-top: $header-height;
+    // overflow: auto;
   }
 }
 
@@ -101,8 +102,15 @@
 // --------------------------------------
 
 //
-// navigation (not used anymore...? 2019-03-18)
+// navigation is used in menu e.g. user-menu and in case of tab-bar
 .navigation {
+
+  &.tab-bar {
+    background-color: #fff;
+    position: sticky;
+    top: $header-height;
+    z-index: 1;
+  }
 
   padding-top: 0 !important;
 
