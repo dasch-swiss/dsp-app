@@ -2,11 +2,10 @@
 @import '../../assets/style/mixins';
 
 .landing-page {
-    top: 0;
-    position: absolute;
-    // overflow-x: scroll;
-    height: 100vh;
-    width: 100vw;
+//    top: 0;
+//    position: absolute;
+//    height: 100vh;
+//    width: 100vw;
 }
 
 section {
@@ -16,14 +15,11 @@ section {
 
     &.intro {
         height: 61vh;
-        background: none;
     }
 
     .parallax-wrapper {
         padding: 30vh 0;
         text-align: center;
-
-        // @include background-cover(fixed);
         &::after {
             content: "";
             @include background-cover(fixed, url('/assets/images/intro.jpg'));
