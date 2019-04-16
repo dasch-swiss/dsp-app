@@ -1,7 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDividerModule, MatIconModule } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
+import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
 
 describe('MainComponent', () => {
@@ -10,8 +13,14 @@ describe('MainComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [MainComponent],
-            imports: [KuiAuthenticationModule, RouterTestingModule],
+            declarations: [MainComponent, GridComponent],
+            imports: [
+                KuiActionModule,
+                KuiAuthenticationModule,
+                MatIconModule,
+                MatDividerModule,
+                RouterTestingModule
+            ],
             providers: [
                 {
                     provide: KuiCoreConfigToken,

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GridComponent } from './grid.component';
+import { MatIconModule } from '@angular/material';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -8,7 +9,12 @@ describe('GridComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GridComponent ]
+      declarations: [
+        GridComponent
+      ],
+      imports: [
+        MatIconModule
+      ]
     })
     .compileComponents();
   }));
