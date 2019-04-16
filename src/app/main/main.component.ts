@@ -54,6 +54,7 @@ export class MainComponent implements OnInit {
     constructor(
         private _auth: AuthenticationService,
         private _projectsService: ProjectsService,
+        private _router: Router,
         private _titleService: Title
     ) {
         // set the page title
@@ -65,7 +66,7 @@ export class MainComponent implements OnInit {
             this.session = this._auth.session();
 
             if (this._auth.session()) {
-                //                this._router.navigate(['dashboard']);
+                this._router.navigate(['dashboard']);
             }
         }
     }
