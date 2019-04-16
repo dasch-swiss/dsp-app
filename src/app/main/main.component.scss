@@ -1,18 +1,6 @@
 @import '../../assets/style/config';
 @import '../../assets/style/mixins';
 
-/* Background Cover Image */
-@mixin background-cover-new($attachment: scroll) {
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    z-index: -1;
-    background-image: linear-gradient(rgba(11, 11, 11, 0.2), rgba(11, 11, 11, 0.2));
-    background-position: 50% 50%;
-    background-attachment: $attachment;
-}
-
 .landing-page {
     top: 0;
     position: absolute;
@@ -22,23 +10,34 @@
 }
 
 section {
+    background-color: #fff;
     min-height: 39vh;
     width: 100%;
+
+    &.intro {
+        height: 61vh;
+        background: none;
+    }
 
     .parallax-wrapper {
         padding: 30vh 0;
         text-align: center;
-        @include background-cover(fixed, url('/assets/images/intro.jpg'));
+
+        // @include background-cover(fixed);
+        &::after {
+            content: "";
+            @include background-cover(fixed, url('/assets/images/intro.jpg'));
+            opacity: 0.5;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            position: absolute;
+            height: 61vh;
+            z-index: -1;
+
+          }
     }
-
-    // width: 100vw;
-    // dev option
-    min-height: 50vh;
-
-
-    background-color: #fff;
-
-    // position: relative;
 
     &.transparent {
         background: none;;
