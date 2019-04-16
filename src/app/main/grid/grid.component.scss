@@ -1,0 +1,44 @@
+@import '../../../assets/style/config';
+
+.app-grid {
+    display: flex;
+    margin: 90px -15px 0 0;
+    padding: 0;
+    list-style: none;
+
+    .app-grid-item {
+        margin: 0 0 64px 0;
+        box-sizing: border-box;
+        border: 1px solid $primary_100;
+        border-radius: $border-radius;
+        padding: 0 30px 25px 30px;
+        text-align: center;
+        min-height: 200px;
+
+        .mat-icon {
+            background: white;
+            margin: -28px auto 0;
+            padding: 10px;
+            border-radius: 50px;
+            height: 36px;
+            width: 60px;
+            font-size: 36px;
+            color: $primary_900;
+        }
+
+        p {
+            // white-space: pre;
+	        word-spacing: normal;
+	        word-break: normal;
+	        word-wrap: normal;
+            hyphens: auto;
+        }
+
+        .description {
+            &.short {
+                height: 86px;
+                overflow: hidden;
+            }
+        }
+    }
+}

@@ -11,28 +11,17 @@
 section {
     background-color: #fff;
     min-height: 39vh;
-    width: 100%;
+//    width: 100%;
+    text-align: center;
+    padding: 24px 48px;
 
     &.intro {
-        height: 61vh;
-    }
+        min-height: 61vh;
+        margin-top: -$header-height;
 
-    .parallax-wrapper {
-        padding: 30vh 0;
-        text-align: center;
-        &::after {
-            content: "";
-            @include background-cover(fixed, url('/assets/images/intro.jpg'));
-            opacity: 0.5;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            position: absolute;
-            height: 61vh;
-            z-index: -1;
-
-          }
+        h1 {
+            text-transform: uppercase;
+        }
     }
 
     &.transparent {
@@ -42,6 +31,88 @@ section {
     &.darken-bg {
         background-color: $primary_50;
     }
+
+    // background image in parallax style
+    .parallax-wrapper {
+        padding: 15vh 0 0;
+        &::after {
+            content: "";
+            opacity: 0.5;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            position: absolute;
+            min-height: 61vh;
+            z-index: -1;
+        }
+
+        &.bg-1::after {
+            @include background-cover(fixed, url('/assets/images/intro.jpg'));
+        }
+    }
+}
+
+footer {
+    padding: 16px;
+    background: $primary_900;
+    color: $primary_50;
+    min-height: 128px;
+    font-weight: 100;
+    letter-spacing: 1px;
+
+    .panel {
+        align-items: center;
+        display: flex;
+        width: calc(100vw - 32px);
+        text-align: center;
+        margin: 0 auto;
+        position: relative;
+        padding: 50px 30px;
+        box-sizing: border-box;
+
+        &.no-padding {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        p {
+            text-align: center;
+            width: 100%;
+        }
+        .box {
+            box-sizing: content-box;
+            margin: 0;
+            padding: 0 24px;
+            text-align: justify;
+            width: 30%;
+        }
+    }
+    a {
+        color: inherit;
+    }
+
+    .mat-icon {
+        margin-right: 12px;
+    }
+
+
+
+}
+
+.app-headline {
+    line-height: 1.5;
+    letter-spacing: 2px;
+}
+
+.mat-card {
+    display: block;
+    padding: 12px;
+    height: 256px;
+    width: 256px;
+    border: 1px solid $primary_200;
+    border-radius: $border-radius;
+    margin: 12px 0;
 }
 
 // first section with introduction, search panel and full-size background image
