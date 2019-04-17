@@ -90,13 +90,16 @@ footer {
     }
     a {
         color: inherit;
+
+        &.mat-button {
+            display: block;
+            text-align: left;
+        }
     }
 
     .mat-icon {
         margin-right: 12px;
     }
-
-
 
 }
 
@@ -105,32 +108,20 @@ footer {
     letter-spacing: 2px;
 }
 
-.mat-card {
-    display: block;
-    padding: 12px;
-    height: 256px;
-    width: 256px;
-    border: 1px solid $primary_200;
-    border-radius: $border-radius;
-    margin: 12px 0;
-}
-
-// first section with introduction, search panel and full-size background image
-.old-intro {
-    background-image: url('/assets/images/intro.jpg');
-    background-attachment: scroll;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    top: 0;
-    position: absolute;
-    // z-index: -10;
-    width: 100%;
-    height: 80vh;
-}
-
-@media (max-width: 1140px) {
-    .parallax-wrapper {
+@media (max-width: 992px) {
+    .parallax-wrapper::after {
         background-attachment: scroll !important;
+    }
+
+    footer .panel {
+        display: inline;
+
+        .box {
+            width: auto;
+
+            p, a {
+                text-align: left;
+            }
+        }
     }
 }

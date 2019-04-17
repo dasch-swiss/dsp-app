@@ -13,6 +13,7 @@ import { ProjectsService, Project, ApiServiceError } from '@knora/core';
 export class MainComponent implements OnInit {
 
     loading: boolean;
+    errorMessage: ApiServiceError;
 
     session: boolean = false;
 
@@ -97,6 +98,8 @@ export class MainComponent implements OnInit {
             },
             (error: ApiServiceError) => {
                 console.error(error);
+                this.errorMessage = error;
+                this.loading = false;
             }
         )
     }

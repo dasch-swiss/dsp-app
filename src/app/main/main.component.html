@@ -16,7 +16,7 @@
     <!-- features -->
     <section class="features">
         <div class="content large middle">
-            <h2 class="mat-title">This web application offers all features from Knora in a friendly designed way</h2>
+            <h2 class="mat-title">The web application offers all features from Knora in a friendly designed way</h2>
             <app-grid [list]="features"></app-grid>
         </div>
     </section>
@@ -24,6 +24,7 @@
     <!-- contact and partner institutions -->
     <section class="contact darken-bg">
         <h2 class="mat-title">If you're interested to use the platform do not hesitate to contact us</h2>
+        <h3 class="mat-subheader">What kind of data do you have?</h3>
 
     </section>
 
@@ -31,10 +32,11 @@
     <section class="projects">
         <div class="content large middle">
             <h2 class="mat-title">The following projects have already stored their data in Knora</h2>
-            <kui-progress-indicator [color]="'primary'" *ngIf="loading"></kui-progress-indicator>
+            <kui-progress-indicator [color]="'primary'" *ngIf="loading && !errorMessage"></kui-progress-indicator>
             <div *ngIf="!loading">
                 <app-grid [list]="projects"></app-grid>
             </div>
+            <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
             <!-- <app-grid ngIf="!loading && projects" [list]="projects"></app-grid> -->
         </div>
     </section>
@@ -50,7 +52,7 @@
                 </p>
             </div>
             <div class="box contact">
-                <!-- <a mat-button href="https://www.dasch.swiss">Data and Service Center for the Humanities</a> -->
+                <a mat-button href="https://www.dasch.swiss">Data and Service Center for the Humanities</a>
                 <a mat-button href="https://www.google.com/maps/place/Bernoullistrasse+32%2C+4056+Basel">
                     <mat-icon>location_on</mat-icon> Bernoullistrasse 32, 4056 Basel
                 </a>
@@ -65,7 +67,6 @@
                        </svg>
                     </mat-icon> dhlab-basel
                 </a>
-                <br>
                 <a mat-button href="https://twitter.com/DaSCHSwiss">
                     <mat-icon>
                         <svg role="img" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
@@ -73,7 +74,6 @@
                         </svg>
                     </mat-icon> DaSCHSwiss
                 </a>
-                <br>
                 <a mat-button href="https://facebook.com/dasch.swiss">
                     <mat-icon>
                         <svg role="img" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
