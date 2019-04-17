@@ -15,6 +15,8 @@ export class MainComponent implements OnInit {
     loading: boolean;
     errorMessage: ApiServiceError;
 
+    researchField: string;
+
     session: boolean = false;
 
     projects: GridItem[] = [];

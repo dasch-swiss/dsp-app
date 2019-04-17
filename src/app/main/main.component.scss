@@ -24,6 +24,23 @@ section {
         }
     }
 
+    &.research {
+        .research-question {
+            margin: 0 auto;
+            width: 240px;
+            .mat-select {
+                width: 100% !important;
+            }
+        }
+
+        .research-solution {
+            margin: 48px auto;
+            width: 80%;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+    }
+
     &.transparent {
         background: none;;
     }
@@ -106,7 +123,10 @@ footer {
 .app-headline {
     line-height: 1.5;
     letter-spacing: 2px;
+    text-shadow: 0 2px 2px $black-20-opacity, 0 0 2px $black-12-opacity;
+    @include font-smoothing();
 }
+
 
 @media (max-width: 992px) {
     .parallax-wrapper::after {
