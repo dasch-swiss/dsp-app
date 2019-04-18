@@ -105,6 +105,6 @@ export class MainComponent implements OnInit {
                 this.errorMessage = error;
                 this.loading = false;
             }
-        )
+        );
     }
 }
