@@ -1,7 +1,8 @@
 <!-- show landing page in case of guest user -->
 <div class="landing-page">
-    <section class="intro transparent">
-        <div class="parallax-wrapper bg-1">
+    <!-- introduction: headline, info and parallax background image -->
+    <section class="intro parallax-wrapper bg-1">
+        <div class="parallax-curtain">
             <div class="content medium middle">
                 <!-- <h2 class="mat-title">Knora User Interface &middot; Research Layer</h2> -->
                 <h1 class="mat-display-2 app-headline">bring all together and simplify your research</h1>
@@ -11,9 +12,10 @@
                     humanities.</h2>
             </div>
         </div>
+
     </section>
 
-    <!-- features -->
+    <!-- features: almost the same as in knora -->
     <section class="features">
         <div class="content large middle">
             <h2 class="mat-title">The web application offers all features from Knora in a friendly designed way</h2>
@@ -21,10 +23,12 @@
         </div>
     </section>
 
+
     <!-- contact and partner institutions -->
     <section class="research darken-bg">
-        <h2 class="mat-title">You're interested to use the platform? What kind of research do you do?</h2>
-        <mat-form-field class="research-question">
+        <div class="content large middle">
+            <h2 class="mat-title">You're interested to use the platform? What kind of research do you do?</h2>
+            <mat-form-field class="research-question">
                 <mat-label>Select an option</mat-label>
                 <mat-select [(value)]="researchField">
                     <mat-option value="qualitative">Qualitative data</mat-option>
@@ -33,32 +37,38 @@
                 </mat-select>
             </mat-form-field>
 
-        <div class="research-solution middle" [ngSwitch]="researchField">
-            <div *ngSwitchCase="'qualitative'">
-                <h2 class="mat-title">You're in the right place.</h2>
-                <mat-divider class="more-space-bottom"></mat-divider>
-                <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. You can upload and transcribe taped interviews. Describe images, photographs. Annotate the data and connect every kind of media with each other.</h4>
-                <mat-divider class="more-space-bottom"></mat-divider>
-                <a mat-raised-button [color]="'accent'" href="https://wwww.dasch.swiss/team">Please contact us</a>
-            </div>
-
-            <div *ngSwitchCase="'quantitative'">
-                    <h2 class="mat-title">Uh oh, unfortunately you're in the wrong place</h2>
+            <div class="research-solution middle" [ngSwitch]="researchField">
+                <div *ngSwitchCase="'qualitative'">
+                    <h2 class="mat-title">Hooray, you're in the right place.</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking for a tool to work with quantitative data, you should contact <a href="https://forscenter.ch/">FORS</a>.</h4>
+                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. You can upload and
+                        transcribe taped interviews. Describe images, photographs. Annotate the data and connect every kind
+                        of media with each other.</h4>
+                    <mat-divider class="more-space-bottom"></mat-divider>
+                    <a mat-raised-button [color]="'accent'" href="https://wwww.dasch.swiss/team">Please contact us</a>
+                </div>
+
+                <div *ngSwitchCase="'quantitative'">
+                    <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
+                    <mat-divider class="more-space-bottom"></mat-divider>
+                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking for
+                        a tool to work with quantitative data, you should contact <a href="https://forscenter.ch/">FORS</a>.
+                    </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://forscenter.ch/">Please contact FORS</a>
-            </div>
+                </div>
 
-            <div *ngSwitchCase="'edition'">
-                    <h2 class="mat-title">Uh oh, unfortunately you're in the wrong place</h2>
+                <div *ngSwitchCase="'edition'">
+                    <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also based on Knora. For this kind of research you should contact <a href="https://nie-ine.ch/">NIE-INE</a>.</h4>
+                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also based
+                        on Knora. For this kind of research you should contact <a href="https://nie-ine.ch/">NIE-INE</a>.
+                    </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://nie-ine.ch/">Please contact NIE-INE</a>
+                </div>
             </div>
         </div>
-
     </section>
 
     <!-- list of projects -->
@@ -71,6 +81,36 @@
             </div>
             <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
             <!-- <app-grid ngIf="!loading && projects" [list]="projects"></app-grid> -->
+        </div>
+    </section>
+
+    <section class="intersection parallax-wrapper bg-2">
+        <div class="parallax-curtain">
+            <div class="content medium middle">
+                <!-- <h2 class="mat-title">Knora User Interface &middot; Research Layer</h2> -->
+                <h1 class="mat-display-2 app-headline">annotate, transcribe, connect and share</h1>
+                <!-- <h2 class="mat-title">This is the generic web application of the Data and Service Center for Humanities
+                    DaSCH. It's the user interface research layer of Knora &ndash; a software framework for storing,
+                    sharing, and working with primary sources and all kind of data in your research project in
+                    humanities.</h2> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- all about dasch and partners; code is open source on github -->
+    <section class="about">
+        <div class="content medium middle">
+            <h2 class="mat-title">Who's behind all that?</h2>
+            <h3 class="mat-subheading-2">
+                Since 2017, the Data and Service Center for humanities (DaSCH) has been a member of the Swiss Academy of Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities research data that ensures access to this data.
+            </h3>
+            <img class="logo" src="/assets/images/logo-dasch.jpg">
+            <img class="logo" src="/assets/images/logo-sagw.jpg">
+        </div>
+        <div class="content large middle">
+            <h2 class="mat-title">Partner institutions</h2>
+            <img class="logo" src="/assets/images/logo-unibas.jpg">
+            <img class="logo" src="/assets/images/logo-unil.jpg">
         </div>
     </section>
 
@@ -133,50 +173,11 @@
         <!-- copyright info -->
         <div class="panel no-padding">
             <p class="mat-caption">
-                &copy; <a href="http://www.dasch.swiss">Data and Service Center for the Humanities DaSCH</a> @ <a
-                   href="https://unibas.ch">University of Basel, Switzerland</a>
+                This app is built by <a href="http://www.dasch.swiss">DaSCH</a> @ <a
+                   href="https://unibas.ch">University of Basel</a> &copy; 2018 - {{currentYear.getFullYear()}}
             </p>
         </div>
 
     </footer>
 
-
 </div>
-
-<mat-divider></mat-divider>
-<!--
-<div class="dev-note">
-    <h1 class="mat-headline">Welcome to the Knora User Interface Research Layer | KUIRL</h1>
-    <h2 class="mat-title">This is a simple app to work with <a href="https://knora.org">Knora</a>, a software framework
-        for storing, sharing, and working with primary sources and data in the humanities.</h2>
-
-    <!--<img width="300" alt="KUIRL Logo" src="assets/images/kuirl-logo.svg">--
-
-
-    <div class="note developer wrapper narrow middle mat-elevation-z6">
-
-        <h3 class="mat-subheader">[DEVELOPER REMARK N° 1]</h3>
-
-        <p>This is the landing page for not registered or logged-in users. It will show the following elements:</p>
-
-        <ol>
-            <li>a fulltext search panel</li>
-
-            <li>a short description about the app and Knora with an information about the end-user (for who is the
-                software?). We will ask a question about the kind of data, a user is looking for and we offer links to
-                FORS in case of "quantitative date", to NIE-INE in case of "edition data". In other case (qualitative
-                data) the user can start with his own project here.</li>
-
-            <li>list of projects and info box about them</li>
-
-            <li>get more info, link to (workflow) manual / documentation</li>
-
-            <li>info about the DaSCH and the partners</li>
-
-            <li>footnote</li>
-        </ol>
-
-
-    </div>
-</div>
--->

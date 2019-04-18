@@ -54,6 +54,8 @@ export class MainComponent implements OnInit {
         }
     ];
 
+    currentYear: Date = new Date();
+
     constructor(
         private _auth: AuthenticationService,
         private _projectsService: ProjectsService,

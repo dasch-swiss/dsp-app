@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDividerModule, MatIconModule } from '@angular/material';
+import { MatDividerModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatButtonModule } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
@@ -17,7 +17,10 @@ describe('MainComponent', () => {
             imports: [
                 KuiActionModule,
                 KuiAuthenticationModule,
+                MatButtonModule,
                 MatIconModule,
+                MatFormFieldModule,
+                MatSelectModule,
                 MatDividerModule,
                 RouterTestingModule
             ],
