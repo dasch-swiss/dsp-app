@@ -8,9 +8,13 @@ $white: rgb(244, 244, 244);
 
 $border-color: #ebebeb;
 
-@mixin background-cover($attachment: scroll) {
+@mixin background-cover($attachment: scroll, $image: linear-gradient($black-20-opacity, $black-20-opacity)) {
   background-size: cover;
-  background: linear-gradient($black-20-opacity, $black-20-opacity) $attachment center center;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: $attachment;
+  background-image: $image;
+  position: relative;
 }
 
 @mixin font-smoothing() {

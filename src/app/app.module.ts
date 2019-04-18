@@ -54,6 +54,7 @@ import { UserPasswordComponent } from './user/user-form/user-password/user-passw
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
+
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 
 import { SearchComponent } from './workspace/search/search.component';
@@ -61,6 +62,7 @@ import { ResultsComponent } from './workspace/results/results.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
+import { GridComponent } from './main/grid/grid.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -123,7 +125,8 @@ export function initializeApp(appInitService: AppInitService) {
         UsersComponent,
         StatusComponent,
         UsersListComponent,
-        DialogHeaderComponent
+        DialogHeaderComponent,
+        GridComponent
     ],
     imports: [
         AppRoutingModule,
