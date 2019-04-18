@@ -2,7 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExpertSearchComponent } from './expert-search.component';
 
-describe('ExpertSearchComponent', () => {
+// TODO: do we still need this component
+// or can we use the complete search panel from @knora/search?
+xdescribe('ExpertSearchComponent', () => {
   let component: ExpertSearchComponent;
   let fixture: ComponentFixture<ExpertSearchComponent>;
 
