@@ -315,10 +315,8 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@knora/action@7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@knora/action/-/action-7.4.0.tgz#12b2ed71c5bd5dd8189dbdd4abb5e0f0511c1eba"
-  integrity sha512-5o6PGgT8qpqUttA8nZ4Eso3wg+ofYnnWVOVZNb1pYMKNquYQQaVulwi78L5ntoZGrHSqJ7vh81idfrH5M4A65Q==
+"@knora/action@file:.yalc/@knora/action":
+  version "7.4.0-583da3cb"
   dependencies:
     tslib "^1.9.0"
 
@@ -336,17 +334,13 @@
   dependencies:
     tslib "^1.9.0"
 
-"@knora/search@7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@knora/search/-/search-7.4.0.tgz#ae406a03015ca73fa71d15a03cf5ce4b78ce5c2d"
-  integrity sha512-SWzR/sG6jH29WpUOHUwFFeEh67uGe5aQUwX3kmMVRtzH5szd+BmquXwuvJgAXWirWXpGxfsVNblC7oYXFicByg==
+"@knora/search@file:.yalc/@knora/search":
+  version "7.4.0-816bfea4"
   dependencies:
     tslib "^1.9.0"
 
-"@knora/viewer@7.4.0":
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-7.4.0.tgz#ed1fd5efb8eb383a60b38e5cc1a2e5d258a83790"
-  integrity sha512-2O7Myh6FnwYxiPkgQsxU1zimbTBt/VWhnkF5jJR9DoKT3nU48GmKrUUFIndkwc0ujnyimHFsmzvvKgqvAKKayg==
+"@knora/viewer@file:.yalc/@knora/viewer":
+  version "7.4.0-fe43dbfe"
   dependencies:
     tslib "^1.9.0"
 
@@ -4902,6 +4896,11 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
+openseadragon@^2.0.0, openseadragon@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/openseadragon/-/openseadragon-2.4.0.tgz#d0b28b37a953602c82432a0dbd8a3779dadf756f"
+  integrity sha512-e2fsoEiCDkmwc3vyrv396lkYu4c9CGlpbSX4kYE07eW0ZlEF5DnLbeY2PhqPTskkC1jlsPu2TGZwaZ9VhaAn/w==
+
 opn@5.4.0, opn@^5.1.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/opn/-/opn-5.4.0.tgz#cb545e7aab78562beb11aa3bfabc7042e1761035"
@@ -6673,6 +6672,12 @@ supports-color@^6.0.0, supports-color@^6.1.0:
   integrity sha512-qe1jfm1Mg7Nq/NSh6XE24gPXROEVsWHxC1LIx//XNlD9iw7YZQGjZNjYN7xGaEG6iKdA8EtNFW6R0gjnVXp+wQ==
   dependencies:
     has-flag "^3.0.0"
+
+"svg-overlay@github:openseadragon/svg-overlay":
+  version "0.0.5"
+  resolved "https://codeload.github.com/openseadragon/svg-overlay/tar.gz/33add271889e92c8bc17ee760306b935bdc78aff"
+  dependencies:
+    openseadragon "^2.0.0"
 
 symbol-observable@1.2.0:
   version "1.2.0"

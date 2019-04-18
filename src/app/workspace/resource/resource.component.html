@@ -1,3 +1,6 @@
-<p>
-  resource works!
-</p>
+<button mat-stroked-button class="previousBtn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Zurück
+</button>
+<!-- <kui-progress-indicator *ngIf="refresh"></kui-progress-indicator> -->
+<kui-resource-view [iri]="resourceIri"></kui-resource-view>

@@ -8,6 +8,7 @@ import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { KuiSearchModule } from '@knora/search';
+import { KuiViewerModule } from '@knora/viewer';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppInitService } from './app-init.service';
@@ -54,15 +55,12 @@ import { UserPasswordComponent } from './user/user-form/user-password/user-passw
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
-
-import { DesignQuestionComponent } from './dev/design-question/design-question.component';
-
 import { SearchComponent } from './workspace/search/search.component';
 import { ResultsComponent } from './workspace/results/results.component';
-import { ResourceComponent } from './workspace/resource/resource.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { GridComponent } from './main/grid/grid.component';
+import { ResourceComponent } from './workspace/resource/resource.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -112,7 +110,6 @@ export function initializeApp(appInitService: AppInitService) {
         ResourceTypeComponent,
         WorkspaceComponent,
         DesignQuestionComponent,
-
         SearchComponent,
         ResultsComponent,
         ResourceComponent,
@@ -138,6 +135,7 @@ export function initializeApp(appInitService: AppInitService) {
         KuiAuthenticationModule,
         KuiCoreModule,
         KuiSearchModule,
+        KuiViewerModule,
         MaterialModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({

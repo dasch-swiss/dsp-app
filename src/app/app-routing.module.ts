@@ -26,7 +26,7 @@ import { SystemComponent } from './system/system.component';
 import { ProjectsComponent } from './system/projects/projects.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
-
+import { ResourceComponent } from './workspace/resource/resource.component';
 
 const routes: Routes = [
     {
@@ -125,7 +125,7 @@ const routes: Routes = [
     },
     {
         path: 'search',
-        component: WorkspaceComponent,
+        // component: WorkspaceComponent,
         children: [
             {
                 path: 'advanced',
@@ -138,8 +138,17 @@ const routes: Routes = [
             {
                 path: ':mode/:q',
                 component: ResultsComponent
+            },
+            {
+                path: ':mode/:q/:project',
+                component: ResultsComponent
             }
         ]
+    },
+    {
+      path: 'resource/:id',
+      component: ResourceComponent,
+      runGuardsAndResolvers: 'always'
     },
     {
         path: 'dev',        // developer test environment
@@ -149,7 +158,7 @@ const routes: Routes = [
         path: '**',
         component: ErrorComponent,
         data: { status: 404 }
-    }
+    },
 ];
 
 @NgModule({
