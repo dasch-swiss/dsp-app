@@ -1,31 +1,34 @@
 //
 // responsive sizes
-$grid-breakpoints: (
-  watch: 0,
-  phone: 576px,
-  tablet: 768px,
-  notebook: 992px,
-  desktop: 1200px
-);
+$grid-breakpoints: (watch: 0,
+phone: 576px,
+tablet: 768px,
+notebook: 992px,
+desktop: 1200px);
 
-/*
 // mobile device: tablet and smaller than a tablet
 @media (max-width: map-get($grid-breakpoints, tablet)) {
-  .large {
-    display: none !important;
-  }
-  .small {
-    display: block !important;
-  }
+    .content {
+
+        &.small,
+        &.medium,
+        &.large {
+            padding: 0;
+        }
+
+        &.small {
+            max-width: 320px;
+        }
+
+        &.medium,
+        &.large {
+            max-width: 100%;
+        }
+
+    }
 }
 
 // desktop screen size: bigger than a tablet
 @media (min-width: map-get($grid-breakpoints, tablet)) {
-  .large {
-    display: block !important;
-  }
-  .small {
-    display: none !important;
-  }
+
 }
-*/

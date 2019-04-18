@@ -8,20 +8,20 @@
     }
 
     &:hover {
-      background: rgba($primary, 0.39);
+      background: rgba($primary, 0.38);
       color: rgba(0, 0, 0, 1);
     }
 
     &:active {
-      background: rgba($primary, 0.61);
+      background: rgba($primary, 0.62);
     }
 
     &.archived,
     &.archived .mat-icon {
-      color: rgba(0, 0, 0, 0.39);
+      color: rgba(0, 0, 0, 0.38);
 
       &:hover {
-        color: rgba(0, 0, 0, 0.61);
+        color: rgba(0, 0, 0, 0.62);
       }
 
     }

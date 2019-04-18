@@ -27,7 +27,8 @@
             </div>
         </div>
 
-        <app-projects [username]="user.username" [system]="showSystemProjects"></app-projects>
+        <app-projects *ngIf="showSystemProjects" [system]="true"></app-projects>
+        <app-projects *ngIf="!showSystemProjects" [username]="user.username"></app-projects>
 
 
     </div>
