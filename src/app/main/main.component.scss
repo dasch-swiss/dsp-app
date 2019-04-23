@@ -138,6 +138,11 @@ footer {
 
     .note {
         margin-left: 48px;
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+        }
     }
 
     .action {
