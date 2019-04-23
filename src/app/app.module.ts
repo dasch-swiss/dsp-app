@@ -55,6 +55,7 @@ import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import { GridComponent } from './main/grid/grid.component';
+import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -111,7 +112,8 @@ export function initializeApp(appInitService: AppInitService) {
         StatusComponent,
         UsersListComponent,
         DialogHeaderComponent,
-        GridComponent
+        GridComponent,
+        CookiePolicyComponent
     ],
     imports: [
         AppRoutingModule,
