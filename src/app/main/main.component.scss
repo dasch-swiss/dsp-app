@@ -125,6 +125,26 @@ footer {
 
 }
 
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    height: 64px;
+    width: 100%;
+    background: rgba(0,0,0,.75);
+    color: #fff;
+    z-index: 100;
+    display: inline-flex;
+    padding-top: 12px;
+
+    .note {
+        margin-left: 48px;
+    }
+
+    .action {
+        margin-right: 48px;
+    }
+}
+
 .app-headline {
     line-height: 1.5;
     letter-spacing: 2px;

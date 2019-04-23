@@ -15,6 +15,8 @@ export class MainComponent implements OnInit {
     loading: boolean;
     errorMessage: ApiServiceError;
 
+    showCookieBanner: boolean = true;
+
     researchField: string;
 
     session: boolean = false;
@@ -106,5 +108,9 @@ export class MainComponent implements OnInit {
                 this.loading = false;
             }
         );
+    }
+
+    closeCookieBanner() {
+        this.showCookieBanner = !this.showCookieBanner;
     }
 }

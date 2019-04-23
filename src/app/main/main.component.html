@@ -1,5 +1,16 @@
 <!-- show landing page in case of guest user -->
 <div class="landing-page">
+    <div class="cookie-banner" *ngIf="showCookieBanner">
+        <div class="note">
+            This web-application uses cookies to provide you with great user experience. By using the application you accept our use of cookies.
+        </div>
+        <div class="fill-remaining-space"></div>
+        <div class="action">
+            <button mat-icon-button (click)="showCookieBanner = !showCookieBanner">
+                <mat-icon >close</mat-icon>
+            </button>
+        </div>
+    </div>
     <!-- introduction: headline, info and parallax background image -->
     <section class="intro parallax-wrapper bg-1">
         <div class="parallax-curtain">
