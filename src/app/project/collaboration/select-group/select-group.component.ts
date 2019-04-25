@@ -50,6 +50,9 @@ export class SelectGroupComponent implements OnInit {
     }
 
     setList() {
+        // set cache for groups
+        this._cache.get('groups_of_' + this.projectcode, this._groupsService.getAllGroups());
+
         // update list of groups with the project specific groups
         this._cache
             .get(

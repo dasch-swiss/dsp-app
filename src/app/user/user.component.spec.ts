@@ -22,12 +22,22 @@ import { CollectionListComponent } from './collection-list/collection-list.compo
 import { ProfileComponent } from './profile/profile.component';
 import { UserPasswordComponent } from './user-form/user-password/user-password.component';
 import { UserComponent } from './user.component';
+import { Session } from '@knora/authentication';
 
-// TODO: fix test
-// TypeError: Cannot read property 'snapshot' of undefined
-xdescribe('UserComponent', () => {
+describe('UserComponent', () => {
     let component: UserComponent;
     let fixture: ComponentFixture<UserComponent>;
+
+    const currentTestSession: Session = {
+        id: 1555226377250,
+        user: {
+            jwt: '',
+            lang: 'en',
+            name: 'root',
+            projectAdmin: [],
+            sysAdmin: false
+        }
+    };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -65,13 +75,42 @@ xdescribe('UserComponent', () => {
         }).compileComponents();
     }));
 
+    // Mock localStorage
     beforeEach(() => {
+        let store = {};
+
+        spyOn(localStorage, 'getItem').and.callFake(
+            (key: string): String => {
+                return store[key] || null;
+            }
+        );
+        spyOn(localStorage, 'removeItem').and.callFake(
+            (key: string): void => {
+                delete store[key];
+            }
+        );
+        spyOn(localStorage, 'setItem').and.callFake(
+            (key: string, value: string): string => {
+                return (store[key] = <any>value);
+            }
+        );
+        spyOn(localStorage, 'clear').and.callFake(() => {
+            store = {};
+        });
+    });
+
+    beforeEach(() => {
+        localStorage.setItem('session', JSON.stringify(currentTestSession));
+
         fixture = TestBed.createComponent(UserComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
     it('should create', () => {
+        expect<any>(localStorage.getItem('session')).toBe(
+            JSON.stringify(currentTestSession)
+        );
         expect(component).toBeTruthy();
     });
 });

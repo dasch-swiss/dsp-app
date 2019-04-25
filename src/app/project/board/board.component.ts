@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { Session } from '@knora/authentication';
@@ -57,7 +57,9 @@ export class BoardComponent implements OnInit {
         private _titleService: Title
     ) {
         // get the shortcode of the current project
-        this.projectcode = this._route.parent.snapshot.params.shortcode;
+        this._route.parent.paramMap.subscribe((params: Params) => {
+            this.projectcode = params.get('shortcode');
+        });
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode);
@@ -78,6 +80,8 @@ export class BoardComponent implements OnInit {
     }
 
     getProject() {
+        // set the cache
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get project data from cache
         this._cache

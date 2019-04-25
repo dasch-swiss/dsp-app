@@ -3,11 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule, MatFormFieldModule } from '@angular/material';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { SelectGroupComponent } from './select-group.component';
-import { CacheService } from 'src/app/main/cache/cache.service';
 
-// TODO: fix test
-// TypeError: Cannot read property 'subscribe' of undefined
-xdescribe('SelectGroupComponent', () => {
+describe('SelectGroupComponent', () => {
     let component: SelectGroupComponent;
     let fixture: ComponentFixture<SelectGroupComponent>;
 

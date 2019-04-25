@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
@@ -44,7 +44,11 @@ export class CollaborationComponent implements OnInit {
                 private _titleService: Title) {
 
         // get the shortcode of the current project
-        this.projectcode = this._route.parent.snapshot.params.shortcode;
+        this._route.parent.paramMap.subscribe((params: Params) => {
+            this.projectcode = params.get('shortcode');
+        });
+
+//        this.projectcode = this._route.parent.snapshot.params.shortcode;
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
@@ -72,6 +76,9 @@ export class CollaborationComponent implements OnInit {
 
         // default value for projectAdmin
         this.projectAdmin = this.sysAdmin;
+
+        // set the cache
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
         this._cache

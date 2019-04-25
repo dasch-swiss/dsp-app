@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Session, AuthenticationService } from '@knora/authentication';
 import {
     User,
@@ -91,8 +91,10 @@ export class UsersListComponent implements OnInit {
         private _router: Router
     ) {
         // get the shortcode of the current project
-        if (this._route.parent.snapshot.params) {
-            this.projectcode = this._route.parent.snapshot.params.shortcode;
+        if (this._route.parent.paramMap) {
+            this._route.parent.paramMap.subscribe((params: Params) => {
+                this.projectcode = params.get('shortcode');
+            });
         }
     }
 
@@ -107,7 +109,16 @@ export class UsersListComponent implements OnInit {
         // default value for projectAdmin
         this.projectAdmin = this.sysAdmin;
 
+
         if (this.projectcode) {
+            // set the cache
+            this._cache.get(
+                this.projectcode,
+                this._projectsService.getProjectByShortcode(
+                    this.projectcode
+                )
+            );
+
             // get project information
             this._cache
                 .get(

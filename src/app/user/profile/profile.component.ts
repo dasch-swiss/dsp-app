@@ -62,6 +62,9 @@ export class ProfileComponent implements OnInit {
     getUser() {
         this.loading = true;
 
+        // set the cache
+        this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+
         this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
             (response: any) => {
                 this.user = response;

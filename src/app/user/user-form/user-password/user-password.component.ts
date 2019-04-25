@@ -105,8 +105,13 @@ export class UserPasswordComponent implements OnInit {
             }
         }
 
-        this._cache
-            .get(
+        // set the cache
+        this._cache.get(
+            this.username,
+            this._usersService.getUserByUsername(this.username)
+        );
+
+        this._cache.get(
                 this.username,
                 this._usersService.getUserByUsername(this.username)
             )
