@@ -315,8 +315,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@knora/action@file:.yalc/@knora/action":
-  version "7.4.0-583da3cb"
+"@knora/action@7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@knora/action/-/action-7.4.0.tgz#12b2ed71c5bd5dd8189dbdd4abb5e0f0511c1eba"
+  integrity sha512-5o6PGgT8qpqUttA8nZ4Eso3wg+ofYnnWVOVZNb1pYMKNquYQQaVulwi78L5ntoZGrHSqJ7vh81idfrH5M4A65Q==
   dependencies:
     tslib "^1.9.0"
 
@@ -334,13 +336,17 @@
   dependencies:
     tslib "^1.9.0"
 
-"@knora/search@file:.yalc/@knora/search":
-  version "7.4.0-816bfea4"
+"@knora/search@7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@knora/search/-/search-7.4.0.tgz#ae406a03015ca73fa71d15a03cf5ce4b78ce5c2d"
+  integrity sha512-SWzR/sG6jH29WpUOHUwFFeEh67uGe5aQUwX3kmMVRtzH5szd+BmquXwuvJgAXWirWXpGxfsVNblC7oYXFicByg==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/viewer@file:.yalc/@knora/viewer":
-  version "7.4.0-fe43dbfe"
+"@knora/viewer@7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-7.4.0.tgz#ed1fd5efb8eb383a60b38e5cc1a2e5d258a83790"
+  integrity sha512-2O7Myh6FnwYxiPkgQsxU1zimbTBt/VWhnkF5jJR9DoKT3nU48GmKrUUFIndkwc0ujnyimHFsmzvvKgqvAKKayg==
   dependencies:
     tslib "^1.9.0"
 

@@ -66,7 +66,7 @@ const routes: Routes = [
             },
             {
                 path: 'ontology/:id',
-                component: OntologyComponent,
+                component: OntologyComponent
             },
             {
                 path: '**',
@@ -77,7 +77,7 @@ const routes: Routes = [
     },
     {
         path: 'user/:name',
-        component: ProfileComponent,
+        component: ProfileComponent
     },
     {
         path: 'profile',
@@ -120,7 +120,7 @@ const routes: Routes = [
             {
                 path: 'status',
                 component: StatusComponent
-            },
+            }
         ]
     },
     {
@@ -151,19 +151,18 @@ const routes: Routes = [
         runGuardsAndResolvers: 'always'
     },
     {
-        path: 'dev',        // developer test environment
+        path: 'dev', // developer test environment
         component: DesignQuestionComponent
     },
     {
         path: '**',
         component: ErrorComponent,
         data: { status: 404 }
-    },
+    }
 ];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
     exports: [RouterModule]
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}

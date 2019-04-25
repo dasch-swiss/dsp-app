@@ -1,12 +1,58 @@
-<div class="content center expert-search-container">
+<div class="content large middle expert-search-container">
+    <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Expert search
+            </mat-panel-title>
+            <mat-panel-description> </mat-panel-description>
+        </mat-expansion-panel-header>
 
-    <h3>Expert search</h3>
+        <form
+            [formGroup]="expertSearchForm"
+            class="expert-search-form form-content"
+        >
+            <mat-form-field class="textarea-field large-field">
+                <textarea
+                    matInput
+                    formControlName="gravquery"
+                    matTextareaAutosize
+                    matAutosizeMinRows="12"
+                    matAutosizeMaxRows="24"
+                    placeholder="Write your gravsearch query"
+                ></textarea>
+            </mat-form-field>
+            <div class="form-panel form-action">
+                <span>
+                    <button
+                        mat-button
+                        type="reset"
+                        (click)="expertSearchForm.reset()"
+                    >
+                        {{ 'appLabels.form.action.reset' | translate }}
+                    </button>
+                </span>
+                <span class="fill-remaining-space"></span>
+                <span>
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="button"
+                        [disabled]="!expertSearchForm.valid"
+                        (click)="submitQuery()"
+                    >
+                        Run
+                    </button>
+                </span>
+            </div>
+        </form>
+    </mat-expansion-panel>
+</div>
 
-    <form [formGroup]="expertSearchForm" class="expert-search-form">
-        <mat-form-field class="textarea-field">
-            <textarea matInput formControlName="gravquery" matTextareaAutosize matAutosizeMinRows=3 matAutosizeMaxRows=20 placeholder="Write your gravsearch query"></textarea>
-        </mat-form-field>
-        <button mat-stroked-button color="primary" type="button" [disabled]="!expertSearchForm.valid" (click)="submitQuery()">Run</button>
-    </form>
-
+<div class="content large middle" *ngIf="gravsearchQuery">
+    <kui-search-results
+        [searchMode]="'extended'"
+        [searchQuery]="gravsearchQuery"
+        [complexView]="true"
+    >
+    </kui-search-results>
 </div>
