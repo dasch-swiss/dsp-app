@@ -1,27 +1,45 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdvancedSearchComponent } from './advanced-search.component';
+import { MatExpansionModule } from '@angular/material';
+import { KuiSearchModule } from '@knora/search';
+import { KuiViewerModule } from '@knora/viewer';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
 
-// TODO: do we still need this component
-// or can we use the complete search panel from @knora/search?
-xdescribe('AdvancedSearchComponent', () => {
-  let component: AdvancedSearchComponent;
-  let fixture: ComponentFixture<AdvancedSearchComponent>;
+describe('AdvancedSearchComponent', () => {
+    let component: AdvancedSearchComponent;
+    let fixture: ComponentFixture<AdvancedSearchComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AdvancedSearchComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [AdvancedSearchComponent],
+            imports: [
+                KuiSearchModule,
+                KuiViewerModule,
+                MatExpansionModule,
+                RouterTestingModule
+            ],
+            providers: [
+                {
+                    provide: ActivatedRoute
+                },
+                {
+                    provide: KuiCoreConfigToken,
+                    useValue: KuiCoreConfig
+                }
+            ]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AdvancedSearchComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(AdvancedSearchComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

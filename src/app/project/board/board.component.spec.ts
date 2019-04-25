@@ -9,7 +9,7 @@ import {
 } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { Session } from '@knora/authentication';
 
