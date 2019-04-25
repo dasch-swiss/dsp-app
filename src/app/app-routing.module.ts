@@ -146,9 +146,9 @@ const routes: Routes = [
         ]
     },
     {
-      path: 'resource/:id',
-      component: ResourceComponent,
-      runGuardsAndResolvers: 'always'
+        path: 'resource/:id',
+        component: ResourceComponent,
+        runGuardsAndResolvers: 'always'
     },
     {
         path: 'dev',        // developer test environment
@@ -162,7 +162,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
+    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
     exports: [RouterModule]
 })
 export class AppRoutingModule {

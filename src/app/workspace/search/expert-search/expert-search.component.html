@@ -1,3 +1,12 @@
-<p>
-  expert-search works! but Gravsearch is not implemented in knora-ui search module yet.
-</p>
+<div class="content center expert-search-container">
+
+    <h3>Expert search</h3>
+
+    <form [formGroup]="expertSearchForm" class="expert-search-form">
+        <mat-form-field class="textarea-field">
+            <textarea matInput formControlName="gravquery" matTextareaAutosize matAutosizeMinRows=3 matAutosizeMaxRows=20 placeholder="Write your gravsearch query"></textarea>
+        </mat-form-field>
+        <button mat-stroked-button color="primary" type="button" [disabled]="!expertSearchForm.valid" (click)="submitQuery()">Run</button>
+    </form>
+
+</div>

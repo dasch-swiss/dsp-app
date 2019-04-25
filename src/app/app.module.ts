@@ -1,7 +1,7 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
@@ -65,7 +65,7 @@ import { ResourceComponent } from './workspace/resource/resource.component';
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
-//    return new TranslateHttpLoader(httpClient);
+    //    return new TranslateHttpLoader(httpClient);
 }
 
 export function initializeApp(appInitService: AppInitService) {
@@ -138,6 +138,7 @@ export function initializeApp(appInitService: AppInitService) {
         KuiViewerModule,
         MaterialModule,
         ReactiveFormsModule,
+        FormsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -162,4 +163,4 @@ export function initializeApp(appInitService: AppInitService) {
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
