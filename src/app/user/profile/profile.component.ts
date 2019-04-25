@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { MatDialog, MatDialogConfig } from '@angular/material';
@@ -35,8 +35,12 @@ export class ProfileComponent implements OnInit {
                 private _titleService: Title) {
 
         // get username from route and set the cache
+        /*
         if (this._route.snapshot.params.name  && (this._route.snapshot.params.name.length > 3)) {
-            this.username = this._route.snapshot.params.name;
+            this._route.paramMap.subscribe((params: Params) => {
+                this.username = params.get('name');
+            });
+//            this.username = this._route.snapshot.params.name;
             this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
             /*
             if (localStorage.getItem('session') && !this.loggedInUser) {
@@ -46,7 +50,7 @@ export class ProfileComponent implements OnInit {
                 }
             }
             */
-        }
+        //}
 
         // get info about the logged-in user: does he have the right to change user's profile?
         if (localStorage.getItem('session') && !this.loggedInUser) {

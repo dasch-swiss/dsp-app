@@ -74,10 +74,12 @@ const routes: Routes = [
             }
         ]
     },
+    /*
     {
         path: 'user/:name',
         component: ProfileComponent
     },
+    */
     {
         path: 'profile',
         component: UserComponent,

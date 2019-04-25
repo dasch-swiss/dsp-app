@@ -23,10 +23,13 @@ import { ProfileComponent } from './profile/profile.component';
 import { UserPasswordComponent } from './user-form/user-password/user-password.component';
 import { UserComponent } from './user.component';
 import { Session } from '@knora/authentication';
+import { ActivatedRoute } from '@angular/router';
 
 describe('UserComponent', () => {
     let component: UserComponent;
     let fixture: ComponentFixture<UserComponent>;
+
+    const route = 'account';
 
     const currentTestSession: Session = {
         id: 1555226377250,
@@ -67,6 +70,27 @@ describe('UserComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        pathFromRoot: [
+                            {
+                                snapshot: {
+                                    url: []
+                                }
+                            },
+                            {
+                                snapshot: {
+                                    url: [
+                                        {
+                                            path: route
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
                 {
                     provide: KuiCoreConfigToken,
                     useValue: KuiCoreConfig
