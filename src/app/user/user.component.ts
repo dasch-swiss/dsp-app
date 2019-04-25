@@ -6,8 +6,7 @@ import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
 import { AppGlobal } from '../app-global';
 import { Session } from '@knora/authentication';
-import { MatDialogConfig, MatDialog } from '@angular/material';
-import { DialogComponent } from '../main/dialog/dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     selector: 'app-user',
@@ -36,6 +35,12 @@ export class UserComponent implements OnInit {
 
         // get the activated route; we need it for the viewer switch
         this.route = this._route.pathFromRoot[1].snapshot.url[0].path;
+
+        /*
+        parent.paramMap.subscribe((params: Params) => {
+            this.projectcode = params.get('shortcode');
+        });
+        */
 
         // get username
         this.session = JSON.parse(localStorage.getItem('session'));

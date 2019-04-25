@@ -7,9 +7,9 @@
       "replaced": "7.0.1"
     },
     "@knora/search": {
-      "signature": "e705f80174cab57ed1ce580495bb8a68",
+      "signature": "816bfea44b09fd9edbd52a782949bad5",
       "file": true,
-      "replaced": "^7.4.0"
+      "replaced": "7.4.0"
     },
     "@knora/action": {
       "signature": "583da3cbfd2c1a2dae1e8863f526c4f2",
@@ -20,6 +20,11 @@
       "signature": "9cd2affc30d462bcc225894bf0b67e94",
       "file": true,
       "replaced": "7.3.0"
+    },
+    "@knora/viewer": {
+      "signature": "202b81157a480bb0c92c8a6ef6fc382e",
+      "file": true,
+      "replaced": "7.4.0"
     }
   }
 }

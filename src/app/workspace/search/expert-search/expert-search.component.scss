@@ -1,0 +1,30 @@
+.expert-search-container {
+    min-height: 100%;
+    margin-top: 48px;
+
+    /*
+    .mat-expansion-panel {
+        position: sticky !important;
+        top: 64px;
+    }
+    */
+
+    .expert-search-form {
+        min-width: 150px;
+        width: 100%;
+        margin: auto;
+
+        .textarea-field {
+            width: 100%;
+        }
+
+        .form-panel {
+            width: 100%;
+        }
+    }
+}
+
+
+.mat-input-element {
+    font-family: 'Courier New', Courier, monospace
+}

@@ -1,13 +1,14 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { KuiSearchModule } from '@knora/search';
+import { KuiViewerModule } from '@knora/viewer';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppInitService } from './app-init.service';
@@ -53,14 +54,18 @@ import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserPasswordComponent } from './user/user-form/user-password/user-password.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
-import { WorkspaceComponent } from './workspace/workspace.component';
+import { SearchComponent } from './workspace/search/search.component';
+import { ResultsComponent } from './workspace/results/results.component';
+import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
+import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { GridComponent } from './main/grid/grid.component';
+import { ResourceComponent } from './workspace/resource/resource.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
-//    return new TranslateHttpLoader(httpClient);
+    //    return new TranslateHttpLoader(httpClient);
 }
 
 export function initializeApp(appInitService: AppInitService) {
@@ -103,8 +108,13 @@ export function initializeApp(appInitService: AppInitService) {
         ProjectsComponent,
         SelectGroupComponent,
         ResourceTypeComponent,
-        WorkspaceComponent,
         DesignQuestionComponent,
+        SearchComponent,
+        ResultsComponent,
+        ResourceComponent,
+        ExpertSearchComponent,
+        AdvancedSearchComponent,
+
         DashboardComponent,
         DialogComponent,
         SystemComponent,
@@ -125,8 +135,10 @@ export function initializeApp(appInitService: AppInitService) {
         KuiAuthenticationModule,
         KuiCoreModule,
         KuiSearchModule,
+        KuiViewerModule,
         MaterialModule,
         ReactiveFormsModule,
+        FormsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -151,4 +163,4 @@ export function initializeApp(appInitService: AppInitService) {
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

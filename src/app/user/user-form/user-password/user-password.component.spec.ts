@@ -11,9 +11,7 @@ import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { UserPasswordComponent } from './user-password.component';
 
-// TODO: fix test
-// TypeError: Cannot read property 'subscribe' of undefined
-xdescribe('UserPasswordComponent', () => {
+describe('UserPasswordComponent', () => {
     let component: UserPasswordComponent;
     let fixture: ComponentFixture<UserPasswordComponent>;
 

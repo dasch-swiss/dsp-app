@@ -14,9 +14,7 @@ import {
 } from '@angular/material';
 import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
 
-// TODO: fix test
-// TypeError: Cannot read property 'subscribe' of undefined
-xdescribe('AccountComponent', () => {
+describe('AccountComponent', () => {
     let component: AccountComponent;
     let fixture: ComponentFixture<AccountComponent>;
 

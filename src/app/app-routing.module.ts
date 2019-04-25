@@ -1,21 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@knora/authentication';
+
 import { ErrorComponent } from './main/error/error.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
+// project
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { ProjectComponent } from './project/project.component';
+// user
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
+
+// workspace
+import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
+import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
+import { ResultsComponent } from './workspace/results/results.component';
+
 import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 import { SystemComponent } from './system/system.component';
 import { ProjectsComponent } from './system/projects/projects.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
+import { ResourceComponent } from './workspace/resource/resource.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 const routes: Routes = [
@@ -56,19 +66,21 @@ const routes: Routes = [
             },
             {
                 path: 'ontology/:id',
-                component: OntologyComponent,
+                component: OntologyComponent
             },
             {
                 path: '**',
                 component: ErrorComponent,
-                data: {status: 404}
+                data: { status: 404 }
             }
         ]
     },
+    /*
     {
         path: 'user/:name',
-        component: ProfileComponent,
+        component: ProfileComponent
     },
+    */
     {
         path: 'profile',
         component: UserComponent,
@@ -110,8 +122,34 @@ const routes: Routes = [
             {
                 path: 'status',
                 component: StatusComponent
-            },
+            }
         ]
+    },
+    {
+        path: 'search',
+        children: [
+            {
+                path: 'advanced',
+                component: AdvancedSearchComponent
+            },
+            {
+                path: 'expert',
+                component: ExpertSearchComponent
+            },
+            {
+                path: ':mode/:q',
+                component: ResultsComponent
+            },
+            {
+                path: ':mode/:q/:project',
+                component: ResultsComponent
+            }
+        ]
+    },
+    {
+        path: 'resource/:id',
+        component: ResourceComponent,
+        runGuardsAndResolvers: 'always'
     },
     {
         path: 'cookie-policy',
@@ -124,13 +162,12 @@ const routes: Routes = [
     {
         path: '**',
         component: ErrorComponent,
-        data: {status: 404}
+        data: { status: 404 }
     }
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
+    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
     exports: [RouterModule]
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}

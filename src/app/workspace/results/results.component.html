@@ -1,0 +1,8 @@
+<!-- <div class="content large middle">
+    <kui-search-results [complexView]="true"></kui-search-results>
+</div> -->
+
+<div class="content large middle">
+    <kui-search-results *ngIf="projectIri" [searchMode]="searchMode" [searchQuery]="searchQuery" [projectIri]="projectIri" [complexView]="true" ></kui-search-results>
+    <kui-search-results *ngIf="!projectIri" [searchMode]="searchMode" [searchQuery]="searchQuery" [complexView]="true" ></kui-search-results>
+</div>

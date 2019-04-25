@@ -37,7 +37,9 @@
     "json2typescript": "^1.0.6",
     "jsonld": "^1.1.0",
     "moment": "^2.22.2",
+    "openseadragon": "^2.4.0",
     "rxjs": "~6.4.0",
+    "svg-overlay": "github:openseadragon/svg-overlay",
     "ts-md5": "^1.2.4",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
