@@ -60,6 +60,7 @@ import { ExpertSearchComponent } from './workspace/search/expert-search/expert-s
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { GridComponent } from './main/grid/grid.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
+import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 // Translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -121,7 +122,8 @@ export function initializeApp(appInitService: AppInitService) {
         StatusComponent,
         UsersListComponent,
         DialogHeaderComponent,
-        GridComponent
+        GridComponent,
+        CookiePolicyComponent
     ],
     imports: [
         AppRoutingModule,

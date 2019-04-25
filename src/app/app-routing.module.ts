@@ -26,6 +26,7 @@ import { ProjectsComponent } from './system/projects/projects.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
+import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 const routes: Routes = [
     {
@@ -151,7 +152,11 @@ const routes: Routes = [
         runGuardsAndResolvers: 'always'
     },
     {
-        path: 'dev', // developer test environment
+        path: 'cookie-policy',
+        component: CookiePolicyComponent
+    },
+    {
+        path: 'dev',        // developer test environment
         component: DesignQuestionComponent
     },
     {
