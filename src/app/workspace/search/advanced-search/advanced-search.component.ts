@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdvancedSearchComponent implements OnInit {
 
+  gravsearchQuery: string;
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  setGravsearch(query: string) {
+    this.gravsearchQuery = query;
   }
 
 }

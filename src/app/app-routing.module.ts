@@ -16,7 +16,6 @@ import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 
 // workspace
-import { WorkspaceComponent } from './workspace/workspace.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { ResultsComponent } from './workspace/results/results.component';
@@ -125,7 +124,6 @@ const routes: Routes = [
     },
     {
         path: 'search',
-        // component: WorkspaceComponent,
         children: [
             {
                 path: 'advanced',

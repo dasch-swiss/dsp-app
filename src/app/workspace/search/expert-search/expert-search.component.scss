@@ -1,7 +1,13 @@
 .expert-search-container {
     min-height: 100%;
     margin-top: 48px;
-    position: sticky;
+
+    /*
+    .mat-expansion-panel {
+        position: sticky !important;
+        top: 64px;
+    }
+    */
 
     .expert-search-form {
         min-width: 150px;
