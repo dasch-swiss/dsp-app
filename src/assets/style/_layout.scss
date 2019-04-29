@@ -17,7 +17,7 @@
 
   .app-content {
     flex: 1;
-//    height: calc(100vh - #{$header-height});
+    //    height: calc(100vh - #{$header-height});
     margin-top: $header-height;
     // overflow: auto;
   }
@@ -26,7 +26,6 @@
 //
 // content wrapper
 .content {
-
   &.small,
   &.medium,
   &.large {
@@ -44,9 +43,7 @@
   &.large {
     max-width: 940px;
   }
-
 }
-
 
 // --------------------------------------
 
@@ -55,7 +52,7 @@
 .sidenav-container {
   .sidenav {
     background-color: lighten($primary, 50%);
-    letter-spacing: .3px;
+    letter-spacing: 0.3px;
     width: 36px;
 
     &.wide {
@@ -67,7 +64,6 @@
     }
 
     .mat-drawer-inner-container {
-
       overflow-x: hidden;
 
       .mat-list {
@@ -104,7 +100,6 @@
 //
 // navigation is used in menu e.g. user-menu and in case of tab-bar
 .navigation {
-
   &.tab-bar {
     background-color: #fff;
     position: sticky;
@@ -155,7 +150,6 @@
   }
 }
 
-
 // --------------------------------------
 
 //
@@ -184,9 +178,6 @@
 
 // --------------------------------------
 
-
-
-
 // ?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
 // TODO: clean up the following classes
 // ?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
@@ -201,8 +192,6 @@
   font-size: small;
 }
 
-
-
 //
 // dialog: not the one from material, it's a fullframe dialog box
 .window.fullframe {
@@ -213,7 +202,6 @@
   height: 100vh;
   background: white;
 }
-
 
 // --------------------------------------
 

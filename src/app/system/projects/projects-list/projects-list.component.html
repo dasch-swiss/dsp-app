@@ -1,6 +1,6 @@
 <div *ngIf="list && !loading">
     <!-- header toolbar -->
-    <div class="app-toolbar more-space-top" *ngIf="list.length > 0">
+    <div class="app-toolbar" *ngIf="list.length > 0">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span *ngIf="status">Active</span>
@@ -16,17 +16,15 @@
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action button">
                 <!-- sort button if more than one item in the list -->
-                    <kui-sort-button
-                        *ngIf="list.length > 1" [icon]="'sort_by_alpha'"
-                        [sortProps]="sortProps" [(sortKey)]="sortBy"
-                        [position]="'right'">
-                    </kui-sort-button>
+                <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
+                                 [(sortKey)]="sortBy" [position]="'right'">
+                </kui-sort-button>
             </span>
         </div>
     </div>
 
     <!-- content: list -->
-    <table class="table" [class.archived]="!status">
+    <table class="table more-space-bottom" [class.archived]="!status">
 
         <tr *ngFor="let project of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
             <!-- logo -->
@@ -50,17 +48,21 @@
             </td>
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectMenu" [disabled]="!sysAdmin && !userIsProjectAdmin(project.id)">
+                <button mat-icon-button [matMenuTriggerFor]="projectMenu"
+                        [disabled]="!sysAdmin && !userIsProjectAdmin(project.id)">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-                    <button mat-menu-item *ngIf="status" (click)="openDialog('editProject', project.shortname, project.shortcode)">
+                    <button mat-menu-item *ngIf="status"
+                            (click)="openDialog('editProject', project.shortname, project.shortcode)">
                         Edit project
                     </button>
-                    <button mat-menu-item *ngIf="status" (click)="openDialog('deleteProject', project.shortname, project.id)">
+                    <button mat-menu-item *ngIf="status"
+                            (click)="openDialog('deleteProject', project.shortname, project.id)">
                         Archive project
                     </button>
-                    <button mat-menu-item *ngIf="!status" (click)="openDialog('activateProject', project.shortname, project.id)">
+                    <button mat-menu-item *ngIf="!status"
+                            (click)="openDialog('activateProject', project.shortname, project.id)">
                         Reactivate project
                     </button>
                 </mat-menu>

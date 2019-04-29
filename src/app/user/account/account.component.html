@@ -3,7 +3,7 @@
 <div *ngIf="user && !loading">
 
     <!-- password update: header -->
-    <div class="app-toolbar more-space-top more-space-bottom">
+    <div class="app-toolbar more-space-bottom">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 {{ 'appLabels.form.user.title.edit' | translate }}
@@ -53,13 +53,14 @@
         </div>
         <!-- delete account: button -->
         <div class="center more-space-top more-space-bottom">
-            <button *ngIf="user.status" mat-button [color]="'warn'" (click)="openDialog('deleteUser', user.username, user.id)">
+            <button *ngIf="user.status" mat-button [color]="'warn'"
+                    (click)="openDialog('deleteUser', user.username, user.id)">
                 {{ 'appLabels.form.user.title.deleteButton' | translate | uppercase }}
             </button>
 
-            <button *ngIf="!user.status" mat-button [color]="'primary'" (click)="openDialog('activateUser', user.username, user.id)">ACTIVATE ACCOUNT</button>
+            <button *ngIf="!user.status" mat-button [color]="'primary'"
+                    (click)="openDialog('activateUser', user.username, user.id)">ACTIVATE ACCOUNT</button>
         </div>
     </div>
 
 </div>
-

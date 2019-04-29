@@ -13,7 +13,7 @@
 
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-<div *ngIf="!loading" class="content large middle">
+<div *ngIf="!loading">
     <!-- <mat-divider></mat-divider> -->
     <app-projects-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-projects-list>
 
