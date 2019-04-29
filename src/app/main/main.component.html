@@ -2,12 +2,13 @@
 <div class="landing-page">
     <div class="cookie-banner" *ngIf="showCookieBanner">
         <div class="note">
-            This web-application uses cookies to provide you with great user experience. By using the application you accept our <a href="./cookie-policy">use of cookies</a>.
+            This web-application uses cookies to provide you with great user experience. By using the application you
+            accept our <a href="./cookie-policy">use of cookies</a>.
         </div>
         <div class="fill-remaining-space"></div>
         <div class="action">
             <button mat-icon-button (click)="showCookieBanner = !showCookieBanner">
-                <mat-icon >close</mat-icon>
+                <mat-icon>close</mat-icon>
             </button>
         </div>
     </div>
@@ -53,7 +54,8 @@
                     <h2 class="mat-title">Hooray, you're in the right place.</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. You can upload and
-                        transcribe taped interviews. Describe images, photographs. Annotate the data and connect every kind
+                        transcribe taped interviews. Describe images, photographs. Annotate the data and connect every
+                        kind
                         of media with each other.</h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'accent'" href="https://wwww.dasch.swiss/team">Please contact us</a>
@@ -62,8 +64,10 @@
                 <div *ngSwitchCase="'quantitative'">
                     <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking for
-                        a tool to work with quantitative data, you should contact <a href="https://forscenter.ch/">FORS</a>.
+                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking
+                        for
+                        a tool to work with quantitative data, you should contact <a
+                           href="https://forscenter.ch/">FORS</a>.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://forscenter.ch/">Please contact FORS</a>
@@ -72,8 +76,10 @@
                 <div *ngSwitchCase="'edition'">
                     <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also based
-                        on Knora. For this kind of research you should contact <a href="https://nie-ine.ch/">NIE-INE</a>.
+                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also
+                        based
+                        on Knora. For this kind of research you should contact <a
+                           href="https://nie-ine.ch/">NIE-INE</a>.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://nie-ine.ch/">Please contact NIE-INE</a>
@@ -113,7 +119,9 @@
         <div class="content medium middle">
             <h2 class="mat-title">Who's behind all that?</h2>
             <h3 class="mat-subheading-2">
-                Since 2017, the Data and Service Center for humanities (DaSCH) has been a member of the Swiss Academy of Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities research data that ensures access to this data.
+                Since 2017, the Data and Service Center for humanities (DaSCH) has been a member of the Swiss Academy of
+                Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities
+                research data that ensures access to this data.
             </h3>
             <img class="logo" src="/assets/images/logo-dasch.jpg">
             <img class="logo" src="/assets/images/logo-sagw.jpg">
@@ -131,10 +139,10 @@
         <div class="panel">
             <div class="box about">
                 <p class="mat-body">
-                    Built with <a href="https://angular.io">Angular</a>, styled with <a
-                       href="https://material.angular.io">Material Design</a> &middot; <a
-                       href="http://www.knora.org">Knora</a> and <a href="http://www.sipi.io">Sipi</a> under the
-                    hood.<br><br>
+                    Built with <a href="https://angular.io">Angular</a> &middot; Styled with <a
+                       href="https://material.angular.io">Material</a> &middot; <a href="http://www.knora.org">Knora</a>
+                    and <a href="http://www.sipi.io">Sipi</a> under the
+                    hood<br><br>
                     Supported by the <a href="https://sagw.ch">Swiss Academy of Humanities and Social Sciences</a>.
                 </p>
             </div>
@@ -184,8 +192,8 @@
         <!-- copyright info -->
         <div class="panel no-padding">
             <p class="mat-caption">
-                This app is built by <a href="http://www.dasch.swiss">DaSCH</a> @ <a
-                   href="https://unibas.ch">University of Basel</a> &copy; 2018 - {{currentYear.getFullYear()}}
+                <a href="http://www.dasch.swiss">DaSCH</a> @ <a href="https://unibas.ch">University of Basel</a> &copy;
+                2018 - {{currentYear.getFullYear()}}
             </p>
         </div>
 
