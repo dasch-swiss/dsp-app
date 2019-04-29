@@ -30,6 +30,7 @@ import { CollaborationComponent } from './project/collaboration/collaboration.co
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
 import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
+import { AddToDirective } from './project/ontology/ontology.component';
 import { PropertyItemComponent } from './project/ontology/property-item/property-item.component';
 import { PropertyListComponent } from './project/ontology/property-list/property-list.component';
 import { ResourceItemComponent } from './project/ontology/resource-item/resource-item.component';
@@ -84,6 +85,7 @@ export function initializeApp(appInitService: AppInitService) {
         AddUserComponent,
         OntologyListComponent,
         OntologyComponent,
+        AddToDirective,
         PropertyListComponent,
         PropertyItemComponent,
         ResourceListComponent,
