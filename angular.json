@@ -32,7 +32,8 @@
             ],
             "scripts": [
               "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",
-              "node_modules/svg-overlay/openseadragon-svg-overlay.js"]
+              "node_modules/svg-overlay/openseadragon-svg-overlay.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -54,7 +55,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "3mb",
                   "maximumError": "5mb"
                 }
               ]
@@ -90,7 +91,8 @@
             ],
             "scripts": [
               "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",
-              "node_modules/svg-overlay/openseadragon-svg-overlay.js"],
+              "node_modules/svg-overlay/openseadragon-svg-overlay.js"
+            ],
             "assets": [
               "src/favicon.ico",
               "src/assets",
