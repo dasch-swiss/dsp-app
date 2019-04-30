@@ -8,7 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-prod": "ng build --prod --build-optimizer"
+    "build-prod": "ng build --prod --build-optimizer",
+    "test-ci": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "private": true,
   "dependencies": {
@@ -24,11 +25,11 @@
     "@angular/platform-browser": "~7.2.8",
     "@angular/platform-browser-dynamic": "~7.2.8",
     "@angular/router": "~7.2.8",
-    "@knora/action": "7.4.0",
-    "@knora/authentication": "7.4.0",
-    "@knora/core": "7.4.0",
-    "@knora/search": "7.4.0",
-    "@knora/viewer": "7.4.0",
+    "@knora/action": "7.5.0",
+    "@knora/authentication": "7.5.0",
+    "@knora/core": "7.5.0",
+    "@knora/search": "7.5.0",
+    "@knora/viewer": "7.5.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "core-js": "^2.5.4",
