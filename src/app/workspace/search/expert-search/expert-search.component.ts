@@ -6,7 +6,6 @@ import {
     ExtendedSearchParams,
     SearchService
 } from '@knora/core';
-import { encodeUriQuery } from '@angular/router/src/url_tree';
 
 @Component({
     selector: 'app-expert-search',
@@ -24,7 +23,7 @@ export class ExpertSearchComponent implements OnInit {
         private _router: Router,
         private _searchService: SearchService,
         private _searchParamsService: SearchParamsService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.expertSearchForm = this.fb.group({
@@ -46,27 +45,18 @@ CONSTRUCT {
             ]
         });
     }
-
+    /**
+     * Submit the gravsearch query when clicking on the RUN button.
+     */
     submitQuery() {
         this.gravsearchQuery = this.generateGravsearch(0);
-        console.log('encoded', encodeURIComponent(this.gravsearchQuery));
-        /*
-        this._searchService.doExtendedSearchReadResourceSequence(this.gravsearchQuery).subscribe(
-            (result: any) => {
-                console.log('result:', result);
-            },
-            (error: any) => {
-                console.error('gravsearch error', error);
-            }
-        );
-*/
-
-        // this._router.navigate([this.route + '/extended/', this.gravsearchQuery]);
     }
 
+    /**
+     * Generate the whole gravsearch query matching the query given by the form.
+     */
     private generateGravsearch(offset: number = 0): string {
         const queryTemplate = this.expertSearchForm.controls['gravquery'].value;
-        console.log('queryTemplate', queryTemplate);
 
         // offset component of the Gravsearch query
         const offsetTemplate = `
