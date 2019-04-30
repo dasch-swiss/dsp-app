@@ -1,9 +1,10 @@
-[![CircleCI](https://circleci.com/gh/dhlab-basel/Kuirl.svg?style=svg)](https://circleci.com/gh/dhlab-basel/Kuirl)
-
 # Knora User Interface | Research Layer
 
+[![Build Status](https://travis-ci.com/dhlab-basel/Kuirl.svg?branch=master)](https://travis-ci.com/dhlab-basel/Kuirl)
+[![CircleCI](https://circleci.com/gh/dhlab-basel/Kuirl.svg?style=svg)](https://circleci.com/gh/dhlab-basel/Kuirl)
+
 This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the Knora server application in the backend.
- 
+
 It's a system for annotation and linkage of sources in arts and humanities.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.4.
