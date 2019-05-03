@@ -364,9 +364,9 @@ export class UserFormComponent implements OnInit, OnChanges {
                 value: user.status ? user.status : true,
                 disabled: editMode
             }),
-            newSystemAdminMembershipStatus: new FormControl({
+            systemAdmin: new FormControl({
                 value: this.sysAdminPermission,
-                disabled: false
+                disabled: editMode
             })
             //            'systemAdmin': this.sysAdminPermission,
             //            'group': null
@@ -525,14 +525,15 @@ export class UserFormComponent implements OnInit, OnChanges {
                                 }
                             );
                     } else {
-                        // go to user's profile page
+                        this.closeMessage();
                         this.loading = false;
-                        // redirect to (new) user's page
-                        this._router
-                            .navigateByUrl('/user', {
-                                skipLocationChange: true
-                            })
-                            .then(() => this._router.navigate([returnUrl]));
+
+                        /*                         // redirect to (new) user's page
+                                                this._router
+                                                    .navigateByUrl('/user', {
+                                                        skipLocationChange: true
+                                                    })
+                                                    .then(() => this._router.navigate([returnUrl])); */
                     }
                 },
                 (error: ApiServiceError) => {

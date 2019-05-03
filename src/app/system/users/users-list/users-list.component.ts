@@ -26,6 +26,9 @@ export class UsersListComponent implements OnInit {
     // list of users: depending on the parent
     @Input() list: User[];
 
+    // enable the button to create new user
+    @Input() createNew: boolean = false;
+
     // in case of modification
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 

@@ -26,14 +26,17 @@ export class ProjectsListComponent implements OnInit {
     // list of users: depending on the parent
     @Input() list: User[];
 
+    // enable the button to create new project
+    @Input() createNew: boolean = false;
+
     // in case of modification
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
     // i18n plural mapping
     itemPluralMapping = {
         title: {
-            '=1': 'Project',
-            other: 'Projects'
+            '=1': '1 Project',
+            other: '# Projects'
         }
     };
 
@@ -56,11 +59,11 @@ export class ProjectsListComponent implements OnInit {
     // ... and sort by 'shortname'
     sortBy: string = 'shortname';
 
-    constructor(
+    constructor (
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _projectsService: ProjectsService,
-        private _router: Router) {}
+        private _router: Router) { }
 
     ngOnInit() {
         // get information about the logged-in user
@@ -108,11 +111,11 @@ export class ProjectsListComponent implements OnInit {
                 switch (mode) {
                     case 'deleteProject':
                         this.deleteProject(id);
-                    break;
+                        break;
 
                     case 'activateProject':
                         this.activateProject(id);
-                    break;
+                        break;
                 }
             } else {
                 // update the view
