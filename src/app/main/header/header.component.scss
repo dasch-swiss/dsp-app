@@ -1,5 +1,4 @@
 .logo {
-
   margin-left: -16px;
 
   .mat-icon {
@@ -14,13 +13,16 @@
       width: 40px;
     }
   }
+}
 
+.version {
+  margin: auto 0 9px -9px;
 }
 
 .project-selector {
   margin-right: 6px;
-  font-size: inherit; 
+  font-size: inherit;
 }
-.ps-btn{
-  font-size: inherit; 
+.ps-btn {
+  font-size: inherit;
 }

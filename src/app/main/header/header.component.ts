@@ -4,6 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
 
+const { version: appVersion } = require('../../../../package.json');
+
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
@@ -13,10 +15,12 @@ export class HeaderComponent implements OnInit {
 
     session: boolean;
 
-    constructor(private _auth: AuthenticationService,
-                private _domSanitizer: DomSanitizer,
-                private _matIconRegistry: MatIconRegistry,
-                private _router: Router) {
+    appVersion = appVersion;
+
+    constructor (private _auth: AuthenticationService,
+        private _domSanitizer: DomSanitizer,
+        private _matIconRegistry: MatIconRegistry,
+        private _router: Router) {
 
         // kuirl icon with text
         this._matIconRegistry.addSvgIcon(
