@@ -1,19 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router, Params } from '@angular/router';
-import { Session, AuthenticationService } from '@knora/authentication';
-import {
-    User,
-    KnoraConstants,
-    Project,
-    ProjectsService,
-    UsersService,
-    PermissionData,
-    ApiServiceError,
-    Group
-} from '@knora/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { AuthenticationService, Session } from '@knora/authentication';
+import { ApiServiceError, Group, KnoraConstants, PermissionData, Project, ProjectsService, User, UsersService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-users-list',
@@ -81,7 +72,7 @@ export class UsersListComponent implements OnInit {
     // ... and sort by 'email'
     sortBy: string = 'email';
 
-    constructor(
+    constructor (
         private _auth: AuthenticationService,
         private _cache: CacheService,
         private _dialog: MatDialog,
@@ -185,7 +176,7 @@ export class UsersListComponent implements OnInit {
                         this._usersService
                             .addUserToGroup(id, newGroup)
                             .subscribe(
-                                (ngResult: User) => {},
+                                (ngResult: User) => { },
                                 (ngError: ApiServiceError) => {
                                     console.error(ngError);
                                 }
@@ -203,7 +194,7 @@ export class UsersListComponent implements OnInit {
                             this._usersService
                                 .removeUserFromGroup(id, oldGroup)
                                 .subscribe(
-                                    (ngResult: User) => {},
+                                    (ngResult: User) => { },
                                     (ngError: ApiServiceError) => {
                                         console.error(ngError);
                                     }
@@ -218,7 +209,7 @@ export class UsersListComponent implements OnInit {
                             this._usersService
                                 .addUserToGroup(id, newGroup)
                                 .subscribe(
-                                    (ngResult: User) => {},
+                                    (ngResult: User) => { },
                                     (ngError: ApiServiceError) => {
                                         console.error(ngError);
                                     }
@@ -246,18 +237,18 @@ export class UsersListComponent implements OnInit {
                         // console.log(result);
                         // if this user is not the logged-in user
                         if (this.session.user.name !== result.username) {
-                          this.refreshParent.emit();
+                            this.refreshParent.emit();
                         } else {
-                          // the logged-in user removed himself as project admin
-                          // the list is not available anymore;
-                          // open dialog to confirm and
-                          // redirect to project page
-                          // update the cache of logged-in user and the session
-                          this._auth.updateSession(this.session.user.jwt, this.session.user.name);
-                          // go to project page
-                          this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                            () => this._router.navigate(['/project/' + this.projectcode])
-                        );
+                            // the logged-in user removed himself as project admin
+                            // the list is not available anymore;
+                            // open dialog to confirm and
+                            // redirect to project page
+                            // update the cache of logged-in user and the session
+                            this._auth.updateSession(this.session.user.jwt, this.session.user.name);
+                            // go to project page
+                            this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                                () => this._router.navigate(['/project/' + this.projectcode])
+                            );
                         }
 
                     },
@@ -308,14 +299,14 @@ export class UsersListComponent implements OnInit {
                 switch (mode) {
                     case 'removeFromProject':
                         this.removeUserFromProject(iri);
-                    break;
+                        break;
                     case 'deleteUser':
                         this.deleteUser(iri);
-                    break;
+                        break;
 
                     case 'activateUser':
                         this.activateUser(iri);
-                    break;
+                        break;
                 }
             } else {
                 // update the view
@@ -364,6 +355,31 @@ export class UsersListComponent implements OnInit {
                 console.error(error);
             }
         );
+    }
+
+
+    /**
+     * returns true, when the user is system admin
+     * TODO: it's not working as long the knora admin api
+     * returns empty objects in the list of users
+     *
+     * @param  {User} user User object
+     * @returns boolean
+     */
+    systemAdmin(user: User): boolean {
+
+        let admin: boolean = false;
+
+        const groupsPerProjectKeys: string[] = Object.keys(user.permissions.groupsPerProject);
+
+        for (const key of groupsPerProjectKeys) {
+            if (key === KnoraConstants.SystemProjectIRI) {
+                admin = user.permissions.groupsPerProject[key].indexOf(KnoraConstants.SystemAdminGroupIRI) > -1;
+            }
+        }
+
+        return admin;
+
     }
 
 }
