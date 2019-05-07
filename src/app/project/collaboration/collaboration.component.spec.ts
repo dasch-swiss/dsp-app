@@ -6,7 +6,8 @@ import {
     MatIconModule,
     MatInputModule,
     MatMenuModule,
-    MatSelectModule
+    MatSelectModule,
+    MatButtonModule
 } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
@@ -51,6 +52,7 @@ describe('CollaborationComponent', () => {
                 KuiActionModule,
                 KuiCoreModule,
                 MatAutocompleteModule,
+                MatButtonModule,
                 MatChipsModule,
                 MatIconModule,
                 MatInputModule,

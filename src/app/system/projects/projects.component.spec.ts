@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectsComponent } from './projects.component';
 import { KuiActionModule } from '@knora/action';
 import { ProjectsListComponent } from './projects-list/projects-list.component';
-import { MatIconModule, MatMenuModule, MatDialogModule } from '@angular/material';
+import { MatIconModule, MatMenuModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
 
 describe('ProjectsComponent', () => {
@@ -19,18 +19,19 @@ describe('ProjectsComponent', () => {
       imports: [
         KuiActionModule,
         KuiCoreModule,
+        MatButtonModule,
         MatDialogModule,
         MatIconModule,
         MatMenuModule
       ],
       providers: [
-          {
-              provide: KuiCoreConfigToken,
-              useValue: KuiCoreConfig
-          }
+        {
+          provide: KuiCoreConfigToken,
+          useValue: KuiCoreConfig
+        }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

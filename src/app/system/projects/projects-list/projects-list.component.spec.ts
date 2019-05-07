@@ -2,7 +2,8 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {
     MatDialogModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    MatButtonModule
 } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
@@ -31,6 +32,7 @@ describe('ProjectsListComponent', () => {
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
+                MatButtonModule,
                 MatDialogModule,
                 MatIconModule,
                 MatMenuModule,
