@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatIconModule, MatMenuModule } from '@angular/material';
+import { MatIconModule, MatMenuModule, MatButtonModule } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
 import { Session } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
@@ -32,6 +32,7 @@ describe('DashboardComponent', () => {
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
+                MatButtonModule,
                 MatIconModule,
                 MatMenuModule
             ],

@@ -74,7 +74,8 @@
           "newPassword": "New password",
           "requesterPassword": "Admin password",
           "avatar": "Upload a profile pic",
-          "language": "Default language"
+          "language": "Default language",
+          "sysAdmin": "System administrator rules"
         },
         "title": {
           "new": "Create new",
@@ -93,7 +94,7 @@
             "step_4": "Confirm",
             "more": "Add more users"
           },
-          "add2project": "Add new member",
+          "add2project": "Add member",
           "select": "Select from list...",
           "create": "or create new one",
           "deleted": "already deleted"

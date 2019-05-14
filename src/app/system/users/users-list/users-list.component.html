@@ -12,13 +12,15 @@
             </span>
         </div>
         <div class="app-toolbar-row">
-            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
-            <span class="fill-remaining-space"></span>
-            <span class="app-toolbar-action button">
+            <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
                 <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
-                                 [(sortKey)]="sortBy" [position]="'right'">
-                </kui-sort-button>
+                                 [(sortKey)]="sortBy"></kui-sort-button>
+            </span>
+            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action button right" *ngIf="status && createNew && sysAdmin">
+                <button mat-flat-button [color]="'primary'" (click)="openDialog('createUser')">Create new</button>
             </span>
         </div>
     </div>

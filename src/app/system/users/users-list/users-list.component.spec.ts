@@ -5,7 +5,8 @@ import {
     MatDialogModule,
     MatIconModule,
     MatMenuModule,
-    MatSelectModule
+    MatSelectModule,
+    MatButtonModule
 } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
@@ -39,6 +40,7 @@ describe('UsersListComponent', () => {
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
+                MatButtonModule,
                 MatChipsModule,
                 MatDialogModule,
                 MatIconModule,

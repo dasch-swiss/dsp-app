@@ -3,7 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
     MatIconModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSlideToggleModule
 } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
@@ -24,6 +25,7 @@ describe('UserFormComponent', () => {
                 MatIconModule,
                 MatInputModule,
                 MatSelectModule,
+                MatSlideToggleModule,
                 ReactiveFormsModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()
