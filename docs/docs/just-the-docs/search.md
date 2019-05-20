@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Search
+parent: Just the docs
 nav_order: 7
 ---
 

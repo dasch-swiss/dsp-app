@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Markdown kitchen sink
+parent: Just the docs
 nav_order: 99
 ---
 

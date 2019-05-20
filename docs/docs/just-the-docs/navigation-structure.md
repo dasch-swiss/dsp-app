@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Navigation Structure
+parent: Just the docs
 nav_order: 5
 ---
 
