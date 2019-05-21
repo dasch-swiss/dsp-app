@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Permission groups
-parent: Project administration
-nav_order: 2
+title: Work on your data
+parent: Workspace
+nav_order: 3
 ---
 
 ---
@@ -14,4 +14,4 @@ Coming soon
 
 ---
 
-# Create own permission groups
+# Work on your data

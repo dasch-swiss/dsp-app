@@ -7,7 +7,6 @@ permalink: /
 ---
 
 # User guide for the Knora web app
-
 {: .fs-9 }
 
 This is the documentation for the generic web application of the Data and Service Center for Humanities DaSCH.

@@ -5,4 +5,4 @@ parent: Project administration
 nav_order: 1
 ---
 
-# Define collaboration
+# Define collaborators
