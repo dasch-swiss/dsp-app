@@ -14,7 +14,6 @@ Coming soon
 
 ---
 
-
 # Generate data and / or add your data
 
 Once your data model is ready, you're able to add data. The SUID app offers several possibilities to add data, whether you are starting from scratch or importing data from another program.
@@ -27,7 +26,8 @@ When a project starts from scratch, you will enter and generate new data directl
 - Augment the metadata
 - In case of interview transcriptions from audio or video files, SUID will offer a simple transcription tool
 
-![Create new source e.g. upload audio file of an interview](/assets/images/mock-source-new-edit.png)
+![Create new source e.g. upload audio file of an interview.](/assets/images/mock-source-new-edit.png)
+Create new source e.g. upload audio file of an interview.
 
 ## Organize data and create additional sources
 
