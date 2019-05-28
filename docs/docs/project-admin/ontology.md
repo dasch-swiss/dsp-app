@@ -25,7 +25,7 @@ Coming soon
 
 ---
 
-The most important step in the project is the definition of the data model. SUID offers a tool to create data models easely. First you have to know about your data and sources you want to work with. The data model can be flexible and customizable. With SUID you can comply with the FAIR data standard, but compliance is not required to analyze your data.
+The most important step in the project is the definition of the data model. Knora web app offers a tool to create data models easely. First you have to know about your data and sources you want to work with. The data model can be flexible and customizable. With Knora web app you can comply with the FAIR data standard, but compliance is not required to analyze your data.
 
 The questions to answer in creating your data model:
 "What kind of data do I have in my project?"

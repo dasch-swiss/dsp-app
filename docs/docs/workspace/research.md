@@ -20,7 +20,7 @@ Once you found the desired sources, you can (re)view them and annotate the sourc
 
 ## Display a source
 
-The SUID app offers different source views for different media types. There's a viewer for still images, moving images, audio and document files. You can open them from the list of search results. Depending on the media type, SUID offers different tools to work on the source.
+The Knora web app app offers different source views for different media types. There's a viewer for still images, moving images, audio and document files. You can open them from the list of search results. Depending on the media type, Knora web app offers different tools to work on the source.
 
 In a still image source, you're able to draw regions on the image and to annotate or transcribe this region. Usually a still image source is used for book pages, photographs, postcards, letters etc.
 
@@ -29,7 +29,7 @@ In time-based sources like moving image or audio document, you can mark sequence
 ![Single resource view. The source type in this example is "Video".](/assets/images/source-selected-one.png)
 Single resource view. The source type in this example is "Video".
 
-SUID offers a graph view to visualize the connection of a selected source. The graph view is a powerful tool, because you will find more information about the source by clicking through the nodes.
+Knora web app offers a graph view to visualize the connection of a selected source. The graph view is a powerful tool, because you will find more information about the source by clicking through the nodes.
 
 ![Graph view of a single resource.](/assets/images/source-graph-view.png)
 Graph view of a single resource.
@@ -50,13 +50,13 @@ By selecting more than one source, you can edit them all at once, add them to a 
 
 You can compare from two to six source objects at the same time side by side.
 
-![Compare 2 to 6 sources with each other, similar to the Mirador web app.](/assets/images/source-compare-viewer.png.png)
+![Compare 2 to 6 sources with each other, similar to the Mirador web app.](/assets/images/source-compare-viewer.png)
 Compare 2 to 6 sources with each other, similar to the Mirador web app.
 
 ## Annotate and connect your data (sources and / or metadata)
 
-A main feature of the flexible data storage that SUID uses is the possibility to annotate and link sources and their metadata. An annotation can be a small note about a date like "Not sure about the birthdate of this person. There's another date mentioned in the source XYZ". Inside the note, it's possible to link to another source.
-Links in SUID are always bi-directional. If you link source A with source B, then source B knows about this connection. If you find source B, you have the connection to source A as well.
+A main feature of the flexible data storage that Knora web app uses is the possibility to annotate and link sources and their metadata. An annotation can be a small note about a date like "Not sure about the birthdate of this person. There's another date mentioned in the source XYZ". Inside the note, it's possible to link to another source.
+Links in Knora web app are always bi-directional. If you link source A with source B, then source B knows about this connection. If you find source B, you have the connection to source A as well.
 
 ## Export, save or share the data
 

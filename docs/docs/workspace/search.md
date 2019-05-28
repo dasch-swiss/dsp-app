@@ -8,7 +8,7 @@ nav_order: 0
 # Search and find data
 {: .no_toc }
 
-It's possible to look at data only in your own project or across all public projects stored in SUID. The SUID app offers three possible search tools to find your data: full-text, advanced and expert search.
+It's possible to look at data only in your own project or across all public projects stored in Knora web app. The Knora web app app offers three possible search tools to find your data: full-text, advanced and expert search.
 
 ## Table of contents
 {: .no_toc .text-delta }
