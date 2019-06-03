@@ -57,8 +57,6 @@ export class UsersComponent implements OnInit {
                     } else {
                         this.inactive.push(u);
                     }
-
-                    console.log(u);
                 }
 
                 this.loading = false;
