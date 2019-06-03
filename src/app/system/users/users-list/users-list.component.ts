@@ -249,7 +249,7 @@ export class UsersListComponent implements OnInit {
     /**
      * update user's admin-group membership
      */
-    updateAdminMembership(id: string, permissions: PermissionData): void {
+    updateProjectAdminMembership(id: string, permissions: PermissionData): void {
         if (this.userIsProjectAdmin(permissions)) {
             // true = user is already project admin --> remove from admin rights
             this._usersService
@@ -282,6 +282,39 @@ export class UsersListComponent implements OnInit {
             // false: user isn't project admin yet --> add admin rights
             this._usersService
                 .addUserToProjectAdmin(id, this.project.id)
+                .subscribe(
+                    (result: User) => {
+                        // console.log(result);
+                        this.refreshParent.emit();
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
+        }
+    }
+
+    updateSystemAdminMembership(id: string, permissions: PermissionData): void {
+        if (this.userIsSystemAdmin(permissions)) {
+            // true = user is already system admin --> remove from system admin rights
+            this._usersService
+                .removeUserFromSystemAdmin(id)
+                .subscribe(
+                    (result: User) => {
+                        // console.log(result);
+                        // if this user is not the logged-in user
+                        if (this.session.user.name !== result.username) {
+                            this.refreshParent.emit();
+                        }
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            // false: user isn't system admin yet --> add system admin rights
+            this._usersService
+                .addUserToSystemAdmin(id)
                 .subscribe(
                     (result: User) => {
                         // console.log(result);

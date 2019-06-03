@@ -70,10 +70,17 @@
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
                     <!-- update user's admin group membership; only in project view -->
                     <button mat-menu-item *ngIf="projectcode && user.status"
-                            (click)="updateAdminMembership(user.id, user.permissions)">
+                            (click)="updateProjectAdminMembership(user.id, user.permissions)">
                         <span *ngIf="!userIsProjectAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsProjectAdmin(user.permissions)">Remove</span>
                         <span>&nbsp;as project admin</span>
+                    </button>
+                    <!-- update user's system admin group membership; only in system admin view -->
+                    <button mat-menu-item *ngIf="!projectcode && user.status && sysAdmin"
+                            (click)="updateSystemAdminMembership(user.id, user.permissions)">
+                        <span *ngIf="!userIsSystemAdmin(user.permissions)">Add</span>
+                        <span *ngIf="userIsSystemAdmin(user.permissions)">Remove</span>
+                        <span>&nbsp;as system admin</span>
                     </button>
                     <!-- update user's profile data; only for system admin -->
                     <button mat-menu-item *ngIf="sysAdmin  && user.status"
