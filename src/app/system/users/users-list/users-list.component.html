@@ -49,6 +49,9 @@
                 <mat-chip-list *ngIf="projectcode">
                     <mat-chip *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
                 </mat-chip-list>
+                <mat-chip-list *ngIf="!projectcode && userIsSystemAdmin(user.permissions)">
+                    <mat-chip>System Admin</mat-chip>
+                </mat-chip-list>
             </td>
 
             <!-- group: only in project view -->
@@ -87,7 +90,7 @@
                         Remove user from project
                     </button>
                     <!-- add user to project; only in system view -->
-                    <button mat-menu-item *ngIf="sysAdmin && !projectcode"
+                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectcode"
                             (click)="openDialog('addUserToProject', user.username)">
                         Add user to project
                     </button>

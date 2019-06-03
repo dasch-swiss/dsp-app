@@ -15,7 +15,7 @@ export class UsersComponent implements OnInit {
     // list of inactive (deleted) users
     inactive: User[] = [];
 
-    constructor(
+    constructor (
         private _usersService: UsersService,
         private _route: ActivatedRoute,
         private _titleService: Title
@@ -40,11 +40,25 @@ export class UsersComponent implements OnInit {
                 this.inactive = [];
 
                 for (const u of result) {
+                    // get permission for each user
+                    // by default, permission is not shown in the
+                    // api result of user's list
+                    this._usersService.getUserByIri(u.id).subscribe(
+                        (res: User) => {
+                            u.permissions = res.permissions;
+                        },
+                        (error: ApiServiceError) => {
+                            console.error(error);
+                        }
+                    );
+
                     if (u.status === true) {
                         this.active.push(u);
                     } else {
                         this.inactive.push(u);
                     }
+
+                    console.log(u);
                 }
 
                 this.loading = false;

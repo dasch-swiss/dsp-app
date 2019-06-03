@@ -161,6 +161,25 @@ export class UsersListComponent implements OnInit {
     }
 
     /**
+     * returns true, when the user is system admin
+     *
+     * @param permissions PermissionData from user profile
+     */
+    userIsSystemAdmin(permissions: PermissionData): boolean {
+
+        let admin: boolean = false;
+        const groupsPerProjectKeys: string[] = Object.keys(permissions.groupsPerProject);
+
+        for (const key of groupsPerProjectKeys) {
+            if (key === KnoraConstants.SystemProjectIRI) {
+                admin = permissions.groupsPerProject[key].indexOf(KnoraConstants.SystemAdminGroupIRI) > -1;
+            }
+        }
+
+        return admin;
+    }
+
+    /**
      * update user's group memebership
      */
     updateGroupsMembership(id: string, groups: string[]): void {
@@ -321,7 +340,7 @@ export class UsersListComponent implements OnInit {
     /**
      * remove user from project and update list of users
      *
-     * @param  {string} id user's IRI
+     * @param id user's IRI
      * @returns void
      */
     removeUserFromProject(id: string): void {
@@ -336,6 +355,12 @@ export class UsersListComponent implements OnInit {
         );
     }
 
+
+    /**
+     * delete resp. deactivate user
+     *
+     * @param id user's IRI
+     */
     deleteUser(id: string) {
         this._usersService.deleteUser(id).subscribe(
             (result: User) => {
@@ -348,6 +373,11 @@ export class UsersListComponent implements OnInit {
         );
     }
 
+    /**
+     * Reactivate user
+     *
+     * @param id user's IRI
+     */
     activateUser(id: string) {
         this._usersService.activateUser(id).subscribe(
             (result: User) => {
@@ -359,30 +389,4 @@ export class UsersListComponent implements OnInit {
             }
         );
     }
-
-
-    /**
-     * returns true, when the user is system admin
-     * TODO: it's not working as long the knora admin api
-     * returns empty objects in the list of users
-     *
-     * @param  {User} user User object
-     * @returns boolean
-     */
-    systemAdmin(user: User): boolean {
-
-        let admin: boolean = false;
-
-        const groupsPerProjectKeys: string[] = Object.keys(user.permissions.groupsPerProject);
-
-        for (const key of groupsPerProjectKeys) {
-            if (key === KnoraConstants.SystemProjectIRI) {
-                admin = user.permissions.groupsPerProject[key].indexOf(KnoraConstants.SystemAdminGroupIRI) > -1;
-            }
-        }
-
-        return admin;
-
-    }
-
 }
