@@ -10,16 +10,18 @@
 
         <div class="app-toolbar transparent">
             <div class="app-toolbar-row">
-                <h3 class="mat-body subtitle" >List of projects</h3>
+                <h3 class="mat-body subtitle">List of projects</h3>
             </div>
             <div class="app-toolbar-row">
                 <h2 class="mat-title">
-                    <span *ngIf="!showSystemProjects">These are your projects</span>
-                    <span *ngIf="showSystemProjects && sysAdmin">As a system admin you have access to all projects</span>
+                    <span *ngIf="!showSystemProjects">You are member in the following projects</span>
+                    <span *ngIf="showSystemProjects && sysAdmin">As a system admin you have access to all
+                        projects</span>
                 </h2>
                 <span class="fill-remaining-space"></span>
                 <span class="app-toolbar-action">
-                    <button mat-button color="'primary'" *ngIf="sysAdmin" (click)="showSystemProjects = !showSystemProjects" class="toggle-view">
+                    <button mat-button color="'primary'" *ngIf="sysAdmin"
+                            (click)="showSystemProjects = !showSystemProjects" class="toggle-view">
                         <span *ngIf="showSystemProjects">Show only my projects</span>
                         <span *ngIf="!showSystemProjects">Show all projects</span>
                     </button>

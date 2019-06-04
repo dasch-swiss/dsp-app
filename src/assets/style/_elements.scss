@@ -51,6 +51,15 @@
 
   .app-toolbar-action.button {
     margin: 0 0 16px;
+    min-width: 40px;
+
+    &.left {
+      margin-right: 16px;
+    }
+
+    &.right {
+      margin-left: 16px;
+    }
   }
 }
 

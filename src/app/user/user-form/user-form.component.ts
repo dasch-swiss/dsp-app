@@ -192,7 +192,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         }
     ];
 
-    constructor(
+    constructor (
         private _route: ActivatedRoute,
         private _router: Router,
         private _cache: CacheService,
@@ -217,8 +217,8 @@ export class UserFormComponent implements OnInit, OnChanges {
              * edit mode: get user data from cache
              */
 
-             this.title = this.username;
-             this.subtitle = "'appLabels.form.user.title.edit' | translate";
+            this.title = this.username;
+            this.subtitle = "'appLabels.form.user.title.edit' | translate";
 
             // set the cache first: user data to edit
             this._cache.get(
@@ -264,8 +264,8 @@ export class UserFormComponent implements OnInit, OnChanges {
                         this.existingUsernames.push(
                             new RegExp(
                                 '(?:^|W)' +
-                                    user.username.toLowerCase() +
-                                    '(?:$|W)'
+                                user.username.toLowerCase() +
+                                '(?:$|W)'
                             )
                         );
                     }
@@ -298,14 +298,9 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     buildForm(user: User): boolean {
         // get info about system admin permission
-        if (
-            user.id &&
-            user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]
-        ) {
+        if (user.id && user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]) {
             // this user is member of the system project. does he has admin rights?
-            this.sysAdminPermission = user.permissions.groupsPerProject[
-                KnoraConstants.SystemProjectIRI
-            ].includes(KnoraConstants.SystemAdminGroupIRI);
+            this.sysAdminPermission = user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI].includes(KnoraConstants.SystemAdminGroupIRI);
         }
 
         // if user is defined, we're in the edit mode
@@ -498,7 +493,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                                                 );
                                                 this._cache.get(
                                                     'members_of_' +
-                                                        this.projectcode,
+                                                    this.projectcode,
                                                     this._projectsService.getProjectMembersByShortcode(
                                                         this.projectcode
                                                     )
@@ -530,14 +525,15 @@ export class UserFormComponent implements OnInit, OnChanges {
                                 }
                             );
                     } else {
-                        // go to user's profile page
+                        this.closeMessage();
                         this.loading = false;
-                        // redirect to (new) user's page
-                        this._router
-                            .navigateByUrl('/user', {
-                                skipLocationChange: true
-                            })
-                            .then(() => this._router.navigate([returnUrl]));
+
+                        /*                         // redirect to (new) user's page
+                                                this._router
+                                                    .navigateByUrl('/user', {
+                                                        skipLocationChange: true
+                                                    })
+                                                    .then(() => this._router.navigate([returnUrl])); */
                     }
                 },
                 (error: ApiServiceError) => {
