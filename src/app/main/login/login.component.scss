@@ -1,4 +1,4 @@
-@import '../../../assets/style/theme';
+@import "../../../assets/style/theme";
 
 .login-page {
   background: #fff;
@@ -6,16 +6,14 @@
   width: 100%;
   top: 0;
   position: absolute;
-
-  padding-top: 120px;
 }
 
-.content {
-  margin: 96px auto;
+kui-login-form {
+  margin: 160px auto;
   max-width: 80%;
+  display: block;
 
   @media (max-width: map-get($grid-breakpoints, phone)) {
     max-width: 100%;
   }
-
 }

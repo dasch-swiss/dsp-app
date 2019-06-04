@@ -4,8 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
 
-const { version: appVersion } = require('../../../../package.json');
-
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
@@ -15,19 +13,18 @@ export class HeaderComponent implements OnInit {
 
     session: boolean;
 
-    appVersion = appVersion;
-
     constructor (private _auth: AuthenticationService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _router: Router) {
 
+        // create tool icons to use them in mat-icons
         // kuirl icon with text
         this._matIconRegistry.addSvgIcon(
             'kuirl_banner',
             this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/kuirl-banner.svg')
         );
-        // kuirl icon (for smaller screens
+        // kuirl icon (for smaller screens)
         this._matIconRegistry.addSvgIcon(
             'kuirl_icon',
             this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/kuirl-icon.svg')
