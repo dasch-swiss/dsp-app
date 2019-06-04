@@ -1,6 +1,6 @@
 title: User guide Kuirl
 description: The whole user documentation for the generic Knora web app
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/kuirl" # the subpath of your site, e.g. /blog
 url: "https://dhlab-basel.github.io" # the base hostname & protocol for your site
 
 permalink: pretty
