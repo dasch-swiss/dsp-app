@@ -6,7 +6,7 @@
         </button>
     </span>
     <span class="version mat-caption">
-        {{appVersion}}
+        <!-- {{appVersion}} -->
     </span>
 
     <span class="fill-remaining-space"></span>
@@ -32,8 +32,10 @@
     <span class="fill-remaining-space"></span>
 
     <span class="action">
+        <app-info-menu></app-info-menu>
         <app-select-language></app-select-language>
-        <button mat-raised-button color="primary" *ngIf="!session" class="login" (click)="goToLogin()">LOGIN</button>
+        <button mat-raised-button color="primary" *ngIf="!session" class="login-button"
+                (click)="goToLogin()">LOGIN</button>
         <app-user-menu *ngIf="session"></app-user-menu>
     </span>
 </mat-toolbar>

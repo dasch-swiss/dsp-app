@@ -79,8 +79,13 @@ a,
 // logo, action button
 .logo,
 .action {
-  .mat-button.main-toolbar-button {
+  .main-toolbar-button {
     padding: 12px 0;
+
+    .mat-icon {
+      font-size: 30px;
+      margin-bottom: 5px;
+    }
   }
 }
 
@@ -109,6 +114,72 @@ a,
   right: 12px !important;
 }
 */
+
+.menu-header,
+.menu-content,
+.menu-footer {
+  width: 192px;
+}
+
+.menu-action,
+.menu-title {
+  width: 100%;
+}
+
+.menu-header {
+  background-color: $primary;
+  color: white;
+  border-bottom: 1px solid rgba($primary, 0.1);
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  display: inline-block;
+  height: 48px;
+
+  &.active {
+    background-color: $primary;
+  }
+
+  &.inactive {
+    background-color: $warn;
+  }
+
+  .menu-title {
+    text-align: center;
+  }
+}
+
+.menu-content {
+  .mat-grid-tile button {
+    border-radius: $border-radius;
+    font-size: 11px;
+    height: 84px;
+    padding: 6px;
+    width: 84px;
+
+    .mat-icon {
+      font-size: 36px;
+      height: 36px;
+      width: 36px;
+    }
+  }
+}
+
+.border-top {
+  border-top: 1px solid rgba($primary, 0.1);
+}
+
+.menu-footer {
+  .menu-action.logout {
+    background: #ebebeb;
+    height: 48px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    &:hover {
+      background: $warn;
+    }
+  }
+}
 
 .mat-menu-content {
   padding: 0 !important;

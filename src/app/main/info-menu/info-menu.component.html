@@ -1,0 +1,24 @@
+<button mat-button [matMenuTriggerFor]="infoMenu" class="main-toolbar-button info-menu">
+  <mat-icon>network_check</mat-icon>
+</button>
+
+<mat-menu #infoMenu="matMenu" xPosition="before" class="menu">
+  <div class="menu-header" [class.inactive]="!apiStatus">
+    <p class="menu-title">
+      Tools status
+    </p>
+  </div>
+  <div class="menu-content" *ngIf="!loading">
+    <mat-list class="navigation">
+      <mat-list-item class="nav-item" *ngFor="let item of versions">
+        <a [href]="item.route" target="_blank" mat-button class="nav-item button">
+          <mat-icon class="prefix" [svgIcon]="item.icon"></mat-icon>
+          <span class="label">{{item.label}}</span>
+        </a>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div class="menu-footer">
+
+  </div>
+</mat-menu>
