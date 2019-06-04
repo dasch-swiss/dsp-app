@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
+import { InfoMenuComponent } from '../info-menu/info-menu.component';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
@@ -18,6 +19,7 @@ describe('HeaderComponent', () => {
             declarations: [
                 HeaderComponent,
                 SelectLanguageComponent,
+                InfoMenuComponent,
                 UserMenuComponent
             ],
             imports: [
