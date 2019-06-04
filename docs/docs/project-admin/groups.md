@@ -1,12 +1,8 @@
----
+<!--
 layout: default
 title: Permission groups
----
-
-<!--
 parent: Project administration
 nav_order: 2
----
 -->
 
 ---
