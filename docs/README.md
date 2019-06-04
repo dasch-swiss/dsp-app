@@ -10,6 +10,13 @@ The documentation is stored in folder `/docs`. To run it locally, you have to sw
 $ jekyll serve
 ```
 
+or
+
+```bash
+# .. or if you're using a Gemfile (bundler)
+$ bundle exec jekyll serve
+```
+
 Point your web browser to <http://localhost:4000>
 
 ## Usage

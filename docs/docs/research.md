@@ -1,10 +1,9 @@
 ---
 layout: default
 title: Work on your data
-parent: Workspace
-nav_order: 3
----
-
+nav_order: 5
+has_children: false
+permalink: /docs/research
 ---
 
 Coming soon

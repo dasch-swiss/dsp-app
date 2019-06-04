@@ -1,8 +1,9 @@
 ---
 layout: default
 title: Search
-parent: Workspace
-nav_order: 0
+nav_order: 2
+has_children: false
+permalink: /docs/search
 ---
 
 # Search and find data

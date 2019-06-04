@@ -1,8 +1,9 @@
 ---
 layout: default
 title: Search Results
-parent: Workspace
-nav_order: 1
+nav_order: 3
+has_children: false
+permalink: /docs/search-results
 ---
 
 # Display search results
