@@ -14,7 +14,8 @@ This is the documentation for the generic web application of the Data and Servic
 
 <!--The web app is the user interface research layer of Knora &ndash; a software framework for storing, sharing, and working with primary sources and all kind of data in your research project in humanities.-->
 
-[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } <!--[View it on GitHub](https://github.com/pmarsceill/just-the-docs){: .btn .fs-5 .mb-4 .mb-md-0 }-->
+<!-- [Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }  -->
+<!--[View it on GitHub](https://github.com/pmarsceill/just-the-docs){: .btn .fs-5 .mb-4 .mb-md-0 }-->
 
 * * *
 
