@@ -39,6 +39,8 @@ testem.log
 docs/_site/
 docs/.sass-cache
 docs/.jekyll-metadata
+docs/vendor
+docs/bin
 
 # System Files
 .DS_Store
