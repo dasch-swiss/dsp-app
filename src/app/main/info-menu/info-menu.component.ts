@@ -5,7 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ApiService, KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
 import { MenuItem } from '../declarations/menu-item';
 
-
+declare let require: any;
 const { version: appVersion } = require('../../../../package.json');
 
 @Component({
@@ -63,10 +63,6 @@ export class InfoMenuComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    console.log('simple log output');
-    console.warn('simple warn output');
-    console.error('simple error output');
 
     this._http.get<HttpResponse<any>>(this.config.api + '/v2/authentication', { observe: 'response' })
       .subscribe(
