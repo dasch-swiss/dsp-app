@@ -55,7 +55,6 @@ import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserPasswordComponent } from './user/user-form/user-password/user-password.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
-import { SearchComponent } from './workspace/search/search.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
@@ -112,7 +111,6 @@ export function initializeApp(appInitService: AppInitService) {
         SelectGroupComponent,
         ResourceTypeComponent,
         DesignQuestionComponent,
-        SearchComponent,
         ResultsComponent,
         ResourceComponent,
         ExpertSearchComponent,
