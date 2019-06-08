@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GridComponent } from './grid.component';
 import { MatIconModule } from '@angular/material';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('GridComponent', () => {
   let component: GridComponent;
@@ -13,10 +14,11 @@ describe('GridComponent', () => {
         GridComponent
       ],
       imports: [
-        MatIconModule
+        MatIconModule,
+        RouterTestingModule
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
