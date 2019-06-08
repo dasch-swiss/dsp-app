@@ -15,7 +15,7 @@ export interface GridItem {
 export class GridComponent implements OnInit {
     @Input() list: GridItem[];
 
-    constructor() {}
+    constructor () { }
 
-    ngOnInit() {}
+    ngOnInit() { }
 }

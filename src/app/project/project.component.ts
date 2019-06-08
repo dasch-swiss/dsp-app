@@ -42,7 +42,7 @@ export class ProjectComponent implements OnInit {
 
     navigation: MenuItem[] = AppGlobal.projectNav;
 
-    constructor(
+    constructor (
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _projectsService: ProjectsService,
@@ -70,14 +70,18 @@ export class ProjectComponent implements OnInit {
                 this._projectsService.getProjectByShortcode(this.projectcode)
             );
 
-            // get information about the logged-in user
-            this.session = JSON.parse(localStorage.getItem('session'));
-            // is the logged-in user system admin?
-            this.sysAdmin = this.session.user.sysAdmin;
+            // get information about the logged-in user, if one is logged-in
+            if (localStorage.getItem('session')) {
 
-            // default value for projectAdmin
-            this.projectAdmin = this.sysAdmin;
+                this.session = JSON.parse(localStorage.getItem('session'));
 
+
+                // is the logged-in user system admin?
+                this.sysAdmin = this.session.user.sysAdmin;
+
+                // default value for projectAdmin
+                this.projectAdmin = this.sysAdmin;
+            }
             // get the project data from cache
             this._cache
                 .get(
@@ -98,9 +102,9 @@ export class ProjectComponent implements OnInit {
                             'Project: ' + result.shortname.toUpperCase();
 
                         // is logged-in user projectAdmin?
-                        this.projectAdmin = this.sysAdmin
-                            ? this.sysAdmin
-                            : (this.session.user.projectAdmin.some(e => e === this.project.id));
+                        if (this.session) {
+                            this.projectAdmin = this.sysAdmin ? this.sysAdmin : (this.session.user.projectAdmin.some(e => e === this.project.id));
+                        }
 
 
 
