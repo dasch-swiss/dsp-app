@@ -1,13 +1,12 @@
 <!--
----
 layout: default
 title: Permission groups
 parent: Project administration
 nav_order: 2
----
 -->
 
 ---
+<!--
 
 Coming soon
 {: .label .label-yellow }
@@ -17,3 +16,4 @@ Coming soon
 ---
 
 # Create own permission groups
+-->

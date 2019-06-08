@@ -161,6 +161,25 @@ export class UsersListComponent implements OnInit {
     }
 
     /**
+     * returns true, when the user is system admin
+     *
+     * @param permissions PermissionData from user profile
+     */
+    userIsSystemAdmin(permissions: PermissionData): boolean {
+
+        let admin: boolean = false;
+        const groupsPerProjectKeys: string[] = Object.keys(permissions.groupsPerProject);
+
+        for (const key of groupsPerProjectKeys) {
+            if (key === KnoraConstants.SystemProjectIRI) {
+                admin = permissions.groupsPerProject[key].indexOf(KnoraConstants.SystemAdminGroupIRI) > -1;
+            }
+        }
+
+        return admin;
+    }
+
+    /**
      * update user's group memebership
      */
     updateGroupsMembership(id: string, groups: string[]): void {
@@ -230,7 +249,7 @@ export class UsersListComponent implements OnInit {
     /**
      * update user's admin-group membership
      */
-    updateAdminMembership(id: string, permissions: PermissionData): void {
+    updateProjectAdminMembership(id: string, permissions: PermissionData): void {
         if (this.userIsProjectAdmin(permissions)) {
             // true = user is already project admin --> remove from admin rights
             this._usersService
@@ -263,6 +282,39 @@ export class UsersListComponent implements OnInit {
             // false: user isn't project admin yet --> add admin rights
             this._usersService
                 .addUserToProjectAdmin(id, this.project.id)
+                .subscribe(
+                    (result: User) => {
+                        // console.log(result);
+                        this.refreshParent.emit();
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
+        }
+    }
+
+    updateSystemAdminMembership(id: string, permissions: PermissionData): void {
+        if (this.userIsSystemAdmin(permissions)) {
+            // true = user is already system admin --> remove from system admin rights
+            this._usersService
+                .removeUserFromSystemAdmin(id)
+                .subscribe(
+                    (result: User) => {
+                        // console.log(result);
+                        // if this user is not the logged-in user
+                        if (this.session.user.name !== result.username) {
+                            this.refreshParent.emit();
+                        }
+                    },
+                    (error: ApiServiceError) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            // false: user isn't system admin yet --> add system admin rights
+            this._usersService
+                .addUserToSystemAdmin(id)
                 .subscribe(
                     (result: User) => {
                         // console.log(result);
@@ -321,7 +373,7 @@ export class UsersListComponent implements OnInit {
     /**
      * remove user from project and update list of users
      *
-     * @param  {string} id user's IRI
+     * @param id user's IRI
      * @returns void
      */
     removeUserFromProject(id: string): void {
@@ -336,6 +388,12 @@ export class UsersListComponent implements OnInit {
         );
     }
 
+
+    /**
+     * delete resp. deactivate user
+     *
+     * @param id user's IRI
+     */
     deleteUser(id: string) {
         this._usersService.deleteUser(id).subscribe(
             (result: User) => {
@@ -348,6 +406,11 @@ export class UsersListComponent implements OnInit {
         );
     }
 
+    /**
+     * Reactivate user
+     *
+     * @param id user's IRI
+     */
     activateUser(id: string) {
         this._usersService.activateUser(id).subscribe(
             (result: User) => {
@@ -359,30 +422,4 @@ export class UsersListComponent implements OnInit {
             }
         );
     }
-
-
-    /**
-     * returns true, when the user is system admin
-     * TODO: it's not working as long the knora admin api
-     * returns empty objects in the list of users
-     *
-     * @param  {User} user User object
-     * @returns boolean
-     */
-    systemAdmin(user: User): boolean {
-
-        let admin: boolean = false;
-
-        const groupsPerProjectKeys: string[] = Object.keys(user.permissions.groupsPerProject);
-
-        for (const key of groupsPerProjectKeys) {
-            if (key === KnoraConstants.SystemProjectIRI) {
-                admin = user.permissions.groupsPerProject[key].indexOf(KnoraConstants.SystemAdminGroupIRI) > -1;
-            }
-        }
-
-        return admin;
-
-    }
-
 }
