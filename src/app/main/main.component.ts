@@ -58,7 +58,7 @@ export class MainComponent implements OnInit {
 
     currentYear: Date = new Date();
 
-    constructor(
+    constructor (
         private _auth: AuthenticationService,
         private _projectsService: ProjectsService,
         private _router: Router,
@@ -78,7 +78,7 @@ export class MainComponent implements OnInit {
         }
     }
 
-    ngOnInit( ) {
+    ngOnInit() {
         this.loadProjects();
     }
 
@@ -95,7 +95,9 @@ export class MainComponent implements OnInit {
                     const preview: string = project.description[0].value.replace(/(<([^>]+)>)/ig, '');
 
                     projectItem.text = preview.substring(0, sliceLength).trim() +
-                    (preview.length > sliceLength ? '...' : '');
+                        (preview.length > sliceLength ? '...' : '');
+
+                    projectItem.url = 'project/' + project.shortcode;
 
                     this.projects.push(projectItem);
                 }

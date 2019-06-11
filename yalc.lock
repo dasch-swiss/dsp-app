@@ -2,9 +2,9 @@
   "version": "v1",
   "packages": {
     "@knora/core": {
-      "signature": "793618df7e418350f5aa93841af4a632",
+      "signature": "e87b194654367d891e088af1b352750a",
       "file": true,
-      "replaced": "7.0.1"
+      "replaced": "7.6.0"
     },
     "@knora/search": {
       "signature": "816bfea44b09fd9edbd52a782949bad5",

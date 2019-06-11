@@ -49,7 +49,7 @@ export class BoardComponent implements OnInit {
         }
     };
 
-    constructor(
+    constructor (
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
@@ -68,14 +68,15 @@ export class BoardComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
 
-        // get information about the logged-in user
-        this.session = JSON.parse(localStorage.getItem('session'));
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
+        // get information about the logged-in user, if one is logged-in
+        if (localStorage.getItem('session')) {
+            this.session = JSON.parse(localStorage.getItem('session'));
+            // is the logged-in user system admin?
+            this.sysAdmin = this.session.user.sysAdmin;
 
-        // default value for projectAdmin
-        this.projectAdmin = this.sysAdmin;
-
+            // default value for projectAdmin
+            this.projectAdmin = this.sysAdmin;
+        }
         this.getProject();
     }
 
@@ -84,21 +85,15 @@ export class BoardComponent implements OnInit {
         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get project data from cache
-        this._cache
-            .get(
-                this.projectcode,
-                this._projectsService.getProjectByShortcode(this.projectcode)
-            )
-            .subscribe(
-                (result: any) => {
-                    this.project = result;
-
-                    this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    console.error(error);
-                }
-            );
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
+            (result: any) => {
+                this.project = result;
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+            }
+        );
 
         /*
         this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode)).subscribe(
