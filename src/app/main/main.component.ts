@@ -97,6 +97,8 @@ export class MainComponent implements OnInit {
                     projectItem.text = preview.substring(0, sliceLength).trim() +
                         (preview.length > sliceLength ? '...' : '');
 
+                    projectItem.url = 'project/' + project.shortcode;
+
                     this.projects.push(projectItem);
                 }
 

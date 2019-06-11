@@ -45,7 +45,6 @@ const routes: Routes = [
     {
         path: 'project/:shortcode',
         component: ProjectComponent,
-        canActivate: [AuthGuard],
         children: [
             {
                 path: '',
@@ -58,15 +57,18 @@ const routes: Routes = [
             },
             {
                 path: 'collaboration',
-                component: CollaborationComponent
+                component: CollaborationComponent,
+                canActivate: [AuthGuard]
             },
             {
                 path: 'ontologies',
-                component: OntologyComponent
+                component: OntologyComponent,
+                canActivate: [AuthGuard]
             },
             {
                 path: 'ontology/:id',
-                component: OntologyComponent
+                component: OntologyComponent,
+                canActivate: [AuthGuard]
             },
             {
                 path: '**',
@@ -170,4 +172,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
     exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
