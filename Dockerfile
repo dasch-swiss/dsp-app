@@ -7,7 +7,7 @@ LABEL maintainer="ivan.subotic@unibas.ch"
 
 # The qq is for silent output in the console
 # You are welcome to modify this part as it
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev
+RUN apt-get update -qq && apt-get install -y build-essential@latest libpq-dev@latest
 
 # Sets the path where the app is going to be installed
 ENV NODE_ROOT /usr/app/
