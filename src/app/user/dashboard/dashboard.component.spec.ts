@@ -45,7 +45,7 @@ describe('DashboardComponent', () => {
         }).compileComponents();
     }));
 
-    // Mock localStorage
+    // mock localStorage
     beforeEach(() => {
         let store = {};
 

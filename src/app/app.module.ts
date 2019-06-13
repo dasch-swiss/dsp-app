@@ -63,10 +63,10 @@ import { GridComponent } from './main/grid/grid.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
-// Translate: AoT requires an exported function for factories
+// translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json');
-    //    return new TranslateHttpLoader(httpClient);
+    // return new TranslateHttpLoader(httpClient);
 }
 
 export function initializeApp(appInitService: AppInitService) {

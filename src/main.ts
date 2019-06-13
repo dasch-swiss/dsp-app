@@ -22,7 +22,7 @@ fetch(`config/config.${environment.name}.json`)
             return;
         }
 
-        // Store the response somewhere that your ConfigService can read it.
+        // store the response somewhere that your ConfigService can read it.
         window['tempConfigStorage'] = config;
 
         // console.log('config', config);

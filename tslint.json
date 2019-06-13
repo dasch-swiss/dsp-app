@@ -12,8 +12,9 @@
       "check-lowercase",
       {
         "ignore-words": [
-          "TODO",
-          "HACK"
+          "FIXME",
+          "HACK",
+          "TODO"
         ]
       }
     ],
