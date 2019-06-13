@@ -8,7 +8,14 @@
     "class-name": true,
     "comment-format": [
       true,
-      "check-space"
+      "check-space",
+      "check-lowercase",
+      {
+        "ignore-words": [
+          "TODO",
+          "HACK"
+        ]
+      }
     ],
     "curly": true,
     "deprecation": {
