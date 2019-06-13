@@ -93,7 +93,9 @@
     "prefer-const": true,
     "quotemark": [
       true,
-      "single"
+      "single",
+      "jsx-single",
+      "avoid-escape"
     ],
     "radix": true,
     "semicolon": [
