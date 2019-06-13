@@ -9,5 +9,10 @@ module.exports = {
     "ecmaFeatures": {
       "jsx": true
     }
+  },
+  "rules": {
+    "eqeqeq": "off",
+    "curly": "error",
+    "quotes": ["error", "single", "avoid-escape"]
   }
 }
