@@ -33,11 +33,6 @@ export class InfoMenuComponent implements OnInit {
       label: 'Knora v ',
       icon: 'knora_icon',
       route: 'https://github.com/dhlab-basel/Knora/releases/tag/v'
-    },
-    {
-      label: 'Akka v ',
-      icon: 'akka_icon',
-      route: 'https://github.com/akka/akka-http/releases/tag/v'
     }
   ];
 
@@ -56,10 +51,12 @@ export class InfoMenuComponent implements OnInit {
       'knora_icon',
       this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-icon.svg')
     );
+    /*
     this._matIconRegistry.addSvgIcon(
       'akka_icon',
       this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/akka-icon.svg')
     );
+    */
   }
 
   ngOnInit() {
@@ -90,8 +87,8 @@ export class InfoMenuComponent implements OnInit {
 
     this.versions[1].label += this.apiVersion;
     this.versions[1].route += this.apiVersion;
-    this.versions[2].label += this.akkaVersion;
-    this.versions[2].route += this.akkaVersion;
+    // this.versions[2].label += this.akkaVersion;
+    // this.versions[2].route += this.akkaVersion;
 
     this.loading = false;
 
