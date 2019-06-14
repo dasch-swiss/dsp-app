@@ -14,8 +14,8 @@ It's possible to look at data only in your own project or across all public proj
 ## Table of contents
 {: .no_toc .text-delta }
 
-1. TOC
-{:toc}
+  1. TOC
+  {:toc}
 
 ---
 
