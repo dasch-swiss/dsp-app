@@ -14,9 +14,6 @@ Coming soon
 
 ---
 
-# Create your data model
-{: .no_toc }
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -48,7 +45,7 @@ Relationship of the data by source type
 
 In the data model editor, you have to select your source types from a predefined list on the right-hand side. Later, you can customize the source type or define an additional default source type, if the one you need doesn't exist as a default.
 
-![Data model editor 1: Select all your main source types by drag and drop; e.g. for an interview, select the source type "Audio / Sound / Interview".](/assets/images/data-model-add-source.png)
+![Data model editor 1: Select all your main source types by drag and drop; e.g. for an interview, select the source type "Audio / Sound / Interview".](../assets/images/data-model-add-source.png)
 Data model editor 1: Select all your main source types by drag and drop; e.g. for an interview, select the source type "Audio / Sound / Interview".
 
 In our example with the interview and the photographs, you drag and drop the following main source types from the list on the right-hand side:

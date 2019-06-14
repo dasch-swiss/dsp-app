@@ -13,8 +13,6 @@ Coming soon
 
 ---
 
-# Generate data and / or add your data
-
 Once your data model is ready, you're able to add data. The Knora web app app offers several possibilities to add data, whether you are starting from scratch or importing data from another program.
 
 ## Start from scratch

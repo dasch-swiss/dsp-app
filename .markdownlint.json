@@ -8,5 +8,15 @@
     },
     "no-hard-tabs": false,
     "line-length": false,
-    "list-indent": false
+    "list-indent": false,
+    "no-multiple-blanks": {
+        "maximum": 1
+    },
+    "blanks-around-headings": {
+        "lines_below": 0
+    },
+    "indentation": true,
+    "ul-indent": {
+        "indent": 0
+    }
 }
