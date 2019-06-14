@@ -11,8 +11,8 @@ Once a search is submitted, the relevant results are displayed in the user inter
 ## Table of contents
 {: .no_toc .text-delta }
 
-  1. TOC
-  {:toc}
+1. TOC
+{:toc}
 
 ---
 
