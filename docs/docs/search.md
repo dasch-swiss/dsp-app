@@ -40,7 +40,7 @@ The expert search can be more powerful than the advanced search, but requires kn
 
 For example, you could search for a photograph in a transcript that contains a certain element and also mentions a person, who lived in the same country as another person, who is the author of another photograph.
 
-To learn Gravsearch, go to the Knora documentation: <https://docs.knora.org/paradox/03- apis/api-v2/query-language.html>
+To learn Gravsearch, go to the Knora documentation [&rarr; Gravsearch](https://docs.knora.org/paradox/03-apis/api-v2/query-language.html)
 
 ![Search 3: Expert search is a text area in which you can create Gravsearch queries.](../assets/images/search-expert-gravsearch.png)
 Search 3: Expert search is a text area in which you can create Gravsearch queries.
