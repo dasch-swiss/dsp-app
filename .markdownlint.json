@@ -7,5 +7,6 @@
         "indent": 4
     },
     "no-hard-tabs": false,
-    "line-length": false
+    "line-length": false,
+    "list-indent": false
 }
