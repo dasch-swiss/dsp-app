@@ -6,8 +6,7 @@ description: "Just the Docs is a responsive Jekyll theme with built-in search th
 permalink: /
 ---
 
-# User guide for the Knora web app
-{: .fs-9 }
+<!-- # User guide for the Knora web app -->
 
 This is the documentation for the generic web application of the Data and Service Center for Humanities DaSCH.
 {: .fs-6 .fw-300 }
