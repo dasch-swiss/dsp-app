@@ -1,11 +1,5 @@
 {
     "default": true,
-    "MD003": {
-        "style": "atx"
-    },
-    "MD007": {
-        "indent": 2
-    },
     "no-hard-tabs": false,
     "line-length": false,
     "list-indent": false,
@@ -20,7 +14,7 @@
     },
     "indentation": false,
     "ul-indent": {
-        "indent": 0
+        "indent": 0,
     },
     "list-marker-space": {
         "ul_single": 1,
