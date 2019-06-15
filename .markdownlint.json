@@ -12,12 +12,15 @@
     "no-multiple-blanks": {
         "maximum": 1
     },
+    "heading-style": {
+        "style": "atx"
+    },
     "blanks-around-headings": {
         "lines_below": 0
     },
-    "indentation": true,
+    "indentation": false,
     "ul-indent": {
-        "indent": 0
+        "indent": 2
     },
     "list-marker-space": {
         "ul_single": 1,
