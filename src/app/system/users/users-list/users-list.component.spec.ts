@@ -73,7 +73,7 @@ describe('UsersListComponent', () => {
     }));
 
 
-    // Mock localStorage
+    // mock localStorage
     beforeEach(() => {
         let store = {};
 

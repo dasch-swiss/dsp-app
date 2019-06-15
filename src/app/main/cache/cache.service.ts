@@ -79,7 +79,7 @@ export class CacheService {
      * Notifies all observers of the new value
      */
     set(key: string, value: any, maxAge: number = this.DEFAULT_MAX_AGE): void {
-        this.cache.set(key, {value: value, expiry: Date.now() + maxAge});
+        this.cache.set(key, { value: value, expiry: Date.now() + maxAge });
         this.notifyInFlightObservers(key, value);
     }
 
@@ -92,7 +92,7 @@ export class CacheService {
 
     /**
      * delete a cached content by key
-     * @param key
+     * @param key Key is the id of the content
      */
     del(key: string) {
         this.cache.delete(key);

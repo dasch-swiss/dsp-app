@@ -6,9 +6,6 @@ has_children: false
 permalink: /docs/search-results
 ---
 
-# Display search results
-{: .no_toc }
-
 Once a search is submitted, the relevant results are displayed in the user interface. You have three layout choices: a simple list, a lighttable, or a table-based Excel-like view.
 
 ## Table of contents

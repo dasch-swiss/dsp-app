@@ -61,7 +61,7 @@ export class ProjectFormComponent implements OnInit {
     removable = true;
     addOnBlur = true;
 
-        /**
+    /**
      * success of sending data
      */
     success = false;
@@ -83,8 +83,8 @@ export class ProjectFormComponent implements OnInit {
         'longname': '',
         'shortcode': '',
         'description': ''
-//        'institution': '',
-//        'keywords': '',
+        //        'institution': '',
+        //        'keywords': '',
     };
 
     validationMessages = {
@@ -109,19 +109,19 @@ export class ProjectFormComponent implements OnInit {
             'required': 'A description is required.',
             'maxlength': 'Description cannot be more than ' + this.descriptionMaxLength + ' characters long.'
         }
-//        'institution': {},
-//        'keywords': {
-//            'required': 'At least one keyword is required.'
-//        }
+        //        'institution': {},
+        //        'keywords': {
+        //            'required': 'At least one keyword is required.'
+        //        }
     };
 
-    constructor(private _cache: CacheService,
-                private _route: ActivatedRoute,
-                private _router: Router,
-                private _projects: ProjectsService,
-                private _users: UsersService,
-                private _fb: FormBuilder,
-                private _titleService: Title) {
+    constructor (private _cache: CacheService,
+        private _route: ActivatedRoute,
+        private _router: Router,
+        private _projects: ProjectsService,
+        private _users: UsersService,
+        private _fb: FormBuilder,
+        private _titleService: Title) {
 
         // set the page title
         // this._titleService.setTitle('New project');
@@ -205,34 +205,34 @@ export class ProjectFormComponent implements OnInit {
             'shortname': new FormControl({
                 value: project.shortname, disabled: editMode
             }, [
-                Validators.required,
-                Validators.minLength(this.shortnameMinLength),
-                Validators.maxLength(this.shortnameMaxLength),
-                existingNamesValidator(this.existingShortNames),
-                Validators.pattern(this.shortnameRegex)
-            ]),
+                    Validators.required,
+                    Validators.minLength(this.shortnameMinLength),
+                    Validators.maxLength(this.shortnameMaxLength),
+                    existingNamesValidator(this.existingShortNames),
+                    Validators.pattern(this.shortnameRegex)
+                ]),
             'longname': new FormControl({
                 value: project.longname, disabled: disabled
             }, [
-                Validators.required
-            ]),
+                    Validators.required
+                ]),
             'shortcode': new FormControl({
                 value: project.shortcode, disabled: (editMode && project.shortcode !== null)
             }, [
-                Validators.required,
-                Validators.minLength(this.shortcodeMinLength),
-                Validators.maxLength(this.shortcodeMaxLength),
-                existingNamesValidator(this.existingShortcodes),
-                Validators.pattern(this.shortcodeRegex)
-            ]),
+                    Validators.required,
+                    Validators.minLength(this.shortcodeMinLength),
+                    Validators.maxLength(this.shortcodeMaxLength),
+                    existingNamesValidator(this.existingShortcodes),
+                    Validators.pattern(this.shortcodeRegex)
+                ]),
             'description': new FormControl({
                 value: project.description[0].value, disabled: disabled
             }, [
-                Validators.maxLength(this.descriptionMaxLength)
-            ]),
-//            'institution': new FormControl({
-//                value: project.institution, disabled: disabled
-//            }),
+                    Validators.maxLength(this.descriptionMaxLength)
+                ]),
+            //            'institution': new FormControl({
+            //                value: project.institution, disabled: disabled
+            //            }),
             'logo': new FormControl({
                 value: project.logo, disabled: disabled
             }),
@@ -274,10 +274,6 @@ export class ProjectFormComponent implements OnInit {
         });
     }
 
-    /**
-     *
-     * @param {MatChipInputEvent} event
-     */
     addKeyword(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
@@ -286,21 +282,17 @@ export class ProjectFormComponent implements OnInit {
             this.keywords = [];
         }
 
-        // Add keyword
+        // add keyword
         if ((value || '').trim()) {
             this.keywords.push(value.trim());
         }
 
-        // Reset the input value
+        // reset the input value
         if (input) {
             input.value = '';
         }
     }
 
-    /**
-     *
-     * @param keyword
-     */
     removeKeyword(keyword: any): void {
 
         const index = this.keywords.indexOf(keyword);
@@ -334,7 +326,7 @@ export class ProjectFormComponent implements OnInit {
             this._projects.updateProject(this.project.id, this.form.value).subscribe(
                 (result: Project) => {
 
-//                    console.log(result);
+                    //                    console.log(result);
                     this.project = result;
                     this.buildForm(this.project);
 
@@ -375,7 +367,7 @@ export class ProjectFormComponent implements OnInit {
                                     this.loading = false;
                                     this.closeMessage();
                                     // redirect to (new) project page
-                                    this._router.navigateByUrl('/project', {skipLocationChange: true}).then(() =>
+                                    this._router.navigateByUrl('/project', { skipLocationChange: true }).then(() =>
                                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
                                     );
                                 },
@@ -483,7 +475,7 @@ export class ProjectFormComponent implements OnInit {
         this.buildForm(project);
 
         // TODO: fix "set value" for keywords field
-//        this.form.controls['keywords'].setValue(this.keywords);
+        //        this.form.controls['keywords'].setValue(this.keywords);
     }
 
     closeMessage() {

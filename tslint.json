@@ -8,7 +8,15 @@
     "class-name": true,
     "comment-format": [
       true,
-      "check-space"
+      "check-space",
+      "check-lowercase",
+      {
+        "ignore-words": [
+          "FIXME",
+          "HACK",
+          "TODO"
+        ]
+      }
     ],
     "curly": true,
     "deprecation": {
@@ -86,7 +94,9 @@
     "prefer-const": true,
     "quotemark": [
       true,
-      "single"
+      "single",
+      "jsx-single",
+      "avoid-escape"
     ],
     "radix": true,
     "semicolon": [

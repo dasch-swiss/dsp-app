@@ -13,8 +13,6 @@ Coming soon
 
 ---
 
-# Work on your data
-
 Once you found the desired sources, you can (re)view them and annotate the source itself, the media file, or single metadata values. If you select more than one source, you can compare them in a side-by-side view, link them, edit them all at once, or save them in a collection. A collection is similar to a playlist in a music app or shopping basket in an online store.
 
 ## Display a source

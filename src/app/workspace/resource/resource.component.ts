@@ -4,65 +4,67 @@ import { ActivatedRoute, Params, Router, NavigationStart, NavigationEnd, Navigat
 import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-resource',
-    templateUrl: './resource.component.html',
-    styleUrls: ['./resource.component.scss']
+  selector: 'app-resource',
+  templateUrl: './resource.component.html',
+  styleUrls: ['./resource.component.scss']
 })
 export class ResourceComponent implements OnInit, OnDestroy {
 
-    resourceIri: string;
+  resourceIri: string;
 
-    refresh: boolean;
+  refresh: boolean;
 
-    navigationSubscription: Subscription;
+  navigationSubscription: Subscription;
 
-    constructor(private _route: ActivatedRoute,
-                private _router: Router,
-                private _location: Location) {
+  constructor (private _route: ActivatedRoute,
+    private _router: Router,
+    private _location: Location) {
 
-                  this._route.paramMap.subscribe((params: Params) => {
-                    this.resourceIri = decodeURIComponent(params.get('id'));
-                  });
+    this._route.paramMap.subscribe((params: Params) => {
+      this.resourceIri = decodeURIComponent(params.get('id'));
+    });
 
-                  this._router.events.subscribe( (event) => {
+    this._router.events.subscribe((event) => {
 
-                    if (event instanceof NavigationStart) {
-                        // Show loading indicator
-//                        console.log('NavigationStart', this.resourceIri);
-                    }
+      if (event instanceof NavigationStart) {
+        // show loading indicator
+        // console.log('NavigationStart', this.resourceIri);
+      }
 
-                    if (event instanceof NavigationEnd) {
-                        // Hide loading indicator
-                        this.refresh = true;
-                        // console.log('NavigationEnd', this.resourceIri);
-                        this.refresh = false;
-                    }
+      if (event instanceof NavigationEnd) {
+        // hide loading indicator
+        this.refresh = true;
+        // console.log('NavigationEnd', this.resourceIri);
+        this.refresh = false;
+      }
 
-                    if (event instanceof NavigationError) {
-                        // Hide loading indicator
+      if (event instanceof NavigationError) {
+        // hide loading indicator
 
-                        // Present error to user
-                        console.error(event.error);
-                    }
-                });
-    }
+        // present error to user
+        console.error(event.error);
+      }
+    });
+  }
 
-    ngOnInit() {
-/*       this.navigationSubscription = this._route.paramMap.subscribe((params: ParamMap) => {
-          this.refresh = true;
-          // this.getResource(params.get('id'));
-          this.refresh = false;
-      }); */
+  ngOnInit() {
+    /*
+    this.navigationSubscription = this._route.paramMap.subscribe((params: ParamMap) => {
+      this.refresh = true;
+      // this.getResource(params.get('id'));
+      this.refresh = false;
+    });
+    */
 
   }
 
   ngOnDestroy() {
-      if (this.navigationSubscription !== undefined) {
-          this.navigationSubscription.unsubscribe();
-      }
+    if (this.navigationSubscription !== undefined) {
+      this.navigationSubscription.unsubscribe();
+    }
   }
 
-    goBack() {
-      this._location.back();
-    }
+  goBack() {
+    this._location.back();
+  }
 }
