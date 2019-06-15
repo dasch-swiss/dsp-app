@@ -99,7 +99,7 @@ describe('UserComponent', () => {
         }).compileComponents();
     }));
 
-    // Mock localStorage
+    // mock localStorage
     beforeEach(() => {
         let store = {};
 

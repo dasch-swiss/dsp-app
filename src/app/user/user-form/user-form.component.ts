@@ -70,8 +70,8 @@ export class UserFormComponent implements OnInit, OnChanges {
     subtitle: string;
 
     /**
-     *  send user data to parent component;
-     *  in case of dialog box?
+     * send user data to parent component;
+     * in case of dialog box?
      */
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<User>();
 
@@ -252,15 +252,15 @@ export class UserFormComponent implements OnInit, OnChanges {
                 .get('allUsers', this._users.getAllUsers())
                 .subscribe((result: User[]) => {
                     for (const user of result) {
-                        // The email address of the user should be unique.
-                        // Therefore we create a list of existing email addresses to avoid multiple use of user names
+                        // email address of the user should be unique.
+                        // therefore we create a list of existing email addresses to avoid multiple use of user names
                         this.existingEmails.push(
                             new RegExp(
                                 '(?:^|W)' + user.email.toLowerCase() + '(?:$|W)'
                             )
                         );
-                        // The username should also be unique.
-                        // Therefore we create a list of existingUsernames to avoid multiple use of user names
+                        // username should also be unique.
+                        // therefore we create a list of existingUsernames to avoid multiple use of user names
                         this.existingUsernames.push(
                             new RegExp(
                                 '(?:^|W)' +
@@ -368,20 +368,16 @@ export class UserFormComponent implements OnInit, OnChanges {
                 value: this.sysAdminPermission,
                 disabled: editMode
             })
-            //            'systemAdmin': this.sysAdminPermission,
-            //            'group': null
+            // 'systemAdmin': this.sysAdminPermission,
+            // 'group': null
         });
 
-        //        this.loading = false;
+        // this.loading = false;
 
         this.form.valueChanges.subscribe(data => this.onValueChanged());
         return true;
     }
 
-    /**
-     *
-     * @param data
-     */
     onValueChanged() {
         if (!this.form) {
             return;
@@ -409,9 +405,6 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.showPassword = !this.showPassword;
     }
 
-    /**
-     *
-     */
     submitData(): void {
         this.loading = true;
 

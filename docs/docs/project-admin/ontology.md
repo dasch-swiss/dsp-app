@@ -14,9 +14,6 @@ Coming soon
 
 ---
 
-# Create your data model
-{: .no_toc }
-
 ## Table of contents
 {: .no_toc .text-delta }
 
@@ -41,14 +38,14 @@ For example: You interviewed 20 people. During these interviews, which you taped
 
 Diagram 1 shows the relationships of the data by source type from these experiences.
 
-![Relationship of the data by source type](/assets/images/diagram-data-model.png)
+![Relationship of the data by source type](../../assets/images/diagram-data-model.png)
 Relationship of the data by source type
 
 ## Select your SOURCE TYPES
 
 In the data model editor, you have to select your source types from a predefined list on the right-hand side. Later, you can customize the source type or define an additional default source type, if the one you need doesn't exist as a default.
 
-![Data model editor 1: Select all your main source types by drag and drop; e.g. for an interview, select the source type "Audio / Sound / Interview".](/assets/images/data-model-add-source.png)
+![Data model editor 1: Select all your main source types by drag and drop; e.g. for an interview, select the source type "Audio / Sound / Interview".](../../assets/images/data-model-add-source.png)
 Data model editor 1: Select all your main source types by drag and drop; e.g. for an interview, select the source type "Audio / Sound / Interview".
 
 In our example with the interview and the photographs, you drag and drop the following main source types from the list on the right-hand side:
@@ -63,14 +60,14 @@ In our example with the interview and the photographs, you drag and drop the fol
 
 The predefined source types offer a suggested list of metadata fields. This list could help to create a data model simply and quickly. It's also possible to deselect the suggested metadata fields (e.g., no metadata), to adapt others and to customize them.
 
-![Data model editor 2: Add additional metadata fields to your source type; e.g. add the missing field "Person".](/assets/images/data-model-add-property.png)
+![Data model editor 2: Add additional metadata fields to your source type; e.g. add the missing field "Person".](../../assets/images/data-model-add-property.png)
 Data model editor 2: Add additional metadata fields to your source type; e.g. add the missing field "Person".
 
 ## Customize the SOURCE TYPES and the METADATA fields (optional)
 
 It's possible to customize the predefined source type and the metadata field values by clicking on the edit button of the source type. You can rename the source type, rearrange the order of the metadata fields, and set permissions.
 
-![Data model editor 3: Customize the source type AUDIO; e.g. rename it into Interview](/assets/images/data-model-edit-source.png)
+![Data model editor 3: Customize the source type AUDIO; e.g. rename it into Interview](../../assets/images/data-model-edit-source.png)
 Data model editor 3: Customize the source type AUDIO; e.g. rename it into Interview
 
 ## Connect SOURCE TYPES in the data model (optional)
@@ -78,5 +75,5 @@ Data model editor 3: Customize the source type AUDIO; e.g. rename it into Interv
 If you have reusable metadata value in a source type (A), you should create an additional source type (B) and drag-and-drop it over the metadata field of the first source type (A) to connect the two data types.
 E.g., For the metadata "Photographer" in source type "Photograph", you should create a source type "Person" and connect it in "Photograph".
 
-![Data model editor 4: Manage connections between the source types.](/assets/images/data-model-example.png)
+![Data model editor 4: Manage connections between the source types.](../../assets/images/data-model-example.png)
 Data model editor 4: Manage connections between the source types.

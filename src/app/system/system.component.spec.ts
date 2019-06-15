@@ -33,7 +33,7 @@ describe('SystemComponent', () => {
         }).compileComponents();
     }));
 
-    // Mock localStorage
+    // mock localStorage
     beforeEach(() => {
         let store = {};
 

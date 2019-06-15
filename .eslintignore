@@ -1,0 +1,10 @@
+# copied from @angular/material
+# Ignore miscellaneous folders
+.github/
+.idea/
+node_modules/
+dist/
+tmp/
+
+# Ignore certain project files
+docs/assets/js/

@@ -27,12 +27,12 @@ export class ProfileComponent implements OnInit {
 
     user: User;
 
-    constructor(private _cache: CacheService,
-                private _dialog: MatDialog,
-                private _route: ActivatedRoute,
-                private _router: Router,
-                private _usersService: UsersService,
-                private _titleService: Title) {
+    constructor (private _cache: CacheService,
+        private _dialog: MatDialog,
+        private _route: ActivatedRoute,
+        private _router: Router,
+        private _usersService: UsersService,
+        private _titleService: Title) {
 
         // get username from route and set the cache
         /*
@@ -50,7 +50,7 @@ export class ProfileComponent implements OnInit {
                 }
             }
             */
-        //}
+        // }
 
         // get info about the logged-in user: does he have the right to change user's profile?
         if (localStorage.getItem('session') && !this.loggedInUser) {
