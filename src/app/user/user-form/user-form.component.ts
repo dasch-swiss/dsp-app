@@ -454,6 +454,10 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this.user = user;
                     this.buildForm(this.user);
 
+                    // update cache: users list
+                    this._cache.del('allUsers');
+                    this._cache.get('allUsers', this._users.getAllUsers());
+
                     if (this.projectcode) {
                         // if a projectcode exists, add the user to the project
                         // get project iri by projectcode
@@ -463,70 +467,29 @@ export class UserFormComponent implements OnInit, OnChanges {
                                 this.projectcode
                             )
                         );
-                        this._cache
-                            .get(
-                                this.projectcode,
-                                this._projectsService.getProjectByShortcode(
-                                    this.projectcode
-                                )
-                            )
-                            .subscribe(
-                                (p: Project) => {
-                                    // add user to project
-                                    this._users
-                                        .addUserToProject(this.user.id, p.id)
-                                        .subscribe(
-                                            () => {
-                                                // update project cache and member of project cache
-                                                this._cache.get(
-                                                    this.projectcode,
-                                                    this._projectsService.getProjectByShortcode(
-                                                        this.projectcode
-                                                    )
-                                                );
-                                                this._cache.get(
-                                                    'members_of_' +
-                                                    this.projectcode,
-                                                    this._projectsService.getProjectMembersByShortcode(
-                                                        this.projectcode
-                                                    )
-                                                );
-
-                                                // redirect to project collaborator's page
-                                                /*
-                                                this._router
-                                                    .navigateByUrl('/user', {
-                                                        skipLocationChange: true
-                                                    })
-                                                    .then(() =>
-                                                        this._router.navigate([
-                                                            returnUrl
-                                                        ])
-                                                    );
-                                                    */
-
-                                                this.closeMessage();
-                                                this.loading = false;
-                                            },
-                                            (error: any) => {
-                                                console.error(error);
-                                            }
-                                        );
-                                },
-                                (error: any) => {
-                                    console.error(error);
-                                }
-                            );
+                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
+                            (p: Project) => {
+                                // add user to project
+                                this._users.addUserToProject(this.user.id, p.id).subscribe(
+                                    () => {
+                                        // update project cache and member of project cache
+                                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+                                        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+                                        this.closeMessage();
+                                        this.loading = false;
+                                    },
+                                    (error: any) => {
+                                        console.error(error);
+                                    }
+                                );
+                            },
+                            (error: any) => {
+                                console.error(error);
+                            }
+                        );
                     } else {
                         this.closeMessage();
                         this.loading = false;
-
-                        /*                         // redirect to (new) user's page
-                                                this._router
-                                                    .navigateByUrl('/user', {
-                                                        skipLocationChange: true
-                                                    })
-                                                    .then(() => this._router.navigate([returnUrl])); */
                     }
                 },
                 (error: ApiServiceError) => {
