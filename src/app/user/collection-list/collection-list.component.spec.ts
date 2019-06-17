@@ -10,7 +10,9 @@ describe('CollectionListComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [CollectionListComponent],
-            imports: [KuiActionModule]
+            imports: [
+                KuiActionModule
+            ]
         }).compileComponents();
     }));
 

@@ -13,7 +13,9 @@
         <!-- user profile info: status, description etc.? -->
         <ul class="user-profile-info">
             <br>
-            <li><mat-icon>flag</mat-icon>{{user.lang}}</li>
+            <li>
+                <mat-icon>flag</mat-icon>{{user.lang}}
+            </li>
             <li class="status text-only" [class.active]="user.status">
                 <mat-icon>info</mat-icon>
                 <span *ngIf="user.status">Active</span>
@@ -31,11 +33,11 @@
 </div>
 
 <!-- different view for public user profile -->
+<!-- NOT SUPPORTED ANYMORE
 <div *ngIf="!loading && user && !loggedInUser" class="content large middle user-profile">
 
-
-        <h2 class="mat-title">{{user.givenName}}<br>{{user.familyName}}</h2>
-        <h3 class="mat-body subtitle">{{user.username}}</h3>
-
+    <h2 class="mat-title">{{user.givenName}}<br>{{user.familyName}}</h2>
+    <h3 class="mat-body subtitle">{{user.username}}</h3>
 
 </div>
+-->
