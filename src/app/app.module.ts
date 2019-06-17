@@ -48,7 +48,6 @@ import { UsersListComponent } from './system/users/users-list/users-list.compone
 import { UsersComponent } from './system/users/users.component';
 import { AccountComponent } from './user/account/account.component';
 import { CollectionListComponent } from './user/collection-list/collection-list.component';
-import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
@@ -99,7 +98,6 @@ export function initializeApp(appInitService: AppInitService) {
         UserPasswordComponent,
         CollectionListComponent,
         UserMenuComponent,
-        CreateMenuComponent,
         MainComponent,
         HeaderComponent,
         ErrorComponent,
