@@ -2,29 +2,29 @@
   "version": "v1",
   "packages": {
     "@knora/core": {
-      "signature": "e87b194654367d891e088af1b352750a",
+      "signature": "8dc268c3fc42a2d38b67c314eac705d1",
+      "file": true,
+      "replaced": "7.6.0"
+    },
+    "@knora/authentication": {
+      "signature": "bcd5beb8b5e6edb8e75386d03636413a",
       "file": true,
       "replaced": "7.6.0"
     },
     "@knora/search": {
-      "signature": "50fd735d8085b5704a454a277090b207",
+      "signature": "9afd14e49b3554e4a1fd216395d5e937",
       "file": true,
-      "replaced": "7.5.0"
-    },
-    "@knora/action": {
-      "signature": "e824cc6c0653c49944b06ab434142124",
-      "file": true,
-      "replaced": "7.5.0"
-    },
-    "@knora/authentication": {
-      "signature": "9cd2affc30d462bcc225894bf0b67e94",
-      "file": true,
-      "replaced": "7.3.0"
+      "replaced": "7.6.0"
     },
     "@knora/viewer": {
-      "signature": "16d2ca1b50fc21966d76d487f79c7f2e",
+      "signature": "177eaa107ea7982d8e9f121af3666807",
       "file": true,
-      "replaced": "7.4.0"
+      "replaced": "7.6.0"
+    },
+    "@knora/action": {
+      "signature": "ad6ca4bfbaa45db046696334cb5effbb",
+      "file": true,
+      "replaced": "7.6.0"
     }
   }
 }
