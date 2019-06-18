@@ -3,7 +3,6 @@ import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
-import { AppInitService } from 'src/app/app-init.service';
 
 @Component({
     selector: 'app-header',
@@ -13,8 +12,6 @@ import { AppInitService } from 'src/app/app-init.service';
 export class HeaderComponent implements OnInit {
 
     session: boolean;
-
-    appName: string = AppInitService.coreConfig.name;
 
     constructor (private _auth: AuthenticationService,
         private _domSanitizer: DomSanitizer,

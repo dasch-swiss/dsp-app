@@ -2,9 +2,8 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ApiService, KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
 import { MenuItem } from '../declarations/menu-item';
-import { AppInitService } from 'src/app/app-init.service';
 
 declare let require: any;
 const { version: appVersion } = require('../../../../package.json');
@@ -18,8 +17,6 @@ export class InfoMenuComponent implements OnInit {
 
   loading: boolean = true;
 
-  appName: string = AppInitService.coreConfig.name;
-
   appVersion: string = appVersion;
   apiVersion: string;
   akkaVersion: string;
@@ -28,18 +25,18 @@ export class InfoMenuComponent implements OnInit {
 
   versions: MenuItem[] = [
     {
-      label: this.appName + ' v ' + this.appVersion,
+      label: '',
       icon: 'kuirl_icon',
       route: 'https://github.com/dhlab-basel/Kuirl/releases/tag/v' + this.appVersion
     },
     {
-      label: 'Knora v ',
+      label: 'Knora v',
       icon: 'knora_icon',
       route: 'https://github.com/dhlab-basel/Knora/releases/tag/v'
     }
   ];
 
-  constructor (private _apiService: ApiService,
+  constructor (
     @Inject(KuiCoreConfigToken) public config: KuiCoreConfig,
     private _domSanitizer: DomSanitizer,
     private _matIconRegistry: MatIconRegistry,
@@ -63,6 +60,8 @@ export class InfoMenuComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.versions[0].label = KuiCoreConfig.name + ' v' + this.appVersion;
 
     this._http.get<HttpResponse<any>>(this.config.api + '/v2/authentication', { observe: 'response' })
       .subscribe(
