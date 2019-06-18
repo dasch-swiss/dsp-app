@@ -422,4 +422,17 @@ export class UsersListComponent implements OnInit {
             }
         );
     }
+
+    disableMenu(): boolean {
+
+        // disable menu in case of:
+        // project.status = false
+        if (this.project && this.project.status === false) {
+            return true;
+        } else {
+            return (!this.sysAdmin && !this.projectAdmin);
+        }
+
+
+    }
 }
