@@ -49,10 +49,10 @@ const routes: Routes = [
             {
                 path: '',
                 pathMatch: 'full',
-                redirectTo: 'board'
+                redirectTo: 'info'
             },
             {
-                path: 'board',
+                path: 'info',
                 component: BoardComponent
             },
             {

@@ -6,7 +6,7 @@ export class AppGlobal {
     public static projectNav: MenuItem[] = [
         {
             label: 'Project information',
-            route: 'board',
+            route: 'info',
             icon: 'assignment'
         },
         {
