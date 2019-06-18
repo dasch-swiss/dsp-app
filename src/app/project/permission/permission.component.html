@@ -1,8 +1,8 @@
 <div *ngIf="projectAdmin" class="content large middle">
 
   <!-- add user to the project -->
-  <app-add-user *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()"
-                #addUserComponent></app-add-user>
+  <app-add-group *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()"
+                 #addGroupComponent></app-add-group>
 
   <!-- <mat-divider *ngIf="project?.status" ></mat-divider> -->
 
