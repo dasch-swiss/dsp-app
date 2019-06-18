@@ -11,8 +11,8 @@ export class AppComponent implements OnInit {
 
     session: boolean = false;
 
-    constructor(private _titleService: Title,
-                private _auth: AuthenticationService) {
+    constructor (private _titleService: Title,
+        private _auth: AuthenticationService) {
 
         // set the page title
         this._titleService.setTitle('Knora User Interface | Research Layer');
@@ -20,10 +20,7 @@ export class AppComponent implements OnInit {
         this.session = this._auth.session();
     }
 
-    ngOnInit () {
-        // get info about the logged-in person;
-        // in case of guest user show landing page without full header
+    ngOnInit() {
 
     }
-
 }

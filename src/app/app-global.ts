@@ -1,6 +1,7 @@
 import { MenuItem } from './main/declarations/menu-item';
 
 export class AppGlobal {
+
     // project navigation
     public static projectNav: MenuItem[] = [
         {

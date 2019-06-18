@@ -1,9 +1,8 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router, Params } from '@angular/router';
 import { User, UsersService } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
-import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogComponent } from '../../main/dialog/dialog.component';
 
 @Component({
@@ -29,28 +28,8 @@ export class ProfileComponent implements OnInit {
 
     constructor (private _cache: CacheService,
         private _dialog: MatDialog,
-        private _route: ActivatedRoute,
-        private _router: Router,
         private _usersService: UsersService,
         private _titleService: Title) {
-
-        // get username from route and set the cache
-        /*
-        if (this._route.snapshot.params.name  && (this._route.snapshot.params.name.length > 3)) {
-            this._route.paramMap.subscribe((params: Params) => {
-                this.username = params.get('name');
-            });
-//            this.username = this._route.snapshot.params.name;
-            this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
-            /*
-            if (localStorage.getItem('session') && !this.loggedInUser) {
-                if (this.username === JSON.parse(localStorage.getItem('session')).user.name) {
-                    // redirect to logged-in user profile
-                    this._router.navigate(['/profile']);
-                }
-            }
-            */
-        // }
 
         // get info about the logged-in user: does he have the right to change user's profile?
         if (localStorage.getItem('session') && !this.loggedInUser) {

@@ -48,20 +48,19 @@ import { UsersListComponent } from './system/users/users-list/users-list.compone
 import { UsersComponent } from './system/users/users.component';
 import { AccountComponent } from './user/account/account.component';
 import { CollectionListComponent } from './user/collection-list/collection-list.component';
-import { CreateMenuComponent } from './user/create-menu/create-menu.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
 import { UserPasswordComponent } from './user/user-form/user-password/user-password.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UserComponent } from './user/user.component';
-import { SearchComponent } from './workspace/search/search.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { GridComponent } from './main/grid/grid.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
+import { InfoMenuComponent } from './main/info-menu/info-menu.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -99,7 +98,6 @@ export function initializeApp(appInitService: AppInitService) {
         UserPasswordComponent,
         CollectionListComponent,
         UserMenuComponent,
-        CreateMenuComponent,
         MainComponent,
         HeaderComponent,
         ErrorComponent,
@@ -111,7 +109,6 @@ export function initializeApp(appInitService: AppInitService) {
         SelectGroupComponent,
         ResourceTypeComponent,
         DesignQuestionComponent,
-        SearchComponent,
         ResultsComponent,
         ResourceComponent,
         ExpertSearchComponent,
@@ -125,7 +122,8 @@ export function initializeApp(appInitService: AppInitService) {
         UsersListComponent,
         DialogHeaderComponent,
         GridComponent,
-        CookiePolicyComponent
+        CookiePolicyComponent,
+        InfoMenuComponent
     ],
     imports: [
         AppRoutingModule,

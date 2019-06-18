@@ -9,7 +9,7 @@ import { KuiViewerModule } from '@knora/viewer';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExpertSearchComponent } from './expert-search.component';
 
-describe('ExpertSearchComponent', () => {
+xdescribe('ExpertSearchComponent', () => {
     let component: ExpertSearchComponent;
     let fixture: ComponentFixture<ExpertSearchComponent>;
 

@@ -1,8 +1,6 @@
-<span class="action">
-    <button mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu">
-        <img kuiAdminImage [image]="user?.email" [type]="'user'" class="avatar"/>
-    </button>
-</span>
+<button mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu">
+    <img kuiAdminImage [image]="user?.email" [type]="'user'" class="avatar" />
+</button>
 
 <mat-menu #userMenu="matMenu" xPosition="before" class="menu">
     <!-- first line: user name and close button -->
@@ -24,7 +22,6 @@
 
         <mat-list class="navigation">
             <mat-list-item *ngFor="let item of navigation; let i = index;" class="nav-item">
-
                 <button mat-button [routerLink]="item.route" routerLinkActive="active-link" class="nav-item button">
                     <mat-icon class="prefix">{{item.icon}}</mat-icon>
                     <span class="label">{{item.label}}</span>
@@ -35,7 +32,8 @@
 
             <mat-list-item class="nav-item" *ngIf="sysAdmin">
 
-                <button mat-button [routerLink]="'/system'" routerLinkActive="active-link" class="nav-item button border-top">
+                <button mat-button [routerLink]="'/system'" routerLinkActive="active-link"
+                        class="nav-item button border-top">
                     <mat-icon class="prefix">all_inbox</mat-icon>
                     <span class="label">System</span>
                 </button>

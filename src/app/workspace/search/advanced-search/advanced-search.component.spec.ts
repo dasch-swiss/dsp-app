@@ -7,6 +7,7 @@ import { KuiViewerModule } from '@knora/viewer';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AdvancedSearchComponent', () => {
     let component: AdvancedSearchComponent;
@@ -16,6 +17,7 @@ describe('AdvancedSearchComponent', () => {
         TestBed.configureTestingModule({
             declarations: [AdvancedSearchComponent],
             imports: [
+                HttpClientTestingModule,
                 KuiSearchModule,
                 KuiViewerModule,
                 MatExpansionModule,

@@ -17,7 +17,7 @@ export class MainComponent implements OnInit {
 
     showCookieBanner: boolean = true;
 
-    researchField: string;
+    researchField: string = 'qualitative';
 
     session: boolean = false;
 
