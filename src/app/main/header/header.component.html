@@ -13,17 +13,19 @@
     <span class="fill-remaining-space"></span>
 
     <span class="action">
-        <kui-fulltext-search [route]="'/search'" [projectfilter]="true"></kui-fulltext-search>
+        <kui-search-panel [route]="'/search'" [projectfilter]="true" [expert]="false" [advanced]="false">
+        </kui-search-panel>
+        <!-- <kui-fulltext-search [route]="'/search'" [projectfilter]="true"></kui-fulltext-search> -->
     </span>
-    <button mat-icon-button [matMenuTriggerFor]="menu">
+    <button mat-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
         <button mat-menu-item routerLink="/search/advanced">
-            <span>Advanced</span>
+            <span>Advanced search</span>
         </button>
         <button mat-menu-item routerLink="/search/expert">
-            <span>Expert</span>
+            <span>Expert search</span>
         </button>
     </mat-menu>
 
