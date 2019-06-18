@@ -38,6 +38,7 @@
     "jdnconvertiblecalendardateadapter": "^0.0.9",
     "json2typescript": "^1.0.6",
     "jsonld": "^1.1.0",
+    "material-design-icons": "^3.0.1",
     "moment": "^2.22.2",
     "openseadragon": "^2.4.0",
     "rxjs": "~6.4.0",

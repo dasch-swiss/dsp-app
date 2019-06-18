@@ -17,7 +17,7 @@ export class AppGlobal {
         {
             label: 'Groups',
             route: 'groups',
-            icon: 'supervised_user_circle'
+            icon: 'lock_open'
         },
         {
             label: 'Data model',
@@ -38,7 +38,7 @@ export class AppGlobal {
         {
             label: 'Your Projects',
             route: '/projects',
-            icon: 'all_inbox'
+            icon: 'assignment'
         },
         {
             label: 'Your Collections',
