@@ -89,10 +89,12 @@ a,
 .logo,
 .action {
   .main-toolbar-button {
-    padding: 12px 0;
+    height: $header-height;
 
-    .mat-icon {
-      font-size: 30px;
+    .mat-icon.custom {
+      font-size: 36px;
+      margin-bottom: 12px;
+      margin-left: -12px;
       // margin-bottom: 5px;
     }
   }
