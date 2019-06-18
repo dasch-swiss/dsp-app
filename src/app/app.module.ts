@@ -63,6 +63,8 @@ import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.compon
 import { InfoMenuComponent } from './main/info-menu/info-menu.component';
 import { GroupsComponent } from './system/groups/groups.component';
 import { GroupsListComponent } from './system/groups/groups-list/groups-list.component';
+import { PermissionComponent } from './project/permission/permission.component';
+import { AddGroupComponent } from './project/permission/add-group/add-group.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -126,7 +128,9 @@ export function initializeApp(appInitService: AppInitService) {
         CookiePolicyComponent,
         InfoMenuComponent,
         GroupsComponent,
-        GroupsListComponent
+        GroupsListComponent,
+        PermissionComponent,
+        AddGroupComponent
     ],
     imports: [
         AppRoutingModule,

@@ -15,9 +15,9 @@ export class AppGlobal {
             icon: 'group'
         },
         {
-            label: 'Groups',
-            route: 'groups',
-            icon: 'supervised_user_circle'
+            label: 'Permission groups',
+            route: 'permissions',
+            icon: 'lock_open'
         },
         {
             label: 'Data model',

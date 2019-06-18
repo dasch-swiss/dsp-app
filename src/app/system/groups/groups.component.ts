@@ -7,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GroupsComponent implements OnInit {
 
-  constructor() { }
+  loading: boolean = false;
+
+  constructor () { }
 
   ngOnInit() {
   }

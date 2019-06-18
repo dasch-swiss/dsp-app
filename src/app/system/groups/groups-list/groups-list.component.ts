@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { KuiMessageData } from '@knora/action';
 
 @Component({
   selector: 'app-groups-list',
@@ -7,7 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GroupsListComponent implements OnInit {
 
-  constructor() { }
+  message: KuiMessageData = {
+    status: 200,
+    statusText: 'The list of permission groups is not yet implemented. But we are working on it.'
+  };
+
+  constructor () { }
 
   ngOnInit() {
   }
