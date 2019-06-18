@@ -61,7 +61,7 @@ export class InfoMenuComponent implements OnInit {
 
   ngOnInit() {
 
-    this.versions[0].label = KuiCoreConfig.name + ' v' + this.appVersion;
+    this.versions[0].label = this.config.name + ' v' + this.appVersion;
 
     this._http.get<HttpResponse<any>>(this.config.api + '/v2/authentication', { observe: 'response' })
       .subscribe(
