@@ -82,6 +82,10 @@ export class InfoMenuComponent implements OnInit {
 
   readVersion(v: string) {
 
+    if (!v) {
+      return;
+    }
+
     const versions: string[] = v.split(' ');
 
     this.apiVersion = versions[0].split('/')[1];
