@@ -63,7 +63,7 @@ export class InfoMenuComponent implements OnInit {
 
     this.versions[0].label = this.config.name + ' v' + this.appVersion;
 
-    this._http.get<HttpResponse<any>>(this.config.api + '/v2/authentication', { observe: 'response' })
+    this._http.get<HttpResponse<any>>(this.config.api + '/admin/projects', { observe: 'response' })
       .subscribe(
         (resp: HttpResponse<any>) => {
           // console.log('Stackoverflow', resp.headers.get('Server'));
