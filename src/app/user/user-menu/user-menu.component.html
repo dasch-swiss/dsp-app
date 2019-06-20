@@ -21,7 +21,8 @@
     <div class="menu-content">
 
         <mat-list class="navigation">
-            <mat-list-item *ngFor="let item of navigation; let i = index;" class="nav-item">
+            <mat-list-item *ngFor="let item of navigation; let i = index;" class="nav-item"
+                           [class.border-bottom]="i===0">
                 <button mat-button [routerLink]="item.route" routerLinkActive="active-link" class="nav-item button">
                     <mat-icon class="prefix">{{item.icon}}</mat-icon>
                     <span class="label">{{item.label}}</span>
@@ -34,7 +35,7 @@
 
                 <button mat-button [routerLink]="'/system'" routerLinkActive="active-link"
                         class="nav-item button border-top">
-                    <mat-icon class="prefix">inbox</mat-icon>
+                    <mat-icon class="prefix">all_inbox</mat-icon>
                     <span class="label">System</span>
                 </button>
             </mat-list-item>
