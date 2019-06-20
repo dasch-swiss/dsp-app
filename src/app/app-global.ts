@@ -36,9 +36,14 @@ export class AppGlobal {
         },
         */
         {
+            label: 'Dashboard',
+            route: '/dashboard',
+            icon: 'dashboard'
+        },
+        {
             label: 'Your Projects',
             route: '/projects',
-            icon: 'all_inbox'
+            icon: 'assignment'
         },
         {
             label: 'Your Collections',

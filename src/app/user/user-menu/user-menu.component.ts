@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
-import { ApiServiceError, User, UsersService } from '@knora/core';
+import { User, UsersService, ApiServiceError } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { MenuItem } from '../../main/declarations/menu-item';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-user-menu',
@@ -21,17 +21,28 @@ export class UserMenuComponent implements OnInit {
 
     navigation: MenuItem[];
 
-    constructor(
+    constructor (
         private _auth: AuthenticationService,
+        private _usersService: UsersService,
         private _cache: CacheService,
         private _location: Location,
         private _router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.navigation = AppGlobal.userNav;
         this.username = JSON.parse(localStorage.getItem('session')).user.name;
         this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+
+        this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+        this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
+            (result: User) => {
+                this.user = result;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+            }
+        );
     }
 
     logout() {
@@ -41,9 +52,9 @@ export class UserMenuComponent implements OnInit {
         this._cache.destroy();
 
         // reload the page
-        this._router.navigateByUrl('/refresh', {skipLocationChange: true}).then(() => {
-                this._router.navigate([this._location.path()]);
-            }
+        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(() => {
+            this._router.navigate([this._location.path()]);
+        }
         );
     }
 }
