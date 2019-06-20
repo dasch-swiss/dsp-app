@@ -64,7 +64,7 @@
 
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="!sysAdmin && !projectAdmin">
+                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="disableMenu()">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
