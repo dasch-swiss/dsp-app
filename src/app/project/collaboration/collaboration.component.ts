@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Session } from '@knora/authentication';
 import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
-import { Session } from '@knora/authentication';
 
 @Component({
     selector: 'app-collaboration',
@@ -38,17 +38,17 @@ export class CollaborationComponent implements OnInit {
 
     @ViewChild('addUserComponent') addUser: AddUserComponent;
 
-    constructor(private _cache: CacheService,
-                private _projectsService: ProjectsService,
-                private _route: ActivatedRoute,
-                private _titleService: Title) {
+    constructor (private _cache: CacheService,
+        private _projectsService: ProjectsService,
+        private _route: ActivatedRoute,
+        private _titleService: Title) {
 
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectcode = params.get('shortcode');
         });
 
-//        this.projectcode = this._route.parent.snapshot.params.shortcode;
+        //        this.projectcode = this._route.parent.snapshot.params.shortcode;
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
@@ -82,33 +82,33 @@ export class CollaborationComponent implements OnInit {
 
         // get the project data from cache
         this._cache
-                .get(
-                    this.projectcode,
-                    this._projectsService.getProjectByShortcode(
-                        this.projectcode
-                    )
+            .get(
+                this.projectcode,
+                this._projectsService.getProjectByShortcode(
+                    this.projectcode
                 )
-                .subscribe(
-                    (result: Project) => {
-                        this.project = result;
+            )
+            .subscribe(
+                (result: Project) => {
+                    this.project = result;
 
-                        // is logged-in user projectAdmin?
-                        this.projectAdmin = this.sysAdmin
-                            ? this.sysAdmin
-                            : this.session.user.projectAdmin.some(e => e === this.project.id);
+                    // is logged-in user projectAdmin?
+                    this.projectAdmin = this.sysAdmin
+                        ? this.sysAdmin
+                        : this.session.user.projectAdmin.some(e => e === this.project.id);
 
-                        // get from cache: list of project members and groups
-                        if (this.projectAdmin) {
-                            this.refresh();
-                        }
-
-                        this.loading = false;
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                        this.loading = false;
+                    // get from cache: list of project members and groups
+                    if (this.projectAdmin) {
+                        this.refresh();
                     }
-                );
+
+                    this.loading = false;
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                    this.loading = false;
+                }
+            );
     }
 
     /**

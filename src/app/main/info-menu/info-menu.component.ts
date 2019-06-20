@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ApiService, KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
 import { MenuItem } from '../declarations/menu-item';
 
 declare let require: any;
@@ -25,18 +25,18 @@ export class InfoMenuComponent implements OnInit {
 
   versions: MenuItem[] = [
     {
-      label: 'Kuirl v ' + this.appVersion,
+      label: '',
       icon: 'kuirl_icon',
       route: 'https://github.com/dhlab-basel/Kuirl/releases/tag/v' + this.appVersion
     },
     {
-      label: 'Knora v ',
+      label: 'Knora v',
       icon: 'knora_icon',
       route: 'https://github.com/dhlab-basel/Knora/releases/tag/v'
     }
   ];
 
-  constructor (private _apiService: ApiService,
+  constructor (
     @Inject(KuiCoreConfigToken) public config: KuiCoreConfig,
     private _domSanitizer: DomSanitizer,
     private _matIconRegistry: MatIconRegistry,
@@ -61,7 +61,9 @@ export class InfoMenuComponent implements OnInit {
 
   ngOnInit() {
 
-    this._http.get<HttpResponse<any>>(this.config.api + '/v2/authentication', { observe: 'response' })
+    this.versions[0].label = this.config.name + ' v' + this.appVersion;
+
+    this._http.get<HttpResponse<any>>(this.config.api + '/admin/projects', { observe: 'response' })
       .subscribe(
         (resp: HttpResponse<any>) => {
           // console.log('Stackoverflow', resp.headers.get('Server'));
@@ -79,6 +81,10 @@ export class InfoMenuComponent implements OnInit {
   }
 
   readVersion(v: string) {
+
+    if (!v) {
+      return;
+    }
 
     const versions: string[] = v.split(' ');
 

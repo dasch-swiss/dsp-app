@@ -128,6 +128,9 @@ export class ProjectsListComponent implements OnInit {
         this._projectsService.deleteProject(id).subscribe(
             (result: Project) => {
                 this.refreshParent.emit();
+                // update project cache
+                this._cache.del(result.shortcode);
+                this._cache.get(result.shortcode, this._projectsService.getProjectByShortcode(result.shortcode));
             },
             (error: ApiServiceError) => {
                 // this.errorMessage = error;
@@ -140,6 +143,9 @@ export class ProjectsListComponent implements OnInit {
         this._projectsService.activateProject(id).subscribe(
             (result: Project) => {
                 this.refreshParent.emit();
+                // update project cache
+                this._cache.del(result.shortcode);
+                this._cache.get(result.shortcode, this._projectsService.getProjectByShortcode(result.shortcode));
             },
             (error: ApiServiceError) => {
                 // this.errorMessage = error;

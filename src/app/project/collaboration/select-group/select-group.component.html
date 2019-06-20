@@ -1,5 +1,5 @@
 <mat-form-field *ngIf="projectGroups.length > 0">
-    <mat-select placeholder="Group" [formControl]="groupCtrl" multiple (selectionChange)="onGroupSelect()"
+    <mat-select placeholder="Permission group" [formControl]="groupCtrl" multiple (selectionChange)="onGroupSelect()"
                 (openedChange)="onGroupChange()">
         <mat-option *ngFor="let group of projectGroups" [value]="group.iri" [disabled]="disabled">
             {{group.name}}</mat-option>

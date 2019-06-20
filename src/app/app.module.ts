@@ -61,6 +61,10 @@ import { GridComponent } from './main/grid/grid.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { InfoMenuComponent } from './main/info-menu/info-menu.component';
+import { GroupsComponent } from './system/groups/groups.component';
+import { GroupsListComponent } from './system/groups/groups-list/groups-list.component';
+import { PermissionComponent } from './project/permission/permission.component';
+import { AddGroupComponent } from './project/permission/add-group/add-group.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -113,7 +117,6 @@ export function initializeApp(appInitService: AppInitService) {
         ResourceComponent,
         ExpertSearchComponent,
         AdvancedSearchComponent,
-
         DashboardComponent,
         DialogComponent,
         SystemComponent,
@@ -123,7 +126,11 @@ export function initializeApp(appInitService: AppInitService) {
         DialogHeaderComponent,
         GridComponent,
         CookiePolicyComponent,
-        InfoMenuComponent
+        InfoMenuComponent,
+        GroupsComponent,
+        GroupsListComponent,
+        PermissionComponent,
+        AddGroupComponent
     ],
     imports: [
         AppRoutingModule,
