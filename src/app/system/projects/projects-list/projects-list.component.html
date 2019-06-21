@@ -59,7 +59,11 @@
                             (click)="openDialog('editProject', project.shortname, project.shortcode)">
                         Edit project
                     </button>
-                    <button mat-menu-item *ngIf="status"
+                    <!-- disable the archive-button for the following two projects:
+                    - http://www.knora.org/ontology/knora-admin#SystemProject
+                    - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject
+                    -->
+                    <button mat-menu-item *ngIf="status" [disabled]="doNotDelete.includes(project.id)"
                             (click)="openDialog('deleteProject', project.shortname, project.id)">
                         Archive project
                     </button>

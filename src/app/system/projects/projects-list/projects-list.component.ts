@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { Project, User, ProjectsService, ApiServiceError } from '@knora/core';
+import { KnoraConstants, Project, User, ProjectsService, ApiServiceError } from '@knora/core';
 import { MatDialogConfig, MatDialog } from '@angular/material';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 import { Session } from '@knora/authentication';
@@ -19,6 +19,11 @@ export class ProjectsListComponent implements OnInit {
     session: Session;
     sysAdmin: boolean = false;
     projectAdmin: boolean = false;
+
+    doNotDelete: string[] = [
+        KnoraConstants.SystemProjectIRI,
+        KnoraConstants.DefaultSharedOntologyIRI
+    ];
 
     // list of users: status active or inactive (deleted)
     @Input() status: boolean;
