@@ -1,14 +1,13 @@
 <!-- show landing page in case of guest user -->
 <div class="landing-page">
     <div class="cookie-banner" *ngIf="showCookieBanner">
-        <div class="note">
+        <p class="note">
             This web-application uses cookies to provide you with great user experience. By using the application you
             accept our <a href="./cookie-policy">use of cookies</a>.
-        </div>
-        <div class="fill-remaining-space"></div>
+        </p>
         <div class="action">
-            <button mat-icon-button (click)="closeCookieBanner()">
-                <mat-icon>close</mat-icon>
+            <button mat-flat-button color="accent" (click)="closeCookieBanner()">
+                ACCEPT
             </button>
         </div>
     </div>

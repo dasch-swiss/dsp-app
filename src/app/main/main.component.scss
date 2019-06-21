@@ -136,11 +136,11 @@ footer {
   background: rgba(0, 0, 0, 0.75);
   color: #fff;
   z-index: 100;
-  display: inline-flex;
-  padding-top: 48px;
+  // display: inline-flex;
+  padding: 24px 0;
 
   .note {
-    margin-left: 48px;
+    text-align: center;
 
     a {
       color: inherit;
@@ -148,8 +148,9 @@ footer {
     }
   }
 
-  .action {
-    margin-right: 48px;
+  .action button {
+    margin: 0 auto 24px auto;
+    display: block;
   }
 }
 
