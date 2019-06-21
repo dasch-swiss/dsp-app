@@ -2,9 +2,9 @@
   "version": "v1",
   "packages": {
     "@knora/core": {
-      "signature": "8dc268c3fc42a2d38b67c314eac705d1",
+      "signature": "fb6381efaddce748bc0a99678efc8e96",
       "file": true,
-      "replaced": "7.6.0"
+      "replaced": "8.0.0"
     },
     "@knora/authentication": {
       "signature": "bcd5beb8b5e6edb8e75386d03636413a",
@@ -12,9 +12,9 @@
       "replaced": "7.6.0"
     },
     "@knora/search": {
-      "signature": "9afd14e49b3554e4a1fd216395d5e937",
+      "signature": "88e53a46a3eec00c86a571b76c3f30ff",
       "file": true,
-      "replaced": "7.6.0"
+      "replaced": "8.0.0"
     },
     "@knora/viewer": {
       "signature": "177eaa107ea7982d8e9f121af3666807",
