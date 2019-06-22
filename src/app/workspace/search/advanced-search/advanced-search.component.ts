@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-advanced-search',
@@ -12,7 +13,10 @@ export class AdvancedSearchComponent implements OnInit {
 
     gravsearchQuery: string;
 
-    constructor (private _cache: CacheService) { }
+    constructor (private _cache: CacheService,
+        private _titleService: Title) {
+        this._titleService.setTitle('Advanced search');
+    }
 
     ngOnInit() {
 
