@@ -1,30 +1,28 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
-  selector: 'app-results',
-  templateUrl: './results.component.html',
-  styleUrls: ['./results.component.scss']
+    selector: 'app-results',
+    templateUrl: './results.component.html',
+    styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent implements OnInit {
 
-  searchQuery: string;
-  searchMode: string;
+    searchQuery: string;
+    searchMode: string;
 
-  projectIri: string;
+    projectIri: string;
 
-  constructor(private _route: ActivatedRoute) {
-
-      this._route.paramMap.subscribe((params: Params) => {
-        this.searchMode = params.get('mode');
-        this.searchQuery = decodeURIComponent(params.get('q'));
-        if (params.get('project') !== null) {
-          this.projectIri = decodeURIComponent(params.get('project'));
-        }
-      });
+    constructor (private _route: ActivatedRoute,
+        private _titleService: Title) {
+        this._route.paramMap.subscribe((params: Params) => {
+            // set the page title
+            this._titleService.setTitle('Results found for "' + decodeURIComponent(params.get('q')) + '"');
+        });
     }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
 }
