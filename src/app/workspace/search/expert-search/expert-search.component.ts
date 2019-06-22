@@ -1,28 +1,55 @@
-import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-    SearchParamsService,
-    ExtendedSearchParams,
-    SearchService
-} from '@knora/core';
+import { Component, OnInit } from '@angular/core';
+import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
     selector: 'app-expert-search',
     templateUrl: './expert-search.component.html',
     styleUrls: ['./expert-search.component.scss']
 })
-export class ExpertSearchComponent {
+export class ExpertSearchComponent implements OnInit {
+
+    loading: boolean = true;
 
     gravsearchQuery: string;
 
-    constructor() { }
+    constructor (private _cache: CacheService) { }
 
-    /**
-     * Submit the gravsearch query.
-     */
+    ngOnInit() {
+
+        if (this._cache.has('gravsearch')) {
+            // reload the results
+            this._cache.get('gravsearch').subscribe(
+                (cachedQuery: string) => {
+                    this.gravsearchQuery = cachedQuery;
+                    this.loading = false;
+                },
+                (error: any) => {
+                    console.error(error);
+                }
+            );
+        }
+    }
+
     setGravsearch(query: string) {
-        this.gravsearchQuery = query;
+
+        this.loading = true;
+
+        this._cache.del('gravsearch');
+
+        this._cache.set('gravsearch', query);
+
+        this._cache.get('gravsearch').subscribe(
+            (cachedQuery: string) => {
+                // get cached query
+                this.gravsearchQuery = cachedQuery;
+            },
+            (error: any) => {
+                console.error(error);
+            }
+        );
+
+        this.loading = false;
+
     }
 
 }
