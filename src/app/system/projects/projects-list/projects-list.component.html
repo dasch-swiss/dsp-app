@@ -51,7 +51,7 @@
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
                 <button mat-icon-button [matMenuTriggerFor]="projectMenu"
-                        [disabled]="!sysAdmin && !userIsProjectAdmin(project.id)">
+                        [disabled]="(!sysAdmin && !userIsProjectAdmin(project.id)) || doNotDelete.includes(project.id)">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
@@ -63,7 +63,7 @@
                     - http://www.knora.org/ontology/knora-admin#SystemProject
                     - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject
                     -->
-                    <button mat-menu-item *ngIf="status" [disabled]="doNotDelete.includes(project.id)"
+                    <button mat-menu-item *ngIf="status"
                             (click)="openDialog('deleteProject', project.shortname, project.id)">
                         Archive project
                     </button>
