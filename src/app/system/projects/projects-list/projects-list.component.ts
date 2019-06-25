@@ -20,10 +20,10 @@ export class ProjectsListComponent implements OnInit {
     sysAdmin: boolean = false;
     projectAdmin: boolean = false;
 
-    // list of users: status active or inactive (deleted)
+    // list of projects: status active or inactive (deleted)
     @Input() status: boolean;
 
-    // list of users: depending on the parent
+    // list of projects: depending on the parent
     @Input() list: User[];
 
     // enable the button to create new project
