@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
-import { Project, User, ProjectsService, ApiServiceError } from '@knora/core';
-import { MatDialogConfig, MatDialog } from '@angular/material';
-import { DialogComponent } from '../../../main/dialog/dialog.component';
 import { Session } from '@knora/authentication';
+import { ApiServiceError, KnoraConstants, Project, ProjectsService, User } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DialogComponent } from '../../../main/dialog/dialog.component';
 
 @Component({
     selector: 'app-projects-list',
@@ -20,7 +20,13 @@ export class ProjectsListComponent implements OnInit {
     sysAdmin: boolean = false;
     projectAdmin: boolean = false;
 
-    // list of projects: status active or inactive (deleted)
+    // List of default, knora-specific projects, which are not able to be deleted or to be editied
+    doNotDelete: string[] = [
+        KnoraConstants.SystemProjectIRI,
+        KnoraConstants.DefaultSharedOntologyIRI
+    ];
+
+    // list of users: status active or inactive (deleted)
     @Input() status: boolean;
 
     // list of projects: depending on the parent

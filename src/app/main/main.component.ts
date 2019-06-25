@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
+import { ApiServiceError, KnoraConstants, Project, ProjectsService } from '@knora/core';
 import { GridItem } from './grid/grid.component';
-import { ProjectsService, Project, ApiServiceError } from '@knora/core';
 
 @Component({
     selector: 'app-main',
@@ -20,6 +20,12 @@ export class MainComponent implements OnInit {
     researchField: string = 'qualitative';
 
     session: boolean = false;
+
+    disabledProjects: string[] = [
+        KnoraConstants.SystemProjectIRI,
+        KnoraConstants.DefaultSharedOntologyIRI,
+        'http://rdfh.ch/projects/0001'
+    ];
 
     projects: GridItem[] = [];
 
@@ -79,6 +85,11 @@ export class MainComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (sessionStorage.getItem('cookieBanner') === null) {
+            sessionStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
+        } else {
+            this.showCookieBanner = JSON.parse(sessionStorage.getItem('cookieBanner'));
+        }
         this.loadProjects();
     }
 
@@ -89,18 +100,24 @@ export class MainComponent implements OnInit {
                 const sliceLength: number = 160;
 
                 for (const project of result) {
-                    const projectItem: GridItem = <GridItem>{};
-                    projectItem.title = project.longname;
+                    // disable default test projects
 
-                    const preview: string = project.description[0].value.replace(/(<([^>]+)>)/ig, '');
+                    if (!this.disabledProjects.includes(project.id)) {
+                        const projectItem: GridItem = <GridItem>{};
+                        projectItem.title = project.longname;
 
-                    projectItem.text = preview.substring(0, sliceLength).trim() +
-                        (preview.length > sliceLength ? '...' : '');
+                        const preview: string = project.description[0].value.replace(/(<([^>]+)>)/ig, '');
 
-                    projectItem.url = 'project/' + project.shortcode;
+                        projectItem.text = preview.substring(0, sliceLength).trim() +
+                            (preview.length > sliceLength ? '...' : '');
 
-                    this.projects.push(projectItem);
+                        projectItem.url = 'project/' + project.shortcode;
+
+                        this.projects.push(projectItem);
+                    }
                 }
+
+                this.projects.sort((a, b) => (a.title > b.title) ? 1 : -1);
 
                 this.loading = false;
             },
@@ -114,5 +131,6 @@ export class MainComponent implements OnInit {
 
     closeCookieBanner() {
         this.showCookieBanner = !this.showCookieBanner;
+        sessionStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
     }
 }
