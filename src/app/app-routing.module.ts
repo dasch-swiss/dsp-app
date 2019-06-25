@@ -146,11 +146,11 @@ const routes: Routes = [
                 component: ExpertSearchComponent
             },
             {
-                path: ':mode/:q',
+                path: ':mode/:q/:project',
                 component: ResultsComponent
             },
             {
-                path: ':mode/:q/:project',
+                path: ':mode/:q',
                 component: ResultsComponent
             }
         ]
