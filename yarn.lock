@@ -111,10 +111,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/cdk@^7.3.4":
-  version "7.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-7.3.4.tgz#b9d8c62cdd24fa6517dd3ae68c78632b1525d35f"
-  integrity sha512-cHl1o7obogCO3Nxf9n8MrXpfHa7AH1QNX2BY+bftYBTHW++YJe+qAwkwWLVqnJD9TQE2OpiR058zoJU20khM/g==
+"@angular/cdk@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-8.0.1.tgz#106872aa7fac0c55144ed5dd60df9af7e24b436a"
+  integrity sha512-Ul7rVU/rr4qGHs1w24P/6MHEosYp8AHRxBHrp/yJ50eHbHVS31FyfO8gKfNqPc1bnL1YoYYCs0hIBwNDaz8uDg==
   dependencies:
     tslib "^1.7.1"
   optionalDependencies:
@@ -200,10 +200,10 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-8.0.3.tgz#25909e6a9ce5336768e489401bc9c3abb57b4304"
   integrity sha512-04XojOo9FJgEQE/rZafnaJQxPEU+//TSzTgpGoIVzCSMx+joCY/ZSSwJZPWxiHlOE57W/zX02ZY+TwcM81oTdw==
 
-"@angular/material@^7.3.4":
-  version "7.3.4"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-7.3.4.tgz#a0d3fc14bf4c165944e3f1ddc71f7c685b8d4ef3"
-  integrity sha512-UWS4Kd3AqJBtAJRds4hhPNez9k1rkWhd6/E17pfcH6KWxP3Pi7tcubaSqoDRGHVbr/QegDn1SOoRokJxLYDn2g==
+"@angular/material@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-8.0.1.tgz#cbb3f7776d2405a1d75b6e7eb6675fd80a8a5cf5"
+  integrity sha512-BozIS+9yiqFTfXBoZfhFUibY8meDUcv/e+CxhSHyv3vZw9XVTNTbiaX7tX/FX0Ai+1VKnwRTGrKvPKGFSqynCA==
   dependencies:
     tslib "^1.7.1"
 
@@ -316,38 +316,28 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@knora/action@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@knora/action/-/action-8.1.0.tgz#963e1a3dc558ecea2f4f2bd22378b870de088b90"
-  integrity sha512-p1H7GT8Nx/2gYZ7jhAOXGfCB7r4ty0NY3LDC10hLHLj6MQtLyPfR6JFzA/cF27eZn8Qwv61Jtak/WGRQwBkx5w==
+"@knora/action@file:.yalc/@knora/action":
+  version "8.1.0-2642e6c2"
   dependencies:
     tslib "^1.9.0"
 
-"@knora/authentication@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@knora/authentication/-/authentication-8.1.0.tgz#753eb248226bc2180e13e8cdb0c72931a3b0130d"
-  integrity sha512-iaTZ2/w1n9pa81eQMv+Cy71B6WRaN2wTVfNxQRmblVrrJUtoSFoV1aBYc4qppmBRsSc4K4xyzDnzCjsTSDNl4g==
+"@knora/authentication@file:.yalc/@knora/authentication":
+  version "8.1.0-3c5989aa"
   dependencies:
     tslib "^1.9.0"
 
-"@knora/core@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@knora/core/-/core-8.1.0.tgz#421cbd03900619461bb2d7a9940b16ae6d9265a0"
-  integrity sha512-wFaD9w1mpAKVO/rz9EB0ToxNRQuUsTCwraj6rtp7erdi5gHwlWzanoi+5433CE0QLSMZjBRMEqz0Rqw0L4F3Jw==
+"@knora/core@file:.yalc/@knora/core":
+  version "8.1.0-b0f8bfbf"
   dependencies:
     tslib "^1.9.0"
 
-"@knora/search@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@knora/search/-/search-8.1.0.tgz#4d08b3c4e27a6e36a6c998b897c5151e8c228bb9"
-  integrity sha512-b+DHoiyvIybp1rnPr0wRqxra+dq015uCYzX641Ce38yQvaQT8Og6ynDUi6y1Avo8C3CCiIdqrqqLiFJ9G5MUcA==
+"@knora/search@file:.yalc/@knora/search":
+  version "8.1.0-5d131e88"
   dependencies:
     tslib "^1.9.0"
 
-"@knora/viewer@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-8.1.0.tgz#e9e242543fa24b68feb4cfd80db62ee5c4f7100a"
-  integrity sha512-4cRQbME+bCNXy67kVPFoG4AHoKYsZSGidiS6XCvyf/ywNhUU52e9OBma4TwBci1INrznSyL8uRx/KyWEnBdAVg==
+"@knora/viewer@file:.yalc/@knora/viewer":
+  version "8.1.0-8ed4c32a"
   dependencies:
     tslib "^1.9.0"
 
@@ -3978,6 +3968,18 @@ jasminewd2@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/jasminewd2/-/jasminewd2-2.2.0.tgz#e37cf0b17f199cce23bea71b2039395246b4ec4e"
   integrity sha1-43zwsX8ZnM4jvqcbIDk5Uka07E4=
+
+jdnconvertiblecalendar@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendar/-/jdnconvertiblecalendar-0.0.3.tgz#a4e6106340b27bc06bf08cd00912960c666693cc"
+  integrity sha512-AxqmzIkHLE/iEZuej5S9zTqXOAvtHJIk6iMPM3tLBha9UBclxXqXGeqJtclMflVHuvpzm06e0zJ2YVCSA8vtQg==
+
+jdnconvertiblecalendardateadapter@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendardateadapter/-/jdnconvertiblecalendardateadapter-0.0.9.tgz#b02f044139b28cfa0e631f779caa270a91e67ddf"
+  integrity sha512-LnAlZ6pE9lOa5eSWydpLAeBJ297z2HaWIp2GB5AQgackPkl/LNdP/zBpa5rvUOywpuuuKFfocLwIL1UVMn8xtA==
+  dependencies:
+    tslib "^1.9.0"
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"

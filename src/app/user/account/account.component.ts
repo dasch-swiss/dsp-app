@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { User, UsersService, ApiServiceError } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
-import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({

@@ -6,7 +6,7 @@ import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
 import { AppGlobal } from '../app-global';
 import { Session } from '@knora/authentication';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-user',

@@ -5,13 +5,11 @@ import { KuiActionModule } from '@knora/action';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserPasswordComponent } from '../user-form/user-password/user-password.component';
-import {
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatDialogModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
 
 describe('AccountComponent', () => {
