@@ -181,10 +181,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/flex-layout@^7.0.0-beta.23":
-  version "7.0.0-beta.23"
-  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-7.0.0-beta.23.tgz#eff267584284bf534932deac513827d1b059c92e"
-  integrity sha512-jH2i3i/M7SbK6scVlj2urVL5OhzwavbQ7KwvUjyc/UwccKnnzuOuWEGCINLja/aoaUO3I35LluCLv6a6VN0olA==
+"@angular/flex-layout@^8.0.0-beta.26":
+  version "8.0.0-beta.26"
+  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-8.0.0-beta.26.tgz#05807e4daeb7c70da5653b681f8e8c0da87d133e"
+  integrity sha512-lXDLlMSNQhidW0grvisIsj/3gqLuYyN2MvABuRYybnFTc233sXGZuOAaulqq663LA0/DP/GNcz6a+A4ZAAlmPA==
   dependencies:
     tslib "^1.7.1"
 
@@ -3978,18 +3978,6 @@ jasminewd2@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/jasminewd2/-/jasminewd2-2.2.0.tgz#e37cf0b17f199cce23bea71b2039395246b4ec4e"
   integrity sha1-43zwsX8ZnM4jvqcbIDk5Uka07E4=
-
-jdnconvertiblecalendar@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendar/-/jdnconvertiblecalendar-0.0.3.tgz#a4e6106340b27bc06bf08cd00912960c666693cc"
-  integrity sha512-AxqmzIkHLE/iEZuej5S9zTqXOAvtHJIk6iMPM3tLBha9UBclxXqXGeqJtclMflVHuvpzm06e0zJ2YVCSA8vtQg==
-
-jdnconvertiblecalendardateadapter@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendardateadapter/-/jdnconvertiblecalendardateadapter-0.0.9.tgz#b02f044139b28cfa0e631f779caa270a91e67ddf"
-  integrity sha512-LnAlZ6pE9lOa5eSWydpLAeBJ297z2HaWIp2GB5AQgackPkl/LNdP/zBpa5rvUOywpuuuKFfocLwIL1UVMn8xtA==
-  dependencies:
-    tslib "^1.9.0"
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
