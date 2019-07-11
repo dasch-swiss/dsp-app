@@ -1,4 +1,4 @@
-@import "responsive";
+@import "../../../assets/style/responsive";
 
 // mobile device: tablet and smaller than a tablet
 @media (max-width: map-get($grid-breakpoints, tablet)) {
