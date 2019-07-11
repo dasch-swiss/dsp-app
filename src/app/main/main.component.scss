@@ -174,7 +174,11 @@ footer {
 
       p,
       a {
-        text-align: left;
+        text-align: center;
+      }
+
+      &.about p {
+       max-width: 100%;
       }
     }
   }
