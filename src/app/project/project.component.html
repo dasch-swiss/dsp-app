@@ -1,10 +1,7 @@
 <div *ngIf="!error; else errorMsg">
 
-    <nav *ngIf="projectAdmin" mat-tab-nav-bar mat-align-tabs="center" class="navigation tab-bar margin-from-top"
-         animationDuration="0ms" [color]="color">
-        <a mat-tab-link *ngFor="let link of navigation; let first = first" [routerLink]="link.route"
-           routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive"
-           [disabled]="!first && !projectAdmin" [class.archived]="!project?.status">
+    <nav *ngIf="projectAdmin" mat-tab-nav-bar mat-align-tabs="center" class="navigation tab-bar margin-from-top" animationDuration="0ms" [color]="color">
+        <a mat-tab-link *ngFor="let link of navigation; let first = first; let i = index" [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive" [disabled]="!first && !projectAdmin" [class.archived]="!project?.status" [class.hide-on-small-devices]="i === 3">
             <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
             {{link.label}}
         </a>
