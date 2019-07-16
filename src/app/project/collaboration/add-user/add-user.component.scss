@@ -1,7 +1,24 @@
+@import "../../../../assets/style/responsive";
+
 .form-content {
   display: contents;
 
   .select-user {
     margin: 0 24px 0 0;
+  }
+}
+
+// mobile device: tablet and smaller than a tablet
+@media (max-width: map-get($grid-breakpoints, tablet)) {
+  .form-content {
+    display: contents;
+  
+    .select-user {
+      margin: 0 16px 0 16px;
+    }
+
+    .large-field {
+      min-width: 380px;
+    }
   }
 }

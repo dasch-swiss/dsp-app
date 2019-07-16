@@ -14,10 +14,10 @@
         </kui-search-panel>
         <!-- <kui-fulltext-search [route]="'/search'" [projectfilter]="true"></kui-fulltext-search> -->
     </span>
-    <button mat-button [matMenuTriggerFor]="menu">
+    <button mat-button [matMenuTriggerFor]="menu" class="hide-search">
         <mat-icon>more_vert</mat-icon>
     </button>
-    <mat-menu #menu="matMenu">
+    <mat-menu #menu="matMenu" class="hide-search">
         <button mat-menu-item routerLink="/search/advanced">
             <span>Advanced search</span>
         </button>
@@ -32,10 +32,9 @@
     <span class="fill-remaining-space"></span>
 
     <span class="action">
-        <app-info-menu></app-info-menu>
+        <app-info-menu class="info-menu-button"></app-info-menu>
         <app-select-language></app-select-language>
-        <button mat-raised-button color="primary" *ngIf="!session" class="login-button"
-                (click)="goToLogin()">LOGIN</button>
+        <button mat-raised-button color="primary" *ngIf="!session" class="login-button" (click)="goToLogin()">LOGIN</button>
         <app-user-menu *ngIf="session"></app-user-menu>
     </span>
 </mat-toolbar>

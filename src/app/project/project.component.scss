@@ -1,5 +1,13 @@
 @import '../../assets/style/config';
+@import "../../assets/style/responsive";
 
 .archived {
     color: $warn;
+}
+
+// mobile device: tablet and smaller than a tablet
+@media (max-width: map-get($grid-breakpoints, tablet)) {
+    a[id="Data model"] {
+        display: none;
+    }
 }
