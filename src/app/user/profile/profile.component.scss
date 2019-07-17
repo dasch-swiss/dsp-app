@@ -80,10 +80,11 @@
             width: 50%;
             h2.mat-title {
                 margin: 0;
+                font-size: 15px;
             }
             h3.subtitle {
                 font-size: 14px;
-                margin: 3px 0 6px 0;
+                margin: 0;
             }
             ul.user-profile-lang {
                 margin: 0;
@@ -113,10 +114,6 @@
             .status {
                 width: 25%;
                 height: 30px;
-
-                .mat-icon {
-                    font-size: 28px;
-                }
             }
             
             .mat-button {
@@ -126,7 +123,6 @@
                 min-width: 48px;
                 .mat-icon {
                     vertical-align: top;
-                    font-size: 28px;
                 }
             }
         }

@@ -63,10 +63,27 @@ desktop: 1200px);
 
     }
 
+    .form-content {
+        width: 100% !important;
+
+        .large-field {
+            min-width: 100% !important;
+        }
+
+        .form-panel {
+            width: 100% !important;
+        
+          }
+    }
+
     .cdk-overlay-pane {
         margin-bottom: 120px !important;
         overflow-y: auto !important;
         max-height: 80% !important;
+    }
+
+    .more-space-top {
+        margin-top: 24px !important;
     }
     
 }
