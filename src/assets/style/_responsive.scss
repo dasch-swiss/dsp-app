@@ -6,8 +6,9 @@ tablet: 768px,
 notebook: 992px,
 desktop: 1200px);
 
+
 // mobile device: tablet and smaller than a tablet
-@media (max-width: map-get($grid-breakpoints, tablet)) {
+@media (max-width: map-get($grid-breakpoints, tablet) and (min-width: map-get($grid-breakpoints, phone))) {
     .content {
 
         &.small,
@@ -23,6 +24,41 @@ desktop: 1200px);
         &.medium,
         &.large {
             max-width: 100%;
+        }
+
+    }
+
+    .cdk-overlay-pane {
+        margin-bottom: 120px !important;
+        overflow-y: auto !important;
+        max-height: 80% !important;
+    }
+    
+}
+
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) {
+    // general app layout
+    .app {
+        display: flex;
+        flex-direction: inherit !important;
+    }
+
+    .content {
+
+        &.small,
+        &.medium,
+        &.large {
+            padding: 0 !important;
+        }
+
+        &.small {
+            max-width: 320px !important;
+        }
+
+        &.medium,
+        &.large {
+            max-width: calc(100% - 36px) !important;
         }
 
     }
