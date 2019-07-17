@@ -85,10 +85,16 @@ desktop: 1200px);
     .more-space-top {
         margin-top: 24px !important;
     }
+
+    .nav-link {
+        display: none;
+    }
     
 }
 
 // desktop screen size: bigger than a tablet
 @media (min-width: map-get($grid-breakpoints, tablet)) {
-
+    .nav-link-mobile {
+        display: none;
+    }
 }
