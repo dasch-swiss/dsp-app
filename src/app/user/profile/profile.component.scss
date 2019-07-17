@@ -1,44 +1,135 @@
-.user-profile {
+@import "../../../assets/style/responsive";
 
-    .user-profile-image {
-        width: 100%;
-
-        &:after {
-            content: "";
-            display: block;
-            padding-bottom: 100%;
-        }
+// tablet and desktop
+@media (min-width: map-get($grid-breakpoints, phone)) {
+    .user-profile-mobile {
+        display: none;
     }
 
-    .user-profile-headline {
-        h3.mat-subheading-2 {
-            font-size: 18px;
-            margin-top: -18px;
+    .user-profile {
+
+        .user-profile-image {
+            width: 100%;
+
+            &:after {
+                content: "";
+                display: block;
+                padding-bottom: 100%;
+            }
+        }
+
+        .user-profile-headline {
+            h3.mat-subheading-2 {
+                font-size: 18px;
+                margin-top: -18px;
+            }
+        }
+
+        ul.user-profile-info {
+            margin-top: 48px;
+            padding-inline-start: 12px;
+
+            li {
+                list-style-type: none;
+    //            font-size: 12px;
+                font-weight: bold;
+                line-height: 1.5em;
+
+                &.status {
+                    padding: 0;
+                }
+
+                .mat-icon {
+                    margin-right: 8px;
+                    vertical-align: middle;
+                    position: relative;
+                    // top: -1px;
+                    font-size: 16px;
+                    height: 18px;
+                }
+            }
         }
     }
+}
 
-    ul.user-profile-info {
-        margin-top: 48px;
-        padding-inline-start: 12px;
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) {
 
-        li {
-            list-style-type: none;
-//            font-size: 12px;
-            font-weight: bold;
-            line-height: 1.5em;
+    .user-profile { 
+        display: none;
+    }
 
-            &.status {
+    .user-profile-mobile {
+        display: flex;
+        margin-top: 16px;
+        margin-bottom: 16px;
+
+        .user-profile-image {
+            width: 20%;
+            height: 20%;
+            margin-right: 10px;
+    
+            &:after {
+                content: "";
+                display: block;
+                padding-bottom: 100%;
+            }
+        }
+    
+        .user-profile-headline {
+            width: 50%;
+            h2.mat-title {
+                margin: 0;
+            }
+            h3.subtitle {
+                font-size: 14px;
+                margin: 3px 0 6px 0;
+            }
+            ul.user-profile-lang {
+                margin: 0;
+                padding-inline-start: 0 !important;        
+                li {
+                    list-style-type: none;
+                    font-weight: bold;
+                    line-height: 1.5em;
+        
+                    .mat-icon {
+                        margin-right: 8px;
+                        vertical-align: middle;
+                        position: relative;
+                        font-size: 16px;
+                        height: 18px;
+                    }
+                }
+            }
+        }
+        
+        .user-profile-status {
+            width: 25%;
+            display: flex;
+            .fill-in-space {
+                width: 50%;
+            }
+            .status {
+                width: 25%;
+                height: 30px;
+
+                .mat-icon {
+                    font-size: 28px;
+                }
+            }
+            
+            .mat-button {
+                width: 25%;
+                height: 30px;
                 padding: 0;
-            }
-
-            .mat-icon {
-                margin-right: 8px;
-                vertical-align: middle;
-                position: relative;
-                // top: -1px;
-                font-size: 16px;
-                height: 18px;
+                min-width: 48px;
+                .mat-icon {
+                    vertical-align: top;
+                    font-size: 28px;
+                }
             }
         }
+        
     }
 }
