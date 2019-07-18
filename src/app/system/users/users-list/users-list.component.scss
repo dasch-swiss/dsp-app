@@ -1,3 +1,38 @@
+@import "../../../../assets/style/responsive";
+@import "../../../../assets/style/theme";
+
 .sys-admin-chip {
     width: 116px;
+}
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+    .table {
+        .table-entry {
+            .avatar-cell {
+             padding: 3px 3px;
+            }
+            .table-info {
+             padding: 3px 3px;
+            }
+            .table-admin-chip {
+                display: none;
+            }
+            .table-select-group {
+                display: none;
+            }
+            .table-action {
+                padding: 3px 3px;
+                min-width: 36px;
+            }
+        }
+    }
+
+    .admin-chip {
+        background-color: #ffecb3;
+    }
+    .syst-admin-chip {
+        background-color: #ffe082;
+    }
+
 }
