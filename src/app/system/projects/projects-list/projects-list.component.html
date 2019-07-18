@@ -40,7 +40,8 @@
                 -->
             </td>
             <td class="table-info">
-                <h5 class="mat-subheading-2 link" (click)="gotoProjectBoard(project.shortcode)">
+                <!-- Longname hidden on phone devices -->
+                <h5 class="mat-subheading-2 link info-longname" (click)="gotoProjectBoard(project.shortcode)">
                     {{project.longname}}
                 </h5>
                 <p class="mat-subheading-1 link" (click)="gotoProjectBoard(project.shortcode)">
