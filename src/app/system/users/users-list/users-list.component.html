@@ -26,7 +26,7 @@
 
     <!-- content: list -->
     <table class="table more-space-bottom" [class.archived]="!status">
-        <tr class="table-entry" *ngFor="let user of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last" [class.admin-chip]="projectcode && userIsProjectAdmin(user.permissions)" [class.syst-admin-chip]="!projectcode && userIsSystemAdmin(user.permissions)">
+        <tr class="table-entry" *ngFor="let user of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image" />
@@ -34,11 +34,14 @@
 
             <!-- name and e-mail address -->
             <td class="table-info">
-                <h5 class="mat-subheading-2">
+                <h5 class="mat-subheading-2 info-names">
+                    <!-- Names hidden on phone devices -->
                     {{user.givenName}} {{user.familyName}}
                 </h5>
                 <p class="mat-subheading-1">
-                    {{user.username}} | {{user.email}}
+                    <span class="info-username">{{user.username}} </span>
+                    <!-- Email hidden on phone devices -->
+                    <span class="info-email">| {{user.email}}</span>
                     <!-- TODO: question: how public should the email address be? -->
                 </p>
             </td>
@@ -46,7 +49,7 @@
             <!-- admin: only in project view -->
             <td class="table-admin-chip">
                 <mat-chip-list *ngIf="projectcode">
-                    <mat-chip *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
+                    <mat-chip class="admin-chip" *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
                 </mat-chip-list>
                 <mat-chip-list *ngIf="!projectcode && userIsSystemAdmin(user.permissions)">
                     <mat-chip class="sys-admin-chip">System Admin</mat-chip>

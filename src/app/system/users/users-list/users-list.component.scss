@@ -15,9 +15,6 @@
             .table-info {
              padding: 3px 3px;
             }
-            .table-admin-chip {
-                display: none;
-            }
             .table-select-group {
                 display: none;
             }
@@ -25,14 +22,24 @@
                 padding: 3px 3px;
                 min-width: 36px;
             }
+            .table-admin-chip {
+                padding: 0;
+                min-width: 60px;
+                .admin-chip {
+                    width: 64px;
+                    font-size: 0.7em;
+                    text-align: center;
+                }
+                .sys-admin-chip {
+                    width: 64px;
+                    font-size: 0.7em;
+                    text-align: center;
+                }
+            }
         }
     }
 
-    .admin-chip {
-        background-color: #eceff1;
+    .info-names, .info-email {
+        display: none;
     }
-    .syst-admin-chip {
-        background-color: #ffebee;
-    }
-
 }

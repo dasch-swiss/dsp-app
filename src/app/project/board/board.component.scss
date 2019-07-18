@@ -38,6 +38,7 @@ section {
   }
 }
 
+// desktop and tablet devices
 @media (min-width: map-get($grid-breakpoints, phone)) {
    
   .app-toolbar-mobile {
