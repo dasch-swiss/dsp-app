@@ -12,8 +12,16 @@
 // mobile device: tablet and smaller than a tablet
 @media (max-width: map-get($grid-breakpoints, phone)) {
   .app-headline {
-    margin: 36px 0;
-    width: 620px !important;
+    margin: 24px 0;
+    width: 100%;
+   }
+
+   .app-toolbar {
+    width: 100%;
+
+      .app-toolbar-row {
+        padding: 0;
+      }
    }
 
    .toggle-view {
@@ -22,7 +30,15 @@
 
   .toggle-view-mobile {
     margin-bottom: 16px;
-    margin-left: 12%;
+  }
+
+  .mat-title {
+    white-space: normal;
+    font-size: 1.1em;
+  }
+
+  .show-projects-title {
+    color: #616161;
   }
 }
 

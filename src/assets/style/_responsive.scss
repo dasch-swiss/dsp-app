@@ -42,6 +42,10 @@ desktop: 1200px);
     .app {
         display: flex;
         flex-direction: inherit !important;
+
+        .app-content {
+            width: 100%;
+        }
     }
 
     .content {
