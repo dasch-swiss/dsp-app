@@ -22,3 +22,12 @@
     }
   }
 }
+
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .fill-remaining-space {
+      display: none;
+  }
+}
+
