@@ -2,8 +2,8 @@
 <div class="landing-page">
     <div class="cookie-banner" *ngIf="showCookieBanner">
         <p class="note">
-            This web-application uses cookies to provide you with great user experience. By using the application you
-            accept our <a href="./cookie-policy">use of cookies</a>.
+            This web-application uses cookies to provide you with great user experience. By using the application you accept our
+            <a href="./cookie-policy">use of cookies</a>.
         </p>
         <div class="action">
             <button mat-flat-button color="accent" (click)="closeCookieBanner()">
@@ -17,10 +17,8 @@
             <div class="content medium middle">
                 <!-- <h2 class="mat-title">Knora User Interface &middot; Research Layer</h2> -->
                 <h1 class="mat-display-2 app-headline">bring all together and simplify your research</h1>
-                <h2 class="mat-title">This is the generic web application of the Data and Service Center for Humanities
-                    DaSCH. It's the user interface research layer of Knora &ndash; a software framework for storing,
-                    sharing, and working with primary sources and all kind of data in your research project in
-                    humanities.</h2>
+                <h2 class="mat-title">This is the generic web application of the Data and Service Center for Humanities DaSCH. It's the user interface research layer of Knora &ndash; a software framework for storing, sharing, and working with primary sources and all kind of data in your research project in humanities.
+                </h2>
             </div>
         </div>
 
@@ -30,14 +28,13 @@
     <section class="features">
         <div class="content large middle">
             <h2 class="mat-title">The web application offers all features from Knora in a friendly designed way</h2>
-            <app-grid [list]="features"></app-grid>
+            <app-grid id="app-grid-features" [list]="features"></app-grid>
         </div>
     </section>
 
-
     <!-- contact and partner institutions -->
     <section class="research darken-bg">
-        <div class="content large middle">
+        <div class="content large middle content-research">
             <h2 class="mat-title">You're interested to use the platform? What kind of research do you do?</h2>
             <mat-form-field class="research-question">
                 <mat-label>Select an option</mat-label>
@@ -52,10 +49,7 @@
                 <div *ngSwitchCase="'qualitative'">
                     <h2 class="mat-title">Hooray, you're in the right place.</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. You can upload and
-                        transcribe taped interviews. Describe images, photographs. Annotate the data and connect every
-                        kind
-                        of media with each other.</h4>
+                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. You can upload and transcribe taped interviews. Describe images, photographs. Annotate the data and connect every kind of media with each other.</h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'accent'" href="https://dasch.swiss/team">Please contact us</a>
                 </div>
@@ -63,10 +57,8 @@
                 <div *ngSwitchCase="'quantitative'">
                     <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking
-                        for
-                        a tool to work with quantitative data, you should contact <a
-                           href="https://forscenter.ch/">FORS</a>.
+                    <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking for a tool to work with quantitative data, you should contact
+                        <a href="https://forscenter.ch/">FORS</a>.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://forscenter.ch/">Please contact FORS</a>
@@ -75,10 +67,8 @@
                 <div *ngSwitchCase="'edition'">
                     <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also
-                        based
-                        on Knora. For this kind of research you should contact <a
-                           href="https://nie-ine.ch/">NIE-INE</a>.
+                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also based on Knora. For this kind of research you should contact
+                        <a href="https://nie-ine.ch/">NIE-INE</a>.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://nie-ine.ch/">Please contact NIE-INE</a>
@@ -118,17 +108,15 @@
         <div class="content medium middle">
             <h2 class="mat-title">Who's behind all that?</h2>
             <h3 class="mat-subheading-2">
-                Since 2017, the Data and Service Center for humanities (DaSCH) has been a member of the Swiss Academy of
-                Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities
-                research data that ensures access to this data.
+                Since 2017, the Data and Service Center for humanities (DaSCH) has been a member of the Swiss Academy of Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities research data that ensures access to this data.
             </h3>
-            <img class="logo" src="/assets/images/logo-dasch.jpg">
-            <img class="logo" src="/assets/images/logo-sagw.jpg">
+            <img class="logo logo-dasch" src="/assets/images/logo-dasch.jpg">
+            <img class="logo logo-sagw" src="/assets/images/logo-sagw.jpg">
         </div>
         <div class="content large middle">
             <h2 class="mat-title">Partner institutions</h2>
-            <img class="logo" src="/assets/images/logo-unibas.jpg">
-            <img class="logo" src="/assets/images/logo-unil.jpg">
+            <img class="logo logo-unibas" src="/assets/images/logo-unibas.jpg">
+            <img class="logo logo-unil" src="/assets/images/logo-unil.jpg">
         </div>
     </section>
 
@@ -138,11 +126,15 @@
         <div class="panel">
             <div class="box about">
                 <p class="mat-body">
-                    Built with <a href="https://angular.io">Angular</a> &middot; Styled with <a
-                       href="https://material.angular.io">Material</a> &middot; <a href="http://www.knora.org">Knora</a>
-                    and <a href="http://www.sipi.io">Sipi</a> under the
-                    hood<br><br>
-                    Supported by the <a href="https://sagw.ch">Swiss Academy of Humanities and Social Sciences</a>.
+                    Built with
+                    <a href="https://angular.io">Angular</a> &middot; Styled with
+                    <a href="https://material.angular.io">Material</a> &middot;
+                    <a href="http://www.knora.org">Knora</a>
+                    and
+                    <a href="http://www.sipi.io">Sipi</a> under the hood
+                    <br>
+                    <br> Supported by the
+                    <a href="https://sagw.ch">Swiss Academy of Humanities and Social Sciences</a>.
                 </p>
             </div>
             <div class="box contact">
@@ -161,8 +153,7 @@
                 <a mat-button href="https://www.github.com/dhlab-basel">
                     <mat-icon>
                         <svg role="img" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z">
                             </path>
                         </svg>
                     </mat-icon> dhlab-basel
@@ -170,8 +161,7 @@
                 <a mat-button href="https://twitter.com/DaSCHSwiss">
                     <mat-icon>
                         <svg role="img" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                  d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
+                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
                             </path>
                         </svg>
                     </mat-icon> DaSCHSwiss
@@ -179,8 +169,7 @@
                 <a mat-button href="https://facebook.com/dasch.swiss">
                     <mat-icon>
                         <svg role="img" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                  d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z">
+                            <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z">
                             </path>
                         </svg>
                     </mat-icon> dasch.swiss
@@ -191,8 +180,8 @@
         <!-- copyright info -->
         <div class="panel no-padding">
             <p class="mat-caption">
-                <a href="https://dasch.swiss">DaSCH</a> @ <a href="https://unibas.ch">University of Basel</a> &copy;
-                2018 - {{currentYear.getFullYear()}}
+                <a href="https://dasch.swiss">DaSCH</a> @
+                <a href="https://unibas.ch">University of Basel</a> &copy; 2018 - {{currentYear.getFullYear()}}
             </p>
         </div>
 
