@@ -12,8 +12,9 @@ import { AuthenticationService } from '@knora/authentication';
 export class HeaderComponent implements OnInit {
 
     session: boolean;
+    show: boolean = false;
 
-    constructor (private _auth: AuthenticationService,
+    constructor(private _auth: AuthenticationService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _router: Router) {
@@ -47,6 +48,13 @@ export class HeaderComponent implements OnInit {
                 returnUrl: this._router.url
             }
         });
+    }
+
+    /**
+     * Show or hide search bar in phone version
+     */
+    showSearchBar() {
+        this.show = !this.show;
     }
 
 }

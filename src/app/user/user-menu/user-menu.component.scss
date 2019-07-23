@@ -1,4 +1,14 @@
+@import "../../../assets/style/responsive";
+
 .avatar {
   height: 40px;
   border-radius: 50%;
 }
+
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .user-menu {
+    padding: 0;
+  }
+}
+

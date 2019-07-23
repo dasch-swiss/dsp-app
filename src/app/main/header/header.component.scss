@@ -40,9 +40,27 @@
   }
 }
 
-// mobile device: tablet and smaller than a tablet
+// tablet and desktop device
+@media (min-width: map-get($grid-breakpoints, phone)) {
+  .searchbar-phone-screen {
+    display: none;
+  }
+}
+
+
+// mobile device: phone
 @media (max-width: map-get($grid-breakpoints, phone)) {
   .info-menu-button {
     display: none;
+  }
+  .searchbar-large-screen {
+    display: none;
+  }
+  .search-link {
+    padding: 0;
+    min-width: 45px;
+  }
+  .action {
+    padding: 0;
   }
 }
