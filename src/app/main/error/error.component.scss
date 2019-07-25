@@ -1,3 +1,5 @@
+@import "../../../assets/style/responsive";
+
 .error-page {
   background: #fff;
   height: 100%;
@@ -31,3 +33,12 @@
 
 }
 
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) { 
+  .image {
+    display: none;
+  }
+  .error-page .container {
+    padding-top: 30px;
+  }
+}
