@@ -29,6 +29,7 @@ import { ResourceComponent } from './workspace/resource/resource.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { GroupsComponent } from './system/groups/groups.component';
 import { PermissionComponent } from './project/permission/permission.component';
+import { ListComponent } from './project/list/list.component';
 
 const routes: Routes = [
     {
@@ -75,6 +76,11 @@ const routes: Routes = [
             {
                 path: 'ontology/:id',
                 component: OntologyComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'lists',
+                component: ListComponent,
                 canActivate: [AuthGuard]
             },
             {

@@ -23,6 +23,11 @@ export class AppGlobal {
             label: 'Data model',
             route: 'ontologies',
             icon: 'bubble_chart'
+        },
+        {
+            label: 'Lists',
+            route: 'lists',
+            icon: 'list'
         }
     ];
 

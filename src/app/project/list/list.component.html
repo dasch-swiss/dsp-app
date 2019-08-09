@@ -1,0 +1,4 @@
+<ul>
+    <li *ngFor="let list of projectLists">{{list.labels[0].value}} <span
+              *ngIf="list.comments.length > 0">({{list.comments[0].value}})</span></li>
+</ul>
