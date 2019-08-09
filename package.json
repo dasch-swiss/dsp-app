@@ -29,7 +29,7 @@
     "@knora/authentication": "8.1.0",
     "@knora/core": "file:.yalc/@knora/core",
     "@knora/search": "8.1.0",
-    "@knora/viewer": "8.1.0",
+    "@knora/viewer": "file:.yalc/@knora/viewer",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "core-js": "^2.5.4",
