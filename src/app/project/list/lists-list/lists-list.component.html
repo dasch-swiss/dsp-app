@@ -58,12 +58,14 @@
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
 
                     <!-- update list data -->
-                    <button mat-menu-item *ngIf="projectAdmin" (click)="openDialog('editList', item.id)">
+                    <button mat-menu-item *ngIf="projectAdmin"
+                            (click)="openDialog('editList', item.labels[0].value, item.id)">
                         Edit list data
                     </button>
 
                     <!-- update list info -->
-                    <button mat-menu-item *ngIf="projectAdmin" (click)="openDialog('updateListInfo', item.id)">
+                    <button mat-menu-item *ngIf="projectAdmin"
+                            (click)="openDialog('updateListInfo', item.labels[0].value, item.id)">
                         Update list info
                     </button>
 

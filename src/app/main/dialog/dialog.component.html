@@ -134,6 +134,29 @@
         <app-list-data [iri]="data.project"></app-list-data>
     </div>
 
+    <!-- Create new list -->
+    <div *ngSwitchCase="'createList'">
+        <app-dialog-header [title]="'List'" [subtitle]="'Create new'" (close)="dialogRef.close()">
+        </app-dialog-header>
+        <app-list-info-form></app-list-info-form>
+        <mat-divider></mat-divider>
+        <app-list-data-form></app-list-data-form>
+    </div>
+
+    <!-- Edit list nodes -->
+    <div *ngSwitchCase="'editList'">
+        <app-dialog-header [title]="data.name" [subtitle]="'Edit list nodes'" (close)="dialogRef.close()">
+        </app-dialog-header>
+        <app-list-data-form [iri]="data.project"></app-list-data-form>
+    </div>
+
+    <!-- Update list info -->
+    <div *ngSwitchCase="'updateListInfo'">
+        <app-dialog-header [title]="data.name" [subtitle]="'Edit list nodes'" (close)="dialogRef.close()">
+        </app-dialog-header>
+        <app-list-info-form [iri]="data.project"></app-list-info-form>
+    </div>
+
     <!-- Delete list -->
     <div *ngSwitchCase="'deleteList'">
         <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.lists.title.delete' | translate"

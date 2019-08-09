@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-list-info-form',
-  templateUrl: './list-info-form.component.html',
-  styleUrls: ['./list-info-form.component.scss']
+    selector: 'app-list-info-form',
+    templateUrl: './list-info-form.component.html',
+    styleUrls: ['./list-info-form.component.scss']
 })
 export class ListInfoFormComponent implements OnInit {
 
-  constructor() { }
+    @Input() iri?: string;
 
-  ngOnInit() {
-  }
+    constructor () { }
+
+    ngOnInit() {
+    }
 
 }
