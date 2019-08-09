@@ -115,7 +115,7 @@ export class ListsListComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { name: name, mode: mode }
+            data: { name: name, mode: mode, project: iri }
         };
 
         const dialogRef = this._dialog.open(

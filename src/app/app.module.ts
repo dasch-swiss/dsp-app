@@ -67,6 +67,9 @@ import { PermissionComponent } from './project/permission/permission.component';
 import { AddGroupComponent } from './project/permission/add-group/add-group.component';
 import { ListComponent } from './project/list/list.component';
 import { ListsListComponent } from './project/list/lists-list/lists-list.component';
+import { ListInfoFormComponent } from './project/list/list-info-form/list-info-form.component';
+import { ListDataComponent } from './project/list/list-data/list-data.component';
+import { ListDataFormComponent } from './project/list/list-data-form/list-data-form.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -134,7 +137,10 @@ export function initializeApp(appInitService: AppInitService) {
         PermissionComponent,
         AddGroupComponent,
         ListComponent,
-        ListsListComponent
+        ListsListComponent,
+        ListInfoFormComponent,
+        ListDataComponent,
+        ListDataFormComponent
     ],
     imports: [
         AppRoutingModule,

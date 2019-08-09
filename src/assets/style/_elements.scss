@@ -472,3 +472,14 @@ $gc-small: $form-width - $gc-large - 4;
   color: rgba(0, 0, 0, 1) !important;
 }
 // --------------------------------------
+
+//
+// dialog box / material overlay
+
+.cdk-overlay-pane {
+  margin-bottom: 120px !important;
+  overflow-y: auto !important;
+  max-height: 80% !important;
+}
+
+// --------------------------------------

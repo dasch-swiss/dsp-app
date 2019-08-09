@@ -128,7 +128,14 @@ export class ListComponent implements OnInit {
                 for (const list of response) {
                     console.log(list.id);
                     this._listsService.getList(list.id).subscribe(
-                        (info: any) => {
+                        (info: List) => {
+                            // TODO: we should set the cache for each list
+                            // is it hierarchical list?
+                            for (const child of info.children) {
+                                if (child.children.length > 0) {
+                                    console.log('hierarchical list');
+                                }
+                            }
                             console.log(info);
                         },
                         (error: ApiServiceError) => {

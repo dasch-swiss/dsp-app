@@ -30,7 +30,7 @@
         <tr *ngFor="let item of list; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
-                <mat-icon>list</mat-icon>
+                <mat-icon>format_align_justify</mat-icon>
             </td>
 
             <!-- label and comment -->
@@ -43,7 +43,12 @@
                 </p>
             </td>
 
-            <!-- group: only in project view -->
+            <!-- preview -->
+            <td>
+                <mat-chip-list>
+                    <mat-chip (click)="openDialog('previewList', item.labels[0].value, item.id)">Preview</mat-chip>
+                </mat-chip-list>
+            </td>
 
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
@@ -62,8 +67,8 @@
                         Update list info
                     </button>
 
-                    <!-- delete list -->
-                    <button mat-menu-item *ngIf="projectAdmin"
+                    <!-- delete list; TODO: delete doesn't exist yet -->
+                    <button mat-menu-item *ngIf="projectAdmin" [disabled]="true"
                             (click)="openDialog('deleteList', item.labels[0].value, item.id)">
                         Delete list
                     </button>
