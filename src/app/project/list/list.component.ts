@@ -49,6 +49,8 @@ export class ListComponent implements OnInit {
 
     ngOnInit() {
 
+        this.loading = true;
+
         // get information about the logged-in user
         this.session = JSON.parse(localStorage.getItem('session'));
         // is the logged-in user system admin?
@@ -143,5 +145,12 @@ export class ListComponent implements OnInit {
         );
     }
 
+    refresh(): void {
+        // referesh the component
+        this.loading = true;
+
+        this.initList();
+
+    }
 
 }

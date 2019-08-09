@@ -1,4 +1,21 @@
-<ul>
-    <li *ngFor="let list of projectLists">{{list.labels[0].value}} <span
-              *ngIf="list.comments.length > 0">({{list.comments[0].value}})</span></li>
-</ul>
+<div *ngIf="projectAdmin" class="content large middle">
+
+    <!-- add list to the project -->
+    <!-- <app-add-user *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()" #addUserComponent></app-add-user> -->
+
+    <!-- <mat-divider *ngIf="project?.status" ></mat-divider> -->
+
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+    <div *ngIf="!loading" class="content users-list">
+
+        <!-- list of active users -->
+        <app-lists-list [list]="projectLists" (refreshParent)="refresh()"></app-lists-list>
+
+    </div>
+
+</div>
+
+<div *ngIf="!projectAdmin" class="content large middle">
+    <app-error [status]="403"></app-error>
+</div>

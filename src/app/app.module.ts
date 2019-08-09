@@ -66,6 +66,7 @@ import { GroupsListComponent } from './system/groups/groups-list/groups-list.com
 import { PermissionComponent } from './project/permission/permission.component';
 import { AddGroupComponent } from './project/permission/add-group/add-group.component';
 import { ListComponent } from './project/list/list.component';
+import { ListsListComponent } from './project/list/lists-list/lists-list.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -132,7 +133,8 @@ export function initializeApp(appInitService: AppInitService) {
         GroupsListComponent,
         PermissionComponent,
         AddGroupComponent,
-        ListComponent
+        ListComponent,
+        ListsListComponent
     ],
     imports: [
         AppRoutingModule,
