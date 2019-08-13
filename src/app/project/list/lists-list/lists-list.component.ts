@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Session } from '@knora/authentication';
-import { ApiServiceError, ListNodeInfo, ListsService, Project, ProjectsService } from '@knora/core';
+import { ApiServiceError, ListNode, ListsService, Project, ProjectsService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
@@ -20,7 +20,7 @@ export class ListsListComponent implements OnInit {
     projectAdmin: boolean = false;
 
     // list of lists: depending on the parent
-    @Input() list: ListNodeInfo[];
+    @Input() list: ListNode[];
 
     // in case of modification
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
@@ -85,6 +85,7 @@ export class ListsListComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         if (this.projectcode) {
+
             // set the cache
             this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
@@ -125,6 +126,7 @@ export class ListsListComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result === true) {
+                console.log('refresh parent?');
                 // get the mode
                 /*
                 switch (mode) {
@@ -142,6 +144,7 @@ export class ListsListComponent implements OnInit {
                  */
             } else {
                 // update the view
+                console.log('refresh parent? update the view');
                 this.refreshParent.emit();
             }
         });
@@ -156,8 +159,6 @@ export class ListsListComponent implements OnInit {
         } else {
             return (!this.sysAdmin && !this.projectAdmin);
         }
-
-
     }
 
 }

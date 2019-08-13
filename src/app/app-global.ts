@@ -2,6 +2,13 @@ import { MenuItem } from './main/declarations/menu-item';
 
 export class AppGlobal {
 
+    // iri base url TODO: should we move this base to the KnoraConstants in knora-ui core?
+    public static iriBase: string = 'http://rdfh.ch/';
+    public static iriProjectsBase: string = AppGlobal.iriBase + 'projects/';
+    public static iriUsersBase: string = AppGlobal.iriBase + 'users/';
+    public static iriListsBase: string = AppGlobal.iriBase + 'lists/';
+
+
     // project navigation
     public static projectNav: MenuItem[] = [
         {

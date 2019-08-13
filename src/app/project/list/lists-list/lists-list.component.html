@@ -1,6 +1,6 @@
-<div *ngIf="list && !loading">
+<div *ngIf="!loading">
     <!-- header toolbar -->
-    <div class="app-toolbar" *ngIf="list.length > 0">
+    <div class="app-toolbar">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span>Active</span>
@@ -20,7 +20,9 @@
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action button right">
-                <button mat-flat-button [color]="'primary'" (click)="openDialog('createList')">Create new</button>
+                <button mat-flat-button [color]="'primary'"
+                        (click)="openDialog('createList', 'new', projectcode)">Create
+                    new</button>
             </span>
         </div>
     </div>
@@ -59,13 +61,13 @@
 
                     <!-- update list data -->
                     <button mat-menu-item *ngIf="projectAdmin"
-                            (click)="openDialog('editList', item.labels[0].value, item.id)">
+                            (click)="openDialog('editListNodes', item.labels[0].value, item.id)">
                         Edit list data
                     </button>
 
                     <!-- update list info -->
                     <button mat-menu-item *ngIf="projectAdmin"
-                            (click)="openDialog('updateListInfo', item.labels[0].value, item.id)">
+                            (click)="openDialog('editListInfo', item.labels[0].value, item.id)">
                         Update list info
                     </button>
 

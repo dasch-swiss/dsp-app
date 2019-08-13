@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Session } from '@knora/authentication';
-import { ApiServiceError, List, ListsService, Project, ProjectsService, ListNodeInfo, ListNode, ListNodeInfoResponse } from '@knora/core';
+import { ApiServiceError, ListNode, ListsService, Project, ProjectsService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class ListComponent implements OnInit {
     // project data
     project: Project;
 
-    projectLists: ListNodeInfo[] = [];
+    projectLists: ListNode[] = [];
 
 
     constructor (
@@ -60,7 +60,7 @@ export class ListComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         // set the cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+        // this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode))
@@ -113,36 +113,33 @@ export class ListComponent implements OnInit {
      * build the list of lists
      */
     initList(): void {
-        this._listsService.getLists().subscribe(
-            (response: any) => {
-                console.log('all lists', response);
-            }
-
-        );
-        this._cache.get('lists_of_' + this.projectcode, this._listsService.getLists(this.project.id));
-
-        this._cache.get('lists_of_' + this.projectcode, this._listsService.getLists(this.project.id)).subscribe(
-            (response: ListNodeInfo[]) => {
+        this._listsService.getLists(this.project.id).subscribe(
+            (response: ListNode[]) => {
                 this.projectLists = response;
 
+                /*
                 for (const list of response) {
-                    console.log(list.id);
+                    // console.log(list.id);
                     this._listsService.getList(list.id).subscribe(
                         (info: List) => {
                             // TODO: we should set the cache for each list
                             // is it hierarchical list?
+                            /*
                             for (const child of info.children) {
                                 if (child.children.length > 0) {
+
                                     console.log('hierarchical list');
+
                                 }
                             }
-                            console.log(info);
+                            *
                         },
                         (error: ApiServiceError) => {
                             console.error(error);
                         }
                     );
                 }
+                */
 
                 this.loading = false;
             },
@@ -150,11 +147,14 @@ export class ListComponent implements OnInit {
                 console.error(error);
             }
         );
+
     }
 
     refresh(): void {
         // referesh the component
         this.loading = true;
+        // update the cache
+        // this._cache.del('lists_of_' + this.projectcode);
 
         this.initList();
 

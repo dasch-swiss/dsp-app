@@ -27,7 +27,7 @@ export class ListDataComponent implements OnInit {
 
         this._listsService.getList(this.iri).subscribe(
             (result: List) => {
-                console.log(result);
+                // console.log(result);
                 this.dataSource.data = result.children;
                 //                this.list = result;
             },
