@@ -47,6 +47,12 @@
   }
 }
 
+// tablet and desktop device
+@media (max-width: map-get($grid-breakpoints, desktop)) and (min-width: map-get($grid-breakpoints, phone)) {
+  .space-before {
+    display: none;
+  }
+}
 
 // mobile device: phone
 @media (max-width: map-get($grid-breakpoints, phone)) {
