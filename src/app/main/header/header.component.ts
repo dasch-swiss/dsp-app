@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { AuthenticationService } from '@knora/authentication';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
     session: boolean;
     show: boolean = false;
@@ -39,9 +39,9 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
-    }
-
+    /**
+     * Navigate to the login page
+     */
     goToLogin() {
         this._router.navigate(['login'], {
             queryParams: {

@@ -48,6 +48,6 @@
 
 <!-- search-panel (in phone version) -->
 <div class="search-panel-phone" *ngIf="show">
-    <kui-search-panel [route]="'/search'" [projectfilter]="true" [expert]="false" [advanced]="false">
-    </kui-search-panel>
+    <kui-fulltext-search class="kui-fulltext-search" [route]="'/search'" [projectfilter]="true" (showState)="show=$event">
+    </kui-fulltext-search>
 </div>

@@ -33,7 +33,6 @@ desktop: 1200px);
         overflow-y: auto !important;
         /* max-height: 80% !important; */
     }
-    
 }
 
 // mobile device: phone
@@ -91,9 +90,8 @@ desktop: 1200px);
     }
 
     .cdk-overlay-pane {
-        margin-bottom: 120px !important;
         overflow-y: auto !important;
-        /* max-height: 80% !important; */
+        max-height: 500px !important;
     }
 
     .more-space-top {
@@ -103,6 +101,12 @@ desktop: 1200px);
     .nav-link {
         display: none;
     }
+
+    .menu-footer {
+        .menu-action.logout {
+          background: white;
+        }
+      }
     
 }
 
