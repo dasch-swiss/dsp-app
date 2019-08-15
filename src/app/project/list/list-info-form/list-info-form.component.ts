@@ -19,7 +19,7 @@ export class ListInfoFormComponent implements OnInit {
     // project short code
     @Input() projectcode?: string;
 
-    @Output() closeDialog: EventEmitter<List | ListInfo> = new EventEmitter<List | ListInfo>();
+    @Output() closeDialog: EventEmitter<List | ListInfo> = new EventEmitter<List>();
 
     project: Project;
 
@@ -51,6 +51,12 @@ export class ListInfoFormComponent implements OnInit {
         }
     };
 
+
+    /**
+     * in case of an API error
+     */
+    errorMessage: any;
+
     /**
      * success of sending data
      */
@@ -60,7 +66,7 @@ export class ListInfoFormComponent implements OnInit {
      */
     successMessage: any = {
         status: 200,
-        statusText: "You have successfully updated list's info data."
+        statusText: "You have successfully updated list's info."
     };
 
     constructor (private _formBuilder: FormBuilder,
@@ -72,6 +78,8 @@ export class ListInfoFormComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.loading = true;
 
         // get list info in case of edit mode: this.iri is not undefined
         if (this.iri) {
@@ -92,14 +100,12 @@ export class ListInfoFormComponent implements OnInit {
         }
     }
 
-    buildForm(list?: ListInfo): boolean {
+    buildForm(list?: ListInfo): void {
 
         let label: string = '';
         let comment: string = '';
 
-
         if (list && list.id) {
-            console.log(list);
             label = list.labels[0].value;
             if (list.comments.length > 0) {
                 comment = list.comments[0].value;
@@ -123,7 +129,7 @@ export class ListInfoFormComponent implements OnInit {
         });
 
         this.form.valueChanges.subscribe(data => this.onValueChanged());
-        return true;
+        this.loading = false;
     }
 
     onValueChanged() {
@@ -168,13 +174,16 @@ export class ListInfoFormComponent implements OnInit {
             };
             this._listsService.updateListInfo(listInfoUpdateData).subscribe(
                 (result: ListInfo) => {
-                    // console.log(result);
+                    console.log(result);
 
-                    this.closeDialog.emit(result);
                     this.loading = false;
+                    this.closeDialog.emit(result);
                 },
                 (error: ApiServiceError) => {
-                    console.error(error);
+                    this.errorMessage = error;
+                    this.loading = false;
+                    this.success = false;
+                    // console.error(error);
                 }
             );
 
@@ -198,11 +207,13 @@ export class ListInfoFormComponent implements OnInit {
             this._listsService.createList(listInfoData).subscribe(
                 (result: List) => {
                     // console.log(result);
-                    this.closeDialog.emit(result);
+                    // this.closeDialog.emit(result);
                     this.loading = false;
                 },
                 (error: ApiServiceError) => {
-                    console.error(error);
+                    this.errorMessage = error;
+                    this.loading = false;
+                    this.success = false;
                 }
             );
         }
@@ -225,7 +236,8 @@ export class ListInfoFormComponent implements OnInit {
 
     }
 
-    closeMessage(list: List) {
-        this.closeDialog.emit(list);
+    closeMessage() {
+        this.closeDialog.emit(this.list);
     }
+
 }

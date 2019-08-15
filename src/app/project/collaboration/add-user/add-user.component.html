@@ -17,9 +17,11 @@
                     <mat-form-field class="large-field select-user">
                         <!--<span matPrefix><mat-icon>add</mat-icon>&nbsp;</span>-->
 
-                        <input matInput [matAutocomplete]="user" [formControl]="selectUserForm.controls['username']" [placeholder]="'appLabels.form.user.title.select' | translate">
+                        <input matInput [matAutocomplete]="user" [formControl]="selectUserForm.controls['username']"
+                               [placeholder]="'appLabels.form.user.title.select' | translate">
 
-                        <button mat-icon-button matSuffix *ngIf="selectUserForm.controls['username'].value" (click)="resetInput($event)" type="button">
+                        <button mat-icon-button matSuffix *ngIf="selectUserForm.controls['username'].value"
+                                (click)="resetInput($event)" type="button">
                             <mat-icon>close</mat-icon>
                         </button>
 
@@ -35,7 +37,8 @@
 
                     </mat-form-field>
 
-                    <button mat-stroked-button [disabled]="!selectUserForm.valid" class="add-new" (click)="openDialog('createUser')">Or create new one</button>
+                    <button mat-stroked-button [disabled]="!selectUserForm.valid" class="add-new"
+                            (click)="openDialog('createUser')">Or create new one</button>
 
                 </div>
 

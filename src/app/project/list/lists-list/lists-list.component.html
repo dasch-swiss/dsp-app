@@ -62,13 +62,13 @@
                     <!-- update list data -->
                     <button mat-menu-item *ngIf="projectAdmin"
                             (click)="openDialog('editListNodes', item.labels[0].value, item.id)">
-                        Edit list data
+                        Edit list items
                     </button>
 
                     <!-- update list info -->
                     <button mat-menu-item *ngIf="projectAdmin"
                             (click)="openDialog('editListInfo', item.labels[0].value, item.id)">
-                        Update list info
+                        Edit list info
                     </button>
 
                     <!-- delete list; TODO: delete doesn't exist yet -->

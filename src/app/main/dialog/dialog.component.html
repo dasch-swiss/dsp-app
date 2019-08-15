@@ -1,4 +1,4 @@
-<div [ngSwitch]="data.mode">
+<div [ngSwitch]="data.mode" class="dialog-content">
 
     <!-- all about USER -->
     <!-- Create new user profile -->
@@ -29,6 +29,8 @@
         <app-dialog-header [title]="data.name" [subtitle]="'Delete user'" (close)="dialogRef.close()">
         </app-dialog-header>
         Do you want to delete this user?
+
+        <!-- TODO: create a mat dialog actions component with the following buttons: Cancel to reset and OK to confirm action -->
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
                 Cancel
@@ -129,37 +131,37 @@
 
     <!-- Preview list nodes -->
     <div *ngSwitchCase="'previewList'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Preview list'" (close)="dialogRef.close()">
+        <app-dialog-header [title]="data.title" [subtitle]="'Preview list'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-data [iri]="data.project"></app-list-data>
+        <app-list-data [iri]="data.id"></app-list-data>
     </div>
 
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
         <app-dialog-header [title]="'List'" [subtitle]="'Create new'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-info-form></app-list-info-form>
+        <app-list-info-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-list-info-form>
         <mat-divider></mat-divider>
         <app-list-data-form></app-list-data-form>
     </div>
 
     <!-- Edit list nodes -->
-    <div *ngSwitchCase="'editList'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Edit list nodes'" (close)="dialogRef.close()">
+    <div *ngSwitchCase="'editListNodes'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Edit list items'" (close)="dialogRef.close()">
         </app-dialog-header>
         <app-list-data-form [iri]="data.project"></app-list-data-form>
     </div>
 
     <!-- Update list info -->
-    <div *ngSwitchCase="'updateListInfo'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Edit list nodes'" (close)="dialogRef.close()">
+    <div *ngSwitchCase="'editListInfo'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Edit list info'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-info-form [iri]="data.project"></app-list-info-form>
+        <app-list-info-form [iri]="data.id" [projectcode]="data.project"></app-list-info-form>
     </div>
 
     <!-- Delete list -->
     <div *ngSwitchCase="'deleteList'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.lists.title.delete' | translate"
+        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.delete' | translate"
                            (close)="dialogRef.close()"></app-dialog-header>
         Do you want to delete this list?
         <mat-dialog-actions>
