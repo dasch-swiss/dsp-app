@@ -103,6 +103,11 @@ export class ListsListComponent implements OnInit {
                     }
                 );
         }
+
+        // for testing the list-items-form
+        setTimeout(() => {
+            this.openDialog('editListItems', 'Einstellungen', 'http://rdfh.ch/lists/0011/KCu5AjF5RV6z9E3fDKXcJA');
+        }, 50);
     }
 
     /**
@@ -126,7 +131,6 @@ export class ListsListComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result === true) {
-                console.log('refresh parent?');
                 // get the mode
                 /*
                 switch (mode) {
@@ -144,8 +148,8 @@ export class ListsListComponent implements OnInit {
                  */
             } else {
                 // update the view
-                console.log('refresh parent? update the view');
-                this.refreshParent.emit();
+                // TODO: reactivate the refreshParent here to relaod the whole list...
+                // this.refreshParent.emit();
             }
         });
     }

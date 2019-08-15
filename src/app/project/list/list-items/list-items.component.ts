@@ -1,14 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ListsService, ListNode, ApiServiceError, List } from '@knora/core';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material';
+import { ApiServiceError, List, ListNode, ListsService } from '@knora/core';
 
 @Component({
-    selector: 'app-list-data',
-    templateUrl: './list-data.component.html',
-    styleUrls: ['./list-data.component.scss']
+    selector: 'app-list-items',
+    templateUrl: './list-items.component.html',
+    styleUrls: ['./list-items.component.scss']
 })
-export class ListDataComponent implements OnInit {
+export class ListItemsComponent implements OnInit {
 
     loading: boolean;
 

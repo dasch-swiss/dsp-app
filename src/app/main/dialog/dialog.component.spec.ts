@@ -3,9 +3,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatChipsModule, MatDialogModule, MatDialogRef, MatDividerModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTreeModule, MAT_DIALOG_DATA } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
 import { TranslateModule } from '@ngx-translate/core';
-import { ListDataFormComponent } from 'src/app/project/list/list-data-form/list-data-form.component';
-import { ListDataComponent } from 'src/app/project/list/list-data/list-data.component';
 import { ListInfoFormComponent } from 'src/app/project/list/list-info-form/list-info-form.component';
+import { ListItemsFormComponent } from 'src/app/project/list/list-items-form/list-items-form.component';
+import { ListItemsComponent } from 'src/app/project/list/list-items/list-items.component';
 import { ProjectFormComponent } from 'src/app/project/project-form/project-form.component';
 import { UserFormComponent } from 'src/app/user/user-form/user-form.component';
 import { UserPasswordComponent } from 'src/app/user/user-form/user-password/user-password.component';
@@ -24,8 +24,8 @@ describe('DialogComponent', () => {
                 UserFormComponent,
                 UserPasswordComponent,
                 ProjectFormComponent,
-                ListDataComponent,
-                ListDataFormComponent,
+                ListItemsComponent,
+                ListItemsFormComponent,
                 ListInfoFormComponent
             ],
             imports: [

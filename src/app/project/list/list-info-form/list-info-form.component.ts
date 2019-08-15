@@ -25,6 +25,13 @@ export class ListInfoFormComponent implements OnInit {
 
     list: ListInfo;
 
+    /**
+     * by adding new list, it starts with the list info and the next section is "creating the list";
+     * true after adding list
+     *
+     */
+    createList: boolean = false;
+
     nameMinLength = 3;
     nameMaxLength = 16;
 
@@ -174,8 +181,8 @@ export class ListInfoFormComponent implements OnInit {
             };
             this._listsService.updateListInfo(listInfoUpdateData).subscribe(
                 (result: ListInfo) => {
-                    console.log(result);
 
+                    this.success = true;
                     this.loading = false;
                     this.closeDialog.emit(result);
                 },
@@ -209,6 +216,7 @@ export class ListInfoFormComponent implements OnInit {
                     // console.log(result);
                     // this.closeDialog.emit(result);
                     this.loading = false;
+                    this.createList = true;
                 },
                 (error: ApiServiceError) => {
                     this.errorMessage = error;

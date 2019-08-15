@@ -5,7 +5,7 @@
     <!-- success message after updating -->
     <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
-    <form *ngIf="!loading" [formGroup]="form" class="form-content list-info" (ngSubmit)="submitData()">
+    <form *ngIf="!loading && !createList" [formGroup]="form" class="form-content list-info" (ngSubmit)="submitData()">
 
         <div class="form-content">
             <mat-form-field class="large-field list-label">
@@ -36,6 +36,10 @@
             </div>
         </div>
     </form>
+
+    <div class="create-list-items" *ngIf="createList">
+        <app-list-items-form></app-list-items-form>
+    </div>
 
 </div>
 

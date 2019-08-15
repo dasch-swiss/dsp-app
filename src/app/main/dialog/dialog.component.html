@@ -130,10 +130,10 @@
     <!-- all about LISTS -->
 
     <!-- Preview list nodes -->
-    <div *ngSwitchCase="'previewList'">
+    <div *ngSwitchCase="'showList'">
         <app-dialog-header [title]="data.title" [subtitle]="'Preview list'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-data [iri]="data.id"></app-list-data>
+        <app-list-items [iri]="data.id"></app-list-items>
     </div>
 
     <!-- Create new list -->
@@ -141,15 +141,13 @@
         <app-dialog-header [title]="'List'" [subtitle]="'Create new'" (close)="dialogRef.close()">
         </app-dialog-header>
         <app-list-info-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-list-info-form>
-        <mat-divider></mat-divider>
-        <app-list-data-form></app-list-data-form>
     </div>
 
     <!-- Edit list nodes -->
-    <div *ngSwitchCase="'editListNodes'">
+    <div *ngSwitchCase="'editListItems'">
         <app-dialog-header [title]="data.title" [subtitle]="'Edit list items'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-data-form [iri]="data.project"></app-list-data-form>
+        <app-list-items-form [iri]="data.id" [projectcode]="data.project"></app-list-items-form>
     </div>
 
     <!-- Update list info -->

@@ -36,7 +36,7 @@
             </td>
 
             <!-- label and comment -->
-            <td>
+            <td class="link" (click)="openDialog('showList', item.labels[0].value, item.id)">
                 <h5 class="mat-subheading-2">
                     {{item.labels[0].value}}
                 </h5>
@@ -46,11 +46,13 @@
             </td>
 
             <!-- preview -->
+            <!--
             <td>
                 <mat-chip-list>
                     <mat-chip (click)="openDialog('previewList', item.labels[0].value, item.id)">Preview</mat-chip>
                 </mat-chip-list>
             </td>
+            -->
 
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
@@ -61,7 +63,7 @@
 
                     <!-- update list data -->
                     <button mat-menu-item *ngIf="projectAdmin"
-                            (click)="openDialog('editListNodes', item.labels[0].value, item.id)">
+                            (click)="openDialog('editListItems', item.labels[0].value, item.id)">
                         Edit list items
                     </button>
 

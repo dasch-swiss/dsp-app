@@ -68,8 +68,8 @@ import { AddGroupComponent } from './project/permission/add-group/add-group.comp
 import { ListComponent } from './project/list/list.component';
 import { ListsListComponent } from './project/list/lists-list/lists-list.component';
 import { ListInfoFormComponent } from './project/list/list-info-form/list-info-form.component';
-import { ListDataComponent } from './project/list/list-data/list-data.component';
-import { ListDataFormComponent } from './project/list/list-data-form/list-data-form.component';
+import { ListItemsComponent } from './project/list/list-items/list-items.component';
+import { ListItemsFormComponent } from './project/list/list-items-form/list-items-form.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -139,8 +139,8 @@ export function initializeApp(appInitService: AppInitService) {
         ListComponent,
         ListsListComponent,
         ListInfoFormComponent,
-        ListDataComponent,
-        ListDataFormComponent
+        ListItemsComponent,
+        ListItemsFormComponent
     ],
     imports: [
         AppRoutingModule,
