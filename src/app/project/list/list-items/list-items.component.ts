@@ -14,6 +14,8 @@ export class ListItemsComponent implements OnInit {
 
     @Input() iri: string;
 
+    @Input() projectcode?: string;
+
     list: ListNode;
 
     treeControl = new NestedTreeControl<ListNode>(node => node.children);

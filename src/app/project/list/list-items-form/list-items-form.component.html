@@ -1,15 +1,11 @@
-<app-list-items [iri]="iri"></app-list-items>
+<!-- existing list items first -->
+<!-- <div>
+    <span *ngFor="let child of list">
+        <p>
+            {{child.labels[0].value}}
+        </p>
+        <app-list-item [children]="child.children"></app-list-item>
+    </span>
+</div> -->
 
-
-<form [formGroup]="form" *ngIf="!loading" class="form-content list-item" (ngSubmit)="submitData()">
-    <mat-form-field class="hidden list-item-label">
-        <input matInput [formControl]="form.controls['hasRootNode']" [placeholder]="'Root node iri'">
-    </mat-form-field>
-
-    <mat-form-field class="medium-field list-item-label">
-        <input matInput [formControl]="form.controls['label']" [placeholder]="'Item label'">
-    </mat-form-field>
-    <button mat-icon-button matSuffix>
-        <mat-icon>add</mat-icon>
-    </button>
-</form>
+<app-list-item [list]="list" [parentIri]="iri" [listIri]="iri" [projectcode]="projectcode"></app-list-item>

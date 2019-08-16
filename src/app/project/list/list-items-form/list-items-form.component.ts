@@ -2,7 +2,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTreeNestedDataSource } from '@angular/material';
-import { ApiServiceError, ListNodeUpdatePayload, ListsService, ListNode } from '@knora/core';
+import { ApiServiceError, ListNodeUpdatePayload, ListsService, ListNode, List } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 
 /**
@@ -55,6 +55,8 @@ export class ListItemsFormComponent implements OnInit {
 
     @Input() projectcode?: string;
 
+    list: ListNode[];
+
     treeControl = new NestedTreeControl<ListItem>(node => node.children);
     dataSource = new MatTreeNestedDataSource<ListItem>();
 
@@ -71,6 +73,17 @@ export class ListItemsFormComponent implements OnInit {
     hasChild = (_: number, node: ListItem) => !!node.children && node.children.length > 0;
 
     ngOnInit() {
+
+        this._listsService.getList(this.iri).subscribe(
+            (result: List) => {
+                // console.log(result);
+                this.list = result.children;
+                //                this.list = result;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+            }
+        );
 
         // build form
         this.form = this._formBuilder.group({
