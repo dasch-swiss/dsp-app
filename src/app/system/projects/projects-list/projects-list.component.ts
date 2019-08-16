@@ -65,7 +65,7 @@ export class ProjectsListComponent implements OnInit {
     // ... and sort by 'shortname'
     sortBy: string = 'shortname';
 
-    constructor (
+    constructor(
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _projectsService: ProjectsService,
