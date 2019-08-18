@@ -1,4 +1,5 @@
 @import "../../../assets/style/config";
+@import "../../../assets/style/responsive";
 
 .app-grid {
   display: flex;
@@ -52,5 +53,12 @@
         overflow: hidden;
       }
     }
+  }
+}
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .app-grid {
+    margin: 50px -15px 0 0;
   }
 }

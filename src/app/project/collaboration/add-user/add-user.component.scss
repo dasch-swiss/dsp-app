@@ -8,8 +8,15 @@
   }
 }
 
+// phone devices
+@media (min-width: map-get($grid-breakpoints, phone)) { 
+  .add-new-mobile {
+    display: none;
+  }
+}
+
 // mobile device: tablet and smaller than a tablet
-@media (max-width: map-get($grid-breakpoints, tablet)) {
+@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) {
   .form-content {
     display: contents;
   
@@ -21,4 +28,53 @@
       min-width: 380px;
     }
   }
+}
+
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .fill-remaining-space {
+      display: none;
+  }
+
+  .add-new {
+    display: none;
+  }
+
+  .add-new-mobile { 
+    padding: 0;
+    min-width: 36px;
+  }
+
+  .toolbar-subtitle {
+    display: none;
+  }
+
+  .toolbar-form {
+    display: block;
+
+    .mat-title {
+      margin: 10px 0 0;
+    }
+  
+    .app-toolbar-action {
+      display: block !important;
+      width: fit-content;
+
+      .form-content {
+        display: contents;
+      
+        .select-user {
+          margin: 0 30px 0 0;
+        }
+    
+        .large-field {
+          min-width: 380px;
+        }
+      }
+    }
+  }
+
+
+  
 }

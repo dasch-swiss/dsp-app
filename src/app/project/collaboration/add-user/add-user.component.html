@@ -2,12 +2,13 @@
 
 <!-- header toolbar -->
 <div class="app-toolbar transparent">
-    <div class="app-toolbar-row">
+    <div class="app-toolbar-row toolbar-subtitle">
         <h3 class="mat-body subtitle">Increase your team</h3>
     </div>
-    <div class="app-toolbar-row">
+    <div class="app-toolbar-row toolbar-form">
         <h2 class="mat-title">{{"appLabels.form.user.title.add2project" | translate}}</h2>
         <span class="fill-remaining-space"></span>
+
         <span class="app-toolbar-action">
             <form [formGroup]="selectUserForm" class="form" *ngIf="!loading">
 
@@ -37,8 +38,10 @@
 
                     </mat-form-field>
 
-                    <button mat-stroked-button [disabled]="!selectUserForm.valid" class="add-new"
-                            (click)="openDialog('createUser')">Or create new one</button>
+                    <button mat-stroked-button [disabled]="!selectUserForm.valid" class="add-new" (click)="openDialog('createUser')">Or create new one</button>
+                    <button mat-button [disabled]="!selectUserForm.valid" class="add-new-mobile" (click)="openDialog('createUser')">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
 
                 </div>
 

@@ -26,27 +26,30 @@
 
     <!-- content: list -->
     <table class="table more-space-bottom" [class.archived]="!status">
-        <tr *ngFor="let user of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
+        <tr class="table-entry" *ngFor="let user of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img kuiAdminImage [image]="user.email" [type]="'user'" class="avatar-image" />
             </td>
 
             <!-- name and e-mail address -->
-            <td>
-                <h5 class="mat-subheading-2">
+            <td class="table-info">
+                <h5 class="mat-subheading-2 info-names">
+                    <!-- Names hidden on phone devices -->
                     {{user.givenName}} {{user.familyName}}
                 </h5>
                 <p class="mat-subheading-1">
-                    {{user.username}} | {{user.email}}
+                    <span class="info-username">{{user.username}} </span>
+                    <!-- Email hidden on phone devices -->
+                    <span class="info-email">| {{user.email}}</span>
                     <!-- TODO: question: how public should the email address be? -->
                 </p>
             </td>
 
             <!-- admin: only in project view -->
-            <td>
+            <td class="table-admin-chip">
                 <mat-chip-list *ngIf="projectcode">
-                    <mat-chip *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
+                    <mat-chip class="admin-chip" *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
                 </mat-chip-list>
                 <mat-chip-list *ngIf="!projectcode && userIsSystemAdmin(user.permissions)">
                     <mat-chip class="sys-admin-chip">System Admin</mat-chip>
@@ -54,7 +57,7 @@
             </td>
 
             <!-- group: only in project view -->
-            <td>
+            <td class="table-select-group">
                 <app-select-group *ngIf="projectAdmin && projectcode" [projectcode]="project.shortcode" [projectid]="project.id" [permissions]="user.permissions.groupsPerProject[project.id]" [disabled]="!status" (groupChange)="updateGroupsMembership(user.id, $event)">
                 </app-select-group>
             </td>
