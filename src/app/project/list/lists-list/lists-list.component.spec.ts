@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { Session } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ListsListComponent } from './lists-list.component';
 
@@ -27,7 +28,9 @@ describe('ListsListComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ListsListComponent],
+            declarations: [
+                ListsListComponent
+            ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
@@ -36,7 +39,8 @@ describe('ListsListComponent', () => {
                 MatDialogModule,
                 MatIconModule,
                 MatMenuModule,
-                RouterTestingModule
+                RouterTestingModule,
+                TranslateModule.forRoot()
             ],
             providers: [
                 {

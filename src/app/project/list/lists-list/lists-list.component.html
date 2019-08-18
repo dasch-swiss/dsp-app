@@ -10,7 +10,7 @@
 
             </span>
         </div>
-        <div class="app-toolbar-row">
+        <div class="app-toolbar-row" *ngIf="list">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
                 <!-- TODO: doesn't work with the StringLiteral value -->
@@ -41,7 +41,7 @@
                     {{item.labels[0].value}}
                 </h5>
                 <p class="mat-subheading-1">
-                    <span *ngIf="item.comments.length > 0">{{item.comments[0].value}}</span>
+                    <span *ngIf="item.comments && item.comments.length > 0">{{item.comments[0].value}}</span>
                 </p>
             </td>
 

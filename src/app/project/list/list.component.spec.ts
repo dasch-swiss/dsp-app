@@ -29,7 +29,11 @@ describe('ListComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ListComponent, ListsListComponent, ErrorComponent],
+            declarations: [
+                ListComponent,
+                ListsListComponent,
+                ErrorComponent
+            ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,

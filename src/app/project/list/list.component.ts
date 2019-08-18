@@ -60,7 +60,7 @@ export class ListComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         // set the cache
-        // this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode))
@@ -85,28 +85,6 @@ export class ListComponent implements OnInit {
                     this.loading = false;
                 }
             );
-
-        /* this._listsService.getLists(this.project.id).subscribe(
-            (result: any) => {
-
-                console.log(result);
-
-                for (const list of result) {
-                    console.log(list);
-                    this._lists.getList(list.id).subscribe(
-                        (info: any) => {
-                            console.log(info);
-                        },
-                        (error: ApiServiceError) => {
-                            console.error(error);
-                        }
-                    );
-                }
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-            }
-        ); */
     }
 
     /**

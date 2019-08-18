@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Session } from '@knora/authentication';
-import { ApiServiceError, ListNode, ListsService, Project, ProjectsService } from '@knora/core';
+import { ApiServiceError, ListNode, Project, ProjectsService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
@@ -60,9 +60,7 @@ export class ListsListComponent implements OnInit {
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _projectsService: ProjectsService,
-        private _listsService: ListsService,
-        private _route: ActivatedRoute,
-        private _router: Router
+        private _route: ActivatedRoute
     ) {
         // get the shortcode of the current project
         if (this._route.parent.paramMap) {
