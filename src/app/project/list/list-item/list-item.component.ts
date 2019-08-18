@@ -46,10 +46,12 @@ export class ListItemComponent implements OnInit {
 
     }
 
-    updateView(data: any) {
+    updateView(data: ListNode) {
         this.loading = true;
-        console.log('reload', this.expandedNode);
-        console.log(data);
+        data.children = [];
+        this.list.push(data);
+        console.log('update list', this.list);
+        console.log('with new node?', data);
         this.loading = false;
 
 

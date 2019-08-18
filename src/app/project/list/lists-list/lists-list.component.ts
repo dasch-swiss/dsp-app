@@ -105,7 +105,7 @@ export class ListsListComponent implements OnInit {
         }
 
         // for testing the list-items-form
-        const testList: string = 'http://rdfh.ch/lists/00FF/73d0ec0302'; // http://rdfh.ch/lists/0011/KCu5AjF5RV6z9E3fDKXcJA
+        const testList: string = 'http://rdfh.ch/lists/0011/KCu5AjF5RV6z9E3fDKXcJA'; // 'http://rdfh.ch/lists/00FF/73d0ec0302';
         setTimeout(() => {
             this.openDialog('editListItems', 'TEST', testList);
         }, 50);

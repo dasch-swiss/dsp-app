@@ -1,3 +1,4 @@
+<kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
 <form [formGroup]="form" *ngIf="!loading" class="form-content list-item" (ngSubmit)="submitData()">
     <mat-form-field class="hidden list-item-label">
         <input matInput [formControl]="form.controls['hasRootNode']" [placeholder]="'Root node iri'">

@@ -10,6 +10,8 @@ import { AppGlobal } from 'src/app/app-global';
 })
 export class ListItemFormComponent implements OnInit {
 
+    loading: boolean;
+
     /**
      * node id, in case of edit item
      */
@@ -30,7 +32,7 @@ export class ListItemFormComponent implements OnInit {
      */
     @Input() listIri?: string;
 
-    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
+    @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
 
     placeholder: string = 'Append item to ';
 
@@ -84,9 +86,13 @@ export class ListItemFormComponent implements OnInit {
                 }
             )
         });
+
+        this.loading = false;
     }
 
     submitData() {
+
+        this.loading = true;
 
         if (this.iri) {
             // edit mode
@@ -112,7 +118,7 @@ export class ListItemFormComponent implements OnInit {
                 ]
             };
             // send payload to knora's api
-            this._listsService.createListItem(this.listIri, listItem).subscribe(
+            this._listsService.createListItem(this.form.controls['hasRootNode'].value, listItem).subscribe(
                 (result: ListNode) => {
                     this.refreshParent.emit(result);
                     this.buildForm();

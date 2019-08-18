@@ -1,5 +1,4 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
-<div class="list" *ngIf="!loading">
+<div class="list">
     <div class="list-node" *ngFor="let node of list; let first = first; let last = last;">
 
         <!-- list item -->
@@ -8,11 +7,12 @@
                 {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
         </button>
-        {{node.labels[0].value}} ({{node.id}})
+        {{node.labels[0].value}}
+        <!-- ({{node.id}}) -->
 
         <!-- list with child nodes -->
         <app-list-item class="child-node" *ngIf="node.id === expandedNode && node.children.length > 0"
-                       [list]="node.children" [parentIri]="node.id">
+                       [list]="node.children" [parentIri]="node.id" [projectcode]="projectcode">
         </app-list-item>
 
         <!-- in case of none children: show form to append new item  -->
