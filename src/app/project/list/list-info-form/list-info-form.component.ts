@@ -89,8 +89,6 @@ export class ListInfoFormComponent implements OnInit {
 
     ngOnInit() {
 
-        console.log('project:', this.projectcode);
-
         this.loading = true;
 
         // get list info in case of edit mode: this.iri is not undefined

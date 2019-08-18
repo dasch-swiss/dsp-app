@@ -21,8 +21,6 @@ export class ListItemsComponent implements OnInit {
     treeControl = new NestedTreeControl<ListNode>(node => node.children);
     dataSource = new MatTreeNestedDataSource<ListNode>();
 
-
-
     constructor (private _listsService: ListsService) { }
 
     ngOnInit() {

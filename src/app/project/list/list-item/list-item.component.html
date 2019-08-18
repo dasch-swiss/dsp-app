@@ -16,7 +16,7 @@
 
         <!-- in case of none children: show form to append new item  -->
         <div class="list-node" *ngIf="node.id === expandedNode && node.children.length === 0">
-            first child should have an empty list?
+            <!-- first child should have an empty list? yes -->
             <app-list-item-form [parentIri]="node.id" [listIri]="node.id" [projectcode]="projectcode"
                                 (refreshParent)="updateView($event, true)">
             </app-list-item-form>
