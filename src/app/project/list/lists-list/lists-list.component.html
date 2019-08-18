@@ -20,9 +20,9 @@
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action button right">
-                <button mat-flat-button [color]="'primary'"
-                        (click)="openDialog('createList', 'new', projectcode)">Create
-                    new</button>
+                <button mat-flat-button [color]="'primary'" (click)="openDialog('createList', 'List')">
+                    Create new
+                </button>
             </span>
         </div>
     </div>

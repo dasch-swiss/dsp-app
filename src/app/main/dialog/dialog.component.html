@@ -138,9 +138,10 @@
 
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
-        <app-dialog-header [title]="'List'" [subtitle]="'Create new'" (close)="dialogRef.close()">
+        <app-dialog-header [title]="data.title" [subtitle]="'Create new'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-info-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-list-info-form>
+        <app-list-info-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"
+                            (updateParent)="replaceTitle($event)"></app-list-info-form>
     </div>
 
     <!-- Edit list nodes -->

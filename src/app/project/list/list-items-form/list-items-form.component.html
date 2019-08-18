@@ -8,4 +8,7 @@
     </span>
 </div> -->
 
-<app-list-item [list]="list" [parentIri]="iri" [listIri]="iri" [projectcode]="projectcode"></app-list-item>
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+
+<app-list-item *ngIf="!loading" [list]="list" [parentIri]="iri" [listIri]="iri" [projectcode]="projectcode">
+</app-list-item>

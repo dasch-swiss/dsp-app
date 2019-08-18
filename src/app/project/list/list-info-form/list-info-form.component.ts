@@ -17,9 +17,11 @@ export class ListInfoFormComponent implements OnInit {
     @Input() iri?: string;
 
     // project short code
-    @Input() projectcode?: string;
+    @Input() projectcode: string;
 
     @Output() closeDialog: EventEmitter<List | ListInfo> = new EventEmitter<List>();
+
+    @Output() updateParent: EventEmitter<string> = new EventEmitter<string>();
 
     project: Project;
 
@@ -31,6 +33,7 @@ export class ListInfoFormComponent implements OnInit {
      *
      */
     createList: boolean = false;
+    newList: List;
 
     nameMinLength = 3;
     nameMaxLength = 16;
@@ -85,6 +88,8 @@ export class ListInfoFormComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        console.log('project:', this.projectcode);
 
         this.loading = true;
 
@@ -181,7 +186,6 @@ export class ListInfoFormComponent implements OnInit {
             };
             this._listsService.updateListInfo(listInfoUpdateData).subscribe(
                 (result: ListInfo) => {
-
                     this.success = true;
                     this.loading = false;
                     this.closeDialog.emit(result);
@@ -215,6 +219,8 @@ export class ListInfoFormComponent implements OnInit {
                 (result: List) => {
                     // console.log(result);
                     // this.closeDialog.emit(result);
+                    this.newList = result;
+                    this.updateParent.emit(result.listinfo.labels[0].value);
                     this.loading = false;
                     this.createList = true;
                 },

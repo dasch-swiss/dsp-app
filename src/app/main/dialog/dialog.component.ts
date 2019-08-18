@@ -28,7 +28,6 @@ export interface DialogData {
 })
 export class DialogComponent implements OnInit {
 
-
     constructor (
         public dialogRef: MatDialogRef<DialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData
@@ -38,5 +37,9 @@ export class DialogComponent implements OnInit {
 
     closeDialog(data: any): void {
         this.dialogRef.close();
+    }
+
+    replaceTitle(title: string) {
+        this.data.title = title;
     }
 }

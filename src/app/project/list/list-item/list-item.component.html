@@ -1,29 +1,38 @@
-<div class="list">
+<div class="list" *ngIf="list && list.length > 0">
     <div class="list-node" *ngFor="let node of list; let first = first; let last = last;">
 
-        <!-- list item -->
+        <!-- button to expand / close node -->
         <button type="button" mat-icon-button (click)="toggleChildren(node.id)">
             <mat-icon class="mat-icon-rtl-mirror">
                 {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
         </button>
         {{node.labels[0].value}}
-        <!-- ({{node.id}}) -->
 
-        <!-- list with child nodes -->
+        <!-- recursion: list with child nodes -->
         <app-list-item class="child-node" *ngIf="node.id === expandedNode && node.children.length > 0"
                        [list]="node.children" [parentIri]="node.id" [projectcode]="projectcode">
         </app-list-item>
 
         <!-- in case of none children: show form to append new item  -->
         <div class="list-node" *ngIf="node.id === expandedNode && node.children.length === 0">
+            first child should have an empty list?
             <app-list-item-form [parentIri]="node.id" [listIri]="node.id" [projectcode]="projectcode"
-                                (refreshParent)="updateView($event)">
+                                (refreshParent)="updateView($event, true)">
             </app-list-item-form>
         </div>
 
         <!-- form to append new item to parent node -->
         <app-list-item-form *ngIf="last" [parentIri]="parentIri" [listIri]="listIri" [projectcode]="projectcode"
+                            (refreshParent)="updateView($event)">
+        </app-list-item-form>
+    </div>
+</div>
+
+<!-- new list to create if list is empty -->
+<div class="list" *ngIf="list && list.length === 0">
+    <div class="list-node">
+        <app-list-item-form [parentIri]="listIri" [listIri]="listIri" [projectcode]="projectcode"
                             (refreshParent)="updateView($event)">
         </app-list-item-form>
     </div>

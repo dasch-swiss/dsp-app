@@ -38,7 +38,7 @@
     </form>
 
     <div class="create-list-items" *ngIf="createList">
-        <app-list-items-form></app-list-items-form>
+        <app-list-items-form [projectcode]="projectcode" [iri]="newList.listinfo.id"></app-list-items-form>
     </div>
 
 </div>

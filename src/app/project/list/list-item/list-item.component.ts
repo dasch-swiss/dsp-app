@@ -41,19 +41,22 @@ export class ListItemComponent implements OnInit {
             this.expandedNode = id;
         }
 
-        console.log(id);
-        // this.showChildren = !this.showChildren;
-
     }
 
-    updateView(data: ListNode) {
-        this.loading = true;
-        data.children = [];
-        this.list.push(data);
-        console.log('update list', this.list);
-        console.log('with new node?', data);
-        this.loading = false;
+    updateView(data: ListNode, firstNode: boolean = false) {
 
+        this.loading = true;
+        // update the view by updating the existing list
+        if (firstNode) {
+            // in case of new child node, we have to use the children from list
+            const index: number = this.list.findIndex(item => item.id === this.expandedNode);
+            this.list[index].children.push(data);
+
+        } else {
+            this.list.push(data);
+        }
+
+        data.children = [];
 
     }
 
