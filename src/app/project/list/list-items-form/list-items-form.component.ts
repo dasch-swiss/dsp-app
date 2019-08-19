@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ApiServiceError, List, ListNode, ListNodeUpdatePayload, ListsService } from '@knora/core';
-import { AppGlobal } from 'src/app/app-global';
+import { ApiServiceError, List, ListNode, ListsService } from '@knora/core';
 
 @Component({
     selector: 'app-list-items-form',
@@ -21,13 +19,7 @@ export class ListItemsFormComponent implements OnInit {
 
     list: ListNode[];
 
-    /**
-    * form group for the form controller
-    */
-    form: FormGroup;
-
-    constructor (private _formBuilder: FormBuilder,
-        private _listsService: ListsService) {
+    constructor (private _listsService: ListsService) {
     }
 
     ngOnInit() {
@@ -45,61 +37,6 @@ export class ListItemsFormComponent implements OnInit {
             }
         );
 
-        // build form
-        this.form = this._formBuilder.group({
-            hasRootNode: new FormControl(
-                {
-                    value: this.iri,
-                    disabled: false
-                }
-            ),
-            label: new FormControl(
-                {
-                    value: '',
-                    disabled: false
-                }
-            ),
-            comment: new FormControl(
-                {
-                    value: '',
-                    disabled: false
-                }
-            )
-        });
-    }
-
-    submitData() {
-
-        const listItem: ListNodeUpdatePayload = {
-            parentNodeIri: this.form.controls['hasRootNode'].value,
-            projectIri: AppGlobal.iriProjectsBase + this.projectcode,
-            name: this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
-            labels: [
-                {
-                    value: this.form.controls['label'].value,
-                    language: this.language
-                }
-            ],
-            comments: [
-                {
-                    value: this.form.controls['comment'].value,
-                    language: this.language
-                }
-            ]
-        };
-        // send to the api
-        this._listsService.createListItem(this.iri, listItem).subscribe(
-            (result: ListNode) => {
-                console.log('success? ', result);
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-            }
-        );
-
-        console.log(
-            listItem
-        );
     }
 
 }

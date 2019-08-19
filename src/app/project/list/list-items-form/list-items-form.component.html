@@ -1,13 +1,3 @@
-<!-- existing list items first -->
-<!-- <div>
-    <span *ngFor="let child of list">
-        <p>
-            {{child.labels[0].value}}
-        </p>
-        <app-list-item [children]="child.children"></app-list-item>
-    </span>
-</div> -->
-
 <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
 <app-list-item *ngIf="!loading" [list]="list" [parentIri]="iri" [listIri]="iri" [projectcode]="projectcode"
