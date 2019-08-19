@@ -7,7 +7,7 @@
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <div *ngIf="!loading" class="content">
+    <div *ngIf="!loading" class="content users-list">
 
         <!-- list of active users -->
         <app-users-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-users-list>

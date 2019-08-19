@@ -1,3 +1,5 @@
+@import "../../../assets/style/responsive";
+
 .logo {
   // margin-left: -16px;
 
@@ -29,4 +31,42 @@
 
 .login-button {
   margin: 0 16px;
+}
+
+// mobile device: tablet and smaller than a tablet
+@media (max-width: map-get($grid-breakpoints, tablet)) {
+  .hide-search {
+    display: none;
+  }
+}
+
+// tablet and desktop device
+@media (min-width: map-get($grid-breakpoints, phone)) {
+  .searchbar-phone-screen {
+    display: none;
+  }
+}
+
+// tablet and desktop device
+@media (max-width: map-get($grid-breakpoints, desktop)) and (min-width: map-get($grid-breakpoints, phone)) {
+  .space-before {
+    display: none;
+  }
+}
+
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .info-menu-button {
+    display: none;
+  }
+  .searchbar-large-screen {
+    display: none;
+  }
+  .search-link {
+    padding: 0;
+    min-width: 45px;
+  }
+  .action {
+    padding: 0;
+  }
 }

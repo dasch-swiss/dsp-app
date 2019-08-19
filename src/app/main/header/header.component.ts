@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
+import { Component } from '@angular/core';
+import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { AuthenticationService } from '@knora/authentication';
@@ -9,11 +9,12 @@ import { AuthenticationService } from '@knora/authentication';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
     session: boolean;
+    show: boolean = false;
 
-    constructor (private _auth: AuthenticationService,
+    constructor(private _auth: AuthenticationService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _router: Router) {
@@ -38,15 +39,22 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
-    }
-
+    /**
+     * Navigate to the login page
+     */
     goToLogin() {
         this._router.navigate(['login'], {
             queryParams: {
                 returnUrl: this._router.url
             }
         });
+    }
+
+    /**
+     * Show or hide search bar in phone version
+     */
+    showSearchBar() {
+        this.show = !this.show;
     }
 
 }
