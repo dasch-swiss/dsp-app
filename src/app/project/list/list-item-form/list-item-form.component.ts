@@ -1,8 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ApiServiceError, ListNode, ListNodeUpdatePayload, ListsService } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
-import { MatInput } from '@angular/material';
 
 @Component({
     selector: 'app-list-item-form',
@@ -38,8 +37,7 @@ export class ListItemFormComponent implements OnInit {
 
     @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
 
-    @ViewChild('setFocus') labelInput: MatInput;
-
+    // @ViewChild('setFocus') labelInput: MatInput;
 
     placeholder: string = 'Append item to ';
 
@@ -74,6 +72,7 @@ export class ListItemFormComponent implements OnInit {
 
     buildForm() {
         this.form = this._formBuilder.group({
+            // hidden field
             hasRootNode: new FormControl(
                 {
                     value: this.parentIri,
@@ -84,7 +83,9 @@ export class ListItemFormComponent implements OnInit {
                 {
                     value: '',
                     disabled: false
-                }
+                }, [
+                    Validators.required
+                ]
             ),
             comment: new FormControl(
                 {
