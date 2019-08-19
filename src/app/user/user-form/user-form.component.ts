@@ -3,7 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
 import { Session } from '@knora/authentication';
-import { ApiServiceError, KnoraConstants, Project, ProjectsService, User, UsersService, Utils } from '@knora/core';
+import { ApiServiceError, KnoraConstants, Project, ProjectsService, StringLiteral, User, UsersService, Utils } from '@knora/core';
+import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -153,24 +154,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     /**
      * selector to set default language
      */
-    languagesList: any[] = [
-        {
-            id: 'en',
-            name: 'english'
-        },
-        {
-            id: 'de',
-            name: 'deutsch'
-        },
-        {
-            id: 'fr',
-            name: 'français'
-        },
-        {
-            id: 'it',
-            name: 'italiano'
-        }
-    ];
+    languagesList: StringLiteral[] = AppGlobal.languagesList;
 
     constructor (
         private _route: ActivatedRoute,

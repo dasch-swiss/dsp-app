@@ -68,8 +68,8 @@
 
             <mat-select [formControl]="form.controls['lang']"
                         [placeholder]="'appLabels.form.user.general.language' | translate">
-                <mat-option *ngFor="let lang of languagesList" [value]="lang.id">
-                    {{ lang.name }}
+                <mat-option *ngFor="let lang of languagesList" [value]="lang.language">
+                    {{ lang.value }}
                 </mat-option>
             </mat-select>
 

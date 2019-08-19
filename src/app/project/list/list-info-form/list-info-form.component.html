@@ -20,6 +20,14 @@
                 <input matInput [formControl]="form.controls['comment']" [placeholder]="'Description'">
             </mat-form-field>
 
+            <mat-form-field>
+                <mat-label>List language</mat-label>
+                <select matNativeControl [formControl]="form.controls['language']">
+                    <option *ngFor="let lang of languagesList" [value]="lang.language">{{lang.value}}</option>
+                </select>
+            </mat-form-field>
+
+
             <div class="form-panel form-action">
                 <span>
                     <button mat-button type="button" (click)="resetForm($event, list)">
@@ -38,7 +46,8 @@
     </form>
 
     <div class="create-list-items" *ngIf="createList">
-        <app-list-items-form [projectcode]="projectcode" [iri]="newList.listinfo.id"></app-list-items-form>
+        <app-list-items-form [projectcode]="projectcode" [iri]="newList.listinfo.id"
+                             [language]="form.controls['language'].value"></app-list-items-form>
     </div>
 
 </div>

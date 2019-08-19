@@ -18,13 +18,13 @@
         <div class="list-node" *ngIf="node.id === expandedNode && node.children.length === 0">
             <!-- first child should have an empty list? yes -->
             <app-list-item-form [parentIri]="node.id" [listIri]="node.id" [projectcode]="projectcode"
-                                (refreshParent)="updateView($event, true)">
+                                [language]="language" (refreshParent)="updateView($event, true)">
             </app-list-item-form>
         </div>
 
         <!-- form to append new item to parent node -->
         <app-list-item-form *ngIf="last" [parentIri]="parentIri" [listIri]="listIri" [projectcode]="projectcode"
-                            (refreshParent)="updateView($event)">
+                            [language]="language" (refreshParent)="updateView($event)">
         </app-list-item-form>
     </div>
 </div>
@@ -32,7 +32,7 @@
 <!-- new list to create if list is empty -->
 <div class="list" *ngIf="list && list.length === 0">
     <div class="list-node">
-        <app-list-item-form [parentIri]="listIri" [listIri]="listIri" [projectcode]="projectcode"
+        <app-list-item-form [parentIri]="listIri" [listIri]="listIri" [projectcode]="projectcode" [language]="language"
                             (refreshParent)="updateView($event)">
         </app-list-item-form>
     </div>

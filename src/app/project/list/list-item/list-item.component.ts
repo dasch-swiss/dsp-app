@@ -18,6 +18,9 @@ export class ListItemComponent implements OnInit {
 
     @Input() projectcode: string;
 
+    // TODO: this is only used for the list creator prototype
+    @Input() language?: string = 'en';
+
     expandedNode: string;
 
     // showChildren: boolean = false;

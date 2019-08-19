@@ -33,6 +33,9 @@ export class ListItemFormComponent implements OnInit {
      */
     @Input() listIri?: string;
 
+    // TODO: this is only used for the list creator prototype
+    @Input() language?: string = 'en';
+
     @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
 
     @ViewChild('setFocus') labelInput: MatInput;
@@ -113,13 +116,13 @@ export class ListItemFormComponent implements OnInit {
                 labels: [
                     {
                         value: this.form.controls['label'].value,
-                        language: 'en'
+                        language: this.language
                     }
                 ],
                 comments: [
                     {
                         value: this.form.controls['comment'].value,
-                        language: 'en'
+                        language: this.language
                     }
                 ]
             };

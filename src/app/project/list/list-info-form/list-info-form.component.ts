@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiServiceError, List, ListCreatePayload, ListInfo, ListInfoUpdatePayload, ListsService, Project, ProjectsService } from '@knora/core';
+import { ApiServiceError, List, ListCreatePayload, ListInfo, ListInfoUpdatePayload, ListsService, Project, ProjectsService, StringLiteral } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
@@ -79,10 +79,14 @@ export class ListInfoFormComponent implements OnInit {
         statusText: "You have successfully updated list's info."
     };
 
-    constructor (private _formBuilder: FormBuilder,
-        private _router: Router,
-        private _cache: CacheService,
-        private _projectsService: ProjectsService,
+    /**
+     * In this prototype we create list in only one language,
+     * the user has to select the language to use
+     */
+    languagesList: StringLiteral[] = AppGlobal.languagesList;
+
+    constructor (
+        private _formBuilder: FormBuilder,
         private _listsService: ListsService) {
 
     }
@@ -115,8 +119,11 @@ export class ListInfoFormComponent implements OnInit {
         let label: string = '';
         let comment: string = '';
 
+        let language: string = this.languagesList[0].language;
+
         if (list && list.id) {
             label = list.labels[0].value;
+            language = list.labels[0].language;
             if (list.comments.length > 0) {
                 comment = list.comments[0].value;
             }
@@ -133,6 +140,12 @@ export class ListInfoFormComponent implements OnInit {
             comment: new FormControl(
                 {
                     value: comment,
+                    disabled: false
+                }
+            ),
+            language: new FormControl(
+                {
+                    value: language,
                     disabled: false
                 }
             )
@@ -172,13 +185,13 @@ export class ListInfoFormComponent implements OnInit {
                 labels: [
                     {
                         value: this.form.controls['label'].value,
-                        language: 'de'
+                        language: this.form.controls['language'].value
                     }
                 ],
                 comments: [
                     {
                         value: this.form.controls['comment'].value,
-                        language: 'de'
+                        language: this.form.controls['language'].value
                     }
                 ]
             };
@@ -203,13 +216,13 @@ export class ListInfoFormComponent implements OnInit {
                 labels: [
                     {
                         value: this.form.controls['label'].value,
-                        language: 'de'
+                        language: this.form.controls['language'].value
                     }
                 ],
                 comments: [
                     {
                         value: this.form.controls['comment'].value,
-                        language: 'de'
+                        language: this.form.controls['language'].value
                     }
                 ]
             };
@@ -218,7 +231,7 @@ export class ListInfoFormComponent implements OnInit {
                     // console.log(result);
                     // this.closeDialog.emit(result);
                     this.newList = result;
-                    this.updateParent.emit(result.listinfo.labels[0].value);
+                    this.updateParent.emit(result.listinfo.labels[0].value + ' (' + this.form.controls['language'].value + ')');
                     this.loading = false;
                     this.createList = true;
                 },

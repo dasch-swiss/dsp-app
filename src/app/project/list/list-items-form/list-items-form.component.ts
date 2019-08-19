@@ -16,6 +16,9 @@ export class ListItemsFormComponent implements OnInit {
 
     @Input() projectcode?: string;
 
+    // TODO: this is only used for the list creator prototype
+    @Input() language?: string = 'en';
+
     list: ListNode[];
 
     /**
@@ -32,8 +35,8 @@ export class ListItemsFormComponent implements OnInit {
         this.loading = true;
         this._listsService.getList(this.iri).subscribe(
             (result: List) => {
-                // console.log(result);
                 this.list = result.children;
+                this.language = result.listinfo.labels[0].language;
                 this.loading = false;
                 //                this.list = result;
             },
@@ -74,13 +77,13 @@ export class ListItemsFormComponent implements OnInit {
             labels: [
                 {
                     value: this.form.controls['label'].value,
-                    language: 'en'
+                    language: this.language
                 }
             ],
             comments: [
                 {
                     value: this.form.controls['comment'].value,
-                    language: 'en'
+                    language: this.language
                 }
             ]
         };
