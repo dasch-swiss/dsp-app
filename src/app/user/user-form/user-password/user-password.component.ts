@@ -79,11 +79,11 @@ export class UserPasswordComponent implements OnInit {
         }
     };
 
-    constructor(
+    constructor (
         private _cache: CacheService,
         private _usersService: UsersService,
         private _formBuilder: FormBuilder
-    ) {}
+    ) { }
 
     ngOnInit() {
 
@@ -112,9 +112,9 @@ export class UserPasswordComponent implements OnInit {
         );
 
         this._cache.get(
-                this.username,
-                this._usersService.getUserByUsername(this.username)
-            )
+            this.username,
+            this._usersService.getUserByUsername(this.username)
+        )
             .subscribe(
                 (response: User) => {
                     this.user = response;
@@ -228,9 +228,9 @@ export class UserPasswordComponent implements OnInit {
     }
 
     /**
-     *Save new password goes to the next div, to check sys admin password and then submit
+     * Go to next step after confirm action with sys admin password
      */
-    savePswd() {
+    nextStep() {
         this.oldPswd = !this.oldPswd;
     }
 
@@ -253,36 +253,30 @@ export class UserPasswordComponent implements OnInit {
             reqPw = this.requesterPasswordForm.controls['requesterPassword'].value;
             newPw = this.newPasswordForm.controls['newPassword'].value;
         }
-        this._usersService
-            .updateOwnPassword(
-                this.user.id,
-                reqPw,
-                newPw
-            )
-            .subscribe(
-                (result: User) => {
-                    // console.log(this.userPasswordForm.value);
-                    this.success = true;
-                    this.failed = false;
+        this._usersService.updateOwnPassword(this.user.id, reqPw, newPw).subscribe(
+            (result: User) => {
+                // console.log(this.userPasswordForm.value);
+                this.success = true;
+                this.failed = false;
+                this.userPasswordForm.reset();
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                if (error.status === 403) {
+                    // the old password is wrong
+                    this.oldPasswordIsWrong = true;
+                    this.success = false;
+                    this.failed = true;
                     this.userPasswordForm.reset();
                     this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    if (error.status === 403) {
-                        // the old password is wrong
-                        this.oldPasswordIsWrong = true;
-                        this.success = false;
-                        this.failed = true;
-                        this.userPasswordForm.reset();
-                        this.loading = false;
-                    } else {
-                        this.errorMessage = error;
-                        console.error(error);
-                    }
-
-                    this.loading = false;
+                } else {
+                    this.errorMessage = error;
+                    console.error(error);
                 }
-            );
+
+                this.loading = false;
+            }
+        );
         this.oldPswd = !this.oldPswd;
     }
 

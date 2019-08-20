@@ -345,7 +345,6 @@ export class UsersListComponent implements OnInit {
                     case 'deleteUser':
                         this.deleteUser(iri);
                         break;
-
                     case 'activateUser':
                         this.activateUser(iri);
                         break;
