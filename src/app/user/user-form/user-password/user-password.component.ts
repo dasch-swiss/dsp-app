@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { AuthenticationService } from '@knora/authentication';
 
 @Component({
     selector: 'app-user-password',
@@ -34,6 +35,10 @@ export class UserPasswordComponent implements OnInit {
     // in case if the old password is wrong
     oldPasswordIsWrong = false;
     oldPasswordError = 'The old password is not correct';
+
+    // in case if sys admin password is wrong
+    adminPasswordIsWrong = false;
+    adminPasswordError = 'Your password is wrong or you\'re not allowed to change other user\'s password';
 
     // in case of success:
     success = false;
@@ -81,6 +86,7 @@ export class UserPasswordComponent implements OnInit {
 
     constructor (
         private _cache: CacheService,
+        private _auth: AuthenticationService,
         private _usersService: UsersService,
         private _formBuilder: FormBuilder
     ) { }
@@ -231,7 +237,20 @@ export class UserPasswordComponent implements OnInit {
      * Go to next step after confirm action with sys admin password
      */
     nextStep() {
-        this.oldPswd = !this.oldPswd;
+
+        // submit requester password with logged-in username
+        this._auth.login(this.loggedInUserName, this.requesterPasswordForm.controls.requesterPassword.value).subscribe(
+            (result: any) => {
+                this.adminPasswordIsWrong = false;
+                this.oldPswd = !this.oldPswd;
+
+            },
+            (error: ApiServiceError) => {
+                this.adminPasswordIsWrong = true;
+                // console.error(error);
+            }
+        );
+
     }
 
     /**
