@@ -26,6 +26,29 @@ export class PasswordFormComponent implements OnInit {
 
     form: FormGroup;
 
+    // error checking on the following fields
+    formErrors = {
+        requesterPassword: '',
+        password: '',
+        confirmPassword: ''
+    };
+
+    // ...and the error hints
+    validationMessages = {
+        requesterPassword: {
+            required: 'The old password is required'
+        },
+        password: {
+            required: 'A new password is needed, if you want to change it.',
+            minlength: 'Use at least 8 characters.',
+            pattern:
+                'The password should have at least one uppercase letter and one number.'
+        },
+        confirmPassword: {
+            required: 'You have to conrim your new password'
+        }
+    };
+
 
 
 
@@ -88,11 +111,34 @@ export class PasswordFormComponent implements OnInit {
                 },
                 [
                     Validators.required,
-                    existingNameValidator(this.newPass)
+                    // existingNameValidator(this.newPass)
                     //                    this.checkPasswords(this.newPasswordForm)
                     //                    existingNameValidator(new RegExp('(?:^|\W)' + 'gaga' + '(?:$|\W)'))
                 ]
             )
+        });
+    }
+
+    submtiData() {
+
+    }
+
+    closeMessage(status?: number) {
+
+        switch (status) {
+            case 200:
+                // success: close message (and dialog box)
+                break;
+
+            case 400:
+                // something went wrong: reset form
+                break;
+
+            default:
+            // close message
+
         }
+
+    }
 
 }
