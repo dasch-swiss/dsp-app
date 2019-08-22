@@ -27,6 +27,7 @@ export class UserPasswordComponent implements OnInit {
     // visibility of password
     showOldPassword = false;
     showNewPassword = false;
+    showConfirmPassword = false;
     oldPswd = true;
 
     // in case of an API error
@@ -42,7 +43,11 @@ export class UserPasswordComponent implements OnInit {
 
     // in case of success:
     success = false;
-    successMessage: any = {
+    ownSuccessMessage: any = {
+        status: 200,
+        statusText: 'You have successfully updated your password.'
+    };
+    adminSuccessMessage: any = {
         status: 200,
         statusText: 'You have successfully updated user\'s password.'
     };
@@ -68,7 +73,8 @@ export class UserPasswordComponent implements OnInit {
     // error checking on the following fields
     formErrors = {
         requesterPassword: '',
-        newPassword: ''
+        newPassword: '',
+        confirmNewPassword: ''
     };
 
     // ...and the error hints
@@ -81,6 +87,9 @@ export class UserPasswordComponent implements OnInit {
             minlength: 'Use at least 8 characters.',
             pattern:
                 'The password should have at least one uppercase letter and one number.'
+        },
+        confirmNewPassword: {
+            required: 'You have to conrim your new password'
         }
     };
 
@@ -151,6 +160,16 @@ export class UserPasswordComponent implements OnInit {
                     Validators.required,
                     Validators.minLength(8),
                     Validators.pattern(Utils.RegexPassword)
+                ]
+            ),
+            confirmNewPassword: new FormControl(
+                {
+                    value: '',
+                    disabled: false,
+                    validator: this.checkPasswords
+                },
+                [
+                    Validators.required
                 ]
             )
         });
@@ -237,7 +256,6 @@ export class UserPasswordComponent implements OnInit {
      * Go to next step after confirm action with sys admin password
      */
     nextStep() {
-
         // submit requester password with logged-in username
         this._auth.login(this.loggedInUserName, this.requesterPasswordForm.controls.requesterPassword.value).subscribe(
             (result: any) => {
@@ -250,7 +268,13 @@ export class UserPasswordComponent implements OnInit {
                 // console.error(error);
             }
         );
+    }
 
+    checkPasswords(group: FormGroup) {
+        const pass = group.controls.newPassword.value;
+        const confirmPass = group.controls.confirmNewPassword.value;
+
+        return pass === confirmPass ? null : { notSame: true };
     }
 
     /**
