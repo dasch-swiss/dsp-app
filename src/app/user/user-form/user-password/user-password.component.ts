@@ -1,13 +1,9 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import {
-    FormBuilder,
-    FormControl,
-    FormGroup,
-    Validators
-} from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthenticationService } from '@knora/authentication';
 import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { AuthenticationService } from '@knora/authentication';
+import { existingNameValidator } from '@knora/action';
 
 @Component({
     selector: 'app-user-password',
@@ -19,6 +15,9 @@ export class UserPasswordComponent implements OnInit {
     @Input() username: string;
 
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
+
+    // test / confirm new password
+    newPass: RegExp; // = new RegExp('(?:^|\W)');
 
     loggedInUserName: string;
 
@@ -89,7 +88,8 @@ export class UserPasswordComponent implements OnInit {
                 'The password should have at least one uppercase letter and one number.'
         },
         confirmNewPassword: {
-            required: 'You have to conrim your new password'
+            required: 'You have to conrim your new password',
+            'existingName': 'This shortcode is already taken.'
         }
     };
 
@@ -165,11 +165,13 @@ export class UserPasswordComponent implements OnInit {
             confirmNewPassword: new FormControl(
                 {
                     value: '',
-                    disabled: false,
-                    validator: this.checkPasswords
+                    disabled: false
                 },
                 [
-                    Validators.required
+                    Validators.required,
+                    existingNameValidator(this.newPass)
+                    //                    this.checkPasswords(this.newPasswordForm)
+                    //                    existingNameValidator(new RegExp('(?:^|\W)' + 'gaga' + '(?:$|\W)'))
                 ]
             )
         });
@@ -204,12 +206,15 @@ export class UserPasswordComponent implements OnInit {
             )
         });
 
-        this.userPasswordForm.valueChanges.subscribe(data =>
-            this.onValueChanged(this.userPasswordForm, data)
-        );
-        this.newPasswordForm.valueChanges.subscribe(data =>
-            this.onValueChanged(this.newPasswordForm, data)
-        );
+        this.userPasswordForm.valueChanges.subscribe(data => {
+            this.newPass = new RegExp('(?:^|\W)' + this.userPasswordForm.controls.newPassword.value + '(?:$|\W)');
+            this.onValueChanged(this.userPasswordForm, data);
+        });
+        this.newPasswordForm.valueChanges.subscribe(data => {
+
+
+            this.onValueChanged(this.newPasswordForm, data);
+        });
         this.requesterPasswordForm.valueChanges.subscribe(data =>
             this.onValueChanged(this.requesterPasswordForm, data)
         );
