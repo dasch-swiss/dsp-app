@@ -5,6 +5,39 @@ import { User, UsersService, Utils, ApiServiceError } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { existingNameValidator, KuiMessageData } from '@knora/action';
 
+export class PasswordValidator {
+    // inspired on: http://plnkr.co/edit/Zcbg2T3tOxYmhxs7vaAm?p=preview
+    static areEqual(formGroup: FormGroup) {
+        let value;
+        let valid = true;
+        for (let key in formGroup.controls) {
+
+            console.log('key', key);
+
+            if (formGroup.controls.hasOwnProperty(key)) {
+                let control: FormControl = <FormControl>formGroup.controls[key];
+
+                if (value === undefined) {
+                    value = control.value
+                } else {
+                    if (value !== control.value) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (valid) {
+            return null;
+        }
+
+        return {
+            areEqual: true
+        };
+    }
+}
+
 @Component({
     selector: 'app-password-form',
     templateUrl: './password-form.component.html',
@@ -32,6 +65,8 @@ export class PasswordFormComponent implements OnInit {
     // password form
     form: FormGroup;
 
+    matching_passwords_group: FormGroup;
+
     // in case of change not own password, we need a sys admin confirm password form
     confirmForm: FormGroup;
 
@@ -56,6 +91,32 @@ export class PasswordFormComponent implements OnInit {
         confirmPassword: {
             required: 'You have to conrim your new password'
         }
+    };
+
+    account_validation_messages = {
+        // 'username': [
+        //   { type: 'required', message: 'Username is required' },
+        //   { type: 'minlength', message: 'Username must be at least 5 characters long' },
+        //   { type: 'maxlength', message: 'Username cannot be more than 25 characters long' },
+        //   { type: 'pattern', message: 'Your username must contain only numbers and letters' },
+        //   { type: 'validUsername', message: 'Your username has already been taken' }
+        // ],
+        // 'email': [
+        //   { type: 'required', message: 'Email is required' },
+        //   { type: 'pattern', message: 'Enter a valid email' }
+        // ],
+        'confirm_password': [
+            { type: 'required', message: 'Confirm password is required' },
+            { type: 'areEqual', message: 'Password mismatch' }
+        ],
+        'password': [
+            { type: 'required', message: 'Password is required' },
+            { type: 'minlength', message: 'Password must be at least 5 characters long' },
+            { type: 'pattern', message: 'Your password must contain at least one uppercase, one lowercase, and one number' }
+        ],
+        // 'terms': [
+        //   { type: 'pattern', message: 'You must accept terms and conditions' }
+        // ]
     };
 
 
@@ -149,9 +210,24 @@ export class PasswordFormComponent implements OnInit {
             )
         });
 
+        this.matching_passwords_group = new FormGroup({
+            password: new FormControl('', Validators.compose([
+                Validators.minLength(5),
+                Validators.required,
+                Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$') //this is for the letters (both uppercase and lowercase) and numbers validation
+            ])),
+            confirm_password: new FormControl('', Validators.required)
+        }, (formGroup: FormGroup) => {
+            return PasswordValidator.areEqual(formGroup);
+        });
+
 
         this.form.valueChanges.subscribe(data => {
             //            this.newPass = new RegExp('(?:^|\W)' + this.userPasswordForm.controls.newPassword.value + '(?:$|\W)');
+            if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
+                // compare password field values:
+                console.log('the same pw?', this.form.controls.password.value === this.form.controls.confirmPassword.value);
+            }
             this.onValueChanged(this.form, data);
         });
 
