@@ -64,7 +64,7 @@ export class MainComponent implements OnInit {
 
     currentYear: Date = new Date();
 
-    constructor (
+    constructor(
         private _auth: AuthenticationService,
         private _projectsService: ProjectsService,
         private _router: Router,
@@ -102,7 +102,7 @@ export class MainComponent implements OnInit {
                 for (const project of result) {
                     // disable default test projects
 
-                    if (!this.disabledProjects.includes(project.id)) {
+                    if (!this.disabledProjects.includes(project.id) && project.status) {
                         const projectItem: GridItem = <GridItem>{};
                         projectItem.title = project.longname;
 
