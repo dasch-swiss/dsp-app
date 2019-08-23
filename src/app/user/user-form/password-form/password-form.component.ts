@@ -65,7 +65,7 @@ export class PasswordFormComponent implements OnInit {
     // password form
     form: FormGroup;
 
-    matching_passwords_group: FormGroup;
+    matchingPasswords: boolean = false;
 
     // in case of change not own password, we need a sys admin confirm password form
     confirmForm: FormGroup;
@@ -89,38 +89,10 @@ export class PasswordFormComponent implements OnInit {
                 'The password should have at least one uppercase letter and one number.'
         },
         confirmPassword: {
-            required: 'You have to conrim your new password'
+            required: 'You have to confirm your password',
+            match: 'Password mismatch'
         }
     };
-
-    account_validation_messages = {
-        // 'username': [
-        //   { type: 'required', message: 'Username is required' },
-        //   { type: 'minlength', message: 'Username must be at least 5 characters long' },
-        //   { type: 'maxlength', message: 'Username cannot be more than 25 characters long' },
-        //   { type: 'pattern', message: 'Your username must contain only numbers and letters' },
-        //   { type: 'validUsername', message: 'Your username has already been taken' }
-        // ],
-        // 'email': [
-        //   { type: 'required', message: 'Email is required' },
-        //   { type: 'pattern', message: 'Enter a valid email' }
-        // ],
-        'confirm_password': [
-            { type: 'required', message: 'Confirm password is required' },
-            { type: 'areEqual', message: 'Password mismatch' }
-        ],
-        'password': [
-            { type: 'required', message: 'Password is required' },
-            { type: 'minlength', message: 'Password must be at least 5 characters long' },
-            { type: 'pattern', message: 'Your password must contain at least one uppercase, one lowercase, and one number' }
-        ],
-        // 'terms': [
-        //   { type: 'pattern', message: 'You must accept terms and conditions' }
-        // ]
-    };
-
-
-
 
     // visibility of password
     showRequesterPassword = false;
@@ -202,7 +174,7 @@ export class PasswordFormComponent implements OnInit {
                     disabled: false
                 },
                 [
-                    Validators.required,
+                    Validators.required
                     // existingNameValidator(this.newPass)
                     //                    this.checkPasswords(this.newPasswordForm)
                     //                    existingNameValidator(new RegExp('(?:^|\W)' + 'gaga' + '(?:$|\W)'))
@@ -210,25 +182,18 @@ export class PasswordFormComponent implements OnInit {
             )
         });
 
-        this.matching_passwords_group = new FormGroup({
-            password: new FormControl('', Validators.compose([
-                Validators.minLength(5),
-                Validators.required,
-                Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$') //this is for the letters (both uppercase and lowercase) and numbers validation
-            ])),
-            confirm_password: new FormControl('', Validators.required)
-        }, (formGroup: FormGroup) => {
-            return PasswordValidator.areEqual(formGroup);
-        });
-
-
         this.form.valueChanges.subscribe(data => {
             //            this.newPass = new RegExp('(?:^|\W)' + this.userPasswordForm.controls.newPassword.value + '(?:$|\W)');
-            if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
-                // compare password field values:
-                console.log('the same pw?', this.form.controls.password.value === this.form.controls.confirmPassword.value);
-            }
             this.onValueChanged(this.form, data);
+            // this.comparePasswords(data.)
+            // compare passwords here
+            if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty && (this.form.controls.password.value !== this.form.controls.confirmPassword.value)) {
+
+                this.formErrors['confirmPassword'] = this.validationMessages['confirmPassword'].match;
+
+                this.matchingPasswords = true;
+                // form.get('confirmPassword').setValidators(false); // = !form.get('confirmPassword').valid;
+            }
         });
 
         this.onValueChanged(this.form); // (re)set validation messages now
@@ -248,6 +213,18 @@ export class PasswordFormComponent implements OnInit {
                 });
             }
         });
+    }
+
+    comparePasswords(pw_1: string, pw_2: string) {
+
+        if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
+            // compare password field values:
+            if (this.form.controls.password.value !== this.form.controls.confirmPassword.value) {
+
+                this.formErrors['confirmPassword'] = this.validationMessages['confirmPassword'].match;
+                console.log(this.formErrors['confirmPassword']);
+            }
+        }
     }
 
     submtiData() {
