@@ -106,28 +106,15 @@ export class UsersListComponent implements OnInit {
 
         if (this.projectcode) {
             // set the cache
-            this._cache.get(
-                this.projectcode,
-                this._projectsService.getProjectByShortcode(
-                    this.projectcode
-                )
-            );
+            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
             // get project information
-            this._cache
-                .get(
-                    this.projectcode,
-                    this._projectsService.getProjectByShortcode(
-                        this.projectcode
-                    )
-                )
+            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode))
                 .subscribe(
-                    (response: Project) => {
-                        this.project = response;
+                    (result: Project) => {
+                        this.project = result;
                         // is logged-in user projectAdmin?
-                        this.projectAdmin = this.sysAdmin
-                            ? this.sysAdmin
-                            : this.userIsProjectAdmin();
+                        this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
                     },
                     (error: ApiServiceError) => {
@@ -432,7 +419,6 @@ export class UsersListComponent implements OnInit {
         } else {
             return (!this.sysAdmin && !this.projectAdmin);
         }
-
 
     }
 }

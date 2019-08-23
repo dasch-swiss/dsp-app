@@ -1,0 +1,13 @@
+<kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
+<form [formGroup]="form" *ngIf="!loading" class="form-content list-item" (ngSubmit)="submitData()">
+    <mat-form-field class="hidden list-item-label">
+        <input matInput [formControl]="form.controls['hasRootNode']" [placeholder]="'Root node iri'">
+    </mat-form-field>
+
+    <mat-form-field class="medium-field list-item-label">
+        <input matInput [formControl]="form.controls['label']" [placeholder]="placeholder" #labelInput cdkFocusInitial>
+    </mat-form-field>
+    <button mat-icon-button matSuffix [disabled]="!form.valid">
+        <mat-icon>add</mat-icon>
+    </button>
+</form>

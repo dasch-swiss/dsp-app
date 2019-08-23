@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule, MatButtonModule, MatChipsModule, MatIconModule, MatInputModule, MatMenuModule, MatSelectModule } from '@angular/material';
+import { MatButtonModule, MatChipsModule, MatDialogModule, MatIconModule, MatMenuModule } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
@@ -8,15 +7,11 @@ import { Session } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { ErrorComponent } from 'src/app/main/error/error.component';
-import { UsersListComponent } from 'src/app/system/users/users-list/users-list.component';
-import { AddUserComponent } from './add-user/add-user.component';
-import { CollaborationComponent } from './collaboration.component';
-import { SelectGroupComponent } from './select-group/select-group.component';
+import { ListsListComponent } from './lists-list.component';
 
-describe('CollaborationComponent', () => {
-    let component: CollaborationComponent;
-    let fixture: ComponentFixture<CollaborationComponent>;
+describe('ListsListComponent', () => {
+    let component: ListsListComponent;
+    let fixture: ComponentFixture<ListsListComponent>;
 
     const shortcode = '0001';
 
@@ -34,23 +29,16 @@ describe('CollaborationComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                CollaborationComponent,
-                AddUserComponent,
-                UsersListComponent,
-                SelectGroupComponent,
-                ErrorComponent
+                ListsListComponent
             ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
-                MatAutocompleteModule,
                 MatButtonModule,
                 MatChipsModule,
+                MatDialogModule,
                 MatIconModule,
-                MatInputModule,
                 MatMenuModule,
-                MatSelectModule,
-                ReactiveFormsModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()
             ],
@@ -74,7 +62,8 @@ describe('CollaborationComponent', () => {
                     useValue: KuiCoreConfig
                 }
             ]
-        }).compileComponents();
+        })
+            .compileComponents();
     }));
 
     // mock localStorage
@@ -104,7 +93,7 @@ describe('CollaborationComponent', () => {
     beforeEach(() => {
         localStorage.setItem('session', JSON.stringify(currentTestSession));
 
-        fixture = TestBed.createComponent(CollaborationComponent);
+        fixture = TestBed.createComponent(ListsListComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

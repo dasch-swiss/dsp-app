@@ -147,6 +147,11 @@
         "hint": {
           "alreadyMember": "The user is already a member of this project"
         }
+      },
+      "lists": {
+        "title": {
+            "delete": "Delete list"
+        }
       }
     }
   }
