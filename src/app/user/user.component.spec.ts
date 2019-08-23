@@ -24,6 +24,7 @@ import { UserPasswordComponent } from './user-form/user-password/user-password.c
 import { UserComponent } from './user.component';
 import { Session } from '@knora/authentication';
 import { ActivatedRoute } from '@angular/router';
+import { PasswordFormComponent } from './user-form/password-form/password-form.component';
 
 describe('UserComponent', () => {
     let component: UserComponent;
@@ -52,7 +53,8 @@ describe('UserComponent', () => {
                 ProjectsComponent,
                 ProjectsListComponent,
                 CollectionListComponent,
-                UserPasswordComponent
+                UserPasswordComponent,
+                PasswordFormComponent
             ],
             imports: [
                 KuiActionModule,

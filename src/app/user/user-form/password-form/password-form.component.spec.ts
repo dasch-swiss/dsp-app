@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PasswordFormComponent } from './password-form.component';
 
 
-fdescribe('PasswordFormComponent', () => {
+describe('PasswordFormComponent', () => {
     let component: PasswordFormComponent;
     let fixture: ComponentFixture<PasswordFormComponent>;
 

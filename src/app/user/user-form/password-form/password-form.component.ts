@@ -24,7 +24,16 @@ export class PasswordFormComponent implements OnInit {
     @Input() username: string;
     user: User;
 
+    // who is logged in?
+    loggedInUserName: string;
+    // update own password?
+    updateOwn: boolean;
+
+    // password form
     form: FormGroup;
+
+    // in case of change not own password, we need a sys admin confirm password form
+    confirmForm: FormGroup;
 
     // error checking on the following fields
     formErrors = {
@@ -65,6 +74,25 @@ export class PasswordFormComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        const session = JSON.parse(localStorage.getItem('session'));
+
+        this.loggedInUserName = session.user.name;
+
+        if (this.loggedInUserName === this.username) {
+            // update own password
+            this.updateOwn = true;
+        } else {
+            // update not own password, if logged-in user is system admin
+            if (session.user.sysAdmin) {
+                this.updateOwn = false;
+                this._cache.get(
+                    this.username,
+                    this._usersService.getUserByUsername(this.username)
+                );
+            }
+        }
+
+
         // set/get cached user data
         this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
 
@@ -76,6 +104,9 @@ export class PasswordFormComponent implements OnInit {
                 console.error(error);
             }
         );
+
+        this.buildForm();
+
 
     }
 
@@ -116,6 +147,30 @@ export class PasswordFormComponent implements OnInit {
                     //                    existingNameValidator(new RegExp('(?:^|\W)' + 'gaga' + '(?:$|\W)'))
                 ]
             )
+        });
+
+
+        this.form.valueChanges.subscribe(data => {
+            //            this.newPass = new RegExp('(?:^|\W)' + this.userPasswordForm.controls.newPassword.value + '(?:$|\W)');
+            this.onValueChanged(this.form, data);
+        });
+
+        this.onValueChanged(this.form); // (re)set validation messages now
+    }
+
+
+    onValueChanged(form: FormGroup, data?: any) {
+        // const form = this.userPasswordForm;
+
+        Object.keys(this.formErrors).map(field => {
+            this.formErrors[field] = '';
+            const control = form.get(field);
+            if (control && control.dirty && !control.valid) {
+                const messages = this.validationMessages[field];
+                Object.keys(control.errors).map(key => {
+                    this.formErrors[field] += messages[key] + ' ';
+                });
+            }
         });
     }
 

@@ -1,18 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { AccountComponent } from './account.component';
-import { KuiActionModule } from '@knora/action';
-import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserPasswordComponent } from '../user-form/user-password/user-password.component';
-import {
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatDialogModule
-} from '@angular/material';
-import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
+import { MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule } from '@angular/material';
+import { KuiActionModule } from '@knora/action';
+import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { PasswordFormComponent } from '../user-form/password-form/password-form.component';
+import { AccountComponent } from './account.component';
+
 
 describe('AccountComponent', () => {
     let component: AccountComponent;
@@ -20,7 +14,10 @@ describe('AccountComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [AccountComponent, UserPasswordComponent],
+            declarations: [
+                AccountComponent,
+                PasswordFormComponent
+            ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
