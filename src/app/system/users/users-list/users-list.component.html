@@ -79,7 +79,8 @@
                         <span>&nbsp;as project admin</span>
                     </button>
                     <!-- update user's system admin group membership; only in system admin view -->
-                    <button mat-menu-item *ngIf="!projectcode && user.status && sysAdmin"
+                    <button mat-menu-item
+                            *ngIf="!projectcode && user.status && sysAdmin && (user.username !== session.user.name)"
                             (click)="updateSystemAdminMembership(user.id, user.permissions)">
                         <span *ngIf="!userIsSystemAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsSystemAdmin(user.permissions)">Remove</span>

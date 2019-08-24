@@ -38,6 +38,7 @@ export class AppGlobal {
         },
         {
             label: 'Lists',
+            shortLabel: 'Lists',
             route: 'lists',
             icon: 'list'
         }
