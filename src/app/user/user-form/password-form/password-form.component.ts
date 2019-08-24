@@ -1,42 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { KuiMessageData } from '@knora/action';
 import { AuthenticationService } from '@knora/authentication';
-import { User, UsersService, Utils, ApiServiceError } from '@knora/core';
+import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { existingNameValidator, KuiMessageData } from '@knora/action';
-
-export class PasswordValidator {
-    // inspired on: http://plnkr.co/edit/Zcbg2T3tOxYmhxs7vaAm?p=preview
-    static areEqual(formGroup: FormGroup) {
-        let value;
-        let valid = true;
-        for (let key in formGroup.controls) {
-
-            console.log('key', key);
-
-            if (formGroup.controls.hasOwnProperty(key)) {
-                let control: FormControl = <FormControl>formGroup.controls[key];
-
-                if (value === undefined) {
-                    value = control.value
-                } else {
-                    if (value !== control.value) {
-                        valid = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (valid) {
-            return null;
-        }
-
-        return {
-            areEqual: true
-        };
-    }
-}
 
 @Component({
     selector: 'app-password-form',
@@ -57,8 +24,11 @@ export class PasswordFormComponent implements OnInit {
     @Input() username: string;
     user: User;
 
+    // output to close dialog
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
+
     // who is logged in?
-    loggedInUserName: string;
+    // loggedInUserName: string;
     // update own password?
     updateOwn: boolean;
 
@@ -89,8 +59,8 @@ export class PasswordFormComponent implements OnInit {
                 'The password should have at least one uppercase letter and one number.'
         },
         confirmPassword: {
-            required: 'You have to confirm your password',
-            match: 'Password mismatch'
+            required: 'You have to confirm your password.',
+            match: 'Password mismatch.'
         }
     };
 
@@ -109,19 +79,14 @@ export class PasswordFormComponent implements OnInit {
     ngOnInit() {
         const session = JSON.parse(localStorage.getItem('session'));
 
-        this.loggedInUserName = session.user.name;
-
-        if (this.loggedInUserName === this.username) {
+        if (session.user.name === this.username) {
             // update own password
             this.updateOwn = true;
         } else {
             // update not own password, if logged-in user is system admin
             if (session.user.sysAdmin) {
                 this.updateOwn = false;
-                this._cache.get(
-                    this.username,
-                    this._usersService.getUserByUsername(this.username)
-                );
+                this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
             }
         }
 
@@ -148,14 +113,16 @@ export class PasswordFormComponent implements OnInit {
         this.form = this._fb.group({
             username: new FormControl({
                 value: this.username,
-                disabled: true
+                disabled: false
             }),
             requesterPassword: new FormControl(
                 {
                     value: '',
                     disabled: false
                 },
-                [Validators.required]
+                [
+                    Validators.required
+                ]
             ),
             password: new FormControl(
                 {
@@ -175,9 +142,6 @@ export class PasswordFormComponent implements OnInit {
                 },
                 [
                     Validators.required
-                    // existingNameValidator(this.newPass)
-                    //                    this.checkPasswords(this.newPasswordForm)
-                    //                    existingNameValidator(new RegExp('(?:^|\W)' + 'gaga' + '(?:$|\W)'))
                 ]
             )
         });
@@ -187,13 +151,15 @@ export class PasswordFormComponent implements OnInit {
             this.onValueChanged(this.form, data);
             // this.comparePasswords(data.)
             // compare passwords here
-            if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty && (this.form.controls.password.value !== this.form.controls.confirmPassword.value)) {
 
-                this.formErrors['confirmPassword'] = this.validationMessages['confirmPassword'].match;
+            if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
 
-                this.matchingPasswords = true;
-                // form.get('confirmPassword').setValidators(false); // = !form.get('confirmPassword').valid;
+                this.matchingPasswords = this.form.controls.password.value === this.form.controls.confirmPassword.value;
+
+                this.formErrors['confirmPassword'] += (this.matchingPasswords ? '' : this.validationMessages['confirmPassword'].match);
+
             }
+
         });
 
         this.onValueChanged(this.form); // (re)set validation messages now
@@ -229,6 +195,7 @@ export class PasswordFormComponent implements OnInit {
 
     submtiData() {
 
+
     }
 
     closeMessage(status?: number) {
@@ -236,10 +203,12 @@ export class PasswordFormComponent implements OnInit {
         switch (status) {
             case 200:
                 // success: close message (and dialog box)
+                this.closeDialog.emit();
                 break;
 
             case 400:
                 // something went wrong: reset form
+                this.form.reset();
                 break;
 
             default:
