@@ -1,4 +1,4 @@
-<div *ngIf="projectAdmin" class="content large middle">
+<div *ngIf="projectAdmin" class="content large middle desktop-only">
 
     <!-- add list to the project -->
     <!-- <app-add-user *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()" #addUserComponent></app-add-user> -->
@@ -18,4 +18,8 @@
 
 <div *ngIf="!projectAdmin" class="content large middle">
     <app-error [status]="403"></app-error>
+</div>
+
+<div class="mobile-only">
+    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}"></kui-message>
 </div>
