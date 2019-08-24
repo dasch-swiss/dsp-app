@@ -45,6 +45,9 @@ export class PasswordFormComponent implements OnInit {
     // output to close dialog
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
+    // in case of child component inside parent form
+    @Output() sendToParent: EventEmitter<string> = new EventEmitter<string>();
+
     // who is logged in?
     // loggedInUserName: string;
     // update own password?
@@ -74,7 +77,7 @@ export class PasswordFormComponent implements OnInit {
             required: 'The old password is required'
         },
         password: {
-            required: 'A new password is needed, if you want to change it.',
+            required: 'Password is required.',
             minlength: 'Use at least 8 characters.',
             pattern:
                 'The password should have at least one uppercase letter and one number.'
@@ -103,37 +106,45 @@ export class PasswordFormComponent implements OnInit {
 
         const session = JSON.parse(localStorage.getItem('session'));
 
-        if (session.user.name === this.username) {
-            // update own password
-            this.updateOwn = true;
-        } else {
-            // update not own password, if logged-in user is system admin
-            if (session.user.sysAdmin) {
-                this.loggedInUserName = session.user.name;
-                this.updateOwn = false;
+        if (this.username) {
+            // edit mode
+            if (session.user.name === this.username) {
+                // update own password
+                this.updateOwn = true;
+            } else {
+                // update not own password, if logged-in user is system admin
+                if (session.user.sysAdmin) {
+                    this.loggedInUserName = session.user.name;
+                    this.updateOwn = false;
+                }
             }
-        }
+            this.showPasswordForm = this.updateOwn;
 
-        this.showPasswordForm = this.updateOwn;
 
-        // set/get cached user data
-        this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+            // set/get cached user data
+            this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
 
-        this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
-            (response: User) => {
-                this.user = response;
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
+            this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
+                (response: User) => {
+                    this.user = response;
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+
+            if (!this.updateOwn) {
+                this.buildConfirmForm();
+            } else {
+                this.buildForm();
             }
-        );
 
-        if (!this.updateOwn) {
-            this.buildConfirmForm();
         } else {
+            // create new password
+            this.updateOwn = false;
+            this.showPasswordForm = true;
             this.buildForm();
         }
-
     }
 
     buildConfirmForm() {
@@ -158,12 +169,14 @@ export class PasswordFormComponent implements OnInit {
 
     buildForm() {
 
-        const requesterPassword = (this.updateOwn ? '' : this.confirmForm.controls.requesterPassword.value);
+        const requesterPassword = ((this.updateOwn || !this.confirmForm) ? '' : this.confirmForm.controls.requesterPassword.value);
+
+        const name = (this.username ? this.username : '');
 
         this.form = this._fb.group({
             username: new FormControl({
-                value: this.username,
-                disabled: false
+                value: name,
+                disabled: !this.username
             }),
             requesterPassword: new FormControl(
                 {
@@ -207,6 +220,12 @@ export class PasswordFormComponent implements OnInit {
 
                 this.formErrors['confirmPassword'] += (this.matchingPasswords ? '' : this.validationMessages['confirmPassword'].match);
 
+            }
+
+            if (this.matchingPasswords && !this.formErrors['password'] && !this.formErrors['confirmPassword']) {
+                this.sendToParent.emit(this.form.controls.password.value);
+            } else {
+                this.sendToParent.emit('');
             }
 
         });

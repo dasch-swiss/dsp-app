@@ -77,6 +77,11 @@ export class UserFormComponent implements OnInit, OnChanges {
     ];
 
     /**
+     * password will be defined in password-form
+     */
+    password: string = '';
+
+    /**
      * form group for the form controller
      */
     form: FormGroup;
@@ -88,8 +93,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         givenName: '',
         familyName: '',
         email: '',
-        username: '',
-        password: ''
+        username: ''
     };
 
     /**
@@ -120,12 +124,6 @@ export class UserFormComponent implements OnInit, OnChanges {
             existingName:
                 'This user exists already. If you want to edit it, ask a system administrator.',
             member: 'This user is already a member of the project.'
-        },
-        password: {
-            required: 'A password is required.',
-            minlength: 'Use at least 8 characters.',
-            pattern:
-                'The password should have at least one uppercase letter and one number.'
         }
     };
 
@@ -133,11 +131,6 @@ export class UserFormComponent implements OnInit, OnChanges {
      * in case of an API error
      */
     errorMessage: any;
-
-    /**
-     * password visibility
-     */
-    showPassword = false;
 
     /**
      * success of sending data
@@ -293,17 +286,6 @@ export class UserFormComponent implements OnInit, OnChanges {
                     existingNamesValidator(this.existingUsernames)
                 ]
             ),
-            password: new FormControl(
-                {
-                    value: user.password,
-                    disabled: editMode
-                },
-                [
-                    Validators.required,
-                    Validators.minLength(8),
-                    Validators.pattern(Utils.RegexPassword)
-                ]
-            ),
             lang: new FormControl({
                 value: user.lang ? user.lang : 'en',
                 disabled: false
@@ -345,12 +327,10 @@ export class UserFormComponent implements OnInit, OnChanges {
         });
     }
 
-    /**
-     * toggle the visibility of the password
-     */
-    toggleVisibility(ev: Event) {
-        ev.preventDefault();
-        this.showPassword = !this.showPassword;
+    // get password from password form
+    getPassword(pw: string) {
+        // this.form.controls.password.setValue(pw);
+        this.password = pw;
     }
 
     submitData(): void {
