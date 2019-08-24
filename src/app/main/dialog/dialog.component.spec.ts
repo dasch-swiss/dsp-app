@@ -9,8 +9,8 @@ import { ListItemComponent } from 'src/app/project/list/list-item/list-item.comp
 import { ListItemsFormComponent } from 'src/app/project/list/list-items-form/list-items-form.component';
 import { ListItemsComponent } from 'src/app/project/list/list-items/list-items.component';
 import { ProjectFormComponent } from 'src/app/project/project-form/project-form.component';
+import { PasswordFormComponent } from 'src/app/user/user-form/password-form/password-form.component';
 import { UserFormComponent } from 'src/app/user/user-form/user-form.component';
-import { UserPasswordComponent } from 'src/app/user/user-form/user-password/user-password.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
 import { DialogComponent } from './dialog.component';
 
@@ -24,7 +24,7 @@ describe('DialogComponent', () => {
                 DialogComponent,
                 DialogHeaderComponent,
                 UserFormComponent,
-                UserPasswordComponent,
+                PasswordFormComponent,
                 ProjectFormComponent,
                 ListItemComponent,
                 ListItemFormComponent,
