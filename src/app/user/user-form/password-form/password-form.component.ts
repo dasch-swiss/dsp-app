@@ -18,11 +18,29 @@ export class PasswordFormComponent implements OnInit {
     errorMessage: ApiServiceError;
 
     // in case of updating data: was it succesful or does it failed
-    apiResponse: KuiMessageData;
+    apiResponses: KuiMessageData[] = [
+        {
+            status: 200,
+            statusText: 'You have successfully updated your password.'
+        },
+        {
+            status: 200,
+            statusText: 'You have successfully updated user\'s password.'
+        },
+        {
+            status: 400,
+            statusText: 'This wasn\'t successfull. Something went wrong.'
+
+        }
+    ];
+
+    showResponse: KuiMessageData;
 
     // update password for:
     @Input() username: string;
     user: User;
+
+    loggedInUserName: string;
 
     // output to close dialog
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
@@ -31,6 +49,9 @@ export class PasswordFormComponent implements OnInit {
     // loggedInUserName: string;
     // update own password?
     updateOwn: boolean;
+
+    // depending on updateOwn: showPasswordForm or showConfirmForm
+    showPasswordForm: boolean;
 
     // password form
     form: FormGroup;
@@ -77,6 +98,9 @@ export class PasswordFormComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+
+        this.loading = true;
+
         const session = JSON.parse(localStorage.getItem('session'));
 
         if (session.user.name === this.username) {
@@ -85,11 +109,12 @@ export class PasswordFormComponent implements OnInit {
         } else {
             // update not own password, if logged-in user is system admin
             if (session.user.sysAdmin) {
+                this.loggedInUserName = session.user.name;
                 this.updateOwn = false;
-                this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
             }
         }
 
+        this.showPasswordForm = this.updateOwn;
 
         // set/get cached user data
         this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
@@ -103,12 +128,37 @@ export class PasswordFormComponent implements OnInit {
             }
         );
 
-        this.buildForm();
-
+        if (!this.updateOwn) {
+            this.buildConfirmForm();
+        } else {
+            this.buildForm();
+        }
 
     }
 
+    buildConfirmForm() {
+        this.confirmForm = this._fb.group({
+            requesterPassword: new FormControl(
+                {
+                    value: '',
+                    disabled: false
+                },
+                [
+                    Validators.required
+                ]
+            )
+        });
+
+        this.confirmForm.valueChanges.subscribe(data => { this.onValueChanged(this.confirmForm, data); });
+
+        this.onValueChanged(this.confirmForm); // (re)set validation messages now
+
+        this.loading = false;
+    }
+
     buildForm() {
+
+        const requesterPassword = (this.updateOwn ? '' : this.confirmForm.controls.requesterPassword.value);
 
         this.form = this._fb.group({
             username: new FormControl({
@@ -117,7 +167,7 @@ export class PasswordFormComponent implements OnInit {
             }),
             requesterPassword: new FormControl(
                 {
-                    value: '',
+                    value: requesterPassword,
                     disabled: false
                 },
                 [
@@ -147,11 +197,10 @@ export class PasswordFormComponent implements OnInit {
         });
 
         this.form.valueChanges.subscribe(data => {
-            //            this.newPass = new RegExp('(?:^|\W)' + this.userPasswordForm.controls.newPassword.value + '(?:$|\W)');
-            this.onValueChanged(this.form, data);
-            // this.comparePasswords(data.)
-            // compare passwords here
 
+            this.onValueChanged(this.form, data);
+
+            // compare passwords here
             if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
 
                 this.matchingPasswords = this.form.controls.password.value === this.form.controls.confirmPassword.value;
@@ -163,6 +212,8 @@ export class PasswordFormComponent implements OnInit {
         });
 
         this.onValueChanged(this.form); // (re)set validation messages now
+
+        this.loading = false;
     }
 
 
@@ -181,24 +232,59 @@ export class PasswordFormComponent implements OnInit {
         });
     }
 
-    comparePasswords(pw_1: string, pw_2: string) {
+    // confirm sys admin
+    nextStep() {
 
-        if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
-            // compare password field values:
-            if (this.form.controls.password.value !== this.form.controls.confirmPassword.value) {
+        // reset response message
+        this.showResponse = undefined;
 
-                this.formErrors['confirmPassword'] = this.validationMessages['confirmPassword'].match;
-                console.log(this.formErrors['confirmPassword']);
+        this.loading = true;
+
+        // submit requester password with logged-in username
+        this._auth.login(this.loggedInUserName, this.confirmForm.controls.requesterPassword.value).subscribe(
+            (result: any) => {
+                // go to next step with password form
+                this.showPasswordForm = !this.showPasswordForm;
+                // this.requesterPass = this.confirmForm.controls.requesterPassword.value;
+                this.buildForm();
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+                this.showResponse = this.apiResponses[2];
+                this.loading = false;
             }
-        }
+        );
     }
 
-    submtiData() {
+    submitData() {
+
+        // reset response message
+        this.showResponse = undefined;
+
+        this.loading = true;
+
+        const requesterPassword = (this.updateOwn ? this.form.controls.requesterPassword.value : this.confirmForm.controls.requesterPassword.value);
+
+        this._usersService.updateUsersPassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
+            (result: User) => {
+                this.showResponse = (this.updateOwn ? this.apiResponses[0] : this.apiResponses[1]);
+                this.form.reset();
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+                this.showResponse = this.apiResponses[2];
+                this.loading = false;
+            }
+        );
 
 
     }
 
     closeMessage(status?: number) {
+
+        this.showResponse = undefined;
 
         switch (status) {
             case 200:
@@ -209,6 +295,9 @@ export class PasswordFormComponent implements OnInit {
             case 400:
                 // something went wrong: reset form
                 this.form.reset();
+                if (this.confirmForm) {
+                    this.confirmForm.reset();
+                }
                 break;
 
             default:

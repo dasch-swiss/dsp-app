@@ -21,7 +21,7 @@
     <div *ngSwitchCase="'editPassword'">
         <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.password' | translate"
                            (close)="dialogRef.close()"></app-dialog-header>
-        <app-user-password [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-password>
+        <app-password-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-password-form>
     </div>
 
     <!-- Delete user -->
