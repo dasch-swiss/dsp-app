@@ -7,6 +7,7 @@
         {{user.projects.length | i18nPlural: itemPluralMapping['project']}}</h4>
 
     <mat-list>
+        <!-- list of projects where the user is member of -->
         <mat-list-item *ngFor="let project of user.projects">
             <mat-icon mat-list-icon>
                 <span>assignment</span>
@@ -19,8 +20,29 @@
                 </span>
             </p>
             <span class="fill-remaining-space"></span>
-            <button mat-icon-button (click)="removeFromProject(project.id)">
+            <button mat-icon-button color="warn" (click)="removeFromProject(project.id)"
+                    aria-label="Button to remove user from project" matTooltip="Remove user from project"
+                    matTooltipPosition="above">
                 <mat-icon>delete_outline</mat-icon>
+            </button>
+        </mat-list-item>
+        <mat-divider class="more-space-top more-space-bottom"></mat-divider>
+        <!-- select another project to add user -->
+        <mat-list-item class="add-to-project">
+            <mat-form-field class="select-project">
+                <mat-select placeholder="Add user to project" [formControl]="newProject">
+                    <mat-option>Select Project to add user</mat-option>
+                    <mat-divider></mat-divider>
+                    <mat-option *ngFor="let project of projects" [value]="project.iri">
+                        {{project.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <span class="fill-remaining-space"></span>
+            <button mat-stroked-button color="primary" (click)="addToProject(newProject.value)"
+                    [disabled]="!newProject.value" aria-label="Button to add user to project"
+                    matTooltip="Add user to selected project" matTooltipPosition="above">
+                <mat-icon>add</mat-icon>
             </button>
         </mat-list-item>
     </mat-list>
