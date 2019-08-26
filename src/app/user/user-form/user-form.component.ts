@@ -88,8 +88,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         givenName: '',
         familyName: '',
         email: '',
-        username: '',
-        password: ''
+        username: ''
     };
 
     /**
@@ -120,12 +119,6 @@ export class UserFormComponent implements OnInit, OnChanges {
             existingName:
                 'This user exists already. If you want to edit it, ask a system administrator.',
             member: 'This user is already a member of the project.'
-        },
-        password: {
-            required: 'A password is required.',
-            minlength: 'Use at least 8 characters.',
-            pattern:
-                'The password should have at least one uppercase letter and one number.'
         }
     };
 
@@ -133,11 +126,6 @@ export class UserFormComponent implements OnInit, OnChanges {
      * in case of an API error
      */
     errorMessage: any;
-
-    /**
-     * password visibility
-     */
-    showPassword = false;
 
     /**
      * success of sending data
@@ -295,14 +283,9 @@ export class UserFormComponent implements OnInit, OnChanges {
             ),
             password: new FormControl(
                 {
-                    value: user.password,
+                    value: '',
                     disabled: editMode
-                },
-                [
-                    Validators.required,
-                    Validators.minLength(8),
-                    Validators.pattern(Utils.RegexPassword)
-                ]
+                }
             ),
             lang: new FormControl({
                 value: user.lang ? user.lang : 'en',
@@ -345,12 +328,9 @@ export class UserFormComponent implements OnInit, OnChanges {
         });
     }
 
-    /**
-     * toggle the visibility of the password
-     */
-    toggleVisibility(ev: Event) {
-        ev.preventDefault();
-        this.showPassword = !this.showPassword;
+    // get password from password form and send it to user form
+    getPassword(pw: string) {
+        this.form.controls.password.setValue(pw);
     }
 
     submitData(): void {

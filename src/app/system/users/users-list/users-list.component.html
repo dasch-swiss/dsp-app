@@ -4,7 +4,7 @@
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span *ngIf="status">Active</span>
-                <span *ngIf="!status">Archived</span>
+                <span *ngIf="!status">Suspended</span>
             </h3>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
@@ -108,7 +108,7 @@
                     <!-- delete / reactivate user -->
                     <button mat-menu-item *ngIf="user.status && sysAdmin && !projectcode"
                             (click)="openDialog('deleteUser', user.username, user.id)">
-                        Delete user
+                        Suspend user
                     </button>
                     <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectcode"
                             (click)="openDialog('activateUser', user.username, user.id)">
