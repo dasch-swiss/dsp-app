@@ -1,16 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSlideToggleModule
-} from '@angular/material';
+import { MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule } from '@angular/material';
+import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { PasswordFormComponent } from './password-form/password-form.component';
 import { UserFormComponent } from './user-form.component';
-import { RouterTestingModule } from '@angular/router/testing';
 
 describe('UserFormComponent', () => {
     let component: UserFormComponent;
@@ -18,7 +14,10 @@ describe('UserFormComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [UserFormComponent],
+            declarations: [
+                UserFormComponent,
+                PasswordFormComponent
+            ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,

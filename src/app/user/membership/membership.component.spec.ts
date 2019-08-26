@@ -1,33 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule } from '@angular/material';
+import { MatButtonModule, MatDividerModule, MatIconModule, MatListModule, MatSelectModule } from '@angular/material';
+import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { PasswordFormComponent } from '../user-form/password-form/password-form.component';
-import { AccountComponent } from './account.component';
+import { MembershipComponent } from './membership.component';
 
-
-describe('AccountComponent', () => {
-    let component: AccountComponent;
-    let fixture: ComponentFixture<AccountComponent>;
+describe('MembershipComponent', () => {
+    let component: MembershipComponent;
+    let fixture: ComponentFixture<MembershipComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                AccountComponent,
-                PasswordFormComponent
+                MembershipComponent
             ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,
                 MatButtonModule,
-                MatDialogModule,
-                MatFormFieldModule,
+                MatDividerModule,
                 MatIconModule,
-                MatInputModule,
+                MatListModule,
+                MatSelectModule,
                 ReactiveFormsModule,
-                TranslateModule.forRoot()
+                RouterTestingModule
             ],
             providers: [
                 {
@@ -35,11 +32,12 @@ describe('AccountComponent', () => {
                     useValue: KuiCoreConfig
                 }
             ]
-        }).compileComponents();
+        })
+            .compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(AccountComponent);
+        fixture = TestBed.createComponent(MembershipComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

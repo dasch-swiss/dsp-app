@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatChipsModule, MatDialogModule, MatDialogRef, MatDividerModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTreeModule, MAT_DIALOG_DATA } from '@angular/material';
+import { MatButtonModule, MatChipsModule, MatDialogModule, MatDialogRef, MatDividerModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule, MatTreeModule, MAT_DIALOG_DATA, MatListModule } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
 import { TranslateModule } from '@ngx-translate/core';
 import { ListInfoFormComponent } from 'src/app/project/list/list-info-form/list-info-form.component';
@@ -9,10 +9,11 @@ import { ListItemComponent } from 'src/app/project/list/list-item/list-item.comp
 import { ListItemsFormComponent } from 'src/app/project/list/list-items-form/list-items-form.component';
 import { ListItemsComponent } from 'src/app/project/list/list-items/list-items.component';
 import { ProjectFormComponent } from 'src/app/project/project-form/project-form.component';
+import { PasswordFormComponent } from 'src/app/user/user-form/password-form/password-form.component';
 import { UserFormComponent } from 'src/app/user/user-form/user-form.component';
-import { UserPasswordComponent } from 'src/app/user/user-form/user-password/user-password.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
 import { DialogComponent } from './dialog.component';
+import { MembershipComponent } from 'src/app/user/membership/membership.component';
 
 describe('DialogComponent', () => {
     let component: DialogComponent;
@@ -24,7 +25,8 @@ describe('DialogComponent', () => {
                 DialogComponent,
                 DialogHeaderComponent,
                 UserFormComponent,
-                UserPasswordComponent,
+                MembershipComponent,
+                PasswordFormComponent,
                 ProjectFormComponent,
                 ListItemComponent,
                 ListItemFormComponent,
@@ -41,6 +43,7 @@ describe('DialogComponent', () => {
                 MatFormFieldModule,
                 MatIconModule,
                 MatInputModule,
+                MatListModule,
                 MatSelectModule,
                 MatSlideToggleModule,
                 MatTreeModule,
