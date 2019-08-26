@@ -6,7 +6,13 @@
         <div class="app-headline">
             <h1 class="mat-headline">Welcome {{user?.givenName}} {{user?.familyName}}</h1>
 
-            <h2 class="mat-title">Here you'll find your latest work, your projects, and collections.</h2>
+            <h2 class="mat-title">Here you'll find your latest work, your projects, and collections.
+                <button type="button" mat-icon-button matPrefix matTooltipPosition="above" color="accent"
+                        matTooltip="COMING SOON! All these features are not yet fully implemented.">
+                    <mat-icon>warning</mat-icon>
+                </button>
+            </h2>
+
 
         </div>
 
@@ -27,7 +33,8 @@
                 </h2>
                 <span class="fill-remaining-space"></span>
                 <span class="app-toolbar-action">
-                    <button mat-button color="'primary'" *ngIf="sysAdmin" (click)="showSystemProjects = !showSystemProjects" class="toggle-view">
+                    <button mat-button color="'primary'" *ngIf="sysAdmin"
+                            (click)="showSystemProjects = !showSystemProjects" class="toggle-view">
                         <span *ngIf="showSystemProjects">Show only my projects</span>
                         <span *ngIf="!showSystemProjects">Show all projects</span>
                     </button>
@@ -35,7 +42,8 @@
                 </span>
             </div>
             <!-- customised button for phone -->
-            <button mat-stroked-button color="'primary'" *ngIf="sysAdmin" (click)="showSystemProjects = !showSystemProjects" class="toggle-view-mobile">
+            <button mat-stroked-button color="'primary'" *ngIf="sysAdmin"
+                    (click)="showSystemProjects = !showSystemProjects" class="toggle-view-mobile">
                 <span *ngIf="showSystemProjects">Show only my projects</span>
                 <span *ngIf="!showSystemProjects">Show all projects</span>
             </button>
