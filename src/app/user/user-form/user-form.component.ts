@@ -77,11 +77,6 @@ export class UserFormComponent implements OnInit, OnChanges {
     ];
 
     /**
-     * password will be defined in password-form
-     */
-    password: string = '';
-
-    /**
      * form group for the form controller
      */
     form: FormGroup;
@@ -286,6 +281,12 @@ export class UserFormComponent implements OnInit, OnChanges {
                     existingNamesValidator(this.existingUsernames)
                 ]
             ),
+            password: new FormControl(
+                {
+                    value: '',
+                    disabled: editMode
+                }
+            ),
             lang: new FormControl({
                 value: user.lang ? user.lang : 'en',
                 disabled: false
@@ -327,10 +328,9 @@ export class UserFormComponent implements OnInit, OnChanges {
         });
     }
 
-    // get password from password form
+    // get password from password form and send it to user form
     getPassword(pw: string) {
-        // this.form.controls.password.setValue(pw);
-        this.password = pw;
+        this.form.controls.password.setValue(pw);
     }
 
     submitData(): void {
