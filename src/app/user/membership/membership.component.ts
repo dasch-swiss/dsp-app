@@ -4,6 +4,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { Session } from '@knora/authentication';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
+import { AppGlobal } from 'src/app/app-global';
 
 @Component({
     selector: 'app-membership',
@@ -72,7 +73,7 @@ export class MembershipComponent implements OnInit {
 
                 for (const p of response) {
 
-                    if (p.id !== KnoraConstants.SystemProjectIRI && p.id !== KnoraConstants.DefaultSharedOntologyIRI) {
+                    if (p.id !== KnoraConstants.SystemProjectIRI && p.id !== KnoraConstants.DefaultSharedOntologyIRI && p.status === true) {
                         // get index example:
                         // myArray.findIndex(i => i.hello === "stevie");
                         if (this.user.projects.findIndex(i => i.id === p.id) === -1) {
@@ -106,6 +107,17 @@ export class MembershipComponent implements OnInit {
         );
     }
 
+    updateProjectCache(iri: string) {
+        // TODO: update cache of project
+
+        // get shortcode from iri; not the best way right now
+        const projectcode: string = iri.replace(AppGlobal.iriProjectsBase, '');
+
+        // reset the cache of project members
+        this._cache.get('members_of_' + projectcode, this._projectsService.getProjectMembersByShortcode(projectcode));
+
+    }
+
     /**
      * remove user from project
      *
@@ -122,6 +134,7 @@ export class MembershipComponent implements OnInit {
                 this._cache.del(this.username);
                 this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
                 this.initNewProjects();
+                // this.updateProjectCache(iri);
                 this.loading = false;
 
             },
@@ -144,6 +157,7 @@ export class MembershipComponent implements OnInit {
                 this._cache.del(this.username);
                 this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
                 this.initNewProjects();
+                // this.updateProjectCache(iri);
                 this.loading = false;
             },
             (error: ApiServiceError) => {

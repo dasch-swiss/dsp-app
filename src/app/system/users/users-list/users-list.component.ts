@@ -365,6 +365,8 @@ export class UsersListComponent implements OnInit {
     removeUserFromProject(id: string): void {
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
+                this._cache.del(result.username);
+                this._cache.get(result.username, this._usersService.getUserByUsername(result.username));
                 this.refreshParent.emit();
             },
             (error: ApiServiceError) => {
