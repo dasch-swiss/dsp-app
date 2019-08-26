@@ -1,19 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule
-} from '@angular/material';
+import { MatFormFieldModule, MatIconModule, MatInputModule } from '@angular/material';
 import { KuiActionModule } from '@knora/action';
-import { Session } from '@knora/authentication';
+import { KuiAuthenticationModule, Session } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { UserPasswordComponent } from './user-password.component';
+import { PasswordFormComponent } from './password-form.component';
 
-describe('UserPasswordComponent', () => {
-    let component: UserPasswordComponent;
-    let fixture: ComponentFixture<UserPasswordComponent>;
+
+describe('PasswordFormComponent', () => {
+    let component: PasswordFormComponent;
+    let fixture: ComponentFixture<PasswordFormComponent>;
 
     const currentTestSession: Session = {
         id: 1555226377250,
@@ -28,9 +25,12 @@ describe('UserPasswordComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [UserPasswordComponent],
+            declarations: [
+                PasswordFormComponent
+            ],
             imports: [
                 KuiActionModule,
+                KuiAuthenticationModule,
                 KuiCoreModule,
                 MatIconModule,
                 MatInputModule,
@@ -44,7 +44,8 @@ describe('UserPasswordComponent', () => {
                     useValue: KuiCoreConfig
                 }
             ]
-        }).compileComponents();
+        })
+            .compileComponents();
     }));
 
     // mock localStorage
@@ -71,18 +72,16 @@ describe('UserPasswordComponent', () => {
         });
     });
 
+
     beforeEach(() => {
         localStorage.setItem('session', JSON.stringify(currentTestSession));
 
-        fixture = TestBed.createComponent(UserPasswordComponent);
+        fixture = TestBed.createComponent(PasswordFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
     it('should create', () => {
-        expect<any>(localStorage.getItem('session')).toBe(
-            JSON.stringify(currentTestSession)
-        );
         expect(component).toBeTruthy();
     });
 });

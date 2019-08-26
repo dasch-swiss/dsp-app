@@ -47,22 +47,14 @@
         </mat-form-field>
 
         <!-- password // hidden in edit mode -->
-        <mat-form-field class="large-field" *ngIf="!username">
-            <input matInput [type]="showPassword ? 'text' : 'password'" autocomplete="new-password"
-                   [formControl]="form.controls['password']"
-                   placeholder="{{ 'appLabels.form.user.general.password' | translate }} *">
+        <app-password-form *ngIf="!username" (sendToParent)="getPassword($event)"></app-password-form>
 
-            <button mat-button type="button" matSuffix mat-icon-button class="input-icon"
-                    attr.aria-label="{{showPassword ? 'Hide password' : 'Show password'}}"
-                    (click)="toggleVisibility($event)">
-                <mat-icon>
-                    {{showPassword ? 'visibility_off' : 'visibility'}}
-                </mat-icon>
-            </button>
-            <mat-hint *ngIf="formErrors.password">
-                {{ formErrors.password }}
-            </mat-hint>
+        <!--
+        <mat-form-field class="large-field hidden" *ngIf="!username">
+            <input matInput [type]="'password'" [formControl]="form.controls['password']"
+                   placeholder="{{ 'appLabels.form.user.general.password' | translate }} *">
         </mat-form-field>
+        -->
 
         <mat-form-field class="large-field">
 
@@ -90,9 +82,14 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
-                    <span *ngIf="username">{{ 'appLabels.form.action.update' | translate }}</span>
-                    <span *ngIf="!username">{{ 'appLabels.form.action.submit' | translate }}</span>
+                <!-- Update -->
+                <button mat-raised-button type="submit" color="primary" *ngIf="username" [disabled]="!form.valid">
+                    {{ 'appLabels.form.action.update' | translate }}
+                </button>
+                <!-- Create new -->
+                <button mat-raised-button type="submit" color="primary" *ngIf="!username"
+                        [disabled]="!form.valid || (form.controls.password.value.length < 8)">
+                    {{ 'appLabels.form.action.submit' | translate }}
                 </button>
             </span>
         </div>
