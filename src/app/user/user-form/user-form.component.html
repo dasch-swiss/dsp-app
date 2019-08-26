@@ -88,7 +88,7 @@
                 </button>
                 <!-- Create new -->
                 <button mat-raised-button type="submit" color="primary" *ngIf="!username"
-                        [disabled]="!form.valid || (form.controls.password.value.length < 8)">
+                        [disabled]="!form.valid || (form.controls['password'].value.length < 8)">
                     {{ 'appLabels.form.action.submit' | translate }}
                 </button>
             </span>
