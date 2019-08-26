@@ -107,11 +107,11 @@ export class AddUserComponent implements OnInit {
      */
     isAlreadyMember = false;
 
-    constructor(private _cache: CacheService,
-                private _dialog: MatDialog,
-                private _projects: ProjectsService,
-                private _users: UsersService,
-                private _formBuilder: FormBuilder) {
+    constructor (private _cache: CacheService,
+        private _dialog: MatDialog,
+        private _projects: ProjectsService,
+        private _users: UsersService,
+        private _formBuilder: FormBuilder) {
     }
 
     ngOnInit() {
@@ -210,11 +210,11 @@ export class AddUserComponent implements OnInit {
             'username': new FormControl({
                 value: '', disabled: false
             }, [
-                existingNamesValidator(this.existingUsernames),
-                existingNamesValidator(this.existingUsernameInProject),
-                existingNamesValidator(this.existingEmails),
-                existingNamesValidator(this.existingEmailInProject)
-            ])
+                    existingNamesValidator(this.existingUsernames),
+                    existingNamesValidator(this.existingUsernameInProject),
+                    existingNamesValidator(this.existingEmails),
+                    existingNamesValidator(this.existingEmailInProject)
+                ])
         });
 
         this.filteredUsers = this.selectUserForm.controls['username'].valueChanges
@@ -310,11 +310,11 @@ export class AddUserComponent implements OnInit {
 
                                     // update own user profile, if the added user is the same as the logged-in user
                                     // get logged-in user name
-                                    const session: Session = JSON.parse(localStorage.getItem('session'));
-                                    if (add.username === session.user.name) {
-                                        this._cache.del(add.username);
-                                        this._cache.get(add.username, this._users.getUserByUsername(add.username));
-                                    }
+                                    // const session: Session = JSON.parse(localStorage.getItem('session'));
+                                    // if (add.username === session.user.name) {
+                                    this._cache.del(add.username);
+                                    this._cache.get(add.username, this._users.getUserByUsername(add.username));
+                                    // }
                                     this.loading = false;
 
                                 },

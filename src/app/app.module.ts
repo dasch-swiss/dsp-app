@@ -62,6 +62,7 @@ import { UsersComponent } from './system/users/users.component';
 import { AccountComponent } from './user/account/account.component';
 import { CollectionListComponent } from './user/collection-list/collection-list.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
+import { MembershipComponent } from './user/membership/membership.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { PasswordFormComponent } from './user/user-form/password-form/password-form.component';
 import { UserFormComponent } from './user/user-form/user-form.component';
@@ -143,7 +144,8 @@ export function initializeApp(appInitService: AppInitService) {
         ListItemsComponent,
         ListItemsFormComponent,
         ListItemComponent,
-        ListItemFormComponent
+        ListItemFormComponent,
+        MembershipComponent
     ],
     imports: [
         AppRoutingModule,

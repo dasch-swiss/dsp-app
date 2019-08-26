@@ -77,6 +77,13 @@
         </mat-dialog-actions>
     </div>
 
+    <!-- Manage user project membership -->
+    <div *ngSwitchCase="'manageProjectMembership'">
+        <app-dialog-header [title]="data.name" [subtitle]="'Manage project membership'" (close)="dialogRef.close()">
+        </app-dialog-header>
+        <app-membership [username]="data.name" (closeDialog)="dialogRef.close()"></app-membership>
+    </div>
+
     <!-- all about PROJECT -->
     <!-- Create project -->
     <div *ngSwitchCase="'createProject'">
