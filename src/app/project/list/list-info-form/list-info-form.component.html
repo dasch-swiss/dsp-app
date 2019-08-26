@@ -25,6 +25,11 @@
                 <select matNativeControl [formControl]="form.controls['language']">
                     <option *ngFor="let lang of languagesList" [value]="lang.language">{{lang.value}}</option>
                 </select>
+                <span class="fill-remaining-space"></span>
+                <button type="button" mat-icon-button matPrefix matTooltipPosition="above" color="accent"
+                        matTooltip="PROTOTYPE ONLY! Set the language for the whole list and list node labels. This selector will be replaced in the next release by StringLiteral input">
+                    <mat-icon>warning</mat-icon>
+                </button>
             </mat-form-field>
 
 
