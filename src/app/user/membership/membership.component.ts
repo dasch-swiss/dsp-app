@@ -121,6 +121,7 @@ export class MembershipComponent implements OnInit {
                 // set new user cache
                 this._cache.del(this.username);
                 this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+                this.initNewProjects();
                 this.loading = false;
 
             },
