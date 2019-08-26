@@ -71,15 +71,19 @@ export class MembershipComponent implements OnInit {
             (response: Project[]) => {
 
                 for (const p of response) {
-                    // get index example:
-                    // myArray.findIndex(i => i.hello === "stevie");
-                    if (this.user.projects.findIndex(i => i.id === p.id) === -1) {
-                        this.projects.push({ iri: p.id, name: p.longname + ' (' + p.shortname + ')' });
+
+                    if (p.id !== KnoraConstants.SystemProjectIRI && p.id !== KnoraConstants.DefaultSharedOntologyIRI) {
+                        // get index example:
+                        // myArray.findIndex(i => i.hello === "stevie");
+                        if (this.user.projects.findIndex(i => i.id === p.id) === -1) {
+                            this.projects.push({ iri: p.id, name: p.longname + ' (' + p.shortname + ')' });
+                        }
+                        /*
+                        if (this.user.projects.indexOf(p.id) > -1) {
+                            console.log('member of', p);
+                        } */
                     }
-                    /*
-                    if (this.user.projects.indexOf(p.id) > -1) {
-                        console.log('member of', p);
-                    } */
+
                 }
 
                 this.projects.sort(function (u1: AutocompleteItem, u2: AutocompleteItem) {
