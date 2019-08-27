@@ -8,8 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
+import { Session } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ErrorComponent } from '../main/error/error.component';
@@ -18,10 +20,8 @@ import { ProjectsComponent } from '../system/projects/projects.component';
 import { AccountComponent } from './account/account.component';
 import { CollectionListComponent } from './collection-list/collection-list.component';
 import { ProfileComponent } from './profile/profile.component';
-import { UserPasswordComponent } from './user-form/user-password/user-password.component';
+import { PasswordFormComponent } from './user-form/password-form/password-form.component';
 import { UserComponent } from './user.component';
-import { Session } from '@knora/authentication';
-import { ActivatedRoute } from '@angular/router';
 
 describe('UserComponent', () => {
     let component: UserComponent;
@@ -50,7 +50,7 @@ describe('UserComponent', () => {
                 ProjectsComponent,
                 ProjectsListComponent,
                 CollectionListComponent,
-                UserPasswordComponent
+                PasswordFormComponent
             ],
             imports: [
                 KuiActionModule,

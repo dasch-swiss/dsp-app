@@ -1,29 +1,10 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    Output
-} from '@angular/core';
-import {
-    FormBuilder,
-    FormControl,
-    FormGroup,
-    Validators
-} from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import {
-    ApiServiceError,
-    KnoraConstants,
-    Project,
-    ProjectsService,
-    User,
-    UsersService,
-    Utils
-} from '@knora/core';
 import { Session } from '@knora/authentication';
+import { ApiServiceError, KnoraConstants, Project, ProjectsService, StringLiteral, User, UsersService, Utils } from '@knora/core';
+import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -107,8 +88,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         givenName: '',
         familyName: '',
         email: '',
-        username: '',
-        password: ''
+        username: ''
     };
 
     /**
@@ -139,12 +119,6 @@ export class UserFormComponent implements OnInit, OnChanges {
             existingName:
                 'This user exists already. If you want to edit it, ask a system administrator.',
             member: 'This user is already a member of the project.'
-        },
-        password: {
-            required: 'A password is required.',
-            minlength: 'Use at least 8 characters.',
-            pattern:
-                'The password should have at least one uppercase letter and one number.'
         }
     };
 
@@ -152,11 +126,6 @@ export class UserFormComponent implements OnInit, OnChanges {
      * in case of an API error
      */
     errorMessage: any;
-
-    /**
-     * password visibility
-     */
-    showPassword = false;
 
     /**
      * success of sending data
@@ -173,24 +142,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     /**
      * selector to set default language
      */
-    languagesList: any[] = [
-        {
-            id: 'en',
-            name: 'english'
-        },
-        {
-            id: 'de',
-            name: 'deutsch'
-        },
-        {
-            id: 'fr',
-            name: 'français'
-        },
-        {
-            id: 'it',
-            name: 'italiano'
-        }
-    ];
+    languagesList: StringLiteral[] = AppGlobal.languagesList;
 
     constructor (
         private _route: ActivatedRoute,
@@ -221,25 +173,17 @@ export class UserFormComponent implements OnInit, OnChanges {
             this.subtitle = "'appLabels.form.user.title.edit' | translate";
 
             // set the cache first: user data to edit
-            this._cache.get(
-                this.username,
-                this._users.getUserByUsername(this.username)
-            );
+            this._cache.get(this.username, this._users.getUserByUsername(this.username));
             // get user data from cache
-            this._cache
-                .get(
-                    this.username,
-                    this._users.getUserByUsername(this.username)
-                )
-                .subscribe(
-                    (response: User) => {
-                        this.user = response;
-                        this.loading = !this.buildForm(this.user);
-                    },
-                    (error: any) => {
-                        console.error(error);
-                    }
-                );
+            this._cache.get(this.username, this._users.getUserByUsername(this.username)).subscribe(
+                (response: User) => {
+                    this.user = response;
+                    this.loading = !this.buildForm(this.user);
+                },
+                (error: any) => {
+                    console.error(error);
+                }
+            );
         } else {
             /**
              * create mode: empty form for new user
@@ -248,41 +192,33 @@ export class UserFormComponent implements OnInit, OnChanges {
             // set the cache first: all users to avoid same email-address / username twice
             this._cache.get('allUsers', this._users.getAllUsers());
             // get existing users to avoid same usernames and email addresses
-            this._cache
-                .get('allUsers', this._users.getAllUsers())
-                .subscribe((result: User[]) => {
-                    for (const user of result) {
-                        // email address of the user should be unique.
-                        // therefore we create a list of existing email addresses to avoid multiple use of user names
-                        this.existingEmails.push(
-                            new RegExp(
-                                '(?:^|W)' + user.email.toLowerCase() + '(?:$|W)'
-                            )
-                        );
-                        // username should also be unique.
-                        // therefore we create a list of existingUsernames to avoid multiple use of user names
-                        this.existingUsernames.push(
-                            new RegExp(
-                                '(?:^|W)' +
-                                user.username.toLowerCase() +
-                                '(?:$|W)'
-                            )
-                        );
-                    }
+            this._cache.get('allUsers', this._users.getAllUsers()).subscribe((result: User[]) => {
+                for (const user of result) {
+                    // email address of the user should be unique.
+                    // therefore we create a list of existing email addresses to avoid multiple use of user names
+                    this.existingEmails.push(
+                        new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)')
+                    );
+                    // username should also be unique.
+                    // therefore we create a list of existingUsernames to avoid multiple use of user names
+                    this.existingUsernames.push(
+                        new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)')
+                    );
+                }
 
-                    // get parameters from url, if they exist
-                    // this.projectcode = this._route.snapshot.queryParams['project'];
-                    // const name: string = this._route.snapshot.queryParams['value'];
-                    const newUser: User = new User();
+                // get parameters from url, if they exist
+                // this.projectcode = this._route.snapshot.queryParams['project'];
+                // const name: string = this._route.snapshot.queryParams['value'];
+                const newUser: User = new User();
 
-                    if (Utils.RegexEmail.test(this.name)) {
-                        newUser.email = this.name;
-                    } else {
-                        newUser.username = this.name;
-                    }
-                    // build the form
-                    this.loading = !this.buildForm(newUser);
-                });
+                if (Utils.RegexEmail.test(this.name)) {
+                    newUser.email = this.name;
+                } else {
+                    newUser.username = this.name;
+                }
+                // build the form
+                this.loading = !this.buildForm(newUser);
+            });
         }
     }
 
@@ -347,14 +283,9 @@ export class UserFormComponent implements OnInit, OnChanges {
             ),
             password: new FormControl(
                 {
-                    value: user.password,
+                    value: '',
                     disabled: editMode
-                },
-                [
-                    Validators.required,
-                    Validators.minLength(8),
-                    Validators.pattern(Utils.RegexPassword)
-                ]
+                }
             ),
             lang: new FormControl({
                 value: user.lang ? user.lang : 'en',
@@ -397,12 +328,9 @@ export class UserFormComponent implements OnInit, OnChanges {
         });
     }
 
-    /**
-     * toggle the visibility of the password
-     */
-    toggleVisibility(ev: Event) {
-        ev.preventDefault();
-        this.showPassword = !this.showPassword;
+    // get password from password form and send it to user form
+    getPassword(pw: string) {
+        this.form.controls.password.setValue(pw);
     }
 
     submitData(): void {
@@ -461,12 +389,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                     if (this.projectcode) {
                         // if a projectcode exists, add the user to the project
                         // get project iri by projectcode
-                        this._cache.get(
-                            this.projectcode,
-                            this._projectsService.getProjectByShortcode(
-                                this.projectcode
-                            )
-                        );
+                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
                         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
                             (p: Project) => {
                                 // add user to project

@@ -106,28 +106,15 @@ export class UsersListComponent implements OnInit {
 
         if (this.projectcode) {
             // set the cache
-            this._cache.get(
-                this.projectcode,
-                this._projectsService.getProjectByShortcode(
-                    this.projectcode
-                )
-            );
+            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
             // get project information
-            this._cache
-                .get(
-                    this.projectcode,
-                    this._projectsService.getProjectByShortcode(
-                        this.projectcode
-                    )
-                )
+            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode))
                 .subscribe(
-                    (response: Project) => {
-                        this.project = response;
+                    (result: Project) => {
+                        this.project = result;
                         // is logged-in user projectAdmin?
-                        this.projectAdmin = this.sysAdmin
-                            ? this.sysAdmin
-                            : this.userIsProjectAdmin();
+                        this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
                     },
                     (error: ApiServiceError) => {
@@ -358,7 +345,6 @@ export class UsersListComponent implements OnInit {
                     case 'deleteUser':
                         this.deleteUser(iri);
                         break;
-
                     case 'activateUser':
                         this.activateUser(iri);
                         break;
@@ -379,6 +365,8 @@ export class UsersListComponent implements OnInit {
     removeUserFromProject(id: string): void {
         this._usersService.removeUserFromProject(id, this.project.id).subscribe(
             (result: User) => {
+                this._cache.del(result.username);
+                this._cache.get(result.username, this._usersService.getUserByUsername(result.username));
                 this.refreshParent.emit();
             },
             (error: ApiServiceError) => {
@@ -432,7 +420,6 @@ export class UsersListComponent implements OnInit {
         } else {
             return (!this.sysAdmin && !this.projectAdmin);
         }
-
 
     }
 }

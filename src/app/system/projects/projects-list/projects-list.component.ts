@@ -20,7 +20,7 @@ export class ProjectsListComponent implements OnInit {
     sysAdmin: boolean = false;
     projectAdmin: boolean = false;
 
-    // List of default, knora-specific projects, which are not able to be deleted or to be editied
+    // list of default, knora-specific projects, which are not able to be deleted or to be editied
     doNotDelete: string[] = [
         KnoraConstants.SystemProjectIRI,
         KnoraConstants.DefaultSharedOntologyIRI
@@ -65,7 +65,7 @@ export class ProjectsListComponent implements OnInit {
     // ... and sort by 'shortname'
     sortBy: string = 'shortname';
 
-    constructor(
+    constructor (
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _projectsService: ProjectsService,

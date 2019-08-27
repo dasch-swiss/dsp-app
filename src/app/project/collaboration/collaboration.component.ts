@@ -81,34 +81,27 @@ export class CollaborationComponent implements OnInit {
         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache
-            .get(
-                this.projectcode,
-                this._projectsService.getProjectByShortcode(
-                    this.projectcode
-                )
-            )
-            .subscribe(
-                (result: Project) => {
-                    this.project = result;
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
+            (result: Project) => {
+                this.project = result;
 
-                    // is logged-in user projectAdmin?
-                    this.projectAdmin = this.sysAdmin
-                        ? this.sysAdmin
-                        : this.session.user.projectAdmin.some(e => e === this.project.id);
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin
+                    ? this.sysAdmin
+                    : this.session.user.projectAdmin.some(e => e === this.project.id);
 
-                    // get from cache: list of project members and groups
-                    if (this.projectAdmin) {
-                        this.refresh();
-                    }
-
-                    this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    console.error(error);
-                    this.loading = false;
+                // get from cache: list of project members and groups
+                if (this.projectAdmin) {
+                    this.refresh();
                 }
-            );
+
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+                this.loading = false;
+            }
+        );
     }
 
     /**

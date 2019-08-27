@@ -4,11 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { PasswordFormComponent } from './password-form/password-form.component';
 import { UserFormComponent } from './user-form.component';
-import { RouterTestingModule } from '@angular/router/testing';
 
 describe('UserFormComponent', () => {
     let component: UserFormComponent;
@@ -16,7 +17,10 @@ describe('UserFormComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [UserFormComponent],
+            declarations: [
+                UserFormComponent,
+                PasswordFormComponent
+            ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,

@@ -115,7 +115,7 @@ export class BoardComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { name: name, mode: mode, project: id }
+            data: { mode: mode, title: name, project: id }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

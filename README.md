@@ -1,6 +1,6 @@
 # Knora User Interface | Research Layer
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/992ee9b16ce34edcae77478b2be597cd)](https://app.codacy.com/app/dhlab-basel/Kuirl?utm_source=github.com&utm_medium=referral&utm_content=dhlab-basel/Kuirl&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/app/dhlab-basel/Kuirl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dhlab-basel/Kuirl&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.com/dhlab-basel/Kuirl.svg?branch=master)](https://travis-ci.com/dhlab-basel/Kuirl)
 [![CircleCI](https://circleci.com/gh/dhlab-basel/Kuirl.svg?style=svg)](https://circleci.com/gh/dhlab-basel/Kuirl)
 

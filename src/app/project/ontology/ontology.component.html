@@ -1,14 +1,8 @@
+<div class="content ontology-editor drag-drop-boundary desktop-only">
 
-
-
-
-
-
-<div class="content ontology-editor drag-drop-boundary">
-
-        <mat-card class="resource-type" cdkDragBoundary=".drag-drop-boundary" cdkDrag>
-                Create your data model: add the first source type here
-        </mat-card>
+    <mat-card class="resource-type" cdkDragBoundary=".drag-drop-boundary" cdkDrag>
+        Create your data model: add the first source type here
+    </mat-card>
 
 
     <!--
@@ -18,7 +12,7 @@
                 - You can customize the predefined sources to your needs later.
         </div>
     -->
-<!--
+    <!--
     <mat-toolbar>
                 <span>Select ontology to edit</span>
                 <span class="fill-remaining-space"></span>
@@ -52,4 +46,9 @@
 
     </div>
 -->
+</div>
+
+
+<div class="mobile-only">
+    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}"></kui-message>
 </div>
