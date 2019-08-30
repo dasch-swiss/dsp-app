@@ -10,7 +10,7 @@ Humanities DaSCH, which uses the Knora server application in the backend.
 It's a system for annotation and linkage of sources in arts and humanities.
 
 This project was generated with
-[Angular CLI](https://github.com/angular/angular-cli) version 7.3.5 and [Node](https://nodejs.org/en/) version 10.13.0.
+[Angular CLI](https://github.com/angular/angular-cli) version 8.0.6 and [Node](https://nodejs.org/en/) version 10.13.0.
 
 **Required version of Knora: ^[9.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v9.0.0)**
 
