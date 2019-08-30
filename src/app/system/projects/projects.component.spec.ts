@@ -3,7 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectsComponent } from './projects.component';
 import { KuiActionModule } from '@knora/action';
 import { ProjectsListComponent } from './projects-list/projects-list.component';
-import { MatIconModule, MatMenuModule, MatDialogModule, MatButtonModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
 
 describe('ProjectsComponent', () => {

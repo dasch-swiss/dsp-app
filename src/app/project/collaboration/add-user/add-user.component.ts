@@ -7,7 +7,7 @@ import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, User
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '../../../main/cache/cache.service';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({

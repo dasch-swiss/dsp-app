@@ -9,7 +9,7 @@ import {
     UsersService
 } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
-import { MatDialogConfig, MatDialog } from '@angular/material';
+import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { AdminPermissions } from 'src/app/main/declarations/admin-permissions';
 

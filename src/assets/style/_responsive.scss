@@ -28,7 +28,7 @@ $grid-breakpoints: (
 }
 
 // mobile device: tablet and smaller than a tablet
-@media (max-width: map-get($grid-breakpoints, tablet) and (min-width: map-get($grid-breakpoints, phone))) {
+@media (max-width: 768px) and (min-width: 576px) {
   .content {
     &.small,
     &.medium,

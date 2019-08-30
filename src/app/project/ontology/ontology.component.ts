@@ -19,9 +19,9 @@ export class OntologyComponent implements OnInit {
 
     sourcetypes = ['Text', 'Image', 'Video'];
 
-    @ViewChild('ontologyEditor', { read: ViewContainerRef }) ontologyEditor: ViewContainerRef;
+    @ViewChild('ontologyEditor', { read: ViewContainerRef, static: false }) ontologyEditor: ViewContainerRef;
 
-    @ViewChild(AddToDirective) addToHost: AddToDirective;
+    @ViewChild(AddToDirective, { static: false }) addToHost: AddToDirective;
 
     constructor (private _titleService: Title,
         private _componentFactoryResolver: ComponentFactoryResolver,

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { AuthenticationService, Session } from '@knora/authentication';
 import { ApiServiceError, Group, KnoraConstants, PermissionData, Project, ProjectsService, User, UsersService } from '@knora/core';

@@ -30,7 +30,7 @@ export class PermissionComponent implements OnInit {
   // project members
   projectGroups: Group[] = [];
 
-  @ViewChild('addGroupComponent') addGroup: AddGroupComponent;
+  @ViewChild('addGroupComponent', { static: false }) addGroup: AddGroupComponent;
 
   constructor (private _cache: CacheService,
     private _projectsService: ProjectsService,

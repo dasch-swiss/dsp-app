@@ -2,11 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BoardComponent } from './board.component';
 import { KuiActionModule } from '@knora/action';
-import {
-    MatIconModule,
-    MatChipsModule,
-    MatDialogModule
-} from '@angular/material';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiCoreModule, KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
 import { ActivatedRoute } from '@angular/router';

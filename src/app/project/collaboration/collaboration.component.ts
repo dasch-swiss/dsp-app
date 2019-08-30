@@ -36,7 +36,7 @@ export class CollaborationComponent implements OnInit {
     // list of inactive (deleted) users
     inactive: User[] = [];
 
-    @ViewChild('addUserComponent') addUser: AddUserComponent;
+    @ViewChild('addUserComponent', { static: false }) addUser: AddUserComponent;
 
     constructor (private _cache: CacheService,
         private _projectsService: ProjectsService,
