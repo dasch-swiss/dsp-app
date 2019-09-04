@@ -8,3 +8,10 @@ body {
   margin: 0;
   //  overflow: hidden;
 }
+
+// jdnconvertiblecalendar main style
+.mat-datepicker-content {
+  .mat-calendar {
+    height: auto !important;
+  }
+}
