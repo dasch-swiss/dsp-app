@@ -111,7 +111,7 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/cdk@^8.0.1":
+"@angular/cdk@^8.1.4":
   version "8.1.4"
   resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-8.1.4.tgz#69066053fe4cbd80cee2bb7fa238f1c9abb963fc"
   integrity sha512-U0tjhAZM4qqUHGGKIKFZZ9d8929s2U/HO0FdoT/eX+oHPOA6mm3bBep7myrSzlkP9V7O1JJfYdhEgijXhYxprQ==
@@ -181,10 +181,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/flex-layout@^8.0.0-beta.26":
-  version "8.0.0-beta.26"
-  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-8.0.0-beta.26.tgz#05807e4daeb7c70da5653b681f8e8c0da87d133e"
-  integrity sha512-lXDLlMSNQhidW0grvisIsj/3gqLuYyN2MvABuRYybnFTc233sXGZuOAaulqq663LA0/DP/GNcz6a+A4ZAAlmPA==
+"@angular/flex-layout@^8.0.0-beta.27":
+  version "8.0.0-beta.27"
+  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-8.0.0-beta.27.tgz#a697d5a90e6d04c06b02ee872f88f384d1723f7c"
+  integrity sha512-qmpvQPesU4ZQ56IscwgmVRpK2UnyV+gwvXUql7TMv0QV215hLcHczjGsrKkLfW2By5E7XEyDat9br72uVXcPMw==
   dependencies:
     tslib "^1.7.1"
 
@@ -207,7 +207,7 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-8.0.3.tgz#25909e6a9ce5336768e489401bc9c3abb57b4304"
   integrity sha512-04XojOo9FJgEQE/rZafnaJQxPEU+//TSzTgpGoIVzCSMx+joCY/ZSSwJZPWxiHlOE57W/zX02ZY+TwcM81oTdw==
 
-"@angular/material@^8.0.1":
+"@angular/material@^8.1.4":
   version "8.1.4"
   resolved "https://registry.yarnpkg.com/@angular/material/-/material-8.1.4.tgz#8bda747bb023af8ccce2c2d3e9e8dc25f05b3605"
   integrity sha512-HV1qU63MaOtAc+cWg21Y2ygQKdEDjsGQ/3d3qym9sfR0xU2vvY7OG6gH48BfPeU63oMYxQkhxfoGP8wWMXSU1w==
@@ -323,38 +323,38 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@knora/action@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/action/-/action-9.0.0.tgz#e979e781d7d314a68cfa6c2a978b1aa375668540"
-  integrity sha512-ZP+bvsZi2Zkb8j7kXTP3JRvyOY4YUWS+pjTixTlU+IQCuMxGUfD72s66loeKs+edgWS2OdSZVukhasjp225pQw==
+"@knora/action@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@knora/action/-/action-9.1.0.tgz#63a66a1c5a14418ae88c6953e6dff8409a8e0ee0"
+  integrity sha512-R5uWQtgwspiHmI3Jw8kjHteckAgRGaptA8QO8pn8h6huNjiFo9YGprtITT14RQMgZOCEf/LR5CL8MnolQqKS9g==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/authentication@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/authentication/-/authentication-9.0.0.tgz#53dec6d812487bbd0a5565785067682f9d32ca25"
-  integrity sha512-jLphjRbMoI51eMpyhe11iaAIKgG3skihjOVnjG5Aqua2WTZNvd/6PZRKAlHD4ykGBAUZ3t7KTSRA+njUGfEOcg==
+"@knora/authentication@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@knora/authentication/-/authentication-9.1.0.tgz#f0dda8ff52bbf4826047a47b8835a1c32987d070"
+  integrity sha512-yJtIyGmAPDV2T9U+JQS2qumKg7KUXQvp7eP18Dy1zeW4IyLXm3zsHp1DC2VAGzMGQvzdbEOXj9hGuQFEWT1pPQ==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/core@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/core/-/core-9.0.0.tgz#dfe186c57dda1b8e5416786e9db04e61a1acead8"
-  integrity sha512-Q29qNrdQh8BFVd7rpYTHXw4cRrBnn23KzEb7Injt+T2JiAzSbNrG8GOWRN4kM2Bz2atgNw5pUEsSmiiVSkcp9Q==
+"@knora/core@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@knora/core/-/core-9.1.0.tgz#868b9cdd70ec8cd7b8ad3923d7939fbcc57de96e"
+  integrity sha512-ZzKnS7zZoPuaQG8SVquGFpplouofpmIUt5vBQW0IvJC017kQv54WBDdW6AHoT3J4I+GfMGmbenKzcGYxIXnz1A==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/search@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/search/-/search-9.0.0.tgz#2288f25ac288b2cf8e876f89ca6ddcd2778deea8"
-  integrity sha512-rgWe+Bm/OvcRWkiddlCHBSP/qH1kgBn5RyBrw3zn30pFPV+6xafR2Qg26cjWG355RSMb1gtI8SidCOX6ZtbE7w==
+"@knora/search@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@knora/search/-/search-9.1.0.tgz#3b57c8a1ea21374f96167a76ec191bf2cc48161d"
+  integrity sha512-uonrKEdVwahgbStoN3JUhawvmkok2YU+Hr0x6eMLmeZnmiF/7iDlICULjbX0bi8RTp15lBFTcizhtRd4if6qAg==
   dependencies:
     tslib "^1.9.0"
 
-"@knora/viewer@9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-9.0.0.tgz#748f1335946b4dbd1ba6aea7d307104ef49b0733"
-  integrity sha512-BmJKp9DzvkSLLEAeprWpqm3UIvt5mPXtwZOGYmgyMBxl0Qip4HQ8NP21QviYBGmZ+KDVWauNHKt0zF8yDQEnuA==
+"@knora/viewer@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@knora/viewer/-/viewer-9.1.0.tgz#e4804f9384d4cf2f5fd81bec05f6f3f2d5763a91"
+  integrity sha512-Mpt0ZkejerpCjY28wyJaAh2KjDHOpXcFCeRXI+kuUTBhE0gIyk38cHixcXPXe046rZ/zChFV26W4ullWjIIQFA==
   dependencies:
     tslib "^1.9.0"
 
@@ -3902,15 +3902,15 @@ jasminewd2@^2.1.0:
   resolved "https://registry.yarnpkg.com/jasminewd2/-/jasminewd2-2.2.0.tgz#e37cf0b17f199cce23bea71b2039395246b4ec4e"
   integrity sha1-43zwsX8ZnM4jvqcbIDk5Uka07E4=
 
-jdnconvertiblecalendar@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendar/-/jdnconvertiblecalendar-0.0.3.tgz#a4e6106340b27bc06bf08cd00912960c666693cc"
-  integrity sha512-AxqmzIkHLE/iEZuej5S9zTqXOAvtHJIk6iMPM3tLBha9UBclxXqXGeqJtclMflVHuvpzm06e0zJ2YVCSA8vtQg==
+jdnconvertiblecalendar@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendar/-/jdnconvertiblecalendar-0.0.5.tgz#84179c03922ff730fbae2b07b89b2aa9b84e5bf6"
+  integrity sha512-/yBqMepJNHxy+yS4Llt0KQPsHGkMi1FVwcE77cpiJZh2RwoNyGBXOwFz4Am5FNZYBF3oiL39FMzHRwwf6yl6xg==
 
-jdnconvertiblecalendardateadapter@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendardateadapter/-/jdnconvertiblecalendardateadapter-0.0.9.tgz#b02f044139b28cfa0e631f779caa270a91e67ddf"
-  integrity sha512-LnAlZ6pE9lOa5eSWydpLAeBJ297z2HaWIp2GB5AQgackPkl/LNdP/zBpa5rvUOywpuuuKFfocLwIL1UVMn8xtA==
+jdnconvertiblecalendardateadapter@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/jdnconvertiblecalendardateadapter/-/jdnconvertiblecalendardateadapter-0.0.10.tgz#bd007c2f1e5e67d99a93e067d11d12afb84e980b"
+  integrity sha512-qqbWdSe5owgGtRu24QV64IvR4zeE0icnVnRF9eC1Gz+L6wPmOpjPfUfkj+Hs/z14KK0/ADTl7HcslYbO0N2vtw==
   dependencies:
     tslib "^1.9.0"
 
