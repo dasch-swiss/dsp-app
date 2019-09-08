@@ -323,10 +323,8 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@knora/action@9.1.0":
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/@knora/action/-/action-9.1.0.tgz#63a66a1c5a14418ae88c6953e6dff8409a8e0ee0"
-  integrity sha512-R5uWQtgwspiHmI3Jw8kjHteckAgRGaptA8QO8pn8h6huNjiFo9YGprtITT14RQMgZOCEf/LR5CL8MnolQqKS9g==
+"@knora/action@file:.yalc/@knora/action":
+  version "9.1.0-215e4da2"
   dependencies:
     tslib "^1.9.0"
 
