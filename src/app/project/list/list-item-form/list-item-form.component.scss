@@ -1,19 +1,17 @@
-.form-content {
-  margin: 0 0 0 8px;
-
-  .hidden {
-    display: none;
-  }
+.medium-field {
+  margin-top: -6px;
 }
 
-.medium-field {
-  display: inline-flex;
+.list-item-label {
   width: 480px;
-  .list-item-label {
-    flex: auto;
-  }
-  .add-node-btn,
-  .edit-node-btn {
-    margin: 8px 0 0 8px;
-  }
+  height: 48px;
+  display: inline-block;
+}
+.add-node-btn,
+.edit-node-btn {
+  margin: 0 0 0 8px;
+}
+
+.new-list-item {
+  margin: 8px 0 0 40px;
 }

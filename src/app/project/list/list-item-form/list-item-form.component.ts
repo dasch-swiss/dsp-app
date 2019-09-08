@@ -88,8 +88,8 @@ export class ListItemFormComponent implements OnInit {
 
         this.loading = true;
 
-        console.log('update data on node', this.iri);
-        console.log('update data', this.updateData);
+        // console.log('update data on node', this.iri);
+        // console.log('update data', this.updateData);
 
         if (this.iri && this.updateData) {
             // edit mode
@@ -127,7 +127,7 @@ export class ListItemFormComponent implements OnInit {
     }
 
     handleData(data: StringLiteral[]) {
-        console.log('stringliteral', data);
+
         this.labels = data;
         if (data.length > 0) {
             // this.form.;
