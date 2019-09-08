@@ -1,13 +1,31 @@
-<kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
-<form [formGroup]="form" *ngIf="!loading" class="form-content list-item" (ngSubmit)="submitData()">
-    <mat-form-field class="hidden list-item-label">
-        <input matInput [formControl]="form.controls['hasRootNode']" [placeholder]="'Root node iri'">
-    </mat-form-field>
+<div class="list-item medium-field">
+    <!-- add new node item -->
+    <span *ngIf="parentIri && projectcode">
+        <kui-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
+                                  (dataChanged)="handleData($event)" [language]="language">
+        </kui-string-literal-input>
+        <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="labels.length === 0" class="add-node-btn"
+                (click)="submitData()">
+            <mat-icon>
+                add
+            </mat-icon>
+        </button>
+        <kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
+    </span>
 
-    <mat-form-field class="medium-field list-item-label">
-        <input matInput [formControl]="form.controls['label']" [placeholder]="placeholder" #labelInput cdkFocusInitial>
-    </mat-form-field>
-    <button mat-icon-button matSuffix [disabled]="!form.valid">
-        <mat-icon>add</mat-icon>
-    </button>
-</form>
+    <!-- edit node item -->
+    <span *ngIf="!(parentIri && projectcode)">
+        <kui-string-literal-input class="list-item-label" [placeholder]="''" [value]="labels"
+                                  (dataChanged)="handleData($event)" [language]="language">
+        </kui-string-literal-input>
+        <!-- TODO: asap Knora api is ready to update single nodes set [disabled]="labels.length === 0" -->
+        <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="true" class="edit-node-btn"
+                (click)="submitData(); updateData = !updateData;">
+            <mat-icon>
+                {{updateData ? 'check' : 'edit'}}
+            </mat-icon>
+        </button>
+        <kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
+    </span>
+
+</div>

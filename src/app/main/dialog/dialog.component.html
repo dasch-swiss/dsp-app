@@ -136,26 +136,12 @@
 
     <!-- all about LISTS -->
 
-    <!-- Preview list nodes -->
-    <div *ngSwitchCase="'showList'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Preview list'" (close)="dialogRef.close()">
-        </app-dialog-header>
-        <app-list-items [iri]="data.id"></app-list-items>
-    </div>
-
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
         <app-dialog-header [title]="data.title" [subtitle]="'Create new'" (close)="dialogRef.close()">
         </app-dialog-header>
         <app-list-info-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"
                             (updateParent)="replaceTitle($event)"></app-list-info-form>
-    </div>
-
-    <!-- Edit list nodes -->
-    <div *ngSwitchCase="'editListItems'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Edit list items'" (close)="dialogRef.close()">
-        </app-dialog-header>
-        <app-list-items-form [iri]="data.id" [projectcode]="data.project"></app-list-items-form>
     </div>
 
     <!-- Update list info -->

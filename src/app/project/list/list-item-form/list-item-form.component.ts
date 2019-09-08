@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ApiServiceError, ListNode, ListNodeUpdatePayload, ListsService } from '@knora/core';
+import { ApiServiceError, ListNode, ListNodeUpdatePayload, ListsService, StringLiteral } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 
 @Component({
@@ -32,10 +32,14 @@ export class ListItemFormComponent implements OnInit {
      */
     @Input() listIri?: string;
 
+    @Input() labels?: StringLiteral[];
+
     // TODO: this is only used for the list creator prototype
     @Input() language?: string = 'en';
 
     @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
+
+    // labels: StringLiteral[];
 
     // @ViewChild('setFocus') labelInput: MatInput;
 
@@ -46,12 +50,18 @@ export class ListItemFormComponent implements OnInit {
     */
     form: FormGroup;
 
+    updateData: boolean = false;
+
     constructor (
         private _formBuilder: FormBuilder,
         private _listsService: ListsService
     ) { }
 
     ngOnInit() {
+
+        if (this.labels && this.labels.length > 0) {
+            this.placeholder = 'Edit item ';
+        }
 
         // TODO: get label of the parent node
         // it can be used in the input placeholder
@@ -67,59 +77,35 @@ export class ListItemFormComponent implements OnInit {
         }
 
         // build form
-        this.buildForm();
-    }
-
-    buildForm() {
-        this.form = this._formBuilder.group({
-            // hidden field
-            hasRootNode: new FormControl(
-                {
-                    value: this.parentIri,
-                    disabled: false
-                }
-            ),
-            label: new FormControl(
-                {
-                    value: '',
-                    disabled: false
-                }, [
-                    Validators.required
-                ]
-            ),
-            comment: new FormControl(
-                {
-                    value: '',
-                    disabled: false
-                }
-            )
-        });
-
-        // this.form.controls['label'].focus();
-
-        this.loading = false;
+        // this.buildForm();
     }
 
     submitData() {
 
+        if (!this.updateData) {
+            return;
+        }
+
         this.loading = true;
 
-        if (this.iri) {
+        console.log('update data on node', this.iri);
+        console.log('update data', this.updateData);
+
+        if (this.iri && this.updateData) {
             // edit mode
-            // TODO: not yet implemented
+            // TODO: update node method not yet implemented; Waiting for Knora API
+            this.loading = false;
+
+
         } else {
 
+            console.log(this.labels);
             // generate the data payload
             const listItem: ListNodeUpdatePayload = {
-                parentNodeIri: this.form.controls['hasRootNode'].value,
+                parentNodeIri: this.parentIri,
                 projectIri: AppGlobal.iriProjectsBase + this.projectcode,
                 name: this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
-                labels: [
-                    {
-                        value: this.form.controls['label'].value,
-                        language: this.language
-                    }
-                ],
+                labels: this.labels,
                 comments: [
                     {
                         value: this.form.controls['comment'].value,
@@ -128,10 +114,10 @@ export class ListItemFormComponent implements OnInit {
                 ]
             };
             // send payload to knora's api
-            this._listsService.createListItem(this.form.controls['hasRootNode'].value, listItem).subscribe(
+            this._listsService.createListItem(this.parentIri, listItem).subscribe(
                 (result: ListNode) => {
                     this.refreshParent.emit(result);
-                    this.buildForm();
+                    // this.buildForm();
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
@@ -140,4 +126,11 @@ export class ListItemFormComponent implements OnInit {
         }
     }
 
+    handleData(data: StringLiteral[]) {
+        console.log('stringliteral', data);
+        this.labels = data;
+        if (data.length > 0) {
+            // this.form.;
+        }
+    }
 }

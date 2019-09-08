@@ -4,6 +4,8 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Session } from '@knora/authentication';
 import { ApiServiceError, ListNode, ListsService, Project, ProjectsService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-list',
@@ -28,8 +30,16 @@ export class ListComponent implements OnInit {
 
     projectLists: ListNode[] = [];
 
+    // i18n plural mapping
+    itemPluralMapping = {
+        title: {
+            '=1': '1 List',
+            other: '# Lists'
+        }
+    };
 
     constructor (
+        private _dialog: MatDialog,
         private _cache: CacheService,
         private _listsService: ListsService,
         private _projectsService: ProjectsService,
@@ -136,6 +146,31 @@ export class ListComponent implements OnInit {
 
         this.initList();
 
+    }
+
+    /**
+    * open dialog in every case of modification:
+    * edit list data, remove list from project etc.
+    *
+    */
+    openDialog(mode: string, name: string, iri?: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '840px',
+            position: {
+                top: '112px'
+            },
+            data: { mode: mode, title: name, id: iri, project: this.projectcode }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.refresh();
+        });
     }
 
 }

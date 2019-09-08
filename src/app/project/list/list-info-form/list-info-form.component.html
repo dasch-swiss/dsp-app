@@ -51,8 +51,9 @@
     </form>
 
     <div class="create-list-items" *ngIf="createList">
-        <app-list-items-form [projectcode]="projectcode" [iri]="newList.listinfo.id"
-                             [language]="form.controls['language'].value"></app-list-items-form>
+        <app-list-item [projectcode]="projectcode" [listIri]="newList.listinfo.id"
+                       [language]="form.controls['language'].value">
+        </app-list-item>
     </div>
 
 </div>

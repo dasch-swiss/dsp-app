@@ -7,12 +7,17 @@
                 {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
         </button>
-        {{node.labels[0].value}}
+        <!-- existing node: show label in form, which is disabled until the admin press the edit button at the end of the line;
+            value is e.g. {{node.labels[0].value}} -->
+        <app-list-item-form [iri]="node.id" [language]="language" (refreshParent)="updateView($event, true)"
+                            [labels]="node.labels"></app-list-item-form>
+
 
         <!-- recursion: list with child nodes -->
         <app-list-item class="child-node" *ngIf="node.id === expandedNode && node.children.length > 0"
                        [list]="node.children" [parentIri]="node.id" [projectcode]="projectcode">
         </app-list-item>
+
 
         <!-- in case of none children: show form to append new item  -->
         <div class="list-node" *ngIf="node.id === expandedNode && node.children.length === 0">
@@ -26,6 +31,7 @@
         <app-list-item-form *ngIf="last" [parentIri]="parentIri" [listIri]="listIri" [projectcode]="projectcode"
                             [language]="language" (refreshParent)="updateView($event)">
         </app-list-item-form>
+
     </div>
 </div>
 

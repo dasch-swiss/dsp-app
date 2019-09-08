@@ -1,7 +1,19 @@
 .form-content {
-  margin: 0 0 0 16px;
+  margin: 0 0 0 8px;
 
   .hidden {
     display: none;
+  }
+}
+
+.medium-field {
+  display: inline-flex;
+  width: 480px;
+  .list-item-label {
+    flex: auto;
+  }
+  .add-node-btn,
+  .edit-node-btn {
+    margin: 8px 0 0 8px;
   }
 }

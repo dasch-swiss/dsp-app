@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ListNode } from '@knora/core';
+import { ListNode, StringLiteral, ListsService, List, ApiServiceError } from '@knora/core';
 
 @Component({
     selector: 'app-list-item',
@@ -23,13 +23,27 @@ export class ListItemComponent implements OnInit {
 
     expandedNode: string;
 
+    edit: boolean = false;
+
     // showChildren: boolean = false;
 
-    constructor () { }
+    constructor (private _listsService: ListsService) { }
 
     ngOnInit() {
         // console.log(this.list);
         // console.log(this.parentIri);
+        this.loading = true;
+        this._listsService.getList(this.parentIri).subscribe(
+            (result: List) => {
+                this.list = result.children;
+                this.language = result.listinfo.labels[0].language;
+                this.loading = false;
+                //                this.list = result;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+            }
+        );
     }
 
     showChildren(id: string): boolean {
@@ -60,6 +74,10 @@ export class ListItemComponent implements OnInit {
         }
 
         data.children = [];
+
+    }
+
+    editNode(label: StringLiteral[]) {
 
     }
 

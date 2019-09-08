@@ -34,10 +34,7 @@ import { SelectGroupComponent } from './project/collaboration/select-group/selec
 import { ListInfoFormComponent } from './project/list/list-info-form/list-info-form.component';
 import { ListItemFormComponent } from './project/list/list-item-form/list-item-form.component';
 import { ListItemComponent } from './project/list/list-item/list-item.component';
-import { ListItemsFormComponent } from './project/list/list-items-form/list-items-form.component';
-import { ListItemsComponent } from './project/list/list-items/list-items.component';
 import { ListComponent } from './project/list/list.component';
-import { ListsListComponent } from './project/list/lists-list/lists-list.component';
 import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
 import { AddToDirective, OntologyComponent } from './project/ontology/ontology.component';
 import { PropertyItemComponent } from './project/ontology/property-item/property-item.component';
@@ -139,10 +136,7 @@ export function initializeApp(appInitService: AppInitService) {
         PermissionComponent,
         AddGroupComponent,
         ListComponent,
-        ListsListComponent,
         ListInfoFormComponent,
-        ListItemsComponent,
-        ListItemsFormComponent,
         ListItemComponent,
         ListItemFormComponent,
         MembershipComponent
