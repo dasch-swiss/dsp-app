@@ -16,8 +16,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ListInfoFormComponent } from 'src/app/project/list/list-info-form/list-info-form.component';
 import { ListItemFormComponent } from 'src/app/project/list/list-item-form/list-item-form.component';
 import { ListItemComponent } from 'src/app/project/list/list-item/list-item.component';
-import { ListItemsFormComponent } from 'src/app/project/list/list-items-form/list-items-form.component';
-import { ListItemsComponent } from 'src/app/project/list/list-items/list-items.component';
 import { ProjectFormComponent } from 'src/app/project/project-form/project-form.component';
 import { PasswordFormComponent } from 'src/app/user/user-form/password-form/password-form.component';
 import { UserFormComponent } from 'src/app/user/user-form/user-form.component';
@@ -40,8 +38,6 @@ describe('DialogComponent', () => {
                 ProjectFormComponent,
                 ListItemComponent,
                 ListItemFormComponent,
-                ListItemsComponent,
-                ListItemsFormComponent,
                 ListInfoFormComponent
             ],
             imports: [

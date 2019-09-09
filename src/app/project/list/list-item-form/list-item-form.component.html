@@ -18,7 +18,7 @@
 </div>
 
 <!-- edit node item -->
-<div class="list-item medium-field" *ngIf="!(parentIri && projectcode)">
+<div class="list-item medium-field" *ngIf="!(parentIri && projectcode) && labels">
     <kui-string-literal-input class="list-item-label" [placeholder]="''" [value]="labels"
                               (dataChanged)="handleData($event)" [language]="language">
     </kui-string-literal-input>

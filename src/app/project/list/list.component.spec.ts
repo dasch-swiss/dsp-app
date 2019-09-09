@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule, MatChipsModule, MatDialogModule, MatIconModule, MatMenuModule } from '@angular/material';
+import { MatButtonModule, MatChipsModule, MatDialogModule, MatIconModule, MatMenuModule, MatExpansionModule } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
@@ -8,7 +8,8 @@ import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { of } from 'rxjs';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { ListComponent } from './list.component';
-import { ListsListComponent } from './lists-list/lists-list.component';
+import { ListItemComponent } from './list-item/list-item.component';
+import { ListItemFormComponent } from './list-item-form/list-item-form.component';
 
 describe('ListComponent', () => {
     let component: ListComponent;
@@ -31,7 +32,8 @@ describe('ListComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 ListComponent,
-                ListsListComponent,
+                ListItemComponent,
+                ListItemFormComponent,
                 ErrorComponent
             ],
             imports: [
@@ -40,6 +42,7 @@ describe('ListComponent', () => {
                 MatButtonModule,
                 MatChipsModule,
                 MatDialogModule,
+                MatExpansionModule,
                 MatIconModule,
                 MatMenuModule,
                 RouterTestingModule
