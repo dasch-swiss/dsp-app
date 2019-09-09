@@ -7,8 +7,13 @@
   height: 48px;
   display: inline-block;
 }
+.progress-indicator {
+  display: inline-block;
+  margin-bottom: -12px;
+}
 .add-node-btn,
-.edit-node-btn {
+.edit-node-btn,
+.progress-indicator {
   margin: 0 0 0 8px;
 }
 

@@ -20,15 +20,15 @@
 <!-- edit node item -->
 <div class="list-item medium-field" *ngIf="!(parentIri && projectcode) && labels">
     <kui-string-literal-input class="list-item-label" [placeholder]="''" [value]="labels"
-                              (dataChanged)="handleData($event)" [language]="language">
+                              (dataChanged)="handleData($event)" [language]="language" (touched)="toggleBtn($event)">
     </kui-string-literal-input>
     <!-- TODO: asap Knora api is ready to update single nodes set [disabled]="labels.length === 0" -->
-    <button *ngIf="!loading" mat-icon-button matSuffix class="edit-node-btn"
-            (click)="submitData(); updateData = !updateData;">
+    <button *ngIf="!loading && updateData" mat-icon-button matSuffix class="edit-node-btn"
+            [disabled]="labels.length === 0" (click)="submitData(); updateData = !updateData;">
         <mat-icon>
-            {{updateData ? 'check' : 'edit'}}
+            <!-- {{updateData ? 'check' : 'edit'}} -->
+            check
         </mat-icon>
     </button>
-    <kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
-
+    <kui-progress-indicator [status]="0" *ngIf="loading" class="progress-indicator"></kui-progress-indicator>
 </div>

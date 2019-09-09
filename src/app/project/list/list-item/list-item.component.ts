@@ -18,6 +18,8 @@ export class ListItemComponent implements OnInit {
 
     @Input() projectcode: string;
 
+    @Input() childNode: boolean;
+
     // TODO: this is only used for the list creator prototype
     @Input() language?: string = 'en';
 
@@ -33,17 +35,22 @@ export class ListItemComponent implements OnInit {
         // console.log(this.list);
         // console.log(this.parentIri);
         this.loading = true;
-        this._listsService.getList(this.parentIri).subscribe(
-            (result: List) => {
-                this.list = result.children;
-                this.language = result.listinfo.labels[0].language;
-                this.loading = false;
-                //                this.list = result;
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-            }
-        );
+
+        // TODO: in case of child node: do not run the following request
+        if (!this.childNode) {
+            this._listsService.getList(this.parentIri).subscribe(
+                (result: List) => {
+                    this.list = result.children;
+                    this.language = result.listinfo.labels[0].language;
+                    this.loading = false;
+                    //                this.list = result;
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+        }
+
     }
 
     showChildren(id: string): boolean {

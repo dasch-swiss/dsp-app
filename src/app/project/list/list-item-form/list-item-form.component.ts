@@ -39,6 +39,8 @@ export class ListItemFormComponent implements OnInit {
 
     @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
 
+
+
     // labels: StringLiteral[];
 
     // @ViewChild('setFocus') labelInput: MatInput;
@@ -69,6 +71,7 @@ export class ListItemFormComponent implements OnInit {
             this._listsService.getListNodeInfo(this.parentIri).subscribe(
                 (result: ListNode) => {
                     this.placeholder += result.labels[0].value;
+                    console.log(this.placeholder)
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
@@ -94,8 +97,12 @@ export class ListItemFormComponent implements OnInit {
         if (this.iri && this.updateData) {
             // edit mode
             // TODO: update node method not yet implemented; Waiting for Knora API
-            this.loading = false;
 
+            // TODO: remove setTimeout after testing position of progress indicator
+            setTimeout(() => {
+                // console.log(this.resource);
+                this.loading = false;
+            }, 500);
 
         } else {
 
@@ -128,9 +135,20 @@ export class ListItemFormComponent implements OnInit {
 
     handleData(data: StringLiteral[]) {
 
+        console.log('data from StringLiteral input', data);
+
+
         this.labels = data;
         if (data.length > 0) {
             // this.form.;
+            // console.log('update node data', data);
         }
+    }
+
+    toggleBtn(show: boolean) {
+        // console.log('show btn', show);
+        this.updateData = show;
+
+
     }
 }

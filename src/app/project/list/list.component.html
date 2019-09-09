@@ -7,7 +7,7 @@
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <div *ngIf="!loading" class="content lists-list">
+    <div *ngIf="!loading" class="content">
 
         <!-- header toolbar -->
         <div class="app-toolbar">
@@ -38,10 +38,9 @@
         </div>
 
         <!-- list of active lists -->
-        <mat-accordion>
+        <mat-accordion class="lists-list">
 
-            <mat-expansion-panel *ngFor="let list of projectLists; let i = index" [expanded]="i === 2">
-                <!-- just to test; TODO remove expanded after testing! -->
+            <mat-expansion-panel *ngFor="let list of projectLists; let i = index" class="list">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         {{list.labels[0].value}}
