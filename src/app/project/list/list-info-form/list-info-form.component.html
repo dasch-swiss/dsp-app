@@ -6,8 +6,33 @@
     <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
     <form *ngIf="!loading && !createList" [formGroup]="form" class="form-content list-info" (ngSubmit)="submitData()">
+        <mat-form-field class="medium-field">
+            <mat-label>Set the main language for the list</mat-label>
+            <select matNativeControl [formControl]="form.controls['language']">
+                <option *ngFor="let lang of languagesList" [value]="lang.language">{{lang.value}}</option>
+            </select>
+            <span class="fill-remaining-space"></span>
+            <button type="button" mat-icon-button matSuffix matTooltipPosition="above"
+                    matTooltip="You can change the language later and/or add values in other languages">
+                <mat-icon>info</mat-icon>
+            </button>
+        </mat-form-field>
 
-        <div class="form-content">
+        <!-- list label -->
+        <kui-string-literal-input [placeholder]="'List label'" [language]="form.controls['language'].value">
+        </kui-string-literal-input>
+        <mat-hint *ngIf="formErrors.label">
+            {{ formErrors.label }}
+        </mat-hint>
+
+        <br><br>
+
+        <!-- list description / comment -->
+        <kui-string-literal-input [textarea]="true" [placeholder]="'List description'"
+                                  [language]="form.controls['language'].value">
+        </kui-string-literal-input>
+
+        <div class="form-content" style="display: none">
             <mat-form-field class="large-field list-label">
                 <input matInput [maxlength]="nameMaxLength" [formControl]="form.controls['label']"
                        [placeholder]="'Set a label *'">
@@ -20,33 +45,23 @@
                 <input matInput [formControl]="form.controls['comment']" [placeholder]="'Description'">
             </mat-form-field>
 
-            <mat-form-field>
-                <mat-label>List language</mat-label>
-                <select matNativeControl [formControl]="form.controls['language']">
-                    <option *ngFor="let lang of languagesList" [value]="lang.language">{{lang.value}}</option>
-                </select>
-                <span class="fill-remaining-space"></span>
-                <button type="button" mat-icon-button matPrefix matTooltipPosition="above" color="accent"
-                        matTooltip="PROTOTYPE ONLY! Set the language for the whole list and list node labels. This selector will be replaced in the next release by StringLiteral input">
-                    <mat-icon>warning</mat-icon>
+        </div>
+
+
+
+        <div class="form-panel form-action">
+            <span>
+                <button mat-button type="button" (click)="resetForm($event, list)">
+                    {{ 'appLabels.form.action.reset' | translate }}
                 </button>
-            </mat-form-field>
-
-
-            <div class="form-panel form-action">
-                <span>
-                    <button mat-button type="button" (click)="resetForm($event, list)">
-                        {{ 'appLabels.form.action.reset' | translate }}
-                    </button>
-                </span>
-                <span class="fill-remaining-space"></span>
-                <span>
-                    <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
-                        <span *ngIf="!iri">Next</span>
-                        <span *ngIf="iri">Update</span>
-                    </button>
-                </span>
-            </div>
+            </span>
+            <span class="fill-remaining-space"></span>
+            <span>
+                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
+                    <span *ngIf="!iri">Next</span>
+                    <span *ngIf="iri">Update</span>
+                </button>
+            </span>
         </div>
     </form>
 
