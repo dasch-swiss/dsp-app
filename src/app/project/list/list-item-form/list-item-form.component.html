@@ -6,7 +6,7 @@
         </mat-icon>
     </button> -->
     <kui-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
-                              (dataChanged)="handleData($event)" [language]="language">
+                              (dataChanged)="handleData($event)" [language]="language" (enter)="submitData()">
     </kui-string-literal-input>
     <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="labels.length === 0" class="add-node-btn"
             (click)="submitData()">

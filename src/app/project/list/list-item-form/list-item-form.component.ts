@@ -84,9 +84,9 @@ export class ListItemFormComponent implements OnInit {
 
     submitData() {
 
-        // if (!this.updateData) {
-        //     return;
-        // }
+        if (!this.labels.length) {
+            return;
+        }
 
         this.loading = true;
 
