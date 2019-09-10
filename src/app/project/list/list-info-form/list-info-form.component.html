@@ -5,21 +5,11 @@
     <!-- success message after updating -->
     <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
-    <form *ngIf="!loading && !createList" [formGroup]="form" class="form-content list-info" (ngSubmit)="submitData()">
-        <mat-form-field class="medium-field">
-            <mat-label>Set the main language for the list</mat-label>
-            <select matNativeControl [formControl]="form.controls['language']">
-                <option *ngFor="let lang of languagesList" [value]="lang.language">{{lang.value}}</option>
-            </select>
-            <span class="fill-remaining-space"></span>
-            <button type="button" mat-icon-button matSuffix matTooltipPosition="above"
-                    matTooltip="You can change the language later and/or add values in other languages">
-                <mat-icon>info</mat-icon>
-            </button>
-        </mat-form-field>
+    <div *ngIf="!loading && !createList" class="form-content list-info">
 
         <!-- list label -->
-        <kui-string-literal-input [placeholder]="'List label'" [language]="form.controls['language'].value">
+        <kui-string-literal-input [placeholder]="'List label'" [value]="labels"
+                                  (dataChanged)="handleData($event, 'labels')">
         </kui-string-literal-input>
         <mat-hint *ngIf="formErrors.label">
             {{ formErrors.label }}
@@ -28,26 +18,9 @@
         <br><br>
 
         <!-- list description / comment -->
-        <kui-string-literal-input [textarea]="true" [placeholder]="'List description'"
-                                  [language]="form.controls['language'].value">
+        <kui-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
+                                  (dataChanged)="handleData($event, 'comments')">
         </kui-string-literal-input>
-
-        <div class="form-content" style="display: none">
-            <mat-form-field class="large-field list-label">
-                <input matInput [maxlength]="nameMaxLength" [formControl]="form.controls['label']"
-                       [placeholder]="'Set a label *'">
-                <mat-hint *ngIf="formErrors.label">
-                    {{ formErrors.label }}
-                </mat-hint>
-            </mat-form-field>
-
-            <mat-form-field class="large-field list-comment">
-                <input matInput [formControl]="form.controls['comment']" [placeholder]="'Description'">
-            </mat-form-field>
-
-        </div>
-
-
 
         <div class="form-panel form-action">
             <span>
@@ -57,17 +30,16 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
-                    <span *ngIf="!iri">Next</span>
-                    <span *ngIf="iri">Update</span>
+                <button mat-raised-button type="submit" color="primary" [disabled]="!labels && labels.length === 0"
+                        (click)="submitData()">
+                    {{ iri ? 'Update' : 'Next' }}
                 </button>
             </span>
         </div>
-    </form>
+    </div>
 
-    <div class="create-list-items" *ngIf="createList">
-        <app-list-item [projectcode]="projectcode" [listIri]="newList.listinfo.id"
-                       [language]="form.controls['language'].value">
+    <div class="create-list-items" *ngIf="!loading && createList && newList">
+        <app-list-item [projectcode]="projectcode" [parentIri]="newList.listinfo.id" [language]="labels[0].language">
         </app-list-item>
     </div>
 

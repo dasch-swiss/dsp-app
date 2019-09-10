@@ -14,7 +14,7 @@ export class ListItemComponent implements OnInit {
 
     @Input() parentIri?: string;
 
-    @Input() listIri: string;
+    // @Input() listIri: string;
 
     @Input() projectcode: string;
 

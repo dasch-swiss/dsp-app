@@ -30,7 +30,7 @@ export class ListItemFormComponent implements OnInit {
     /**
      * list iri
      */
-    @Input() listIri?: string;
+    // @Input() listIri?: string;
 
     @Input() labels?: StringLiteral[];
 
@@ -84,9 +84,9 @@ export class ListItemFormComponent implements OnInit {
 
     submitData() {
 
-        if (!this.updateData) {
-            return;
-        }
+        // if (!this.updateData) {
+        //     return;
+        // }
 
         this.loading = true;
 
@@ -105,19 +105,14 @@ export class ListItemFormComponent implements OnInit {
 
         } else {
 
-            console.log(this.labels);
+            // console.log(this.labels);
             // generate the data payload
             const listItem: ListNodeUpdatePayload = {
                 parentNodeIri: this.parentIri,
                 projectIri: AppGlobal.iriProjectsBase + this.projectcode,
                 name: this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
                 labels: this.labels,
-                comments: [
-                    {
-                        value: this.form.controls['comment'].value,
-                        language: this.language
-                    }
-                ]
+                comments: []        // TODO: comment is not yet implemented
             };
             // send payload to knora's api
             this._listsService.createListItem(this.parentIri, listItem).subscribe(

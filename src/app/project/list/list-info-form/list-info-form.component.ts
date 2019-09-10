@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ApiServiceError, List, ListCreatePayload, ListInfo, ListInfoUpdatePayload, ListsService, Project, ProjectsService, StringLiteral } from '@knora/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ApiServiceError, List, ListCreatePayload, ListInfo, ListInfoUpdatePayload, ListsService, Project, StringLiteral } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
-import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
     selector: 'app-list-info-form',
@@ -26,6 +24,9 @@ export class ListInfoFormComponent implements OnInit {
     project: Project;
 
     list: ListInfo;
+
+    labels: StringLiteral[];
+    comments: StringLiteral[];
 
     /**
      * by adding new list, it starts with the list info and the next section is "creating the list";
@@ -86,9 +87,7 @@ export class ListInfoFormComponent implements OnInit {
     languagesList: StringLiteral[] = AppGlobal.languagesList;
 
     constructor (
-        private _formBuilder: FormBuilder,
         private _listsService: ListsService) {
-
     }
 
     ngOnInit() {
@@ -116,45 +115,52 @@ export class ListInfoFormComponent implements OnInit {
 
     buildForm(list?: ListInfo): void {
 
-        let label: string = '';
-        let comment: string = '';
+        this.labels = [];
+        this.comments = [];
+        // let label: string = '';
+        // let comment: string = '';
 
-        let language: string = this.languagesList[0].language;
+        // let language: string = this.languagesList[0].language;
 
         if (list && list.id) {
-            label = list.labels[0].value;
-            language = list.labels[0].language;
-            if (list.comments.length > 0) {
-                comment = list.comments[0].value;
-            }
+            this.labels = list.labels;
+            this.comments = list.comments;
+            //            label = list.labels[0].value;
+            //            language = list.labels[0].language;
+            // if (list.comments.length > 0) {
+            //     comment = list.comments[0].value;
+            // }
         }
 
+        /*
         this.form = this._formBuilder.group({
             label: new FormControl(
                 {
-                    value: label,
+                    value: this.labels,
                     disabled: false
                 },
                 [Validators.required]
             ),
             comment: new FormControl(
                 {
-                    value: comment,
+                    value: this.comments,
                     disabled: false
                 }
             ),
             language: new FormControl(
                 {
-                    value: language,
+                    value: ,
                     disabled: false
                 }
             )
         });
+        */
 
-        this.form.valueChanges.subscribe(data => this.onValueChanged());
+        // this.form.valueChanges.subscribe(data => this.onValueChanged());
         this.loading = false;
     }
 
+    /*
     onValueChanged() {
         if (!this.form) {
             return;
@@ -173,6 +179,7 @@ export class ListInfoFormComponent implements OnInit {
             }
         });
     }
+    */
 
     submitData(): void {
         this.loading = true;
@@ -182,18 +189,8 @@ export class ListInfoFormComponent implements OnInit {
             const listInfoUpdateData: ListInfoUpdatePayload = {
                 projectIri: AppGlobal.iriProjectsBase + this.projectcode,
                 listIri: this.iri,
-                labels: [
-                    {
-                        value: this.form.controls['label'].value,
-                        language: this.form.controls['language'].value
-                    }
-                ],
-                comments: [
-                    {
-                        value: this.form.controls['comment'].value,
-                        language: this.form.controls['language'].value
-                    }
-                ]
+                labels: this.labels,
+                comments: this.comments
             };
             this._listsService.updateListInfo(listInfoUpdateData).subscribe(
                 (result: ListInfo) => {
@@ -213,26 +210,21 @@ export class ListInfoFormComponent implements OnInit {
             // new: create list
             const listInfoData: ListCreatePayload = {
                 projectIri: AppGlobal.iriProjectsBase + this.projectcode,
-                labels: [
-                    {
-                        value: this.form.controls['label'].value,
-                        language: this.form.controls['language'].value
-                    }
-                ],
-                comments: [
-                    {
-                        value: this.form.controls['comment'].value,
-                        language: this.form.controls['language'].value
-                    }
-                ]
+                labels: this.labels,
+                comments: this.comments
             };
             this._listsService.createList(listInfoData).subscribe(
                 (result: List) => {
                     // console.log(result);
                     // this.closeDialog.emit(result);
                     this.newList = result;
-                    this.updateParent.emit(result.listinfo.labels[0].value + ' (' + this.form.controls['language'].value + ')');
+                    console.log(this.newList)
+                    this.updateParent.emit(result.listinfo.labels[0].value + ' (' + result.listinfo.labels[0].language + ')');
                     this.loading = false;
+                    // setTimeout(() => {
+                    //     // console.log(this.resource);
+                    //     this.initContent();
+                    // });
                     this.createList = true;
                 },
                 (error: ApiServiceError) => {
@@ -259,6 +251,18 @@ export class ListInfoFormComponent implements OnInit {
 
         this.buildForm(list);
 
+    }
+
+    handleData(data: StringLiteral[], type: string) {
+        switch (type) {
+            case 'labels':
+                this.labels = data;
+                break;
+
+            case 'comments':
+                this.comments = data;
+                break;
+        }
     }
 
     closeMessage() {

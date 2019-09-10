@@ -14,7 +14,7 @@
             add
         </mat-icon>
     </button>
-    <kui-progress-indicator [status]="0" *ngIf="loading"></kui-progress-indicator>
+    <kui-progress-indicator [status]="0" *ngIf="loading" class="progress-indicator"></kui-progress-indicator>
 </div>
 
 <!-- edit node item -->
@@ -23,7 +23,7 @@
                               (dataChanged)="handleData($event)" [language]="language" (touched)="toggleBtn($event)">
     </kui-string-literal-input>
     <!-- TODO: asap Knora api is ready to update single nodes set [disabled]="labels.length === 0" -->
-    <button *ngIf="!loading && updateData" mat-icon-button matSuffix class="edit-node-btn"
+    <button *ngIf="!loading && updateData" type="submit" mat-icon-button matSuffix class="edit-node-btn"
             [disabled]="labels.length === 0" (click)="submitData(); updateData = !updateData;">
         <mat-icon>
             <!-- {{updateData ? 'check' : 'edit'}} -->
