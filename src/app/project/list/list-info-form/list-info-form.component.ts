@@ -115,6 +115,7 @@ export class ListInfoFormComponent implements OnInit {
 
     buildForm(list?: ListInfo): void {
 
+        this.loading = true;
         this.labels = [];
         this.comments = [];
         // let label: string = '';
@@ -157,7 +158,10 @@ export class ListInfoFormComponent implements OnInit {
         */
 
         // this.form.valueChanges.subscribe(data => this.onValueChanged());
-        this.loading = false;
+        setTimeout(() => {
+            // console.log(this.resource);
+            this.loading = false;
+        });
     }
 
     /*
@@ -251,12 +255,20 @@ export class ListInfoFormComponent implements OnInit {
 
         this.buildForm(list);
 
+
+
     }
 
     handleData(data: StringLiteral[], type: string) {
+
         switch (type) {
             case 'labels':
                 this.labels = data;
+                // if (data.length === 0) {
+                //     this.formErrors.label = this.validationMessages.label.required;
+                // } else {
+                //     this.formErrors.label = '';
+                // }
                 break;
 
             case 'comments':

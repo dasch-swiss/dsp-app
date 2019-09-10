@@ -11,9 +11,9 @@
         <kui-string-literal-input [placeholder]="'List label'" [value]="labels"
                                   (dataChanged)="handleData($event, 'labels')">
         </kui-string-literal-input>
-        <mat-hint *ngIf="formErrors.label">
+        <!-- TODO: we should support mat hint in the string literal input        <mat-hint *ngIf="formErrors.label">
             {{ formErrors.label }}
-        </mat-hint>
+        </mat-hint> -->
 
         <br><br>
 
@@ -30,7 +30,7 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" [disabled]="!labels && labels.length === 0"
+                <button mat-raised-button type="submit" color="primary" [disabled]="labels.length === 0"
                         (click)="submitData()">
                     {{ iri ? 'Update' : 'Next' }}
                 </button>
