@@ -71,7 +71,6 @@ export class ListItemFormComponent implements OnInit {
             this._listsService.getListNodeInfo(this.parentIri).subscribe(
                 (result: ListNode) => {
                     this.placeholder += result.labels[0].value;
-                    console.log(this.placeholder)
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
@@ -135,7 +134,7 @@ export class ListItemFormComponent implements OnInit {
 
     handleData(data: StringLiteral[]) {
 
-        console.log('data from StringLiteral input', data);
+        // console.log('data from StringLiteral input', data);
 
 
         this.labels = data;
