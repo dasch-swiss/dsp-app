@@ -151,7 +151,5 @@ export class ListItemFormComponent implements OnInit {
     toggleBtn(show: boolean) {
         // console.log('show btn', show);
         this.updateData = show;
-
-
     }
 }
