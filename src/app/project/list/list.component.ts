@@ -95,7 +95,7 @@ export class ListComponent implements OnInit {
             }
         );
 
-        this.openDialog('createList', 'List');
+        // this.openDialog('createList', 'List');
     }
 
     /**
