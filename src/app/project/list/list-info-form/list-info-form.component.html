@@ -19,7 +19,8 @@
 
         <!-- list description / comment -->
         <kui-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
-                                  (dataChanged)="handleData($event, 'comments')">
+                                  (dataChanged)="handleData($event, 'comments')"
+                                  [language]="labels.length ? labels[0].language : 'en'">
         </kui-string-literal-input>
 
         <div class="form-panel form-action">

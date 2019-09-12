@@ -34,12 +34,13 @@ export class ListItemFormComponent implements OnInit {
 
     @Input() labels?: StringLiteral[];
 
-    // TODO: this is only used for the list creator prototype
-    @Input() language?: string = 'en';
+    // set main / pre-defined language
+    @Input() language?: string;
 
     @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
 
 
+    initComponent: boolean;
 
     // labels: StringLiteral[];
 
@@ -61,6 +62,8 @@ export class ListItemFormComponent implements OnInit {
 
     ngOnInit() {
 
+        this.initComponent = true;
+
         if (this.labels && this.labels.length > 0) {
             this.placeholder = 'Edit item ';
         }
@@ -71,6 +74,7 @@ export class ListItemFormComponent implements OnInit {
             this._listsService.getListNodeInfo(this.parentIri).subscribe(
                 (result: ListNode) => {
                     this.placeholder += result.labels[0].value;
+                    this.initComponent = false;
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
@@ -80,6 +84,8 @@ export class ListItemFormComponent implements OnInit {
 
         // build form
         // this.buildForm();
+
+
     }
 
     submitData() {
@@ -128,15 +134,18 @@ export class ListItemFormComponent implements OnInit {
     }
 
     handleData(data: StringLiteral[]) {
+        // this shouldn't run on the init...
+        if (!this.initComponent) {
 
-        // console.log('data from StringLiteral input', data);
+            console.log('data from StringLiteral input', data);
 
-
-        this.labels = data;
-        if (data.length > 0) {
-            // this.form.;
-            // console.log('update node data', data);
+            this.labels = data;
+            if (data.length > 0) {
+                // this.form.;
+                // console.log('update node data', data);
+            }
         }
+
     }
 
     toggleBtn(show: boolean) {

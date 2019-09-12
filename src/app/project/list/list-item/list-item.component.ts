@@ -21,7 +21,7 @@ export class ListItemComponent implements OnInit {
     @Input() childNode: boolean;
 
     // TODO: this is only used for the list creator prototype
-    @Input() language?: string = 'en';
+    @Input() language?: string;
 
     expandedNode: string;
 

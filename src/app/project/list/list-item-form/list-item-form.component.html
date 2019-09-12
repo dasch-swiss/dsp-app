@@ -8,7 +8,7 @@
     <kui-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
                               (dataChanged)="handleData($event)" [language]="language" (enter)="submitData()">
     </kui-string-literal-input>
-    <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="labels.length === 0" class="add-node-btn"
+    <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="!labels && labels?.length === 0" class="add-node-btn"
             (click)="submitData()">
         <mat-icon>
             add
@@ -19,7 +19,7 @@
 
 <!-- edit node item -->
 <div class="list-item medium-field" *ngIf="!(parentIri && projectcode) && labels">
-    <kui-string-literal-input class="list-item-label" [placeholder]="''" [value]="labels"
+    <kui-string-literal-input class="list-item-label" [placeholder]="labels | stringifyStringLiteral" [value]="labels"
                               (dataChanged)="handleData($event)" [language]="language" (touched)="toggleBtn($event)">
     </kui-string-literal-input>
     <!-- TODO: asap Knora api is ready to update single nodes set [disabled]="labels.length === 0" -->
