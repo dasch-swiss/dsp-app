@@ -17,6 +17,8 @@ export class ListInfoFormComponent implements OnInit {
     // project short code
     @Input() projectcode: string;
 
+    @Input() projectIri: string;
+
     @Output() closeDialog: EventEmitter<List | ListInfo> = new EventEmitter<List>();
 
     @Output() updateParent: EventEmitter<string> = new EventEmitter<string>();
@@ -191,7 +193,7 @@ export class ListInfoFormComponent implements OnInit {
         if (this.iri) {
             // edit mode: update list info
             const listInfoUpdateData: ListInfoUpdatePayload = {
-                projectIri: AppGlobal.iriProjectsBase + this.projectcode,
+                projectIri: this.projectIri,
                 listIri: this.iri,
                 labels: this.labels,
                 comments: this.comments
@@ -213,7 +215,7 @@ export class ListInfoFormComponent implements OnInit {
         } else {
             // new: create list
             const listInfoData: ListCreatePayload = {
-                projectIri: AppGlobal.iriProjectsBase + this.projectcode,
+                projectIri: this.projectIri,
                 labels: this.labels,
                 comments: this.comments
             };

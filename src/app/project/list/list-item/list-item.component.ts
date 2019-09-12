@@ -18,6 +18,8 @@ export class ListItemComponent implements OnInit {
 
     @Input() projectcode: string;
 
+    @Input() projectIri: string;
+
     @Input() childNode: boolean;
 
     // TODO: this is only used for the list creator prototype

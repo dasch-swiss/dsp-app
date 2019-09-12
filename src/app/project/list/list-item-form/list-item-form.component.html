@@ -1,5 +1,5 @@
 <!-- add new node item -->
-<div class="new-list-item medium-field" *ngIf="parentIri && projectcode">
+<div class="new-list-item medium-field" *ngIf="parentIri && projectIri">
     <!--     <button type="button" mat-icon-button>
         <mat-icon class="mat-icon-rtl-mirror">
             add
@@ -18,7 +18,7 @@
 </div>
 
 <!-- edit node item -->
-<div class="list-item medium-field" *ngIf="!(parentIri && projectcode) && labels">
+<div class="list-item medium-field" *ngIf="!(parentIri && projectIri) && labels">
     <!-- TODO: at the moment (2019-09-12) we can't modify a node; the api doesn't support it; this is why we set the input to readonly -->
     <kui-string-literal-input class="list-item-label" [placeholder]="labels | stringifyStringLiteral" [value]="labels"
                               [readonly]="true" (dataChanged)="handleData($event)" [language]="language"

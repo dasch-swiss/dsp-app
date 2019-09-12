@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ApiServiceError, ListNode, ListNodeUpdatePayload, ListsService, StringLiteral } from '@knora/core';
-import { AppGlobal } from 'src/app/app-global';
 
 @Component({
     selector: 'app-list-item-form',
@@ -21,6 +20,11 @@ export class ListItemFormComponent implements OnInit {
      * project shortcode
      */
     @Input() projectcode?: string;
+
+    /**
+     * project id
+     */
+    @Input() projectIri?: string;
 
     /**
      * parent node id
@@ -56,7 +60,6 @@ export class ListItemFormComponent implements OnInit {
     updateData: boolean = false;
 
     constructor (
-        private _formBuilder: FormBuilder,
         private _listsService: ListsService
     ) { }
 
@@ -81,10 +84,6 @@ export class ListItemFormComponent implements OnInit {
                 }
             );
         }
-
-        // build form
-        // this.buildForm();
-
 
     }
 
@@ -115,7 +114,7 @@ export class ListItemFormComponent implements OnInit {
             // generate the data payload
             const listItem: ListNodeUpdatePayload = {
                 parentNodeIri: this.parentIri,
-                projectIri: AppGlobal.iriProjectsBase + this.projectcode,
+                projectIri: this.projectIri,
                 name: this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
                 labels: this.labels,
                 comments: []        // TODO: comment is not yet implemented

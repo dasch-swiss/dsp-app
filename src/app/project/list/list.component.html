@@ -30,7 +30,7 @@
                 <h2 class="mat-title">{{projectLists.length | i18nPlural: itemPluralMapping['title']}}</h2>
                 <span class="fill-remaining-space"></span>
                 <span class="app-toolbar-action button right">
-                    <button mat-flat-button [color]="'primary'" (click)="openDialog('createList', 'List')">
+                    <button mat-flat-button [color]="'primary'" (click)="openDialog('createList', 'List', project.id)">
                         Create new
                     </button>
                 </span>
@@ -50,7 +50,8 @@
                     </mat-panel-description>
                 </mat-expansion-panel-header>
 
-                <app-list-item *ngIf="!loading" [list]="list" [parentIri]="list.id" [projectcode]="projectcode">
+                <app-list-item *ngIf="!loading" [list]="list" [parentIri]="list.id" [projectIri]="project.id"
+                               [projectcode]="projectcode">
                 </app-list-item>
             </mat-expansion-panel>
 
