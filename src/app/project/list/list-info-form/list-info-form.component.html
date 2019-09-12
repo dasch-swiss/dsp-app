@@ -40,7 +40,8 @@
     </div>
 
     <div class="create-list-items" *ngIf="!loading && createList && newList">
-        <app-list-item [projectcode]="projectcode" [parentIri]="newList.listinfo.id" [language]="labels[0].language">
+        <app-list-item [projectcode]="projectcode" [projectIri]="projectIri" [parentIri]="newList.listinfo.id"
+                       [language]="labels[0].language">
         </app-list-item>
     </div>
 
