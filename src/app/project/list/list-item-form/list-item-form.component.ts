@@ -136,8 +136,6 @@ export class ListItemFormComponent implements OnInit {
         // this shouldn't run on the init...
         if (!this.initComponent) {
 
-            console.log('data from StringLiteral input', data);
-
             this.labels = data;
             if (data.length > 0) {
                 // this.form.;
