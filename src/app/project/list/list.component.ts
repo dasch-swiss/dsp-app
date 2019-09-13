@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Session } from '@knora/authentication';
-import { ApiServiceError, ListNode, ListsService, Project, ProjectsService } from '@knora/core';
+import { ApiServiceError, ListNode, ListsService, Project, ProjectsService, StringLiteral } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { AppGlobal } from 'src/app/app-global';
 
 @Component({
     selector: 'app-list',
@@ -16,6 +17,8 @@ export class ListComponent implements OnInit {
 
     // loading for progess indicator
     loading: boolean;
+
+    reload: boolean;
 
     // permissions of logged-in user
     session: Session;
@@ -28,7 +31,16 @@ export class ListComponent implements OnInit {
     // project data
     project: Project;
 
+    // lists in the project
     projectLists: ListNode[] = [];
+
+    // list of languages
+    languagesList: StringLiteral[] = AppGlobal.languagesList;
+
+    // current selected language
+    language: string;
+
+    openPanel: number;
 
     // i18n plural mapping
     itemPluralMapping = {
@@ -160,7 +172,7 @@ export class ListComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { mode: mode, title: name, id: iri, project: this.projectcode }
+            data: { mode: mode, title: name, id: iri, project: this.project.id }
         };
 
         const dialogRef = this._dialog.open(

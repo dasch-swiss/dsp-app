@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ApiServiceError, List, ListCreatePayload, ListInfo, ListInfoUpdatePayload, ListsService, Project, StringLiteral } from '@knora/core';
-import { AppGlobal } from 'src/app/app-global';
 
 @Component({
     selector: 'app-list-info-form',
@@ -82,12 +81,6 @@ export class ListInfoFormComponent implements OnInit {
         statusText: "You have successfully updated list's info."
     };
 
-    /**
-     * In this prototype we create list in only one language,
-     * the user has to select the language to use
-     */
-    languagesList: StringLiteral[] = AppGlobal.languagesList;
-
     constructor (
         private _listsService: ListsService) {
     }
@@ -122,8 +115,6 @@ export class ListInfoFormComponent implements OnInit {
         this.comments = [];
         // let label: string = '';
         // let comment: string = '';
-
-        // let language: string = this.languagesList[0].language;
 
         if (list && list.id) {
             this.labels = list.labels;

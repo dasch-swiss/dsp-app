@@ -20,9 +20,9 @@
 <!-- edit node item -->
 <div class="list-item medium-field" *ngIf="!(parentIri && projectIri) && labels">
     <!-- TODO: at the moment (2019-09-12) we can't modify a node; the api doesn't support it; this is why we set the input to readonly -->
-    <kui-string-literal-input class="list-item-label" [placeholder]="labels | stringifyStringLiteral" [value]="labels"
-                              [readonly]="true" (dataChanged)="handleData($event)" [language]="language"
-                              (touched)="toggleBtn($event)">
+    <kui-string-literal-input class="list-item-label" [placeholder]="labels | kuiStringifyStringLiteral"
+                              [value]="labels" [readonly]="true" (dataChanged)="handleData($event)"
+                              [language]="language" (touched)="toggleBtn($event)">
     </kui-string-literal-input>
     <!-- TODO: asap Knora api is ready to update single nodes set [disabled]="labels.length === 0" -->
     <button *ngIf="!loading && updateData" type="submit" mat-icon-button matSuffix class="edit-node-btn"

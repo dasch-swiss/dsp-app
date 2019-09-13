@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ListNode, StringLiteral, ListsService, List, ApiServiceError } from '@knora/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ApiServiceError, List, ListNode, ListsService, StringLiteral } from '@knora/core';
 
 @Component({
     selector: 'app-list-item',
@@ -22,12 +22,9 @@ export class ListItemComponent implements OnInit {
 
     @Input() childNode: boolean;
 
-    // TODO: this is only used for the list creator prototype
     @Input() language?: string;
 
     expandedNode: string;
-
-    edit: boolean = false;
 
     // showChildren: boolean = false;
 
@@ -38,14 +35,20 @@ export class ListItemComponent implements OnInit {
         // console.log(this.parentIri);
         this.loading = true;
 
+        // this.language = (this.language ? )
+
+        //
+
         // TODO: in case of child node: do not run the following request
         if (!this.childNode) {
             this._listsService.getList(this.parentIri).subscribe(
                 (result: List) => {
                     this.list = result.children;
+                    // this.language = (this.language ? this.language : result.listinfo.labels[0].language);
                     this.language = result.listinfo.labels[0].language;
+
                     this.loading = false;
-                    //                this.list = result;
+
                 },
                 (error: ApiServiceError) => {
                     console.error(error);
@@ -89,5 +92,7 @@ export class ListItemComponent implements OnInit {
     editNode(label: StringLiteral[]) {
 
     }
+
+
 
 }
