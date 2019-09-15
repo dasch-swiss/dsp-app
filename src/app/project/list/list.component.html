@@ -44,11 +44,13 @@
                                  (afterExpand)="openPanel = i"
                                  [expanded]="projectLists.length === 1 || openPanel === i">
                 <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        {{list.labels[0].value}}
+                    <mat-panel-title [matTooltip]="list.labels | kuiStringifyStringLiteral:'all'"
+                                     matTooltipPosition="above">
+                        {{list.labels | kuiStringifyStringLiteral}}
                     </mat-panel-title>
-                    <mat-panel-description class="shorten-text">
-                        {{list.comments[0]?.value}}
+                    <mat-panel-description class="shorten-text" [matTooltip]="list.comments | kuiStringifyStringLiteral"
+                                           matTooltipPosition="above">
+                        {{list.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}
                         <span class="fill-remaining-space"></span>
                         <button mat-stroked-button *ngIf="openPanel === i"
                                 (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">

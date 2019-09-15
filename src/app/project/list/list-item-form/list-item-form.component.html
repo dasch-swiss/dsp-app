@@ -20,7 +20,8 @@
 <!-- edit node item -->
 <div class="list-item medium-field" *ngIf="!(parentIri && projectIri) && labels">
     <!-- TODO: at the moment (2019-09-12) we can't modify a node; the api doesn't support it; this is why we set the input to readonly -->
-    <kui-string-literal-input class="list-item-label" [placeholder]="labels | kuiStringifyStringLiteral"
+    <kui-string-literal-input class="list-item-label"
+                              [placeholder]="labels | kuiStringifyStringLiteral:'all' | kuiTruncate:[128]"
                               [value]="labels" [readonly]="true" (dataChanged)="handleData($event)"
                               [language]="language" (touched)="toggleBtn($event)">
     </kui-string-literal-input>
