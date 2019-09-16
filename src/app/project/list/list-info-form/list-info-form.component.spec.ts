@@ -7,7 +7,6 @@ import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ListItemFormComponent } from '../list-item-form/list-item-form.component';
 import { ListItemComponent } from '../list-item/list-item.component';
-import { ListItemsFormComponent } from '../list-items-form/list-items-form.component';
 import { ListInfoFormComponent } from './list-info-form.component';
 
 describe('ListInfoFormComponent', () => {
@@ -18,7 +17,6 @@ describe('ListInfoFormComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 ListInfoFormComponent,
-                ListItemsFormComponent,
                 ListItemComponent,
                 ListItemFormComponent
             ],

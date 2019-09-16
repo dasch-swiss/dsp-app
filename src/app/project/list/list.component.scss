@@ -1,0 +1,21 @@
+.content {
+  .app-toolbar {
+    margin-bottom: 24px;
+  }
+
+  .lists-list {
+    .list {
+      //   margin: 16px 0;
+      position: relative;
+    }
+  }
+}
+
+.list-action-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding: 0px 8px 16px 24px;
+  position: absolute;
+  right: 0;
+}

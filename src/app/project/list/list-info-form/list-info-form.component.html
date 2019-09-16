@@ -5,54 +5,44 @@
     <!-- success message after updating -->
     <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
 
-    <form *ngIf="!loading && !createList" [formGroup]="form" class="form-content list-info" (ngSubmit)="submitData()">
+    <div *ngIf="!loading && !createList" class="form-content list-info">
 
-        <div class="form-content">
-            <mat-form-field class="large-field list-label">
-                <input matInput [maxlength]="nameMaxLength" [formControl]="form.controls['label']"
-                       [placeholder]="'Set a label *'">
-                <mat-hint *ngIf="formErrors.label">
-                    {{ formErrors.label }}
-                </mat-hint>
-            </mat-form-field>
+        <!-- list label -->
+        <kui-string-literal-input [placeholder]="'List label'" [value]="labels"
+                                  (dataChanged)="handleData($event, 'labels')">
+        </kui-string-literal-input>
+        <!-- TODO: we should support mat hint in the string literal input        <mat-hint *ngIf="formErrors.label">
+            {{ formErrors.label }}
+        </mat-hint> -->
 
-            <mat-form-field class="large-field list-comment">
-                <input matInput [formControl]="form.controls['comment']" [placeholder]="'Description'">
-            </mat-form-field>
+        <br><br>
 
-            <mat-form-field>
-                <mat-label>List language</mat-label>
-                <select matNativeControl [formControl]="form.controls['language']">
-                    <option *ngFor="let lang of languagesList" [value]="lang.language">{{lang.value}}</option>
-                </select>
-                <span class="fill-remaining-space"></span>
-                <button type="button" mat-icon-button matPrefix matTooltipPosition="above" color="accent"
-                        matTooltip="PROTOTYPE ONLY! Set the language for the whole list and list node labels. This selector will be replaced in the next release by StringLiteral input">
-                    <mat-icon>warning</mat-icon>
+        <!-- list description / comment -->
+        <kui-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
+                                  (dataChanged)="handleData($event, 'comments')"
+                                  [language]="labels.length ? labels[0].language : 'en'">
+        </kui-string-literal-input>
+
+        <div class="form-panel form-action">
+            <span>
+                <button mat-button type="button" (click)="resetForm($event, list)">
+                    {{ 'appLabels.form.action.reset' | translate }}
                 </button>
-            </mat-form-field>
-
-
-            <div class="form-panel form-action">
-                <span>
-                    <button mat-button type="button" (click)="resetForm($event, list)">
-                        {{ 'appLabels.form.action.reset' | translate }}
-                    </button>
-                </span>
-                <span class="fill-remaining-space"></span>
-                <span>
-                    <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
-                        <span *ngIf="!iri">Next</span>
-                        <span *ngIf="iri">Update</span>
-                    </button>
-                </span>
-            </div>
+            </span>
+            <span class="fill-remaining-space"></span>
+            <span>
+                <button mat-raised-button type="submit" color="primary" [disabled]="labels.length === 0"
+                        (click)="submitData()">
+                    {{ iri ? 'Update' : 'Next' }}
+                </button>
+            </span>
         </div>
-    </form>
+    </div>
 
-    <div class="create-list-items" *ngIf="createList">
-        <app-list-items-form [projectcode]="projectcode" [iri]="newList.listinfo.id"
-                             [language]="form.controls['language'].value"></app-list-items-form>
+    <div class="create-list-items" *ngIf="!loading && createList && newList">
+        <app-list-item [projectcode]="projectcode" [projectIri]="projectIri" [parentIri]="newList.listinfo.id"
+                       [language]="labels[0].language">
+        </app-list-item>
     </div>
 
 </div>

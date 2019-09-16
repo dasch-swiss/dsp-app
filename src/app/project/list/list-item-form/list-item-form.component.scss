@@ -1,7 +1,22 @@
-.form-content {
-  margin: 0 0 0 16px;
+.medium-field {
+  margin-top: -6px;
+}
 
-  .hidden {
-    display: none;
-  }
+.list-item-label {
+  width: 480px;
+  height: 48px;
+  display: inline-block;
+}
+.progress-indicator {
+  display: inline-block;
+  margin-bottom: -12px;
+}
+.add-node-btn,
+.edit-node-btn,
+.progress-indicator {
+  margin: 0 0 0 8px;
+}
+
+.new-list-item {
+  margin: 8px 0 0 40px;
 }

@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Session } from '@knora/authentication';
-import { ApiServiceError, ListNode, ListsService, Project, ProjectsService } from '@knora/core';
+import { ApiServiceError, ListNode, ListsService, Project, ProjectsService, StringLiteral } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { AppGlobal } from 'src/app/app-global';
 
 @Component({
     selector: 'app-list',
@@ -14,6 +17,8 @@ export class ListComponent implements OnInit {
 
     // loading for progess indicator
     loading: boolean;
+
+    reload: boolean;
 
     // permissions of logged-in user
     session: Session;
@@ -26,10 +31,27 @@ export class ListComponent implements OnInit {
     // project data
     project: Project;
 
+    // lists in the project
     projectLists: ListNode[] = [];
 
+    // list of languages
+    languagesList: StringLiteral[] = AppGlobal.languagesList;
+
+    // current selected language
+    language: string;
+
+    openPanel: number;
+
+    // i18n plural mapping
+    itemPluralMapping = {
+        title: {
+            '=1': '1 List',
+            other: '# Lists'
+        }
+    };
 
     constructor (
+        private _dialog: MatDialog,
         private _cache: CacheService,
         private _listsService: ListsService,
         private _projectsService: ProjectsService,
@@ -63,28 +85,29 @@ export class ListComponent implements OnInit {
         this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode))
-            .subscribe(
-                (result: Project) => {
-                    this.project = result;
+        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
+            (result: Project) => {
+                this.project = result;
 
-                    // is logged-in user projectAdmin?
-                    this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
-                    this.initList();
+                this.initList();
 
-                    // get from cache: list of project members and groups
-                    if (this.projectAdmin) {
-                        // this.refresh();
-                    }
-
-                    this.loading = false;
-                },
-                (error: ApiServiceError) => {
-                    console.error(error);
-                    this.loading = false;
+                // get from cache: list of project members and groups
+                if (this.projectAdmin) {
+                    // this.refresh();
                 }
-            );
+
+                this.loading = false;
+            },
+            (error: ApiServiceError) => {
+                console.error(error);
+                this.loading = false;
+            }
+        );
+
+        // this.openDialog('createList', 'List');
     }
 
     /**
@@ -136,6 +159,31 @@ export class ListComponent implements OnInit {
 
         this.initList();
 
+    }
+
+    /**
+    * open dialog in every case of modification:
+    * edit list data, remove list from project etc.
+    *
+    */
+    openDialog(mode: string, name: string, iri?: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '640px',
+            position: {
+                top: '112px'
+            },
+            data: { mode: mode, title: name, id: iri, project: this.project.id }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.refresh();
+        });
     }
 
 }

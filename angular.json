@@ -28,7 +28,8 @@
               "src/config"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/@knora/action/assets/style/action.scss"
             ],
             "scripts": [
               "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",

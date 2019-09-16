@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ListNode } from '@knora/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ApiServiceError, List, ListNode, ListsService, StringLiteral } from '@knora/core';
 
 @Component({
     selector: 'app-list-item',
@@ -14,22 +14,48 @@ export class ListItemComponent implements OnInit {
 
     @Input() parentIri?: string;
 
-    @Input() listIri: string;
+    // @Input() listIri: string;
 
     @Input() projectcode: string;
 
-    // TODO: this is only used for the list creator prototype
-    @Input() language?: string = 'en';
+    @Input() projectIri: string;
+
+    @Input() childNode: boolean;
+
+    @Input() language?: string;
 
     expandedNode: string;
 
     // showChildren: boolean = false;
 
-    constructor () { }
+    constructor (private _listsService: ListsService) { }
 
     ngOnInit() {
         // console.log(this.list);
         // console.log(this.parentIri);
+        this.loading = true;
+
+        // this.language = (this.language ? )
+
+        //
+
+        // TODO: in case of child node: do not run the following request
+        if (!this.childNode) {
+            this._listsService.getList(this.parentIri).subscribe(
+                (result: List) => {
+                    this.list = result.children;
+                    // this.language = (this.language ? this.language : result.listinfo.labels[0].language);
+                    this.language = result.listinfo.labels[0].language;
+
+                    this.loading = false;
+
+                },
+                (error: ApiServiceError) => {
+                    console.error(error);
+                }
+            );
+        }
+
     }
 
     showChildren(id: string): boolean {
@@ -62,5 +88,11 @@ export class ListItemComponent implements OnInit {
         data.children = [];
 
     }
+
+    editNode(label: StringLiteral[]) {
+
+    }
+
+
 
 }
