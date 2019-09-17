@@ -46,12 +46,20 @@ export class UserMenuComponent implements OnInit {
     }
 
     logout() {
-        this._auth.logout();
+        this._auth.logout().subscribe(
+            (result: any) => {
+                console.log(result);
+            },
+            (error: any) => {
+                console.error(error);
+            }
+        );
         // reset the user menu navigation
         this.navigation = undefined;
         this._cache.destroy();
 
         // reload the page
+        console.log('navigate to ' + this._location.path());
         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(() => {
             this._router.navigate([this._location.path()]);
         }
