@@ -14,7 +14,7 @@ export class HeaderComponent {
     session: boolean;
     show: boolean = false;
 
-    constructor(private _auth: AuthenticationService,
+    constructor (private _auth: AuthenticationService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _router: Router) {
@@ -43,9 +43,10 @@ export class HeaderComponent {
      * Navigate to the login page
      */
     goToLogin() {
+        console.log(decodeURI(this._router.url));
         this._router.navigate(['login'], {
             queryParams: {
-                returnUrl: this._router.url
+                returnUrl: decodeURI(this._router.url)
             }
         });
     }
