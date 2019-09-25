@@ -69,6 +69,8 @@ import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
+import { HelpComponent } from './main/help/help.component';
+import { FooterComponent } from './main/footer/footer.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -139,7 +141,9 @@ export function initializeApp(appInitService: AppInitService) {
         ListInfoFormComponent,
         ListItemComponent,
         ListItemFormComponent,
-        MembershipComponent
+        MembershipComponent,
+        HelpComponent,
+        FooterComponent
     ],
     imports: [
         AppRoutingModule,

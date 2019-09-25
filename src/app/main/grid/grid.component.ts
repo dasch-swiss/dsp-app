@@ -4,6 +4,7 @@ export interface GridItem {
     icon?: string;
     title: string;
     url?: string;
+    urlText?: string;
     text: string;
 }
 

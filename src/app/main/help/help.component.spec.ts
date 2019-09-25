@@ -1,28 +1,24 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule, MatIconModule } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
-import { InfoMenuComponent } from './info-menu.component';
+import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { FooterComponent } from '../footer/footer.component';
+import { GridComponent } from '../grid/grid.component';
+import { HelpComponent } from './help.component';
 
 
-describe('InfoMenuComponent', () => {
-    let component: InfoMenuComponent;
-    let fixture: ComponentFixture<InfoMenuComponent>;
+describe('HelpComponent', () => {
+    let component: HelpComponent;
+    let fixture: ComponentFixture<HelpComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [InfoMenuComponent],
+            declarations: [HelpComponent, FooterComponent, GridComponent],
             imports: [
                 HttpClientTestingModule,
-                KuiCoreModule,
                 MatButtonModule,
                 MatIconModule,
-                MatListModule,
-                MatMenuModule,
                 RouterTestingModule
             ],
             providers: [
@@ -36,7 +32,7 @@ describe('InfoMenuComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(InfoMenuComponent);
+        fixture = TestBed.createComponent(HelpComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

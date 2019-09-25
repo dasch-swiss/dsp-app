@@ -8,6 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KuiAuthenticationModule } from '@knora/authentication';
 import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { FooterComponent } from './footer/footer.component';
 import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
 
@@ -17,7 +18,7 @@ describe('MainComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [MainComponent, GridComponent],
+            declarations: [MainComponent, FooterComponent, GridComponent],
             imports: [
                 KuiActionModule,
                 KuiAuthenticationModule,

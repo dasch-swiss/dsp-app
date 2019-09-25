@@ -74,61 +74,6 @@ section {
   }
 }
 
-footer {
-  padding: 16px;
-  background: $primary_900;
-  color: $primary_50;
-  min-height: 128px;
-  font-weight: 100;
-  letter-spacing: 1px;
-
-  .panel {
-    align-items: center;
-    display: flex;
-    width: calc(100vw - 32px);
-    text-align: center;
-    margin: 0 auto;
-    position: relative;
-    padding: 50px 30px;
-    box-sizing: border-box;
-
-    &.no-padding {
-      padding-top: 0;
-      padding-bottom: 0;
-      color: $primary_100;
-    }
-
-    p {
-      text-align: center;
-      width: 100%;
-    }
-    .box {
-      box-sizing: content-box;
-      margin: 0;
-      padding: 0 24px;
-      text-align: justify;
-      width: 30%;
-
-      &.about p {
-        max-width: 320px;
-      }
-    }
-  }
-  a {
-    color: inherit;
-    font-weight: 700;
-
-    &.mat-button {
-      display: block;
-      text-align: left;
-    }
-  }
-
-  .mat-icon {
-    margin-right: 12px;
-  }
-}
-
 .cookie-banner {
   position: fixed;
   bottom: 0;
@@ -166,23 +111,6 @@ footer {
   .parallax-wrapper {
     background-attachment: scroll !important;
   }
-
-  footer .panel {
-    display: inline;
-
-    .box {
-      width: auto;
-
-      p,
-      a {
-        text-align: center;
-      }
-
-      &.about p {
-       max-width: 100%;
-      }
-    }
-  }
 }
 
 // phone devices
@@ -191,14 +119,11 @@ footer {
     height: 140px;
   }
 
+  .help-page,
   .landing-page {
-    .features, .projects {
-      width: calc(100% - 16px);
-    }
-    app-grid[id="app-grid-features"] {
-      div.app-grid {
-        margin: 10px -15px 0 0;
-      }  
+    .features,
+    .projects {
+      //   width: calc(100% - 16px);
     }
   }
 

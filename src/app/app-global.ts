@@ -92,14 +92,17 @@ export class AppGlobal {
             shortLabel: 'Users',
             route: 'users',
             icon: 'group'
-        },
-        {
-            label: 'Api status',
-            shortLabel: 'Api status',
-            route: 'status',
-            icon: 'network_check'
         }
     ];
+
+    /*
+    {
+        label: 'Api status',
+        shortLabel: 'Api status',
+        route: 'status',
+        icon: 'network_check'
+    }
+    */
 
     // possible languages, will be used in form and to change the gui language
     public static languagesList: StringLiteral[] = [

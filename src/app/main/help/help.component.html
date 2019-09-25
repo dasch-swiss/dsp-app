@@ -1,0 +1,31 @@
+<div class="help-page">
+    <section>
+        <div class="content large middle">
+            <h1 class="mat-display-1">Need help?</h1>
+            <h3 class="mat-subheading-2">Read the user guide: Explore by topic</h3>
+
+            <app-grid id="app-grid-documentation" [list]="docs"></app-grid>
+        </div>
+    </section>
+
+    <section class="darken-bg">
+        <div class="content large middle">
+            <h3 class="mat-subheading-2">Explore our software products</h3>
+            <p class="mat-body-1">The web application and the tools for data storage and long-term access are developed
+                by the DaSCH team in Switzerland.</p>
+
+            <app-grid id="app-grid-tools" [list]="tools"></app-grid>
+
+        </div>
+    </section>
+
+    <section>
+        <div class="content large middle">
+            <h3 class="mat-subheading-2">Get more support or help to improve</h3>
+
+            <app-grid id="app-grid-tools" [list]="support"></app-grid>
+        </div>
+    </section>
+
+    <app-footer></app-footer>
+</div>

@@ -30,11 +30,16 @@ import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.compon
 import { GroupsComponent } from './system/groups/groups.component';
 import { PermissionComponent } from './project/permission/permission.component';
 import { ListComponent } from './project/list/list.component';
+import { HelpComponent } from './main/help/help.component';
 
 const routes: Routes = [
     {
         path: '',
         component: MainComponent
+    },
+    {
+        path: 'help',
+        component: HelpComponent
     },
     {
         path: 'login',

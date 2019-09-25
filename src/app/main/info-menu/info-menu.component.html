@@ -1,24 +1,40 @@
 <button mat-button [matMenuTriggerFor]="infoMenu" class="main-toolbar-button info-menu">
-  <mat-icon class="custom">network_check</mat-icon>
+    <!-- <mat-icon class="custom">help_outline</mat-icon> -->
+    Help
 </button>
 
 <mat-menu #infoMenu="matMenu" xPosition="before" class="menu">
-  <div class="menu-header" [class.inactive]="!apiStatus">
-    <p class="menu-title">
-      Status
-    </p>
-  </div>
-  <div class="menu-content" *ngIf="!loading">
-    <mat-list class="navigation">
-      <mat-list-item class="nav-item" *ngFor="let item of versions">
-        <a [href]="item.route" target="_blank" mat-button class="nav-item button">
-          <mat-icon class="prefix" [svgIcon]="item.icon"></mat-icon>
-          <span class="label">{{item.label}}</span>
-        </a>
-      </mat-list-item>
-    </mat-list>
-  </div>
-  <div class="menu-footer">
+    <div class="menu-header" [class.inactive]="!apiStatus">
+        <p class="menu-title">
+            Need help?
+        </p>
+    </div>
+    <div class="menu-content">
+        <mat-list class="navigation">
+            <!-- Documentation -->
+            <mat-list-item>
+                <button mat-button [routerLink]="'/system'" routerLinkActive="active-link"
+                        class="nav-item button border-top">
+                    <mat-icon class="prefix">all_inbox</mat-icon>
+                    <span class="label">System</span>
+                </button>
+            </mat-list-item>
 
-  </div>
+            <!-- About -->
+
+            <!-- Version -->
+            <!-- *ngIf="!loading" -->
+            <mat-list-item *ngFor="let item of versions; let i = index" class="nav-item" [class.border-top]="i === 0">
+                <a [href]="item.route" target="_blank" mat-button class="nav-item button">
+                    <mat-icon class="prefix" [svgIcon]="item.icon"></mat-icon>
+                    <span class="label">{{item.label}}</span>
+                </a>
+            </mat-list-item>
+
+
+        </mat-list>
+    </div>
+    <div class="menu-footer border-top">
+        Contact
+    </div>
 </mat-menu>

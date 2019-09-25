@@ -1,15 +1,21 @@
 <div class="app-grid" fxLayout="row wrap" fxLayout.lt-sm="column" fxLayoutGap="24px" fxLayoutAlign="flex-start">
     <div class="app-grid-item" *ngFor="let item of list" fxFlex="0 1 calc(33.3% - 24px)"
          fxFlex.lt-md="0 1 calc(50% - 24px)" fxFlex.lt-sm="100%">
-        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+        <mat-icon *ngIf="item.icon" class="topic">{{item.icon}}</mat-icon>
         <!-- <h3>Ensures Longevity of Humanities Data</h3> -->
         <h3>{{item.title}}</h3>
         <p>{{item.text}}</p>
-        <p class="action center">
-            <button mat-button *ngIf="item.url" [routerLink]="[item.url]" routerLinkActive="router-link-active"
-                    color="primary">
-                Read more
+        <br><br>
+        <p class="action center" *ngIf="item.url">
+
+            <button mat-button *ngIf="item.url.substr(0,4) !== 'http'" [routerLink]="[item.url]"
+                    routerLinkActive="router-link-active" color="primary">
+                {{item.urlText ? item.urlText : 'Read more'}}
             </button>
+
+            <a mat-button *ngIf="item.url.substr(0,4) === 'http'" [href]="item.url" target="_blank" color="primary">
+                {{item.urlText ? item.urlText : 'Read more'}} <mat-icon class="suffix">launch</mat-icon>
+            </a>
         </p>
     </div>
 </div>

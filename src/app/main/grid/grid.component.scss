@@ -17,7 +17,7 @@
     min-height: 200px;
     position: relative;
 
-    .mat-icon {
+    .mat-icon.topic {
       background: white;
       margin: -28px auto 0;
       padding: 10px;
@@ -37,13 +37,19 @@
     }
 
     .action {
-      bottom: 0;
+      margin-top: 24px;
+      bottom: 16px;
       position: absolute;
       height: 24px;
       width: calc(100% - 60px);
 
-      button {
+      button,
+      a {
         margin: 0 auto;
+
+        .mat-icon {
+          margin-left: 16px;
+        }
       }
     }
 
@@ -60,5 +66,10 @@
 @media (max-width: map-get($grid-breakpoints, phone)) {
   .app-grid {
     margin: 50px -15px 0 0;
+    width: 100%;
+
+    .app-grid-item {
+      margin: 12px 0;
+    }
   }
 }

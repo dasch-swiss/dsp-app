@@ -62,9 +62,7 @@ export class MainComponent implements OnInit {
         }
     ];
 
-    currentYear: Date = new Date();
-
-    constructor(
+    constructor (
         private _auth: AuthenticationService,
         private _projectsService: ProjectsService,
         private _router: Router,

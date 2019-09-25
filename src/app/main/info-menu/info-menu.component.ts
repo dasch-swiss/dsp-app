@@ -40,7 +40,7 @@ export class InfoMenuComponent implements OnInit {
         @Inject(KuiCoreConfigToken) public config: KuiCoreConfig,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
-        private _http: HttpClient, ) {
+        private _http: HttpClient) {
 
         // create tool icons to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
@@ -69,6 +69,7 @@ export class InfoMenuComponent implements OnInit {
                     // console.log('Stackoverflow', resp.headers.get('Server'));
                     this.readVersion(resp.headers.get('Server'));
                     this.apiStatus = true;
+
                 },
                 (error: any) => {
                     this.readVersion(error.headers.get('Server'));
@@ -79,6 +80,7 @@ export class InfoMenuComponent implements OnInit {
             );
 
     }
+
 
     readVersion(v: string) {
 
