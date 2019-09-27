@@ -9,7 +9,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-prod": "ng build --prod --build-optimizer",
-    "test-ci": "ng test --watch=false --browsers=ChromeHeadless"
+    "test-ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "yalc-add-modules": "rm -rf .yalc/@knora && yalc add @knora/action && yalc add @knora/authentication && yalc add @knora/core && yalc add @knora/search && yalc add @knora/viewer && yarn install --prod=false"
   },
   "private": true,
   "dependencies": {
@@ -25,11 +26,11 @@
     "@angular/platform-browser": "~8.2.7",
     "@angular/platform-browser-dynamic": "~8.2.7",
     "@angular/router": "~8.2.7",
-    "@knora/action": "9.3.0",
-    "@knora/authentication": "9.3.0",
-    "@knora/core": "9.3.0",
-    "@knora/search": "9.3.0",
-    "@knora/viewer": "9.3.0",
+    "@knora/action": "9.4.0",
+    "@knora/authentication": "9.4.0",
+    "@knora/core": "9.4.0",
+    "@knora/search": "9.4.0",
+    "@knora/viewer": "9.4.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "core-js": "^2.5.4",
