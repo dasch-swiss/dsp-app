@@ -43,7 +43,7 @@ export class HeaderComponent {
      * Navigate to the login page
      */
     goToLogin() {
-        console.log(decodeURI(this._router.url));
+        // console.log(decodeURI(this._router.url));
         this._router.navigate(['login'], {
             queryParams: {
                 returnUrl: decodeURI(this._router.url)

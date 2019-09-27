@@ -215,7 +215,7 @@ export class ListInfoFormComponent implements OnInit {
                     // console.log(result);
                     // this.closeDialog.emit(result);
                     this.newList = result;
-                    console.log(this.newList)
+
                     this.updateParent.emit(result.listinfo.labels[0].value + ' (' + result.listinfo.labels[0].language + ')');
                     this.loading = false;
                     // setTimeout(() => {
