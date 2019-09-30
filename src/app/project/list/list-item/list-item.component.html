@@ -2,7 +2,7 @@
     <div class="list-node" *ngFor="let node of list; let first = first; let last = last;">
 
         <!-- button to expand / close node -->
-        <button type="button" mat-icon-button (click)="toggleChildren(node.id)">
+        <button type="button" mat-icon-button (click)="toggleChildren(node.id)" class="">
             <mat-icon class="mat-icon-rtl-mirror">
                 {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
@@ -32,8 +32,9 @@
         </div>
 
         <!-- form to append new item to parent node -->
-        <app-list-item-form class="append-child-node" *ngIf="last" [parentIri]="parentIri" [projectIri]="projectIri"
-                            [projectcode]="projectcode" [language]="language" (refreshParent)="updateView($event)">
+        <app-list-item-form class="list-node append-child-node" *ngIf="last" [parentIri]="parentIri"
+                            [projectIri]="projectIri" [projectcode]="projectcode" [language]="language"
+                            (refreshParent)="updateView($event)">
         </app-list-item-form>
 
     </div>
