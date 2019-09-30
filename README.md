@@ -1,4 +1,4 @@
-# Knora User Interface | Research Layer (KUIRL)
+# Knora app | Generic web application for Knora
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/app/dhlab-basel/Kuirl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dhlab-basel/Kuirl&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.com/dhlab-basel/Kuirl.svg?branch=master)](https://travis-ci.com/dhlab-basel/Kuirl)
@@ -15,6 +15,7 @@ This project was generated with
 **Required version of Knora: ^[9.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v9.0.0)**
 
 Developed by the [DaSCH Team](https://dasch.swiss) in Basel.
+
 
 ## Development server
 
