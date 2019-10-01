@@ -1,7 +1,4 @@
 {
-  "env": {
-    "name": "dev"
-  },
   "ontologyIRI": "http://0.0.0.0:3333",
   "apiURL": "http://0.0.0.0:3333",
   "iiifURL": "http://0.0.0.0:1024",

@@ -177,9 +177,7 @@ export function initializeApp(appInitService: AppInitService) {
         {
             provide: KuiCoreConfigToken,
             useFactory: () => AppInitService.coreConfig
-        },
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: WithCredentialsInterceptor, multi: true }
+        }
     ],
     bootstrap: [AppComponent]
 })
