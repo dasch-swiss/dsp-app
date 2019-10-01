@@ -20,15 +20,15 @@ export class HeaderComponent {
         private _router: Router) {
 
         // create tool icons to use them in mat-icons
-        // kuirl icon with text
+        // knora-app icon with text
         this._matIconRegistry.addSvgIcon(
-            'kuirl_banner',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/kuirl-banner.svg')
+            'knora_app_banner',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-app-banner.svg')
         );
-        // kuirl icon (for smaller screens)
+        // knora-app icon (for smaller screens)
         this._matIconRegistry.addSvgIcon(
-            'kuirl_icon',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/kuirl-icon.svg')
+            'knora_app_icon',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-app-icon.svg')
         );
 
         // logged-in user? show user menu or login button

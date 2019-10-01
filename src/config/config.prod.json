@@ -6,5 +6,5 @@
   "apiURL": "http://0.0.0.0:3333",
   "iiifURL": "http://0.0.0.0:1024",
   "appURL": "http://localhost:4200",
-  "appName": "Salsah"
+  "appName": "Knora app"
 }

@@ -1,8 +1,8 @@
 {
   "appLabels": {
     "dashboardComponent": {
-      "firstParagraph": "Willkommen bei Salsah – einer web-basierten virtuellen Forschungsumgebung, die Forschern in den Humanities bei der Arbeit mit digitalen Daten unterstützt. Salsah erlaubt die Annotation und die Verknüpfung mit beliebigen Quellen, seien es digitale Texte, bewegte oder unbewegte Bilder oder Ton.",
-      "secondParagraph": "SALSAH ist eine (generische) Benutzerschnittstelle um auf Daten von einem Haupt-Repository zuzugreifen, das hier beschrieben ist: ",
+      "firstParagraph": "Willkommen bei Knora app – einer web-basierten virtuellen Forschungsumgebung, die Forschern in den Humanities bei der Arbeit mit digitalen Daten unterstützt. Knora app erlaubt die Annotation und die Verknüpfung mit beliebigen Quellen, seien es digitale Texte, bewegte oder unbewegte Bilder oder Ton.",
+      "secondParagraph": "Knora app ist eine (generische) Benutzerschnittstelle um auf Daten von einem Haupt-Repository zuzugreifen, das hier beschrieben ist: ",
       "projectsIntro": "Öffentliche Projekte in Knora"
     },
     "frameworkForListings": {

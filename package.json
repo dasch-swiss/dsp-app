@@ -1,6 +1,10 @@
 {
-  "name": "kuirl",
-  "version": "1.6.0",
+  "name": "knora-app",
+  "version": "1.6.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dasch-swiss/knora-app.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

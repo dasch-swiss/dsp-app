@@ -52,9 +52,9 @@ export class HelpComponent implements OnInit {
 
     tools: GridItem[] = [
         {
-            title: '(s)Kuirl ',
+            title: 'Knora app ',
             text: 'This is the tool of the user interface you are using right now. Knora\'s generic web application.',
-            url: 'https://github.com/dhlab-basel/Kuirl/releases/tag/v',
+            url: 'https://github.com/dasch-swiss/knora-app/releases/tag/v',
             urlText: 'Release notes'
         },
         {
@@ -99,8 +99,8 @@ export class HelpComponent implements OnInit {
 
         // create tool icons to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
-            'kuirl_icon',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/kuirl-icon.svg')
+            'knora_app_icon',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-app-icon.svg')
         );
         this._matIconRegistry.addSvgIcon(
             'knora_icon',
@@ -110,7 +110,7 @@ export class HelpComponent implements OnInit {
 
     ngOnInit() {
 
-        // set Kuirl version
+        // set knora-app version
         this.tools[0].title = this.config.name + ' v' + this.appVersion;
         this.tools[0].url += this.appVersion;
 

@@ -1,8 +1,8 @@
 # Knora app
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/app/dhlab-basel/Kuirl?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dhlab-basel/Kuirl&amp;utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.com/dhlab-basel/Kuirl.svg?branch=master)](https://travis-ci.com/dhlab-basel/Kuirl)
-[![CircleCI](https://circleci.com/gh/dhlab-basel/Kuirl.svg?style=svg)](https://circleci.com/gh/dhlab-basel/Kuirl)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/manual/dasch-swiss/Knora-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dasch-swiss/knora-app&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.com/dasch-swiss/knora-app.svg?branch=master)](https://travis-ci.com/dasch-swiss/knora-app)
+[![CircleCI](https://circleci.com/gh/dasch-swiss/knora-app.svg?style=svg)](https://circleci.com/gh/dasch-swiss/knora-app)
 
 This app is a simple user interface for the Data and Service Center for the
 Humanities DaSCH, which uses the Knora server application in the backend.
@@ -47,17 +47,4 @@ To get more help on the Angular CLI use `ng help` or go check out the
 
 ## Documentation / User guidelines
 
-We built the user guidelines with [Jekyll](https://jekyllrb.com/) and published
-them on Github: <https://dhlab-basel.github.io/Kuirl>.
-
-The documentation is stored in folder `/docs`. To run it locally, you have to
-switch to this folder with `cd docs` and start it with
-
-```bash
-jekyll serve
-```
-
-Point your web browser to <http://localhost:4000>
-
-All documentation about the usage of Jekyll together with the Just-the-Docs theme
-is described here: <https://pmarsceill.github.io/just-the-docs/>
+We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/) in a separate [repository](https://github.com/dasch-swiss/dsp-docs). The user guide is published on [docs.dasch.swiss/user-guide](https://docs.dasch.swiss/user-guide).
