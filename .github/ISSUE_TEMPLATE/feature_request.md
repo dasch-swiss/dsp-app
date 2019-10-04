@@ -5,8 +5,8 @@ title: ''
 labels:
     - enhancement
 assignees:
-    - kilchenmann
-    - flavens
+    - @kilchenmann
+    - @flavens
 
 ---
 
