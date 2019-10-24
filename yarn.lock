@@ -975,15 +975,22 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/jasmine@*":
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.4.4.tgz#be3fbd73e72725edb44e6f7f509cd52912d1550c"
+  integrity sha512-+/sHcTPyDS1JQacDRRRWb+vNrjBwnD+cKvTaWlxlJ/uOOFvzCkjOwNaqVjYMLfsjzNi0WtDH9RyReDXPG1Cdug==
+
 "@types/jasmine@~2.8.8":
   version "2.8.16"
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.8.16.tgz#a6cb24b1149d65293bd616923500014838e14e7d"
   integrity sha512-056oRlBBp7MDzr+HoU5su099s/s7wjZ3KcHxLfv+Byqb9MwdLUvsfLgw1VS97hsh3ddxSPyQu+olHMnoVTUY6g==
 
-"@types/jasminewd2@~2.0.3":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@types/jasminewd2/-/jasminewd2-2.0.7.tgz#71756ac7780add2dcd32384919ac903ad550f643"
-  integrity sha512-pKeZFRn4vQyd8Px9FK6ww3frKiAYPgpKzBayWHd9SOzGjty6aXPsuFvxgRr866KLP1h7Cnd1z3XrhGX17WqO2g==
+"@types/jasminewd2@~2.0.8":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@types/jasminewd2/-/jasminewd2-2.0.8.tgz#67afe5098d5ef2386073a7b7384b69a840dfe93b"
+  integrity sha512-d9p31r7Nxk0ZH0U39PTH0hiDlJ+qNVGjlt1ucOoTUptxb2v+Y5VMnsxfwN+i3hK4yQnqBi3FMmoMFcd1JHDxdg==
+  dependencies:
+    "@types/jasmine" "*"
 
 "@types/minimatch@*":
   version "3.0.3"

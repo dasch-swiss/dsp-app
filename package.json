@@ -59,7 +59,7 @@
     "@angular/compiler-cli": "~8.2.7",
     "@angular/language-service": "~8.2.7",
     "@types/jasmine": "~2.8.8",
-    "@types/jasminewd2": "~2.0.3",
+    "@types/jasminewd2": "~2.0.8",
     "@types/node": "~8.9.4",
     "codelyzer": "^5.0.1",
     "eslint": "^5.16.0",
