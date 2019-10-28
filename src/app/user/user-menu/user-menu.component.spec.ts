@@ -50,7 +50,7 @@ describe('UserMenuComponent', () => {
         let store = {};
 
         spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): String => {
+            (key: string): string => {
                 return store[key] || null;
             }
         );

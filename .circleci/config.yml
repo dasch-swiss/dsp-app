@@ -2,7 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-    - image: angular/ngcontainer:latest
+    # - image: angular/ngcontainer:latest
+    - image: circleci/node:10-browsers
     working_directory: ~/repo
 
     steps:
