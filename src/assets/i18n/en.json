@@ -8,7 +8,7 @@
     "list": {
       "title": {
         "active": "Active",
-        "inactive": "Archived"
+        "inactive": "Deactivated"
       }
     },
     "frameworkForListings": {
@@ -83,9 +83,9 @@
           "edit": "Edit profile",
           "profile": "User profile",
           "editSuccess": "You have successfully updated the user profile.",
-          "delete": "Deactivate user account",
+          "delete": "Suspend user account",
           "deleteHint": "You're sure to delete this user?",
-          "deleteButton": "Deactivate user account now",
+          "deleteButton": "Suspend user account now",
           "password": "Update password",
           "passwordSuccess": "You have successfully updated the password.",
           "formWizard": {
@@ -95,7 +95,7 @@
             "step_4": "Confirm",
             "more": "Add more users"
           },
-          "add2project": "Add member",
+          "add2project": "Add user member",
           "select": "Select from list...",
           "create": "or create new one",
           "deleted": "already deleted"
@@ -121,9 +121,9 @@
           "edit": "Update project",
           "profile": "Research project",
           "editSuccess": "You have successfully updated this project.",
-          "delete": "Archive project",
+          "delete": "Deactivate project",
           "deleteHint": "You're sure to delete this project?",
-          "deleteButton": "Archive project now",
+          "deleteButton": "Deactivate project now",
           "activate": "Do you want to reactivate?",
           "activateButton": "Reactivate project now",
           "formWizard": {
@@ -151,7 +151,7 @@
       },
       "lists": {
         "title": {
-            "delete": "Delete list"
+          "delete": "Delete list"
         }
       }
     }

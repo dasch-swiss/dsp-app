@@ -115,7 +115,7 @@ export class ProjectFormComponent implements OnInit {
         //        }
     };
 
-    constructor (private _cache: CacheService,
+    constructor(private _cache: CacheService,
         private _route: ActivatedRoute,
         private _router: Router,
         private _projects: ProjectsService,
@@ -195,7 +195,7 @@ export class ProjectFormComponent implements OnInit {
         // edit mode is true, when a project id (iri) exists
         const editMode: boolean = (!!project.id);
 
-        // disabled is true, if project status is false (= archived);
+        // disabled is true, if project status is false (= deactivated);
         const disabled: boolean = (project.id !== undefined && !project.status);
 
         // separate list of keywords
@@ -205,31 +205,31 @@ export class ProjectFormComponent implements OnInit {
             'shortname': new FormControl({
                 value: project.shortname, disabled: editMode
             }, [
-                    Validators.required,
-                    Validators.minLength(this.shortnameMinLength),
-                    Validators.maxLength(this.shortnameMaxLength),
-                    existingNamesValidator(this.existingShortNames),
-                    Validators.pattern(this.shortnameRegex)
-                ]),
+                Validators.required,
+                Validators.minLength(this.shortnameMinLength),
+                Validators.maxLength(this.shortnameMaxLength),
+                existingNamesValidator(this.existingShortNames),
+                Validators.pattern(this.shortnameRegex)
+            ]),
             'longname': new FormControl({
                 value: project.longname, disabled: disabled
             }, [
-                    Validators.required
-                ]),
+                Validators.required
+            ]),
             'shortcode': new FormControl({
                 value: project.shortcode, disabled: (editMode && project.shortcode !== null)
             }, [
-                    Validators.required,
-                    Validators.minLength(this.shortcodeMinLength),
-                    Validators.maxLength(this.shortcodeMaxLength),
-                    existingNamesValidator(this.existingShortcodes),
-                    Validators.pattern(this.shortcodeRegex)
-                ]),
+                Validators.required,
+                Validators.minLength(this.shortcodeMinLength),
+                Validators.maxLength(this.shortcodeMaxLength),
+                existingNamesValidator(this.existingShortcodes),
+                Validators.pattern(this.shortcodeRegex)
+            ]),
             'description': new FormControl({
                 value: project.description[0].value, disabled: disabled
             }, [
-                    Validators.maxLength(this.descriptionMaxLength)
-                ]),
+                Validators.maxLength(this.descriptionMaxLength)
+            ]),
             //            'institution': new FormControl({
             //                value: project.institution, disabled: disabled
             //            }),
@@ -391,7 +391,7 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Delete / archive project
+     * Deactivate project
      * @param id Project Iri
      */
     delete(id: string) {

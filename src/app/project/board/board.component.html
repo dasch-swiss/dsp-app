@@ -7,7 +7,7 @@
         <span class="app-toolbar-action-status">
             <span class="badge status" [class.active]="project.status">
                 <span *ngIf="project.status">Active</span>
-                <span *ngIf="!project.status">Archived</span>
+                <span *ngIf="!project.status">Deactivated</span>
             </span>
         </span>
         <span class="fill-remaining-space-action"></span>
@@ -28,7 +28,7 @@
             <span class="app-toolbar-action">
                 <span class="badge status" [class.active]="project.status">
                     <span *ngIf="project.status">Active</span>
-                    <span *ngIf="!project.status">Archived</span>
+                    <span *ngIf="!project.status">Deactivated</span>
                 </span>
             </span>
         </div>

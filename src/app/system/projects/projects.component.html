@@ -18,7 +18,7 @@
     <app-projects-list [list]="active" [status]="true" (refreshParent)="refresh()" [createNew]="true">
     </app-projects-list>
 
-    <!-- already archived projects: disable the menu -->
+    <!-- already deactivated projects: disable the menu -->
     <app-projects-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-projects-list>
 </div>
 

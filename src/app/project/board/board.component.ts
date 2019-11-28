@@ -33,23 +33,20 @@ export class BoardComponent implements OnInit {
     // i18n setup
     itemPluralMapping = {
         member: {
-            // '=0': '0 Members',
-            '=1': '1 Member',
-            other: '# Members'
+            '=1': '1 User',
+            other: '# Users'
         },
         ontology: {
-            // '=0': '0 Ontologies',
             '=1': '1 Ontology',
             other: '# Ontologies'
         },
         keyword: {
-            // '=0': '0 Keywords',
             '=1': '1 Keyword',
             other: '# Keywords'
         }
     };
 
-    constructor (
+    constructor(
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
@@ -94,17 +91,6 @@ export class BoardComponent implements OnInit {
                 console.error(error);
             }
         );
-
-        /*
-        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode)).subscribe(
-            (result: User[]) => {
-                this.projectMembers = result;
-            },
-            (error: ApiServiceError) => {
-                console.error(error);
-            }
-        );
-        */
 
         this.loading = false;
     }

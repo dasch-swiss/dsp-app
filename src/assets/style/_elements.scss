@@ -295,8 +295,8 @@ a,
   width: 100%;
   // max-width: calc(1000px - 2 * 48px);
 
-  &.archived,
-  &.archived .mat-icon {
+  &.deactivated,
+  &.deactivated .mat-icon {
     color: rgba(0, 0, 0, 0.38);
 
     .avatar-image {
