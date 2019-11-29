@@ -140,13 +140,10 @@ export class HelpComponent implements OnInit {
         // read and set version of knora
         const versions: string[] = v.split(' ');
 
-        this.apiVersion = versions[0].split('/')[1].substring(0, 5);
-        this.akkaVersion = versions[1].split('/')[1];
+        this.apiVersion = versions[0].split('/')[1];
 
         this.tools[1].title += this.apiVersion;
         this.tools[1].url += this.apiVersion;
-        // this.versions[2].label += this.akkaVersion;
-        // this.versions[2].route += this.akkaVersion;
 
         this.loading = false;
 
