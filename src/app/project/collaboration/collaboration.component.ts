@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Session } from '@knora/authentication';
-import { ApiServiceError, Project, ProjectsService, User } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadProject, ReadUser } from '@knora/api';
+import { KnoraApiConnectionToken, Session } from '@knora/core';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
 
@@ -25,21 +25,22 @@ export class CollaborationComponent implements OnInit {
     projectcode: string;
 
     // project data
-    project: Project;
+    project: ReadProject;
 
     // project members
-    projectMembers: User[] = [];
+    projectMembers: ReadUser[] = [];
 
     // two lists of project members:
     // list of active users
-    active: User[] = [];
+    active: ReadUser[] = [];
     // list of inactive (deleted) users
-    inactive: User[] = [];
+    inactive: ReadUser[] = [];
 
     @ViewChild('addUserComponent', { static: false }) addUser: AddUserComponent;
 
-    constructor (private _cache: CacheService,
-        private _projectsService: ProjectsService,
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        private _cache: CacheService,
         private _route: ActivatedRoute,
         private _titleService: Title) {
 
@@ -78,17 +79,15 @@ export class CollaborationComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         // set the cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-            (result: Project) => {
-                this.project = result;
+        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+            (response: ApiResponseData<ProjectResponse>) => {
+                this.project = response.body.project;
 
                 // is logged-in user projectAdmin?
-                this.projectAdmin = this.sysAdmin
-                    ? this.sysAdmin
-                    : this.session.user.projectAdmin.some(e => e === this.project.id);
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
                 // get from cache: list of project members and groups
                 if (this.projectAdmin) {
@@ -97,7 +96,7 @@ export class CollaborationComponent implements OnInit {
 
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.loading = false;
             }
@@ -108,11 +107,13 @@ export class CollaborationComponent implements OnInit {
      * build the list of members
      */
     initList(): void {
-        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+        // set the cache
+        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
 
-        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode)).subscribe(
-            (response: any) => {
-                this.projectMembers = response;
+        // get the project data from cache
+        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
+            (response: ApiResponseData<MembersResponse>) => {
+                this.projectMembers = response.body.members;
 
                 // clean up list of users
                 this.active = [];

@@ -6,13 +6,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiConfig, KuiConfigToken } from '@knora/core';
 import { KuiSearchModule } from '@knora/search';
 import { KuiViewerModule } from '@knora/viewer';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { ExpertSearchComponent } from './expert-search.component';
 
-xdescribe('ExpertSearchComponent', () => {
+describe('ExpertSearchComponent', () => {
     let component: ExpertSearchComponent;
     let fixture: ComponentFixture<ExpertSearchComponent>;
 
@@ -34,9 +37,18 @@ xdescribe('ExpertSearchComponent', () => {
                 {
                     provide: ActivatedRoute
                 },
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KuiConfigToken,
+                    useValue: new KuiConfig(TestConfig.ApiConfig, TestConfig.AppConfig)
+                },
+                {
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();

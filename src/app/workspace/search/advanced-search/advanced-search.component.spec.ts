@@ -1,13 +1,15 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { AdvancedSearchComponent } from './advanced-search.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { KuiSearchModule } from '@knora/search';
-import { KuiViewerModule } from '@knora/viewer';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
+import { KuiSearchModule } from '@knora/search';
+import { KuiViewerModule } from '@knora/viewer';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
+import { AdvancedSearchComponent } from './advanced-search.component';
 
 describe('AdvancedSearchComponent', () => {
     let component: AdvancedSearchComponent;
@@ -27,9 +29,14 @@ describe('AdvancedSearchComponent', () => {
                 {
                     provide: ActivatedRoute
                 },
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();

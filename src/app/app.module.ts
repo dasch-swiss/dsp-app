@@ -1,12 +1,11 @@
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
-import { KuiAuthenticationModule, JwtInterceptor, WithCredentialsInterceptor } from '@knora/authentication';
-import { KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { KuiCoreModule, KuiConfigToken, KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
 import { KuiSearchModule } from '@knora/search';
 import { KuiViewerModule } from '@knora/viewer';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -79,7 +78,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
 
 export function initializeApp(appInitService: AppInitService) {
     return (): Promise<any> => {
-        return appInitService.Init();
+        return appInitService.init();
     };
 }
 
@@ -150,7 +149,6 @@ export function initializeApp(appInitService: AppInitService) {
         FlexLayoutModule,
         HttpClientModule,
         KuiActionModule,
-        KuiAuthenticationModule,
         KuiCoreModule,
         KuiSearchModule,
         KuiViewerModule,
@@ -175,8 +173,16 @@ export function initializeApp(appInitService: AppInitService) {
             multi: true
         },
         {
-            provide: KuiCoreConfigToken,
-            useFactory: () => AppInitService.coreConfig
+            provide: KuiConfigToken,
+            useFactory: () => AppInitService.kuiConfig
+        },
+        {
+            provide: KnoraApiConfigToken,
+            useFactory: () => AppInitService.knoraApiConfig
+        },
+        {
+            provide: KnoraApiConnectionToken,
+            useFactory: () => AppInitService.knoraApiConnection
         }
     ],
     bootstrap: [AppComponent]

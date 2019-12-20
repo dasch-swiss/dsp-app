@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ApiServiceError, List, ListNode, ListsService, StringLiteral } from '@knora/core';
+import { Component, Input, OnInit, Inject } from '@angular/core';
+import { StringLiteral, KnoraApiConnection, ApiResponseData, ListResponse, ListNode, ApiResponseError } from '@knora/api';
+import { KnoraApiConnectionToken } from '@knora/core';
 
 @Component({
     selector: 'app-list-item',
@@ -8,13 +9,9 @@ import { ApiServiceError, List, ListNode, ListsService, StringLiteral } from '@k
 })
 export class ListItemComponent implements OnInit {
 
-    loading: boolean;
-
     @Input() list: ListNode[];
 
     @Input() parentIri?: string;
-
-    // @Input() listIri: string;
 
     @Input() projectcode: string;
 
@@ -26,31 +23,24 @@ export class ListItemComponent implements OnInit {
 
     expandedNode: string;
 
-    // showChildren: boolean = false;
+    loading: boolean;
 
-    constructor (private _listsService: ListsService) { }
+    constructor(@Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection) { }
 
     ngOnInit() {
-        // console.log(this.list);
-        // console.log(this.parentIri);
         this.loading = true;
 
-        // this.language = (this.language ? )
-
-        //
-
-        // TODO: in case of child node: do not run the following request
+        // in case of child node: do not run the following request
         if (!this.childNode) {
-            this._listsService.getList(this.parentIri).subscribe(
-                (result: List) => {
-                    this.list = result.children;
-                    // this.language = (this.language ? this.language : result.listinfo.labels[0].language);
-                    this.language = result.listinfo.labels[0].language;
+            this.knoraApiConnection.admin.listsEndpoint.getList(this.parentIri).subscribe(
+                (result: ApiResponseData<ListResponse>) => {
+                    this.list = result.body.list.children;
+                    this.language = result.body.list.listinfo.labels[0].language;
 
                     this.loading = false;
 
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     console.error(error);
                 }
             );
@@ -88,11 +78,5 @@ export class ListItemComponent implements OnInit {
         data.children = [];
 
     }
-
-    editNode(label: StringLiteral[]) {
-
-    }
-
-
 
 }

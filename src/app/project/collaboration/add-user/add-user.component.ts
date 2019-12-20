@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { existingNamesValidator } from '@knora/action';
-import { Session } from '@knora/authentication';
-import { ApiServiceError, AutocompleteItem, Project, ProjectsService, User, UsersService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadUser, UserResponse, UsersResponse } from '@knora/api';
+import { KnoraApiConnectionToken } from '@knora/core';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { CacheService } from '../../../main/cache/cache.service';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { CacheService } from 'src/app/main/cache/cache.service';
+import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
 
 @Component({
     selector: 'app-add-user',
@@ -100,17 +100,17 @@ export class AddUserComponent implements OnInit {
     /**
      * selected user object
      */
-    selectedUser: User;
+    selectedUser: ReadUser;
 
     /**
      * member status of selected user
      */
     isAlreadyMember = false;
 
-    constructor (private _cache: CacheService,
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        private _cache: CacheService,
         private _dialog: MatDialog,
-        private _projects: ProjectsService,
-        private _users: UsersService,
         private _formBuilder: FormBuilder) {
     }
 
@@ -126,23 +126,23 @@ export class AddUserComponent implements OnInit {
         this.users = [];
 
         // set the cache
-        this._cache.get('allUsers', this._users.getAllUsers());
+        this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers());
 
-        // get all users; results from cache
-        this._cache.get('allUsers', this._users.getAllUsers()).subscribe(
-            (response: any) => {
+        // get all users; response from cache
+        this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers()).subscribe(
+            (response: ApiResponseData<UsersResponse>) => {
 
                 // if a user is already member of the team, mark it in the list
                 const members: string[] = [];
 
                 // empty the list of existingUserNames
                 this._cache.del('members_of_' + this.projectcode);
-                this._cache.get('members_of_' + this.projectcode, this._projects.getProjectMembersByShortcode(this.projectcode));
+                this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
 
-                // get all members of this project; results from cache
-                this._cache.get('members_of_' + this.projectcode, this._projects.getProjectMembersByShortcode(this.projectcode)).subscribe(
-                    (res: any) => {
-                        for (const m of res) {
+                // get all members of this project; response from cache
+                this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
+                    (res: ApiResponseData<MembersResponse>) => {
+                        for (const m of res.body.members) {
                             members.push(m.id);
 
                             // if the user is already member of the project
@@ -157,7 +157,7 @@ export class AddUserComponent implements OnInit {
                         }
 
                         let i: number = 0;
-                        for (const u of response) {
+                        for (const u of response.body.users) {
 
                             // if the user is already member of the project
                             // add the email to the list of existing
@@ -210,11 +210,11 @@ export class AddUserComponent implements OnInit {
             'username': new FormControl({
                 value: '', disabled: false
             }, [
-                    existingNamesValidator(this.existingUsernames),
-                    existingNamesValidator(this.existingUsernameInProject),
-                    existingNamesValidator(this.existingEmails),
-                    existingNamesValidator(this.existingEmailInProject)
-                ])
+                existingNamesValidator(this.existingUsernames),
+                existingNamesValidator(this.existingUsernameInProject),
+                existingNamesValidator(this.existingEmails),
+                existingNamesValidator(this.existingEmailInProject)
+            ])
         });
 
         this.filteredUsers = this.selectUserForm.controls['username'].valueChanges
@@ -284,24 +284,26 @@ export class AddUserComponent implements OnInit {
 
         // TODO: add getUserByEmail
         // you can type username or email. We have to check, what we have now
-        this._users.getUserByUsername(val).subscribe(
-            (result: User) => {
+        this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(val).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
                 // case b) result if the user exists
-                this.selectedUser = result;
+                this.selectedUser = response.body.user;
 
                 // the following request should never start
-                this.isAlreadyMember = (!!result.projects.find(p => p.shortcode === this.projectcode));
+                this.isAlreadyMember = (!!response.body.user.projects.find(p => p.shortcode === this.projectcode));
 
                 if (!this.isAlreadyMember) {
 
                     this.loading = true;
 
+                    console.log('psc', this.projectcode);
+
                     // get project iri by projectcode
                     this._cache.get(this.projectcode).subscribe(
-                        (p: Project) => {
+                        (p: ApiResponseData<ProjectResponse>) => {
                             // add user to project
-                            this._users.addUserToProject(this.selectedUser.id, p.id).subscribe(
-                                (add: User) => {
+                            this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.body.project.id).subscribe(
+                                (userAdded: ApiResponseData<UserResponse>) => {
 
                                     // successful post
                                     // reload the component
@@ -312,8 +314,8 @@ export class AddUserComponent implements OnInit {
                                     // get logged-in user name
                                     // const session: Session = JSON.parse(localStorage.getItem('session'));
                                     // if (add.username === session.user.name) {
-                                    this._cache.del(add.username);
-                                    this._cache.get(add.username, this._users.getUserByUsername(add.username));
+                                    this._cache.del(userAdded.body.user.username);
+                                    this._cache.get(userAdded.body.user.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(userAdded.body.user.username));
                                     // }
                                     this.loading = false;
 
@@ -330,11 +332,11 @@ export class AddUserComponent implements OnInit {
                 }
 
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 if (error.status === 404) {
                     // case c) user doesn't exist
                     // create new user user-profile
-                    this.selectedUser = new User();
+                    this.selectedUser = new ReadUser();
 
                     this.selectedUser.email = val;
 
@@ -358,7 +360,7 @@ export class AddUserComponent implements OnInit {
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(response => {
             // update the view
             this.refreshParent.emit();
         });

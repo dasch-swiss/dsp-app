@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { existingNamesValidator } from '@knora/action';
-import { Session } from '@knora/authentication';
-import { ApiServiceError, KnoraConstants, Project, ProjectsService, StringLiteral, User, UsersService, Utils } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadUser, UserResponse, UsersResponse, UpdateUserRequest, User, StringLiteral, Constants } from '@knora/api';
+import { KnoraApiConnectionToken, Utils, Session } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from '../../main/cache/cache.service';
 
@@ -45,7 +45,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     /**
      * user data
      */
-    user: User;
+    user: ReadUser;
 
     title: string;
     subtitle: string;
@@ -54,7 +54,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      * send user data to parent component;
      * in case of dialog box?
      */
-    @Output() closeDialog: EventEmitter<any> = new EventEmitter<User>();
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<ReadUser>();
 
     /**
      * define, if the user has system administration permission
@@ -144,12 +144,14 @@ export class UserFormComponent implements OnInit, OnChanges {
      */
     languagesList: StringLiteral[] = AppGlobal.languagesList;
 
-    constructor (
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin: boolean = false;
+
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _route: ActivatedRoute,
-        private _router: Router,
         private _cache: CacheService,
-        private _users: UsersService,
-        private _projectsService: ProjectsService,
         private _formBuilder: FormBuilder
     ) {
         // get username from url
@@ -164,6 +166,11 @@ export class UserFormComponent implements OnInit, OnChanges {
     ngOnInit() {
         this.loading = true;
 
+        // get information about the logged-in user
+        this.session = JSON.parse(localStorage.getItem('session'));
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
         if (this.username) {
             /**
              * edit mode: get user data from cache
@@ -173,11 +180,11 @@ export class UserFormComponent implements OnInit, OnChanges {
             this.subtitle = "'appLabels.form.user.title.edit' | translate";
 
             // set the cache first: user data to edit
-            this._cache.get(this.username, this._users.getUserByUsername(this.username));
+            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
             // get user data from cache
-            this._cache.get(this.username, this._users.getUserByUsername(this.username)).subscribe(
-                (response: User) => {
-                    this.user = response;
+            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
                     this.loading = !this.buildForm(this.user);
                 },
                 (error: any) => {
@@ -190,35 +197,36 @@ export class UserFormComponent implements OnInit, OnChanges {
              */
 
             // set the cache first: all users to avoid same email-address / username twice
-            this._cache.get('allUsers', this._users.getAllUsers());
+            this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers());
             // get existing users to avoid same usernames and email addresses
-            this._cache.get('allUsers', this._users.getAllUsers()).subscribe((result: User[]) => {
-                for (const user of result) {
-                    // email address of the user should be unique.
-                    // therefore we create a list of existing email addresses to avoid multiple use of user names
-                    this.existingEmails.push(
-                        new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)')
-                    );
-                    // username should also be unique.
-                    // therefore we create a list of existingUsernames to avoid multiple use of user names
-                    this.existingUsernames.push(
-                        new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)')
-                    );
-                }
+            this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers()).subscribe(
+                (response: ApiResponseData<UsersResponse>) => {
+                    for (const user of response.body.users) {
+                        // email address of the user should be unique.
+                        // therefore we create a list of existing email addresses to avoid multiple use of user names
+                        this.existingEmails.push(
+                            new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)')
+                        );
+                        // username should also be unique.
+                        // therefore we create a list of existingUsernames to avoid multiple use of user names
+                        this.existingUsernames.push(
+                            new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)')
+                        );
+                    }
 
-                // get parameters from url, if they exist
-                // this.projectcode = this._route.snapshot.queryParams['project'];
-                // const name: string = this._route.snapshot.queryParams['value'];
-                const newUser: User = new User();
+                    // get parameters from url, if they exist
+                    // this.projectcode = this._route.snapshot.queryParams['project'];
+                    // const name: string = this._route.snapshot.queryParams['value'];
+                    const newUser: ReadUser = new ReadUser();
 
-                if (Utils.RegexEmail.test(this.name)) {
-                    newUser.email = this.name;
-                } else {
-                    newUser.username = this.name;
-                }
-                // build the form
-                this.loading = !this.buildForm(newUser);
-            });
+                    if (Utils.RegexEmail.test(this.name)) {
+                        newUser.email = this.name;
+                    } else {
+                        newUser.username = this.name;
+                    }
+                    // build the form
+                    this.loading = !this.buildForm(newUser);
+                });
         }
     }
 
@@ -232,11 +240,11 @@ export class UserFormComponent implements OnInit, OnChanges {
      * build the whole form
      *
      */
-    buildForm(user: User): boolean {
+    buildForm(user: ReadUser): boolean {
         // get info about system admin permission
-        if (user.id && user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI]) {
+        if (user.id && user.permissions.groupsPerProject[Constants.SystemProjectIRI]) {
             // this user is member of the system project. does he has admin rights?
-            this.sysAdminPermission = user.permissions.groupsPerProject[KnoraConstants.SystemProjectIRI].includes(KnoraConstants.SystemAdminGroupIRI);
+            this.sysAdminPermission = user.permissions.groupsPerProject[Constants.SystemProjectIRI].includes(Constants.SystemAdminGroupIRI);
         }
 
         // if user is defined, we're in the edit mode
@@ -342,62 +350,76 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         if (this.username) {
             // edit mode: update user data
-            this._users
-                .updateBasicUserInformation(this.user.id, this.form.value)
-                .subscribe(
-                    (result: User) => {
-                        this.user = result;
-                        this.buildForm(this.user);
-                        // update cache
-                        const session: Session = JSON.parse(
-                            localStorage.getItem('session')
-                        );
-                        if (session.user.name === this.username) {
-                            // update logged in user session
-                            session.user.lang = this.form.controls[
-                                'lang'
-                            ].value;
-                            localStorage.setItem(
-                                'session',
-                                JSON.stringify(session)
-                            );
-                        }
+            // username doesn't seem to be optional in @knora/api usersEndpoint type UpdateUserRequest.
+            // but a user can't change the username, the field is disabled, so it's not a value in this form.
+            // we have to make a small hack here.
+            const userData: UpdateUserRequest = new UpdateUserRequest();
+            // userData.username = this.form.value.username;
+            userData.familyName = this.form.value.familyName;
+            userData.givenName = this.form.value.givenName;
+            // userData.email = this.form.value.email;
+            userData.lang = this.form.value.lang;
 
-                        this._cache.set(this.username, result);
-
-                        this.success = true;
-
-                        this.loading = false;
-                    },
-                    (error: ApiServiceError) => {
-                        this.errorMessage = error;
-                        this.loading = false;
-                        this.success = false;
+            this.knoraApiConnection.admin.usersEndpoint.updateUserBasicInformation(this.user.id, userData).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
+                    this.buildForm(this.user);
+                    // update cache
+                    const session: Session = JSON.parse(
+                        localStorage.getItem('session')
+                    );
+                    if (session.user.name === this.username) {
+                        // update logged in user session
+                        session.user.lang = this.form.controls['lang'].value;
+                        localStorage.setItem('session', JSON.stringify(session));
                     }
-                );
+
+                    this._cache.set(this.username, response);
+
+                    this.success = true;
+
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    this.errorMessage = error;
+                    this.loading = false;
+                    this.success = false;
+                }
+            );
         } else {
             // new: create user
-            this._users.createUser(this.form.value).subscribe(
-                (user: User) => {
-                    this.user = user;
+            const userData: User = new User();
+            userData.username = this.form.value.username;
+            userData.familyName = this.form.value.familyName;
+            userData.givenName = this.form.value.givenName;
+            userData.email = this.form.value.email;
+            userData.password = this.form.value.password;
+            userData.systemAdmin = this.form.value.systemAdmin;
+            userData.status = this.form.value.status;
+            userData.lang = this.form.value.lang;
+
+            this.knoraApiConnection.admin.usersEndpoint.createUser(userData).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+
+                    this.user = response.body.user;
                     this.buildForm(this.user);
 
                     // update cache: users list
                     this._cache.del('allUsers');
-                    this._cache.get('allUsers', this._users.getAllUsers());
+                    this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers());
 
                     if (this.projectcode) {
                         // if a projectcode exists, add the user to the project
                         // get project iri by projectcode
-                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
-                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-                            (p: Project) => {
+                        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+                        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+                            (res: ApiResponseData<ProjectResponse>) => {
                                 // add user to project
-                                this._users.addUserToProject(this.user.id, p.id).subscribe(
+                                this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, res.body.project.id).subscribe(
                                     () => {
                                         // update project cache and member of project cache
-                                        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
-                                        this._cache.get('members_of_' + this.projectcode, this._projectsService.getProjectMembersByShortcode(this.projectcode));
+                                        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+                                        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
                                         this.closeMessage();
                                         this.loading = false;
                                     },
@@ -415,7 +437,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                         this.loading = false;
                     }
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     this.errorMessage = error;
                     this.loading = false;
                 }
@@ -426,10 +448,10 @@ export class UserFormComponent implements OnInit, OnChanges {
     /**
      * Reset the form
      */
-    resetForm(ev: Event, user?: User) {
+    resetForm(ev: Event, user?: ReadUser) {
         ev.preventDefault();
 
-        user = user ? user : new User();
+        user = user ? user : new ReadUser();
 
         this.buildForm(user);
     }

@@ -6,8 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { AddUserComponent } from './add-user.component';
 
 describe('AddUserComponent', () => {
@@ -29,9 +32,14 @@ describe('AddUserComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();

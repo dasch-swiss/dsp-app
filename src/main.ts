@@ -10,14 +10,14 @@ if (environment.production) {
     enableProdMode();
 }
 
-function bootstrapFailed(result: any) {
-    console.error('bootstrap-fail', result);
+function bootstrapFailed(response: any) {
+    console.error('bootstrap-fail', response);
 }
 
 fetch(`config/config.${environment.name}.json`)
     .then(response => response.json())
     .then(config => {
-        if (!config || !config['appName']) {
+        if (!config || !config['knora']) {
             bootstrapFailed(config);
             return;
         }

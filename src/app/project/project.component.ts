@@ -1,16 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import {
-    ApiServiceError,
-    GroupsService,
-    Project,
-    ProjectsService
-} from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@knora/api';
+import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
-import { AppGlobal } from '../app-global';
-import { Session } from '@knora/authentication';
+
 
 @Component({
     selector: 'app-project',
@@ -33,7 +29,7 @@ export class ProjectComponent implements OnInit {
     projectcode: string;
 
     // project data
-    project: Project;
+    project: ReadProject;
 
     color: string = 'primary';
 
@@ -42,11 +38,10 @@ export class ProjectComponent implements OnInit {
 
     navigation: MenuItem[] = AppGlobal.projectNav;
 
-    constructor (
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _route: ActivatedRoute,
-        private _projectsService: ProjectsService,
-        private _groupsService: GroupsService,
         private _titleService: Title
     ) {
         // get the shortcode of the current project
@@ -65,10 +60,7 @@ export class ProjectComponent implements OnInit {
             this.loading = true;
             // set the cache here:
             // current project data, project members and project groups
-            this._cache.get(
-                this.projectcode,
-                this._projectsService.getProjectByShortcode(this.projectcode)
-            );
+            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
             // get information about the logged-in user, if one is logged-in
             if (localStorage.getItem('session')) {
@@ -83,53 +75,35 @@ export class ProjectComponent implements OnInit {
                 this.projectAdmin = this.sysAdmin;
             }
             // get the project data from cache
-            this._cache
-                .get(
-                    this.projectcode,
-                    this._projectsService.getProjectByShortcode(
-                        this.projectcode
-                    )
-                )
-                .subscribe(
-                    (result: Project) => {
-                        this.project = result;
+            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+                (response: ApiResponseData<ProjectResponse>) => {
+                    this.project = response.body.project;
 
-                        if (!this.project.status) {
-                            this.color = 'warn';
-                        }
-
-                        this.navigation[0].label =
-                            'Project: ' + result.shortname.toUpperCase();
-
-                        // is logged-in user projectAdmin?
-                        if (this.session) {
-                            this.projectAdmin = this.sysAdmin ? this.sysAdmin : (this.session.user.projectAdmin.some(e => e === this.project.id));
-                        }
-
-
-
-                        // set the cache for project members and groups
-                        if (this.projectAdmin) {
-                            this._cache.get(
-                                'members_of_' + this.projectcode,
-                                this._projectsService.getProjectMembersByShortcode(
-                                    this.projectcode
-                                )
-                            );
-                            this._cache.get(
-                                'groups_of_' + this.projectcode,
-                                this._groupsService.getAllGroups()
-                            );
-                        }
-
-                        this.loading = false;
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                        this.error = true;
-                        this.loading = false;
+                    if (!this.project.status) {
+                        this.color = 'warn';
                     }
-                );
+
+                    this.navigation[0].label = 'Project: ' + response.body.project.shortname.toUpperCase();
+
+                    // is logged-in user projectAdmin?
+                    if (this.session) {
+                        this.projectAdmin = this.sysAdmin ? this.sysAdmin : (this.session.user.projectAdmin.some(e => e === this.project.id));
+                    }
+
+                    // set the cache for project members and groups
+                    if (this.projectAdmin) {
+                        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
+                        this._cache.get('groups_of_' + this.projectcode, this.knoraApiConnection.admin.groupsEndpoint.getGroups());
+                    }
+
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    console.error(error);
+                    this.error = true;
+                    this.loading = false;
+                }
+            );
         } else {
             // shortcode isn't valid
             // TODO: show an error page

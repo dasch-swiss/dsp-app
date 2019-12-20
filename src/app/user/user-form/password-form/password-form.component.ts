@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { KuiMessageData } from '@knora/action';
-import { AuthenticationService } from '@knora/authentication';
-import { ApiServiceError, User, UsersService, Utils } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, ReadUser, UserResponse } from '@knora/api';
+import { KnoraApiConnectionToken, Utils } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class PasswordFormComponent implements OnInit {
     // progress indicator
     loading: boolean;
     // in case of an api error
-    errorMessage: ApiServiceError;
+    errorMessage: ApiResponseError;
 
     // in case of updating data: was it succesful or does it failed
     apiResponses: KuiMessageData[] = [
@@ -38,7 +38,7 @@ export class PasswordFormComponent implements OnInit {
 
     // update password for:
     @Input() username: string;
-    user: User;
+    user: ReadUser;
 
     loggedInUserName: string;
 
@@ -93,10 +93,9 @@ export class PasswordFormComponent implements OnInit {
     showPassword = false;
     showConfirmPassword = false;
 
-    constructor (
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _auth: AuthenticationService,
-        private _usersService: UsersService,
         private _fb: FormBuilder
     ) { }
 
@@ -121,14 +120,15 @@ export class PasswordFormComponent implements OnInit {
             this.showPasswordForm = this.updateOwn;
 
 
-            // set/get cached user data
-            this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+            // set the cache
+            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
 
-            this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
-                (response: User) => {
-                    this.user = response;
+            // get from cache
+            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     console.error(error);
                 }
             );
@@ -260,15 +260,15 @@ export class PasswordFormComponent implements OnInit {
         this.loading = true;
 
         // submit requester password with logged-in username
-        this._auth.login(this.loggedInUserName, this.confirmForm.controls.requesterPassword.value).subscribe(
-            (result: any) => {
+        this.knoraApiConnection.v2.auth.login('username', this.loggedInUserName, this.confirmForm.controls.requesterPassword.value).subscribe(
+            (response: ApiResponseData<LoginResponse>) => {
                 // go to next step with password form
                 this.showPasswordForm = !this.showPasswordForm;
                 // this.requesterPass = this.confirmForm.controls.requesterPassword.value;
                 this.buildForm();
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.showResponse = this.apiResponses[2];
                 this.loading = false;
@@ -285,13 +285,13 @@ export class PasswordFormComponent implements OnInit {
 
         const requesterPassword = (this.updateOwn ? this.form.controls.requesterPassword.value : this.confirmForm.controls.requesterPassword.value);
 
-        this._usersService.updateUsersPassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
-            (result: User) => {
+        this.knoraApiConnection.admin.usersEndpoint.updateUserPassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
                 this.showResponse = (this.updateOwn ? this.apiResponses[0] : this.apiResponses[1]);
                 this.form.reset();
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.showResponse = this.apiResponses[2];
                 this.loading = false;

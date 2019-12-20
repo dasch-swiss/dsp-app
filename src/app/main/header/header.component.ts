@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
-import { AuthenticationService } from '@knora/authentication';
+import { SessionService } from '@knora/core';
 
 @Component({
     selector: 'app-header',
@@ -11,10 +11,11 @@ import { AuthenticationService } from '@knora/authentication';
 })
 export class HeaderComponent {
 
-    session: boolean;
+    session: boolean = false;
     show: boolean = false;
 
-    constructor (private _auth: AuthenticationService,
+    constructor(
+        private _session: SessionService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _router: Router) {
@@ -32,9 +33,10 @@ export class HeaderComponent {
         );
 
         // logged-in user? show user menu or login button
+
         this._router.events.forEach((event) => {
             if (event instanceof NavigationStart) {
-                this.session = this._auth.session();
+                this.session = this._session.validateSession();
             }
         });
     }

@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { ApiServiceError, User, UsersService, ProjectsService, PermissionData, KnoraConstants, Project, AutocompleteItem } from '@knora/core';
-import { CacheService } from 'src/app/main/cache/cache.service';
-import { Session } from '@knora/authentication';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { AppGlobal } from 'src/app/app-global';
+import { Router } from '@angular/router';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectsResponse, ReadUser, UserResponse, Constants } from '@knora/api';
+import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { CacheService } from 'src/app/main/cache/cache.service';
+import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
+import { IPermissions } from '@knora/api/src/interfaces/models/admin/i-permissions';
 
 @Component({
     selector: 'app-membership',
@@ -19,7 +20,7 @@ export class MembershipComponent implements OnInit {
 
     @Input() username: string;
 
-    user: User;
+    user: ReadUser;
 
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
@@ -34,10 +35,9 @@ export class MembershipComponent implements OnInit {
         }
     };
 
-    constructor (
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _usersService: UsersService,
-        private _projectsService: ProjectsService,
         private _router: Router
     ) { }
 
@@ -45,22 +45,21 @@ export class MembershipComponent implements OnInit {
 
         this.loading = true;
 
-        // set / get user from cache
-        this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+        // set the cache
+        this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
 
-        this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
-            (result: User) => {
-                this.user = result;
+        // get from cache
+        this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this.user = response.body.user;
                 this.initNewProjects();
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.loading = false;
             }
         );
-
-
 
     }
 
@@ -68,12 +67,12 @@ export class MembershipComponent implements OnInit {
 
         this.projects = [];
         // get all projects and filter by projects where the user is already member of
-        this._projectsService.getAllProjects().subscribe(
-            (response: Project[]) => {
+        this.knoraApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+            (response: ApiResponseData<ProjectsResponse>) => {
 
-                for (const p of response) {
+                for (const p of response.body.projects) {
 
-                    if (p.id !== KnoraConstants.SystemProjectIRI && p.id !== KnoraConstants.DefaultSharedOntologyIRI && p.status === true) {
+                    if (p.id !== Constants.SystemProjectIRI && p.id !== Constants.DefaultSharedOntologyIRI && p.status === true) {
                         // get index example:
                         // myArray.findIndex(i => i.hello === "stevie");
                         if (this.user.projects.findIndex(i => i.id === p.id) === -1) {
@@ -101,7 +100,7 @@ export class MembershipComponent implements OnInit {
 
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
             }
         );
@@ -111,10 +110,10 @@ export class MembershipComponent implements OnInit {
         // TODO: update cache of project
 
         // get shortcode from iri; not the best way right now
-        const projectcode: string = iri.replace(AppGlobal.iriProjectsBase, '');
+        const projectcode: string = iri.replace('http://rdfh.ch/projects/', '');
 
         // reset the cache of project members
-        this._cache.get('members_of_' + projectcode, this._projectsService.getProjectMembersByShortcode(projectcode));
+        this._cache.get('members_of_' + projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(projectcode));
 
     }
 
@@ -127,18 +126,18 @@ export class MembershipComponent implements OnInit {
 
         this.loading = true;
 
-        this._usersService.removeUserFromProject(this.user.id, iri).subscribe(
-            (result: User) => {
-                this.user = result;
+        this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(this.user.id, iri).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this.user = response.body.user;
                 // set new user cache
                 this._cache.del(this.username);
-                this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+                this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
                 this.initNewProjects();
                 // this.updateProjectCache(iri);
                 this.loading = false;
 
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.loading = false;
             }
@@ -150,17 +149,17 @@ export class MembershipComponent implements OnInit {
 
         this.loading = true;
 
-        this._usersService.addUserToProject(this.user.id, iri).subscribe(
-            (result: User) => {
-                this.user = result;
+        this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, iri).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this.user = response.body.user;
                 // set new user cache
                 this._cache.del(this.username);
-                this._cache.get(this.username, this._usersService.getUserByUsername(this.username));
+                this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
                 this.initNewProjects();
                 // this.updateProjectCache(iri);
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.loading = false;
             }
@@ -177,8 +176,8 @@ export class MembershipComponent implements OnInit {
      * @param  [iri] project id
      * @returns boolean
      */
-    userIsProjectAdmin(permissions: PermissionData, iri: string): boolean {
-        return (permissions.groupsPerProject[iri].indexOf(KnoraConstants.ProjectAdminGroupIRI) > -1);
+    userIsProjectAdmin(permissions: IPermissions, iri: string): boolean {
+        return (permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1);
     }
 
     openProject(shortcode: string) {

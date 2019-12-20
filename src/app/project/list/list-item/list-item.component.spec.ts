@@ -4,7 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule, MatInputModule } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { ListItemFormComponent } from '../list-item-form/list-item-form.component';
 import { ListItemComponent } from './list-item.component';
 
@@ -27,9 +30,14 @@ describe('ListItemComponent', () => {
                 RouterTestingModule
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         })

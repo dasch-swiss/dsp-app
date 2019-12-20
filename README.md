@@ -1,6 +1,6 @@
 # Knora app
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/manual/dasch-swiss/Knora-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dasch-swiss/knora-app&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/manual/dasch-swiss/Knora-app?utm_source=github.com&utm_medium=referral&utm_content=dasch-swiss/knora-app&utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.com/dasch-swiss/knora-app.svg?branch=master)](https://travis-ci.com/dasch-swiss/knora-app)
 [![CircleCI](https://circleci.com/gh/dasch-swiss/knora-app.svg?style=svg)](https://circleci.com/gh/dasch-swiss/knora-app)
 
@@ -12,14 +12,13 @@ It's a system for annotation and linkage of sources in arts and humanities.
 This project was generated with
 [Angular CLI](https://github.com/angular/angular-cli) version 8.0.6 and [Node](https://nodejs.org/en/) version 10.13.0.
 
-**Required version of Knora: ^[9.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v9.0.0)**
+**Required version of Knora: ^[11.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v11.0.0)**
 
 Developed by the [DaSCH Team](https://dasch.swiss) in Basel.
 
-
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app
+Run `ng serve` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app
 will automatically reload if you change any of the source files.
 
 ## Code scaffolding

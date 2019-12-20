@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { LanguageService } from '@knora/core';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from './language.service';
 
 @Component({
     selector: 'app-select-language',

@@ -1,10 +1,5 @@
 <div *ngIf="projectAdmin" class="content large middle desktop-only">
 
-    <!-- add list to the project -->
-    <!-- <app-add-user *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()" #addUserComponent></app-add-user> -->
-
-    <!-- <mat-divider *ngIf="project?.status" ></mat-divider> -->
-
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
     <div *ngIf="!loading" class="content">
@@ -40,27 +35,21 @@
         <!-- list of active lists -->
         <mat-accordion class="lists-list">
 
-            <mat-expansion-panel *ngFor="let list of projectLists; let i = index" class="list" (closed)="openPanel = -1"
-                                 (afterExpand)="openPanel = i"
-                                 [expanded]="projectLists.length === 1 || openPanel === i">
+            <mat-expansion-panel *ngFor="let list of projectLists; let i = index" class="list" (closed)="openPanel = -1" (afterExpand)="openPanel = i" [expanded]="projectLists.length === 1 || openPanel === i">
                 <mat-expansion-panel-header>
-                    <mat-panel-title [matTooltip]="list.labels | kuiStringifyStringLiteral:'all'"
-                                     matTooltipPosition="above">
+                    <mat-panel-title [matTooltip]="list.labels | kuiStringifyStringLiteral:'all'" matTooltipPosition="above">
                         {{list.labels | kuiStringifyStringLiteral}}
                     </mat-panel-title>
-                    <mat-panel-description class="shorten-text" [matTooltip]="list.comments | kuiStringifyStringLiteral"
-                                           matTooltipPosition="above">
+                    <mat-panel-description class="shorten-text" [matTooltip]="list.comments | kuiStringifyStringLiteral" matTooltipPosition="above">
                         {{list.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}
                         <span class="fill-remaining-space"></span>
-                        <button mat-stroked-button *ngIf="openPanel === i"
-                                (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">
+                        <button mat-stroked-button *ngIf="openPanel === i" (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">
                             Edit info
                         </button>
                     </mat-panel-description>
                 </mat-expansion-panel-header>
 
-                <app-list-item *ngIf="!loading" [list]="list" [parentIri]="list.id" [projectIri]="project.id"
-                               [projectcode]="projectcode">
+                <app-list-item *ngIf="!loading" [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectcode]="projectcode">
                 </app-list-item>
             </mat-expansion-panel>
 

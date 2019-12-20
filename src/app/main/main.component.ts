@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '@knora/authentication';
-import { ApiServiceError, KnoraConstants, Project, ProjectsService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectsResponse, Constants } from '@knora/api';
+import { KnoraApiConnectionToken } from '@knora/core';
 import { GridItem } from './grid/grid.component';
 
 @Component({
@@ -13,7 +13,7 @@ import { GridItem } from './grid/grid.component';
 export class MainComponent implements OnInit {
 
     loading: boolean;
-    errorMessage: ApiServiceError;
+    errorMessage: ApiResponseError;
 
     showCookieBanner: boolean = true;
 
@@ -22,8 +22,8 @@ export class MainComponent implements OnInit {
     session: boolean = false;
 
     disabledProjects: string[] = [
-        KnoraConstants.SystemProjectIRI,
-        KnoraConstants.DefaultSharedOntologyIRI,
+        Constants.SystemProjectIRI,
+        Constants.DefaultSharedOntologyIRI,
         'http://rdfh.ch/projects/0001'
     ];
 
@@ -51,7 +51,7 @@ export class MainComponent implements OnInit {
             text: 'When data changes, Knora preserves past versions, so you can still view and cite them.'
         },
         {
-            icon: 'perm_identity',
+            icon: 'lock',
             title: 'Control Access',
             text: 'You decide who can view and change each item of data in your project.'
         },
@@ -62,23 +62,18 @@ export class MainComponent implements OnInit {
         }
     ];
 
-    constructor (
-        private _auth: AuthenticationService,
-        private _projectsService: ProjectsService,
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _router: Router,
         private _titleService: Title
     ) {
         // set the page title
-        this._titleService.setTitle('Knora User Interface | Research Layer');
+        this._titleService.setTitle('Knora App | DaSCH\'s generic research interface');
 
-        // check if a session is active and valid
+
+        // check if a session is active
         if (JSON.parse(localStorage.getItem('session'))) {
-            // there's an acitve session, but is it still valid?
-            this.session = this._auth.session();
-
-            if (this._auth.session()) {
-                this._router.navigate(['dashboard']);
-            }
+            this._router.navigate(['dashboard']);
         }
     }
 
@@ -93,11 +88,11 @@ export class MainComponent implements OnInit {
 
     loadProjects() {
         this.loading = true;
-        this._projectsService.getAllProjects().subscribe(
-            (result: Project[]) => {
+        this.knoraApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+            (response: ApiResponseData<ProjectsResponse>) => {
                 const sliceLength: number = 160;
 
-                for (const project of result) {
+                for (const project of response.body.projects) {
                     // disable default test projects
 
                     if (!this.disabledProjects.includes(project.id) && project.status) {
@@ -119,7 +114,7 @@ export class MainComponent implements OnInit {
 
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.errorMessage = error;
                 this.loading = false;

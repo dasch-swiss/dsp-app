@@ -14,7 +14,8 @@
         <div class="app-toolbar-row">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
-                <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps" [(sortKey)]="sortBy"></kui-sort-button>
+                <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
+                    [(sortKey)]="sortBy"></kui-sort-button>
             </span>
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
             <span class="fill-remaining-space"></span>
@@ -27,7 +28,8 @@
     <!-- content: list -->
     <table class="table more-space-bottom" [class.deactivated]="!status">
 
-        <tr class="table-entry" *ngFor="let project of list | kuiSortBy: sortBy; let last = last" [class.no-border]="last">
+        <tr class="table-entry" *ngFor="let project of list | kuiSortBy: sortBy; let last = last"
+            [class.no-border]="last">
             <!-- logo -->
             <td class="avatar-cell">
                 <mat-icon mat-list-icon>
@@ -48,23 +50,33 @@
                     {{project.shortcode}} | {{project.shortname}}
                 </p>
             </td>
+            <td class="table-admin-chip">
+                <mat-chip-list *ngIf="userIsProjectAdmin(project.id)">
+                    <mat-chip class="admin-chip">Project Admin</mat-chip>
+                </mat-chip-list>
+
+            </td>
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectMenu" [disabled]="(!sysAdmin && !userIsProjectAdmin(project.id)) || doNotDelete.includes(project.id)">
+                <button mat-icon-button [matMenuTriggerFor]="projectMenu"
+                    [disabled]="(!sysAdmin && !userIsProjectAdmin(project.id)) || doNotDelete.includes(project.id)">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-                    <button mat-menu-item *ngIf="status" (click)="openDialog('editProject', project.shortname, project.shortcode)">
+                    <button mat-menu-item *ngIf="status"
+                        (click)="openDialog('editProject', project.shortname, project.shortcode)">
                         Edit project
                     </button>
                     <!-- disable the deactivate-button for the following two projects:
                     - http://www.knora.org/ontology/knora-admin#SystemProject
                     - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject
                     -->
-                    <button mat-menu-item *ngIf="status" (click)="openDialog('deleteProject', project.shortname, project.id)">
+                    <button mat-menu-item *ngIf="status"
+                        (click)="openDialog('deleteProject', project.shortname, project.id)">
                         Deactivate project
                     </button>
-                    <button mat-menu-item *ngIf="!status" (click)="openDialog('activateProject', project.shortname, project.id)">
+                    <button mat-menu-item *ngIf="!status"
+                        (click)="openDialog('activateProject', project.shortname, project.id)">
                         Reactivate project
                     </button>
                 </mat-menu>

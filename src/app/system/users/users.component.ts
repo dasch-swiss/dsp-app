@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { UsersService, User, ApiServiceError } from '@knora/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ReadUser, UserResponse, UsersResponse } from '@knora/api';
+import { KnoraApiConnectionToken } from '@knora/core';
 
 @Component({
     selector: 'app-users',
@@ -11,13 +11,12 @@ import { Title } from '@angular/platform-browser';
 export class UsersComponent implements OnInit {
     loading: boolean;
     // list of active users
-    active: User[] = [];
+    active: ReadUser[] = [];
     // list of inactive (deleted) users
-    inactive: User[] = [];
+    inactive: ReadUser[] = [];
 
-    constructor (
-        private _usersService: UsersService,
-        private _route: ActivatedRoute,
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _titleService: Title
     ) {
         // set the page title
@@ -33,21 +32,21 @@ export class UsersComponent implements OnInit {
      * init the list of all users in the system
      */
     initList(): void {
-        this._usersService.getAllUsers().subscribe(
-            (result: User[]) => {
+        this.knoraApiConnection.admin.usersEndpoint.getUsers().subscribe(
+            (response: ApiResponseData<UsersResponse>) => {
                 // clean up list of users
                 this.active = [];
                 this.inactive = [];
 
-                for (const u of result) {
+                for (const u of response.body.users) {
                     // get permission for each user
                     // by default, permission is not shown in the
-                    // api result of user's list
-                    this._usersService.getUserByIri(u.id).subscribe(
-                        (res: User) => {
-                            u.permissions = res.permissions;
+                    // api response of user's list
+                    this.knoraApiConnection.admin.usersEndpoint.getUserByIri(u.id).subscribe(
+                        (res: ApiResponseData<UserResponse>) => {
+                            u.permissions = res.body.user.permissions;
                         },
-                        (error: ApiServiceError) => {
+                        (error: ApiResponseError) => {
                             console.error(error);
                         }
                     );
@@ -61,7 +60,7 @@ export class UsersComponent implements OnInit {
 
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
             }
         );

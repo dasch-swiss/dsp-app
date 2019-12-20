@@ -13,7 +13,7 @@ export class ExpertSearchComponent implements OnInit {
 
     gravsearchQuery: string;
 
-    constructor (private _cache: CacheService,
+    constructor(private _cache: CacheService,
         private _titleService: Title) {
         this._titleService.setTitle('Expert search');
     }
@@ -21,10 +21,11 @@ export class ExpertSearchComponent implements OnInit {
     ngOnInit() {
 
         if (this._cache.has('gravsearch')) {
+
             // reload the results
             this._cache.get('gravsearch').subscribe(
-                (cachedQuery: string) => {
-                    this.gravsearchQuery = cachedQuery;
+                (response: string) => {
+                    this.gravsearchQuery = response;
                     this.loading = false;
                 },
                 (error: any) => {
@@ -43,9 +44,9 @@ export class ExpertSearchComponent implements OnInit {
         this._cache.set('gravsearch', query);
 
         this._cache.get('gravsearch').subscribe(
-            (cachedQuery: string) => {
+            (response: string) => {
                 // get cached query
-                this.gravsearchQuery = cachedQuery;
+                this.gravsearchQuery = response;
             },
             (error: any) => {
                 console.error(error);

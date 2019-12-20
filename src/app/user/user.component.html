@@ -10,19 +10,21 @@
     <div class="content-container">
         <nav mat-tab-nav-bar mat-align-tabs="left" class="tab-bar" animationDuration="0ms">
             <span *ngFor="let link of navigation; let i = index">
-                <a mat-tab-link *ngIf="i > 0" class="nav-link" [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive">
+                <a mat-tab-link *ngIf="i > 0" class="nav-link" [routerLink]="link.route" routerLinkActive="active-tab"
+                   #rla="routerLinkActive" [active]="rla.isActive">
                     <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
                     {{link.label}}
                 </a>
                 <!-- mobile version -->
-                <a mat-tab-link *ngIf="i > 0" class="nav-link-mobile" [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive">
+                <a mat-tab-link *ngIf="i > 0" class="nav-link-mobile" [routerLink]="link.route"
+                   routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive">
                     {{link.shortLabel}}
                 </a>
             </span>
         </nav>
 
         <!-- main content: router outlet -->
-        <div class="content middle more-space-top" [ngSwitch]="route" *ngIf="!loading && route">
+        <div class="content middle" [ngSwitch]="route" *ngIf="!loading && route">
 
             <!-- user profile -->
             <div *ngSwitchCase="'profile'" class="full-width">

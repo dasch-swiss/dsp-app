@@ -6,8 +6,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { PasswordFormComponent } from './password-form/password-form.component';
 import { UserFormComponent } from './user-form.component';
 
@@ -33,21 +36,31 @@ describe('UserFormComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();
     }));
 
     beforeEach(() => {
+        localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
+
         fixture = TestBed.createComponent(UserFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
     it('should create', () => {
+        expect<any>(localStorage.getItem('session')).toBe(
+            JSON.stringify(TestConfig.CurrentSession)
+        );
         expect(component).toBeTruthy();
     });
 });

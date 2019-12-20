@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Session } from '@knora/authentication';
-import { ApiServiceError, ListNode, ListsService, Project, ProjectsService, StringLiteral } from '@knora/core';
-import { CacheService } from 'src/app/main/cache/cache.service';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject, ListNode, StringLiteral, ListsResponse, ListNodeInfo } from '@knora/api';
+import { KnoraApiConnectionToken, Session } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
+import { CacheService } from 'src/app/main/cache/cache.service';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-list',
@@ -29,10 +29,10 @@ export class ListComponent implements OnInit {
     projectcode: string;
 
     // project data
-    project: Project;
+    project: ReadProject;
 
     // lists in the project
-    projectLists: ListNode[] = [];
+    projectLists: ListNodeInfo[] = [];
 
     // list of languages
     languagesList: StringLiteral[] = AppGlobal.languagesList;
@@ -50,11 +50,10 @@ export class ListComponent implements OnInit {
         }
     };
 
-    constructor (
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _dialog: MatDialog,
         private _cache: CacheService,
-        private _listsService: ListsService,
-        private _projectsService: ProjectsService,
         private _route: ActivatedRoute,
         private _titleService: Title) {
 
@@ -62,8 +61,6 @@ export class ListComponent implements OnInit {
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectcode = params.get('shortcode');
         });
-
-        //        this.projectcode = this._route.parent.snapshot.params.shortcode;
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Lists');
@@ -82,83 +79,48 @@ export class ListComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         // set the cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode)).subscribe(
-            (result: Project) => {
-                this.project = result;
+        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+            (response: ApiResponseData<ProjectResponse>) => {
+                this.project = response.body.project;
 
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
                 this.initList();
 
-                // get from cache: list of project members and groups
-                if (this.projectAdmin) {
-                    // this.refresh();
-                }
-
                 this.loading = false;
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
                 this.loading = false;
             }
         );
-
-        // this.openDialog('createList', 'List');
     }
 
     /**
      * build the list of lists
      */
     initList(): void {
-        this._listsService.getLists(this.project.id).subscribe(
-            (response: ListNode[]) => {
-                this.projectLists = response;
-
-                /*
-                for (const list of response) {
-                    // console.log(list.id);
-                    this._listsService.getList(list.id).subscribe(
-                        (info: List) => {
-                            // TODO: we should set the cache for each list
-                            // is it hierarchical list?
-                            /*
-                            for (const child of info.children) {
-                                if (child.children.length > 0) {
-
-                                    console.log('hierarchical list');
-
-                                }
-                            }
-                            *
-                        },
-                        (error: ApiServiceError) => {
-                            console.error(error);
-                        }
-                    );
-                }
-                */
+        this.knoraApiConnection.admin.listsEndpoint.getListsInProject(this.project.id).subscribe(
+            (response: ApiResponseData<ListsResponse>) => {
+                this.projectLists = response.body.lists;
 
                 this.loading = false;
             },
-            (error: any) => {
+            (error: ApiResponseError) => {
                 console.error(error);
             }
         );
-
     }
 
     refresh(): void {
         // referesh the component
         this.loading = true;
-        // update the cache
-        // this._cache.del('lists_of_' + this.projectcode);
 
         this.initList();
-
     }
 
     /**
@@ -180,7 +142,7 @@ export class ListComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(() => {
             // update the view
             this.refresh();
         });

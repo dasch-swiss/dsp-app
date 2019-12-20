@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject, throwError } from 'rxjs';
-import { ApiServiceError } from '@knora/core';
-
+import { ApiResponseError } from '@knora/api';
 
 interface CacheContent {
     expiry: number;
@@ -63,7 +62,7 @@ export class CacheService {
 
                     return value;
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     // api service error
                     console.error(error);
                 });

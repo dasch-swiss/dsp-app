@@ -6,8 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { KuiAuthenticationModule } from '@knora/authentication';
-import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
+import { TestConfig } from 'test.config';
+import { AppInitService } from '../app-init.service';
 import { FooterComponent } from './footer/footer.component';
 import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
@@ -21,7 +23,6 @@ describe('MainComponent', () => {
             declarations: [MainComponent, FooterComponent, GridComponent],
             imports: [
                 KuiActionModule,
-                KuiAuthenticationModule,
                 MatButtonModule,
                 MatIconModule,
                 MatFormFieldModule,
@@ -30,15 +31,23 @@ describe('MainComponent', () => {
                 RouterTestingModule
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();
     }));
 
     beforeEach(() => {
+
+        // console.log()
+
         fixture = TestBed.createComponent(MainComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

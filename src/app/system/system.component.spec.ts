@@ -3,24 +3,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { Session } from '@knora/authentication';
+import { TestConfig } from 'test.config';
 import { ErrorComponent } from '../main/error/error.component';
 import { SystemComponent } from './system.component';
 
 describe('SystemComponent', () => {
     let component: SystemComponent;
     let fixture: ComponentFixture<SystemComponent>;
-
-    const currentTestSession: Session = {
-        id: 1555226377250,
-        user: {
-            jwt: '',
-            lang: 'en',
-            name: 'root',
-            projectAdmin: [],
-            sysAdmin: false
-        }
-    };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -59,7 +48,7 @@ describe('SystemComponent', () => {
     });
 
     beforeEach(() => {
-        localStorage.setItem('session', JSON.stringify(currentTestSession));
+        localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
 
         fixture = TestBed.createComponent(SystemComponent);
         component = fixture.componentInstance;
@@ -68,7 +57,7 @@ describe('SystemComponent', () => {
 
     it('should create', () => {
         expect<any>(localStorage.getItem('session')).toBe(
-            JSON.stringify(currentTestSession)
+            JSON.stringify(TestConfig.CurrentSession)
         );
         expect(component).toBeTruthy();
     });

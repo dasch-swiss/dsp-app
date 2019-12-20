@@ -1,22 +1,31 @@
 <div *ngIf="projectAdmin" class="content large middle">
-
     <!-- add user to the project -->
-    <app-add-user *ngIf="project?.status && sysAdmin" [projectcode]="projectcode" (refreshParent)="refresh()" #addUserComponent></app-add-user>
+    <app-add-user
+        *ngIf="project?.status && (sysAdmin || projectAdmin)"
+        [projectcode]="projectcode"
+        (refreshParent)="refresh()"
+        #addUserComponent
+    ></app-add-user>
 
     <!-- <mat-divider *ngIf="project?.status" ></mat-divider> -->
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
     <div *ngIf="!loading" class="content users-list">
-
         <!-- list of active users -->
-        <app-users-list [list]="active" [status]="true" (refreshParent)="refresh()"></app-users-list>
+        <app-users-list
+            [list]="active"
+            [status]="true"
+            (refreshParent)="refresh()"
+        ></app-users-list>
 
         <!-- list of inactive users -->
-        <app-users-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-users-list>
-
+        <app-users-list
+            [list]="inactive"
+            [status]="false"
+            (refreshParent)="refresh()"
+        ></app-users-list>
     </div>
-
 </div>
 
 <div *ngIf="!projectAdmin" class="content large middle">

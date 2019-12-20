@@ -5,10 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { ProjectFormComponent } from './project-form.component';
 
+// exclude test because of issue #100 in knora-api-js-lib
 describe('ProjectFormComponent', () => {
     let component: ProjectFormComponent;
     let fixture: ComponentFixture<ProjectFormComponent>;
@@ -27,9 +31,14 @@ describe('ProjectFormComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();

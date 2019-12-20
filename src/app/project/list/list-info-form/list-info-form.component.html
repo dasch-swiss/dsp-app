@@ -9,7 +9,7 @@
 
         <!-- list label -->
         <kui-string-literal-input [placeholder]="'List label'" [value]="labels"
-                                  (dataChanged)="handleData($event, 'labels')">
+            (dataChanged)="handleData($event, 'labels')">
         </kui-string-literal-input>
         <!-- TODO: we should support mat hint in the string literal input        <mat-hint *ngIf="formErrors.label">
             {{ formErrors.label }}
@@ -19,8 +19,7 @@
 
         <!-- list description / comment -->
         <kui-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
-                                  (dataChanged)="handleData($event, 'comments')"
-                                  [language]="labels.length ? labels[0].language : 'en'">
+            (dataChanged)="handleData($event, 'comments')" [language]="labels.length ? labels[0].language : 'en'">
         </kui-string-literal-input>
 
         <div class="form-panel form-action">
@@ -32,7 +31,7 @@
             <span class="fill-remaining-space"></span>
             <span>
                 <button mat-raised-button type="submit" color="primary" [disabled]="labels.length === 0"
-                        (click)="submitData()">
+                    (click)="submitData()">
                     {{ iri ? 'Update' : 'Next' }}
                 </button>
             </span>
@@ -41,7 +40,7 @@
 
     <div class="create-list-items" *ngIf="!loading && createList && newList">
         <app-list-item [projectcode]="projectcode" [projectIri]="projectIri" [parentIri]="newList.listinfo.id"
-                       [language]="labels[0].language">
+            [language]="labels[0].language">
         </app-list-item>
     </div>
 

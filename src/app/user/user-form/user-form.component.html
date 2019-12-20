@@ -68,7 +68,7 @@
         </mat-form-field>
 
         <div class="large-field">
-            <mat-slide-toggle [formControl]="form.controls['systemAdmin']">
+            <mat-slide-toggle [formControl]="form.controls['systemAdmin']" *ngIf="sysAdmin">
                 {{ 'appLabels.form.user.general.sysAdmin' | translate }}
             </mat-slide-toggle>
         </div>

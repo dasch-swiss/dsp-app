@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ApiServiceError, ListNode, ListNodeUpdatePayload, ListsService, StringLiteral } from '@knora/core';
+import { ApiResponseData, ApiResponseError, CreateChildNodeRequest, KnoraApiConnection, ListInfoResponse, ListNodeInfo, ListNodeInfoResponse, StringLiteral } from '@knora/api';
+import { KnoraApiConnectionToken } from '@knora/core';
 
 @Component({
     selector: 'app-list-item-form',
@@ -8,8 +9,6 @@ import { ApiServiceError, ListNode, ListNodeUpdatePayload, ListsService, StringL
     styleUrls: ['./list-item-form.component.scss']
 })
 export class ListItemFormComponent implements OnInit {
-
-    loading: boolean;
 
     /**
      * node id, in case of edit item
@@ -31,24 +30,16 @@ export class ListItemFormComponent implements OnInit {
      */
     @Input() parentIri?: string;
 
-    /**
-     * list iri
-     */
-    // @Input() listIri?: string;
-
     @Input() labels?: StringLiteral[];
 
     // set main / pre-defined language
     @Input() language?: string;
 
-    @Output() refreshParent: EventEmitter<ListNode> = new EventEmitter<ListNode>();
+    @Output() refreshParent: EventEmitter<ListNodeInfo> = new EventEmitter<ListNodeInfo>();
 
+    loading: boolean;
 
     initComponent: boolean;
-
-    // labels: StringLiteral[];
-
-    // @ViewChild('setFocus') labelInput: MatInput;
 
     placeholder: string = 'Append item to ';
 
@@ -59,8 +50,8 @@ export class ListItemFormComponent implements OnInit {
 
     updateData: boolean = false;
 
-    constructor (
-        private _listsService: ListsService
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection
     ) { }
 
     ngOnInit() {
@@ -71,20 +62,18 @@ export class ListItemFormComponent implements OnInit {
             this.placeholder = 'Edit item ';
         }
 
-        // TODO: get label of the parent node
         // it can be used in the input placeholder
         if (this.parentIri) {
-            this._listsService.getListNodeInfo(this.parentIri).subscribe(
-                (result: ListNode) => {
-                    this.placeholder += result.labels[0].value;
+            this.knoraApiConnection.admin.listsEndpoint.getListNodeInfo(this.parentIri).subscribe(
+                (response: ApiResponseData<ListNodeInfoResponse>) => {
+                    this.placeholder += response.body.nodeinfo.labels[0].value;
                     this.initComponent = false;
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     console.error(error);
                 }
             );
         }
-
     }
 
     submitData() {
@@ -95,37 +84,39 @@ export class ListItemFormComponent implements OnInit {
 
         this.loading = true;
 
-        // console.log('update data on node', this.iri);
-        // console.log('update data', this.updateData);
-
         if (this.iri && this.updateData) {
             // edit mode
             // TODO: update node method not yet implemented; Waiting for Knora API
 
             // TODO: remove setTimeout after testing position of progress indicator
             setTimeout(() => {
-                // console.log(this.resource);
                 this.loading = false;
             }, 500);
 
         } else {
-
-            // console.log(this.labels);
             // generate the data payload
-            const listItem: ListNodeUpdatePayload = {
-                parentNodeIri: this.parentIri,
-                projectIri: this.projectIri,
-                name: this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2),
-                labels: this.labels,
-                comments: []        // TODO: comment is not yet implemented
-            };
+            const listItem: CreateChildNodeRequest = new CreateChildNodeRequest();
+            listItem.parentNodeIri = this.parentIri;
+            listItem.projectIri = this.projectIri;
+            listItem.name = this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+
+            // initialize labels
+            let i = 0;
+            for (const l of this.labels) {
+                listItem.labels[i] = new StringLiteral();
+                listItem.labels[i].language = l.language;
+                listItem.labels[i].value = l.value;
+                i++;
+            }
+            listItem.comments = []; // TODO: comments are not yet implemented in the template
+
             // send payload to knora's api
-            this._listsService.createListItem(this.parentIri, listItem).subscribe(
-                (result: ListNode) => {
-                    this.refreshParent.emit(result);
-                    // this.buildForm();
+            this.knoraApiConnection.admin.listsEndpoint.createChildNode(listItem).subscribe(
+                (response: ApiResponseData<ListNodeInfoResponse>) => {
+                    this.refreshParent.emit(response.body.nodeinfo);
+                    this.loading = false;
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     console.error(error);
                 }
             );
@@ -135,18 +126,11 @@ export class ListItemFormComponent implements OnInit {
     handleData(data: StringLiteral[]) {
         // this shouldn't run on the init...
         if (!this.initComponent) {
-
             this.labels = data;
-            if (data.length > 0) {
-                // this.form.;
-                // console.log('update node data', data);
-            }
         }
-
     }
 
     toggleBtn(show: boolean) {
-        // console.log('show btn', show);
         this.updateData = show;
     }
 }

@@ -3,26 +3,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { KuiActionModule } from '@knora/action';
-import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
-import { ProjectsListComponent } from './projects-list.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Session } from '@knora/authentication';
+import { KuiActionModule } from '@knora/action';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
+import { ProjectsListComponent } from './projects-list.component';
+import { MatChipsModule } from '@angular/material';
 
+// exclude test because of issue #100 in knora-api-js-lib
 describe('ProjectsListComponent', () => {
     let component: ProjectsListComponent;
     let fixture: ComponentFixture<ProjectsListComponent>;
-
-    const currentTestSession: Session = {
-        id: 1555226377250,
-        user: {
-            jwt: '',
-            lang: 'en',
-            name: 'root',
-            projectAdmin: [],
-            sysAdmin: false
-        }
-    };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -31,15 +24,21 @@ describe('ProjectsListComponent', () => {
                 KuiActionModule,
                 KuiCoreModule,
                 MatButtonModule,
+                MatChipsModule,
                 MatDialogModule,
                 MatIconModule,
                 MatMenuModule,
                 RouterTestingModule
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();
@@ -70,7 +69,7 @@ describe('ProjectsListComponent', () => {
     });
 
     beforeEach(() => {
-        localStorage.setItem('session', JSON.stringify(currentTestSession));
+        localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
 
         fixture = TestBed.createComponent(ProjectsListComponent);
         component = fixture.componentInstance;
@@ -79,7 +78,7 @@ describe('ProjectsListComponent', () => {
 
     it('should create', () => {
         expect<any>(localStorage.getItem('session')).toBe(
-            JSON.stringify(currentTestSession)
+            JSON.stringify(TestConfig.CurrentSession)
         );
         expect(component).toBeTruthy();
     });

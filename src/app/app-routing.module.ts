@@ -1,15 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '@knora/authentication';
 
+import { AuthGuard } from './main/guard/auth.guard';
 import { ErrorComponent } from './main/error/error.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
+import { HelpComponent } from './main/help/help.component';
+import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
+
 // project
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { ProjectComponent } from './project/project.component';
+import { PermissionComponent } from './project/permission/permission.component';
+import { ListComponent } from './project/list/list.component';
+
 // user
 import { ProfileComponent } from './user/profile/profile.component';
 import { UserComponent } from './user/user.component';
@@ -19,18 +25,17 @@ import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { ResultsComponent } from './workspace/results/results.component';
+import { ResourceComponent } from './workspace/resource/resource.component';
 
-import { DesignQuestionComponent } from './dev/design-question/design-question.component';
+// system
 import { SystemComponent } from './system/system.component';
 import { ProjectsComponent } from './system/projects/projects.component';
 import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
-import { ResourceComponent } from './workspace/resource/resource.component';
-import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { GroupsComponent } from './system/groups/groups.component';
-import { PermissionComponent } from './project/permission/permission.component';
-import { ListComponent } from './project/list/list.component';
-import { HelpComponent } from './main/help/help.component';
+
+// developer
+import { DesignQuestionComponent } from './dev/design-question/design-question.component';
 
 const routes: Routes = [
     {

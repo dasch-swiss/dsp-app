@@ -5,24 +5,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
-import { Session } from '@knora/authentication';
-import { KuiCoreConfig, KuiCoreConfigToken, KuiCoreModule } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule, Session } from '@knora/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { UserMenuComponent } from './user-menu.component';
 
 describe('UserMenuComponent', () => {
     let component: UserMenuComponent;
     let fixture: ComponentFixture<UserMenuComponent>;
-
-    const currentTestSession: Session = {
-        id: 1555226377250,
-        user: {
-            jwt: '',
-            lang: 'en',
-            name: 'root',
-            projectAdmin: [],
-            sysAdmin: false
-        }
-    };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -37,9 +28,14 @@ describe('UserMenuComponent', () => {
                 RouterTestingModule
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();
@@ -70,7 +66,7 @@ describe('UserMenuComponent', () => {
     });
 
     beforeEach(() => {
-        localStorage.setItem('session', JSON.stringify(currentTestSession));
+        localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
 
         fixture = TestBed.createComponent(UserMenuComponent);
         component = fixture.componentInstance;
@@ -79,7 +75,7 @@ describe('UserMenuComponent', () => {
 
     it('should create', () => {
         expect<any>(localStorage.getItem('session')).toBe(
-            JSON.stringify(currentTestSession)
+            JSON.stringify(TestConfig.CurrentSession)
         );
         expect(component).toBeTruthy();
     });

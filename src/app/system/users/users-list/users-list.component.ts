@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { AuthenticationService, Session } from '@knora/authentication';
-import { ApiServiceError, Group, KnoraConstants, PermissionData, Project, ProjectsService, User, UsersService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection, Permissions, ProjectResponse, ReadProject, ReadUser, UserResponse, Constants } from '@knora/api';
+import { KnoraApiConnectionToken, Session, SessionService } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
@@ -24,7 +24,7 @@ export class UsersListComponent implements OnInit {
     @Input() status: boolean;
 
     // list of users: depending on the parent
-    @Input() list: User[];
+    @Input() list: ReadUser[];
 
     // enable the button to create new user
     @Input() createNew: boolean = false;
@@ -43,13 +43,13 @@ export class UsersListComponent implements OnInit {
     //
     // project view
     // knora admin group iri
-    adminGroupIri: string = KnoraConstants.ProjectAdminGroupIRI;
+    adminGroupIri: string = Constants.ProjectAdminGroupIRI;
 
     // project shortcode; as identifier in project cache service
     projectcode: string;
 
     // project data
-    project: Project;
+    project: ReadProject;
 
     //
     // sort properties
@@ -76,11 +76,10 @@ export class UsersListComponent implements OnInit {
     sortBy: string = 'email';
 
     constructor(
-        private _auth: AuthenticationService,
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        private _session: SessionService,
         private _cache: CacheService,
         private _dialog: MatDialog,
-        private _projectsService: ProjectsService,
-        private _usersService: UsersService,
         private _route: ActivatedRoute,
         private _router: Router
     ) {
@@ -106,18 +105,18 @@ export class UsersListComponent implements OnInit {
 
         if (this.projectcode) {
             // set the cache
-            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode));
+            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
             // get project information
-            this._cache.get(this.projectcode, this._projectsService.getProjectByShortcode(this.projectcode))
+            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode))
                 .subscribe(
-                    (result: Project) => {
-                        this.project = result;
+                    (response: ApiResponseData<ProjectResponse>) => {
+                        this.project = response.body.project;
                         // is logged-in user projectAdmin?
                         this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
                     },
-                    (error: ApiServiceError) => {
+                    (error: ApiResponseError) => {
                         console.error(error);
                     }
                 );
@@ -133,12 +132,12 @@ export class UsersListComponent implements OnInit {
      * @param  [permissions] user's permissions
      * @returns boolean
      */
-    userIsProjectAdmin(permissions?: PermissionData): boolean {
+    userIsProjectAdmin(permissions?: Permissions): boolean {
         if (permissions) {
             // check if this user is project admin
             return (
                 permissions.groupsPerProject[this.project.id].indexOf(
-                    KnoraConstants.ProjectAdminGroupIRI
+                    Constants.ProjectAdminGroupIRI
                 ) > -1
             );
         } else {
@@ -152,14 +151,14 @@ export class UsersListComponent implements OnInit {
      *
      * @param permissions PermissionData from user profile
      */
-    userIsSystemAdmin(permissions: PermissionData): boolean {
+    userIsSystemAdmin(permissions: Permissions): boolean {
 
         let admin: boolean = false;
         const groupsPerProjectKeys: string[] = Object.keys(permissions.groupsPerProject);
 
         for (const key of groupsPerProjectKeys) {
-            if (key === KnoraConstants.SystemProjectIRI) {
-                admin = permissions.groupsPerProject[key].indexOf(KnoraConstants.SystemAdminGroupIRI) > -1;
+            if (key === Constants.SystemProjectIRI) {
+                admin = permissions.groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
             }
         }
 
@@ -171,10 +170,9 @@ export class UsersListComponent implements OnInit {
      */
     updateGroupsMembership(id: string, groups: string[]): void {
         const currentUserGroups: string[] = [];
-
-        this._usersService.getUsersGroupMemberships(id).subscribe(
-            (result: Group[]) => {
-                for (const group of result) {
+        this.knoraApiConnection.admin.usersEndpoint.getUserGroupMemberships(id).subscribe(
+            (response: ApiResponseData<GroupsResponse>) => {
+                for (const group of response.body.groups) {
                     currentUserGroups.push(group.id);
                 }
 
@@ -182,14 +180,12 @@ export class UsersListComponent implements OnInit {
                     // add user to group
                     // console.log('add user to group');
                     for (const newGroup of groups) {
-                        this._usersService
-                            .addUserToGroup(id, newGroup)
-                            .subscribe(
-                                (ngResult: User) => { },
-                                (ngError: ApiServiceError) => {
-                                    console.error(ngError);
-                                }
-                            );
+                        this.knoraApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
+                            (ngResponse: ApiResponseData<UserResponse>) => { },
+                            (ngError: ApiResponseError) => {
+                                console.error(ngError);
+                            }
+                        );
                     }
                 } else {
                     // which one is deselected?
@@ -200,14 +196,12 @@ export class UsersListComponent implements OnInit {
                         } else {
                             // console.log('remove from group', oldGroup);
                             // the old group is not anymore one of the selected groups --> remove user from group
-                            this._usersService
-                                .removeUserFromGroup(id, oldGroup)
-                                .subscribe(
-                                    (ngResult: User) => { },
-                                    (ngError: ApiServiceError) => {
-                                        console.error(ngError);
-                                    }
-                                );
+                            this.knoraApiConnection.admin.usersEndpoint.removeUserFromGroupMembership(id, oldGroup).subscribe(
+                                (ngResponse: ApiResponseData<UserResponse>) => { },
+                                (ngError: ApiResponseError) => {
+                                    console.error(ngError);
+                                }
+                            );
                         }
                     }
                     for (const newGroup of groups) {
@@ -215,19 +209,17 @@ export class UsersListComponent implements OnInit {
                             // already member of this group
                         } else {
                             // console.log('add user to group');
-                            this._usersService
-                                .addUserToGroup(id, newGroup)
-                                .subscribe(
-                                    (ngResult: User) => { },
-                                    (ngError: ApiServiceError) => {
-                                        console.error(ngError);
-                                    }
-                                );
+                            this.knoraApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
+                                (ngResponse: ApiResponseData<UserResponse>) => { },
+                                (ngError: ApiResponseError) => {
+                                    console.error(ngError);
+                                }
+                            );
                         }
                     }
                 }
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error('getUsersGroupMemberships ', error);
             }
         );
@@ -236,61 +228,68 @@ export class UsersListComponent implements OnInit {
     /**
      * update user's admin-group membership
      */
-    updateProjectAdminMembership(id: string, permissions: PermissionData): void {
+    updateProjectAdminMembership(id: string, permissions: Permissions): void {
         if (this.userIsProjectAdmin(permissions)) {
             // true = user is already project admin --> remove from admin rights
-            this._usersService
-                .removeUserFromProjectAdmin(id, this.project.id)
-                .subscribe(
-                    (result: User) => {
-                        // console.log(result);
-                        // if this user is not the logged-in user
-                        if (this.session.user.name !== result.username) {
-                            this.refreshParent.emit();
-                        } else {
-                            // the logged-in user removed himself as project admin
-                            // the list is not available anymore;
-                            // open dialog to confirm and
-                            // redirect to project page
-                            // update the cache of logged-in user and the session
-                            this._auth.updateSession(this.session.user.jwt, this.session.user.name);
-                            // go to project page
-                            this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                                () => this._router.navigate(['/project/' + this.projectcode])
-                            );
-                        }
 
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
+            this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectAdminMembership(id, this.project.id).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+
+                    // if this user is not the logged-in user
+                    if (this.session.user.name !== response.body.user.username) {
+                        this.refreshParent.emit();
+                    } else {
+                        // the logged-in user removed himself as project admin
+                        // the list is not available anymore;
+                        // open dialog to confirm and
+                        // redirect to project page
+                        // update the cache of logged-in user and the session
+                        this._session.updateSession(this.session.user.jwt, this.session.user.name);
+                        // go to project page
+                        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                            () => this._router.navigate(['/project/' + this.projectcode])
+                        );
                     }
-                );
+
+                },
+                (error: ApiResponseError) => {
+                    console.error(error);
+                }
+            );
         } else {
             // false: user isn't project admin yet --> add admin rights
-            this._usersService
-                .addUserToProjectAdmin(id, this.project.id)
-                .subscribe(
-                    (result: User) => {
-                        // console.log(result);
-                        this.refreshParent.emit();
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
+            this.knoraApiConnection.admin.usersEndpoint.addUserToProjectAdminMembership(id, this.project.id).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.refreshParent.emit();
+                },
+                (error: ApiResponseError) => {
+                    console.error(error);
+                }
+            );
         }
     }
 
-    updateSystemAdminMembership(id: string, permissions: PermissionData): void {
-        if (this.userIsSystemAdmin(permissions)) {
+    updateSystemAdminMembership(user: ReadUser): void {
+        this.knoraApiConnection.admin.usersEndpoint.updateUserSystemAdminMembership(user).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                if (this.session.user.name !== user.username) {
+                    this.refreshParent.emit();
+                }
+            },
+            (error: ApiResponseError) => {
+                console.error(error);
+            }
+        );
+        /*
+            if (this.userIsSystemAdmin(permissions)) {
             // true = user is already system admin --> remove from system admin rights
+
             this._usersService
                 .removeUserFromSystemAdmin(id)
                 .subscribe(
-                    (result: User) => {
-                        // console.log(result);
+                    (response: User) => {
                         // if this user is not the logged-in user
-                        if (this.session.user.name !== result.username) {
+                        if (this.session.user.name !== response.username) {
                             this.refreshParent.emit();
                         }
                     },
@@ -303,15 +302,15 @@ export class UsersListComponent implements OnInit {
             this._usersService
                 .addUserToSystemAdmin(id)
                 .subscribe(
-                    (result: User) => {
-                        // console.log(result);
+                    (response: User) => {
+                        // console.log(response);
                         this.refreshParent.emit();
                     },
                     (error: ApiServiceError) => {
                         console.error(error);
                     }
                 );
-        }
+        } */
     }
 
     /**
@@ -335,8 +334,8 @@ export class UsersListComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result === true) {
+        dialogRef.afterClosed().subscribe(response => {
+            if (response === true) {
                 // get the mode
                 switch (mode) {
                     case 'removeFromProject':
@@ -363,13 +362,13 @@ export class UsersListComponent implements OnInit {
      * @returns void
      */
     removeUserFromProject(id: string): void {
-        this._usersService.removeUserFromProject(id, this.project.id).subscribe(
-            (result: User) => {
-                this._cache.del(result.username);
-                this._cache.get(result.username, this._usersService.getUserByUsername(result.username));
+        this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(id, this.project.id).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this._cache.del(response.body.user.username);
+                this._cache.get(response.body.user.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(response.body.user.username));
                 this.refreshParent.emit();
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }
@@ -383,11 +382,11 @@ export class UsersListComponent implements OnInit {
      * @param id user's IRI
      */
     deleteUser(id: string) {
-        this._usersService.deleteUser(id).subscribe(
-            (result: User) => {
+        this.knoraApiConnection.admin.usersEndpoint.deleteUser(id).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
                 this.refreshParent.emit();
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }
@@ -400,11 +399,11 @@ export class UsersListComponent implements OnInit {
      * @param id user's IRI
      */
     activateUser(id: string) {
-        this._usersService.activateUser(id).subscribe(
-            (result: User) => {
+        this.knoraApiConnection.admin.usersEndpoint.updateUserStatus(id, true).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
                 this.refreshParent.emit();
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }

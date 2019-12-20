@@ -1,14 +1,13 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { GridItem } from '../grid/grid.component';
-import { KuiCoreConfigToken, KuiCoreConfig } from '@knora/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material';
-import { HttpResponse, HttpClient } from '@angular/common/http';
-
-
+import { DomSanitizer } from '@angular/platform-browser';
+import { KnoraApiConfig } from '@knora/api';
+import { KnoraApiConfigToken, KuiConfig, KuiConfigToken } from '@knora/core';
+import { GridItem } from '../grid/grid.component';
 
 declare let require: any;
-const { version: appVersion } = require('../../../../package.json');
+const { version: appVersion, name: appName } = require('../../../../package.json');
 
 @Component({
     selector: 'app-help',
@@ -20,11 +19,10 @@ export class HelpComponent implements OnInit {
     loading: boolean = true;
 
     appVersion: string = appVersion;
+
     apiVersion: string;
-    akkaVersion: string;
 
     apiStatus: boolean;
-
 
     docs: GridItem[] = [
         {
@@ -53,7 +51,7 @@ export class HelpComponent implements OnInit {
     tools: GridItem[] = [
         {
             title: 'Knora app ',
-            text: 'This is the tool of the user interface you are using right now. Knora\'s generic web application.',
+            text: 'This is the tool of the user interface you are using right now. DaSCH\'s generic web application.',
             url: 'https://github.com/dasch-swiss/knora-app/releases/tag/v',
             urlText: 'Release notes'
         },
@@ -79,7 +77,7 @@ export class HelpComponent implements OnInit {
             urlText: 'DaSCH Forum'
         },
         {
-            title: 'DaSCH infrastructure',
+            title: 'DaSCH Infrastructure',
             text: 'Wondering what the Data and Service Center for the Humanities DaSCH exactly is? Get more information on our Website:',
             url: 'https://dasch.swiss',
             urlText: 'dasch.swiss'
@@ -92,7 +90,9 @@ export class HelpComponent implements OnInit {
         }
     ];
 
-    constructor (@Inject(KuiCoreConfigToken) public config: KuiCoreConfig,
+    constructor(
+        @Inject(KuiConfigToken) private kuiConfig: KuiConfig,
+        @Inject(KnoraApiConfigToken) private knoraApiConfig: KnoraApiConfig,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _http: HttpClient) {
@@ -111,13 +111,16 @@ export class HelpComponent implements OnInit {
     ngOnInit() {
 
         // set knora-app version
-        this.tools[0].title = this.config.name + ' v' + this.appVersion;
+        this.tools[0].title = this.kuiConfig.app.name + ' v' + this.appVersion;
         this.tools[0].url += this.appVersion;
 
-        this._http.get(this.config.api + '/admin/projects', { observe: 'response' })
+        const apiUrl: string = this.knoraApiConfig.apiUrl;
+
+        this._http.get(apiUrl + '/admin/projects', { observe: 'response' })
             .subscribe(
                 (resp: HttpResponse<any>) => {
                     // console.log('Stackoverflow', resp.headers.get('Server'));
+
                     this.readVersion(resp.headers.get('Server'));
                     this.apiStatus = true;
 

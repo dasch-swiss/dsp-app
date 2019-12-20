@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Session } from '@knora/authentication';
-import { ApiServiceError, KnoraConstants, Project, ProjectsService, User } from '@knora/core';
+import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectResponse, ReadUser, UpdateProjectRequest } from '@knora/api';
+import { KnoraApiConnectionToken, Session } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 
@@ -22,15 +22,15 @@ export class ProjectsListComponent implements OnInit {
 
     // list of default, knora-specific projects, which are not able to be deleted or to be editied
     doNotDelete: string[] = [
-        KnoraConstants.SystemProjectIRI,
-        KnoraConstants.DefaultSharedOntologyIRI
+        Constants.SystemProjectIRI,
+        Constants.DefaultSharedOntologyIRI
     ];
 
     // list of users: status active or inactive (deleted)
     @Input() status: boolean;
 
     // list of projects: depending on the parent
-    @Input() list: User[];
+    @Input() list: ReadUser[];
 
     // enable the button to create new project
     @Input() createNew: boolean = false;
@@ -65,10 +65,10 @@ export class ProjectsListComponent implements OnInit {
     // ... and sort by 'shortname'
     sortBy: string = 'shortname';
 
-    constructor (
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _dialog: MatDialog,
-        private _projectsService: ProjectsService,
         private _router: Router) { }
 
     ngOnInit() {
@@ -111,8 +111,8 @@ export class ProjectsListComponent implements OnInit {
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result === true) {
+        dialogRef.afterClosed().subscribe(response => {
+            if (response === true) {
                 // get the mode
                 switch (mode) {
                     case 'deleteProject':
@@ -131,14 +131,14 @@ export class ProjectsListComponent implements OnInit {
     }
 
     deleteProject(id: string) {
-        this._projectsService.deleteProject(id).subscribe(
-            (result: Project) => {
+        this.knoraApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
+            (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();
                 // update project cache
-                this._cache.del(result.shortcode);
-                this._cache.get(result.shortcode, this._projectsService.getProjectByShortcode(result.shortcode));
+                this._cache.del(response.body.project.shortcode);
+                this._cache.get(response.body.project.shortcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }
@@ -146,14 +146,18 @@ export class ProjectsListComponent implements OnInit {
     }
 
     activateProject(id: string) {
-        this._projectsService.activateProject(id).subscribe(
-            (result: Project) => {
+        // hack because of issue #100 in knora-api-js-lib
+        const data: UpdateProjectRequest = new UpdateProjectRequest();
+        data.status = true;
+
+        this.knoraApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
+            (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();
                 // update project cache
-                this._cache.del(result.shortcode);
-                this._cache.get(result.shortcode, this._projectsService.getProjectByShortcode(result.shortcode));
+                this._cache.del(response.body.project.shortcode);
+                this._cache.get(response.body.project.shortcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 // this.errorMessage = error;
                 console.error(error);
             }

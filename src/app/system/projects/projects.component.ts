@@ -1,17 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
-import { Session } from '@knora/authentication';
-import {
-    ApiServiceError,
-    Project,
-    ProjectsService,
-    User,
-    UsersService
-} from '@knora/core';
-import { CacheService } from '../../main/cache/cache.service';
-import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ProjectsResponse, ReadProject, UserResponse } from '@knora/api';
+import { KnoraApiConnectionToken, Session } from '@knora/core';
 import { AdminPermissions } from 'src/app/main/declarations/admin-permissions';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { CacheService } from '../../main/cache/cache.service';
 
 /**
  * projects component handles the list of projects
@@ -54,15 +48,14 @@ export class ProjectsComponent implements OnInit {
     permissions: AdminPermissions;
 
     // list of active projects
-    active: Project[] = [];
-    // list of deactivate projects
-    inactive: Project[] = [];
+    active: ReadProject[] = [];
+    // list of archived (deleted) projects
+    inactive: ReadProject[] = [];
 
     constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _dialog: MatDialog,
-        private _projectsService: ProjectsService,
-        private _usersService: UsersService,
         private _titleService: Title
     ) {
         // set the page title
@@ -89,45 +82,43 @@ export class ProjectsComponent implements OnInit {
 
         if (this.username) {
             // logged-in user view: get all projects, where the user is member of
-            this._cache.get(this.username, this._usersService.getUserByUsername(this.username)).subscribe(
-                (user: User) => {
+            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
 
                     // get user's projects by iri
-                    for (const project of user.projects) {
-                        this._projectsService
-                            .getProjectByIri(project.id)
-                            .subscribe(
-                                (projectResponse: Project) => {
-                                    // this.projects.push(projectResponse);
-                                    if (projectResponse.status === true) {
-                                        this.active.push(projectResponse);
-                                    } else {
-                                        this.inactive.push(projectResponse);
-                                    }
-                                },
-                                (projectError: ApiServiceError) => {
-                                    console.error(projectError);
+                    for (const project of response.body.user.projects) {
+                        this.knoraApiConnection.admin.projectsEndpoint.getProjectByIri(project.id).subscribe(
+                            (projectResponse: ApiResponseData<ProjectResponse>) => {
+                                // this.projects.push(projectResponse);
+                                if (projectResponse.body.project.status === true) {
+                                    this.active.push(projectResponse.body.project);
+                                } else {
+                                    this.inactive.push(projectResponse.body.project);
                                 }
-                            );
+                            },
+                            (projectError: ApiResponseError) => {
+                                console.error(projectError);
+                            }
+                        );
                     }
 
                     this.loading = false;
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     console.error(error);
                 }
             );
         } else {
 
             // logged-in user is system admin (or guest): show all projects
-            this._projectsService.getAllProjects().subscribe(
-                (projects: Project[]) => {
+            this.knoraApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+                (response: ApiResponseData<ProjectsResponse>) => {
 
                     // reset the lists:
                     this.active = [];
                     this.inactive = [];
 
-                    for (const item of projects) {
+                    for (const item of response.body.projects) {
                         if (item.status === true) {
                             this.active.push(item);
                         } else {
@@ -137,117 +128,13 @@ export class ProjectsComponent implements OnInit {
 
                     this.loading = false;
                 },
-                (error: ApiServiceError) => {
+                (error: ApiResponseError) => {
                     console.error(error);
                 }
             );
         }
     }
-    /*
-        initListBak() {
-            if (this.username) {
-                // get user's projects
-                this._cache
-                    .get(
-                        this.username,
-                        this._usersService.getUserByUsername(this.username)
-                    )
-                    .subscribe(
-                        (user: User) => {
-                            // because of a knora cache issue, we have to make additional requests for each project
 
-                            let i: number = 0;
-                            for (const project of user.projects) {
-                                this._projectsService
-                                    .getProjectByIri(project.id)
-                                    .subscribe(
-                                        (projectResponse: Project) => {
-                                            // this.projects.push(projectResponse);
-
-                                            for (const item of this.projects) {
-                                                if (item.status === true) {
-                                                    this.active.push(item);
-                                                } else {
-                                                    this.inactive.push(item);
-                                                }
-                                            }
-                                        },
-                                        (projectError: ApiServiceError) => {
-                                            console.error(projectError);
-                                        }
-                                    );
-                                i++;
-                            }
-
-                            setTimeout(() => {
-                                // console.log(this.resource);
-                                this.loading = false;
-                            }, 500);
-                        },
-                        (error: ApiServiceError) => {
-                            console.error(error);
-                        }
-                    );
-            } else {
-                // system view if logged-in user is system admin
-            }
-
-            // check if the logged-in user is system admin
-            this.session = JSON.parse(localStorage.getItem('session'));
-
-            if (this.session.user.sysAdmin) {
-                this.loadSystem = true;
-                // the logged-in user is system administrator
-                // additional, get all projects
-                this._projectsService.getAllProjects().subscribe(
-                    (projects: Project[]) => {
-                        // this.systemProjects = projects;
-
-                        for (const item of this.projects) {
-                            if (item.status === true) {
-                                this.active.push(item);
-                            } else {
-                                this.inactive.push(item);
-                            }
-                        }
-
-                        this.loading = false;
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
-            }
-
-            if (this.session && this.username === this.session.user.name) {
-                this.ownProfile = true;
-
-                if (this.session.user.sysAdmin) {
-                    this.loadSystem = true;
-                    // the logged-in user is system administrator
-                    // additional, get all projects
-                    this._projectsService.getAllProjects().subscribe(
-                        (projects: Project[]) => {
-                            this.systemProjects = projects;
-
-                            for (const item of this.projects) {
-                                if (item.status === true) {
-                                    this.active.push(item);
-                                } else {
-                                    this.inactive.push(item);
-                                }
-                            }
-
-                            this.loadSystem = false;
-                        },
-                        (error: ApiServiceError) => {
-                            console.error(error);
-                        }
-                    );
-                }
-            }
-        }
-     */
     openDialog(mode: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
@@ -262,7 +149,7 @@ export class ProjectsComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(response => {
             // update the view
         });
     }

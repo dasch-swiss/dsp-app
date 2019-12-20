@@ -2,11 +2,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule, MatIconModule } from '@angular/material';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiCoreConfig, KuiCoreConfigToken } from '@knora/core';
+import { KnoraApiConnection } from '@knora/api';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiConfigToken, KuiConfig } from '@knora/core';
+import { AppInitService } from 'src/app/app-init.service';
+import { TestConfig } from 'test.config';
 import { FooterComponent } from '../footer/footer.component';
 import { GridComponent } from '../grid/grid.component';
 import { HelpComponent } from './help.component';
-
 
 describe('HelpComponent', () => {
     let component: HelpComponent;
@@ -22,9 +24,18 @@ describe('HelpComponent', () => {
                 RouterTestingModule
             ],
             providers: [
+                AppInitService,
                 {
-                    provide: KuiCoreConfigToken,
-                    useValue: KuiCoreConfig
+                    provide: KuiConfigToken,
+                    useValue: new KuiConfig(TestConfig.ApiConfig, TestConfig.AppConfig)
+                },
+                {
+                    provide: KnoraApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: KnoraApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         })
