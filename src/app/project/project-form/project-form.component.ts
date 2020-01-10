@@ -339,7 +339,6 @@ export class ProjectFormComponent implements OnInit {
                 (response: ApiResponseData<ProjectResponse>) => {
 
                     this.project = response.body.project;
-                    console.log(response.body.project);
                     this.buildForm(this.project);
 
                     // update cache

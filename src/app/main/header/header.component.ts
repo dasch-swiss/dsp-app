@@ -35,6 +35,7 @@ export class HeaderComponent {
         // logged-in user? show user menu or login button
 
         this._router.events.forEach((event) => {
+            // console.log('EVENT', event);
             if (event instanceof NavigationStart) {
                 this.session = this._session.validateSession();
             }

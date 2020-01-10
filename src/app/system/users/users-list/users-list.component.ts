@@ -99,27 +99,23 @@ export class UsersListComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        // default value for projectAdmin
-        this.projectAdmin = this.sysAdmin;
-
-
         if (this.projectcode) {
             // set the cache
             this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
             // get project information
-            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode))
-                .subscribe(
-                    (response: ApiResponseData<ProjectResponse>) => {
-                        this.project = response.body.project;
-                        // is logged-in user projectAdmin?
-                        this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+                (response: ApiResponseData<ProjectResponse>) => {
+                    this.project = response.body.project;
+                    // is logged-in user projectAdmin?
+                    this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+                    this.loading = false;
 
-                    },
-                    (error: ApiResponseError) => {
-                        console.error(error);
-                    }
-                );
+                },
+                (error: ApiResponseError) => {
+                    console.error(error);
+                }
+            );
         }
     }
 
@@ -245,10 +241,18 @@ export class UsersListComponent implements OnInit {
                         // redirect to project page
                         // update the cache of logged-in user and the session
                         this._session.updateSession(this.session.user.jwt, this.session.user.name);
-                        // go to project page
-                        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                            () => this._router.navigate(['/project/' + this.projectcode])
-                        );
+
+                        if (this.sysAdmin) {
+                            // logged-in user is system admin:
+                            this.refreshParent.emit();
+                        } else {
+                            // logged-in user is NOT system admin:
+                            // go to project page and reload project admin interface
+                            this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                                () => this._router.navigate(['/project/' + this.projectcode])
+                            );
+                        }
+
                     }
 
                 },
@@ -260,7 +264,14 @@ export class UsersListComponent implements OnInit {
             // false: user isn't project admin yet --> add admin rights
             this.knoraApiConnection.admin.usersEndpoint.addUserToProjectAdminMembership(id, this.project.id).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
-                    this.refreshParent.emit();
+                    if (this.session.user.name !== response.body.user.username) {
+                        this.refreshParent.emit();
+                    } else {
+                        // the logged-in user (system admin) added himself as project admin
+                        // update the cache of logged-in user and the session
+                        this._session.updateSession(this.session.user.jwt, this.session.user.name);
+                        this.refreshParent.emit();
+                    }
                 },
                 (error: ApiResponseError) => {
                     console.error(error);
@@ -364,8 +375,6 @@ export class UsersListComponent implements OnInit {
     removeUserFromProject(id: string): void {
         this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(id, this.project.id).subscribe(
             (response: ApiResponseData<UserResponse>) => {
-                this._cache.del(response.body.user.username);
-                this._cache.get(response.body.user.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(response.body.user.username));
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {

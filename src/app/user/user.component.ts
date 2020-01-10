@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { KnoraApiConnectionToken, Session, SessionService } from '@knora/core';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
@@ -28,6 +28,7 @@ export class UserComponent implements OnInit {
 
     constructor(
         @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        private _session: SessionService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _titleService: Title) {
@@ -41,7 +42,7 @@ export class UserComponent implements OnInit {
         });
         */
 
-        // get username
+        // get session
         this.session = JSON.parse(localStorage.getItem('session'));
 
         // set the page title
@@ -58,6 +59,9 @@ export class UserComponent implements OnInit {
         this.loading = true;
 
         this._cache.del(this.session.user.name);
+
+        // update session
+        this._session.updateSession(this.session.user.jwt, this.session.user.name);
 
         /**
          * set the cache here for current/logged-in user

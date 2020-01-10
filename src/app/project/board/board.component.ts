@@ -71,8 +71,6 @@ export class BoardComponent implements OnInit {
             // is the logged-in user system admin?
             this.sysAdmin = this.session.user.sysAdmin;
 
-            // default value for projectAdmin
-            this.projectAdmin = this.sysAdmin;
         }
         this.getProject();
     }
@@ -85,6 +83,10 @@ export class BoardComponent implements OnInit {
         this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
+
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+
                 this.loading = false;
             },
             (error: ApiResponseError) => {

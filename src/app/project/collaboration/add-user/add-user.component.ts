@@ -135,10 +135,6 @@ export class AddUserComponent implements OnInit {
                 // if a user is already member of the team, mark it in the list
                 const members: string[] = [];
 
-                // empty the list of existingUserNames
-                this._cache.del('members_of_' + this.projectcode);
-                this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
-
                 // get all members of this project; response from cache
                 this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
                     (res: ApiResponseData<MembersResponse>) => {
@@ -295,8 +291,6 @@ export class AddUserComponent implements OnInit {
                 if (!this.isAlreadyMember) {
 
                     this.loading = true;
-
-                    console.log('psc', this.projectcode);
 
                     // get project iri by projectcode
                     this._cache.get(this.projectcode).subscribe(

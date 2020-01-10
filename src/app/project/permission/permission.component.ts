@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ReadGroup, ReadProject } from '@knora/api';
-import { Session } from '@knora/core';
+import { ReadGroup, ReadProject, KnoraApiConnection, ApiResponseData, ProjectResponse, ApiResponseError } from '@knora/api';
+import { Session, KnoraApiConnectionToken } from '@knora/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AddGroupComponent } from './add-group/add-group.component';
 
@@ -33,6 +33,7 @@ export class PermissionComponent implements OnInit {
     @ViewChild('addGroupComponent', { static: false }) addGroup: AddGroupComponent;
 
     constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _titleService: Title) {
@@ -51,11 +52,33 @@ export class PermissionComponent implements OnInit {
 
         // get information about the logged-in user
         this.session = JSON.parse(localStorage.getItem('session'));
+
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        // default value for projectAdmin
-        this.projectAdmin = this.sysAdmin;
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // set the cache
+        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+
+        // get the project data from cache
+        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+            (response: ApiResponseData<ProjectResponse>) => {
+                this.project = response.body.project;
+
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+
+                this.initList();
+
+                this.loading = false;
+            },
+            (error: ApiResponseError) => {
+                console.error(error);
+                this.loading = false;
+            }
+        );
 
     }
 

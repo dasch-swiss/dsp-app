@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@knora/api';
-import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { KnoraApiConnectionToken, Session, SessionService } from '@knora/core';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
@@ -40,12 +40,16 @@ export class ProjectComponent implements OnInit {
 
     constructor(
         @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        private _session: SessionService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _titleService: Title
     ) {
         // get the shortcode of the current project
         this.projectcode = this._route.snapshot.params.shortcode;
+
+        // get session
+        this.session = JSON.parse(localStorage.getItem('session'));
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode);
@@ -63,17 +67,10 @@ export class ProjectComponent implements OnInit {
             this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
             // get information about the logged-in user, if one is logged-in
-            if (localStorage.getItem('session')) {
+            if (this.session) {
 
-                this.session = JSON.parse(localStorage.getItem('session'));
-
-
-                // is the logged-in user system admin?
-                this.sysAdmin = this.session.user.sysAdmin;
-
-                // default value for projectAdmin
-                this.projectAdmin = this.sysAdmin;
             }
+
             // get the project data from cache
             this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
@@ -87,6 +84,13 @@ export class ProjectComponent implements OnInit {
 
                     // is logged-in user projectAdmin?
                     if (this.session) {
+                        this._session.updateSession(this.session.user.jwt, this.session.user.name);
+                        this.session = JSON.parse(localStorage.getItem('session'));
+
+                        // is the logged-in user system admin?
+                        this.sysAdmin = this.session.user.sysAdmin;
+
+                        // is the logged-in user project admin?
                         this.projectAdmin = this.sysAdmin ? this.sysAdmin : (this.session.user.projectAdmin.some(e => e === this.project.id));
                     }
 
