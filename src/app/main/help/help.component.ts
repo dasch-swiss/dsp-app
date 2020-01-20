@@ -58,13 +58,13 @@ export class HelpComponent implements OnInit {
         {
             title: 'Knora v',
             text: 'Framework to store, share, and work with primary sources in the humanities.',
-            url: 'https://github.com/dhlab-basel/Knora/releases/tag/v',
+            url: 'https://github.com/dasch-swiss/Knora/releases/tag/v',
             urlText: 'Release notes'
         },
         {
             title: 'Sipi v2.0.0',
             text: 'High-performance, IIIF compatible media storage server.',
-            url: 'https://github.com/dhlab-basel/Sipi/releases/tag/v2.0.0',
+            url: 'https://github.com/dasch-swiss/Sipi/releases/tag/v2.0.0',
             urlText: 'Release notes'
         }
     ];

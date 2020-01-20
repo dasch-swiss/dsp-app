@@ -31,10 +31,12 @@ jobs:
 
       # Build the libraries
       - run: yarn add --force node-sass
-      - run: yarn build
+      - run: yarn build-prod
 
       # Run unit tests!
       - run: yarn ng test --watch=false --browsers=ChromeHeadless
+      - run: yarn run webdriver-manager update --standalone false --gecko false --versions.chrome 2.37
+      - run: yarn ng e2e --prod=true --protractor-config=./e2e/protractor-ci.conf.js --webdriver-update=false
 
       # Store build artefacts on circle
       - store_artifacts:

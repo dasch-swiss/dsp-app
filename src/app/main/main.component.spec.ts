@@ -17,6 +17,7 @@ import { MainComponent } from './main.component';
 describe('MainComponent', () => {
     let component: MainComponent;
     let fixture: ComponentFixture<MainComponent>;
+    let element: HTMLElement;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -46,14 +47,29 @@ describe('MainComponent', () => {
 
     beforeEach(() => {
 
-        // console.log()
-
         fixture = TestBed.createComponent(MainComponent);
         component = fixture.componentInstance;
+        element = fixture.nativeElement; // the HTML reference
         fixture.detectChanges();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should display the title "bring all together and simplify your research"', () => {
+        const h1 = element.querySelector('h1.app-headline');
+        expect(h1.textContent).toEqual('bring all together and simplify your research');
+    });
+
+    /* xit('should display public projects', inject([KnoraApiConnectionToken], (knoraApiConn) => {
+        const projectSpy = spyOn(knoraApiConn.admin.projectsEndpoint, 'getProjects').and.callFake(
+            () => {
+                // TODO: mock data
+            });
+
+        expect(component).toBeTruthy();
+    })); */
+
+    // it should show the cookie banner, display Accept button, not shown again when clicking (show it once, after clicking, not displayed anymore even when the page is refreshed)
 });

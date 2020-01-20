@@ -91,7 +91,7 @@
             <h2 class="mat-title">The following projects have already stored their data in Knora</h2>
             <kui-progress-indicator [color]="'primary'" *ngIf="loading && !errorMessage"></kui-progress-indicator>
             <div *ngIf="!loading">
-                <app-grid [list]="projects"></app-grid>
+                <app-grid class="project-list" [list]="projects"></app-grid>
             </div>
             <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
             <!-- <app-grid ngIf="!loading && projects" [list]="projects"></app-grid> -->
@@ -121,8 +121,7 @@
                 research data that ensures access to this data.
             </h3>
             <a href="https://dasch.swiss/" target="_blank">
-                <img class="logo logo-dasch" src="/assets/images/logo-dasch.jpg"
-                    alt="Data and Service Center for the Humanities">
+                <img class="logo logo-dasch" src="/assets/images/logo-dasch.jpg" alt="Data and Service Center for the Humanities">
             </a>
             <a href="https://sagw.ch/sagw/" target="_blank">
                 <img class="logo logo-sagw" src="/assets/images/logo-sagw.jpg" alt="Swiss Academy of
@@ -132,8 +131,7 @@
                 <img class="logo logo-snf" src="/assets/images/logo-snf-fns.jpg" alt="Swiss NationalScience Foundation">
             </a>
             <a href="http://swissuniversities.ch" target="_blank">
-                <img class="logo logo-swissuniversities" src="/assets/images/logo-swissuniversities.svg"
-                    alt="swissuniversities">
+                <img class="logo logo-swissuniversities" src="/assets/images/logo-swissuniversities.svg" alt="swissuniversities">
             </a>
         </div>
         <div class="content large middle">

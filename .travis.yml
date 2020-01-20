@@ -24,4 +24,7 @@ install:
 
 script:
   - yarn test-ci
+  - yarn run webdriver-update
+  - yarn test-e2e-protractor
+  - yarn build-prod
   - docker build .
