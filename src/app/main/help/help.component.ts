@@ -58,7 +58,7 @@ export class HelpComponent implements OnInit {
         {
             title: 'Knora v',
             text: 'Framework to store, share, and work with primary sources in the humanities.',
-            url: 'https://github.com/dasch-swiss/Knora/releases/tag/v',
+            url: 'https://github.com/dasch-swiss/knora-api/releases/tag/v',
             urlText: 'Release notes'
         },
         {
@@ -119,7 +119,6 @@ export class HelpComponent implements OnInit {
         this._http.get(apiUrl + '/admin/projects', { observe: 'response' })
             .subscribe(
                 (resp: HttpResponse<any>) => {
-                    // console.log('Stackoverflow', resp.headers.get('Server'));
 
                     this.readVersion(resp.headers.get('Server'));
                     this.apiStatus = true;
@@ -128,7 +127,6 @@ export class HelpComponent implements OnInit {
                 (error: any) => {
                     this.readVersion(error.headers.get('Server'));
                     console.error(error);
-                    // console.log('Stackoverflow', error.headers.get('Server'));
                     this.apiStatus = false;
                 }
             );
