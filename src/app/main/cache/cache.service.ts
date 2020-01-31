@@ -35,9 +35,6 @@ export class CacheService {
             // console.log(`%c Cache returns typeof:` + (typeof of(this.cache.get(key).value)), 'color: green');
 
             // returns observable
-            if (key === 'kilchenmann') {
-                console.log('get from cache: ', key);
-            }
             return of(this.cache.get(key).value);
         }
 
@@ -55,9 +52,6 @@ export class CacheService {
         } else if (fallback && fallback instanceof Observable) {
             this.inFlightObservables.set(key, new Subject());
 
-            if (key === 'kilchenmann') {
-                console.log('get from api: ', key);
-            }
             fallback.subscribe(
                 (value: any) => {
                     this.set(key, value, maxAge);

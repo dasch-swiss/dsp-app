@@ -12,7 +12,7 @@ It's a system for annotation and linkage of sources in arts and humanities.
 This project was generated with
 [Angular CLI](https://github.com/angular/angular-cli) version 8.0.6 and [Node](https://nodejs.org/en/) version 10.13.0.
 
-**Required version of Knora: ^[11.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v11.0.0)**
+**Required version of Knora: ^[12.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v12.0.0)**
 
 Developed by the [DaSCH Team](https://dasch.swiss) in Basel.
 
