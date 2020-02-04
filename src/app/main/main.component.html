@@ -17,11 +17,11 @@
         <div class="parallax-curtain">
             <div class="content medium middle">
                 <!-- <h2 class="mat-title">Knora User Interface &middot; Research Layer</h2> -->
-                <h1 class="mat-display-2 app-headline">bring all together and simplify your research</h1>
-                <h2 class="mat-title">This is the generic web application of the Data and Service Center for Humanities
+                <h1 class="mat-display-2 app-headline">bring everything together and simplify your research</h1>
+                <h2 class="mat-title">This is the generic web application of the Data and Service Center for the Humanities
                     DaSCH. It's the user interface research layer of Knora &ndash; a software framework for storing,
                     sharing, and working with primary sources and all kind of data in your research project in
-                    humanities.
+                    the Humanities.
                 </h2>
             </div>
         </div>
@@ -31,7 +31,7 @@
     <!-- features: almost the same as in knora -->
     <section class="features">
         <div class="content large middle">
-            <h2 class="mat-title">The web application offers all features from Knora in a friendly designed way</h2>
+            <h2 class="mat-title">The web application offers all features from Knora on a user-friendly platform.</h2>
             <app-grid [list]="features"></app-grid>
         </div>
     </section>
@@ -39,7 +39,7 @@
     <!-- contact and partner institutions -->
     <section class="research darken-bg">
         <div class="content large middle content-research">
-            <h2 class="mat-title">You're interested to use the platform? What kind of research do you do?</h2>
+            <h2 class="mat-title">You're interested in using the platform? What kind of research do you do?</h2>
             <mat-form-field class="research-question">
                 <mat-label>Select an option</mat-label>
                 <mat-select [(value)]="researchField">
@@ -61,22 +61,19 @@
                 </div>
 
                 <div *ngSwitchCase="'quantitative'">
-                    <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
+                    <h2 class="mat-title">Uh-oh, you should contact a team working on quantitative data.</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <h4 class="mat-subheading-2">The tool is designed to work with qualitative data. If you are looking
-                        for a tool to work with quantitative data, you should contact
-                        <a href="https://forscenter.ch/">FORS</a>.
+                        for a tool to work with quantitative data, you should contact FORS.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://forscenter.ch/">Please contact FORS</a>
                 </div>
 
                 <div *ngSwitchCase="'edition'">
-                    <h2 class="mat-title">Uh-oh, unfortunately you're in the wrong place</h2>
+                    <h2 class="mat-title">Uh-oh, you should contact a team working on critical editions.</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">There's another tool which is designed to work on editions, but also
-                        based on Knora. For this kind of research you should contact
-                        <a href="https://nie-ine.ch/">NIE-INE</a>.
+                    <h4 class="mat-subheading-2">Another tool based on Knora and designed to work on editions already exists. You should contact NIE-INE.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://nie-ine.ch/">Please contact NIE-INE</a>
@@ -101,12 +98,7 @@
     <section class="intersection parallax-wrapper bg-2">
         <div class="parallax-curtain">
             <div class="content medium middle">
-                <!-- <h2 class="mat-title">Knora User Interface &middot; Research Layer</h2> -->
                 <h1 class="mat-display-2 app-headline">annotate, transcribe, connect and share</h1>
-                <!-- <h2 class="mat-title">This is the generic web application of the Data and Service Center for Humanities
-                    DaSCH. It's the user interface research layer of Knora &ndash; a software framework for storing,
-                    sharing, and working with primary sources and all kind of data in your research project in
-                    humanities.</h2> -->
             </div>
         </div>
     </section>
@@ -116,7 +108,7 @@
         <div class="content medium middle">
             <h2 class="mat-title">Who's behind all that?</h2>
             <h3 class="mat-subheading-2">
-                Since 2017, the Data and Service Center for humanities (DaSCH) has been a member of the Swiss Academy of
+                Since 2017, the Data and Service Center for the Humanities (DaSCH) has been a member of the Swiss Academy of
                 Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities
                 research data that ensures access to this data.
             </h3>

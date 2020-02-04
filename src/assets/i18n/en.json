@@ -18,7 +18,7 @@
           "description": ""
         },
         "add": {
-          "title": "Add a new team member",
+          "title": "Add a new project member",
           "description": ""
         }
       },
@@ -28,7 +28,7 @@
           "description": ""
         },
         "add": {
-          "title": "Add a new team member",
+          "title": "Add a new project member",
           "description": ""
         }
       }
@@ -95,9 +95,9 @@
             "step_4": "Confirm",
             "more": "Add more users"
           },
-          "add2project": "Add user member",
+          "add2project": "Add project member",
           "select": "Select from list...",
-          "create": "or create new one",
+          "create": "or create new",
           "deleted": "already deleted"
         }
       },
@@ -137,7 +137,7 @@
       "member": {
         "select": {
           "project": "Select project",
-          "user": "Select user",
+          "user": "Select project member",
           "group": "Select permission group"
         },
         "title": {

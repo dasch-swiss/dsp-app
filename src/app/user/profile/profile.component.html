@@ -34,7 +34,7 @@
     <br>
     <!-- edit button -->
     <button mat-button [color]="'primary'" (click)="openDialog('editUser', user.username)" style="width: 100%;">
-        Edit
+        Edit my profile
     </button>
 </div>
 
@@ -67,8 +67,7 @@
 
 
         <!-- edit button -->
-        <button mat-button class="user-profile-edit" [color]="'primary'"
-            (click)="openDialog('editUser', user.username)">
+        <button mat-button class="user-profile-edit" [color]="'primary'" (click)="openDialog('editUser', user.username)">
             <mat-icon>edit</mat-icon>
         </button>
     </div>

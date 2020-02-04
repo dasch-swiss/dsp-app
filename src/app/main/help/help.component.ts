@@ -28,7 +28,7 @@ export class HelpComponent implements OnInit {
         {
             icon: 'assignment',
             title: 'Project management',
-            text: 'Read more about project administration, collaboration and how to define a data model.',
+            text: 'Read more about project administration, project members and how to define a data model.',
             url: 'https://docs.dasch.swiss/user-guide/project',
             urlText: 'Open Documentation'
         },

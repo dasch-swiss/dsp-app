@@ -34,9 +34,13 @@ export class UsersListComponent implements OnInit {
 
     // i18n plural mapping
     itemPluralMapping = {
-        title: {
+        user: {
             '=1': '1 User',
             other: '# Users'
+        },
+        member: {
+            '=1': '1 Member',
+            other: '# Members'
         }
     };
 

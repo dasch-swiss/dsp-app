@@ -57,9 +57,9 @@ describe('MainComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should display the title "bring all together and simplify your research"', () => {
+    it('should display the title "bring everything together and simplify your research"', () => {
         const h1 = element.querySelector('h1.app-headline');
-        expect(h1.textContent).toEqual('bring all together and simplify your research');
+        expect(h1.textContent).toEqual('bring everything together and simplify your research');
     });
 
     // to complete:
