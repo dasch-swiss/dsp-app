@@ -8,9 +8,9 @@ describe('ErrorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ErrorComponent ]
+      declarations: [ErrorComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -22,4 +22,6 @@ describe('ErrorComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // todo: check the input, check the switch (display 403 template if we get a 403 error, same for 404)
 });

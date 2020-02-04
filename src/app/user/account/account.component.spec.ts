@@ -59,4 +59,6 @@ describe('AccountComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: should reset a password, should deactivate user account
 });

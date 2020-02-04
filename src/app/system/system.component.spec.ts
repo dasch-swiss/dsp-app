@@ -61,4 +61,6 @@ describe('SystemComponent', () => {
         );
         expect(component).toBeTruthy();
     });
+
+    // todo: check the title, check if there are 2 tabs
 });

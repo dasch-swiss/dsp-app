@@ -51,4 +51,6 @@ describe('HelpComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: check links, check knora versions
 });

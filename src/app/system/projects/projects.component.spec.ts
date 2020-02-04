@@ -55,4 +55,6 @@ describe('ProjectsComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: should get the list of projects (active and deactivated), should create/edit/deactivate a project
 });

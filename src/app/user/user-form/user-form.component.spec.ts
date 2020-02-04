@@ -63,4 +63,6 @@ describe('UserFormComponent', () => {
         );
         expect(component).toBeTruthy();
     });
+
+    // todo: should edit the user profile, check the submission and the validation of the form
 });

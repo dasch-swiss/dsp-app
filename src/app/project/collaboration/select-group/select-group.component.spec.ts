@@ -44,4 +44,6 @@ describe('SelectGroupComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: check if we get the list of groups
 });

@@ -47,4 +47,7 @@ describe('ProjectComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: check title, check if we get the shortcode of the current project and valide it, check if get session, get project by shortcode, check if the user is logged in as
+    // system admin or project admin
 });

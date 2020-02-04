@@ -62,6 +62,7 @@ describe('MainComponent', () => {
         expect(h1.textContent).toEqual('bring all together and simplify your research');
     });
 
+    // to complete:
     /* xit('should display public projects', inject([KnoraApiConnectionToken], (knoraApiConn) => {
         const projectSpy = spyOn(knoraApiConn.admin.projectsEndpoint, 'getProjects').and.callFake(
             () => {
@@ -71,5 +72,5 @@ describe('MainComponent', () => {
         expect(component).toBeTruthy();
     })); */
 
-    // it should show the cookie banner, display Accept button, not shown again when clicking (show it once, after clicking, not displayed anymore even when the page is refreshed)
+    // todo: it should show the cookie banner, display Accept button, not shown again when clicking (show it once, after clicking, not displayed anymore even when the page is refreshed)
 });

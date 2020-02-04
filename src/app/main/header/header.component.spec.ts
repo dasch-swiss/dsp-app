@@ -62,4 +62,7 @@ describe('HeaderComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: check if the lamp icon is displayed, if the link to dashboard works, if the search bar is well displayed, if there is a Help button
+    // and the user menu
 });

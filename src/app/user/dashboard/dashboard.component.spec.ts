@@ -83,4 +83,6 @@ describe('DashboardComponent', () => {
         );
         expect(component).toBeTruthy();
     });
+
+    // todo: should display a customized title, should get the list of projects (my projects or all projects if user is system admin)
 });

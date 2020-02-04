@@ -50,4 +50,6 @@ describe('ProfileComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // should display the name, the language, the username and the status of the user
 });

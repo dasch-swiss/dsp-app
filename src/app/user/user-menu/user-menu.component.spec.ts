@@ -79,4 +79,6 @@ describe('UserMenuComponent', () => {
         );
         expect(component).toBeTruthy();
     });
+
+    // todo: should display the different menu sections (system displayed only for system admin)
 });

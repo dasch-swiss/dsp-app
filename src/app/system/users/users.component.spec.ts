@@ -62,4 +62,7 @@ describe('UsersComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: should get the list of users (active and deactivated), should create a new user, should add/remove a user as system admin
+    // should add/remove a user in a project
 });

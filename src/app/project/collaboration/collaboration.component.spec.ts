@@ -115,4 +115,7 @@ describe('CollaborationComponent', () => {
         );
         expect(component).toBeTruthy();
     });
+
+    // todo: check if the list is initialized, check the filter
+    // check if the user is added and removed from the list, check if it is not possible to add a user that already exists in the list -> may be implemented in the add-user component
 });

@@ -53,4 +53,6 @@ describe('ProjectFormComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: check the form submission, the validation rules of specific fields like shortcode and the whole form
 });

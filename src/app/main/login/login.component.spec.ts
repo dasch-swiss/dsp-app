@@ -42,4 +42,6 @@ describe('LoginComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    // todo: check status (event), check title, test refresh url(?)
 });
