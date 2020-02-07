@@ -72,7 +72,7 @@ describe('login page', () => {
     });
 
     // TODO: find another solution to target the logout button
-    xit('should log out', async () => {
+    /* xit('should log out', async () => {
 
         const username = page.getUsername();
         const password = page.getPassword();
@@ -102,6 +102,6 @@ describe('login page', () => {
         // check the session
         const value = await browser.executeScript("return window.localStorage.getItem('session');");
         expect(value).toBe(null);
-    });
+    }); */
 
 });

@@ -52,5 +52,5 @@ describe('HelpComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // todo: check links, check knora versions
+    // all the buttons have been tested in e2e tests => see e2e/src/help.e2e-spec.ts
 });

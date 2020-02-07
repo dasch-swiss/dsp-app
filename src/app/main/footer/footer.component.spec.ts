@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { FooterComponent } from './footer.component';
 import { MatIconModule } from '@angular/material';
+import { FooterComponent } from './footer.component';
 
 describe('FooterComponent', () => {
     let component: FooterComponent;
@@ -27,5 +26,4 @@ describe('FooterComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // check links
 });

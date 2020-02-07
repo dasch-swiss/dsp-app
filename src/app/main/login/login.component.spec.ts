@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KnoraApiConnection } from '@knora/api';
@@ -43,5 +44,9 @@ describe('LoginComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // todo: check status (event), check title, test refresh url(?)
+    it('should define the login form', () => {
+        const loginForm = fixture.debugElement.query(By.css('app-login kui-login-form'));
+        expect(loginForm).toBeDefined();
+    });
+
 });

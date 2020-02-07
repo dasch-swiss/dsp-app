@@ -144,6 +144,7 @@ describe('help page', () => {
                 }
                 // perform here any actions needed on the new tab
                 expect(browser.driver.getCurrentUrl()).toMatch('https://discuss.dasch.swiss/');
+                // todo: check if link is still alive or broken
 
                 // close the new tab
                 browser.close();
