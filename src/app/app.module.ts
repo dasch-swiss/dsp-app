@@ -13,8 +13,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppInitService } from './app-init.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DesignQuestionComponent } from './dev/design-question/design-question.component';
-import { LoremIpsumComponent } from './dev/lorem-ipsum/lorem-ipsum.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
@@ -110,13 +108,11 @@ export function initializeApp(appInitService: AppInitService) {
         HeaderComponent,
         ErrorComponent,
         LoginComponent,
-        LoremIpsumComponent,
         AccountComponent,
         SelectLanguageComponent,
         ProjectsComponent,
         SelectGroupComponent,
         ResourceTypeComponent,
-        DesignQuestionComponent,
         ResultsComponent,
         ResourceComponent,
         ExpertSearchComponent,

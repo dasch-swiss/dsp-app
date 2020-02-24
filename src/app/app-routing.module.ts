@@ -34,9 +34,6 @@ import { UsersComponent } from './system/users/users.component';
 import { StatusComponent } from './system/status/status.component';
 import { GroupsComponent } from './system/groups/groups.component';
 
-// developer
-import { DesignQuestionComponent } from './dev/design-question/design-question.component';
-
 const routes: Routes = [
     {
         path: '',
@@ -179,10 +176,6 @@ const routes: Routes = [
     {
         path: 'cookie-policy',
         component: CookiePolicyComponent
-    },
-    {
-        path: 'dev',        // developer test environment
-        component: DesignQuestionComponent
     },
     {
         path: '**',
