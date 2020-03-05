@@ -7,13 +7,12 @@
 
     <!-- content -->
     <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
-          (ngSubmit)="submitData()">
-
+        (ngSubmit)="submitData()">
 
         <!-- short and long name -->
         <mat-form-field class="small-field">
             <input matInput placeholder="{{'appLabels.form.project.general.shortcode' | translate}} * "
-                   [maxlength]="shortcodeMaxLength" [formControl]="form.controls['shortcode']">
+                [maxlength]="shortcodeMaxLength" [formControl]="form.controls['shortcode']">
             <mat-hint *ngIf="formErrors.shortcode">
                 {{ formErrors.shortcode }}
             </mat-hint>
@@ -22,8 +21,8 @@
         <!-- short name -->
         <mat-form-field class="medium-field">
             <input matInput [maxlength]="shortnameMaxLength"
-                   placeholder="{{'appLabels.form.project.general.shortname' | translate}} * "
-                   [formControl]="form.controls['shortname']">
+                placeholder="{{'appLabels.form.project.general.shortname' | translate}} * "
+                [formControl]="form.controls['shortname']">
             <mat-hint *ngIf="formErrors.shortname">
                 {{ formErrors.shortname }}
             </mat-hint>
@@ -32,17 +31,20 @@
         <!-- long name -->
         <mat-form-field class="large-field">
             <input matInput placeholder="{{'appLabels.form.project.general.longname' | translate}} *"
-                   [formControl]="form.controls['longname']">
+                [formControl]="form.controls['longname']">
             <mat-hint *ngIf="formErrors.longname">
                 {{ formErrors.longname }}
             </mat-hint>
         </mat-form-field>
 
         <!-- description -->
-        <kui-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}}"
-                                  [disabled]="project.id !== undefined && !project.status" [textarea]="true"
-                                  [value]="project.description" (dataChanged)="getStringLiteral($event)">
+        <kui-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}} *"
+            [disabled]="project.id !== undefined && !project.status" [textarea]="true" [value]="project.description"
+            (dataChanged)="getStringLiteral($event)">
         </kui-string-literal-input>
+        <mat-hint class="string-literal-error" *ngIf="formErrors.description">
+            {{ formErrors.description }}
+        </mat-hint>
 
         <!-- <mat-form-field class="large-field">
             <textarea matInput matTextareaAutosize [matAutosizeMinRows]="6" [matAutosizeMaxRows]="12"
@@ -69,14 +71,14 @@
         <mat-form-field class="large-field">
             <mat-chip-list #chipList>
                 <mat-chip *ngFor="let tag of keywords" [selectable]="selectable" [removable]="project.status"
-                          (removed)="removeKeyword(tag)">
+                    (removed)="removeKeyword(tag)">
                     {{tag}}
                     <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
                 <input [placeholder]=" 'appLabels.form.project.general.keywords' | translate "
-                       [formControl]="form.controls['keywords']" [matChipInputFor]="chipList"
-                       [matChipInputSeparatorKeyCodes]="separatorKeyCodes" [matChipInputAddOnBlur]="addOnBlur"
-                       (matChipInputTokenEnd)="addKeyword($event)" />
+                    [formControl]="form.controls['keywords']" [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeyCodes" [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="addKeyword($event)" />
             </mat-chip-list>
 
             <!--
@@ -107,8 +109,9 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid"
-                        [disabled]="!form.valid || (projectcode && !project.status)">
+                <!-- TODO: description is required! Disable submit button, if description is empty -->
+                <button mat-raised-button type="submit" color="primary"
+                    [disabled]="!form.valid || !this.description.length || (projectcode && !project.status)">
                     <span *ngIf="projectcode">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectcode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>

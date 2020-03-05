@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { KuiActionModule } from '@knora/action';
 
 import { CollectionListComponent } from './collection-list.component';
-import { KuiActionModule } from '@knora/action';
 
 describe('CollectionListComponent', () => {
     let component: CollectionListComponent;

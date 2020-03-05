@@ -8,7 +8,6 @@ import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { ResourceComponent } from './resource.component';
 
-
 describe('ResourceComponent', () => {
     let component: ResourceComponent;
     let fixture: ComponentFixture<ResourceComponent>;

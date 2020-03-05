@@ -2,58 +2,80 @@
 
     <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-    <div *ngIf="!loading" class="content">
-
-        <!-- header toolbar -->
-        <div class="app-toolbar">
-            <div class="app-toolbar-row">
-                <h3 class="mat-body subtitle">
-                    <span>Active</span>
-                </h3>
-                <span class="fill-remaining-space"></span>
-                <span class="app-toolbar-action">
-
-                </span>
-            </div>
-            <div class="app-toolbar-row" *ngIf="projectLists">
-                <span class="app-toolbar-action button left">
-                    <!-- sort button if more than one item in the list -->
-                    <!-- TODO: doesn't work with the StringLiteral value -->
-                    <!-- <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
-                                     [(sortKey)]="sortBy"></kui-sort-button> -->
-                </span>
-                <h2 class="mat-title">{{projectLists.length | i18nPlural: itemPluralMapping['title']}}</h2>
-                <span class="fill-remaining-space"></span>
-                <span class="app-toolbar-action button right">
-                    <button mat-flat-button [color]="'primary'" (click)="openDialog('createList', 'List', project.id)">
-                        Create new
-                    </button>
-                </span>
-            </div>
+    <!-- header toolbar -->
+    <div class="app-toolbar transparent more-space-bottom" *ngIf="!loading">
+        <div class="app-toolbar-row toolbar-subtitle">
+            <h3 class="mat-body subtitle">Lists are reusable data</h3>
         </div>
 
-        <!-- list of active lists -->
-        <mat-accordion class="lists-list">
+        <div class="app-toolbar-row toolbar-form">
+            <h2 class="mat-title">
+                <span *ngIf="lists.length > 0">
+                    Project has {{lists.length | i18nPlural: itemPluralMapping['list']}}
+                </span>
+                <span *ngIf="lists.length === 0">
+                    It seems there's no list defined yet
+                </span>
+            </h2>
 
-            <mat-expansion-panel *ngFor="let list of projectLists; let i = index" class="list" (closed)="openPanel = -1" (afterExpand)="openPanel = i" [expanded]="projectLists.length === 1 || openPanel === i">
-                <mat-expansion-panel-header>
-                    <mat-panel-title [matTooltip]="list.labels | kuiStringifyStringLiteral:'all'" matTooltipPosition="above">
-                        {{list.labels | kuiStringifyStringLiteral}}
-                    </mat-panel-title>
-                    <mat-panel-description class="shorten-text" [matTooltip]="list.comments | kuiStringifyStringLiteral" matTooltipPosition="above">
-                        {{list.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}
-                        <span class="fill-remaining-space"></span>
-                        <button mat-stroked-button *ngIf="openPanel === i" (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">
-                            Edit info
-                        </button>
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
+            <span class="fill-remaining-space"></span>
 
-                <app-list-item *ngIf="!loading" [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectcode]="projectcode">
-                </app-list-item>
-            </mat-expansion-panel>
+            <span class="app-toolbar-action" [class.select-form]="lists.length">
+                <form [formGroup]="listForm" class="form" *ngIf="!loading">
 
-        </mat-accordion>
+                    <!-- list to select ontology -->
+                    <div class="form-content">
+                        <mat-form-field class="large-field select-list" *ngIf="lists.length">
+                            <mat-label>
+                                Open from list...
+                            </mat-label>
+                            <mat-select [formControl]="listForm.controls['list']" [(value)]="listIri">
+
+                                <mat-option *ngFor="let list of lists; let first = first" [value]="list.id"
+                                    [matTooltip]="list.comments | kuiStringifyStringLiteral" matTooltipPosition="below">
+                                    {{list.labels | kuiStringifyStringLiteral:'all'}}
+                                </mat-option>
+
+                            </mat-select>
+                        </mat-form-field>
+
+                    </div>
+                </form>
+            </span>
+
+            <span class="fill-remaining-space"></span>
+
+            <span class="app-toolbar-action" [class.select-form]="lists.length">
+                <button mat-raised-button color="primary" class="create-list-btn"
+                    (click)="openDialog('createList', 'List', project.id)">
+                    {{lists.length ? 'New list' : 'Create your first list'}}
+                </button>
+            </span>
+        </div>
+
+    </div>
+
+    <!-- main content: show selected list -->
+    <div *ngIf="list && !loadList" class="list-editor" #listEditor>
+
+        <mat-toolbar class="more-space-bottom">
+            <mat-toolbar-row>
+                <h3 class="mat-title" [matTooltip]="list.labels | kuiStringifyStringLiteral:'all'"
+                    matTooltipPosition="above">{{list.labels | kuiStringifyStringLiteral}}</h3>
+                <span class="fill-remaining-space"></span>
+                <p class="mat-body" [matTooltip]="list.comments | kuiStringifyStringLiteral" matTooltipPosition="above">
+                    {{list.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}</p>
+                <span class="fill-remaining-space"></span>
+                <button mat-stroked-button
+                    (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">
+                    Edit info
+                </button>
+            </mat-toolbar-row>
+        </mat-toolbar>
+
+        <app-list-item [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectcode]="projectcode">
+        </app-list-item>
+
     </div>
 
 </div>
@@ -63,5 +85,6 @@
 </div>
 
 <div class="mobile-only">
-    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}"></kui-message>
+    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
+    </kui-message>
 </div>

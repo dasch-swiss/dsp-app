@@ -16,7 +16,10 @@ describe('ProjectComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ProjectComponent, ErrorComponent],
+            declarations: [
+                ProjectComponent,
+                ErrorComponent
+            ],
             imports: [
                 KuiActionModule,
                 KuiCoreModule,

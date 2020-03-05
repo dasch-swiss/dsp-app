@@ -21,7 +21,7 @@ export class ListInfoFormComponent implements OnInit {
 
     @Output() closeDialog: EventEmitter<List | ListNodeInfo> = new EventEmitter<List>();
 
-    @Output() updateParent: EventEmitter<string> = new EventEmitter<string>();
+    @Output() updateParent: EventEmitter<{ title: string }> = new EventEmitter<{ title: string }>();
 
     project: ReadProject;
 
@@ -82,8 +82,9 @@ export class ListInfoFormComponent implements OnInit {
         statusText: "You have successfully updated list's info."
     };
 
-    constructor(@Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection) {
-    }
+    constructor(
+        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection
+    ) { }
 
     ngOnInit() {
 
@@ -189,7 +190,7 @@ export class ListInfoFormComponent implements OnInit {
                 (response: ApiResponseData<ListResponse>) => {
                     this.newList = response.body.list;
 
-                    this.updateParent.emit(response.body.list.listinfo.labels[0].value + ' (' + response.body.list.listinfo.labels[0].language + ')');
+                    this.updateParent.emit({ title: response.body.list.listinfo.labels[0].value + ' (' + response.body.list.listinfo.labels[0].language + ')' });
                     this.loading = false;
                     this.createList = true;
                 },

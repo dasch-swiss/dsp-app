@@ -3,29 +3,28 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from './main/guard/auth.guard';
 import { ErrorComponent } from './main/error/error.component';
+import { HelpComponent } from './main/help/help.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
-import { HelpComponent } from './main/help/help.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 // project
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
-import { OntologyComponent } from './project/ontology/ontology.component';
-import { ProjectComponent } from './project/project.component';
-import { PermissionComponent } from './project/permission/permission.component';
 import { ListComponent } from './project/list/list.component';
+import { OntologyComponent } from './project/ontology/ontology.component';
+import { PermissionComponent } from './project/permission/permission.component';
+import { ProjectComponent } from './project/project.component';
 
 // user
-import { ProfileComponent } from './user/profile/profile.component';
-import { UserComponent } from './user/user.component';
 import { DashboardComponent } from './user/dashboard/dashboard.component';
+import { UserComponent } from './user/user.component';
 
-// workspace
+
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
-import { ResultsComponent } from './workspace/results/results.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
+import { ResultsComponent } from './workspace/results/results.component';
 
 // system
 import { SystemComponent } from './system/system.component';
@@ -81,12 +80,17 @@ const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
-                path: 'ontology/:id',
+                path: 'ontologies/:id',
                 component: OntologyComponent,
                 canActivate: [AuthGuard]
             },
             {
                 path: 'lists',
+                component: ListComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'lists/:id',
                 component: ListComponent,
                 canActivate: [AuthGuard]
             },

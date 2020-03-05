@@ -2,6 +2,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatMenuModule } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 import { SelectLanguageComponent } from './select-language.component';
 
 const TRANSLATIONS_EN = require('../../../assets/i18n/en.json');

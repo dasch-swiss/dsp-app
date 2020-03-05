@@ -14,7 +14,7 @@ export class SelectGroupComponent implements OnInit {
     // send data only, when the selection has changed
     sendData: boolean = false;
 
-    // project iri
+    // project short code
     @Input() projectcode: string;
 
     // project iri

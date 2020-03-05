@@ -1,54 +1,154 @@
-<div class="content ontology-editor drag-drop-boundary desktop-only">
+<div *ngIf="projectAdmin" class="desktop-only">
 
-    <mat-card class="resource-type" cdkDragBoundary=".drag-drop-boundary" cdkDrag>
-        Create your data model: add the first source type here
-    </mat-card>
+    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-
-    <!--
-        <div id="ontology-editor" class="ontology-editor" >
-                Create your data model first:
-                - Drag'n'drop your source types from the list on the right hand side.
-                - You can customize the predefined sources to your needs later.
-        </div>
-    -->
-    <!--
-    <mat-toolbar>
-                <span>Select ontology to edit</span>
-                <span class="fill-remaining-space"></span>
-                <span>
-                    <mat-icon>add</mat-icon>
-                    Add new source type</span>
-            </mat-toolbar>
-
-
-    <div id="ontology-editor" class="ontology-editor" >
-        Create your data model first:
-        - Drag'n'drop your source types from the list on the right hand side.
-        - You can customize the predefined sources to your needs later.
-        <mat-accordion #ontologyEditor>
-            <app-resource-type></app-resource-type>
-        </mat-accordion>
-
-    </div>
-
-    <div class="ontology-default-elements">
-        Select your source types from this list:<br><br>
-
-        <div class="default-source-types">
-            <div class="list-item"
-              *ngFor="let st of sourcetypes"
-              (click)="loadComponent()">
-              <mat-icon>keyboard_arrow_left</mat-icon>
-                  {{st}}
+    <!-- toolbar: select ontology -->
+    <div class="content large middle" *ngIf="!loading && ontologies">
+        <div class="app-toolbar transparent more-space-bottom">
+            <div class="app-toolbar-row toolbar-subtitle">
+                <h3 class="mat-body subtitle">Define your metadata</h3>
             </div>
-          </div>
+            <div class="app-toolbar-row toolbar-form">
+                <h2 class="mat-title">
+                    <span *ngIf="ontologies.length > 0">
+                        Project has {{ontologies.length | i18nPlural: itemPluralMapping['ontology']}}
+                    </span>
+                    <span *ngIf="ontologies.length === 0">
+                        It seems there's no data model defined yet
+                    </span>
+                </h2>
 
+                <span class="fill-remaining-space"></span>
+
+                <span class="app-toolbar-action" [class.select-form]="ontologies.length">
+                    <form [formGroup]="ontologyForm" class="form" *ngIf="!loading && ontologies.length > 1">
+
+                        <!-- list to select ontology -->
+                        <div class="form-content">
+                            <mat-form-field class="large-field select-ontology" *ngIf="ontologies.length">
+                                <mat-label>
+                                    Open from list...
+                                </mat-label>
+                                <mat-select [formControl]="ontologyForm.controls['ontology']" [(value)]="ontologyIri">
+                                    <mat-option *ngFor="let onto of ontologies; let first = first" [value]="onto.id">
+                                        {{onto.label}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </form>
+                </span>
+
+                <span class="fill-remaining-space"></span>
+                <!-- Disabled button to create new ontology
+                <span class="app-toolbar-action" [class.select-form]="ontologies.length">
+                    <button mat-raised-button color="primary" class="create-data-model-btn"
+                        (click)="openOntologyForm('createOntology')">
+                        {{ontologies.length ? 'New data model' : 'Create your first data model'}}
+                    </button>
+                </span>
+                 -->
+            </div>
+        </div>
     </div>
--->
+
+    <!-- main content: overview shows resource classes of ontology -->
+    <div *ngIf="ontology" class="ontology-editor drag-drop-stop">
+
+        <mat-toolbar>
+            <mat-toolbar-row>
+                <h3 class="mat-title" [matTooltip]="ontology.id">{{ontology?.label}}</h3>
+
+                <span class="fill-remaining-space"></span>
+                <!-- <p class="mat-body" [matTooltip]="ontology.comments | kuiStringifyStringLiteral"
+                    matTooltipPosition="above">
+                    {{ontology.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}</p> -->
+                <span class="fill-remaining-space"></span>
+                <!-- Buttons to edit or delete the ontology
+                <button mat-stroked-button
+                    (click)="$event.stopPropagation(); openOntologyForm('editOntologyInfo', ontology?.id, ontology?.id)">
+                    Edit
+                </button>
+                &nbsp;
+                <button mat-stroked-button
+                    (click)="$event.stopPropagation(); delete(ontologyIri, 'Ontology', ontology.label)">
+                    Delete
+                </button>
+                -->
+            </mat-toolbar-row>
+        </mat-toolbar>
+
+        <div #ontologyEditor class="ontology-editor-canvas" *ngIf="!loadOntology">
+            <!-- button to select and add new source type to the ontology -->
+            <!-- Disabled button to add new source class
+            <div class="add-source-type" *ngIf="project?.status && sysAdmin && ontologyIri">
+                <button mat-raised-button color="primary" [matMenuTriggerFor]="addResClassMenu">
+                    Add source type&nbsp;
+                    <mat-icon>add</mat-icon>
+                </button>
+                <mat-menu #addResClassMenu="matMenu" xPosition="before">
+                    <button mat-menu-item *ngFor="let type of sourceTypes"
+                        (click)="openSourceTypeForm('addSourceType', type)">
+                        {{ type?.label }}
+                    </button>
+                </mat-menu>
+            </div>
+            -->
+
+            <!-- <app-add-source-type *ngIf="project?.status && sysAdmin && ontologyIri" [projectcode]="projectcode"
+                class="add-source-type" (refreshParent)="resetOntology(ontologyIri)" #addSourceTypeComponent>
+            </app-add-source-type> -->
+
+            <!-- list of source types -->
+            <!-- <svg width="100%" height="1200" class="mySvg" (click)="clicked($event)"></svg> -->
+
+            <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
+                cdkDragBoundary=".drag-drop-stop">
+                <mat-toolbar class="resource-class-header" cdkDragHandle>
+                    <mat-toolbar-row>
+                        <h4 mat-card-title [matTooltip]="resClass.label" matTooltipPosition="above">
+                            {{resClass.label | kuiTruncate:['24']}}</h4>
+                        <span class="fill-remaining-space"></span>
+                        <button mat-icon-button [matMenuTriggerFor]="resClassMenu" disabled>
+                            <!-- TODO: enable menu in the next PR -->
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                        <mat-menu #resClassMenu="matMenu" xPosition="before">
+                            <button mat-menu-item
+                                (click)="openSourceTypeForm('editSourceType', {iri: resClass.id, name: '', label: resClass.label})">Edit</button>
+                            <button mat-menu-item
+                                (click)="delete(resClass.id, 'SourceType', resClass.label)">Delete</button>
+                        </mat-menu>
+                    </mat-toolbar-row>
+                </mat-toolbar>
+                <div class="resource-class-properties">
+                    <ul>
+                        <span *ngFor="let prop of resClass.propertiesList">
+                            <!-- display only properties with guiOrder and they exist in list of properties
+                                and objectType is not a linkValue (otherwise we have the property twice) -->
+                            <li
+                                *ngIf="prop.guiOrder >= 0 && ontology?.properties[prop.propertyIndex] && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'">
+                                {{ontology?.properties[prop.propertyIndex].label}}
+                            </li>
+                        </span>
+
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <kui-progress-indicator *ngIf="loadOntology"></kui-progress-indicator>
+    </div>
+
+</div>
+
+<div *ngIf="!projectAdmin" class="content large middle">
+    <app-error [status]="403"></app-error>
 </div>
 
 
 <div class="mobile-only">
-    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}"></kui-message>
+    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
+    </kui-message>
 </div>

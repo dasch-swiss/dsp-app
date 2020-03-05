@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { GridComponent } from './grid.component';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
+
+import { GridComponent } from './grid.component';
 
 describe('GridComponent', () => {
   let component: GridComponent;

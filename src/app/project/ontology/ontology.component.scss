@@ -1,62 +1,116 @@
-@import '~@angular/material/theming';
-@import '../../../assets/style/config';
+@import "~@angular/material/theming";
+@import "../../../assets/style/config";
+
+$width: 304px;
+
+.app-toolbar-action {
+  &.select-form {
+    margin-top: -18px;
+  }
+
+  .form-content {
+    display: contents;
+
+    .select-ontology {
+      margin: 0 24px 0 0;
+    }
+  }
+
+  .create-data-model-btn {
+    margin: 0 0 16px;
+    min-width: 140px;
+  }
+}
 
 .ontology-editor {
-    height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 49px);
+  width: 98vw;
+  max-width: 1280px;
+  min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 300px);
+  border: 1px dotted $primary_200;
+  background: $primary_200;
+  position: relative;
+  margin: 0 auto 60px auto;
 }
 
-.resource-type {
-    width: 240px;
-    min-height: 240px;
-    height: auto;
-    position: relative;
-    top: 48px;
-    left: 48px;
-    @include mat-elevation-transition;
-    @include mat-elevation(2);
+.ontology-editor-canvas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
+  grid-column-gap: 12px;
+  grid-row-gap: 12px;
+  padding-top: 60px;
+}
 
-    &:active {
-      @include mat-elevation(8);
+.resource-class {
+  min-height: 120px;
+  height: auto;
+  position: relative;
+  @include mat-elevation-transition;
+  @include mat-elevation(2);
+  padding: 12px;
+  margin: 12px;
+  background-color: #fff;
+
+  .resource-class-header {
+    margin: -12px -12px 12px -12px;
+    width: calc(100% + 24px);
+    min-height: 48px !important;
+    height: 48px;
+    cursor: move;
+  }
+
+  .resource-class-properties {
+    li {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-left: -24px;
+      list-style-position: inside;
     }
+  }
+
+  &:active {
+    @include mat-elevation(8);
+  }
 }
-
-
-
-
+/*
 .ontology-container {
-    // display: flex;
-    // flex-direction: row;
-    width: 100%;
+  // display: flex;
+  // flex-direction: row;
+  width: 100%;
 
-    .ontology-editor {
-        overflow: hidden;
+  .ontology-editor {
+    overflow: hidden;
+  }
+
+  .ontology-default-elements {
+    width: 220px;
+    // TODO: fix height
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 72px 6px 6px;
+    background: rgb(255, 255, 255);
+
+    .list-item {
+      border: 1px solid black;
+      padding: 6px;
+      margin: 6px;
     }
 
-    .ontology-default-elements {
-        width: 220px;
-        // TODO: fix height
-        height: 100vh;
-        position: fixed;
-        right: 0;
-        top: 0;
-        padding: 72px 6px 6px;
-        background: rgb(255, 255, 255);
+    ul {
+      padding-inline-start: 0;
 
-        .list-item {
-            border: 1px solid black;
-            padding: 6px;
-            margin: 6px;
-        }
-
-        ul {
-            padding-inline-start: 0;
-
-            li {
-                list-style-type: none;
-
-            }
-        }
-
+      li {
+        list-style-type: none;
+      }
     }
+  }
+}
+ */
 
+.add-source-type {
+  position: absolute;
+  right: 12px;
+  top: 80px;
 }

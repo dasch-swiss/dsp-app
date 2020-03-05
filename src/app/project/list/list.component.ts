@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Params } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject, ListNode, StringLiteral, ListsResponse, ListNodeInfo } from '@knora/api';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ListNodeInfo, ListsResponse, ProjectResponse, ReadProject, StringLiteral } from '@knora/api';
 import { KnoraApiConnectionToken, Session } from '@knora/core';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
@@ -17,8 +18,7 @@ export class ListComponent implements OnInit {
 
     // loading for progess indicator
     loading: boolean;
-
-    reload: boolean;
+    loadList: boolean;
 
     // permissions of logged-in user
     session: Session;
@@ -32,7 +32,7 @@ export class ListComponent implements OnInit {
     project: ReadProject;
 
     // lists in the project
-    projectLists: ListNodeInfo[] = [];
+    lists: ListNodeInfo[] = [];
 
     // list of languages
     languagesList: StringLiteral[] = AppGlobal.languagesList;
@@ -40,19 +40,29 @@ export class ListComponent implements OnInit {
     // current selected language
     language: string;
 
+    // form to select list
+    listForm: FormGroup;
+
+    // selected list
+    list: ListNodeInfo;
+    // selected list iri
+    listIri: string = undefined;
+
     openPanel: number;
 
     // i18n plural mapping
     itemPluralMapping = {
-        title: {
-            '=1': '1 List',
-            other: '# Lists'
+        list: {
+            '=1': '1 list',
+            other: '# lists'
         }
     };
 
     constructor(
         @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
         private _dialog: MatDialog,
+        private _router: Router,
+        private _fb: FormBuilder,
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _titleService: Title) {
@@ -62,8 +72,17 @@ export class ListComponent implements OnInit {
             this.projectcode = params.get('shortcode');
         });
 
+        // get list iri from route
+        if (this._route.snapshot && this._route.snapshot.params.id) {
+            this.listIri = decodeURIComponent(this._route.snapshot.params.id);
+        }
+
         // set the page title
-        this._titleService.setTitle('Project ' + this.projectcode + ' | Lists');
+        if (this.listIri) {
+            this._titleService.setTitle('Project ' + this.projectcode + ' | List');
+        } else {
+            this._titleService.setTitle('Project ' + this.projectcode + ' | Lists');
+        }
     }
 
     ngOnInit() {
@@ -89,6 +108,15 @@ export class ListComponent implements OnInit {
 
                 this.initList();
 
+                this.listForm = this._fb.group({
+                    list: new FormControl({
+                        value: this.listIri, disabled: false
+                    })
+                });
+
+                this.listForm.valueChanges
+                    .subscribe(data => this.onValueChanged(data));
+
                 this.loading = false;
             },
             (error: ApiResponseError) => {
@@ -102,11 +130,23 @@ export class ListComponent implements OnInit {
      * build the list of lists
      */
     initList(): void {
+
+        this.loading = true;
+
         this.knoraApiConnection.admin.listsEndpoint.getListsInProject(this.project.id).subscribe(
             (response: ApiResponseData<ListsResponse>) => {
-                this.projectLists = response.body.lists;
+                this.lists = response.body.lists;
+
+                if (this.lists.length === 1) {
+                    this.listIri = this.lists[0].id;
+                }
+
+                if (this.listIri) {
+                    this.openList(this.listIri);
+                }
 
                 this.loading = false;
+
             },
             (error: ApiResponseError) => {
                 console.error(error);
@@ -114,11 +154,34 @@ export class ListComponent implements OnInit {
         );
     }
 
-    refresh(): void {
-        // referesh the component
-        this.loading = true;
+    // update view after selecting a list from dropdown
+    onValueChanged(data?: any) {
 
-        this.initList();
+        if (!this.listForm) {
+            return;
+        }
+
+        // go to page with this id
+        this.openList(data.list);
+
+    }
+
+    // open list by iri
+    openList(id: string) {
+
+        this.listIri = id;
+
+        this.loadList = true;
+
+        this.list = this.lists.find(i => i.id === id);
+
+        const goto = 'project/' + this.projectcode + '/lists/' + encodeURIComponent(id);
+        this._router.navigateByUrl(goto, { skipLocationChange: false });
+
+        setTimeout(() => {
+            this.loadList = false;
+        });
+
     }
 
     /**
@@ -142,7 +205,7 @@ export class ListComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(() => {
             // update the view
-            this.refresh();
+            this.initList();
         });
     }
 

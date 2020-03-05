@@ -1,7 +1,10 @@
-import { Location } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params, Router, NavigationStart, NavigationEnd, NavigationError, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs';
+
+import { Location } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+    ActivatedRoute, NavigationEnd, NavigationError, NavigationStart, ParamMap, Params, Router
+} from '@angular/router';
 
 @Component({
   selector: 'app-resource',

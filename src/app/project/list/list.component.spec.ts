@@ -1,10 +1,12 @@
+import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule, MatChipsModule, MatDialogModule, MatExpansionModule, MatIconModule, MatMenuModule, MatTooltipModule } from '@angular/material';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatMenuModule, MatSelectModule, MatToolbarModule, MatTooltipModule } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KuiActionModule } from '@knora/action';
 import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule, Session } from '@knora/core';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { ErrorComponent } from 'src/app/main/error/error.component';
@@ -12,7 +14,6 @@ import { TestConfig } from 'test.config';
 import { ListItemFormComponent } from './list-item-form/list-item-form.component';
 import { ListItemComponent } from './list-item/list-item.component';
 import { ListComponent } from './list.component';
-import { HttpClientModule } from '@angular/common/http';
 
 describe('ListComponent', () => {
     let component: ListComponent;
@@ -33,10 +34,13 @@ describe('ListComponent', () => {
                 MatButtonModule,
                 MatChipsModule,
                 MatDialogModule,
-                MatExpansionModule,
+                MatFormFieldModule,
                 MatIconModule,
                 MatMenuModule,
+                MatSelectModule,
+                MatToolbarModule,
                 MatTooltipModule,
+                ReactiveFormsModule,
                 RouterTestingModule
             ],
             providers: [

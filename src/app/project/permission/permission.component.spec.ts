@@ -13,7 +13,6 @@ import { TestConfig } from 'test.config';
 import { AddGroupComponent } from './add-group/add-group.component';
 import { PermissionComponent } from './permission.component';
 
-
 describe('PermissionComponent', () => {
     let component: PermissionComponent;
     let fixture: ComponentFixture<PermissionComponent>;

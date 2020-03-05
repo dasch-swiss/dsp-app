@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -5,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KuiActionModule } from '@knora/action';
-import { KuiCoreModule, KuiConfigToken, KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiConfigToken, KuiCoreModule } from '@knora/core';
 import { KuiSearchModule } from '@knora/search';
 import { KuiViewerModule } from '@knora/viewer';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -17,8 +18,10 @@ import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.compon
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { ErrorComponent } from './main/error/error.component';
+import { FooterComponent } from './main/footer/footer.component';
 import { GridComponent } from './main/grid/grid.component';
 import { HeaderComponent } from './main/header/header.component';
+import { HelpComponent } from './main/help/help.component';
 import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
@@ -31,15 +34,10 @@ import { ListInfoFormComponent } from './project/list/list-info-form/list-info-f
 import { ListItemFormComponent } from './project/list/list-item-form/list-item-form.component';
 import { ListItemComponent } from './project/list/list-item/list-item.component';
 import { ListComponent } from './project/list/list.component';
-import { OntologyListComponent } from './project/ontology-list/ontology-list.component';
-import { AddToDirective, OntologyComponent } from './project/ontology/ontology.component';
-import { PropertyItemComponent } from './project/ontology/property-item/property-item.component';
-import { PropertyListComponent } from './project/ontology/property-list/property-list.component';
-import { ResourceItemComponent } from './project/ontology/resource-item/resource-item.component';
-import { ResourceListComponent } from './project/ontology/resource-list/resource-list.component';
-import { ResourceTypeComponent } from './project/ontology/resource-type/resource-type.component';
-import { SelectItemComponent } from './project/ontology/select-item/select-item.component';
-import { SelectListComponent } from './project/ontology/select-list/select-list.component';
+import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
+import { OntologyComponent } from './project/ontology/ontology.component';
+import { SourceTypeFormComponent } from './project/ontology/source-type-form/source-type-form.component';
+import { SourceTypePropertyComponent } from './project/ontology/source-type-form/source-type-property/source-type-property.component';
 import { AddGroupComponent } from './project/permission/add-group/add-group.component';
 import { PermissionComponent } from './project/permission/permission.component';
 import { ProjectFormComponent } from './project/project-form/project-form.component';
@@ -65,8 +63,6 @@ import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
-import { HelpComponent } from './main/help/help.component';
-import { FooterComponent } from './main/footer/footer.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -88,15 +84,7 @@ export function initializeApp(appInitService: AppInitService) {
         ProjectFormComponent,
         CollaborationComponent,
         AddUserComponent,
-        OntologyListComponent,
         OntologyComponent,
-        AddToDirective,
-        PropertyListComponent,
-        PropertyItemComponent,
-        ResourceListComponent,
-        ResourceItemComponent,
-        SelectListComponent,
-        SelectItemComponent,
         UserComponent,
         PasswordFormComponent,
         ProfileComponent,
@@ -112,7 +100,6 @@ export function initializeApp(appInitService: AppInitService) {
         SelectLanguageComponent,
         ProjectsComponent,
         SelectGroupComponent,
-        ResourceTypeComponent,
         ResultsComponent,
         ResourceComponent,
         ExpertSearchComponent,
@@ -130,6 +117,9 @@ export function initializeApp(appInitService: AppInitService) {
         GroupsListComponent,
         PermissionComponent,
         AddGroupComponent,
+        SourceTypeFormComponent,
+        SourceTypePropertyComponent,
+        OntologyFormComponent,
         ListComponent,
         ListInfoFormComponent,
         ListItemComponent,
@@ -142,6 +132,7 @@ export function initializeApp(appInitService: AppInitService) {
         AppRoutingModule,
         BrowserModule,
         BrowserAnimationsModule,
+        CommonModule,
         FlexLayoutModule,
         HttpClientModule,
         KuiActionModule,
@@ -159,7 +150,7 @@ export function initializeApp(appInitService: AppInitService) {
             }
         })
     ],
-    entryComponents: [DialogComponent, ResourceTypeComponent],
+    entryComponents: [DialogComponent],
     providers: [
         AppInitService,
         {

@@ -1,0 +1,116 @@
+<div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
+
+    <!-- <kui-progress-indicator *ngIf="loading"></kui-progress-indicator> -->
+
+    <!-- success message after updating -->
+    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
+
+    <!-- content: Step 1 = define resource type -->
+    <form [formGroup]="sourceTypeForm" class="form-content">
+
+        <div *ngIf="showSourceTypeForm" class="source-type-data">
+            <div class="center more-space-top">
+
+                <!-- name -->
+                <mat-form-field class="short-field">
+                    <input matInput [formControl]="sourceTypeForm.controls['name']" [placeholder]="'Unique name *'">
+                    <mat-hint *ngIf="formErrors.name">
+                        {{ formErrors.name }}
+                    </mat-hint>
+                </mat-form-field>
+
+                <!-- label -->
+                <div class="medium-field string-literal-container">
+                    <kui-string-literal-input [placeholder]="'Label *'" [value]="sourceTypeLabels"
+                        (dataChanged)="handleData($event, 'labels')">
+                    </kui-string-literal-input>
+                    <mat-hint class="string-literal-error" *ngIf="formErrors.label">
+                        {{ formErrors.label }}
+                    </mat-hint>
+                </div>
+
+                <!-- description -->
+                <div class="large-field string-literal-container more-space-top">
+                    <kui-string-literal-input [placeholder]="'Description'" [value]="sourceTypeComments"
+                        [textarea]="true" (dataChanged)="handleData($event, 'comments')"></kui-string-literal-input>
+                </div>
+            </div>
+
+            <!-- action buttons -->
+            <div class="form-panel form-action">
+                <span>
+                    <button mat-button type="button" (click)="closeMessage()">
+                        {{ 'appLabels.form.action.cancel' | translate }}
+                    </button>
+                </span>
+                <span class="fill-remaining-space"></span>
+                <span>
+                    <button mat-raised-button type="submit" color="primary"
+                        [disabled]="!(sourceTypeLabels.length && this.sourceTypeForm.controls['name'].value)"
+                        (click)="nextStep($event)">
+                        Next
+                    </button>
+                </span>
+            </div>
+        </div>
+
+
+        <!-- content: Step 2 = define properties for resource type -->
+        <div *ngIf="!showSourceTypeForm" class="properties-data">
+
+            <!-- propertiy: one line, with "add" icon to add additional properties -->
+            <div cdkDropList class="properties-list" (cdkDropListDropped)="drop($event)">
+                <div cdkDrag class="property-line"
+                    *ngFor="let prop of properties?.controls; let last = last; let i = index;">
+
+                    <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
+
+                    <button *ngIf="properties.length > 1" cdkDragHandle mat-icon-button type="button"
+                        aria-label="Change order of properties" class="prefix drag-n-drop-line">
+                        <mat-icon>drag_indicator</mat-icon>
+                    </button>
+
+                    <app-source-type-property [propertyForm]="prop" [index]="i"></app-source-type-property>
+
+                    <button *ngIf="properties.length > 1" mat-icon-button type="button" color="warn"
+                        aria-label="Delete this property" class="suffix delete-line" (click)="removeProperty(i)">
+                        <mat-icon>delete_outlined</mat-icon>
+                    </button>
+                    <button *ngIf="last" [disabled]="!properties.valid" mat-icon-button type="button" color="primary"
+                        aria-label="Add new property" class="add-new-line" (click)="addProperty()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+
+            </div>
+            <!-- action buttons -->
+            <div class="form-panel form-action">
+                <span>
+                    <button mat-button type="button" (click)="prevStep($event)">
+                        {{ 'appLabels.form.action.back' | translate }}
+                    </button>
+                </span>
+                <span class="fill-remaining-space"></span>
+                <span>
+                    <button mat-raised-button type="submit" color="primary" [disabled]="!properties.valid"
+                        (click)="submitData()">
+                        <kui-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                        </kui-progress-indicator>
+                        <mat-icon *ngIf="errorMessage && !loading">close</mat-icon>
+                        {{errorMessage ? 'Failed' : 'Submit'}}
+                    </button>
+                </span>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+
+
+
+<!-- in the case of an API error: show the error message -->
+<ng-template #errorMsg>
+    <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
+</ng-template>

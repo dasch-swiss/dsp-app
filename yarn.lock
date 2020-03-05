@@ -926,7 +926,7 @@
   dependencies:
     tslib "^1.9.0"
 
-"@knora/api@0.2.0":
+"@knora/api@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@knora/api/-/api-0.2.0.tgz#ce418b87c68b0f6381b9540bd61132aca983edb6"
   integrity sha512-hNK1JJeBjXxUtO2LI8Bx5jJ1s+QGPUoo87ARETdxy5EbVIXbt2O4ohvuC0xZmhvm+2QpDI5tyPScYDjJ9543pg==

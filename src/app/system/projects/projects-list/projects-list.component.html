@@ -17,7 +17,7 @@
                 <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
                     [(sortKey)]="sortBy"></kui-sort-button>
             </span>
-            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['title']}}</h2>
+            <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['project']}}</h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action button right" *ngIf="status && createNew && sysAdmin">
                 <button mat-flat-button [color]="'primary'" (click)="openDialog('createProject')">Create new</button>

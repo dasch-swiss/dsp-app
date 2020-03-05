@@ -1,3 +1,15 @@
 .previousBtn {
-    margin: 24px 48px;
+  margin: 24px 48px;
+  position: absolute;
+}
+
+@media (max-width: 1024px) {
+  .previousBtn {
+    margin: 12px auto 0 12px;
+    // position: relative;
+  }
+
+  .large-screen-only {
+    display: none;
+  }
 }

@@ -15,12 +15,12 @@ export class SelectLanguageComponent implements OnInit, OnDestroy {
     subscription: Subscription;
 
     constructor(public translate: TranslateService,
-                public _langService: LanguageService) {
+        public _langService: LanguageService) {
 
         this.subscription = this._langService.getLanguage().subscribe(lang => {
-                this.lang = lang;
-                // console.log('lang: ' + lang.var);
-            }
+            this.lang = lang;
+            // console.log('lang: ' + lang.var);
+        }
         );
 
         translate.addLangs(['de', 'en']);

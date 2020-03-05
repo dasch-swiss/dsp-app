@@ -38,7 +38,6 @@ export class ListItemComponent implements OnInit {
                     this.language = result.body.list.listinfo.labels[0].language;
 
                     this.loading = false;
-
                 },
                 (error: ApiResponseError) => {
                     console.error(error);

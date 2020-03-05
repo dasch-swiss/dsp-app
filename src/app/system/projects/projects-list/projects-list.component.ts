@@ -40,7 +40,7 @@ export class ProjectsListComponent implements OnInit {
 
     // i18n plural mapping
     itemPluralMapping = {
-        title: {
+        project: {
             '=1': '1 Project',
             other: '# Projects'
         }

@@ -14,7 +14,6 @@ import { TestConfig } from 'test.config';
 import { PasswordFormComponent } from '../user-form/password-form/password-form.component';
 import { AccountComponent } from './account.component';
 
-
 describe('AccountComponent', () => {
     let component: AccountComponent;
     let fixture: ComponentFixture<AccountComponent>;

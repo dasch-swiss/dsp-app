@@ -66,6 +66,7 @@ export class ProjectFormComponent implements OnInit {
      * success of sending data
      */
     success = false;
+
     /**
      * message after successful post
      */
@@ -188,6 +189,7 @@ export class ProjectFormComponent implements OnInit {
 
         if (!editMode) {
             this.description = [new StringLiteral()];
+            this.formErrors['description'] = '';
         }
 
         // disabled is true, if project status is false (= archived);
@@ -221,9 +223,12 @@ export class ProjectFormComponent implements OnInit {
                 Validators.pattern(this.shortcodeRegex)
             ]),
             // 'description': new FormControl({
-            //     value: project.description[0].value, disabled: disabled
-            // }, [Validators.maxLength(this.descriptionMaxLength)]
-            // ),
+            //     value: project.description,
+            //     disabled: disabled
+            // }, [
+            //     Validators.maxLength(this.descriptionMaxLength),
+            //     Validators.required
+            // ]),
             //            'institution': new FormControl({
             //                value: project.institution, disabled: disabled
             //            }),
@@ -269,6 +274,12 @@ export class ProjectFormComponent implements OnInit {
 
     getStringLiteral(data: StringLiteral[]) {
         this.description = data;
+
+        if (!this.description.length) {
+            this.formErrors['description'] = this.validationMessages['description'].required;
+        } else {
+            this.formErrors['description'] = '';
+        }
     }
 
     addKeyword(event: MatChipInputEvent): void {

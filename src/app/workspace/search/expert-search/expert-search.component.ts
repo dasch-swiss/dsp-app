@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
 import { CacheService } from 'src/app/main/cache/cache.service';
+
+import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 @Component({

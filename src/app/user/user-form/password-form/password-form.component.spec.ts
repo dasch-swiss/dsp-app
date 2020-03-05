@@ -5,12 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { KuiActionModule } from '@knora/action';
 import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule, Session } from '@knora/core';
+import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { PasswordFormComponent } from './password-form.component';
-
 
 describe('PasswordFormComponent', () => {
     let component: PasswordFormComponent;

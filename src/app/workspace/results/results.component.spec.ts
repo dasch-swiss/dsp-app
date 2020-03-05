@@ -7,7 +7,6 @@ import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { ResultsComponent } from './results.component';
 
-
 describe('ResultsComponent', () => {
     let component: ResultsComponent;
     let fixture: ComponentFixture<ResultsComponent>;
