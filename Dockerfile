@@ -23,11 +23,11 @@ COPY . .
 
 # Install all the packages
 RUN npm install -g @angular/cli
-RUN yarn install
+RUN npm install
 
 ## Build the angular app in production mode and store the artifacts in dist folder
 ## should be: $(npm bin)/ng build --prod --env=prod --build-optimizer
-RUN yarn build-prod
+RUN npm run build-prod
 
 ### STAGE 2: Setup ###
 
