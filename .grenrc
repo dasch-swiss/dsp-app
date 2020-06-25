@@ -1,6 +1,7 @@
-module.exports = {
-    "dataSource": "milestones",
+{
+    "dataSource": "prs",
     "prefix": "",
+    "onlyMilestones": false,
     "changelogFilename": "CHANGELOG.md",
     "ignoreIssuesWith": [
         "duplicate",
@@ -21,4 +22,4 @@ module.exports = {
         "Styling:": ["styling"],
         "Other:": ["chore", "refactor"]
     }
-};
+}

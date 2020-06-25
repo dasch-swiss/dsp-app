@@ -1,25 +1,22 @@
-# Knora app
+# DSP APP &mdash; Generic user interface of DaSCH Service Platform
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddfe61cdc2a14c3b89e34d2f49cd64fa)](https://www.codacy.com/manual/dasch-swiss/Knora-app?utm_source=github.com&utm_medium=referral&utm_content=dasch-swiss/knora-app&utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.com/dasch-swiss/knora-app.svg?branch=master)](https://travis-ci.com/dasch-swiss/knora-app)
-[![CircleCI](https://circleci.com/gh/dasch-swiss/knora-app.svg?style=svg)](https://circleci.com/gh/dasch-swiss/knora-app)
+[![GitHub version](https://badge.fury.io/gh/dasch-swiss%2Fdsp-app.svg)](https://github.com/dasch-swiss/dsp-app)
+[![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
+[![Docker](https://img.shields.io/docker/cloud/build/daschswiss/dsp-app)](https://hub.docker.com/r/daschswiss/dsp-app)
 
-This app is a simple user interface for the Data and Service Center for the
-Humanities DaSCH, which uses the Knora server application in the backend.
+This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the DSP/Knora server application in the backend. It's a system for annotation and linkage of sources in arts and humanities.
 
-It's a system for annotation and linkage of sources in arts and humanities.
+DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js) to connect with [DSP-API](https://docs.dasch.swiss/developers/knora/api-reference/). DSP-API is a software framework for storing, sharing, and working with primary sources and data in the humanities.
 
-This project was generated with
-[Angular CLI](https://github.com/angular/angular-cli) version 8.0.6 and [Node](https://nodejs.org/en/) version 12.18.0.
+Additional it's built with [DSP-UI-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-ui) &mdash; reusable DSP specific Angular modules.
 
-**Required version of Knora: ^[12.0.0](https://github.com/dhlab-basel/Knora/releases/tag/v12.0.0)**
+Please check our [DSP Release Compatibility Matrix](https://docs.google.com/spreadsheets/d/e/2PACX-1vQe-0nFKqYHwHT3cNI2M_ZCycKOgDZBxtaabxEQDDkNKJf6funMVrJBJPgMFEJdiBdCesahUhURN6MS/pubhtml) to use this app with the correct and required versions of the dependent packages.
 
-Developed by the [DaSCH Team](https://dasch.swiss) in Basel.
+DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app
-will automatically reload if you change any of the source files.
+Run `ng serve` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
@@ -28,8 +25,7 @@ also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the
-`dist/` directory. Use the `--prod` flag for a production build.
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Running unit tests
 
@@ -41,8 +37,7 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 ## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the
-[Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 ## Documentation / User guidelines
 
