@@ -4,10 +4,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiActionModule } from '@knora/action';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
-import { AppInitService } from 'src/app/app-init.service';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspActionModule,
+    DspApiConfigToken,
+    DspApiConnectionToken,
+    DspCoreModule
+} from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
 import { ProfileComponent } from './profile.component';
 
@@ -19,8 +23,8 @@ describe('ProfileComponent', () => {
         TestBed.configureTestingModule({
             declarations: [ProfileComponent],
             imports: [
-                KuiActionModule,
-                KuiCoreModule,
+                DspActionModule,
+                DspCoreModule,
                 MatButtonModule,
                 MatDialogModule,
                 MatDividerModule,
@@ -30,11 +34,11 @@ describe('ProfileComponent', () => {
             providers: [
                 AppInitService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]

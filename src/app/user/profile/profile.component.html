@@ -1,8 +1,8 @@
-<kui-progress-indicator *ngIf="loading && !user"></kui-progress-indicator>
+<dsp-progress-indicator *ngIf="loading && !user"></dsp-progress-indicator>
 
 <!-- own user profile (logged-in user) -->
 <div *ngIf="!loading && user && loggedInUser" class="user-profile">
-    <img kuiAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
+    <img dspAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
     <div class="user-profile-headline">
         <!-- user names -->
         <h2 class="mat-title">{{user.givenName}}
@@ -41,7 +41,7 @@
 <!-- phone view -->
 <div *ngIf="!loading && user && loggedInUser" class="user-profile-mobile">
 
-    <img kuiAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
+    <img dspAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
 
     <div class="user-profile-headline">
         <!-- user names -->
@@ -67,7 +67,8 @@
 
 
         <!-- edit button -->
-        <button mat-button class="user-profile-edit" [color]="'primary'" (click)="openDialog('editUser', user.username)">
+        <button mat-button class="user-profile-edit" [color]="'primary'"
+            (click)="openDialog('editUser', user.username)">
             <mat-icon>edit</mat-icon>
         </button>
     </div>

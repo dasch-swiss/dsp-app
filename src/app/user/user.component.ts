@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConnectionToken, Session, SessionService } from '@knora/core';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
@@ -27,7 +27,7 @@ export class UserComponent implements OnInit {
     navigation: MenuItem[] = AppGlobal.userNav;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _session: SessionService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
@@ -43,7 +43,7 @@ export class UserComponent implements OnInit {
         */
 
         // get session
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
 
         // set the page title
         this._titleService.setTitle(this.session.user.name);
@@ -61,12 +61,12 @@ export class UserComponent implements OnInit {
         this._cache.del(this.session.user.name);
 
         // update session
-        this._session.updateSession(this.session.user.jwt, this.session.user.name);
+        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username');
 
         /**
          * set the cache here for current/logged-in user
          */
-        this._cache.get(this.session.user.name, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name));
+        this._cache.get(this.session.user.name, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name));
         this.loading = false;
 
     }

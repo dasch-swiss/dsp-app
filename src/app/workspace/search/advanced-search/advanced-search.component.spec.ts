@@ -3,11 +3,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
-import { KuiSearchModule } from '@knora/search';
-import { KuiViewerModule } from '@knora/viewer';
-import { AppInitService } from 'src/app/app-init.service';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspApiConfigToken,
+    DspApiConnectionToken,
+    DspSearchModule,
+    DspViewerModule
+} from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
 import { AdvancedSearchComponent } from './advanced-search.component';
 
@@ -20,22 +23,19 @@ describe('AdvancedSearchComponent', () => {
             declarations: [AdvancedSearchComponent],
             imports: [
                 HttpClientTestingModule,
-                KuiSearchModule,
-                KuiViewerModule,
+                DspSearchModule,
+                DspViewerModule,
                 MatExpansionModule,
                 RouterTestingModule
             ],
             providers: [
-                {
-                    provide: ActivatedRoute
-                },
                 AppInitService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]

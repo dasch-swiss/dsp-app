@@ -6,12 +6,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiConfig, KuiConfigToken } from '@knora/core';
-import { KuiSearchModule } from '@knora/search';
-import { KuiViewerModule } from '@knora/viewer';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspApiConfigToken,
+    DspApiConnectionToken,
+    DspViewerModule,
+    DspSearchModule
+} from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { ExpertSearchComponent } from './expert-search.component';
 
@@ -23,8 +26,8 @@ describe('ExpertSearchComponent', () => {
         TestBed.configureTestingModule({
             declarations: [ExpertSearchComponent],
             imports: [
-                KuiSearchModule,
-                KuiViewerModule,
+                DspSearchModule,
+                DspViewerModule,
                 MatButtonModule,
                 MatExpansionModule,
                 MatFormFieldModule,
@@ -34,20 +37,13 @@ describe('ExpertSearchComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
-                {
-                    provide: ActivatedRoute
-                },
                 AppInitService,
                 {
-                    provide: KuiConfigToken,
-                    useValue: new KuiConfig(TestConfig.ApiConfig, TestConfig.AppConfig)
-                },
-                {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]

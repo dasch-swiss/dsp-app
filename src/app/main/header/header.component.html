@@ -11,9 +11,8 @@
 
     <!-- search-panel (in desktop and tablet version) -->
     <span class="action searchbar-large-screen">
-        <kui-search-panel [route]="'/search'" [projectfilter]="true" [expert]="false" [advanced]="false">
-        </kui-search-panel>
-        <!-- <kui-fulltext-search [route]="'/search'" [projectfilter]="true"></kui-fulltext-search> -->
+        <dsp-search-panel [projectfilter]="true" [expert]="false" [advanced]="false" (search)="doSearch($event)">
+        </dsp-search-panel>
     </span>
 
     <!-- advanced and expert search (in desktop version) -->
@@ -42,7 +41,8 @@
 
         <app-select-language></app-select-language>
 
-        <button mat-raised-button color="primary" *ngIf="!session" class="login-button" (click)="goToLogin()">LOGIN</button>
+        <button mat-raised-button color="primary" *ngIf="!session" class="login-button"
+            (click)="goToLogin()">LOGIN</button>
         <app-user-menu *ngIf="session"></app-user-menu>
     </span>
 
@@ -50,6 +50,6 @@
 
 <!-- search-panel (in phone version) -->
 <div class="search-panel-phone" *ngIf="show">
-    <kui-fulltext-search class="kui-fulltext-search" [route]="'/search'" [projectfilter]="true" (showState)="show=$event">
-    </kui-fulltext-search>
+    <dsp-fulltext-search class="dsp-fulltext-search" (search)="doSearch($event)" [projectfilter]="true">
+    </dsp-fulltext-search>
 </div>

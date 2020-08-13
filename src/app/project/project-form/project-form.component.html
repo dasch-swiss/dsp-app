@@ -1,9 +1,9 @@
 <div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
 
-    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+    <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- success message after updating -->
-    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
 
     <!-- content -->
     <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
@@ -38,10 +38,10 @@
         </mat-form-field>
 
         <!-- description -->
-        <kui-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}} *"
+        <dsp-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}} *"
             [disabled]="project.id !== undefined && !project.status" [textarea]="true" [value]="project.description"
             (dataChanged)="getStringLiteral($event)">
-        </kui-string-literal-input>
+        </dsp-string-literal-input>
         <mat-hint class="string-literal-error" *ngIf="formErrors.description">
             {{ formErrors.description }}
         </mat-hint>
@@ -123,5 +123,5 @@
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
+    <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
 </ng-template>

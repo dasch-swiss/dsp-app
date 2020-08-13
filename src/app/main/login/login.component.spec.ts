@@ -1,10 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiActionModule } from '@knora/action';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
-import { AppInitService } from 'src/app/app-init.service';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspActionModule,
+    DspApiConfigToken,
+    DspApiConnectionToken,
+    DspCoreModule
+} from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
 import { LoginComponent } from './login.component';
 
@@ -16,18 +20,18 @@ describe('LoginComponent', () => {
         TestBed.configureTestingModule({
             declarations: [LoginComponent],
             imports: [
-                KuiActionModule,
-                KuiCoreModule,
+                DspActionModule,
+                DspCoreModule,
                 RouterTestingModule
             ],
             providers: [
                 AppInitService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
@@ -45,7 +49,7 @@ describe('LoginComponent', () => {
     });
 
     it('should define the login form', () => {
-        const loginForm = fixture.debugElement.query(By.css('app-login kui-login-form'));
+        const loginForm = fixture.debugElement.query(By.css('app-login dsp-login-form'));
         expect(loginForm).toBeDefined();
     });
 

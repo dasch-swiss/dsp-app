@@ -1,9 +1,9 @@
 <div *ngIf="!errorMessage; else errorMsg">
 
-    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+    <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- success message after updating -->
-    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
 
     <!-- content -->
     <form *ngIf="!loading" [formGroup]="form" class="form-content user-data" (ngSubmit)="submitData()">
@@ -12,7 +12,7 @@
         <!-- username -->
         <mat-form-field [class.large-field]="!username" [class.small-field]="username">
             <input matInput type="text" [formControl]="form.controls['username']"
-                   placeholder="{{ 'appLabels.form.user.general.username' | translate }} *" autocomplete="username">
+                placeholder="{{ 'appLabels.form.user.general.username' | translate }} *" autocomplete="username">
             <mat-hint *ngIf="formErrors.username">
                 {{ formErrors.username }}
             </mat-hint>
@@ -21,7 +21,7 @@
         <!-- email -->
         <mat-form-field [class.large-field]="!username" [class.medium-field]="username">
             <input matInput type="email" [formControl]="form.controls['email']"
-                   placeholder="{{ 'appLabels.form.user.general.email' | translate }} *" autocomplete="email">
+                placeholder="{{ 'appLabels.form.user.general.email' | translate }} *" autocomplete="email">
             <mat-hint *ngIf="formErrors.email">
                 {{ formErrors.email }}
             </mat-hint>
@@ -31,7 +31,7 @@
         <!-- given name -->
         <mat-form-field class="small-field">
             <input matInput [formControl]="form.controls['givenName']"
-                   placeholder="{{ 'appLabels.form.user.general.givenName' | translate }} *" autocomplete="givenname">
+                placeholder="{{ 'appLabels.form.user.general.givenName' | translate }} *" autocomplete="givenname">
             <mat-hint *ngIf="formErrors.givenName">
                 {{ formErrors.givenName }}
             </mat-hint>
@@ -40,7 +40,7 @@
         <!-- family name -->
         <mat-form-field class="medium-field">
             <input matInput [formControl]="form.controls['familyName']"
-                   placeholder="{{ 'appLabels.form.user.general.familyName' | translate }} *" autocomplete="name">
+                placeholder="{{ 'appLabels.form.user.general.familyName' | translate }} *" autocomplete="name">
             <mat-hint *ngIf="formErrors.familyName">
                 {{ formErrors.familyName }}
             </mat-hint>
@@ -59,7 +59,7 @@
         <mat-form-field class="large-field">
 
             <mat-select [formControl]="form.controls['lang']"
-                        [placeholder]="'appLabels.form.user.general.language' | translate">
+                [placeholder]="'appLabels.form.user.general.language' | translate">
                 <mat-option *ngFor="let lang of languagesList" [value]="lang.language">
                     {{ lang.value }}
                 </mat-option>
@@ -88,7 +88,7 @@
                 </button>
                 <!-- Create new -->
                 <button mat-raised-button type="submit" color="primary" *ngIf="!username"
-                        [disabled]="!form.valid || (form.controls['password'].value.length < 8)">
+                    [disabled]="!form.valid || (form.controls['password'].value.length < 8)">
                     {{ 'appLabels.form.action.submit' | translate }}
                 </button>
             </span>
@@ -100,5 +100,5 @@
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
+    <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
 </ng-template>

@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadProject, ReadUser } from '@knora/api';
-import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
 
@@ -36,11 +36,12 @@ export class CollaborationComponent implements OnInit {
     // list of inactive (deleted) users
     inactive: ReadUser[] = [];
 
-    @ViewChild('addUserComponent', { static: false }) addUser: AddUserComponent;
+    @ViewChild('addUserComponent') addUser: AddUserComponent;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _session: SessionService,
         private _route: ActivatedRoute,
         private _titleService: Title) {
 
@@ -49,12 +50,10 @@ export class CollaborationComponent implements OnInit {
             this.projectcode = params.get('shortcode');
         });
 
-        //        this.projectcode = this._route.parent.snapshot.params.shortcode;
-
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
 
-        // go back to project page, if the logged-in user has no admin rights
+        // TODO: go back to project page, if the logged-in user has no admin rights
         // is the logged-in user a project admin?
         /*
         const session: Session = JSON.parse(
@@ -71,16 +70,16 @@ export class CollaborationComponent implements OnInit {
         this.loading = true;
 
         // get information about the logged-in user
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
 
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
         // set the cache
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 
@@ -106,10 +105,10 @@ export class CollaborationComponent implements OnInit {
      */
     initList(): void {
         // set the cache
-        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
+        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
+        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
             (response: ApiResponseData<MembersResponse>) => {
                 this.projectMembers = response.body.members;
 

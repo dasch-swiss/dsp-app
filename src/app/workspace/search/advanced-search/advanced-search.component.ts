@@ -1,7 +1,8 @@
-import { CacheService } from 'src/app/main/cache/cache.service';
-
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { SearchParams, AdvancedSearchParamsService, AdvancedSearchParams } from '@dasch-swiss/dsp-ui';
+
 
 @Component({
     selector: 'app-advanced-search',
@@ -14,46 +15,29 @@ export class AdvancedSearchComponent implements OnInit {
 
     gravsearchQuery: string;
 
-    constructor (private _cache: CacheService,
-        private _titleService: Title) {
+    searchParams: SearchParams;
+
+    constructor(
+        private _titleService: Title,
+        private _router: Router
+    ) {
         this._titleService.setTitle('Advanced search');
     }
 
     ngOnInit() {
-
-        if (this._cache.has('gravsearch')) {
-            // reload the results
-            this._cache.get('gravsearch').subscribe(
-                (cachedQuery: string) => {
-                    this.gravsearchQuery = cachedQuery;
-                    this.loading = false;
-                },
-                (error: any) => {
-                    console.error(error);
-                }
-            );
-        }
+        // TODO: if gravsearch query exists in the advanced-search cache (AdvancedSearchParamsService), get it and reload the results
+        // otherwise empty (throw message)
     }
 
-    setGravsearch(query: string) {
+    doSearch(search: SearchParams) {
+        // reset search params
+        this.searchParams = undefined;
+        // we can do the routing here or send the search param
+        // to (resource) list view directly
+        this.searchParams = search;
+    }
 
-        this.loading = true;
-
-        this._cache.del('gravsearch');
-
-        this._cache.set('gravsearch', query);
-
-        this._cache.get('gravsearch').subscribe(
-            (cachedQuery: string) => {
-                // get cached query
-                this.gravsearchQuery = cachedQuery;
-            },
-            (error: any) => {
-                console.error(error);
-            }
-        );
-
-        this.loading = false;
-
+    openResource(id: string) {
+        this._router.navigate(['/resource/' + encodeURIComponent(id)]);
     }
 }

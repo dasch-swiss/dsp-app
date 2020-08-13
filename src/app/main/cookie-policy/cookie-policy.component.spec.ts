@@ -41,9 +41,9 @@ describe('CookiePolicyComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should display the title "Cookie Policy for Knora web application"', () => {
+    it('should display the title "Cookie Policy for DSP-API web application"', () => {
         const h1 = element.querySelector('h1');
-        expect(h1.textContent).toEqual('Cookie Policy for Knora web application');
+        expect(h1.textContent).toEqual('Cookie Policy for DSP-API web application');
     });
 
     it('should have goBack method and should call location.back', inject([Location], (loc: Location) => {

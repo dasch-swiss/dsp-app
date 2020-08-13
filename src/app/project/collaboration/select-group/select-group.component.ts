@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
 
@@ -35,7 +35,7 @@ export class SelectGroupComponent implements OnInit {
     groupCtrl = new FormControl();
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService
     ) { }
 
@@ -48,10 +48,10 @@ export class SelectGroupComponent implements OnInit {
 
     setList() {
         // set cache for groups
-        this._cache.get('groups_of_' + this.projectcode, this.knoraApiConnection.admin.groupsEndpoint.getGroups());
+        this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
 
         // update list of groups with the project specific groups
-        this._cache.get('groups_of_' + this.projectcode, this.knoraApiConnection.admin.groupsEndpoint.getGroups()).subscribe(
+        this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups()).subscribe(
             (response: ApiResponseData<GroupsResponse>) => {
                 for (const group of response.body.groups) {
                     if (group.project.id === this.projectid) {
@@ -70,20 +70,13 @@ export class SelectGroupComponent implements OnInit {
 
     onGroupChange() {
         // get the selected values onOpen and onClose
-        // console.log('onGroupChange, value', this.groupCtrl.value);
-
         // and compare them with the current values from user profile
-        // console.log('onGroupChange, permissions', this.permissions);
-
         // compare the selected data with the permissions data
         this.sendData = this.compare(this.permissions, this.groupCtrl.value);
-
-        // console.log('sendData? ', this.sendData);
 
         if (this.sendData) {
             this.permissions = this.groupCtrl.value;
             this.groupChange.emit(this.groupCtrl.value);
-            // console.log('Group changed: ', this.groupCtrl.value);
         }
     }
 

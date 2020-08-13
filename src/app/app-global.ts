@@ -1,4 +1,4 @@
-import { StringLiteral } from '@knora/api';
+import { StringLiteral } from '@dasch-swiss/dsp-js';
 
 import { MenuItem } from './main/declarations/menu-item';
 

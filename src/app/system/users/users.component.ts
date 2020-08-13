@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ReadUser, UserResponse, UsersResponse } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ReadUser, UserResponse, UsersResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-users',
@@ -16,7 +16,7 @@ export class UsersComponent implements OnInit {
     inactive: ReadUser[] = [];
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _titleService: Title
     ) {
         // set the page title
@@ -32,7 +32,7 @@ export class UsersComponent implements OnInit {
      * init the list of all users in the system
      */
     initList(): void {
-        this.knoraApiConnection.admin.usersEndpoint.getUsers().subscribe(
+        this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe(
             (response: ApiResponseData<UsersResponse>) => {
                 // clean up list of users
                 this.active = [];
@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit {
                     // get permission for each user
                     // by default, permission is not shown in the
                     // api response of user's list
-                    this.knoraApiConnection.admin.usersEndpoint.getUserByIri(u.id).subscribe(
+                    this._dspApiConnection.admin.usersEndpoint.getUserByIri(u.id).subscribe(
                         (res: ApiResponseData<UserResponse>) => {
                             u.permissions = res.body.user.permissions;
                         },

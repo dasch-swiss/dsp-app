@@ -27,7 +27,7 @@ export class LoginPage {
     }
 
     getLoginButton() {
-        return element(by.css('kui-login-form form button'));
+        return element(by.css('dsp-login-form form button'));
     }
 
 }

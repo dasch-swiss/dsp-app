@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { SearchParams } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-results',
@@ -9,20 +9,34 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class ResultsComponent implements OnInit {
 
-    searchQuery: string;
-    searchMode: string;
+    searchParams: SearchParams;
 
-    projectIri: string;
+    resIri: string;
 
-    constructor (private _route: ActivatedRoute,
-        private _titleService: Title) {
+    constructor(
+        private _route: ActivatedRoute,
+        private _router: Router
+    ) {
+
         this._route.paramMap.subscribe((params: Params) => {
-            // set the page title
-            this._titleService.setTitle('Results found for "' + decodeURIComponent(params.get('q')) + '"');
+            this.searchParams = {
+                query: decodeURIComponent(params.get('q')),
+                mode: 'fulltext'
+            };
+            // get the project iri if exists
+            if (params.get('project')) {
+                this.searchParams.filter = {
+                    limitToProject: decodeURIComponent(params.get('project'))
+                };
+            }
+
         });
     }
 
     ngOnInit() {
     }
 
+    openResource(id: string) {
+        this._router.navigate(['/resource/' + encodeURIComponent(id)]);
+    }
 }

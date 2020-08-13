@@ -7,12 +7,11 @@
             <mat-panel-description> </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <kui-expert-search (gravsearch)="setGravsearch($event)"></kui-expert-search>
+        <dsp-expert-search (search)="doSearch($event)"></dsp-expert-search>
 
     </mat-expansion-panel>
 </div>
 
-<div class="content large middle" *ngIf="gravsearchQuery">
-    <kui-search-results [searchMode]="'extended'" [searchQuery]="gravsearchQuery" [complexView]="true">
-    </kui-search-results>
+<div class="content large middle" *ngIf="searchParams">
+    <dsp-list-view [search]="searchParams" (resourceSelected)="openResource($event)" #searchResults></dsp-list-view>
 </div>

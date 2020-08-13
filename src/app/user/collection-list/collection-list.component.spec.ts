@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { KuiActionModule } from '@knora/action';
-
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { CollectionListComponent } from './collection-list.component';
 
 describe('CollectionListComponent', () => {
@@ -11,7 +10,7 @@ describe('CollectionListComponent', () => {
         TestBed.configureTestingModule({
             declarations: [CollectionListComponent],
             imports: [
-                KuiActionModule
+                DspActionModule
             ]
         }).compileComponents();
     }));

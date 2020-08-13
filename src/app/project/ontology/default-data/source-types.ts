@@ -1,4 +1,4 @@
-import { Constants } from '@knora/api';
+import { Constants } from '@dasch-swiss/dsp-js';
 
 export interface DefaultSourceType {
     iri: string;

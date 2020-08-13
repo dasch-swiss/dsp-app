@@ -11,7 +11,7 @@
 </form>
  -->
 
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
 <div *ngIf="!loading" class="app-projects">
     <!-- <mat-divider></mat-divider> -->
@@ -28,7 +28,7 @@
     <button mat-raised-button [color]="'primary'" class="add-new" (click)="openDialog('createProject')">
             NEW project
     </button>
-    <kui-progress-indicator *ngIf="loadSystem"></kui-progress-indicator>
+    <dsp-progress-indicator *ngIf="loadSystem"></dsp-progress-indicator>
     <app-projects-list *ngIf="!loadSystem" [list]="active" [system]="system"></app-projects-list>
     <app-projects-list *ngIf="!loadSystem" [list]="inactive" [system]="system"></app-projects-list>
 </div>

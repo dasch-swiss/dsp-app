@@ -1,9 +1,7 @@
 <div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
 
-    <!-- <kui-progress-indicator *ngIf="loading"></kui-progress-indicator> -->
-
     <!-- success message after updating -->
-    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
 
     <!-- content: Step 1 = define resource type -->
     <form [formGroup]="sourceTypeForm" class="form-content">
@@ -21,9 +19,9 @@
 
                 <!-- label -->
                 <div class="medium-field string-literal-container">
-                    <kui-string-literal-input [placeholder]="'Label *'" [value]="sourceTypeLabels"
+                    <dsp-string-literal-input [placeholder]="'Label *'" [value]="sourceTypeLabels"
                         (dataChanged)="handleData($event, 'labels')">
-                    </kui-string-literal-input>
+                    </dsp-string-literal-input>
                     <mat-hint class="string-literal-error" *ngIf="formErrors.label">
                         {{ formErrors.label }}
                     </mat-hint>
@@ -31,8 +29,8 @@
 
                 <!-- description -->
                 <div class="large-field string-literal-container more-space-top">
-                    <kui-string-literal-input [placeholder]="'Description'" [value]="sourceTypeComments"
-                        [textarea]="true" (dataChanged)="handleData($event, 'comments')"></kui-string-literal-input>
+                    <dsp-string-literal-input [placeholder]="'Description'" [value]="sourceTypeComments"
+                        [textarea]="true" (dataChanged)="handleData($event, 'comments')"></dsp-string-literal-input>
                 </div>
             </div>
 
@@ -94,8 +92,8 @@
                 <span>
                     <button mat-raised-button type="submit" color="primary" [disabled]="!properties.valid"
                         (click)="submitData()">
-                        <kui-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-                        </kui-progress-indicator>
+                        <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                        </dsp-progress-indicator>
                         <mat-icon *ngIf="errorMessage && !loading">close</mat-icon>
                         {{errorMessage ? 'Failed' : 'Submit'}}
                     </button>
@@ -107,10 +105,7 @@
 
 </div>
 
-
-
-
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
+    <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
 </ng-template>

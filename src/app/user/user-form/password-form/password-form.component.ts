@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { KuiMessageData } from '@knora/action';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, ReadUser, UserResponse } from '@knora/api';
-import { KnoraApiConnectionToken, Utils } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspMessageData, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
 @Component({
@@ -17,8 +16,11 @@ export class PasswordFormComponent implements OnInit {
     // in case of an api error
     errorMessage: ApiResponseError;
 
+    // TODO: replace RegexPassword by CustomRegex.PASSWORD_REGEX from dsp-ui
+    public readonly RegexPassword = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/i;
+
     // in case of updating data: was it succesful or does it failed
-    apiResponses: KuiMessageData[] = [
+    apiResponses: DspMessageData[] = [
         {
             status: 200,
             statusText: 'You have successfully updated your password.'
@@ -34,7 +36,7 @@ export class PasswordFormComponent implements OnInit {
         }
     ];
 
-    showResponse: KuiMessageData;
+    showResponse: DspMessageData;
 
     // update password for:
     @Input() username: string;
@@ -94,8 +96,9 @@ export class PasswordFormComponent implements OnInit {
     showConfirmPassword = false;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _session: SessionService,
         private _fb: FormBuilder
     ) { }
 
@@ -103,7 +106,7 @@ export class PasswordFormComponent implements OnInit {
 
         this.loading = true;
 
-        const session = JSON.parse(localStorage.getItem('session'));
+        const session = this._session.getSession();
 
         if (this.username) {
             // edit mode
@@ -121,10 +124,10 @@ export class PasswordFormComponent implements OnInit {
 
 
             // set the cache
-            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
+            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
 
             // get from cache
-            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
                 },
@@ -195,7 +198,7 @@ export class PasswordFormComponent implements OnInit {
                 [
                     Validators.required,
                     Validators.minLength(8),
-                    Validators.pattern(Utils.RegexPassword)
+                    Validators.pattern(this.RegexPassword) // TODO: replace by CustomRegex.PASSWORD_REGEX from dsp-ui
                 ]
             ),
             confirmPassword: new FormControl(
@@ -260,7 +263,7 @@ export class PasswordFormComponent implements OnInit {
         this.loading = true;
 
         // submit requester password with logged-in username
-        this.knoraApiConnection.v2.auth.login('username', this.loggedInUserName, this.confirmForm.controls.requesterPassword.value).subscribe(
+        this._dspApiConnection.v2.auth.login('username', this.loggedInUserName, this.confirmForm.controls.requesterPassword.value).subscribe(
             (response: ApiResponseData<LoginResponse>) => {
                 // go to next step with password form
                 this.showPasswordForm = !this.showPasswordForm;
@@ -285,7 +288,7 @@ export class PasswordFormComponent implements OnInit {
 
         const requesterPassword = (this.updateOwn ? this.form.controls.requesterPassword.value : this.confirmForm.controls.requesterPassword.value);
 
-        this.knoraApiConnection.admin.usersEndpoint.updateUserPassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.updateUserPassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.showResponse = (this.updateOwn ? this.apiResponses[0] : this.apiResponses[1]);
                 this.form.reset();

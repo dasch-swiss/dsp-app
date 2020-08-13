@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { existingNamesValidator } from '@knora/action';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadUser, UserResponse, UsersResponse, UpdateUserRequest, User, StringLiteral, Constants } from '@knora/api';
-import { KnoraApiConnectionToken, Utils, Session } from '@knora/core';
+import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectResponse, ReadUser, StringLiteral, UpdateUserRequest, User, UserResponse, UsersResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, existingNamesValidator, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from '../../main/cache/cache.service';
 
@@ -22,6 +21,9 @@ export class UserFormComponent implements OnInit, OnChanges {
     // the form needs then some permission checks
 
     public readonly RegexUsername = /^[a-zA-Z0-9]+$/;
+
+    // TODO: replace RegexEmail by CustomRegex.EMAIL_REGEX from dsp-ui
+    public readonly RegexEmail = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
     /**
      * status for the progress indicator
@@ -149,9 +151,10 @@ export class UserFormComponent implements OnInit, OnChanges {
     sysAdmin: boolean = false;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _route: ActivatedRoute,
         private _cache: CacheService,
+        private _session: SessionService,
         private _formBuilder: FormBuilder
     ) {
         // get username from url
@@ -167,7 +170,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.loading = true;
 
         // get information about the logged-in user
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
@@ -180,9 +183,9 @@ export class UserFormComponent implements OnInit, OnChanges {
             this.subtitle = "'appLabels.form.user.title.edit' | translate";
 
             // set the cache first: user data to edit
-            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
+            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
             // get user data from cache
-            this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
                     this.loading = !this.buildForm(this.user);
@@ -197,9 +200,9 @@ export class UserFormComponent implements OnInit, OnChanges {
              */
 
             // set the cache first: all users to avoid same email-address / username twice
-            this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers());
+            this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers());
             // get existing users to avoid same usernames and email addresses
-            this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers()).subscribe(
+            this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers()).subscribe(
                 (response: ApiResponseData<UsersResponse>) => {
                     for (const user of response.body.users) {
                         // email address of the user should be unique.
@@ -219,7 +222,8 @@ export class UserFormComponent implements OnInit, OnChanges {
                     // const name: string = this._route.snapshot.queryParams['value'];
                     const newUser: ReadUser = new ReadUser();
 
-                    if (Utils.RegexEmail.test(this.name)) {
+                    // TODO: replace this.RegexEmail by CustomRegex.EMAIL_REGEX from dsp-ui
+                    if (this.RegexEmail.test(this.name)) {
                         newUser.email = this.name;
                     } else {
                         newUser.username = this.name;
@@ -273,7 +277,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                 },
                 [
                     Validators.required,
-                    Validators.pattern(Utils.RegexEmail),
+                    Validators.pattern(this.RegexEmail), // TODO: replace this.RegexEmail by CustomRegex.EMAIL_REGEX from dsp-ui
                     existingNamesValidator(this.existingEmails)
                 ]
             ),
@@ -350,7 +354,7 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         if (this.username) {
             // edit mode: update user data
-            // username doesn't seem to be optional in @knora/api usersEndpoint type UpdateUserRequest.
+            // username doesn't seem to be optional in @dasch-swiss/dsp-js usersEndpoint type UpdateUserRequest.
             // but a user can't change the username, the field is disabled, so it's not a value in this form.
             // we have to make a small hack here.
             const userData: UpdateUserRequest = new UpdateUserRequest();
@@ -360,14 +364,12 @@ export class UserFormComponent implements OnInit, OnChanges {
             // userData.email = this.form.value.email;
             userData.lang = this.form.value.lang;
 
-            this.knoraApiConnection.admin.usersEndpoint.updateUserBasicInformation(this.user.id, userData).subscribe(
+            this._dspApiConnection.admin.usersEndpoint.updateUserBasicInformation(this.user.id, userData).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
                     this.buildForm(this.user);
                     // update cache
-                    const session: Session = JSON.parse(
-                        localStorage.getItem('session')
-                    );
+                    const session: Session = this._session.getSession();
                     if (session.user.name === this.username) {
                         // update logged in user session
                         session.user.lang = this.form.controls['lang'].value;
@@ -398,7 +400,7 @@ export class UserFormComponent implements OnInit, OnChanges {
             userData.status = this.form.value.status;
             userData.lang = this.form.value.lang;
 
-            this.knoraApiConnection.admin.usersEndpoint.createUser(userData).subscribe(
+            this._dspApiConnection.admin.usersEndpoint.createUser(userData).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
 
                     this.user = response.body.user;
@@ -406,20 +408,20 @@ export class UserFormComponent implements OnInit, OnChanges {
 
                     // update cache: users list
                     this._cache.del('allUsers');
-                    this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers());
+                    this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers());
 
                     if (this.projectcode) {
                         // if a projectcode exists, add the user to the project
                         // get project iri by projectcode
-                        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-                        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+                        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+                        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
                             (res: ApiResponseData<ProjectResponse>) => {
                                 // add user to project
-                                this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, res.body.project.id).subscribe(
+                                this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, res.body.project.id).subscribe(
                                     () => {
                                         // update project cache and member of project cache
-                                        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-                                        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
+                                        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+                                        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
                                         this.closeMessage();
                                         this.loading = false;
                                     },

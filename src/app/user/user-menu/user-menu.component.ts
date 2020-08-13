@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse, ReadUser, UserResponse } from '@knora/api';
-import { KnoraApiConnectionToken, SessionService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { MenuItem } from '../../main/declarations/menu-item';
@@ -20,18 +20,18 @@ export class UserMenuComponent implements OnInit {
     navigation: MenuItem[];
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _session: SessionService
     ) { }
 
     ngOnInit() {
         this.navigation = AppGlobal.userNav;
-        this.username = JSON.parse(localStorage.getItem('session')).user.name;
-        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+        this.username = this._session.getSession().user.name;
+        this.sysAdmin = this._session.getSession().user.sysAdmin;
 
-        this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
-        this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+        this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
+        this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.user = response.body.user;
             },
@@ -42,13 +42,13 @@ export class UserMenuComponent implements OnInit {
     }
 
     logout() {
-        this.knoraApiConnection.v2.auth.logout().subscribe(
+        this._dspApiConnection.v2.auth.logout().subscribe(
             (response: ApiResponseData<LogoutResponse>) => {
 
                 // destroy cache
                 this._cache.destroy();
 
-                // destroy (knora-ui) session
+                // destroy (dsp-ui) session
                 this._session.destroySession();
 
                 // reload the page

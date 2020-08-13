@@ -1,20 +1,18 @@
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { async, ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiActionModule } from '@knora/action';
-import { KnoraApiConnection, ReadProject, ProjectResponse, ApiResponseData, ProjectsResponse } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken } from '@knora/core';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { AppInitService, DspActionModule, DspApiConnectionToken, SessionService, DspApiConfigToken } from '@dasch-swiss/dsp-ui';
+import { of } from 'rxjs';
 import { TestConfig } from 'test.config';
-import { AppInitService } from '../app-init.service';
 import { FooterComponent } from './footer/footer.component';
 import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
-import { of } from 'rxjs';
-import { By } from '@angular/platform-browser';
 
 describe('MainComponent', () => {
     let component: MainComponent;
@@ -26,7 +24,7 @@ describe('MainComponent', () => {
         TestBed.configureTestingModule({
             declarations: [MainComponent, FooterComponent, GridComponent],
             imports: [
-                KuiActionModule,
+                DspActionModule,
                 MatButtonModule,
                 MatIconModule,
                 MatFormFieldModule,
@@ -36,19 +34,63 @@ describe('MainComponent', () => {
             ],
             providers: [
                 AppInitService,
+                SessionService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
         }).compileComponents();
     }));
 
-    beforeEach(inject([KnoraApiConnectionToken], (knoraApiConn) => {
+    // mock sessionStorage
+    beforeEach(() => {
+        let store = {};
+
+        spyOn(sessionStorage, 'getItem').and.callFake(
+            (key: string): string => {
+                return store[key] || null;
+            }
+        );
+        spyOn(sessionStorage, 'removeItem').and.callFake(
+            (key: string): void => {
+                delete store[key];
+            }
+        );
+        spyOn(sessionStorage, 'setItem').and.callFake(
+            (key: string, value: string): string => {
+                return (store[key] = <any>value);
+            }
+        );
+        spyOn(sessionStorage, 'clear').and.callFake(() => {
+            store = {};
+        });
+
+        spyOn(localStorage, 'getItem').and.callFake(
+            (key: string): string => {
+                return store[key] || null;
+            }
+        );
+        spyOn(localStorage, 'removeItem').and.callFake(
+            (key: string): void => {
+                delete store[key];
+            }
+        );
+        spyOn(localStorage, 'setItem').and.callFake(
+            (key: string, value: string): string => {
+                return (store[key] = <any>value);
+            }
+        );
+        spyOn(localStorage, 'clear').and.callFake(() => {
+            store = {};
+        });
+    });
+
+    beforeEach(inject([DspApiConnectionToken], (knoraApiConn) => {
         projectSpy = spyOn(knoraApiConn.admin.projectsEndpoint, 'getProjects').and.callFake(
             () => {
                 const projectList = {
@@ -135,6 +177,8 @@ describe('MainComponent', () => {
                 return of(projectList);
             });
 
+        sessionStorage.setItem('cookieBanner', JSON.stringify(TestConfig.CurrentSession));
+
         fixture = TestBed.createComponent(MainComponent);
         component = fixture.componentInstance;
         element = fixture.nativeElement; // the HTML reference
@@ -142,6 +186,10 @@ describe('MainComponent', () => {
     }));
 
     it('should create', () => {
+        expect<any>(sessionStorage.getItem('cookieBanner')).toBe(
+            JSON.stringify(TestConfig.CurrentSession)
+        );
+
         expect(component).toBeTruthy();
         expect(projectSpy).toHaveBeenCalledTimes(1);
     });

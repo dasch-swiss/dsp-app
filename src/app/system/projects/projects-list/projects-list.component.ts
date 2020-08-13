@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectResponse, ReadUser, UpdateProjectRequest } from '@knora/api';
-import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectResponse, ReadUser, UpdateProjectRequest, StoredProject } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session, SortingService, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 
@@ -20,7 +20,7 @@ export class ProjectsListComponent implements OnInit {
     sysAdmin: boolean = false;
     projectAdmin: boolean = false;
 
-    // list of default, knora-specific projects, which are not able to be deleted or to be editied
+    // list of default, dsp-specific projects, which are not able to be deleted or to be editied
     doNotDelete: string[] = [
         Constants.SystemProjectIRI,
         Constants.DefaultSharedOntologyIRI
@@ -30,7 +30,7 @@ export class ProjectsListComponent implements OnInit {
     @Input() status: boolean;
 
     // list of projects: depending on the parent
-    @Input() list: ReadUser[];
+    @Input() list: StoredProject[];
 
     // enable the button to create new project
     @Input() createNew: boolean = false;
@@ -66,14 +66,16 @@ export class ProjectsListComponent implements OnInit {
     sortBy: string = 'shortname';
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _session: SessionService,
+        private _sortingService: SortingService,
         private _dialog: MatDialog,
         private _router: Router) { }
 
     ngOnInit() {
         // get information about the logged-in user
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
 
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
@@ -130,13 +132,17 @@ export class ProjectsListComponent implements OnInit {
         });
     }
 
+    sortList(key: any) {
+        this.list = this._sortingService.keySortByAlphabetical(this.list, key);
+    }
+
     deleteProject(id: string) {
-        this.knoraApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();
                 // update project cache
                 this._cache.del(response.body.project.shortcode);
-                this._cache.get(response.body.project.shortcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
+                this._cache.get(response.body.project.shortcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
             },
             (error: ApiResponseError) => {
                 // this.errorMessage = error;
@@ -146,16 +152,16 @@ export class ProjectsListComponent implements OnInit {
     }
 
     activateProject(id: string) {
-        // hack because of issue #100 in knora-api-js-lib
+        // hack because of issue #100 in dsp-js
         const data: UpdateProjectRequest = new UpdateProjectRequest();
         data.status = true;
 
-        this.knoraApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();
                 // update project cache
                 this._cache.del(response.body.project.shortcode);
-                this._cache.get(response.body.project.shortcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
+                this._cache.get(response.body.project.shortcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
             },
             (error: ApiResponseError) => {
                 // this.errorMessage = error;

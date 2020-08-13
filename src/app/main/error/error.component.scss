@@ -6,15 +6,20 @@
   width: 100%;
 
   .container {
-  //    color: #fff;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    align-items: stretch;
+    align-content: space-evenly;
     padding-top: 120px;
 
     .image,
     .text {
-      flex: 1 1 auto;
-      box-sizing: border-box;
-      padding: 24px;
-      max-height: 280px;
+        justify-self: stretch;
+        align-self: stretch;
+        box-sizing: border-box;
+        padding: 24px;
+        max-height: 280px;
 
 
       &.error-message {
@@ -34,7 +39,7 @@
 }
 
 // mobile device: phone
-@media (max-width: map-get($grid-breakpoints, phone)) { 
+@media (max-width: map-get($grid-breakpoints, phone)) {
   .image {
     display: none;
   }

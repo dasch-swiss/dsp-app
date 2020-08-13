@@ -61,7 +61,7 @@ export class PropertyTypes {
                     icon: 'arrow_drop_down_circle',
                     label: 'Dropdown',
                     subPropOf: 'knora-api:ListValue',
-                    gui_ele: 'salsah-gui:List',     // Pulldown
+                    gui_ele: 'salsah-gui:List',     // 'Pulldown'
                     group: 'List'
                 },
                 {

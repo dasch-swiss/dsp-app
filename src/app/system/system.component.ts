@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 
 import { AppGlobal } from '../app-global';
 import { MenuItem } from '../main/declarations/menu-item';
+import { SessionService } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-system',
@@ -17,12 +18,14 @@ export class SystemComponent implements OnInit {
 
     navigation: MenuItem[] = AppGlobal.systemNav;
 
-    constructor(private _titleService: Title) {
+    constructor(
+        private _titleService: Title,
+        private _session: SessionService) {
         // set the page title
         this._titleService.setTitle('System administration');
     }
 
     ngOnInit() {
-        this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
+        this.sysAdmin = this._session.getSession().user.sysAdmin;
     }
 }

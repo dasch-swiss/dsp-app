@@ -3,9 +3,8 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
-import { existingNamesValidator } from '@knora/action';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ProjectsResponse, ReadProject, UpdateProjectRequest, UserResponse, Project, StringLiteral } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, Project, ProjectResponse, ProjectsResponse, ReadProject, StringLiteral, UpdateProjectRequest, UserResponse } from '@dasch-swiss/dsp-js';
+import { existingNamesValidator, DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -118,8 +117,9 @@ export class ProjectFormComponent implements OnInit {
     };
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _session: SessionService,
         private _router: Router,
         private _fb: FormBuilder) {
     }
@@ -131,7 +131,7 @@ export class ProjectFormComponent implements OnInit {
         // to have the same short name; proof it with the ForbiddenName directive
         if (!this.projectcode) {
             // create new project
-            this.knoraApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
                 (response: ApiResponseData<ProjectsResponse>) => {
 
                     for (const project of response.body.projects) {
@@ -160,8 +160,8 @@ export class ProjectFormComponent implements OnInit {
 
         } else {
             // edit mode
-            this.sysAdmin = JSON.parse(localStorage.getItem('session')).user.sysAdmin;
-            this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
+            this.sysAdmin = this._session.getSession().user.sysAdmin;
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 
@@ -346,7 +346,7 @@ export class ProjectFormComponent implements OnInit {
             }
 
             // edit / update project data
-            this.knoraApiConnection.admin.projectsEndpoint.updateProject(this.project.id, projectData).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.updateProject(this.project.id, projectData).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
 
                     this.project = response.body.project;
@@ -393,16 +393,16 @@ export class ProjectFormComponent implements OnInit {
                 i++;
             }
 
-            this.knoraApiConnection.admin.projectsEndpoint.createProject(projectData).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.createProject(projectData).subscribe(
                 (projectResponse: ApiResponseData<ProjectResponse>) => {
                     this.project = projectResponse.body.project;
                     this.buildForm(this.project);
 
                     // add logged-in user to the project
                     // who am I?
-                    this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(JSON.parse(localStorage.getItem('session')).user.name).subscribe(
+                    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this._session.getSession().user.name).subscribe(
                         (userResponse: ApiResponseData<UserResponse>) => {
-                            this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(userResponse.body.user.id, projectResponse.body.project.id).subscribe(
+                            this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userResponse.body.user.id, projectResponse.body.project.id).subscribe(
                                 (response: ApiResponseData<UserResponse>) => {
 
                                     this.loading = false;
@@ -441,7 +441,7 @@ export class ProjectFormComponent implements OnInit {
         // TODO: "are you sure?"-dialog
 
         // if true
-        this.knoraApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 // reload page
                 this.loading = true;
@@ -471,11 +471,11 @@ export class ProjectFormComponent implements OnInit {
      * @param id Project Iri
      */
     activate(id: string) {
-        // hack because of issue #100 in knora-api-js-lib
+        // hack because of issue #100 in dsp-js
         const data: UpdateProjectRequest = new UpdateProjectRequest();
         data.status = true;
 
-        this.knoraApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 // reload page
                 this.loading = true;
@@ -503,8 +503,8 @@ export class ProjectFormComponent implements OnInit {
         this.loading = true;
         // update the cache
         this._cache.del(this.projectcode);
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
                 this.buildForm(this.project);

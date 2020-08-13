@@ -1,9 +1,8 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { existingNamesValidator } from '@knora/action';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ListsResponse, ReadOntology, StringLiteral } from '@knora/api';
-import { KnoraApiConnectionToken, OntologyService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ListsResponse, ReadOntology, StringLiteral } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { SourceTypeFormService } from './source-type-form.service';
@@ -112,8 +111,7 @@ export class SourceTypeFormComponent implements OnInit, OnDestroy, AfterViewChec
     };
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
-        private _ontologyService: OntologyService,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _cdr: ChangeDetectorRef,
         private _sourceTypeFormService: SourceTypeFormService
@@ -152,7 +150,7 @@ export class SourceTypeFormComponent implements OnInit, OnDestroy, AfterViewChec
         );
 
         // get all lists; will be used to set guit attribut in list property
-        this.knoraApiConnection.admin.listsEndpoint.getListsInProject(this.projectIri).subscribe(
+        this._dspApiConnection.admin.listsEndpoint.getListsInProject(this.projectIri).subscribe(
             (response: ApiResponseData<ListsResponse>) => {
                 this._cache.set('currentOntologyLists', response.body.lists);
             },
@@ -179,7 +177,6 @@ export class SourceTypeFormComponent implements OnInit, OnDestroy, AfterViewChec
         this._cdr.detectChanges();
     }
 
-    //
     // form handling:
 
     /**
@@ -259,7 +256,7 @@ export class SourceTypeFormComponent implements OnInit, OnDestroy, AfterViewChec
         moveItemInArray(this.sourceTypeForm.value.properties, event.previousIndex, event.currentIndex);
     }
     /**
-     * set stringLiterals for label or comment from kui-string-literal-input
+     * set stringLiterals for label or comment from dsp-string-literal-input
      * @param  {StringLiteral[]} data
      * @param  {string} type
      */

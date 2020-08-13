@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, Inject } from '@angular/core';
-import { StringLiteral, KnoraApiConnection, ApiResponseData, ListResponse, ListNode, ApiResponseError } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ListNode, ListResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-list-item',
@@ -25,14 +25,14 @@ export class ListItemComponent implements OnInit {
 
     loading: boolean;
 
-    constructor(@Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection) { }
+    constructor(@Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection) { }
 
     ngOnInit() {
         this.loading = true;
 
         // in case of child node: do not run the following request
         if (!this.childNode) {
-            this.knoraApiConnection.admin.listsEndpoint.getList(this.parentIri).subscribe(
+            this._dspApiConnection.admin.listsEndpoint.getList(this.parentIri).subscribe(
                 (result: ApiResponseData<ListResponse>) => {
                     this.list = result.body.list.children;
                     this.language = result.body.list.listinfo.labels[0].language;

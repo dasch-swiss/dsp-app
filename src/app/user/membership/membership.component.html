@@ -1,7 +1,6 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
 <div class="content" *ngIf="!loading">
-
 
     <h4 class="mat-subheading-1">This user is member of
         {{user.projects.length | i18nPlural: itemPluralMapping['project']}}</h4>
@@ -21,8 +20,8 @@
             </p>
             <span class="fill-remaining-space"></span>
             <button mat-icon-button color="warn" (click)="removeFromProject(project.id)"
-                    aria-label="Button to remove user from project" matTooltip="Remove user from project"
-                    matTooltipPosition="above">
+                aria-label="Button to remove user from project" matTooltip="Remove user from project"
+                matTooltipPosition="above">
                 <mat-icon>delete_outline</mat-icon>
             </button>
         </mat-list-item>
@@ -40,8 +39,8 @@
             </mat-form-field>
             <span class="fill-remaining-space"></span>
             <button mat-stroked-button color="primary" (click)="addToProject(newProject.value)"
-                    [disabled]="!newProject.value" aria-label="Button to add user to project"
-                    matTooltip="Add user to selected project" matTooltipPosition="above">
+                [disabled]="!newProject.value" aria-label="Button to add user to project"
+                matTooltip="Add user to selected project" matTooltipPosition="above">
                 <mat-icon>add</mat-icon>
             </button>
         </mat-list-item>

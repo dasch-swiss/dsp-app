@@ -4,18 +4,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiActionModule } from '@knora/action';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
-import { KuiSearchModule } from '@knora/search';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspActionModule,
+    DspApiConfigToken,
+    DspApiConnectionToken,
+    DspCoreModule,
+    DspSearchModule
+} from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppInitService } from 'src/app/app-init.service';
 import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
 import { TestConfig } from 'test.config';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
-import { By } from '@angular/platform-browser';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
@@ -30,9 +34,9 @@ describe('HeaderComponent', () => {
             ],
             imports: [
                 HttpClientModule,
-                KuiActionModule,
-                KuiCoreModule,
-                KuiSearchModule,
+                DspActionModule,
+                DspCoreModule,
+                DspSearchModule,
                 MatIconModule,
                 MatListModule,
                 MatMenuModule,
@@ -43,11 +47,11 @@ describe('HeaderComponent', () => {
             providers: [
                 AppInitService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]
@@ -86,7 +90,7 @@ describe('HeaderComponent', () => {
     });
 
     it('should display the search panel', () => {
-        const searchPanel = fixture.debugElement.query(By.css('kui-search-panel'));
+        const searchPanel = fixture.debugElement.query(By.css('dsp-search-panel'));
         expect(searchPanel).toBeDefined();
     });
 

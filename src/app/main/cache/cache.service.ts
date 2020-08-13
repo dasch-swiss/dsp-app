@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiResponseError } from '@knora/api';
+import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { Observable, of, Subject, throwError } from 'rxjs';
 
 interface CacheContent {

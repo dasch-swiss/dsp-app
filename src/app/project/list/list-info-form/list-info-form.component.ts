@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ApiResponseData, ApiResponseError, CreateListRequest, KnoraApiConnection, List, ListInfoResponse, ListNodeInfo, ListResponse, ReadProject, StringLiteral, UpdateListInfoRequest } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { ApiResponseData, ApiResponseError, CreateListRequest, KnoraApiConnection, List, ListInfoResponse, ListNodeInfo, ListResponse, ReadProject, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-list-info-form',
@@ -83,7 +83,7 @@ export class ListInfoFormComponent implements OnInit {
     };
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection
     ) { }
 
     ngOnInit() {
@@ -93,7 +93,7 @@ export class ListInfoFormComponent implements OnInit {
         // get list info in case of edit mode: this.iri is not undefined
         if (this.iri) {
             // edit mode, get list
-            this.knoraApiConnection.admin.listsEndpoint.getListInfo(this.iri).subscribe(
+            this._dspApiConnection.admin.listsEndpoint.getListInfo(this.iri).subscribe(
                 (response: ApiResponseData<ListInfoResponse>) => {
                     this.list = response.body.listinfo;
                     this.buildForm(response.body.listinfo);
@@ -151,7 +151,7 @@ export class ListInfoFormComponent implements OnInit {
                 j++;
             }
 
-            this.knoraApiConnection.admin.listsEndpoint.updateListInfo(listInfoUpdateData).subscribe(
+            this._dspApiConnection.admin.listsEndpoint.updateListInfo(listInfoUpdateData).subscribe(
                 (response: ApiResponseData<ListInfoResponse>) => {
                     this.success = true;
                     this.loading = false;
@@ -186,7 +186,7 @@ export class ListInfoFormComponent implements OnInit {
                 j++;
             }
 
-            this.knoraApiConnection.admin.listsEndpoint.createList(listInfoData).subscribe(
+            this._dspApiConnection.admin.listsEndpoint.createList(listInfoData).subscribe(
                 (response: ApiResponseData<ListResponse>) => {
                     this.newList = response.body.list;
 

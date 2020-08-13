@@ -10,7 +10,7 @@ describe('SourceTypeFormService', () => {
     }));
 
     it('should be created', () => {
-        const service: SourceTypeFormService = TestBed.get(SourceTypeFormService);
+        const service: SourceTypeFormService = TestBed.inject(SourceTypeFormService);
         expect(service).toBeTruthy();
     });
 });

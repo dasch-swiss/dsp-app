@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection, Permissions, ProjectResponse, ReadProject, ReadUser, UserResponse, Constants } from '@knora/api';
-import { KnoraApiConnectionToken, Session, SessionService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, Constants, GroupsResponse, KnoraApiConnection, Permissions, ProjectResponse, ReadProject, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session, SessionService, SortingService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
@@ -46,7 +46,7 @@ export class UsersListComponent implements OnInit {
 
     //
     // project view
-    // knora admin group iri
+    // dsp-js admin group iri
     adminGroupIri: string = Constants.ProjectAdminGroupIRI;
 
     // project shortcode; as identifier in project cache service
@@ -80,9 +80,10 @@ export class UsersListComponent implements OnInit {
     sortBy: string = 'email';
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _session: SessionService,
         private _cache: CacheService,
+        private _sortingService: SortingService,
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
         private _router: Router
@@ -98,17 +99,17 @@ export class UsersListComponent implements OnInit {
     ngOnInit() {
 
         // get information about the logged-in user
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
 
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
         if (this.projectcode) {
             // set the cache
-            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
             // get project information
-            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
                     // is logged-in user projectAdmin?
@@ -170,7 +171,7 @@ export class UsersListComponent implements OnInit {
      */
     updateGroupsMembership(id: string, groups: string[]): void {
         const currentUserGroups: string[] = [];
-        this.knoraApiConnection.admin.usersEndpoint.getUserGroupMemberships(id).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.getUserGroupMemberships(id).subscribe(
             (response: ApiResponseData<GroupsResponse>) => {
                 for (const group of response.body.groups) {
                     currentUserGroups.push(group.id);
@@ -180,7 +181,7 @@ export class UsersListComponent implements OnInit {
                     // add user to group
                     // console.log('add user to group');
                     for (const newGroup of groups) {
-                        this.knoraApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
+                        this._dspApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
                             (ngResponse: ApiResponseData<UserResponse>) => { },
                             (ngError: ApiResponseError) => {
                                 console.error(ngError);
@@ -196,7 +197,7 @@ export class UsersListComponent implements OnInit {
                         } else {
                             // console.log('remove from group', oldGroup);
                             // the old group is not anymore one of the selected groups --> remove user from group
-                            this.knoraApiConnection.admin.usersEndpoint.removeUserFromGroupMembership(id, oldGroup).subscribe(
+                            this._dspApiConnection.admin.usersEndpoint.removeUserFromGroupMembership(id, oldGroup).subscribe(
                                 (ngResponse: ApiResponseData<UserResponse>) => { },
                                 (ngError: ApiResponseError) => {
                                     console.error(ngError);
@@ -209,7 +210,7 @@ export class UsersListComponent implements OnInit {
                             // already member of this group
                         } else {
                             // console.log('add user to group');
-                            this.knoraApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
+                            this._dspApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
                                 (ngResponse: ApiResponseData<UserResponse>) => { },
                                 (ngError: ApiResponseError) => {
                                     console.error(ngError);
@@ -232,7 +233,7 @@ export class UsersListComponent implements OnInit {
         if (this.userIsProjectAdmin(permissions)) {
             // true = user is already project admin --> remove from admin rights
 
-            this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectAdminMembership(id, this.project.id).subscribe(
+            this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectAdminMembership(id, this.project.id).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
 
                     // if this user is not the logged-in user
@@ -244,7 +245,7 @@ export class UsersListComponent implements OnInit {
                         // open dialog to confirm and
                         // redirect to project page
                         // update the cache of logged-in user and the session
-                        this._session.updateSession(this.session.user.jwt, this.session.user.name);
+                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username');
 
                         if (this.sysAdmin) {
                             // logged-in user is system admin:
@@ -266,14 +267,14 @@ export class UsersListComponent implements OnInit {
             );
         } else {
             // false: user isn't project admin yet --> add admin rights
-            this.knoraApiConnection.admin.usersEndpoint.addUserToProjectAdminMembership(id, this.project.id).subscribe(
+            this._dspApiConnection.admin.usersEndpoint.addUserToProjectAdminMembership(id, this.project.id).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     if (this.session.user.name !== response.body.user.username) {
                         this.refreshParent.emit();
                     } else {
                         // the logged-in user (system admin) added himself as project admin
                         // update the cache of logged-in user and the session
-                        this._session.updateSession(this.session.user.jwt, this.session.user.name);
+                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username');
                         this.refreshParent.emit();
                     }
                 },
@@ -284,8 +285,8 @@ export class UsersListComponent implements OnInit {
         }
     }
 
-    updateSystemAdminMembership(user: ReadUser): void {
-        this.knoraApiConnection.admin.usersEndpoint.updateUserSystemAdminMembership(user).subscribe(
+    updateSystemAdminMembership(user: ReadUser, systemAdmin: boolean): void {
+        this._dspApiConnection.admin.usersEndpoint.updateUserSystemAdminMembership(user.id, systemAdmin).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 if (this.session.user.name !== user.username) {
                     this.refreshParent.emit();
@@ -295,37 +296,6 @@ export class UsersListComponent implements OnInit {
                 console.error(error);
             }
         );
-        /*
-            if (this.userIsSystemAdmin(permissions)) {
-            // true = user is already system admin --> remove from system admin rights
-
-            this._usersService
-                .removeUserFromSystemAdmin(id)
-                .subscribe(
-                    (response: User) => {
-                        // if this user is not the logged-in user
-                        if (this.session.user.name !== response.username) {
-                            this.refreshParent.emit();
-                        }
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
-        } else {
-            // false: user isn't system admin yet --> add system admin rights
-            this._usersService
-                .addUserToSystemAdmin(id)
-                .subscribe(
-                    (response: User) => {
-                        // console.log(response);
-                        this.refreshParent.emit();
-                    },
-                    (error: ApiServiceError) => {
-                        console.error(error);
-                    }
-                );
-        } */
     }
 
     /**
@@ -377,7 +347,7 @@ export class UsersListComponent implements OnInit {
      * @returns void
      */
     removeUserFromProject(id: string): void {
-        this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(id, this.project.id).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(id, this.project.id).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.refreshParent.emit();
             },
@@ -395,7 +365,7 @@ export class UsersListComponent implements OnInit {
      * @param id user's IRI
      */
     deleteUser(id: string) {
-        this.knoraApiConnection.admin.usersEndpoint.deleteUser(id).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.deleteUser(id).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.refreshParent.emit();
             },
@@ -412,7 +382,7 @@ export class UsersListComponent implements OnInit {
      * @param id user's IRI
      */
     activateUser(id: string) {
-        this.knoraApiConnection.admin.usersEndpoint.updateUserStatus(id, true).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.updateUserStatus(id, true).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.refreshParent.emit();
             },
@@ -433,5 +403,9 @@ export class UsersListComponent implements OnInit {
             return (!this.sysAdmin && !this.projectAdmin);
         }
 
+    }
+
+    sortList(key: any) {
+        this.list = this._sortingService.keySortByAlphabetical(this.list, key);
     }
 }

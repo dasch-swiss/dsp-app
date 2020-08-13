@@ -1,6 +1,6 @@
 <div *ngIf="projectAdmin" class="content large middle desktop-only">
 
-    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+    <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- header toolbar -->
     <div class="app-toolbar transparent more-space-bottom" *ngIf="!loading">
@@ -32,8 +32,8 @@
                             <mat-select [formControl]="listForm.controls['list']" [(value)]="listIri">
 
                                 <mat-option *ngFor="let list of lists; let first = first" [value]="list.id"
-                                    [matTooltip]="list.comments | kuiStringifyStringLiteral" matTooltipPosition="below">
-                                    {{list.labels | kuiStringifyStringLiteral:'all'}}
+                                    [matTooltip]="list.comments | dspStringifyStringLiteral" matTooltipPosition="below">
+                                    {{list.labels | dspStringifyStringLiteral:'all'}}
                                 </mat-option>
 
                             </mat-select>
@@ -60,11 +60,11 @@
 
         <mat-toolbar class="more-space-bottom">
             <mat-toolbar-row>
-                <h3 class="mat-title" [matTooltip]="list.labels | kuiStringifyStringLiteral:'all'"
-                    matTooltipPosition="above">{{list.labels | kuiStringifyStringLiteral}}</h3>
+                <h3 class="mat-title" [matTooltip]="list.labels |dspStringifyStringLiteral:'all'"
+                    matTooltipPosition="above">{{list.labels | dspStringifyStringLiteral}}</h3>
                 <span class="fill-remaining-space"></span>
-                <p class="mat-body" [matTooltip]="list.comments | kuiStringifyStringLiteral" matTooltipPosition="above">
-                    {{list.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}</p>
+                <p class="mat-body" [matTooltip]="list.comments | dspStringifyStringLiteral" matTooltipPosition="above">
+                    {{list.comments | dspStringifyStringLiteral | dspTruncate:64}}</p>
                 <span class="fill-remaining-space"></span>
                 <button mat-stroked-button
                     (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">
@@ -85,6 +85,6 @@
 </div>
 
 <div class="mobile-only">
-    <kui-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
-    </kui-message>
+    <dsp-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
+    </dsp-message>
 </div>

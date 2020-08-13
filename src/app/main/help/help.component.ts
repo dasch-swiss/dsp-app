@@ -1,9 +1,9 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { KnoraApiConfig } from '@knora/api';
-import { KnoraApiConfigToken, KuiConfig, KuiConfigToken } from '@knora/core';
+import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
+import { DspApiConfigToken } from '@dasch-swiss/dsp-ui';
 import { GridItem } from '../grid/grid.component';
 
 declare let require: any;
@@ -19,6 +19,8 @@ export class HelpComponent implements OnInit {
     loading: boolean = true;
 
     appVersion: string = appVersion;
+
+    appName: string = appName;
 
     apiVersion: string;
 
@@ -50,13 +52,13 @@ export class HelpComponent implements OnInit {
 
     tools: GridItem[] = [
         {
-            title: 'Knora app ',
+            title: 'DSP-APP ',
             text: 'This is the tool of the user interface you are using right now. DaSCH\'s generic web application.',
-            url: 'https://github.com/dasch-swiss/knora-app/releases/tag/v',
+            url: 'https://github.com/dasch-swiss/dsp-app/releases/tag/v',
             urlText: 'Release notes'
         },
         {
-            title: 'Knora v',
+            title: 'DSP-API v13.0.0-rc.11',
             text: 'Framework to store, share, and work with primary sources in the humanities.',
             url: 'https://github.com/dasch-swiss/knora-api/releases/tag/v',
             urlText: 'Release notes'
@@ -91,8 +93,7 @@ export class HelpComponent implements OnInit {
     ];
 
     constructor(
-        @Inject(KuiConfigToken) private kuiConfig: KuiConfig,
-        @Inject(KnoraApiConfigToken) private knoraApiConfig: KnoraApiConfig,
+        @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _http: HttpClient) {
@@ -110,13 +111,13 @@ export class HelpComponent implements OnInit {
 
     ngOnInit() {
 
-        // set knora-app version
-        this.tools[0].title = this.kuiConfig.app.name + ' v' + this.appVersion;
+        // set dsp-app version
+        this.tools[0].title = this.appName + ' v' + this.appVersion;
         this.tools[0].url += this.appVersion;
 
-        const apiUrl: string = this.knoraApiConfig.apiUrl;
+        // const apiUrl: string = this._dspApiConfig.apiUrl;
 
-        this._http.get(apiUrl + '/admin/projects', { observe: 'response' })
+        /* this._http.get(apiUrl + '/admin/projects', { observe: 'response' })
             .subscribe(
                 (resp: HttpResponse<any>) => {
 
@@ -129,27 +130,28 @@ export class HelpComponent implements OnInit {
                     console.error(error);
                     this.apiStatus = false;
                 }
-            );
+            ); */
     }
 
-    readVersion(v: string) {
+    // TODO: to reactivate when @subotic fixes the bug in dsp-api (see https://dasch.myjetbrains.com/youtrack/issue/DSP-537)
+    /* readVersion(v: string) {
 
         if (!v) {
             return;
         }
 
-        // read and set version of knora
+        // read and set version of dsp
         const versions: string[] = v.split(' ');
-        const knora: string = versions[0].split('/')[1];
+        const dspApi: string = versions[0].split('/')[1];
 
         // keep version number as x.y.z format (no extra suffix e.g. -SNAPSHOT)
-        this.apiVersion = knora.split('-')[0];
+        this.apiVersion = dspApi.split('-')[0];
 
         this.tools[1].title += this.apiVersion;
         this.tools[1].url += this.apiVersion;
 
         this.loading = false;
 
-    }
+    } */
 
 }

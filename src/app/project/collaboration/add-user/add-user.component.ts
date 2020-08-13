@@ -1,14 +1,13 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { existingNamesValidator } from '@knora/action';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadUser, UserResponse, UsersResponse } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadUser, UserResponse, UsersResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 
 @Component({
     selector: 'app-add-user',
@@ -108,7 +107,7 @@ export class AddUserComponent implements OnInit {
     isAlreadyMember = false;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _formBuilder: FormBuilder) {
@@ -126,17 +125,17 @@ export class AddUserComponent implements OnInit {
         this.users = [];
 
         // set the cache
-        this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers());
+        this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers());
 
         // get all users; response from cache
-        this._cache.get('allUsers', this.knoraApiConnection.admin.usersEndpoint.getUsers()).subscribe(
+        this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers()).subscribe(
             (response: ApiResponseData<UsersResponse>) => {
 
                 // if a user is already member of the team, mark it in the list
                 const members: string[] = [];
 
                 // get all members of this project; response from cache
-                this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
+                this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
                     (res: ApiResponseData<MembersResponse>) => {
                         for (const m of res.body.members) {
                             members.push(m.id);
@@ -280,7 +279,7 @@ export class AddUserComponent implements OnInit {
 
         // TODO: add getUserByEmail
         // you can type username or email. We have to check, what we have now
-        this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(val).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(val).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 // case b) result if the user exists
                 this.selectedUser = response.body.user;
@@ -296,7 +295,7 @@ export class AddUserComponent implements OnInit {
                     this._cache.get(this.projectcode).subscribe(
                         (p: ApiResponseData<ProjectResponse>) => {
                             // add user to project
-                            this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.body.project.id).subscribe(
+                            this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.body.project.id).subscribe(
                                 (userAdded: ApiResponseData<UserResponse>) => {
 
                                     // successful post
@@ -309,7 +308,7 @@ export class AddUserComponent implements OnInit {
                                     // const session: Session = JSON.parse(localStorage.getItem('session'));
                                     // if (add.username === session.user.name) {
                                     this._cache.del(userAdded.body.user.username);
-                                    this._cache.get(userAdded.body.user.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(userAdded.body.user.username));
+                                    this._cache.get(userAdded.body.user.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(userAdded.body.user.username));
                                     // }
                                     this.loading = false;
 

@@ -1,13 +1,26 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatIconRegistry, MatSelectChange, MatOption } from '@angular/material';
+import { MatOption } from '@angular/material/core';
+import { MatIconRegistry } from '@angular/material/icon';
+import { MatSelectChange } from '@angular/material/select';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ClassDefinition, KnoraApiConnection, ListNodeInfo, ReadOntology, ResourcePropertyDefinition } from '@knora/api';
-import { KnoraApiConnectionToken, AutocompleteItem } from '@knora/core';
+import { ClassDefinition, KnoraApiConnection, ListNodeInfo, ReadOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DefaultPropertyType, PropertyTypes, DefaultValueType } from '../../default-data/poperty-types';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
+
+// TODO: should be removed and replaced by AutocompleteItem from dsp-ui
+/**
+ * a list, which is used in the mat-autocomplete form field
+ * contains objects with id and name. the id is usual the iri
+ */
+export interface AutocompleteItem {
+    iri: string;
+    name: string;
+    label?: string;
+}
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 // const resolvedPromise = Promise.resolve(null);
@@ -60,7 +73,7 @@ export class SourceTypePropertyComponent implements OnInit {
     // index: number;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry) {

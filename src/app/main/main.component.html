@@ -18,8 +18,9 @@
             <div class="content medium middle">
                 <!-- <h2 class="mat-title">Knora User Interface &middot; Research Layer</h2> -->
                 <h1 class="mat-display-2 app-headline">bring everything together and simplify your research</h1>
-                <h2 class="mat-title">This is the generic web application of the Data and Service Center for the Humanities
-                    DaSCH. It's the user interface research layer of Knora &ndash; a software framework for storing,
+                <h2 class="mat-title">This is the generic web application of the Data and Service Center for the
+                    Humanities
+                    DaSCH. It's the user interface research layer of DSP-API &ndash; a software framework for storing,
                     sharing, and working with primary sources and all kind of data in your research project in
                     the Humanities.
                 </h2>
@@ -28,10 +29,10 @@
 
     </section>
 
-    <!-- features: almost the same as in knora -->
+    <!-- features: almost the same as in dsp-api -->
     <section class="features">
         <div class="content large middle">
-            <h2 class="mat-title">The web application offers all features from Knora on a user-friendly platform.</h2>
+            <h2 class="mat-title">The web application offers all features from DSP-API on a user-friendly platform.</h2>
             <app-grid [list]="features"></app-grid>
         </div>
     </section>
@@ -73,7 +74,8 @@
                 <div *ngSwitchCase="'edition'">
                     <h2 class="mat-title">Uh-oh, you should contact a team working on critical editions.</h2>
                     <mat-divider class="more-space-bottom"></mat-divider>
-                    <h4 class="mat-subheading-2">Another tool based on Knora and designed to work on editions already exists. You should contact NIE-INE.
+                    <h4 class="mat-subheading-2">Another tool based on DSP-API and designed to work on editions already
+                        exists. You should contact NIE-INE.
                     </h4>
                     <mat-divider class="more-space-bottom"></mat-divider>
                     <a mat-raised-button [color]="'primary'" href="https://nie-ine.ch/">Please contact NIE-INE</a>
@@ -85,12 +87,12 @@
     <!-- list of projects -->
     <section class="projects">
         <div class="content large middle">
-            <h2 class="mat-title">The following projects have already stored their data in Knora</h2>
-            <kui-progress-indicator [color]="'primary'" *ngIf="loading && !errorMessage"></kui-progress-indicator>
+            <h2 class="mat-title">The following projects have already stored their data in DSP-API</h2>
+            <dsp-progress-indicator [color]="'primary'" *ngIf="loading && !errorMessage"></dsp-progress-indicator>
             <div *ngIf="!loading">
                 <app-grid class="project-list" [list]="projects"></app-grid>
             </div>
-            <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
+            <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
             <!-- <app-grid ngIf="!loading && projects" [list]="projects"></app-grid> -->
         </div>
     </section>
@@ -108,12 +110,14 @@
         <div class="content medium middle">
             <h2 class="mat-title">Who's behind all that?</h2>
             <h3 class="mat-subheading-2">
-                Since 2017, the Data and Service Center for the Humanities (DaSCH) has been a member of the Swiss Academy of
+                Since 2017, the Data and Service Center for the Humanities (DaSCH) has been a member of the Swiss
+                Academy of
                 Humanities and Social Sciences. The main task of the institution is to operate a platform for humanities
                 research data that ensures access to this data.
             </h3>
             <a href="https://dasch.swiss/" target="_blank">
-                <img class="logo logo-dasch" src="/assets/images/logo-dasch.jpg" alt="Data and Service Center for the Humanities">
+                <img class="logo logo-dasch" src="/assets/images/logo-dasch.jpg"
+                    alt="Data and Service Center for the Humanities">
             </a>
             <a href="https://sagw.ch/sagw/" target="_blank">
                 <img class="logo logo-sagw" src="/assets/images/logo-sagw.jpg" alt="Swiss Academy of
@@ -123,7 +127,8 @@
                 <img class="logo logo-snf" src="/assets/images/logo-snf-fns.jpg" alt="Swiss NationalScience Foundation">
             </a>
             <a href="http://swissuniversities.ch" target="_blank">
-                <img class="logo logo-swissuniversities" src="/assets/images/logo-swissuniversities.svg" alt="swissuniversities">
+                <img class="logo logo-swissuniversities" src="/assets/images/logo-swissuniversities.svg"
+                    alt="swissuniversities">
             </a>
         </div>
         <div class="content large middle">

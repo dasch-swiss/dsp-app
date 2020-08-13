@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject, ReadOntology, ClassDefinition } from '@knora/api';
-import { ApiServiceError, ApiServiceResult, KnoraApiConnectionToken, OntologyService, Session } from '@knora/core';
+import { ApiResponseData, ApiResponseError, ClassDefinition, KnoraApiConnection, ProjectResponse, ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { DefaultSourceType, SourceTypes } from './default-data/source-types';
@@ -69,16 +69,17 @@ export class OntologyComponent implements OnInit {
      */
     sourceTypes: DefaultSourceType[] = SourceTypes.data;
 
-    @ViewChild('ontologyEditor', { read: ViewContainerRef, static: false }) ontologyEditor: ViewContainerRef;
+    @ViewChild('ontologyEditor', { read: ViewContainerRef }) ontologyEditor: ViewContainerRef;
 
     // @ViewChild(AddToDirective, { static: false }) addToHost: AddToDirective;
 
     // @ViewChild('addSourceTypeComponent', { static: false }) addSourceType: AddSourceTypeComponent;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
-        private _ontologyService: OntologyService,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        // private _ontologyService: OntologyService,
         private _cache: CacheService,
+        private _session: SessionService,
         private _dialog: MatDialog,
         private _fb: FormBuilder,
         private _titleService: Title,
@@ -108,7 +109,7 @@ export class OntologyComponent implements OnInit {
         this.loading = true;
 
         // get information about the logged-in user
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
@@ -116,10 +117,10 @@ export class OntologyComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         // set the cache
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 
@@ -157,7 +158,8 @@ export class OntologyComponent implements OnInit {
         // reset existing ontology names
         this.existingOntologyNames = [];
 
-        this._ontologyService.getProjectOntologies(encodeURI(this.project.id)).subscribe(
+        // TODO: replace _ontologyService and ApiServiceError
+        /* this._ontologyService.getProjectOntologies(encodeURI(this.project.id)).subscribe(
             (ontologies: ApiServiceResult) => {
 
                 let name: string;
@@ -210,7 +212,7 @@ export class OntologyComponent implements OnInit {
             (error: ApiServiceError) => {
                 console.error(error);
             }
-        );
+        ); */
     }
 
     // update view after selecting an ontology from dropdown
@@ -238,7 +240,7 @@ export class OntologyComponent implements OnInit {
 
         this.loadOntology = true;
 
-        this.knoraApiConnection.v2.onto.getOntology(id).subscribe(
+        this._dspApiConnection.v2.onto.getOntology(id).subscribe(
             (response: ReadOntology) => {
 
                 this.ontology = response;

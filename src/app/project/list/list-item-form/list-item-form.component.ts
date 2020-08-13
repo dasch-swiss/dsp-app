@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ApiResponseData, ApiResponseError, CreateChildNodeRequest, KnoraApiConnection, ListInfoResponse, ListNodeInfo, ListNodeInfoResponse, StringLiteral } from '@knora/api';
-import { KnoraApiConnectionToken } from '@knora/core';
+import { ApiResponseData, ApiResponseError, CreateChildNodeRequest, KnoraApiConnection, ListNodeInfo, ListNodeInfoResponse, StringLiteral } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-list-item-form',
@@ -51,7 +51,7 @@ export class ListItemFormComponent implements OnInit {
     updateData: boolean = false;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection
     ) { }
 
     ngOnInit() {
@@ -64,7 +64,7 @@ export class ListItemFormComponent implements OnInit {
 
         // it can be used in the input placeholder
         if (this.parentIri) {
-            this.knoraApiConnection.admin.listsEndpoint.getListNodeInfo(this.parentIri).subscribe(
+            this._dspApiConnection.admin.listsEndpoint.getListNodeInfo(this.parentIri).subscribe(
                 (response: ApiResponseData<ListNodeInfoResponse>) => {
                     this.placeholder += response.body.nodeinfo.labels[0].value;
                     this.initComponent = false;
@@ -110,8 +110,8 @@ export class ListItemFormComponent implements OnInit {
             }
             listItem.comments = []; // TODO: comments are not yet implemented in the template
 
-            // send payload to knora's api
-            this.knoraApiConnection.admin.listsEndpoint.createChildNode(listItem).subscribe(
+            // send payload to dsp-api's api
+            this._dspApiConnection.admin.listsEndpoint.createChildNode(listItem).subscribe(
                 (response: ApiResponseData<ListNodeInfoResponse>) => {
                     this.refreshParent.emit(response.body.nodeinfo);
                     this.loading = false;

@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { existingNamesValidator } from '@knora/action';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@knora/api';
-import { KnoraApiConnectionToken, OntologyService, ApiServiceError, ApiServiceResult } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
 export interface NewOntology {
@@ -68,21 +67,19 @@ export class OntologyFormComponent implements OnInit {
     };
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _fb: FormBuilder,
-        private _router: Router,
-        private _ontologyService: OntologyService) { }
+        private _fb: FormBuilder) { }
 
     ngOnInit() {
 
         this.loading = true;
 
         // set the cache
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
         // get project
-        this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 
@@ -172,7 +169,7 @@ export class OntologyFormComponent implements OnInit {
             name: this.ontologyForm.controls['name'].value,
             label: this.ontologyLabel
         };
-        /* NOT YET IMPLEMENTED!!!
+        /* NOT YET IMPLEMENTED!!! use the new ontology endpoint from dsp-js
         this._ontologyService.createOntology(ontologyData).subscribe(
             (ontology: any) => {
 

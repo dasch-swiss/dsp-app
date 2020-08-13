@@ -25,8 +25,8 @@ describe('SelectLanguageComponent', () => {
             ],
             providers: [TranslateService]
         }).compileComponents();
-        translate = TestBed.get(TranslateService);
-        http = TestBed.get(HttpTestingController);
+        translate = TestBed.inject(TranslateService);
+        http = TestBed.inject(HttpTestingController);
     }));
 
     beforeEach(() => {

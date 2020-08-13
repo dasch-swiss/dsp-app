@@ -1,11 +1,16 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectsResponse, ReadUser, UserResponse, Constants } from '@knora/api';
-import { KnoraApiConnectionToken, Session } from '@knora/core';
+import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectsResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
-import { IPermissions } from '@knora/api/src/interfaces/models/admin/i-permissions';
+
+// TODO: replace it by IPermissions from dsp-js
+export interface IPermissions {
+    groupsPerProject: any;
+    administrativePermissionsPerProject: any;
+}
 
 @Component({
     selector: 'app-membership',
@@ -36,7 +41,7 @@ export class MembershipComponent implements OnInit {
     };
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _router: Router
     ) { }
@@ -46,10 +51,10 @@ export class MembershipComponent implements OnInit {
         this.loading = true;
 
         // set the cache
-        this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
+        this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
 
         // get from cache
-        this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+        this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.user = response.body.user;
                 this.initNewProjects();
@@ -67,7 +72,7 @@ export class MembershipComponent implements OnInit {
 
         this.projects = [];
         // get all projects and filter by projects where the user is already member of
-        this.knoraApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
             (response: ApiResponseData<ProjectsResponse>) => {
 
                 for (const p of response.body.projects) {
@@ -113,7 +118,7 @@ export class MembershipComponent implements OnInit {
         const projectcode: string = iri.replace('http://rdfh.ch/projects/', '');
 
         // reset the cache of project members
-        this._cache.get('members_of_' + projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(projectcode));
+        this._cache.get('members_of_' + projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(projectcode));
 
     }
 
@@ -126,12 +131,12 @@ export class MembershipComponent implements OnInit {
 
         this.loading = true;
 
-        this.knoraApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(this.user.id, iri).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(this.user.id, iri).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.user = response.body.user;
                 // set new user cache
                 this._cache.del(this.username);
-                this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
+                this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
                 this.initNewProjects();
                 // this.updateProjectCache(iri);
                 this.loading = false;
@@ -149,12 +154,12 @@ export class MembershipComponent implements OnInit {
 
         this.loading = true;
 
-        this.knoraApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, iri).subscribe(
+        this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, iri).subscribe(
             (response: ApiResponseData<UserResponse>) => {
                 this.user = response.body.user;
                 // set new user cache
                 this._cache.del(this.username);
-                this._cache.get(this.username, this.knoraApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
+                this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
                 this.initNewProjects();
                 // this.updateProjectCache(iri);
                 this.loading = false;

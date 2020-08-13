@@ -4,7 +4,7 @@
 [![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
 [![Docker](https://img.shields.io/docker/cloud/build/daschswiss/dsp-app)](https://hub.docker.com/r/daschswiss/dsp-app)
 
-This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the DSP/Knora server application in the backend. It's a system for annotation and linkage of sources in arts and humanities.
+This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the DSP-API/Knora server application in the backend. It's a system for annotation and linkage of sources in arts and humanities.
 
 DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js) to connect with [DSP-API](https://docs.dasch.swiss/developers/knora/api-reference/). DSP-API is a software framework for storing, sharing, and working with primary sources and data in the humanities.
 

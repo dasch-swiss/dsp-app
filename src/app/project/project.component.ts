@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@knora/api';
-import { KnoraApiConnectionToken, Session, SessionService } from '@knora/core';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
@@ -38,7 +38,7 @@ export class ProjectComponent implements OnInit {
     navigation: MenuItem[] = AppGlobal.projectNav;
 
     constructor(
-        @Inject(KnoraApiConnectionToken) private knoraApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _session: SessionService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
@@ -48,7 +48,7 @@ export class ProjectComponent implements OnInit {
         this.projectcode = this._route.snapshot.params.shortcode;
 
         // get session
-        this.session = JSON.parse(localStorage.getItem('session'));
+        this.session = this._session.getSession();
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode);
@@ -63,7 +63,7 @@ export class ProjectComponent implements OnInit {
             this.loading = true;
             // set the cache here:
             // current project data, project members and project groups
-            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
             // get information about the logged-in user, if one is logged-in
             if (this.session) {
@@ -71,7 +71,7 @@ export class ProjectComponent implements OnInit {
             }
 
             // get the project data from cache
-            this._cache.get(this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 
@@ -83,8 +83,8 @@ export class ProjectComponent implements OnInit {
 
                     // is logged-in user projectAdmin?
                     if (this.session) {
-                        this._session.updateSession(this.session.user.jwt, this.session.user.name);
-                        this.session = JSON.parse(localStorage.getItem('session'));
+                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username');
+                        this.session = this._session.getSession();
 
                         // is the logged-in user system admin?
                         this.sysAdmin = this.session.user.sysAdmin;
@@ -95,8 +95,8 @@ export class ProjectComponent implements OnInit {
 
                     // set the cache for project members and groups
                     if (this.projectAdmin) {
-                        this._cache.get('members_of_' + this.projectcode, this.knoraApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
-                        this._cache.get('groups_of_' + this.projectcode, this.knoraApiConnection.admin.groupsEndpoint.getGroups());
+                        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
+                        this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
                     }
 
                     this.loading = false;

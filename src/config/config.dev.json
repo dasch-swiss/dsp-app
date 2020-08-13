@@ -1,14 +1,8 @@
 {
-    "knora": {
-        "apiProtocol": "http",
-        "apiHost": "0.0.0.0",
-        "apiPort": 3333,
-        "apiPath": "",
-        "jsonWebToken": "",
-        "logErrors": true
-    },
-    "app": {
-        "name": "Knora-APP",
-        "url": "0.0.0.0:4200"
-    }
+    "apiProtocol": "http",
+    "apiHost": "0.0.0.0",
+    "apiPort": 3333,
+    "apiPath": "",
+    "jsonWebToken": "",
+    "logErrors": true
 }

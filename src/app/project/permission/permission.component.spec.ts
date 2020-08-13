@@ -2,11 +2,14 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KuiActionModule } from '@knora/action';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, Session } from '@knora/core';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspActionModule,
+    DspApiConfigToken,
+    DspApiConnectionToken
+} from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
-import { AppInitService } from 'src/app/app-init.service';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { GroupsListComponent } from 'src/app/system/groups/groups-list/groups-list.component';
 import { TestConfig } from 'test.config';
@@ -27,7 +30,7 @@ describe('PermissionComponent', () => {
             ],
             imports: [
                 HttpClientTestingModule,
-                KuiActionModule,
+                DspActionModule,
                 RouterTestingModule
             ],
             providers: [
@@ -47,11 +50,11 @@ describe('PermissionComponent', () => {
                 },
                 AppInitService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]

@@ -14,8 +14,8 @@
         <div class="app-toolbar-row">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
-                <kui-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
-                    [(sortKey)]="sortBy"></kui-sort-button>
+                <dsp-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
+                    [position]="'right'" (sortKeyChange)="sortList($event)"></dsp-sort-button>
             </span>
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['project']}}</h2>
             <span class="fill-remaining-space"></span>
@@ -28,7 +28,7 @@
     <!-- content: list -->
     <table class="table more-space-bottom" [class.deactivated]="!status">
 
-        <tr class="table-entry" *ngFor="let project of list | kuiSortBy: sortBy; let last = last"
+        <tr class="table-entry" *ngFor="let project of list | dspSortBy: sortBy; let last = last"
             [class.no-border]="last">
             <!-- logo -->
             <td class="avatar-cell">

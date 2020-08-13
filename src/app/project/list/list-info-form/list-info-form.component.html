@@ -1,16 +1,16 @@
 <div *ngIf="!errorMessage; else errorMsg">
 
-    <kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+    <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- success message after updating -->
-    <kui-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></kui-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
 
     <div *ngIf="!loading && !createList" class="form-content list-info">
 
         <!-- list label -->
-        <kui-string-literal-input [placeholder]="'List label'" [value]="labels"
+        <dsp-string-literal-input [placeholder]="'List label'" [value]="labels"
             (dataChanged)="handleData($event, 'labels')">
-        </kui-string-literal-input>
+        </dsp-string-literal-input>
         <!-- TODO: we should support mat hint in the string literal input        <mat-hint *ngIf="formErrors.label">
             {{ formErrors.label }}
         </mat-hint> -->
@@ -18,9 +18,9 @@
         <br><br>
 
         <!-- list description / comment -->
-        <kui-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
+        <dsp-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
             (dataChanged)="handleData($event, 'comments')" [language]="labels.length ? labels[0].language : 'en'">
-        </kui-string-literal-input>
+        </dsp-string-literal-input>
 
         <div class="form-panel form-action">
             <span>
@@ -48,5 +48,5 @@
 
 <!-- in the case of an API error: show the error message -->
 <ng-template #errorMsg>
-    <kui-message *ngIf="errorMessage" [message]="errorMessage"></kui-message>
+    <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
 </ng-template>

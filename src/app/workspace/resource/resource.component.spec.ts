@@ -1,10 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@knora/api';
-import { KnoraApiConfigToken, KnoraApiConnectionToken, KuiCoreModule } from '@knora/core';
-import { KuiViewerModule } from '@knora/viewer';
-import { AppInitService } from 'src/app/app-init.service';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import {
+    AppInitService,
+    DspApiConfigToken,
+    DspApiConnectionToken,
+    DspCoreModule,
+    DspViewerModule
+} from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
 import { ResourceComponent } from './resource.component';
 
@@ -16,19 +20,19 @@ describe('ResourceComponent', () => {
         TestBed.configureTestingModule({
             declarations: [ResourceComponent],
             imports: [
-                KuiCoreModule,
-                KuiViewerModule,
+                DspCoreModule,
+                DspViewerModule,
                 MatIconModule,
                 RouterTestingModule
             ],
             providers: [
                 AppInitService,
                 {
-                    provide: KnoraApiConfigToken,
+                    provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
                 {
-                    provide: KnoraApiConnectionToken,
+                    provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 }
             ]

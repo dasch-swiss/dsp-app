@@ -8,11 +8,11 @@ fdescribe('footer', () => {
         footer = new FooterPage();
     });
 
-    it('should start the description with "Knora app is built with"', async () => {
+    it('should start the description with "DSP-APP is built with"', async () => {
         await browser.waitForAngularEnabled(false);
         footer.navigateTo();
         await browser.waitForAngularEnabled(true);
-        expect(footer.getFooterText()).toContain('Knora app is built with');
+        expect(footer.getFooterText()).toContain('DSP-APP is built with');
     });
 
     it('should route to Angular page', async () => {
@@ -83,7 +83,7 @@ fdescribe('footer', () => {
         });
     });
 
-    it('should route to Knora doc page', async () => {
+    it('should route to DSP-API doc page', async () => {
         await browser.waitForAngularEnabled(false);
         footer.navigateTo();
         await browser.waitForAngularEnabled(true);

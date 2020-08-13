@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
-import { SessionService } from '@knora/core';
+import { SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-header',
@@ -13,6 +13,7 @@ export class HeaderComponent {
 
     session: boolean = false;
     show: boolean = false;
+    searchParams: SearchParams;
 
     constructor(
         private _session: SessionService,
@@ -37,7 +38,9 @@ export class HeaderComponent {
         this._router.events.forEach((event) => {
             // console.log('EVENT', event);
             if (event instanceof NavigationStart) {
-                this.session = this._session.validateSession();
+                this._session.isSessionValid().subscribe((response) => {
+                    this.session = response;
+                });
             }
         });
     }
@@ -61,4 +64,27 @@ export class HeaderComponent {
         this.show = !this.show;
     }
 
+    doSearch(search: SearchParams) {
+        // reset search params
+        this.searchParams = undefined;
+
+        // we can do the routing here or send the search param
+        // to (resource) list view directly
+        this.searchParams = search;
+
+        if(this.searchParams.mode && this.searchParams.query) {
+
+            let doSearchRoute = '/search/' + this.searchParams.mode + '/' + encodeURIComponent(this.searchParams.query);
+
+            if (this.searchParams.filter && this.searchParams.filter.limitToProject) {
+                doSearchRoute += '/' + encodeURIComponent(this.searchParams.filter.limitToProject);
+            }
+
+            this._router.navigate([doSearchRoute]);
+        }
+
+    }
+
 }
+
+

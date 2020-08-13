@@ -1,4 +1,4 @@
-<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
+<dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
 <div *ngIf="user && !loading">
 
@@ -54,12 +54,12 @@
         <!-- delete account: button -->
         <div class="center more-space-top more-space-bottom">
             <button *ngIf="user.status" mat-button [color]="'warn'"
-                    (click)="openDialog('deleteUser', user.username, user.id)">
+                (click)="openDialog('deleteUser', user.username, user.id)">
                 {{ 'appLabels.form.user.title.deleteButton' | translate | uppercase }}
             </button>
 
             <button *ngIf="!user.status" mat-button [color]="'primary'"
-                    (click)="openDialog('activateUser', user.username, user.id)">ACTIVATE ACCOUNT</button>
+                (click)="openDialog('activateUser', user.username, user.id)">ACTIVATE ACCOUNT</button>
         </div>
     </div>
 
