@@ -3,7 +3,7 @@
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- success message after updating -->
-    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
 
     <!-- content -->
     <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
@@ -39,7 +39,7 @@
 
         <!-- description -->
         <dsp-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}} *"
-            [disabled]="project.id !== undefined && !project.status" [textarea]="true" [value]="project.description"
+            [disabled]="!project.status" [textarea]="true" [value]="project.description"
             (dataChanged)="getStringLiteral($event)">
         </dsp-string-literal-input>
         <mat-hint class="string-literal-error" *ngIf="formErrors.description">
@@ -80,12 +80,6 @@
                     [matChipInputSeparatorKeyCodes]="separatorKeyCodes" [matChipInputAddOnBlur]="addOnBlur"
                     (matChipInputTokenEnd)="addKeyword($event)" />
             </mat-chip-list>
-
-            <!--
-            <mat-hint *ngIf="formErrors.keywords">
-                {{ formErrors.keywords }}
-            </mat-hint>
-            -->
         </mat-form-field>
 
         <!-- upload logo -->
@@ -102,10 +96,9 @@
 
         <div class="form-panel form-action">
             <span>
-                <button mat-button type="reset" (click)="resetForm($event, project)">
-                    {{ 'appLabels.form.action.reset' | translate }}
+                <button mat-button type="reset" (click)="closeDialog.emit()">
+                    {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
-
             </span>
             <span class="fill-remaining-space"></span>
             <span>

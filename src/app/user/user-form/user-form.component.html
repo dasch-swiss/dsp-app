@@ -3,7 +3,7 @@
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- success message after updating -->
-    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
 
     <!-- content -->
     <form *ngIf="!loading" [formGroup]="form" class="form-content user-data" (ngSubmit)="submitData()">
@@ -75,10 +75,9 @@
 
         <div class="form-panel form-action">
             <span>
-                <button mat-button type="reset" (click)="resetForm($event, user)">
-                    {{ 'appLabels.form.action.reset' | translate }}
+                <button mat-button type="reset" (click)="closeDialog.emit()">
+                    {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
-
             </span>
             <span class="fill-remaining-space"></span>
             <span>

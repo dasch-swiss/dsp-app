@@ -1,7 +1,7 @@
 <div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
 
     <!-- success message after updating -->
-    <dsp-message *ngIf="success" [message]="successMessage" [short]="true" (click)="closeMessage()"></dsp-message>
+    <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
 
     <!-- content: Step 1 = define resource type -->
     <form [formGroup]="sourceTypeForm" class="form-content">
@@ -37,7 +37,7 @@
             <!-- action buttons -->
             <div class="form-panel form-action">
                 <span>
-                    <button mat-button type="button" (click)="closeMessage()">
+                    <button mat-button type="button" (click)="closeDialog.emit()">
                         {{ 'appLabels.form.action.cancel' | translate }}
                     </button>
                 </span>

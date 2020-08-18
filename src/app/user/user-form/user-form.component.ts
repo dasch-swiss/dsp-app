@@ -422,7 +422,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                                         // update project cache and member of project cache
                                         this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
                                         this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
-                                        this.closeMessage();
+                                        this.closeDialog.emit(this.user);
                                         this.loading = false;
                                     },
                                     (error: any) => {
@@ -435,7 +435,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                             }
                         );
                     } else {
-                        this.closeMessage();
+                        this.closeDialog.emit(this.user);
                         this.loading = false;
                     }
                 },
@@ -458,7 +458,4 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.buildForm(user);
     }
 
-    closeMessage() {
-        this.closeDialog.emit(this.user);
-    }
 }

@@ -227,9 +227,4 @@ export class ListInfoFormComponent implements OnInit {
                 break;
         }
     }
-
-    closeMessage() {
-        this.closeDialog.emit(this.list);
-    }
-
 }

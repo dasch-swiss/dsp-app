@@ -14,15 +14,25 @@ import { CacheService } from '../../main/cache/cache.service';
 })
 export class ProjectFormComponent implements OnInit {
 
-    loading: boolean = true;
+    /**
+     * Param of project form component:
+     * Optional projectcode; if exists we are in edit mode
+     * otherwise we build empty form to create new project
+     */
+    @Input() projectcode?: string;
 
-    errorMessage: any;
-
-    @Input() projectcode: string;
-
+    /**
+     * Output of project form component:
+     * emits info to parent that dialog box was closed
+     */
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
     project: ReadProject;
+    description: StringLiteral[];
+
+    loading = true;
+
+    errorMessage: any;
 
     // is the logged-in user system admin?
     sysAdmin: boolean = false;
@@ -40,7 +50,6 @@ export class ProjectFormComponent implements OnInit {
     ];
     shortcodeRegex = /^[0-9A-Fa-f]+$/;
 
-    description: StringLiteral[];
     /**
      * some restrictions and rules for
      * description, shortcode, shortname and keywords
@@ -84,8 +93,7 @@ export class ProjectFormComponent implements OnInit {
         'longname': '',
         'shortcode': '',
         'description': ''
-        //        'institution': '',
-        //        'keywords': '',
+        // 'institution': ''
     };
 
     validationMessages = {
@@ -110,10 +118,7 @@ export class ProjectFormComponent implements OnInit {
             'required': 'A description is required.',
             'maxlength': 'Description cannot be more than ' + this.descriptionMaxLength + ' characters long.'
         }
-        //        'institution': {},
-        //        'keywords': {
-        //            'required': 'At least one keyword is required.'
-        //        }
+        // 'institution': {}
     };
 
     constructor(
@@ -126,11 +131,30 @@ export class ProjectFormComponent implements OnInit {
 
     ngOnInit() {
 
-        // get a list of all projects and create an array of the short names, but only in "create new" mode
-        // the short name should be unique and with the array list, we can prevent
-        // to have the same short name; proof it with the ForbiddenName directive
-        if (!this.projectcode) {
+        // if projectcode exists, we are in edit mode
+        // otherwise create new project
+        if(this.projectcode) {
+            // edit existing project
+            // get origin project data first
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
+                (response: ApiResponseData<ProjectResponse>) => {
+                    // save the origin project data in case of reset
+                    this.project = response.body.project;
+
+                    this.buildForm(this.project);
+
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    this.errorMessage = error;
+                }
+            );
+
+        } else {
             // create new project
+
+            // to avoid dublicate shortcodes or shortnames
+            // we have to create a list of already exisiting short codes and names
             this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
                 (response: ApiResponseData<ProjectsResponse>) => {
 
@@ -149,58 +173,43 @@ export class ProjectFormComponent implements OnInit {
                 }
             );
 
-            if (this.project === undefined) {
-                this.project = new ReadProject();
-                this.project.status = true;
-            }
+            this.project = new ReadProject();
+            this.project.status = true;
 
             this.buildForm(this.project);
 
             this.loading = false;
 
-        } else {
-            // edit mode
-            this.sysAdmin = this._session.getSession().user.sysAdmin;
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
-                    this.project = response.body.project;
-
-                    this.buildForm(this.project);
-
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this.errorMessage = error;
-                }
-            );
         }
     }
 
     /**
+     * Build form with project data
+     * Project data contains exising data (edit mode)
+     * or no data (create mode) => new ReadProject()
      *
-     * @param project Project data: "empty" means "create new project",
-     * but if there are project data, it means edit mode
+     * @param project
      */
     buildForm(project: ReadProject): void {
         // if project is defined, we're in the edit mode
         // otherwise "create new project" mode is active
-        // edit mode is true, when a project id (iri) exists
-        const editMode: boolean = (!!project.id);
+        // edit mode is true, when a projectcode exists
 
-        if (!editMode) {
+        // disabled is true, if project status is false (= archived);
+        const disabled: boolean = (!project.status);
+
+        // separate description
+        if (!this.projectcode) {
             this.description = [new StringLiteral()];
             this.formErrors['description'] = '';
         }
-
-        // disabled is true, if project status is false (= archived);
-        const disabled: boolean = (project.id !== undefined && !project.status);
 
         // separate list of keywords
         this.keywords = project.keywords;
 
         this.form = this._fb.group({
             'shortname': new FormControl({
-                value: project.shortname, disabled: editMode
+                value: project.shortname, disabled: (this.projectcode)
             }, [
                 Validators.required,
                 Validators.minLength(this.shortnameMinLength),
@@ -214,7 +223,7 @@ export class ProjectFormComponent implements OnInit {
                 Validators.required
             ]),
             'shortcode': new FormControl({
-                value: project.shortcode, disabled: (editMode && project.shortcode !== null)
+                value: project.shortcode, disabled: ((this.projectcode) && project.shortcode !== null)
             }, [
                 Validators.required,
                 Validators.minLength(this.shortcodeMinLength),
@@ -222,24 +231,15 @@ export class ProjectFormComponent implements OnInit {
                 existingNamesValidator(this.existingShortcodes),
                 Validators.pattern(this.shortcodeRegex)
             ]),
-            // 'description': new FormControl({
-            //     value: project.description,
-            //     disabled: disabled
-            // }, [
-            //     Validators.maxLength(this.descriptionMaxLength),
-            //     Validators.required
-            // ]),
-            //            'institution': new FormControl({
-            //                value: project.institution, disabled: disabled
-            //            }),
             'logo': new FormControl({
                 value: project.logo, disabled: disabled
             }),
             'status': [true],
             'selfjoin': [false],
             'keywords': new FormControl({
+                // must be empty (even in edit mode), because of the mat-chip-list
                 value: [], disabled: disabled
-            })          // must be empty (even in edit mode), because of the mat-chip-list
+            })
         });
 
         this.form.valueChanges
@@ -247,9 +247,9 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
+     * This method is for the form error handling
      *
      * @param data Data which changed.
-     * This method is for the form error handling
      */
     onValueChanged(data?: any) {
 
@@ -272,9 +272,12 @@ export class ProjectFormComponent implements OnInit {
         });
     }
 
+    /**
+     * Gets string literal
+     * @param data
+     */
     getStringLiteral(data: StringLiteral[]) {
         this.description = data;
-
         if (!this.description.length) {
             this.formErrors['description'] = this.validationMessages['description'].required;
         } else {
@@ -302,7 +305,6 @@ export class ProjectFormComponent implements OnInit {
     }
 
     removeKeyword(keyword: any): void {
-
         const index = this.keywords.indexOf(keyword);
 
         if (index >= 0) {
@@ -349,6 +351,7 @@ export class ProjectFormComponent implements OnInit {
             this._dspApiConnection.admin.projectsEndpoint.updateProject(this.project.id, projectData).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
 
+                    // this.originProject = response.body.project;
                     this.project = response.body.project;
                     this.buildForm(this.project);
 
@@ -358,13 +361,6 @@ export class ProjectFormComponent implements OnInit {
                     this.success = true;
 
                     this.loading = false;
-
-                    // redirect to project page
-                    /*
-                    this._router.navigateByUrl('/project', {skipLocationChange: true}).then(() =>
-                        this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
-                    );
-                    */
 
                 },
                 (error: ApiResponseError) => {
@@ -406,7 +402,7 @@ export class ProjectFormComponent implements OnInit {
                                 (response: ApiResponseData<UserResponse>) => {
 
                                     this.loading = false;
-                                    this.closeMessage();
+                                    this.closeDialog.emit();
                                     // redirect to (new) project page
                                     this._router.navigateByUrl('/project', { skipLocationChange: true }).then(() =>
                                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
@@ -519,6 +515,8 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
+     * @deprecated Maybe we can reactivate later.
+     *
      * Reset the form
      */
     resetForm(ev: Event, project?: ReadProject) {
@@ -533,7 +531,4 @@ export class ProjectFormComponent implements OnInit {
         //        this.form.controls['keywords'].setValue(this.keywords);
     }
 
-    closeMessage() {
-        this.closeDialog.emit();
-    }
 }

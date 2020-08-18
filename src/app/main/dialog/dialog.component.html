@@ -148,7 +148,7 @@
     <div *ngSwitchCase="'editListInfo'">
         <app-dialog-header [title]="data.title" [subtitle]="'Edit list info'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-list-info-form [iri]="data.id" [projectIri]="data.project"></app-list-info-form>
+        <app-list-info-form [iri]="data.id" [projectIri]="data.project" (closeDialog)="dialogRef.close()"></app-list-info-form>
     </div>
 
     <!-- Delete list -->

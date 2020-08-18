@@ -562,9 +562,6 @@ export class SourceTypeFormComponent implements OnInit, OnDestroy, AfterViewChec
         );
 
         */
-
-        // show message to close dialog box
-        // this.closeMessage();
     }
     /**
      * Convert cardinality values (multiple? & required?) from form to string 1-0, 0-n, 1, 0-1
