@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SourceTypeFormService } from './source-type-form.service';
+import { ResourceClassFormService } from './resource-class-form.service';
 
-describe('SourceTypeFormService', () => {
+describe('ResourceClassFormService', () => {
     beforeEach(() => TestBed.configureTestingModule({
         imports: [
             ReactiveFormsModule
@@ -10,7 +10,7 @@ describe('SourceTypeFormService', () => {
     }));
 
     it('should be created', () => {
-        const service: SourceTypeFormService = TestBed.inject(SourceTypeFormService);
+        const service: ResourceClassFormService = TestBed.inject(ResourceClassFormService);
         expect(service).toBeTruthy();
     });
 });

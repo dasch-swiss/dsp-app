@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject, CreateOntology, OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 
@@ -164,11 +164,24 @@ export class OntologyFormComponent implements OnInit {
 
         // const something: number = Math.floor(Math.random() * Math.floor(9999));
 
-        const ontologyData: NewOntology = {
-            projectIri: this.project.id,
-            name: this.ontologyForm.controls['name'].value,
-            label: this.ontologyLabel
-        };
+        const ontologyData = new CreateOntology();
+        ontologyData.label = this.ontologyLabel;
+        ontologyData.name = this.ontologyForm.controls['name'].value;
+        ontologyData.attachedToProject = this.project.id;
+
+        this._dspApiConnection.v2.onto.createOntology(ontologyData).subscribe(
+            (response: OntologyMetadata) => {
+                this.updateParent.emit(response.id);
+                this.closeDialog.emit(response.id);
+            },
+            (error: ApiResponseError) => {
+                // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
+                this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
+                this.loading = false;
+
+                console.error(error);
+            }
+        );
         /* NOT YET IMPLEMENTED!!! use the new ontology endpoint from dsp-js
         this._ontologyService.createOntology(ontologyData).subscribe(
             (ontology: any) => {
@@ -178,15 +191,11 @@ export class OntologyFormComponent implements OnInit {
 
                 // this.updateParent.emit(ontology['@id']);
 
-                this.closeDialog.emit();
-
-                // go to correct route
-                const goto = 'project/' + this.projectcode + '/ontologies/' + encodeURIComponent(ontology['@id']);
-                this._router.navigate([goto]);
+                // open new ontology after closing dialog
+                this.closeDialog.emit(ontology['@id']);
 
             },
             (error: any) => {
-                // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
 
                 this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
                 this.loading = false;
@@ -200,7 +209,7 @@ export class OntologyFormComponent implements OnInit {
     /**
      * Reset the form
      */
-    resetForm(ev: Event, sourceType?: any) {
+    resetForm(ev: Event, resourceClass?: any) {
 
         this.ontologyLabel = this.project.shortname + ' ontology (data model): ';
 

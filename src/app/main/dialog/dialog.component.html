@@ -172,15 +172,14 @@
     <div *ngSwitchCase="'createOntology'">
         <app-dialog-header [title]="'Data model'" [subtitle]="'Create new'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <!-- TODO: fix [existingOntologyNames]="data.existing" -->
-        <!-- <app-ontology-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"
-            [existingOntologyNames]="data.existing"></app-ontology-form> -->
+        <app-ontology-form [projectcode]="data.project" (closeDialog)="dialogRef.close($event)"
+            [existingOntologyNames]="data.existing"></app-ontology-form>
     </div>
 
     <div *ngSwitchCase="'editOntology'">
         <app-dialog-header [title]="'Data model'" [subtitle]="'Create new'" (close)="dialogRef.close()">
         </app-dialog-header>
-        This component {{data.mode}} is not implemented yet.
+        The component{{data.mode}} is not implemented yet.
     </div>
 
     <div *ngSwitchCase="'deleteOntology'">
@@ -200,22 +199,21 @@
     </div>
 
     <!-- Ontology editor: customize and add source type -->
-    <div *ngSwitchCase="'addSourceType'">
+    <div *ngSwitchCase="'addResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-source-type-form [subClassOf]="data.name" [name]="data.title" [projectIri]="data.project"
+        <app-resource-class-form [subClassOf]="data.name" [name]="data.title" [projectIri]="data.project"
             (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
-        </app-source-type-form>
+        </app-resource-class-form>
     </div>
 
-
-    <div *ngSwitchCase="'editSourceType'">
+    <div *ngSwitchCase="'editResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle" (close)="dialogRef.close()">
         </app-dialog-header>
-        This component {{data.mode}} is not implemented yet.
+        The component{{data.mode}} is not implemented yet.
     </div>
 
-    <div *ngSwitchCase="'deleteSourceType'">
+    <div *ngSwitchCase="'deleteResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="'Delete source type'" (close)="dialogRef.close()">
         </app-dialog-header>
         Do you want to delete this source type?
@@ -231,11 +229,15 @@
         </mat-dialog-actions>
     </div>
 
+    <div *ngSwitchCase="'error'">
+        <dsp-message [short]="true" [message]="data.title"></dsp-message>
+    </div>
+
     <!-- Unknown method (or not yet defined) -->
     <!-- Default dialog content component -->
     <div *ngSwitchDefault>
         <app-dialog-header [title]="'Not yet implemented'" [subtitle]="'ERROR 400'" (close)="dialogRef.close()">
         </app-dialog-header>
-        This component {{data.mode}} is not implemented yet.
+        The component{{data.mode}} is not implemented yet.
     </div>
 </div>

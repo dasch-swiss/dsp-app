@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 // property data structure
 export class Property {
-
     name: string;
     label: string;
     type: any;
@@ -47,7 +46,6 @@ export class PropertyForm {
         property: Property
     ) {
         this.name.setValue(property.name);
-        this.name.setValidators([Validators.required]);
 
         this.label.setValue(property.label);
         this.label.setValidators([Validators.required]);
@@ -67,28 +65,23 @@ export class PropertyForm {
     }
 }
 
-// source type data structure
-export class SourceType {
-    name: string;
+// resource class data structure
+export class ResourceClass {
     properties: Property[];
 
-    constructor(name: string, properties?: Property[]) {
-        this.name = name;
+    constructor(properties?: Property[]) {
         this.properties = properties;
     }
 }
 
 
-// source type form controls
-export class SourceTypeForm {
-    name = new FormControl();
+// resource class form controls
+export class ResourceClassForm {
     properties = new FormArray([]);
 
-    constructor(sourceType: SourceType) {
-        this.name.setValue(sourceType.name);
-
-        if (sourceType.properties) {
-            this.properties.setValue([sourceType.properties]);
+    constructor(resourceClass: ResourceClass) {
+        if (resourceClass.properties) {
+            this.properties.setValue([resourceClass.properties]);
         }
     }
 }
@@ -96,29 +89,35 @@ export class SourceTypeForm {
 @Injectable({
     providedIn: 'root'
 })
-export class SourceTypeFormService {
+export class ResourceClassFormService {
 
-    private sourceTypeForm: BehaviorSubject<FormGroup | undefined> = new BehaviorSubject(this._fb.group(
-        new SourceTypeForm(new SourceType(''))
+    private resourceClassForm: BehaviorSubject<FormGroup | undefined> = new BehaviorSubject(this._fb.group(
+        new ResourceClassForm(new ResourceClass())
     ));
 
-    sourceTypeForm$: Observable<FormGroup> = this.sourceTypeForm.asObservable();
+    resourceClassForm$: Observable<FormGroup> = this.resourceClassForm.asObservable();
 
     constructor(private _fb: FormBuilder) { }
 
-    // reset
+    /**
+     * reset all properties
+     */
     resetProperties() {
 
-        const currentSourceType = this._fb.group(
-            new SourceTypeForm(new SourceType(''))
+        const currentResourceClass = this._fb.group(
+            new ResourceClassForm(new ResourceClass())
         );
 
-        this.sourceTypeForm.next(currentSourceType);
+        this.resourceClassForm.next(currentResourceClass);
     }
 
+
+    /**
+     * add new property line
+     */
     addProperty() {
-        const currentSourceType = this.sourceTypeForm.getValue();
-        const currentProperties = currentSourceType.get('properties') as FormArray;
+        const currentResourceClass = this.resourceClassForm.getValue();
+        const currentProperties = currentResourceClass.get('properties') as FormArray;
 
         currentProperties.push(
             this._fb.group(
@@ -126,14 +125,46 @@ export class SourceTypeFormService {
             )
         );
 
-        this.sourceTypeForm.next(currentSourceType);
+        this.resourceClassForm.next(currentResourceClass);
     }
-
+    /**
+     * delete property line by index i
+     *
+     * @param  {number} i
+     */
     removeProperty(i: number) {
-        const currentSourceType = this.sourceTypeForm.getValue();
-        const currentProperties = currentSourceType.get('properties') as FormArray;
+        const currentResourceClass = this.resourceClassForm.getValue();
+        const currentProperties = currentResourceClass.get('properties') as FormArray;
 
         currentProperties.removeAt(i);
-        this.sourceTypeForm.next(currentSourceType);
+        this.resourceClassForm.next(currentResourceClass);
+    }
+
+    /**
+     * Create a unique name (id) for resource classes or properties;
+     * The name starts with the three first character of ontology iri to avoid a start with a number (which is not allowed)
+     *
+     * @param  {string} ontologyIri
+     * @returns string
+     */
+    setUniqueName(ontologyIri: string): string {
+        const name: string = this.getOntologyName(ontologyIri).substring(0, 3) + Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
+
+        return name;
+    }
+
+    /**
+     * Get the ontolgoy name from ontology iri
+     *
+     * @param  {string} ontologyIri
+     * @returns string
+     */
+    getOntologyName(ontologyIri: string): string {
+
+        const array = ontologyIri.split('/');
+
+        const pos = array.length - 2;
+
+        return array[pos].toLowerCase();
     }
 }

@@ -1,15 +1,15 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 
-export interface DefaultSourceType {
+export interface ResourceClass {
     iri: string;
     name: string;
     label?: string;
     icons?: string[];
 }
 
-export class SourceTypes {
+export class DefaultResourceClasses {
 
-    public static data: DefaultSourceType[] = [
+    public static data: ResourceClass[] = [
         {
             iri: Constants.Resource,
             name: 'knora-api:Resource',

@@ -1,7 +1,7 @@
 <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
 <form [formGroup]="ontologyForm" (ngSubmit)="createOntology()" class="form" *ngIf="!loading">
-    <!-- auto complete list to select source types -->
+    <!-- auto complete list to select resource classs -->
     <div class="form-content">
         <mat-form-field class="large-field ontology-name">
             <input matInput [maxlength]="nameMaxLength" [formControl]="ontologyForm.controls['name']"
@@ -18,8 +18,8 @@
 
         <div class="form-panel form-action">
             <span>
-                <button mat-button type="button" (click)="resetForm($event)">
-                    {{ 'appLabels.form.action.reset' | translate }}
+                <button mat-button type="button" (click)="closeDialog.emit()">
+                    {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
             </span>
             <span class="fill-remaining-space"></span>

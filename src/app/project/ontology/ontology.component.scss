@@ -4,73 +4,94 @@
 $width: 304px;
 
 .app-toolbar-action {
-  &.select-form {
-    margin-top: -18px;
-  }
-
-  .form-content {
-    display: contents;
-
-    .select-ontology {
-      margin: 0 24px 0 0;
+    &.select-form {
+        margin-top: -18px;
     }
-  }
 
-  .create-data-model-btn {
-    margin: 0 0 16px;
-    min-width: 140px;
-  }
+    .form-content {
+        display: contents;
+
+        .select-ontology {
+            margin: 0 24px 0 0;
+        }
+    }
+
+    .create-data-model-btn {
+        margin: 0 0 16px;
+        min-width: 140px;
+    }
 }
 
 .ontology-editor {
-  width: 98vw;
-  max-width: 1280px;
-  min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 300px);
-  border: 1px dotted $primary_200;
-  background: $primary_200;
-  position: relative;
-  margin: 0 auto 60px auto;
+    width: 98vw;
+    max-width: 1280px;
+    min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 300px);
+    border: 1px dotted $primary_200;
+    background: $primary_200;
+    position: relative;
+    margin: 0 auto 60px auto;
+}
+.ontology-viewer {
+    width: 98vw;
+    max-width: 1280px;
+    min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 300px);
+    border: 1px dotted $primary_200;
+    position: relative;
+    margin: 0 auto 60px auto;
 }
 
 .ontology-editor-canvas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
-  grid-column-gap: 12px;
-  grid-row-gap: 12px;
-  padding-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
+    grid-column-gap: 12px;
+    grid-row-gap: 12px;
+    padding-top: 60px;
 }
 
 .resource-class {
-  min-height: 120px;
-  height: auto;
-  position: relative;
-  @include mat-elevation-transition;
-  @include mat-elevation(2);
-  padding: 12px;
-  margin: 12px;
-  background-color: #fff;
+    min-height: 120px;
+    height: auto;
+    position: relative;
+    @include mat-elevation-transition;
+    @include mat-elevation(2);
+    padding: 12px;
+    margin: 12px;
+    background-color: #fff;
 
-  .resource-class-header {
-    margin: -12px -12px 12px -12px;
-    width: calc(100% + 24px);
-    min-height: 48px !important;
-    height: 48px;
-    cursor: move;
-  }
-
-  .resource-class-properties {
-    li {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-left: -24px;
-      list-style-position: inside;
+    .resource-class-header {
+        margin: -12px -12px 12px -12px;
+        width: calc(100% + 24px);
+        min-height: 48px !important;
+        height: 48px;
+        cursor: move;
     }
-  }
 
-  &:active {
-    @include mat-elevation(8);
-  }
+    .resource-class-properties {
+        li {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-left: -24px;
+            list-style-position: inside;
+        }
+    }
+
+    &:active {
+        @include mat-elevation(8);
+    }
+}
+.ontology-editor-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    position: sticky !important;
+    top: 0;
+
+    .switch-view-label {
+        margin-right: 16px;
+    }
+
+    button.active {
+        background-color: $black-12-opacity;
+    }
 }
 /*
 .ontology-container {
@@ -109,8 +130,8 @@ $width: 304px;
 }
  */
 
-.add-source-type {
-  position: absolute;
-  right: 12px;
-  top: 80px;
+.add-resource-class {
+    position: absolute;
+    right: 12px;
+    top: 80px;
 }

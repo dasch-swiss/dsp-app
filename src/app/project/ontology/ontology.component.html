@@ -1,4 +1,5 @@
 <div *ngIf="projectAdmin" class="desktop-only">
+    <dsp-message [medium]="true" [message]="{status: 206, statusText: 'The ontology/data model editor is not yet fully implemented. The functionality is still work in progress.'}"></dsp-message>
 
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
@@ -40,14 +41,13 @@
                 </span>
 
                 <span class="fill-remaining-space"></span>
-                <!-- Disabled button to create new ontology
+
                 <span class="app-toolbar-action" [class.select-form]="ontologies.length">
                     <button mat-raised-button color="primary" class="create-data-model-btn"
                         (click)="openOntologyForm('createOntology')">
                         {{ontologies.length ? 'New data model' : 'Create your first data model'}}
                     </button>
                 </span>
-                 -->
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
     <!-- main content: overview shows resource classes of ontology -->
     <div *ngIf="ontology" class="ontology-editor drag-drop-stop">
 
-        <mat-toolbar>
+        <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
                 <h3 class="mat-title" [matTooltip]="ontology.id">{{ontology?.label}}</h3>
 
@@ -64,7 +64,13 @@
                     matTooltipPosition="above">
                     {{ontology.comments | kuiStringifyStringLiteral | kuiTruncate:[64]}}</p> -->
                 <span class="fill-remaining-space"></span>
-                <!-- Buttons to edit or delete the ontology
+                <span class="switch-list-label">Display as&nbsp;</span>
+                <button mat-button (click)="toggleView('grid')" [class.active]="view === 'grid'">
+                    <mat-icon>view_module</mat-icon> Grid
+                </button>
+                <button mat-button (click)="toggleView('graph')" [class.active]="view === 'graph'">
+                    <mat-icon>scatter_plot</mat-icon> Graph
+                </button>
                 <button mat-stroked-button
                     (click)="$event.stopPropagation(); openOntologyForm('editOntologyInfo', ontology?.id, ontology?.id)">
                     Edit
@@ -74,32 +80,29 @@
                     (click)="$event.stopPropagation(); delete(ontologyIri, 'Ontology', ontology.label)">
                     Delete
                 </button>
-                -->
             </mat-toolbar-row>
         </mat-toolbar>
 
-        <div #ontologyEditor class="ontology-editor-canvas" *ngIf="!loadOntology">
-            <!-- button to select and add new source type to the ontology -->
-            <!-- Disabled button to add new source class
-            <div class="add-source-type" *ngIf="project?.status && sysAdmin && ontologyIri">
+        <div #ontologyEditor *ngIf="!loadOntology && view === 'grid'" class="ontology-editor-canvas">
+            <!-- button to select and add new resource class to the ontology -->
+            <div class="add-resource-class" *ngIf="project?.status && sysAdmin && ontologyIri">
                 <button mat-raised-button color="primary" [matMenuTriggerFor]="addResClassMenu">
-                    Add source type&nbsp;
+                    Add resource class&nbsp;
                     <mat-icon>add</mat-icon>
                 </button>
                 <mat-menu #addResClassMenu="matMenu" xPosition="before">
-                    <button mat-menu-item *ngFor="let type of sourceTypes"
-                        (click)="openSourceTypeForm('addSourceType', type)">
+                    <button mat-menu-item *ngFor="let type of resourceClass"
+                        (click)="openResourceClassForm('addResourceClass', type)">
                         {{ type?.label }}
                     </button>
                 </mat-menu>
             </div>
-            -->
 
-            <!-- <app-add-source-type *ngIf="project?.status && sysAdmin && ontologyIri" [projectcode]="projectcode"
-                class="add-source-type" (refreshParent)="resetOntology(ontologyIri)" #addSourceTypeComponent>
-            </app-add-source-type> -->
+            <!-- <app-add-resource-class *ngIf="project?.status && sysAdmin && ontologyIri" [projectcode]="projectcode"
+                class="add-resource-class" (refreshParent)="resetOntology(ontologyIri)" #addResourceClassComponent>
+            </app-add-resource-class> -->
 
-            <!-- list of source types -->
+            <!-- list of resource classs -->
             <!-- <svg width="100%" height="1200" class="mySvg" (click)="clicked($event)"></svg> -->
 
             <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
@@ -109,15 +112,14 @@
                         <h4 mat-card-title [matTooltip]="resClass.label" matTooltipPosition="above">
                             {{resClass.label | dspTruncate: 24}}</h4>
                         <span class="fill-remaining-space"></span>
-                        <button mat-icon-button [matMenuTriggerFor]="resClassMenu" disabled>
-                            <!-- TODO: enable menu in the next PR -->
+                        <button mat-icon-button [matMenuTriggerFor]="resClassMenu">
                             <mat-icon>more_horiz</mat-icon>
                         </button>
                         <mat-menu #resClassMenu="matMenu" xPosition="before">
                             <button mat-menu-item
-                                (click)="openSourceTypeForm('editSourceType', {iri: resClass.id, name: '', label: resClass.label})">Edit</button>
-                            <button mat-menu-item
-                                (click)="delete(resClass.id, 'SourceType', resClass.label)">Delete</button>
+                                (click)="openResourceClassForm('editResourceClass', {iri: resClass.id, name: '', label: resClass.label})">Edit</button>
+                            <button mat-menu-item [disabled]="resClass.propertiesList.length > 17"
+                                (click)="delete(resClass.id, 'ResourceClass', resClass.label)">Delete</button>
                         </mat-menu>
                     </mat-toolbar-row>
                 </mat-toolbar>
@@ -136,6 +138,10 @@
                 </div>
 
             </div>
+        </div>
+
+        <div *ngIf="view === 'graph'" class="ontology-viewer">
+            <app-ontology-visualizer [ontology]="ontology" [ontoClasses]="ontoClasses"></app-ontology-visualizer>
         </div>
 
         <dsp-progress-indicator *ngIf="loadOntology"></dsp-progress-indicator>

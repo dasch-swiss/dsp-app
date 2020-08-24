@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-// TODO: replace the interface above with the following
 export interface DialogData {
     mode: string;       // switch mode
     id: string;         // main iri
@@ -10,6 +9,7 @@ export interface DialogData {
     subtitle?: string;
     comment?: string;
     name?: string;
+    existing?: string[];
 }
 
 @Component({

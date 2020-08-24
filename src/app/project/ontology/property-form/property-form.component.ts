@@ -6,10 +6,11 @@ import { MatSelectChange } from '@angular/material/select';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ClassDefinition, KnoraApiConnection, ListNodeInfo, ReadOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
-import { CacheService } from 'src/app/main/cache/cache.service';
-import { DefaultPropertyType, PropertyTypes, DefaultValueType } from '../../default-data/poperty-types';
 import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
+import { CacheService } from 'src/app/main/cache/cache.service';
+import { DefaultProperties, Property, PropertyValue } from '../default-data/default-properties';
+
 
 // TODO: should be removed and replaced by AutocompleteItem from dsp-ui
 /**
@@ -26,11 +27,11 @@ export interface AutocompleteItem {
 // const resolvedPromise = Promise.resolve(null);
 
 @Component({
-    selector: 'app-source-type-property',
-    templateUrl: './source-type-property.component.html',
-    styleUrls: ['./source-type-property.component.scss']
+    selector: 'app-property-form',
+    templateUrl: './property-form.component.html',
+    styleUrls: ['./property-form.component.scss']
 })
-export class SourceTypePropertyComponent implements OnInit {
+export class PropertyFormComponent implements OnInit {
 
     @Input() propertyForm: FormGroup;
 
@@ -45,7 +46,7 @@ export class SourceTypePropertyComponent implements OnInit {
     required = new FormControl();
 
     // selection of default property types
-    propertyTypes: DefaultPropertyType[] = PropertyTypes.data;
+    propertyTypes: Property[] = DefaultProperties.data;
 
     showGuiAttr: boolean = false;
 
@@ -55,22 +56,16 @@ export class SourceTypePropertyComponent implements OnInit {
     // current ontology
     ontology: ReadOntology;
 
-    // resource types in this ontology
-    resourceTypes: ClassDefinition[] = [];
+    // reresource classs in this ontology
+    reresourceClasss: ClassDefinition[] = [];
 
     // list of existing properties
     properties: AutocompleteItem[] = [];
 
     filteredProperties: Observable<AutocompleteItem[]>;
 
-
     selectTypeLabel: string; // = this.propertyTypes[0].group + ': ' + this.propertyTypes[0].elements[0].label;
     selectedGroup: string;
-
-
-
-    // index of the given property (unique)
-    // index: number;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -91,6 +86,7 @@ export class SourceTypePropertyComponent implements OnInit {
 
     ngOnInit() {
 
+
         if (this.propertyForm) {
             // init list of property types with first element
             this.propertyForm.patchValue({ type: this.propertyTypes[0].elements[0] });
@@ -100,24 +96,28 @@ export class SourceTypePropertyComponent implements OnInit {
             (response: ReadOntology) => {
                 this.ontology = response;
 
-                console.log(response);
-                // set list of resource types from response; needed for linkValue
+                // set various lists to select from
+                // a) in case of link value:
+                // set list of reresource classes from response; needed for linkValue
                 const classKeys: string[] = Object.keys(response.classes);
                 for (const c of classKeys) {
-                    this.resourceTypes.push(this.ontology.classes[c]);
+                    this.reresourceClasss.push(this.ontology.classes[c]);
                 }
 
-                // set list of properties from response; needed for autocomplete to avoid same property name twice
+                // b) in case of already existing label:
+                // set list of properties from response; needed for autocomplete in label to reuse existing property
                 const propKeys: string[] = Object.keys(response.properties);
-                let i: number = 0;
                 for (const p of propKeys) {
-                    this.properties[i] = {
-                        iri: this.ontology.properties[p].id,
-                        name: this.ontology.properties[p].id.split('#')[1],
-                        label: this.ontology.properties[p].label
-                    };
-                    i++;
-                    // this.properties.push(this.ontology.properties[p]);
+                    if (this.ontology.properties[p].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue') {
+                        const existingProperty: AutocompleteItem = {
+                            iri: this.ontology.properties[p].id,
+                            name: this.ontology.properties[p].id.split('#')[1],
+                            label: this.ontology.properties[p].label
+                        };
+
+                        this.properties.push(existingProperty);
+                    }
+
                 }
             },
             (error: any) => {
@@ -125,6 +125,8 @@ export class SourceTypePropertyComponent implements OnInit {
             }
         );
 
+        // c) in case of list value:
+        // set list of lists; needed for listValue
         this._cache.get('currentOntologyLists').subscribe(
             (response: ListNodeInfo[]) => {
                 this.lists = response;
@@ -133,37 +135,33 @@ export class SourceTypePropertyComponent implements OnInit {
                 console.error(error);
             }
         );
-        console.log(this.propertyForm);
 
-        this.filteredProperties = this.propertyForm.controls['name'].valueChanges
+        this.filteredProperties = this.propertyForm.controls['label'].valueChanges
             .pipe(
                 startWith(''),
                 map(prop => prop.length >= 2 ? this.filter(this.properties, prop) : [])
             );
-
     }
 
     /**
      * filter a list while typing in auto complete input field
      * @param list List of options
-     * @param name Value to filter by
+     * @param label Value to filter by
      * @returns Filtered list of options
      */
-    filter(list: AutocompleteItem[], name: string) {
+    filter(list: AutocompleteItem[], label: string) {
         return list.filter(prop =>
-            prop.name.toLowerCase().includes(name.toLowerCase())
+            prop.label.toLowerCase().includes(label.toLowerCase())
         );
     }
 
     updateAttributeField(event: MatSelectChange) {
 
-        console.log('updateAttrField');
-
         // reset value of guiAttr
         this.propertyForm.controls['guiAttr'].setValue(undefined);
         // depending on the selected property type,
         // we have to define gui element attributes
-        // e.g. iri of list or connected resource type
+        // e.g. iri of list or connected reresource class
         switch (event.value.subPropOf) {
             case 'knora-api:ListValue':
             case 'knora-api:LinkValue':
@@ -185,15 +183,16 @@ export class SourceTypePropertyComponent implements OnInit {
     /**
      * @param  {MatOption} option
      */
-    updateFieldsDependingOnName(option: MatOption) {
+    updateFieldsDependingOnLabel(option: MatOption) {
         this.propertyForm.controls['name'].setValue(option.value.name);
+
         this.propertyForm.controls['label'].setValue(option.value.label);
         this.propertyForm.controls['label'].disable();
 
         if (this.ontology.properties[option.value.iri] instanceof ResourcePropertyDefinition) {
             const tempProp: any = this.ontology.properties[option.value.iri];
 
-            let obj: DefaultValueType;
+            let obj: PropertyValue;
             // find gui ele from list of default property-types to set type value
             for (let group of this.propertyTypes) {
                 obj = group.elements.find(i => i.gui_ele === 'salsah-gui:' + tempProp.guiElement.split('#')[1]);
@@ -236,6 +235,21 @@ export class SourceTypePropertyComponent implements OnInit {
         }
         this.propertyForm.controls['type'].disable();
 
+    }
+
+    resetProperty(ev: Event) {
+        ev.preventDefault();
+
+        this.propertyForm.controls['name'].reset();
+        this.propertyForm.controls['label'].setValue('');
+        this.propertyForm.controls['label'].enable();
+        this.propertyForm.controls['type'].setValue(this.propertyTypes[0].elements[0]);
+        this.propertyForm.controls['type'].enable();
+        this.propertyForm.controls['guiAttr'].setValue(undefined);
+        this.propertyForm.controls['guiAttr'].enable();
+
+        this.propertyForm.controls['multiple'].reset();
+        this.propertyForm.controls['required'].reset();
     }
 
 }

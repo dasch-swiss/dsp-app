@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,8 +19,8 @@ import { ListInfoFormComponent } from 'src/app/project/list/list-info-form/list-
 import { ListItemFormComponent } from 'src/app/project/list/list-item-form/list-item-form.component';
 import { ListItemComponent } from 'src/app/project/list/list-item/list-item.component';
 import { OntologyFormComponent } from 'src/app/project/ontology/ontology-form/ontology-form.component';
-import { SourceTypeFormComponent } from 'src/app/project/ontology/source-type-form/source-type-form.component';
-import { SourceTypePropertyComponent } from 'src/app/project/ontology/source-type-form/source-type-property/source-type-property.component';
+import { PropertyFormComponent } from 'src/app/project/ontology/property-form/property-form.component';
+import { ResourceClassFormComponent } from 'src/app/project/ontology/resource-class-form/resource-class-form.component';
 import { ProjectFormComponent } from 'src/app/project/project-form/project-form.component';
 import { MembershipComponent } from 'src/app/user/membership/membership.component';
 import { PasswordFormComponent } from 'src/app/user/user-form/password-form/password-form.component';
@@ -44,8 +45,8 @@ describe('DialogComponent', () => {
                 ListItemFormComponent,
                 ListInfoFormComponent,
                 OntologyFormComponent,
-                SourceTypeFormComponent,
-                SourceTypePropertyComponent
+                ResourceClassFormComponent,
+                PropertyFormComponent
             ],
             imports: [
                 DspActionModule,
@@ -60,6 +61,7 @@ describe('DialogComponent', () => {
                 MatListModule,
                 MatSelectModule,
                 MatSlideToggleModule,
+                MatTooltipModule,
                 MatTreeModule,
                 ReactiveFormsModule,
                 TranslateModule.forRoot()

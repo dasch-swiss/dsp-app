@@ -3,23 +3,15 @@
     <!-- success message after updating -->
     <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
 
-    <!-- content: Step 1 = define resource type -->
-    <form [formGroup]="sourceTypeForm" class="form-content">
+    <!-- content: Step 1 = define reresource class -->
+    <form [formGroup]="resourceClassForm" class="form-content">
 
-        <div *ngIf="showSourceTypeForm" class="source-type-data">
+        <div *ngIf="showResourceClassForm" class="resource-class-data">
             <div class="center more-space-top">
 
-                <!-- name -->
-                <mat-form-field class="short-field">
-                    <input matInput [formControl]="sourceTypeForm.controls['name']" [placeholder]="'Unique name *'">
-                    <mat-hint *ngIf="formErrors.name">
-                        {{ formErrors.name }}
-                    </mat-hint>
-                </mat-form-field>
-
                 <!-- label -->
-                <div class="medium-field string-literal-container">
-                    <dsp-string-literal-input [placeholder]="'Label *'" [value]="sourceTypeLabels"
+                <div class="large-field string-literal-container">
+                    <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
                         (dataChanged)="handleData($event, 'labels')">
                     </dsp-string-literal-input>
                     <mat-hint class="string-literal-error" *ngIf="formErrors.label">
@@ -29,7 +21,7 @@
 
                 <!-- description -->
                 <div class="large-field string-literal-container more-space-top">
-                    <dsp-string-literal-input [placeholder]="'Description'" [value]="sourceTypeComments"
+                    <dsp-string-literal-input [placeholder]="'Description'" [value]="resourceClassComments"
                         [textarea]="true" (dataChanged)="handleData($event, 'comments')"></dsp-string-literal-input>
                 </div>
             </div>
@@ -43,8 +35,7 @@
                 </span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                    <button mat-raised-button type="submit" color="primary"
-                        [disabled]="!(sourceTypeLabels.length && this.sourceTypeForm.controls['name'].value)"
+                    <button mat-raised-button type="submit" color="primary" [disabled]="!resourceClassLabels.length"
                         (click)="nextStep($event)">
                         Next
                     </button>
@@ -53,8 +44,8 @@
         </div>
 
 
-        <!-- content: Step 2 = define properties for resource type -->
-        <div *ngIf="!showSourceTypeForm" class="properties-data">
+        <!-- content: Step 2 = define properties for reresource class -->
+        <div *ngIf="!showResourceClassForm" class="properties-data">
 
             <!-- propertiy: one line, with "add" icon to add additional properties -->
             <div cdkDropList class="properties-list" (cdkDropListDropped)="drop($event)">
@@ -68,7 +59,7 @@
                         <mat-icon>drag_indicator</mat-icon>
                     </button>
 
-                    <app-source-type-property [propertyForm]="prop" [index]="i"></app-source-type-property>
+                    <app-property-form [propertyForm]="prop" [index]="i"></app-property-form>
 
                     <button *ngIf="properties.length > 1" mat-icon-button type="button" color="warn"
                         aria-label="Delete this property" class="suffix delete-line" (click)="removeProperty(i)">

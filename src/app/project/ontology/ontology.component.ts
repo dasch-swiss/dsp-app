@@ -3,12 +3,11 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, ClassDefinition, KnoraApiConnection, ProjectResponse, ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, ClassDefinition, DeleteOntologyResponse, KnoraApiConnection, OntologiesMetadata, OntologyMetadata, ProjectResponse, ReadOntology, ReadProject, UpdateOntology } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { DefaultSourceType, SourceTypes } from './default-data/source-types';
-
+import { DefaultResourceClasses, ResourceClass } from './default-data/default-resource-classes';
 
 export interface OntologyInfo {
     id: string;
@@ -40,7 +39,7 @@ export class OntologyComponent implements OnInit {
     project: ReadProject;
 
     // ontologies
-    ontologies: OntologyInfo[];
+    ontologies: OntologyMetadata[];
     // existing project ontology names
     existingOntologyNames: string[] = [];
 
@@ -55,6 +54,9 @@ export class OntologyComponent implements OnInit {
     // form to select ontology from list
     ontologyForm: FormGroup;
 
+    // display resource classes as grid or as graph
+    view: 'grid' | 'graph' = 'grid';
+
     // i18n setup
     itemPluralMapping = {
         ontology: {
@@ -65,15 +67,15 @@ export class OntologyComponent implements OnInit {
     };
 
     /**
-     * list of all default source types (sub class of)
+     * list of all default resource classs (sub class of)
      */
-    sourceTypes: DefaultSourceType[] = SourceTypes.data;
+    resourceClass: ResourceClass[] = DefaultResourceClasses.data;
 
     @ViewChild('ontologyEditor', { read: ViewContainerRef }) ontologyEditor: ViewContainerRef;
 
     // @ViewChild(AddToDirective, { static: false }) addToHost: AddToDirective;
 
-    // @ViewChild('addSourceTypeComponent', { static: false }) addSourceType: AddSourceTypeComponent;
+    // @ViewChild('addResourceClassComponent', { static: false }) addResourceClass: AddResourceClassComponent;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -158,6 +160,19 @@ export class OntologyComponent implements OnInit {
         // reset existing ontology names
         this.existingOntologyNames = [];
 
+        this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
+            (response: OntologiesMetadata) => {
+                this.ontologies = response.ontologies;
+                this.loading = false;
+            },
+            (error: ApiResponseError) => {
+                console.error(error);
+            }
+        )
+
+        // this.knoraApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
+        //     (response: OntologiesMetadata) => {
+        //         this.ontologies = response.ontologies;
         // TODO: replace _ontologyService and ApiServiceError
         /* this._ontologyService.getProjectOntologies(encodeURI(this.project.id)).subscribe(
             (ontologies: ApiServiceResult) => {
@@ -174,45 +189,74 @@ export class OntologyComponent implements OnInit {
                             label: ontology['rdfs:label']
                         };
 
-                        this.ontologies.push(info);
+                console.log(this.ontologies);
 
-                        // set list of existing names
-                        name = this.getOntologyName(ontology['@id']);
-                        this.existingOntologyNames.push(name);
-                    }
+                // TODO: set forbidden onto names here
 
-                    this.loading = false;
-
-                } else if (ontologies.body['@id'] && ontologies.body['rdfs:label']) {
-                    // only one ontology
-                    this.ontologies = [
-                        {
-                            id: ontologies.body['@id'],
-                            label: ontologies.body['rdfs:label']
-                        }
-                    ];
-
-                    this.ontologyIri = ontologies.body['@id'];
-                    // set list of existing name
-                    name = this.getOntologyName(this.ontologyIri);
-                    this.existingOntologyNames.push(name);
-
-                    // open this ontology
-                    this.openOntologyRoute(this.ontologyIri);
-                    this.getOntology(this.ontologyIri);
-
-                    this.loading = false;
-                } else {
-                    // none ontology defined yet
-                    this.ontologies = [];
-                    this.loading = false;
-                }
+                this.loading = false;
 
             },
-            (error: ApiServiceError) => {
+            (error: ApiResponseError) => {
                 console.error(error);
+                this.loading = false;
             }
-        ); */
+        );
+
+        // this._ontologyService.getProjectOntologies(encodeURI(this.project.id)).subscribe(
+        //     (ontologies: ApiServiceResult) => {
+
+        //         let name: string;
+
+        //         if (ontologies.body['@graph'] && ontologies.body['@graph'].length > 0) {
+        //             // more than one ontology
+        //             this.ontologies = [];
+
+        //             for (const ontology of ontologies.body['@graph']) {
+        //                 const info: OntologyInfo = {
+        //                     id: ontology['@id'],
+        //                     label: ontology['rdfs:label']
+        //                 };
+
+        //                 this.ontologies.push(info);
+
+        //                 // set list of existing names
+        //                 name = this._resourceClassFormService.getOntologyName(ontology['@id']);
+        //                 this.existingOntologyNames.push(name);
+        //             }
+
+        //             this.loading = false;
+
+        //         } else if (ontologies.body['@id'] && ontologies.body['rdfs:label']) {
+        //             // only one ontology
+        //             this.ontologies = [
+        //                 {
+        //                     id: ontologies.body['@id'],
+        //                     label: ontologies.body['rdfs:label']
+        //                 }
+        //             ];
+
+        //             this.ontologyIri = ontologies.body['@id'];
+        //             // set list of existing name
+        //             name = this._resourceClassFormService.getOntologyName(this.ontologyIri);
+        //             this.existingOntologyNames.push(name);
+
+        //             // open this ontology
+        //             this.openOntologyRoute(this.ontologyIri);
+        //             this.getOntology(this.ontologyIri);
+
+        //             this.loading = false;
+        //         } else {
+        //             // none ontology defined yet
+        //             this.ontologies = [];
+        //             this.loading = false;
+        //         }
+
+        //     },
+        //     (error: ApiServiceError) => {
+        //         console.error(error);
+        //     }
+        // );
+        */
     }
 
     // update view after selecting an ontology from dropdown
@@ -272,7 +316,7 @@ export class OntologyComponent implements OnInit {
     }
 
     filterOwlClass(owlClass: any) {
-        console.log(owlClass);
+        // console.log(owlClass);
         return (owlClass['@type'] === 'owl:class');
     }
 
@@ -290,13 +334,23 @@ export class OntologyComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(() => {
-            // update the view
+        dialogRef.afterClosed().subscribe((ontologyId: string) => {
+
+            // reset view in any case
             this.initList();
+
+            // in case of new ontology, go to correct route and update the view
+            if (ontologyId) {
+                this.ontologyIri = ontologyId;
+                // reset and open selected ontology
+                this.ontologyForm.controls['ontology'].setValue(this.ontologyIri);
+            }
         });
     }
 
-    openSourceTypeForm(mode: string, type: DefaultSourceType): void {
+
+
+    openResourceClassForm(mode: string, type: ResourceClass): void {
 
         // set ontology cache
         this._cache.set('currentOntology', this.ontology);
@@ -307,7 +361,7 @@ export class OntologyComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { name: type.name, title: type.label, subtitle: 'Customize source type', mode: mode, project: this.project.id }
+            data: { name: type.name, title: type.label, subtitle: 'Customize resource class', mode: mode, project: this.project.id }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
@@ -321,7 +375,7 @@ export class OntologyComponent implements OnInit {
      * Delete either ontology or sourcetype
      *
      * @param  {string} id
-     * @param  {string} mode Can be 'Ontology' or 'SourceType'
+     * @param  {string} mode Can be 'Ontology' or 'ResourceClass'
      * @param  {string} title
      */
     delete(id: string, mode: string, title: string) {
@@ -341,48 +395,77 @@ export class OntologyComponent implements OnInit {
         dialogRef.afterClosed().subscribe(answer => {
             if (answer === true) {
                 // delete and refresh the view
-                this.loadOntology = true;
-
                 switch (mode) {
                     case 'Ontology':
-                        /* NOT YET IMPLEMENTED!!!
                         this.loading = true;
-                        this._ontologyService.deleteOntology(id, this.ontology.lastModificationDate).subscribe(
-                            (response: any) => {
-                                this.ontology = undefined;
-                                // get the ontologies for this project
-                                const goto = 'project/' + this.projectcode + '/ontologies/';
-                                this._router.navigateByUrl(goto, { skipLocationChange: true });
-                                this.initList();
+                        this.loadOntology = true;
+                        const ontology = new UpdateOntology();
+                        ontology.id = this.ontology.id;
+                        ontology.lastModificationDate = this.ontology.lastModificationDate;
+                        this._dspApiConnection.v2.onto.deleteOntology(ontology).subscribe(
+                            (response: DeleteOntologyResponse) => {
                                 this.loading = false;
                                 this.loadOntology = false;
+                                // get the ontologies for this project
+                                this.initList();
+                                // go to project ontology page
+                                const goto = 'project/' + this.projectcode + '/ontologies/';
+                                this._router.navigateByUrl(goto, { skipLocationChange: false });
                             },
-                            (error: ApiServiceError) => {
-                                // TODO: show message
+                            (error: ApiResponseError) => {
                                 console.error(error);
                                 this.loading = false;
                                 this.loadOntology = false;
                             }
                         );
-                        */
+
                         break;
 
-                    case 'SourceType':
-                        // delete resource type and refresh the view
-
-                        /* NOT YET IMPLEMENTED!!!
+                    case 'ResourceClass':
+                        // delete reresource class and refresh the view
                         this.loadOntology = true;
-                        this._ontologyService.deleteResourceClass(id, this.ontology.lastModificationDate).subscribe(
-                            (response: any) => {
+                        const resClass = new UpdateOntology();
+                        resClass.id = this.resourceClass[0].iri;
+                        resClass.lastModificationDate = this.ontology.lastModificationDate;
+
+
+                        this._dspApiConnection.v2.onto.deleteResourceClass(ontology).subscribe(
+                            (response: OntologyMetadata) => {
+                                this.loading = false;
                                 this.getOntology(this.ontologyIri);
                             },
-                            (error: ApiServiceError) => {
-                                // TODO: show message
-                                this.getOntology(this.ontologyIri);
+                            (error: ApiResponseError) => {
                                 console.error(error);
+                                this.loading = false;
                             }
                         );
-                        */
+
+                        // TODO: replace by js-lib OntologiesEndpoint
+                        // this._ontologyService.deleteResourceClass(id, this.ontology.lastModificationDate).subscribe(
+                        //     (response: ApiServiceResult) => {
+                        //         this.getOntology(this.ontologyIri);
+                        //     },
+                        //     (error: ApiServiceError) => {
+                        //         console.error(error.errorInfo);
+
+                        //         const dialogErrorConfig: MatDialogConfig = {
+                        //             width: '560px',
+                        //             position: {
+                        //                 top: '112px'
+                        //             },
+                        //             data: { mode: 'error', title: 'Error: Not able to delete' }
+                        //         };
+
+                        //         const dialogErrorRef = this._dialog.open(
+                        //             DialogComponent,
+                        //             dialogErrorConfig
+                        //         );
+
+                        //         dialogErrorRef.afterClosed().subscribe(result => {
+                        //             this.getOntology(this.ontologyIri);
+                        //         });
+                        //     }
+                        // );
                         break;
                 }
 
@@ -390,18 +473,19 @@ export class OntologyComponent implements OnInit {
         });
     }
 
-    /**
-     * Get the ontolgoy name from ontology iri
-     *
-     * @param  {string} iri
-     * @returns string
-     */
-    private getOntologyName(iri: string): string {
+    disableDeleteButton(properties: any): boolean {
 
-        const array = iri.split('/');
+        console.log(properties);
+        return false;
 
-        const pos = array.length - 2;
-
-        return array[pos].toLowerCase();
     }
+
+    /**
+     *
+     * @param view 'grid' | ' graph'
+     */
+    toggleView(view: 'grid' | 'graph') {
+        this.view = view;
+    }
+
 }

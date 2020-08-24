@@ -1,10 +1,10 @@
 
-export interface DefaultPropertyType {
+export interface Property {
     group: string;
-    elements: DefaultValueType[];
+    elements: PropertyValue[];
 }
 
-export interface DefaultValueType {
+export interface PropertyValue {
     icon: string;
     label: string;
     subPropOf: string;
@@ -12,8 +12,8 @@ export interface DefaultValueType {
     group: string;
 }
 
-export class PropertyTypes {
-    public static data: DefaultPropertyType[] = [
+export class DefaultProperties {
+    public static data: Property[] = [
         {
             group: 'Text',
             elements: [
