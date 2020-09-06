@@ -1,7 +1,7 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import {Component, Inject, Input, OnInit, Output} from '@angular/core';
 import { ClassDefinition, KnoraApiConnection, ReadOntology } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
-import { Link, Node } from 'node_modules/d3-force-3d';
+import { Link, Node } from '../../../../../node_modules/d3-force-3d';
 import { ResourceClassFormService } from '../resource-class-form/resource-class-form.service';
 
 export interface NewOntology {
@@ -19,6 +19,7 @@ export class OntologyVisualizerComponent implements OnInit {
     // ontology JSON-LD object
     @Input() ontology: ReadOntology;
     @Input() ontoClasses: ClassDefinition[];
+    @Output() graphInfo;
     loading: boolean;
     nodes: Node[] = [];
     links: Link[] = [];
@@ -120,9 +121,7 @@ export class OntologyVisualizerComponent implements OnInit {
         return { 'nodes': this.nodes, 'links': this.links};
     }
     ngOnInit() {
-        const gData = this.convertOntolologytoGraph();
-        const gData_json = JSON.stringify(gData, null, 4);
-        console.log(gData_json);
+        this.graphInfo = this.convertOntolologytoGraph();
     }
 
 }

@@ -33,7 +33,9 @@
                         ],
                         "scripts": [
                             "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",
-                            "node_modules/svg-overlay/openseadragon-svg-overlay.js"
+                            "node_modules/svg-overlay/openseadragon-svg-overlay.js",
+                            "node_modules/3d-force-graph/dist/3d-force-graph.min.js",
+                            "node_modules/d3-force-3d/dist/d3-force-3d.js"
                         ]
                     },
                     "configurations": {
@@ -56,8 +58,8 @@
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "3mb",
-                                    "maximumError": "5mb"
+                                    "maximumWarning": "6mb",
+                                    "maximumError": "6mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",
