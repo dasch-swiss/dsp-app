@@ -9,27 +9,36 @@ jobs:
   build-test:
     name: Build and Test
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install dependencies
-      run: npm install
-    - name: Build app in prod mode
-      run: npm run build-prod
-    - name: Run unit tests
-      run: npm run test-ci
-    - name: Run e2e tests
-      run: |
-        npm run webdriver-update
-        npm run test-e2e-protractor
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install
+      - name: Build app in prod mode
+        run: npm run build-prod
+      - name: Run unit tests
+        run: npm run test-ci
+      - name: Run e2e tests
+        run: |
+          npm run webdriver-update
+          npm run test-e2e-protractor
+
+  update_release_draft:
+    name: Update next release draft
+    needs: build-test
+    runs-on: ubuntu-latest
+    # Drafts your next Release notes as Pull Requests are merged into "master"
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
   # publish only on release
   publish:
@@ -46,17 +55,3 @@ jobs:
         run: |
           echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
           make publish-dsp-app-image
-      - if: "github.event.release.prerelease"
-        name: Update release notes
-        uses: lakto/gren-action@v2.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          options: '--override --prerelease'
-      - if: "!github.event.release.prerelease"
-        name: Update release notes
-        uses: lakto/gren-action@v2.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          options: '--override'
