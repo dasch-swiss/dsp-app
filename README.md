@@ -1,6 +1,6 @@
 # DSP APP &mdash; Generic user interface of DaSCH Service Platform
 
-[![GitHub version](https://badge.fury.io/gh/dasch-swiss%2Fdsp-app.svg)](https://github.com/dasch-swiss/dsp-app)
+[![Github version](https://badge.fury.io/gh/dasch-swiss%2Fdsp-app.svg)](https://github.com/dasch-swiss/dsp-app)
 [![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
 [![Docker](https://img.shields.io/docker/cloud/build/daschswiss/dsp-app)](https://hub.docker.com/r/daschswiss/dsp-app)
 
@@ -8,7 +8,7 @@ This app is a simple user interface for the Data and Service Center for the Huma
 
 DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js) to connect with [DSP-API](https://docs.dasch.swiss/developers/knora/api-reference/). DSP-API is a software framework for storing, sharing, and working with primary resources and data in the humanities.
 
-Additional it's built with [DSP-UI-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-ui) &mdash; reusable DSP specific Angular modules.
+Additionaly it's built with [DSP-UI-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-ui) &mdash; reusable DSP specific Angular modules.
 
 Please check our [DSP Release Compatibility Matrix](https://docs.google.com/spreadsheets/d/e/2PACX-1vQe-0nFKqYHwHT3cNI2M_ZCycKOgDZBxtaabxEQDDkNKJf6funMVrJBJPgMFEJdiBdCesahUhURN6MS/pubhtml) to use this app with the correct and required versions of the dependent packages.
 
@@ -45,7 +45,7 @@ We built the user guidelines and developer documentation with [MkDocs](https://w
 
 ## Publish a new version to DockerHub
 
-A new version will be published with each github release as it's part of Github actions' workflow. To make a new release, go to <https://github.com/dasch-swiss/dsp-app/releases> and update the draft called "[Next release](https://github.com/dasch-swiss/dsp-app/releases/tag/next-release)" by changing:
+A new version will be published with each Github release as it's part of Github actions' workflow. To make a new release, go to <https://github.com/dasch-swiss/dsp-app/releases> and update the draft called "Next release" by changing:
 
 - the tag version and the release title (same name) with the version number, e.g. `v3.0.0` or `v3.0.0-rc.0`
 - If this is a pre-release, check the box "This is a pre-release"
