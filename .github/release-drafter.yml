@@ -11,7 +11,7 @@ categories:
       - 'enhancement'
   - title: 'Styling'
     label: 'styling'
-  - title: 'Bug Fixes'
+  - title: 'Bug fixes'
     labels:
       - 'fix'
       - 'bugfix'
@@ -24,6 +24,8 @@ categories:
     labels:
       - 'chore'
       - 'refactor'
+  - title: 'Testing'
+    label: 'testing'
 change-template: '- #$NUMBER $TITLE'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 version-resolver:

@@ -45,22 +45,9 @@ We built the user guidelines and developer documentation with [MkDocs](https://w
 
 ## Publish a new version to DockerHub
 
-A new version will be published with each github release as it's part of Github actions' workflow. Please follow the steps below to prepare the next release:
+A new version will be published with each github release as it's part of Github actions' workflow. To make a new release, go to <https://github.com/dasch-swiss/dsp-app/releases> and update the draft called "[Next release](https://github.com/dasch-swiss/dsp-app/releases/tag/next-release)" by changing:
 
-- Create new branch from master called e.g. `prerelease/v1.0.0-rc.2` or `release/v2.0.0`
-- Run one of the corresponding make commands:
-  - `next-release-candidate`         updates version to next release candidate e.g. from 3.0.0-rc.0 to 3.0.0-rc.1 or from 3.0.0 to 3.0.1-rc.0
-  - `prerelease-major`               updates version to next MAJOR as release candidate e.g. from 4.0.0 to 5.0.0-rc.0
-  - `prerelease-minor`               updates version to next MINOR as release-candidate e.g. from 3.1.0 to 3.2.0-rc.0
-  - `prerelease-patch`               updates version to next PATCH as release-candidate e.g. from 3.0.1 to 3.0.2-rc.0
-  - `release-major`                  updates version to next MAJOR version e.g. from 3.0.0 to 4.0.0
-  - `release-minor`                  updates version to next MINOR version e.g. from 3.0.0 to 3.1.0
-  - `release-patch`                  updates version to next PATCH version e.g. from 3.0.0 to 3.0.1
-- The make command will commit and push to github (you have to fill in your GitHub username and password to log when you do not use any [github token](https://docs.github.com/en/enterprise/2.15/user/articles/creating-a-personal-access-token-for-the-command-line))
-- Update README and CHANGELOG if necessary and commit the changes (currently, the CHANGELOG has to be updated manually)
-- Create new pull request and merge into master
-- Draft new release on Github. This will build, test and publish the new package on dockerhub. Additional it creates / overrides release notes on Github. Fill in:
-  - the tag version, the release title (same name)
-  - If this is a pre-release, check the box "This is a pre-release"
+- the tag version and the release title (same name) with the version number, e.g. `v3.0.0` or `v3.0.0-rc.0`
+- If this is a pre-release, check the box "This is a pre-release"
 
 New package will be available on <https://hub.docker.com/repository/docker/daschswiss/dsp-app>.
