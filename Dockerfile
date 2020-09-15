@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as 'builder'
-FROM node:11-stretch as builder
+FROM node:12-stretch as builder
 
 LABEL maintainer="ivan.subotic@unibas.ch"
 

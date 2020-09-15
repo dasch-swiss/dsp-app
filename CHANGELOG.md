@@ -2,11 +2,11 @@
 
 ## v3.0.0 (Next Release)
 
-### Breaking changes
+## Breaking changes
 
 - #283 Upgrade to Angular 9
 
-### Enhancements
+## Enhancements
 
 - #286 Get dsp-api version from the api server info
 - #285 Integrate OntoVis
@@ -16,17 +16,23 @@
 - #256 Add new unit tests to components in the main folder
 - #255 Fix wording through Knora-app
 
-### Styling
+## Styling
 
 - #275 Refactor material icons
 - #260 Same content style in each project tab
 
-### Dependencies
+## Documentation
 
+- #292 docs: Update README
+
+## Dependencies
+
+- #293 Update js- and ui-lib version
 - #283 Upgrade to Angular 9
 
-### Maintenance
+## Maintenance
 
+- #291 DSP-617 Update release process
 - #290 DSP-617 Use release-drafter instead gren
 - #288 DSP-420 update release process
 - #287 Replace the term source by resource
@@ -35,9 +41,10 @@
 - #275 Refactor material icons
 - #259 Delete dev folder
 
-### Testing
+## Testing
 
 - #281 Update CI test environment
+- #256 Add new unit tests to components in the main folder
 - #254 Add todo list in spec files
 
 ---

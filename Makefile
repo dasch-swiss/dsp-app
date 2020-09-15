@@ -7,7 +7,7 @@ CURRENT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 include vars.mk
 
 .PHONY: build-dsp-app-image
-build-dsp-app-image: ## build and publish DSP APP image locally
+build-dsp-app-image: ## build DSP APP image locally
 	docker build -t $(DSP_APP_IMAGE) .
 	docker tag $(DSP_APP_IMAGE) $(DSP_APP_REPO):latest
 
