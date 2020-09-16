@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/services/component-communication-event.service';
 
 @Component({
     selector: 'app-login',
@@ -13,7 +14,8 @@ export class LoginComponent implements OnInit {
 
     constructor (private _titleService: Title,
         private _route: ActivatedRoute,
-        private _router: Router) {
+        private _router: Router,
+        private _componentCommsService: ComponentCommunicationEventService) {
 
         // set the page title
         this._titleService.setTitle('Login');
@@ -29,6 +31,7 @@ export class LoginComponent implements OnInit {
         // go to previous route:
         if (status) {
             this._router.navigate([this.returnUrl]);
+            this._componentCommsService.emit(new EmitEvent(Events.LoginSuccess, true));
         }
     }
 

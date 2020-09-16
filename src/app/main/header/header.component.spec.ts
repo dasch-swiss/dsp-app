@@ -13,17 +13,20 @@ import {
     DspApiConfigToken,
     DspApiConnectionToken,
     DspCoreModule,
-    DspSearchModule
+    DspSearchModule,
+    MessageComponent
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
 import { TestConfig } from 'test.config';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/services/component-communication-event.service';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
     let fixture: ComponentFixture<HeaderComponent>;
+    let componentCommsService: ComponentCommunicationEventService;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -53,9 +56,12 @@ describe('HeaderComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
-                }
+                },
+                ComponentCommunicationEventService
             ]
         }).compileComponents();
+
+        componentCommsService = TestBed.inject(ComponentCommunicationEventService);
     }));
 
     beforeEach(() => {
@@ -92,6 +98,23 @@ describe('HeaderComponent', () => {
     it('should display the search panel', () => {
         const searchPanel = fixture.debugElement.query(By.css('dsp-search-panel'));
         expect(searchPanel).toBeDefined();
+    });
+
+    it('should display the login success message when the LoginSuccess event is emitted', () => {
+        componentCommsService.emit(new EmitEvent(Events.LoginSuccess));
+        fixture.detectChanges();
+        const message = fixture.debugElement.query(By.directive(MessageComponent));
+        expect(message).toBeTruthy();
+    });
+
+    it('should unsubscribe from from changes on destruction', () => {
+
+        expect(component.componentCommsSubscription.closed).toBe(false);
+
+        fixture.destroy();
+
+        expect(component.componentCommsSubscription.closed).toBe(true);
+
     });
 
 });

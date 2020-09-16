@@ -47,7 +47,9 @@
     </span>
 
 </mat-toolbar>
-
+<div *ngIf="showMessage">
+    <dsp-message [message]="successMessage" [short]="true" [duration]="2500"></dsp-message>
+</div>
 <!-- search-panel (in phone version) -->
 <div class="search-panel-phone" *ngIf="show">
     <dsp-fulltext-search class="dsp-fulltext-search" (search)="doSearch($event)" [projectfilter]="true">

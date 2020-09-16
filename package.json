@@ -20,6 +20,7 @@
     },
     "private": true,
     "dependencies": {
+        "3d-force-graph": "^1.60.12",
         "@angular/animations": "^9.1.12",
         "@angular/cdk": "^9.2.4",
         "@angular/common": "~9.1.12",
@@ -34,7 +35,6 @@
         "@dasch-swiss/dsp-ui": "1.0.0-rc.7",
         "@ngx-translate/core": "^13.0.0",
         "@ngx-translate/http-loader": "^6.0.0",
-        "3d-force-graph": "^1.60.12",
         "core-js": "^3.6.5",
         "d3": "^5.15.1",
         "d3-force-3d": "^2.1.0",

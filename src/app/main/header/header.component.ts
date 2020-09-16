@@ -1,25 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
-import { SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspMessageData, SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
+import { ComponentCommunicationEventService, Events } from 'src/app/services/component-communication-event.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy{
 
     session: boolean = false;
     show: boolean = false;
     searchParams: SearchParams;
 
+    successMessage: DspMessageData = {
+        status: 200,
+        statusText: 'Login successful'
+    };
+
+    showMessage = false;
+
+    componentCommsSubscription: Subscription;
+
     constructor(
         private _session: SessionService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
-        private _router: Router) {
+        private _router: Router,
+        private _componentCommsService: ComponentCommunicationEventService) {
 
         // create tool icons to use them in mat-icons
         // knora-app icon with text
@@ -43,6 +55,18 @@ export class HeaderComponent {
                 });
             }
         });
+    }
+
+    ngOnInit() {
+        this.componentCommsSubscription = this._componentCommsService.on(
+            Events.LoginSuccess, () => this.showMessage = true);
+    }
+
+    ngOnDestroy() {
+        // unsubscribe from the ValueOperationEventService when component is destroyed
+        if (this.componentCommsSubscription !== undefined) {
+            this.componentCommsSubscription.unsubscribe();
+        }
     }
 
     /**
