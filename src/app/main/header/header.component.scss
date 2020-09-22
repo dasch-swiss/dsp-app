@@ -29,14 +29,34 @@
   font-size: inherit;
 }
 
+.home-button {
+  display: inline-block;
+
+  .mat-headline {
+    margin-left: 6px;
+  }
+}
+
 .login-button {
   margin: 0 16px;
 }
+
+
+// desktop devices
+@media (min-width: map-get($grid-breakpoints, tablet)) {
+    .desktop-only {
+      display: inline-flex;
+    }
+
+  }
 
 // mobile device: tablet and smaller than a tablet
 @media (max-width: map-get($grid-breakpoints, tablet)) {
   .hide-search {
     display: none;
+  }
+  .mobile-only {
+      display: inline-flex;
   }
 }
 
@@ -56,6 +76,9 @@
 
 // mobile device: phone
 @media (max-width: map-get($grid-breakpoints, phone)) {
+  .mobile-only {
+    display: inline-flex;
+  }
   .searchbar-large-screen {
     display: none;
   }
