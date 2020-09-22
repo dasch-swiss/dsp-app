@@ -1,7 +1,7 @@
 DSP_APP_REPO := daschswiss/dsp-app
 
 ifeq ($(BUILD_TAG),)
-	BUILD_TAG := $(shell git describe --tag --abbrev=7)
+	BUILD_TAG := $(shell git describe --tag --abbrev=0)
 endif
 ifeq ($(BUILD_TAG),)
 	BUILD_TAG := $(shell git rev-parse --verify HEAD)
