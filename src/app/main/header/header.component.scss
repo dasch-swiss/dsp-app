@@ -1,7 +1,10 @@
 @import "../../../assets/style/responsive";
 
+.toolbar-header {
+    height: 72px;
+}
+
 .logo {
-  // margin-left: -16px;
 
   .mat-icon {
     height: 40px;
@@ -11,7 +14,6 @@
     }
 
     &.small {
-      // margin-left: 12px;
       width: 40px;
     }
   }
@@ -39,6 +41,28 @@
 
 .login-button {
   margin: 0 16px;
+}
+
+.other-search-link {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    height: 20px;
+    width: calc(480px + 160px);
+    margin-top: 3px;
+
+    .advanced-search-link, .expert-search-link {
+        justify-self: end;
+        line-height: 18px !important;
+        font-size: 0.6em;
+    }
+
+    .advanced-search-link {
+        grid-column: 7 / span 2;
+    }
+
+    .expert-search-link {
+        grid-column: 9 / span 2;
+    }
 }
 
 
