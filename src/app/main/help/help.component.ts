@@ -16,7 +16,7 @@ const { version: appVersion, name: appName } = require('../../../../package.json
 })
 export class HelpComponent implements OnInit {
 
-    loading: boolean = true;
+    loading = true;
 
     appVersion: string = appVersion;
 
@@ -25,6 +25,8 @@ export class HelpComponent implements OnInit {
     apiVersion: string;
 
     apiStatus: boolean;
+
+    sipiVersion = 'v3.0.0-rc.5';
 
     docs: GridItem[] = [
         {
@@ -60,13 +62,13 @@ export class HelpComponent implements OnInit {
         {
             title: 'DSP-API ',
             text: 'Framework to store, share, and work with primary resources in the humanities.',
-            url: 'https://github.com/dasch-swiss/knora-api/releases/tag/v',
+            url: 'https://github.com/dasch-swiss/knora-api/releases/tag/',
             urlText: 'Release notes'
         },
         {
-            title: 'Sipi v2.0.0',
+            title: 'Sipi ',
             text: 'High-performance, IIIF compatible media storage server.',
-            url: 'https://github.com/dasch-swiss/Sipi/releases/tag/v2.0.0',
+            url: 'https://github.com/dasch-swiss/Sipi/releases/tag/',
             urlText: 'Release notes'
         }
     ];
@@ -115,6 +117,10 @@ export class HelpComponent implements OnInit {
         this.tools[0].title = this.appName + ' v' + this.appVersion;
         this.tools[0].url += this.appVersion;
 
+        // set dsp-sipi version
+        this.tools[2].title += this.sipiVersion;
+        this.tools[2].url += this.sipiVersion;
+
         const apiUrl: string = this._dspApiConfig.apiUrl;
 
         this._http.get(apiUrl + '/admin/projects', { observe: 'response' })
@@ -143,8 +149,8 @@ export class HelpComponent implements OnInit {
         const versions: string[] = v.split(' ');
         const dspApi: string = versions[0].split('/')[1];
 
-        // keep version number as x.y.z format (no extra suffix e.g. -SNAPSHOT)
-        this.apiVersion = dspApi.split('-')[0];
+        // keep whole version number incl. -rc.xy
+        this.apiVersion = dspApi;
 
         this.tools[1].title += this.apiVersion;
         this.tools[1].url += this.apiVersion;
