@@ -11,7 +11,7 @@ $grid-breakpoints: (
 // desktop devices
 @media (min-width: map-get($grid-breakpoints, tablet)) {
   .desktop-only {
-    display: block;
+    display: contents;
   }
   .mobile-only {
     display: none;
@@ -23,7 +23,7 @@ $grid-breakpoints: (
     display: none;
   }
   .mobile-only {
-    display: block;
+    display: contents;
   }
 }
 
