@@ -8,6 +8,7 @@ import {
     Params,
     Router
 } from '@angular/router';
+import { ReadProject } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -74,5 +75,10 @@ export class ResourceComponent implements OnInit, OnDestroy {
 
     goBack() {
         this._location.back();
+    }
+
+    // open project in new tab
+    openProject(project: ReadProject){
+        window.open('/project/' + project.shortcode, "_blank");
     }
 }

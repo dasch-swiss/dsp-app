@@ -3,5 +3,5 @@
     Back
 </button>
 <div class="content large middle">
-    <dsp-resource-view [iri]="resourceIri"></dsp-resource-view>
+    <dsp-resource-view [iri]="resourceIri" (openProject)="openProject($event)"></dsp-resource-view>
 </div>
