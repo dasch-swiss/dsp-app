@@ -4,7 +4,7 @@
     <!-- Create new user profile -->
     <div *ngSwitchCase="'createUser'">
         <app-dialog-header [title]="'appLabels.form.user.title.profile' | translate"
-            [subtitle]="'appLabels.form.user.title.new' | translate" (close)="dialogRef.close()">
+            [subtitle]="'appLabels.form.user.title.new' | translate">
         </app-dialog-header>
         <app-user-form [name]="data.name" [projectcode]="data.project" (closeDialog)="dialogRef.close()">
         </app-user-form>
@@ -12,22 +12,19 @@
 
     <!-- Modify user data -->
     <div *ngSwitchCase="'editUser'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.edit' | translate"
-            (close)="dialogRef.close()"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.edit' | translate"></app-dialog-header>
         <app-user-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-form>
     </div>
 
     <!-- Update password -->
     <div *ngSwitchCase="'editPassword'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.password' | translate"
-            (close)="dialogRef.close()"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.password' | translate"></app-dialog-header>
         <app-password-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-password-form>
     </div>
 
     <!-- Delete user -->
     <div *ngSwitchCase="'deleteUser'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Suspend user'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'Suspend user'"></app-dialog-header>
         Do you want to suspend this user?
 
         <!-- TODO: create a mat dialog actions component with the following buttons: Cancel to reset and OK to confirm action -->
@@ -45,8 +42,7 @@
 
     <!-- Reactivate user -->
     <div *ngSwitchCase="'activateUser'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Activate user'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'Activate user'"></app-dialog-header>
         Do you want to reactivate this user?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -62,8 +58,7 @@
 
     <!-- Remove user from project -->
     <div *ngSwitchCase="'removeFromProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Remove user from Project'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'Remove user from Project'"></app-dialog-header>
         Do you want to remove this user from the project?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -79,31 +74,34 @@
 
     <!-- Manage user project membership -->
     <div *ngSwitchCase="'manageProjectMembership'">
-        <app-dialog-header [title]="data.name" [subtitle]="'Manage project membership'" (close)="dialogRef.close()">
+        <app-dialog-header [title]="data.name" [subtitle]="'Manage project membership'">
         </app-dialog-header>
         <app-membership [username]="data.name" (closeDialog)="dialogRef.close()"></app-membership>
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+                Cancel
+            </button>
+        </mat-dialog-actions>
     </div>
 
     <!-- all about PROJECT -->
     <!-- Create project -->
     <div *ngSwitchCase="'createProject'">
         <app-dialog-header [title]="'appLabels.form.project.title.profile' | translate"
-            [subtitle]="'appLabels.form.project.title.new' | translate" (close)="dialogRef.close()">
+            [subtitle]="'appLabels.form.project.title.new' | translate">
         </app-dialog-header>
         <app-project-form (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Modify project information -->
     <div *ngSwitchCase="'editProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate"
-            (close)="dialogRef.close()"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate"></app-dialog-header>
         <app-project-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Delete project -->
     <div *ngSwitchCase="'deleteProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.delete' | translate"
-            (close)="dialogRef.close()"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.delete' | translate"></app-dialog-header>
         Do you want to deactivate this project?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -119,8 +117,7 @@
 
     <!-- Reactivate project -->
     <div *ngSwitchCase="'activateProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.activate' | translate"
-            (close)="dialogRef.close()"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.activate' | translate"></app-dialog-header>
         Do you want to reactivate this project?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -138,15 +135,14 @@
 
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Create new'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'Create new'"></app-dialog-header>
         <app-list-info-form [projectcode]="data.project" [projectIri]="data.id" (closeDialog)="dialogRef.close()"
             (updateParent)="replaceTitle($event)"></app-list-info-form>
     </div>
 
     <!-- Update list info -->
     <div *ngSwitchCase="'editListInfo'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Edit list info'" (close)="dialogRef.close()">
+        <app-dialog-header [title]="data.title" [subtitle]="'Edit list info'">
         </app-dialog-header>
         <app-list-info-form [iri]="data.id" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
         </app-list-info-form>
@@ -154,8 +150,7 @@
 
     <!-- Delete list -->
     <div *ngSwitchCase="'deleteList'">
-        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.delete' | translate"
-            (close)="dialogRef.close()"></app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.delete' | translate"></app-dialog-header>
         Do you want to delete this list?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -171,8 +166,7 @@
 
     <!-- Ontology editor: create new ontology -->
     <div *ngSwitchCase="'createOntology'">
-        <app-dialog-header [title]="'Data model'" [subtitle]="'Create new'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="'Data model'" [subtitle]="'Create new'"></app-dialog-header>
         <app-ontology-form [projectcode]="data.project" (closeDialog)="dialogRef.close($event)"
             [existingOntologyNames]="data.existing"></app-ontology-form>
     </div>
@@ -184,8 +178,7 @@
     </div>
 
     <div *ngSwitchCase="'deleteOntology'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Delete data model'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete data model'"></app-dialog-header>
         Do you want to delete this data model?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -201,22 +194,25 @@
 
     <!-- Ontology editor: customize and add resource type -->
     <div *ngSwitchCase="'addResourceClass'">
-        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
         <app-resource-class-form [subClassOf]="data.name" [name]="data.title" [projectIri]="data.project"
             (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
         </app-resource-class-form>
     </div>
 
     <div *ngSwitchCase="'editResourceClass'">
-        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle" (close)="dialogRef.close()">
+        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
         The component{{data.mode}} is not implemented yet.
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+                Cancel
+            </button>
+        </mat-dialog-actions>
     </div>
 
     <div *ngSwitchCase="'deleteResourceClass'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource type'" (close)="dialogRef.close()">
-        </app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource type'"></app-dialog-header>
         Do you want to delete this resource type?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
