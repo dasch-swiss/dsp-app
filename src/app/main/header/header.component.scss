@@ -1,17 +1,14 @@
+@import "../../../assets/style/config";
 @import "../../../assets/style/responsive";
 
 .toolbar-header {
-    height: 72px;
+    height: $header-height;
 }
 
 .logo {
-
   .mat-icon {
     height: 40px;
-
-    &.large {
-      width: 180px;
-    }
+    margin: 0 6px 6px 0;
 
     &.small {
       width: 40px;
@@ -19,8 +16,8 @@
   }
 }
 
-.version {
-  margin: auto 0 9px -9px;
+.app-version {
+  margin: -12px 0;
 }
 
 .project-selector {
@@ -44,43 +41,37 @@
 }
 
 .other-search-link {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    height: 20px;
-    width: calc(480px + 160px);
-    margin-top: 3px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  height: 20px;
+  width: calc(480px + 160px);
+  margin-top: 3px;
 
-    .advanced-search-link, .expert-search-link {
-        justify-self: end;
-        line-height: 18px !important;
-        font-size: 0.6em;
-    }
+  .advanced-search-link,
+  .expert-search-link {
+    justify-self: end;
+    line-height: 18px !important;
+    font-size: 0.6em;
+  }
 
-    .advanced-search-link {
-        grid-column: 7 / span 2;
-    }
+  .advanced-search-link {
+    grid-column: 7 / span 2;
+  }
 
-    .expert-search-link {
-        grid-column: 9 / span 2;
-    }
+  .expert-search-link {
+    grid-column: 9 / span 2;
+  }
 }
-
 
 // desktop devices
 @media (min-width: map-get($grid-breakpoints, tablet)) {
-    .desktop-only {
-      display: inline-flex;
-    }
 
-  }
+}
 
 // mobile device: tablet and smaller than a tablet
 @media (max-width: map-get($grid-breakpoints, tablet)) {
   .hide-search {
     display: none;
-  }
-  .mobile-only {
-      display: inline-flex;
   }
 }
 
@@ -100,9 +91,7 @@
 
 // mobile device: phone
 @media (max-width: map-get($grid-breakpoints, phone)) {
-  .mobile-only {
-    display: inline-flex;
-  }
+
   .searchbar-large-screen {
     display: none;
   }

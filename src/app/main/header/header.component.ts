@@ -6,6 +6,8 @@ import { DspMessageData, SearchParams, SessionService } from '@dasch-swiss/dsp-u
 import { ComponentCommunicationEventService, Events } from 'src/app/services/component-communication-event.service';
 import { Subscription } from 'rxjs';
 
+const { version: appVersion } = require('../../../../package.json');
+
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
@@ -16,6 +18,8 @@ export class HeaderComponent implements OnInit, OnDestroy{
     session: boolean = false;
     show: boolean = false;
     searchParams: SearchParams;
+
+    appVersion: string = 'v' + appVersion;
 
     successMessage: DspMessageData = {
         status: 200,
