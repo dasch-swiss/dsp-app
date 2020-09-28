@@ -43,10 +43,10 @@
             </td>
             <td class="table-info">
                 <!-- Longname hidden on phone devices -->
-                <h5 class="mat-subheading-2 link info-longname" (click)="gotoProjectBoard(project.shortcode)">
+                <h5 class="mat-subheading-2 link info-longname" (click)="openProjectPage(project.shortcode)">
                     {{project.longname}}
                 </h5>
-                <p class="mat-subheading-1 link" (click)="gotoProjectBoard(project.shortcode)">
+                <p class="mat-subheading-1 link" (click)="openProjectPage(project.shortcode)">
                     {{project.shortcode}} | {{project.shortname}}
                 </p>
             </td>
@@ -65,7 +65,10 @@
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
                     <button mat-menu-item *ngIf="status"
                         (click)="openDialog('editProject', project.shortname, project.shortcode)">
-                        Edit project
+                        Edit project information
+                    </button>
+                    <button mat-menu-item *ngIf="status" (click)="openProjectPage(project.shortcode, 'collaboration')">
+                        Manage project members
                     </button>
                     <!-- disable the deactivate-button for the following two projects:
                     - http://www.knora.org/ontology/knora-admin#SystemProject
@@ -85,43 +88,3 @@
     </table>
 
 </div>
-
-<!--
-<div *ngFor="let project of projects; let first = first">
-
-    <div class="app-toolbar more-space-top">
-        <div class="app-toolbar-row">
-            <h3 class="mat-body subtitle">
-                <span *ngIf="!system">Projects you are member of</span>
-                <span *ngIf="system">All projects from Knora</span>
-            </h3>
-            <span class="fill-remaining-space"></span>
-            <span class="app-toolbar-action">
-                <kui-sort-button *ngIf="projects.length > 1" [sortProps]="sortProps" [(sortKey)]="sortBy" [position]="'right'"></kui-sort-button>
-            </span>
-        </div>
-        <div class="app-toolbar-row">
-            <h2 class="mat-title">
-                {{projects.length}} {{projects.length | i18nPlural: itemPluralMapping['project']}}
-            </h2>
-            <span class="fill-remaining-space"></span>
-            <span class="app-toolbar-action">
-
-            </span>
-        </div>
-    </div>
-
-
-    <mat-list>
-        <mat-list-item *ngFor="let project of projects | kuiSortBy: sortBy" class="link" [class.deactivated]="group.key === 'deactivate'"
-                       (click)="setProject(project.id, project.id)">
-            <mat-icon mat-list-icon>
-                <span *ngIf="group.key === 'active'">inbox</span>
-                <span *ngIf="group.key === 'deactivate'">lock</span>
-            </mat-icon>
-            <h4 mat-line>{{project.longname}}</h4>
-            <p mat-line> {{project.shortcode}} | {{project.shortname}} </p>
-        </mat-list-item>
-    </mat-list>
-</div>
- -->

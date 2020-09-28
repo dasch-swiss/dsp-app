@@ -95,12 +95,22 @@ export class ProjectsListComponent implements OnInit {
         return this.session.user.projectAdmin.some(e => e === id);
     }
 
-    gotoProjectBoard(code: string) {
+    /**
+     * Navigate to the project pages (e.g. board, collaboration or ontology)
+     *
+     * @param code
+     * @param page
+     */
+    openProjectPage(code: string, page: 'collaboration' | 'ontologies' | 'lists') {
         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-            () => this._router.navigate(['/project/' + code])
+            () => {
+                if (page) {
+                    this._router.navigate(['/project/' + code + '/' + page]);
+                } else {
+                    this._router.navigate(['/project/' + code]); // project board
+                }}
         );
     }
-
 
     openDialog(mode: string, name: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
