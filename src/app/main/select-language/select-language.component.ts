@@ -20,14 +20,14 @@ export class SelectLanguageComponent implements OnInit, OnDestroy {
         this.subscription = this._langService.getLanguage().subscribe(lang => {
             this.lang = lang;
             // console.log('lang: ' + lang.var);
-        }
-        );
+        });
 
-        translate.addLangs(['de', 'en']);
+        translate.addLangs(['en']);
         translate.setDefaultLang('en');
 
         this.selectedLang = translate.getBrowserLang();
-        translate.use(this.selectedLang.match(/en|de/) ? this.selectedLang : 'en');
+        // translate.use(this.selectedLang.match(/en|de/) ? this.selectedLang : 'en');
+        translate.use('en');
         // console.log('BrowserLang: ' + this.browserLang);
         this._langService.setLanguage(this.selectedLang);
 
