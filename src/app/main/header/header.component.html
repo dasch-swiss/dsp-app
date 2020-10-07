@@ -12,8 +12,8 @@
 
     <!-- search-panel (in desktop and tablet version) -->
     <span class="action searchbar-large-screen">
-        <dsp-search-panel [projectfilter]="true" [expert]="false" [advanced]="false" (search)="doSearch($event)">
-        </dsp-search-panel>
+        <dsp-fulltext-search [projectfilter]="true" (search)="doSearch($event)">
+        </dsp-fulltext-search>
          <!-- advanced and expert search (in desktop and tablet version) -->
          <span class="other-search-link">
             <button mat-button color="primary" class="advanced-search-link" routerLink="/search/advanced">

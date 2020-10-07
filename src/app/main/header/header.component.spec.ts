@@ -95,8 +95,8 @@ describe('HeaderComponent', () => {
         expect(loginBtnLabel).toEqual('LOGIN');
     });
 
-    it('should display the search panel', () => {
-        const searchPanel = fixture.debugElement.query(By.css('dsp-search-panel'));
+    it('should display fulltext-search', () => {
+        const searchPanel = fixture.debugElement.query(By.css('dsp-fulltext-search-panel'));
         expect(searchPanel).toBeDefined();
     });
 
