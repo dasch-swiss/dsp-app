@@ -76,8 +76,13 @@ a {
   color: $primary;
 }
 
+.external-link {
+    color: $primary_400 !important;
+}
+
 a,
-.link {
+.link,
+.external-link {
   cursor: pointer;
   text-decoration: none;
 }

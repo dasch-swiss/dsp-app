@@ -73,6 +73,7 @@ import { AdvancedSearchComponent } from './workspace/search/advanced-search/adva
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 
 import { environment } from '../environments/environment';
+import { ExternalLinksDirective } from './main/directive/external-links.directive';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -131,7 +132,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         ListItemFormComponent,
         MembershipComponent,
         HelpComponent,
-        FooterComponent
+        FooterComponent,
+        ExternalLinksDirective
     ],
     imports: [
         AppRoutingModule,
