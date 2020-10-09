@@ -3,7 +3,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { DspMessageData, SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
-import { ComponentCommunicationEventService, Events } from 'src/app/services/component-communication-event.service';
+import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 import { Subscription } from 'rxjs';
 
 const { version: appVersion } = require('../../../../package.json');

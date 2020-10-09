@@ -21,7 +21,7 @@ import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
 import { TestConfig } from 'test.config';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
-import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/services/component-communication-event.service';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;

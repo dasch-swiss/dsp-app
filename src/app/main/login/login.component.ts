@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/services/component-communication-event.service';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 
 @Component({
     selector: 'app-login',
