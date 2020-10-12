@@ -76,8 +76,8 @@ export class UsersListComponent implements OnInit {
         }
     ];
 
-    // ... and sort by 'email'
-    sortBy: string = 'email';
+    // ... and sort by 'username'
+    sortBy: string = 'username';
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -121,6 +121,13 @@ export class UsersListComponent implements OnInit {
                     console.error(error);
                 }
             );
+        }
+
+        // sort list by defined key
+        if(localStorage.getItem('sortUsersBy')) {
+            this.sortBy = localStorage.getItem('sortUsersBy');
+        } else {
+            localStorage.setItem('sortUsersBy', this.sortBy);
         }
     }
 
@@ -407,5 +414,6 @@ export class UsersListComponent implements OnInit {
 
     sortList(key: any) {
         this.list = this._sortingService.keySortByAlphabetical(this.list, key);
+        localStorage.setItem('sortUsersBy', key);
     }
 }

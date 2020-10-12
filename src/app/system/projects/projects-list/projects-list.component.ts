@@ -62,8 +62,8 @@ export class ProjectsListComponent implements OnInit {
         }
     ];
 
-    // ... and sort by 'shortname'
-    sortBy: string = 'shortname';
+    // ... and sort by 'longname'
+    sortBy: string = 'longname';
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -79,6 +79,13 @@ export class ProjectsListComponent implements OnInit {
 
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
+
+        // sort list by defined key
+        if(localStorage.getItem('sortProjectsBy')) {
+            this.sortBy = localStorage.getItem('sortProjectsBy');
+        } else {
+            localStorage.setItem('sortProjectsBy', this.sortBy);
+        }
     }
 
     /**
@@ -144,6 +151,7 @@ export class ProjectsListComponent implements OnInit {
 
     sortList(key: any) {
         this.list = this._sortingService.keySortByAlphabetical(this.list, key);
+        localStorage.setItem('sortProjectsBy', key);
     }
 
     deleteProject(id: string) {

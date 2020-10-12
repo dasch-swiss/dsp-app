@@ -14,8 +14,12 @@
         <div class="app-toolbar-row">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
-                <dsp-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
-                    [position]="'right'" (sortKeyChange)="sortList($event)"></dsp-sort-button>
+                <dsp-sort-button *ngIf="list.length > 1"
+                    [icon]="'sort_by_alpha'"
+                    [sortProps]="sortProps"
+                    [activeKey]="sortBy"
+                    (sortKeyChange)="sortList($event)">
+                </dsp-sort-button>
             </span>
             <h2 class="mat-title">
                 <span *ngIf="projectcode">{{list.length | i18nPlural: itemPluralMapping['member']}}</span>
@@ -30,7 +34,7 @@
 
     <!-- content: list -->
     <table class="table more-space-bottom" [class.deactivated]="!status">
-        <tr class="table-entry" *ngFor="let user of list | dspSortBy: sortBy; let last = last" [class.no-border]="last">
+        <tr class="table-entry" *ngFor="let user of list; let last = last" [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
                 <img dspAdminImage [image]="user.email" [type]="'user'" class="avatar-image" />
