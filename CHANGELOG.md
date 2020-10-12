@@ -1,5 +1,35 @@
 # Changelog
 
+## v3.0.0-rc.2 (12/10/2020)
+
+## Enhancements
+
+- #303 DSP-329 Fix sort button
+- #314 DSP-297 - Make the external links easy to spot
+- #308 DSP-284 Display app version in header
+- #310 DSP-339 - Add a link to the membership management page from the system project page
+
+## Styling
+
+- #309 DSP-689 Resource viewer fix style in properties toolbar
+- #302 DSP-371 - Improve the visibility of expert and advanced search links
+
+## Bug fixes
+
+- #313 DSP-674 Replace search-panel with fulltext-search
+- #306 DSP-700 Fix broken link to project
+- #304 DSP-666 Fix issue with version number
+
+## Maintenance
+
+- #316 DSP-293 Update contact information on the landing page
+- #315 Move services folder to main folder
+- #312 DSP-766 Remove 'de' from list of available languages
+- #307 DSP-368 - Redundancy with Cancel button and close button in dialog boxes
+- #305 DSP-669 Add template for PRs
+
+---
+
 ## v3.0.0-rc.1 (22/09/2020)
 
 ## Enhancements
@@ -14,14 +44,14 @@
 
 - #296 Update README.md
 
+## Dependencies
+
+- #300 DSP-673 Update dependency
+
 ## Maintenance
 
 - #299 Fix tiny issues
 - #297 DSP-295 Open external link in new tab
-
-## Dependencies
-
-- #300 DSP-673 Update dependency
 
 ---
 

@@ -1,6 +1,6 @@
 {
     "name": "dsp-app",
-    "version": "0.0.0-PLACEHOLDER",
+    "version": "0.0.0-DEV",
     "repository": {
         "type": "git",
         "url": "https://github.com/dasch-swiss/dsp-app.git"
@@ -31,8 +31,8 @@
         "@angular/platform-browser": "~9.1.12",
         "@angular/platform-browser-dynamic": "~9.1.12",
         "@angular/router": "~9.1.12",
-        "@dasch-swiss/dsp-js": "1.0.0-rc.12",
-        "@dasch-swiss/dsp-ui": "1.0.0-rc.8",
+        "@dasch-swiss/dsp-js": "1.0.0-rc.13",
+        "@dasch-swiss/dsp-ui": "1.0.0-rc.9",
         "@ngx-translate/core": "^13.0.0",
         "@ngx-translate/http-loader": "^6.0.0",
         "core-js": "^3.6.5",
