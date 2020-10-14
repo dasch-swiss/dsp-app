@@ -34,6 +34,10 @@
 
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
+        <button mat-icon-button aria-label="Add a new resource" (click)="openDialog('createResource')" class="main-toolbar-button new-resource" >
+            <mat-icon>add_circle_outline</mat-icon>
+        </button>
+
         <button mat-button [routerLink]="'/help'" class="main-toolbar-button help">Help</button>
 
         <app-select-language></app-select-language>

@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { DspMessageData, SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
-import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 import { Subscription } from 'rxjs';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 
 const { version: appVersion } = require('../../../../package.json');
 
@@ -34,6 +36,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
         private _session: SessionService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
+        private _dialog: MatDialog,
         private _router: Router,
         private _componentCommsService: ComponentCommunicationEventService) {
 
@@ -115,6 +118,27 @@ export class HeaderComponent implements OnInit, OnDestroy{
             this._router.navigate([doSearchRoute]);
         }
 
+    }
+
+    openDialog(mode: string, name?: string, iri?: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '640px',
+            position: {
+                top: '112px'
+            },
+            data: { mode: mode, title: name, id: iri }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(() => {
+
+            // do something
+
+        });
     }
 
 }

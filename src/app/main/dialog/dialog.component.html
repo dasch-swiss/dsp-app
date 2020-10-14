@@ -230,11 +230,26 @@
         <dsp-message [short]="true" [message]="data.title"></dsp-message>
     </div>
 
+    <!-- all about RESOURCE -->
+    <!-- Create resource -->
+    <div *ngSwitchCase="'createResource'">
+        <app-dialog-header [title]="'appLabels.form.resource.title.profile' | translate"
+            [subtitle]="'appLabels.form.project.title.new' | translate">
+        </app-dialog-header>
+        The component <b>{{data.mode}}</b> is not implemented yet.
+        <!-- TODO: <app-resource-form (closeDialog)="dialogRef.close()"></app-resource-form> -->
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+                Cancel
+            </button>
+        </mat-dialog-actions>
+    </div>
+
     <!-- Unknown method (or not yet defined) -->
     <!-- Default dialog content component -->
     <div *ngSwitchDefault>
         <app-dialog-header [title]="'Not yet implemented'" [subtitle]="'ERROR 400'" (close)="dialogRef.close()">
         </app-dialog-header>
-        The component{{data.mode}} is not implemented yet.
+        The component <b>{{data.mode}}</b> is not implemented yet.
     </div>
 </div>

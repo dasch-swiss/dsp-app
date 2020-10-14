@@ -99,6 +99,15 @@ a,
   }
 }
 
+.new-resource {
+    width: 64px !important ;
+    align-content: center;
+
+    &:hover {
+        background-color: #EBEBEB;
+    }
+}
+
 // --------------------------------------
 
 //

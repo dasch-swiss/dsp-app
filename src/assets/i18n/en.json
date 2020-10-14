@@ -153,6 +153,22 @@
                 "title": {
                     "delete": "Delete list"
                 }
+            },
+            "resource": {
+                "title": {
+                    "new": "Create new",
+                    "edit": "Update resource",
+                    "profile": "Resource",
+                    "editSuccess": "You have successfully updated this resource.",
+                    "delete": "Delete this resource",
+                    "deleteHint": "You're sure to delete this resource?",
+                    "deleteButton": "Delete resource now",
+                    "formWizard": {
+                        "step_1": "Select your resource",
+                        "step_2": "Add properties",
+                        "step_3": "Confirm"
+                    }
+                }
             }
         }
     }
