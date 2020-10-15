@@ -1,5 +1,5 @@
 <div *ngIf="projectAdmin" class="desktop-only">
-    <dsp-message [medium]="true" [message]="{status: 206, statusText: 'The ontology/data model editor is not yet fully implemented. The functionality is still work in progress.'}"></dsp-message>
+    <!-- <dsp-message [medium]="true" [message]="{status: 206, statusText: 'The ontology/data model editor is not yet fully implemented. The functionality is still work in progress.'}"></dsp-message> -->
 
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
@@ -14,7 +14,7 @@
                     <span *ngIf="ontologies.length > 0">
                         Project has {{ontologies.length | i18nPlural: itemPluralMapping['ontology']}}
                     </span>
-                    <span *ngIf="ontologies.length === 0">
+                    <span *ngIf="ontologies.length === 0 || !ontologies">
                         It seems there's no data model defined yet
                     </span>
                 </h2>
@@ -43,12 +43,10 @@
                 <span class="fill-remaining-space"></span>
 
                 <span class="app-toolbar-action" [class.select-form]="ontologies.length">
-                    <!-- disable the "Create new ontology" button; TODO: reactivate on ontology-editor improvementx
                     <button mat-raised-button color="primary" class="create-data-model-btn"
                         (click)="openOntologyForm('createOntology')">
                         {{ontologies.length ? 'New data model' : 'Create your first data model'}}
                     </button>
-                    -->
                 </span>
             </div>
         </div>

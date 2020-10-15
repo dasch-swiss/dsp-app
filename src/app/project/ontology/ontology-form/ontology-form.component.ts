@@ -182,28 +182,6 @@ export class OntologyFormComponent implements OnInit {
                 console.error(error);
             }
         );
-        /* NOT YET IMPLEMENTED!!! use the new ontology endpoint from dsp-js
-        this._ontologyService.createOntology(ontologyData).subscribe(
-            (ontology: any) => {
-
-                // set cache for the new ontology
-                this._cache.get('currentOntology', this._ontologyService.getAllEntityDefinitionsForOntologies(ontology['@id']));
-
-                // this.updateParent.emit(ontology['@id']);
-
-                // open new ontology after closing dialog
-                this.closeDialog.emit(ontology['@id']);
-
-            },
-            (error: any) => {
-
-                this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
-                this.loading = false;
-
-                console.error(error);
-            }
-        );
-        */
     }
 
     /**

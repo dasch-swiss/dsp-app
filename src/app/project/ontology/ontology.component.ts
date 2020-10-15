@@ -3,11 +3,24 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, ClassDefinition, DeleteOntologyResponse, KnoraApiConnection, OntologiesMetadata, OntologyMetadata, ProjectResponse, ReadOntology, ReadProject, UpdateOntology } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    ClassDefinition,
+    DeleteOntologyResponse,
+    KnoraApiConnection,
+    OntologiesMetadata,
+    OntologyMetadata,
+    ProjectResponse,
+    ReadOntology,
+    ReadProject,
+    UpdateOntology
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { DefaultResourceClasses, ResourceClass } from './default-data/default-resource-classes';
+import { ResourceClassFormService } from './resource-class-form/resource-class-form.service';
 
 export interface OntologyInfo {
     id: string;
@@ -60,7 +73,6 @@ export class OntologyComponent implements OnInit {
     // i18n setup
     itemPluralMapping = {
         ontology: {
-            // '=0': '0 Ontologies',
             '=1': '1 data model',
             other: '# data models'
         }
@@ -79,7 +91,7 @@ export class OntologyComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        // private _ontologyService: OntologyService,
+        private _resourceClassFormService: ResourceClassFormService,
         private _cache: CacheService,
         private _session: SessionService,
         private _dialog: MatDialog,
@@ -163,100 +175,32 @@ export class OntologyComponent implements OnInit {
         this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
             (response: OntologiesMetadata) => {
                 this.ontologies = response.ontologies;
+
+                // get list of already existing ontology names
+                // name has to be unique
+                for (const ontology of response.ontologies) {
+                    let name = this._resourceClassFormService.getOntologyName(ontology.id);
+                    this.existingOntologyNames.push(name);
+                }
+
+                // in case project has only one ontology: open this ontology
+                // because there will be no form to select ontlogy
+                if(response.ontologies.length === 1) {
+                    // open this ontology
+                    this.openOntologyRoute(this.ontologies[0].id);
+                    this.getOntology(this.ontologies[0].id);
+                }
+
                 this.loading = false;
             },
             (error: ApiResponseError) => {
+                // temporary solution. There's a bug in js-lib in case of 0 ontologies
+                // s. youtrack issue DSP-863
+                this.ontologies = [];
+
                 console.error(error);
             }
         )
-
-        // this.knoraApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
-        //     (response: OntologiesMetadata) => {
-        //         this.ontologies = response.ontologies;
-        // TODO: replace _ontologyService and ApiServiceError
-        /* this._ontologyService.getProjectOntologies(encodeURI(this.project.id)).subscribe(
-            (ontologies: ApiServiceResult) => {
-
-                let name: string;
-
-                if (ontologies.body['@graph'] && ontologies.body['@graph'].length > 0) {
-                    // more than one ontology
-                    this.ontologies = [];
-
-                    for (const ontology of ontologies.body['@graph']) {
-                        const info: OntologyInfo = {
-                            id: ontology['@id'],
-                            label: ontology['rdfs:label']
-                        };
-
-                console.log(this.ontologies);
-
-                // TODO: set forbidden onto names here
-
-                this.loading = false;
-
-            },
-            (error: ApiResponseError) => {
-                console.error(error);
-                this.loading = false;
-            }
-        );
-
-        // this._ontologyService.getProjectOntologies(encodeURI(this.project.id)).subscribe(
-        //     (ontologies: ApiServiceResult) => {
-
-        //         let name: string;
-
-        //         if (ontologies.body['@graph'] && ontologies.body['@graph'].length > 0) {
-        //             // more than one ontology
-        //             this.ontologies = [];
-
-        //             for (const ontology of ontologies.body['@graph']) {
-        //                 const info: OntologyInfo = {
-        //                     id: ontology['@id'],
-        //                     label: ontology['rdfs:label']
-        //                 };
-
-        //                 this.ontologies.push(info);
-
-        //                 // set list of existing names
-        //                 name = this._resourceClassFormService.getOntologyName(ontology['@id']);
-        //                 this.existingOntologyNames.push(name);
-        //             }
-
-        //             this.loading = false;
-
-        //         } else if (ontologies.body['@id'] && ontologies.body['rdfs:label']) {
-        //             // only one ontology
-        //             this.ontologies = [
-        //                 {
-        //                     id: ontologies.body['@id'],
-        //                     label: ontologies.body['rdfs:label']
-        //                 }
-        //             ];
-
-        //             this.ontologyIri = ontologies.body['@id'];
-        //             // set list of existing name
-        //             name = this._resourceClassFormService.getOntologyName(this.ontologyIri);
-        //             this.existingOntologyNames.push(name);
-
-        //             // open this ontology
-        //             this.openOntologyRoute(this.ontologyIri);
-        //             this.getOntology(this.ontologyIri);
-
-        //             this.loading = false;
-        //         } else {
-        //             // none ontology defined yet
-        //             this.ontologies = [];
-        //             this.loading = false;
-        //         }
-
-        //     },
-        //     (error: ApiServiceError) => {
-        //         console.error(error);
-        //     }
-        // );
-        */
     }
 
     // update view after selecting an ontology from dropdown
