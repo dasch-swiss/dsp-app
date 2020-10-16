@@ -1,48 +1,40 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 
-export interface ResourceClass {
+export interface DefaultClass {
     iri: string;
-    name: string;
-    label?: string;
+    label: string;
     icons?: string[];
 }
 
 export class DefaultResourceClasses {
 
-    public static data: ResourceClass[] = [
+    public static data: DefaultClass[] = [
         {
             iri: Constants.Resource,
-            name: 'knora-api:Resource',
             label: 'Object without file representation (metadata only)'
         },
         {
-            iri: Constants.StillImageFileValue,
-            name: 'knora-api:StillImageRepresentation',
+            iri: Constants.KnoraApiV2 + Constants.Delimiter + "StillImageRepresentation",
             label: 'Still Image'
         },
         {
-            iri: Constants.MovingImageFileValue,
-            name: 'knora-api:MovingImageRepresentation',
+            iri: Constants.KnoraApiV2 + Constants.Delimiter + "MovingImageRepresentation",
             label: 'Moving Image'
         },
         {
-            iri: Constants.AudioFileValue,
-            name: 'knora-api:AudioRepresentation',
+            iri: Constants.KnoraApiV2 + Constants.Delimiter + "AudioRepresentation",
             label: 'Audio'
         },
         {
-            iri: Constants.TextFileValue,
-            name: 'knora-api:TextRepresentation',
+            iri: Constants.KnoraApiV2 + Constants.Delimiter + "TextRepresentation",
             label: 'Text'
         },
         {
-            iri: Constants.DocumentFileValue,
-            name: 'knora-api:DocumentRepresentation',
+            iri: Constants.KnoraApiV2 + Constants.Delimiter + "DocumentRepresentation",
             label: 'Document (Word, PDF, etc.)'
         },
         {
-            iri: Constants.DDDFileValue,
-            name: 'knora-api:DDDRepresentation',
+            iri: Constants.KnoraApiV2 + Constants.Delimiter + "DDDRepresentation",
             label: 'RTI Image'
         }
     ];

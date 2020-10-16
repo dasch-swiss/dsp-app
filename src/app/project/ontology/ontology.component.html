@@ -1,5 +1,4 @@
 <div *ngIf="projectAdmin" class="desktop-only">
-    <!-- <dsp-message [medium]="true" [message]="{status: 206, statusText: 'The ontology/data model editor is not yet fully implemented. The functionality is still work in progress.'}"></dsp-message> -->
 
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
@@ -72,7 +71,7 @@
                     <mat-icon>scatter_plot</mat-icon> Graph
                 </button>
                 <button mat-stroked-button
-                    (click)="$event.stopPropagation(); openOntologyForm('editOntologyInfo', ontology?.id, ontology?.id)">
+                    (click)="$event.stopPropagation(); openOntologyForm('editOntology', ontology.id)">
                     Edit
                 </button>
                 &nbsp;
@@ -85,8 +84,7 @@
 
         <div #ontologyEditor *ngIf="!loadOntology && view === 'grid'" class="ontology-editor-canvas">
             <!-- button to select and add new resource class to the ontology -->
-            <div class="add-resource-class" *ngIf="project?.status && sysAdmin && ontologyIri">
-                <!-- TODO: will be reactivated with the improvements of ontology editor
+            <div class="add-resource-class" *ngIf="project?.status && (sysAdmin || projectAdmin) && ontologyIri">
                 <button mat-raised-button color="primary" [matMenuTriggerFor]="addResClassMenu">
                     Add resource class&nbsp;
                     <mat-icon>add</mat-icon>
@@ -97,16 +95,9 @@
                         {{ type?.label }}
                     </button>
                 </mat-menu>
-                -->
             </div>
 
-            <!-- <app-add-resource-class *ngIf="project?.status && sysAdmin && ontologyIri" [projectcode]="projectcode"
-                class="add-resource-class" (refreshParent)="resetOntology(ontologyIri)" #addResourceClassComponent>
-            </app-add-resource-class> -->
-
             <!-- list of resource classs -->
-            <!-- <svg width="100%" height="1200" class="mySvg" (click)="clicked($event)"></svg> -->
-
             <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
                 cdkDragBoundary=".drag-drop-stop">
                 <mat-toolbar class="resource-class-header" cdkDragHandle>
@@ -120,7 +111,7 @@
                         <mat-menu #resClassMenu="matMenu" xPosition="before">
                             <button mat-menu-item
                                 (click)="openResourceClassForm('editResourceClass', {iri: resClass.id, name: '', label: resClass.label})">Edit</button>
-                            <button mat-menu-item [disabled]="resClass.propertiesList.length > 17"
+                            <button mat-menu-item
                                 (click)="delete(resClass.id, 'ResourceClass', resClass.label)">Delete</button>
                         </mat-menu>
                     </mat-toolbar-row>

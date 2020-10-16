@@ -19,6 +19,8 @@ export interface DialogData {
 })
 export class DialogComponent implements OnInit {
 
+    notYetImplemented = `The component <strong>${this.data.mode}</strong> is not implemented yet.`;
+
     constructor(
         public dialogRef: MatDialogRef<DialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData

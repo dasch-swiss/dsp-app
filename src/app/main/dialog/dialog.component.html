@@ -172,9 +172,9 @@
     </div>
 
     <div *ngSwitchCase="'editOntology'">
-        <app-dialog-header [title]="'Data model'" [subtitle]="'Create new'" (close)="dialogRef.close()">
+        <app-dialog-header [title]="'Data model'" [subtitle]="'Edit'" (close)="dialogRef.close()">
         </app-dialog-header>
-        The component{{data.mode}} is not implemented yet.
+        <p class="todo" [innerHtml]="notYetImplemented"></p>
     </div>
 
     <div *ngSwitchCase="'deleteOntology'">
@@ -192,7 +192,7 @@
         </mat-dialog-actions>
     </div>
 
-    <!-- Ontology editor: customize and add resource type -->
+    <!-- Ontology editor: customize and add resource class -->
     <div *ngSwitchCase="'addResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
         <app-resource-class-form [subClassOf]="data.name" [name]="data.title" [projectIri]="data.project"
@@ -203,7 +203,7 @@
     <div *ngSwitchCase="'editResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        The component{{data.mode}} is not implemented yet.
+        <p class="todo" [innerHtml]="notYetImplemented"></p>
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
                 Cancel
@@ -212,8 +212,8 @@
     </div>
 
     <div *ngSwitchCase="'deleteResourceClass'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource type'"></app-dialog-header>
-        Do you want to delete this resource type?
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource class'"></app-dialog-header>
+        Do you want to delete this resource class?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
                 Cancel
@@ -250,6 +250,6 @@
     <div *ngSwitchDefault>
         <app-dialog-header [title]="'Not yet implemented'" [subtitle]="'ERROR 400'" (close)="dialogRef.close()">
         </app-dialog-header>
-        The component <b>{{data.mode}}</b> is not implemented yet.
+        <p class="todo" [innerHtml]="notYetImplemented"></p>
     </div>
 </div>

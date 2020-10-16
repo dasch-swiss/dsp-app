@@ -8,6 +8,7 @@ import {
     ApiResponseError,
     ClassDefinition,
     DeleteOntologyResponse,
+    DeleteResourceClass,
     KnoraApiConnection,
     OntologiesMetadata,
     OntologyMetadata,
@@ -19,7 +20,7 @@ import {
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { DefaultResourceClasses, ResourceClass } from './default-data/default-resource-classes';
+import { DefaultResourceClasses, DefaultClass } from './default-data/default-resource-classes';
 import { ResourceClassFormService } from './resource-class-form/resource-class-form.service';
 
 export interface OntologyInfo {
@@ -81,7 +82,7 @@ export class OntologyComponent implements OnInit {
     /**
      * list of all default resource classs (sub class of)
      */
-    resourceClass: ResourceClass[] = DefaultResourceClasses.data;
+    resourceClass: DefaultClass[] = DefaultResourceClasses.data;
 
     @ViewChild('ontologyEditor', { read: ViewContainerRef }) ontologyEditor: ViewContainerRef;
 
@@ -264,7 +265,12 @@ export class OntologyComponent implements OnInit {
         return (owlClass['@type'] === 'owl:class');
     }
 
-    openOntologyForm(mode: string, name?: string, iri?: string): void {
+    /**
+     * Opens ontology form
+     * @param mode
+     * @param [iri] only in edit mode
+     */
+    openOntologyForm(mode: 'createOntology' | 'editOntology', iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '640px',
             position: {
@@ -292,9 +298,12 @@ export class OntologyComponent implements OnInit {
         });
     }
 
-
-
-    openResourceClassForm(mode: string, type: ResourceClass): void {
+    /**
+     * Opens resource class form
+     * @param mode
+     * @param subClassOf
+     */
+    openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', subClassOf: DefaultClass): void {
 
         // set ontology cache
         this._cache.set('currentOntology', this.ontology);
@@ -305,7 +314,7 @@ export class OntologyComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { name: type.name, title: type.label, subtitle: 'Customize resource class', mode: mode, project: this.project.id }
+            data: { name: subClassOf.iri, title: subClassOf.label, subtitle: 'Customize resource class', mode: mode, project: this.project.id }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
@@ -315,6 +324,7 @@ export class OntologyComponent implements OnInit {
             this.getOntology(this.ontologyIri);
         });
     }
+
     /**
      * Delete either ontology or sourcetype
      *
@@ -368,12 +378,12 @@ export class OntologyComponent implements OnInit {
                     case 'ResourceClass':
                         // delete reresource class and refresh the view
                         this.loadOntology = true;
-                        const resClass = new UpdateOntology();
-                        resClass.id = this.resourceClass[0].iri;
+                        const resClass: DeleteResourceClass = new DeleteResourceClass();
+                        resClass.id = id;
                         resClass.lastModificationDate = this.ontology.lastModificationDate;
 
 
-                        this._dspApiConnection.v2.onto.deleteResourceClass(ontology).subscribe(
+                        this._dspApiConnection.v2.onto.deleteResourceClass(resClass).subscribe(
                             (response: OntologyMetadata) => {
                                 this.loading = false;
                                 this.getOntology(this.ontologyIri);
@@ -383,45 +393,11 @@ export class OntologyComponent implements OnInit {
                                 this.loading = false;
                             }
                         );
-
-                        // TODO: replace by js-lib OntologiesEndpoint
-                        // this._ontologyService.deleteResourceClass(id, this.ontology.lastModificationDate).subscribe(
-                        //     (response: ApiServiceResult) => {
-                        //         this.getOntology(this.ontologyIri);
-                        //     },
-                        //     (error: ApiServiceError) => {
-                        //         console.error(error.errorInfo);
-
-                        //         const dialogErrorConfig: MatDialogConfig = {
-                        //             width: '560px',
-                        //             position: {
-                        //                 top: '112px'
-                        //             },
-                        //             data: { mode: 'error', title: 'Error: Not able to delete' }
-                        //         };
-
-                        //         const dialogErrorRef = this._dialog.open(
-                        //             DialogComponent,
-                        //             dialogErrorConfig
-                        //         );
-
-                        //         dialogErrorRef.afterClosed().subscribe(result => {
-                        //             this.getOntology(this.ontologyIri);
-                        //         });
-                        //     }
-                        // );
-                        break;
+                    break;
                 }
 
             }
         });
-    }
-
-    disableDeleteButton(properties: any): boolean {
-
-        console.log(properties);
-        return false;
-
     }
 
     /**
