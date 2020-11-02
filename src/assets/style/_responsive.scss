@@ -5,7 +5,7 @@ $grid-breakpoints: (
   phone: 576px,
   tablet: 768px,
   notebook: 992px,
-  desktop: 1200px
+  desktop: 1200px,
 );
 
 // desktop devices
@@ -13,11 +13,19 @@ $grid-breakpoints: (
   .desktop-only {
     display: contents;
   }
-  .mobile-only {
+  .fill-remaining-space.desktop-only {
+    display: flex;
+  }
+  .content.large.middle.desktop-only {
+    display: block;
+  }
+  .mobile-only,
+  .nav-link-mobile {
     display: none;
   }
 }
 
+// mobile device: tablet and phone
 @media (max-width: map-get($grid-breakpoints, tablet)) {
   .desktop-only {
     display: none;
@@ -27,8 +35,20 @@ $grid-breakpoints: (
   }
 }
 
+// mobile device: bigger than phone
+@media (min-width: map-get($grid-breakpoints, phone)) {
+  // override dsp-ui search panel style
+  .dsp-fulltext-search.desktop-only {
+    display: inline-flex !important;
+  }
+  .advanced-expert-buttons {
+    font-size: smaller !important;
+    margin-top: -6px !important;
+  }
+}
+
 // mobile device: tablet and smaller than a tablet
-@media (max-width: 768px) and (min-width: 576px) {
+@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) {
   .content {
     &.small,
     &.medium,
@@ -121,12 +141,5 @@ $grid-breakpoints: (
     .menu-action.logout {
       background: white;
     }
-  }
-}
-
-// desktop screen size: bigger than a tablet
-@media (min-width: map-get($grid-breakpoints, tablet)) {
-  .nav-link-mobile {
-    display: none;
   }
 }

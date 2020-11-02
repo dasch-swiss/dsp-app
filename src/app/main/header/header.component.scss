@@ -2,37 +2,26 @@
 @import "../../../assets/style/responsive";
 
 .toolbar-header {
-    height: $header-height;
+  height: $header-height;
 }
 
 .logo {
-  .mat-icon {
-    height: 40px;
-    margin: 0 6px 6px 0;
+  .home-button {
+    display: inline-block;
+    .mat-icon {
+      height: 40px;
+      margin: 0 6px 6px 0;
 
-    &.small {
-      width: 40px;
+      &.small {
+        width: 40px;
+      }
     }
-  }
-}
-
-.app-version {
-  margin: -12px 0;
-}
-
-.project-selector {
-  margin-right: 6px;
-  font-size: inherit;
-}
-.ps-btn {
-  font-size: inherit;
-}
-
-.home-button {
-  display: inline-block;
-
-  .mat-headline {
-    margin-left: 6px;
+    .mat-headline {
+      margin-left: 6px;
+    }
+    .app-version {
+      margin: -12px 0;
+    }
   }
 }
 
@@ -40,66 +29,19 @@
   margin: 0 16px;
 }
 
-.other-search-link {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  height: 20px;
-  width: calc(480px + 160px);
-  margin-top: 3px;
-
-  .advanced-search-link,
-  .expert-search-link {
-    justify-self: end;
-    line-height: 18px !important;
-    font-size: 0.6em;
+@media (min-width: 1025px) {
+  .desktop-only {
+    display: contents;
   }
-
-  .advanced-search-link {
-    grid-column: 7 / span 2;
-  }
-
-  .expert-search-link {
-    grid-column: 9 / span 2;
-  }
-}
-
-// desktop devices
-@media (min-width: map-get($grid-breakpoints, tablet)) {
-
-}
-
-// mobile device: tablet and smaller than a tablet
-@media (max-width: map-get($grid-breakpoints, tablet)) {
-  .hide-search {
+  .phone-tablet-only {
     display: none;
   }
 }
-
-// tablet and desktop device
-@media (min-width: map-get($grid-breakpoints, phone)) {
-  .searchbar-phone-screen {
+@media (max-width: 1024px) {
+  .desktop-only {
     display: none;
   }
-}
-
-// tablet and desktop device
-@media (max-width: map-get($grid-breakpoints, desktop)) and (min-width: map-get($grid-breakpoints, phone)) {
-  .space-before {
-    display: none;
-  }
-}
-
-// mobile device: phone
-@media (max-width: map-get($grid-breakpoints, phone)) {
-
-  .searchbar-large-screen {
-    display: none;
-  }
-  .search-link {
-    padding: 0;
-    min-width: 45px;
-  }
-  .action {
-    padding: 0;
+  .phone-tablet-only {
+    display: contents;
   }
 }

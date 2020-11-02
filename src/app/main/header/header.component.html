@@ -3,38 +3,42 @@
         <button mat-button routerLink="/" class="main-toolbar-button home-button">
             <mat-icon matPrefix svgIcon="dasch_icon_black" class="small"></mat-icon>
             <h1 class="mat-headline desktop-only">DaSCH Service Platform</h1>
-            <h1 class="mat-headline mobile-only">DSP</h1>
+            <h1 class="mat-headline phone-tablet-only">DSP</h1>
             <p class="mat-caption right app-version">{{appVersion}}</p>
         </button>
     </span>
 
-    <span class="fill-remaining-space space-before"></span>
+    <span class="fill-remaining-space"></span>
 
     <!-- search-panel (in desktop and tablet version) -->
-    <span class="action searchbar-large-screen">
-        <dsp-fulltext-search [projectfilter]="true" (search)="doSearch($event)">
-        </dsp-fulltext-search>
+    <span class="action">
+        <dsp-search-panel
+            [projectfilter]="true"
+            [advanced]="true"
+            [expert]="true"
+            (search)="doSearch($event)">
+        </dsp-search-panel>
          <!-- advanced and expert search (in desktop and tablet version) -->
-         <span class="other-search-link">
+         <!-- <span class="other-search-link">
             <button mat-button color="primary" class="advanced-search-link" routerLink="/search/advanced">
                 <span>Advanced search</span>
             </button>
             <button mat-button color="primary" class="expert-search-link" routerLink="/search/expert">
                 <span>Expert search</span>
             </button>
-        </span>
+        </span> -->
     </span>
 
-    <span class="fill-remaining-space"></span>
+    <span class="fill-remaining-space desktop-only"></span>
 
     <!-- button to display search bar (in phone version) -->
-    <button mat-icon-button class="search-link searchbar-phone-screen" (click)="showSearchBar()">
+    <!-- <button mat-icon-button class="search-link searchbar-phone-screen" (click)="showSearchBar()">
         <mat-icon>search</mat-icon>
-    </button>
+    </button> -->
 
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
-        <button mat-icon-button aria-label="Add a new resource" (click)="openDialog('createResource')" class="main-toolbar-button new-resource" >
+        <button mat-button aria-label="Add a new resource" (click)="openDialog('createResource')" class="main-toolbar-button new-resource">
             <mat-icon>add_circle_outline</mat-icon>
         </button>
 

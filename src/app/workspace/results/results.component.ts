@@ -21,7 +21,7 @@ export class ResultsComponent implements OnInit {
         this._route.paramMap.subscribe((params: Params) => {
             this.searchParams = {
                 query: decodeURIComponent(params.get('q')),
-                mode: 'fulltext'
+                mode: (decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch')
             };
             // get the project iri if exists
             if (params.get('project')) {

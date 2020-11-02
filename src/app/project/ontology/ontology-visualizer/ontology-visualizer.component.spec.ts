@@ -1,5 +1,8 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
     IHasProperty,
@@ -18,6 +21,7 @@ import {
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { OntologyVisualizerComponent } from './ontology-visualizer.component';
+import { VisualizerComponent } from './visualizer/visualizer.component';
 
 describe('OntologyVisualizerComponent', () => {
     let testHostComponent: OntologyVisualizerComponent;
@@ -66,12 +70,16 @@ describe('OntologyVisualizerComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 OntologyVisualizerComponent,
+                VisualizerComponent,
                 ErrorComponent
             ],
             imports: [
                 HttpClientTestingModule,
                 DspActionModule,
                 DspCoreModule,
+                MatRadioModule,
+                MatSliderModule,
+                MatSlideToggleModule,
                 RouterTestingModule
             ],
             providers: [

@@ -100,6 +100,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
     }
 
     doSearch(search: SearchParams) {
+
         // reset search params
         this.searchParams = undefined;
 

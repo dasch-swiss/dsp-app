@@ -1,7 +1,8 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppInitService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
@@ -18,9 +19,10 @@ describe('HelpComponent', () => {
         TestBed.configureTestingModule({
             declarations: [HelpComponent, FooterComponent, GridComponent],
             imports: [
-                HttpClientTestingModule,
+                BrowserAnimationsModule,
                 MatButtonModule,
                 MatIconModule,
+                MatSnackBarModule,
                 RouterTestingModule
             ],
             providers: [

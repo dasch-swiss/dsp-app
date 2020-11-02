@@ -13,10 +13,16 @@ indent_size = 2
 max_line_length = off
 trim_trailing_whitespace = false
 
-[*.json, *.scss, *.yml]
+[*.json]
+indent_size = 2
+
+[*.scss]
 indent_size = 2
 
 [*.ts]
 spaces_around_brackets = inside
 singleQuote = true
 indent_size = 4
+
+[*.yml]
+indent_size = 2

@@ -22,6 +22,7 @@ import { TestConfig } from 'test.config';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
@@ -36,6 +37,7 @@ describe('HeaderComponent', () => {
                 UserMenuComponent
             ],
             imports: [
+                BrowserAnimationsModule,
                 HttpClientModule,
                 DspActionModule,
                 DspCoreModule,

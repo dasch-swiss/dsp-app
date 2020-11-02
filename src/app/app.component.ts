@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
         private _titleService: Title) {
 
         // set the page title
-        this._titleService.setTitle('DSP-APP | DaSCH\'s generic user interface');
+        this._titleService.setTitle('DaSCH Service Platform');
 
     }
 

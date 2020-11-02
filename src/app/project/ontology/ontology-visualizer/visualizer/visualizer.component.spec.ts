@@ -1,4 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
 
 import { VisualizerComponent } from './visualizer.component';
 
@@ -8,7 +11,12 @@ describe('VisualizerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VisualizerComponent ]
+      declarations: [ VisualizerComponent ],
+      imports: [
+        MatRadioModule,
+        MatSliderModule,
+        MatSlideToggleModule
+    ],
     })
     .compileComponents();
   }));

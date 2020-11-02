@@ -77,7 +77,7 @@ a {
 }
 
 .external-link {
-    color: $primary_400 !important;
+  color: $primary_400 !important;
 }
 
 a,
@@ -97,15 +97,18 @@ a,
     height: $header-height;
     border-radius: 0;
   }
-}
 
-.new-resource {
-    width: 64px !important ;
-    align-content: center;
-
-    &:hover {
-        background-color: #EBEBEB;
-    }
+  // override dsp-ui search panel style
+  .dsp-search-panel .mobile-only .dsp-fulltext-search-button {
+    height: $header-height;
+    border-radius: 0;
+    margin-top: 4px;
+  }
+  .dsp-fulltext-search-mobile-panel .dsp-fulltext-search-button {
+    height: auto !important;
+    border-radius: $border-radius !important;
+    margin-top: 0 !important;
+  }
 }
 
 // --------------------------------------

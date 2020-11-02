@@ -69,7 +69,7 @@ export class MainComponent implements OnInit {
         private _titleService: Title
     ) {
         // set the page title
-        this._titleService.setTitle('DSP-APP | DaSCH\'s generic research interface');
+        this._titleService.setTitle('DaSCH Service Platform');
 
 
         // check if a session is active

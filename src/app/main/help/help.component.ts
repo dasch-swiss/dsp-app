@@ -2,8 +2,8 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
-import { DspApiConfigToken } from '@dasch-swiss/dsp-ui';
+import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConfig, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConfigToken, DspApiConnectionToken, NotificationService } from '@dasch-swiss/dsp-ui';
 import { GridItem } from '../grid/grid.component';
 
 declare let require: any;
@@ -20,13 +20,9 @@ export class HelpComponent implements OnInit {
 
     appVersion: string = appVersion;
 
-    appName: string = appName;
-
-    apiVersion: string;
-
-    apiStatus: boolean;
-
     sipiVersion = 'v3.0.0-rc.5';
+
+    apiStatus: HealthResponse;
 
     docs: GridItem[] = [
         {
@@ -95,10 +91,10 @@ export class HelpComponent implements OnInit {
     ];
 
     constructor(
-        @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _notification: NotificationService,
         private _domSanitizer: DomSanitizer,
-        private _matIconRegistry: MatIconRegistry,
-        private _http: HttpClient) {
+        private _matIconRegistry: MatIconRegistry) {
 
         // create tool icons to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
@@ -114,48 +110,24 @@ export class HelpComponent implements OnInit {
     ngOnInit() {
 
         // set dsp-app version
-        this.tools[0].title = this.appName + ' v' + this.appVersion;
+        this.tools[0].title += ' v' + this.appVersion;
         this.tools[0].url += this.appVersion;
 
         // set dsp-sipi version
         this.tools[2].title += this.sipiVersion;
         this.tools[2].url += this.sipiVersion;
 
-        const apiUrl: string = this._dspApiConfig.apiUrl;
-
-        this._http.get(apiUrl + '/admin/projects', { observe: 'response' })
-            .subscribe(
-                (resp: HttpResponse<any>) => {
-
-                    this.readVersion(resp.headers.get('Server'));
-                    this.apiStatus = true;
-
-                },
-                (error: any) => {
-                    this.readVersion(error.headers.get('Server'));
-                    console.error(error);
-                    this.apiStatus = false;
-                }
-            );
-    }
-
-    readVersion(v: string) {
-
-        if (!v) {
-            return;
-        }
-
-        // read and set version of dsp
-        const versions: string[] = v.split(' ');
-        const dspApi: string = versions[0].split('/')[1];
-
-        // keep whole version number incl. -rc.xy
-        this.apiVersion = dspApi;
-
-        this.tools[1].title += this.apiVersion;
-        this.tools[1].url += this.apiVersion;
-
-        this.loading = false;
+        this._dspApiConnection.system.healthEndpoint.getHealthStatus().subscribe(
+            (response: ApiResponseData<HealthResponse>) => {
+                this.apiStatus = response.body;
+                const apiVersion = this.apiStatus.webapiVersion;
+                this.tools[1].title += apiVersion;
+                this.tools[1].url += apiVersion;
+            },
+            (error: ApiResponseError) => {
+                this._notification.openSnackBar(error);
+            }
+        )
 
     }
 
