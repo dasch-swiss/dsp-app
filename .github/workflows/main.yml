@@ -56,6 +56,19 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@1.0.0"
       - name: Update version in package.json
         run: npm version ${{steps.previoustag.outputs.tag}} --git-tag-version=false --commit-hooks=false
+      - name: Update CHANGELOG
+        uses: lakto/gren-changelog-action@v0.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          options: '--override'
+      - name: Attach CHANGELOG to release assets
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: CHANGELOG.md
+          tag: ${{ github.ref }}
+          overwrite: true
       - name: Build and publish image
         run: |
           echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin

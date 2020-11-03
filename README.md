@@ -47,7 +47,7 @@ We built the user guidelines and developer documentation with [MkDocs](https://w
 
 Before publishing:
 
-- Update README and CHANGELOG if necessary and commit the changes (currently, the CHANGELOG has to be updated manually with [gren](https://github.com/github-tools/github-release-notes): `gren changelog --override`)
+- Update README if necessary and commit the changes.
 
 - Be sure that all dependencies to DSP-UI-LIB, DSP-JS-LIB and DSP-API are set to the correct version.
 
