@@ -1,0 +1,143 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSelectHarness } from '@angular/material/select/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MockProjects, StoredProject } from '@dasch-swiss/dsp-js';
+import { SelectProjectComponent } from './select-project.component';
+
+
+/**
+ * Test host component to simulate parent component.
+ */
+@Component({
+    template: `
+       <app-select-project
+            #selectProject
+            [formGroup]="form"
+            [usersProjects]="usersProjects"
+            (projectSelected)="selectProjects($event)">
+        </app-select-project>`
+})
+class TestHostComponent implements OnInit {
+
+    @ViewChild('selectProject') selectProject: SelectProjectComponent;
+
+    form: FormGroup;
+    usersProjects: StoredProject[] = [];
+    selectedProjIri: string;
+
+    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    }
+
+    ngOnInit() {
+        this.usersProjects = MockProjects.mockProjects().body.projects;
+        this.form = this._fb.group({});
+    }
+
+    selectProjects(projectIri: string) {
+        this.selectedProjIri = projectIri;
+    }
+}
+
+describe('SelectProjectComponent', () => {
+    let testHostComponent: TestHostComponent;
+    let testHostFixture: ComponentFixture<TestHostComponent>;
+    let loader: HarnessLoader;
+
+    beforeEach(async(() => {
+
+        TestBed.configureTestingModule({
+        declarations: [ SelectProjectComponent, TestHostComponent ],
+        imports: [
+            ReactiveFormsModule,
+            FormsModule,
+            BrowserAnimationsModule,
+            MatFormFieldModule,
+            MatSelectModule ]
+        })
+        .compileComponents();
+    }));
+
+    beforeEach(() => {
+
+        testHostFixture = TestBed.createComponent(TestHostComponent);
+        testHostComponent = testHostFixture.componentInstance;
+        loader = TestbedHarnessEnvironment.loader(testHostFixture);
+
+        testHostFixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(testHostComponent).toBeTruthy();
+        expect(testHostComponent.selectProject).toBeTruthy();
+    });
+
+    it('should add a new control to the parent form', () => {
+        expect(testHostComponent.form.contains('projects')).toBe(true);
+    });
+
+    it('should initialise the projects', () => {
+
+        expect(testHostComponent.selectProject.usersProjects).toBeDefined();
+        expect(testHostComponent.selectProject.usersProjects.length).toEqual(8);
+
+    });
+
+    it('should init the MatSelect and MatOptions correctly', async () => {
+
+        const select = await loader.getHarness(MatSelectHarness);
+        const initVal = await select.getValueText();
+
+        // placeholder
+        expect(initVal).toEqual('Select a project');
+
+        await select.open();
+
+        const options = await select.getOptions();
+
+        expect(options.length).toEqual(8);
+
+        const option1 = await options[0].getText();
+
+        expect(option1).toEqual('0001 | anything');
+
+        const option2 = await options[1].getText();
+
+        expect(option2).toEqual('00FF | images');
+
+    });
+
+
+    it('should emit the Iri of a selected project', async () => {
+
+        expect(testHostComponent.selectedProjIri).toBeUndefined();
+
+        const select = await loader.getHarness(MatSelectHarness);
+
+        await select.open();
+
+        const options = await select.getOptions({ text: '0001 | anything' });
+
+        expect(options.length).toEqual(1);
+
+        await options[0].click();
+
+        expect(testHostComponent.selectedProjIri).toEqual('http://rdfh.ch/projects/0001');
+    });
+
+    it('should unsubscribe from from changes on destruction', () => {
+
+        expect(testHostComponent.selectProject.projectChangesSubscription.closed).toBe(false);
+
+        testHostFixture.destroy();
+
+        expect(testHostComponent.selectProject.projectChangesSubscription.closed).toBe(true);
+
+    });
+
+});

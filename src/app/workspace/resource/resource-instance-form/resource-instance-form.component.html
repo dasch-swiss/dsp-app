@@ -1,0 +1,86 @@
+<!-- Step1: form to select one project, one ontology, one resource with label -->
+<form *ngIf="selectResourceForm && showNextStepForm" [formGroup]="selectResourceForm" class="resource-instance-form stepOne form-content" (ngSubmit)="nextStep()">
+
+    <!-- select one project -->
+    <div *ngIf="usersProjects?.length > 0">
+        <app-select-project
+            [formGroup]="selectResourceForm"
+            [usersProjects]="usersProjects"
+            (projectSelected)="selectOntologies($event)">
+        </app-select-project>
+    </div>
+
+    <!-- select one ontology -->
+    <span>
+        <div *ngIf="ontologiesMetadata?.ontologies.length > 0">
+            <app-select-ontology
+                [formGroup]="selectResourceForm"
+                [ontologiesMetadata]="ontologiesMetadata"
+                (ontologySelected)="selectResourceClasses($event)">
+            </app-select-ontology>
+        </div>
+    </span>
+
+    <!-- select one resource -->
+    <span *ngIf="resourceClasses?.length > 0">
+        <app-select-resource-class
+            [formGroup]="selectResourceForm"
+            [resourceClassDefinitions]="resourceClasses"
+            (resourceClassSelected)="selectProperties($event)"
+            (resourceLabel)="getResourceLabel($event)">
+        </app-select-resource-class>
+    </span>
+
+    <p *ngIf="errorMessage">
+        <b>{{errorMessage}}</b>
+    </p>
+
+    <!-- action buttons: cancel and next -->
+    <div class="form-panel large-field">
+        <span>
+            <button mat-button type="button" (click)="closeDialog.emit()">
+                {{ 'appLabels.form.action.cancel' | translate }}
+            </button>
+        </span>
+        <span class="fill-remaining-space"></span>
+        <span>
+            <button mat-raised-button type="button" color="primary" [disabled]="!selectResourceForm.valid || !selectedResourceClass || !resourceLabel"
+                (click)="nextStep($event)" class="form-next">
+                Next
+            </button>
+        </span>
+    </div>
+
+</form>
+
+<!-- Step2: create property values and submit data -->
+<form *ngIf="propertiesParentForm && !showNextStepForm" [formGroup]="propertiesParentForm" class="resource-instance-form stepTwo form-content" (ngSubmit)="submitData()">
+
+    <!-- create property values -->
+    <app-select-properties
+        #selectProps
+        [ontologyInfo]="ontologyInfo"
+        [resourceClass]="selectedResourceClass"
+        [propertiesAsArray]="propertiesAsArray"
+        [parentForm]="propertiesParentForm"
+        class="select-properties">
+    </app-select-properties>
+
+    <!-- action buttons: previous, reset and save -->
+    <div class="form-panel large-field btn-field">
+        <span>
+            <button mat-button type="button" (click)="prevStep($event)">
+                {{ 'appLabels.form.action.back' | translate }}
+            </button>
+        </span>
+        <button mat-button type="reset">
+            {{ 'appLabels.form.action.reset' | translate }}
+        </button>
+        <span class="fill-remaining-space"></span>
+        <span>
+            <button mat-raised-button type="submit" color="primary" [disabled]="!propertiesParentForm.valid" class="form-submit">
+                {{ 'appLabels.form.action.submit' | translate}}
+            </button>
+        </span>
+    </div>
+</form>

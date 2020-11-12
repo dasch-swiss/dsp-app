@@ -1,0 +1,56 @@
+// buttons
+.create {
+    cursor: pointer;
+    border: none;
+    padding: 0em;
+    outline: none;
+    background-color: transparent;
+    color: #000000;
+}
+
+// grid
+.properties-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+
+    .properties {
+        grid-column: 1 / span 6;
+        margin-top: 16px;
+
+        .border-bottom {
+            width: 650px;
+        }
+
+        .property {
+            grid-row: 1 / 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+
+            .property-label,
+            .property-value {
+                padding: 2px;
+                overflow-wrap: break-word;
+            }
+
+            .property-label {
+                grid-column: 1 / span 1;
+
+                .label {
+                text-align: right;
+                }
+
+                .label-info {
+                cursor: help;
+                }
+            }
+
+            .property-value {
+                grid-column: 2 / span 3;
+            }
+        }
+    }
+}
+

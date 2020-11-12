@@ -123,11 +123,32 @@ export class HeaderComponent implements OnInit, OnDestroy{
 
     openDialog(mode: string, name?: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
-            width: '640px',
+            width: '840px',
             position: {
                 top: '112px'
             },
             data: { mode: mode, title: name, id: iri }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(() => {
+
+            // do something
+
+        });
+    }
+
+    openNewResourceForm(mode: string, name?: string): void {
+        const dialogConfig: MatDialogConfig = {
+            width: '840px',
+            position: {
+                top: '112px'
+            },
+            data: { mode: mode, title: 'New resource',  subtitle: 'Create new resource class'}
         };
 
         const dialogRef = this._dialog.open(

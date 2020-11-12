@@ -1,0 +1,31 @@
+<div class="properties-container">
+    <div class="properties">
+        <div *ngFor="let prop of propertiesAsArray; let last = last; let i = index" [class.border-bottom]="!last">
+            <div class="property" *ngIf="!prop.isLinkProperty || prop">
+                <div class="property-label">
+                    <h3 class="label mat-subheading-1"
+                        [class.label-info]="prop.comment"
+                        [matTooltip]="prop.comment"
+                        matTooltipPosition="above">
+                        {{prop.label}}
+                    </h3>
+                </div>
+                <div class="property-value large-field">
+                    <app-switch-properties
+                        #switchProp
+                        [property]="prop"
+                        [parentResource]="parentResource"
+                        [parentForm]="parentForm"
+                        [formName]="prop.label + '_' + index">
+                    </app-switch-properties>
+                    <!-- Add button -->
+                    <!-- <div *ngIf="addValueIsAllowed(prop)">
+                        <button class="create" (click)="showAddValueForm(prop)" title="Add a new value">
+                            <mat-icon>add_box</mat-icon>
+                        </button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

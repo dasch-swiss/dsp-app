@@ -1,0 +1,10 @@
+<span *ngIf="form" [formGroup]="form">
+    <mat-form-field class="large-field">
+        <mat-label>Select a project</mat-label>
+        <mat-select placeholder="Select a project" formControlName="projects" class="select-project">
+          <mat-option *ngFor="let project of usersProjects" [value]="project.id">
+            {{ project.shortcode }} | {{ project.shortname }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+</span>
