@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OntologiesMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
+
+const resolvedPromise = Promise.resolve(null);
 
 @Component({
   selector: 'app-select-ontology',
@@ -26,7 +28,7 @@ export class SelectOntologyComponent implements OnInit, OnDestroy {
 
         // build a form for the named graph selection
         this.form = this._fb.group({
-            ontologies: ['null, Validators.required']
+            ontologies: [null, Validators.required]
         });
 
         // emit Iri of the project when selected
@@ -34,8 +36,15 @@ export class SelectOntologyComponent implements OnInit, OnDestroy {
             this.ontologySelected.emit(data.ontologies);
         });
 
-        // add form to the parent form group
-        this.formGroup.addControl('ontologies', this.form);
+        // if there is only one ontology to choose from, select it automatically
+        if (this.ontologiesMetadata.ontologies.length === 1) {
+            this.form.controls.ontologies.setValue(this.ontologiesMetadata.ontologies[0].id);
+        }
+
+        resolvedPromise.then(() => {
+            // add form to the parent form group
+            this.formGroup.addControl('ontologies', this.form);
+        });
     }
 
     ngOnDestroy() {

@@ -148,7 +148,8 @@ export class HeaderComponent implements OnInit, OnDestroy{
             position: {
                 top: '112px'
             },
-            data: { mode: mode, title: 'New resource',  subtitle: 'Create new resource class'}
+            data: { mode: mode, title: 'New resource',  subtitle: 'Create new resource class'},
+            disableClose: true
         };
 
         const dialogRef = this._dialog.open(

@@ -105,10 +105,15 @@ describe('SelectResourceClassComponent', () => {
         expect(testHostComponent.selectResource).toBeTruthy();
     });
 
-    it('should add 2 new controls to the parent form', () => {
-        expect(testHostComponent.form.contains('resources')).toBe(true);
-        expect(testHostComponent.form.contains('label')).toBe(true);
-    });
+    it('should add a new control to the parent form', async(() => {
+        // the control is added to the form as an async operation
+        // https://angular.io/guide/testing#async-test-with-async
+        testHostFixture.whenStable().then(
+            () => {
+                expect(testHostComponent.form.contains('resources')).toBe(true);
+            }
+        );
+    }));
 
     it('should initialise the resource classes', () => {
         expect(testHostComponent.selectResource.resourceClassDefinitions).toBeDefined();

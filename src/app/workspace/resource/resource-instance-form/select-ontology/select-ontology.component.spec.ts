@@ -76,9 +76,15 @@ describe('SelectOntologyComponent', () => {
         expect(testHostComponent.selectOntology).toBeTruthy();
     });
 
-    it('should add a new control to the parent form', () => {
-        expect(testHostComponent.form.contains('ontologies')).toBe(true);
-    });
+    it('should add a new control to the parent form', async(() => {
+        // the control is added to the form as an async operation
+        // https://angular.io/guide/testing#async-test-with-async
+        testHostFixture.whenStable().then(
+            () => {
+                expect(testHostComponent.form.contains('ontologies')).toBe(true);
+            }
+        );
+    }));
 
     it('should initialise the ontologies metadata', () => {
         expect(testHostComponent.selectOntology.ontologiesMetadata.ontologies).toBeDefined();
