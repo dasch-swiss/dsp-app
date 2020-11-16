@@ -16,6 +16,12 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy {
 
     @Input() resourceClassDefinitions: ResourceClassDefinition[];
 
+    // optional input to provide the component with a pre-selected ResourceClassDefinition
+    @Input() selectedResourceClass?: ResourceClassDefinition;
+
+    // optional input to provide the component with a pre-chosen label
+    @Input() chosenResourceLabel?: string;
+
     @Output() resourceClassSelected = new EventEmitter<string>();
 
     @Output() resourceLabel = new EventEmitter<string>();
@@ -37,13 +43,13 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy {
         });
 
         // emit Iri of the resource when selected
-        this.resourceChangesSubscription = this.form.valueChanges.subscribe((data) => {
-            this.resourceClassSelected.emit(data.resources);
+        this.resourceChangesSubscription = this.form.controls.resources.valueChanges.subscribe((data) => {
+            this.resourceClassSelected.emit(data);
         });
 
         // emit label of the resource when selected
-        this.resourceChangesSubscription = this.form.valueChanges.subscribe((data) => {
-            this.resourceLabel.emit(data.label);
+        this.resourceChangesSubscription = this.form.controls.label.valueChanges.subscribe((data) => {
+            this.resourceLabel.emit(data);
         });
 
         // if there is only one Resource Class Definition to choose from, select it automatically
@@ -55,6 +61,16 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy {
             // add form to the parent form group
             this.formGroup.addControl('resources', this.form);
         });
+
+        // check if there is a pre-selected ResourceClassDefinition, if so, set the value of the form control to this value
+        if (this.selectedResourceClass) {
+            this.form.controls.resources.setValue(this.selectedResourceClass.id);
+        }
+
+        // check if there is a pre-chosen label, if so, set the value of the form control to this value
+        if (this.chosenResourceLabel) {
+            this.form.controls.label.setValue(this.chosenResourceLabel);
+        }
     }
 
     ngOnDestroy() {

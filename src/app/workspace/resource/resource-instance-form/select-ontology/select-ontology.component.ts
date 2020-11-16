@@ -16,6 +16,9 @@ export class SelectOntologyComponent implements OnInit, OnDestroy {
 
     @Input() ontologiesMetadata: OntologiesMetadata;
 
+    // optional input to provide the component with a pre-selected ontology
+    @Input() selectedOntology?: string;
+
     @Output() ontologySelected = new EventEmitter<string>();
 
     form: FormGroup;
@@ -45,6 +48,11 @@ export class SelectOntologyComponent implements OnInit, OnDestroy {
             // add form to the parent form group
             this.formGroup.addControl('ontologies', this.form);
         });
+
+        // check if there is a pre-selected ontology, if so, set the value of the form control to this value
+        if (this.selectedOntology) {
+            this.form.controls.ontologies.setValue(this.selectedOntology);
+        }
     }
 
     ngOnDestroy() {

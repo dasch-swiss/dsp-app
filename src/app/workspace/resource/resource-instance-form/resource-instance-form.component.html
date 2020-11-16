@@ -6,6 +6,7 @@
         <app-select-project
             [formGroup]="selectResourceForm"
             [usersProjects]="usersProjects"
+            [selectedProject]="selectedProject"
             (projectSelected)="selectOntologies($event)">
         </app-select-project>
     </div>
@@ -16,6 +17,7 @@
             <app-select-ontology
                 [formGroup]="selectResourceForm"
                 [ontologiesMetadata]="ontologiesMetadata"
+                [selectedOntology]="selectedOntology"
                 (ontologySelected)="selectResourceClasses($event)">
             </app-select-ontology>
         </div>
@@ -24,8 +26,11 @@
     <!-- select one resource -->
     <span *ngIf="resourceClasses?.length > 0">
         <app-select-resource-class
+            #selectResourceClass
             [formGroup]="selectResourceForm"
             [resourceClassDefinitions]="resourceClasses"
+            [selectedResourceClass]="selectedResourceClass"
+            [chosenResourceLabel]="resourceLabel"
             (resourceClassSelected)="selectProperties($event)"
             (resourceLabel)="getResourceLabel($event)">
         </app-select-resource-class>

@@ -10,6 +10,7 @@ import {
     CreateValue,
     KnoraApiConnection,
     OntologiesMetadata,
+    OntologyMetadata,
     PropertyDefinition,
     ReadResource,
     ResourceClassAndPropertyDefinitions,
@@ -22,6 +23,7 @@ import { DspApiConnectionToken, Session, SessionService, SortingService } from '
 import { Subscription } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
+import { SelectResourceClassComponent } from './select-resource-class/select-resource-class.component';
 
 // https://dev.to/krumpet/generic-type-guard-in-typescript-258l
 type Constructor<T> = { new(...args: any[]): T };
@@ -50,6 +52,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     @Output() updateParent: EventEmitter<{ title: string, subtitle: string }> = new EventEmitter<{ title: string, subtitle: string }>();
 
     @ViewChild('selectProps') selectPropertiesComponent: SelectPropertiesComponent;
+    @ViewChild('selectResourceClass') selectResourceClassComponent: SelectResourceClassComponent;
 
     // forms
     selectResourceForm: FormGroup;
@@ -100,7 +103,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         // initialize projects to be used for the project selection in the creation form
         this.initializeProjects();
 
-        // boolean to show onl the first step of the form (= selectResourceForm)
+        // boolean to show only the first step of the form (= selectResourceForm)
         this.showNextStepForm = true;
 
     }
@@ -198,19 +201,38 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      */
     selectOntologies(projectIri: string) {
         if (projectIri) {
-            this.selectedProject = projectIri;
+            // if this method is called with the same value as the current selectedProject, there is no need to do anything
+            if (projectIri !== this.selectedProject) {
+                // any time the project is changed:
 
-            this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).subscribe(
-                (response: OntologiesMetadata) => {
-                    // filter out system ontologies
-                    response.ontologies = response.ontologies.filter(onto => onto.attachedToProject !== Constants.SystemProjectIRI);
+                // reset the selected ontology because it will be invalid
+                this.selectedOntology = undefined;
 
-                    this.ontologiesMetadata = response;
-                },
-                (error: ApiResponseError) => {
-                    console.error(error);
-                }
-            );
+                // reset the ontologies metadata before it is generated again to trigger the select-ontology OnInit method
+                this.ontologiesMetadata = undefined;
+
+                // reset resourceClasses to hide the select-resource-class form in case it is already visible
+                this.resourceClasses = undefined;
+
+                // remove the form control to ensure the parent Formgroups validity is correct
+                // this will be added to the parent Formgroup again when the select-ontology OnInit method is called
+                this.selectResourceForm.removeControl('ontologies');
+
+                // assign the selected iri to selectedProject
+                this.selectedProject = projectIri;
+
+                this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).subscribe(
+                    (response: OntologiesMetadata) => {
+                        // filter out system ontologies
+                        response.ontologies = response.ontologies.filter(onto => onto.attachedToProject !== Constants.SystemProjectIRI);
+
+                        this.ontologiesMetadata = response;
+                    },
+                    (error: ApiResponseError) => {
+                        console.error(error);
+                    }
+                );
+            }
         } else {
             this.errorMessage = 'You are not part of any project.';
         }
@@ -221,18 +243,37 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      * @param ontologyIri
      */
     selectResourceClasses(ontologyIri: string) {
+        // reset errorMessage, it will be reassigned in the else clause if needed
+        this.errorMessage = undefined;
 
         if (ontologyIri) {
-            this.selectedOntology = ontologyIri;
+            // if this method is called with the same value as the current selectedOntology, there is no need to do anything
+            if (ontologyIri !== this.selectedOntology) {
 
-            this._dspApiConnection.v2.ontologyCache.getOntology(ontologyIri).subscribe(
-                onto => {
-                        this.resourceClasses = this._makeResourceClassesArray(onto.get(ontologyIri).classes);
-                },
-                (error: ApiResponseError) => {
-                    console.error(error);
+                // reset selectedResourceClass since it will be invalid
+                this.selectedResourceClass = undefined;
+                this.resourceLabel = undefined;
+
+                // if there is already a select-resource-class component (i.e. the user clicked the back button), reset the resource label
+                if (this.selectResourceClassComponent) {
+                    this.selectResourceClassComponent.form.controls.label.setValue(null);
                 }
-        );
+
+                // remove the form control to ensure the parent Formgroups validity is correct
+                // this will be added to the parent Formgroup again when the select-resource-class OnInit method is called
+                this.selectResourceForm.removeControl('resources');
+
+                this.selectedOntology = ontologyIri;
+
+                this._dspApiConnection.v2.ontologyCache.getOntology(ontologyIri).subscribe(
+                    onto => {
+                            this.resourceClasses = this._makeResourceClassesArray(onto.get(ontologyIri).classes);
+                    },
+                    (error: ApiResponseError) => {
+                        console.error(error);
+                    }
+                );
+            }
         } else {
             this.errorMessage = 'No ontology defined for the selected project.';
         }
@@ -251,28 +292,30 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      * @param resourceClassIri
      */
     selectProperties(resourceClassIri: string) {
-        if (resourceClassIri) {
-            // if the client undoes the selection of a resource class, use the active ontology as a fallback
-            if (resourceClassIri === null) {
-                this.selectResourceClasses(this.selectedOntology);
-            } else {
-                this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
-                    onto => {
-                        this.ontologyInfo = onto;
+        // reset errorMessage, it will be reassigned in the else clause if needed
+        this.errorMessage = undefined;
 
-                        this.selectedResourceClass = onto.classes[resourceClassIri];
-                        // console.log('selectedResourceClass', this.selectedResourceClass);
+        // if the client undoes the selection of a resource class, use the active ontology as a fallback
+        if (resourceClassIri === null) {
+            this.selectResourceClasses(this.selectedOntology);
+        } else if (resourceClassIri) {
+            this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
+                onto => {
+                    this.ontologyInfo = onto;
 
-                        this.properties = this._makeResourceProperties(onto.properties);
-                        // console.log('properties', this.properties);
+                    this.selectedResourceClass = onto.classes[resourceClassIri];
+                    // console.log('selectedResourceClass', this.selectedResourceClass);
 
-                        this.convertPropObjectAsArray();
-                    }
-                );
-            }
+                    this.properties = this._makeResourceProperties(onto.properties);
+                    // console.log('properties', this.properties);
+
+                    this.convertPropObjectAsArray();
+                }
+            );
         } else {
             this.errorMessage = 'No resource class defined for the selected ontology.';
         }
+
     }
 
     /**

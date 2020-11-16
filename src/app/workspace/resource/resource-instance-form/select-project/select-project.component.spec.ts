@@ -77,9 +77,15 @@ describe('SelectProjectComponent', () => {
         expect(testHostComponent.selectProject).toBeTruthy();
     });
 
-    it('should add a new control to the parent form', () => {
-        expect(testHostComponent.form.contains('projects')).toBe(true);
-    });
+    it('should add a new control to the parent form', async(() => {
+        // the control is added to the form as an async operation
+        // https://angular.io/guide/testing#async-test-with-async
+        testHostFixture.whenStable().then(
+            () => {
+                expect(testHostComponent.form.contains('projects')).toBe(true);
+            }
+        );
+    }));
 
     it('should initialise the projects', () => {
 
