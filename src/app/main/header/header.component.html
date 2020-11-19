@@ -38,7 +38,7 @@
 
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
-        <button mat-icon-button aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
+        <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
             <mat-icon>add_circle_outline</mat-icon>
         </button>
 
