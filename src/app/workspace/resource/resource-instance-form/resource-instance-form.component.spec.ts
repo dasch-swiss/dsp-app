@@ -460,7 +460,7 @@ describe('ResourceInstanceFormComponent', () => {
             () => {
                 let resource = new ReadResource();
 
-                MockResource.getTestthing().subscribe((res) => {
+                MockResource.getTestThing().subscribe((res) => {
                     resource = res;
                 });
 
@@ -489,7 +489,7 @@ describe('ResourceInstanceFormComponent', () => {
 
         testHostComponent.resourceInstanceFormComponent.propertiesAsArray = new Array<ResourcePropertyDefinition>();
 
-        MockResource.getTestthing().subscribe( res => {
+        MockResource.getTestThing().subscribe( res => {
             const resourcePropDef = (res.entityInfo as ResourceClassAndPropertyDefinitions).getAllPropertyDefinitions()[9];
             testHostComponent.resourceInstanceFormComponent.propertiesAsArray.push(resourcePropDef as ResourcePropertyDefinition);
         });
