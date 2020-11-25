@@ -58,7 +58,7 @@ export class HelpComponent implements OnInit {
         {
             title: 'DSP-API ',
             text: 'Framework to store, share, and work with primary resources in the humanities.',
-            url: 'https://github.com/dasch-swiss/knora-api/releases/tag/',
+            url: 'https://github.com/dasch-swiss/dsp-api/releases/tag/',
             urlText: 'Release notes'
         },
         {
