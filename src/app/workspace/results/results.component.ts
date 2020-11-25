@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, Params } from '@angular/router';
 import { SearchParams } from '@dasch-swiss/dsp-ui';
-import { ReadProject } from '@dasch-swiss/dsp-js';
 
 @Component({
     selector: 'app-results',
@@ -18,7 +18,7 @@ export class ResultsComponent implements OnInit {
 
     constructor(
         private _route: ActivatedRoute,
-        private _router: Router
+        private _titleService: Title
     ) {
 
         this._route.paramMap.subscribe((params: Params) => {
@@ -34,6 +34,9 @@ export class ResultsComponent implements OnInit {
             }
 
         });
+
+        // set the page title
+        this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
     }
 
     ngOnInit() {
@@ -43,8 +46,4 @@ export class ResultsComponent implements OnInit {
         this.resourceIri = id;
     }
 
-    // open project in new tab
-    openProject(project: ReadProject){
-        window.open('/project/' + project.shortcode, "_blank");
-    }
 }

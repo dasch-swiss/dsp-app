@@ -1,7 +1,3 @@
-<button mat-stroked-button class="previousBtn" (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-    Back
-</button>
 <div class="content large middle">
-    <dsp-resource-view [iri]="resourceIri" (openProject)="openProject($event)"></dsp-resource-view>
+    <dsp-resource-view [iri]="resourceIri" (openProject)="openProject($event)" (referredResourceClicked)="openResource($event)" ></dsp-resource-view>
 </div>

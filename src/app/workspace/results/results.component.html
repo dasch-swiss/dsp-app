@@ -1,10 +1,11 @@
-<div class="content" *ngIf="searchParams" style="margin-top: 20px; height: 100vh;">
+<div class="content" *ngIf="searchParams">
     <as-split direction="horizontal">
         <as-split-area [size]="40">
             <dsp-list-view [search]="searchParams" (resourceSelected)="openResource($event)"></dsp-list-view>
         </as-split-area>
         <as-split-area [size]="60">
-            <dsp-resource-view [iri]="resourceIri" (openProject)="openProject($event)"></dsp-resource-view>
+            <!-- <dsp-resource-view [iri]="resourceIri" (openProject)="openProject($event)"></dsp-resource-view> -->
+            <app-resource [resourceIri]="resourceIri"></app-resource>
         </as-split-area>
     </as-split>
 </div>
