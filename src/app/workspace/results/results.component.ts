@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SearchParams } from '@dasch-swiss/dsp-ui';
+import { ReadProject } from '@dasch-swiss/dsp-js';
 
 @Component({
     selector: 'app-results',
@@ -12,6 +13,8 @@ export class ResultsComponent implements OnInit {
     searchParams: SearchParams;
 
     resIri: string;
+
+    resourceIri: string;
 
     constructor(
         private _route: ActivatedRoute,
@@ -37,6 +40,11 @@ export class ResultsComponent implements OnInit {
     }
 
     openResource(id: string) {
-        this._router.navigate(['/resource/' + encodeURIComponent(id)]);
+        this.resourceIri = id;
+    }
+
+    // open project in new tab
+    openProject(project: ReadProject){
+        window.open('/project/' + project.shortcode, "_blank");
     }
 }

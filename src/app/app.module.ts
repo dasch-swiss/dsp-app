@@ -79,6 +79,8 @@ import { SelectResourceClassComponent } from './workspace/resource/resource-inst
 import { SelectPropertiesComponent } from './workspace/resource/resource-instance-form/select-properties/select-properties.component';
 import { SwitchPropertiesComponent } from './workspace/resource/resource-instance-form/select-properties/switch-properties/switch-properties.component';
 
+import { AngularSplitModule } from 'angular-split';
+
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient, 'assets/i18n/', '.json')
@@ -162,7 +164,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
-        })
+        }),
+        AngularSplitModule.forRoot()
     ],
     providers: [
         {
