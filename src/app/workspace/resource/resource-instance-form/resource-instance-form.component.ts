@@ -132,7 +132,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         this.showNextStepForm = !this.showNextStepForm;
 
         // use response to go further with properties
-        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Define the properties for the resource class' });
+        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Define the properties of the resource' });
     }
 
     /**
@@ -140,7 +140,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      */
     prevStep(ev: Event) {
         ev.preventDefault();
-        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource class' });
+        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource' });
         this.showNextStepForm = true;
     }
 
