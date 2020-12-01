@@ -15,6 +15,7 @@
     <span>
         <div *ngIf="ontologiesMetadata?.ontologies.length > 0">
             <app-select-ontology
+                #selectOntology
                 [formGroup]="selectResourceForm"
                 [ontologiesMetadata]="ontologiesMetadata"
                 [selectedOntology]="selectedOntology"
@@ -49,8 +50,8 @@
         </span>
         <span class="fill-remaining-space"></span>
         <span>
-            <button mat-raised-button type="button" color="primary" [disabled]="!selectResourceForm.valid || !selectedResourceClass || !resourceLabel"
-                (click)="nextStep($event)" class="form-next">
+            <button mat-raised-button type="button" color="primary" [disabled]="!selectResourceForm.valid"
+                (click)="nextStep()" class="form-next">
                 Next
             </button>
         </span>

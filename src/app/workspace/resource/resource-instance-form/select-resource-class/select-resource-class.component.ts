@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ResourceClassDefinition } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
@@ -10,7 +19,7 @@ const resolvedPromise = Promise.resolve(null);
     templateUrl: './select-resource-class.component.html',
     styleUrls: ['./select-resource-class.component.scss']
 })
-export class SelectResourceClassComponent implements OnInit, OnDestroy {
+export class SelectResourceClassComponent implements OnInit, OnDestroy, AfterViewInit {
 
     @Input() formGroup: FormGroup;
 
@@ -32,30 +41,31 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy {
 
     resourceChangesSubscription: Subscription;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    labelChangesSubscription: Subscription;
+
+    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {}
 
     ngOnInit(): void {
 
         // build a form for the named graph selection
         this.form = this._fb.group({
             resources: [null, Validators.required],
-            label: [null]
+            label: [null, Validators.required]
         });
 
         // emit Iri of the resource when selected
         this.resourceChangesSubscription = this.form.controls.resources.valueChanges.subscribe((data) => {
             this.resourceClassSelected.emit(data);
+            this.formGroup.removeControl('resources');
+            this.formGroup.addControl('resources', this.form);
         });
 
-        // emit label of the resource when selected
-        this.resourceChangesSubscription = this.form.controls.label.valueChanges.subscribe((data) => {
+        // emit label of the resource any time it is changed
+        this.labelChangesSubscription = this.form.controls.label.valueChanges.subscribe((data) => {
             this.resourceLabel.emit(data);
+            this.formGroup.removeControl('resources');
+            this.formGroup.addControl('resources', this.form);
         });
-
-        // if there is only one Resource Class Definition to choose from, select it automatically
-        if (this.resourceClassDefinitions.length === 1) {
-            this.form.controls.resources.setValue(this.resourceClassDefinitions[0].id);
-        }
 
         resolvedPromise.then(() => {
             // add form to the parent form group
@@ -71,11 +81,26 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy {
         if (this.chosenResourceLabel) {
             this.form.controls.label.setValue(this.chosenResourceLabel);
         }
+
+    }
+
+
+    ngAfterViewInit() {
+        // if there is only one Resource Class Definition to choose from, select it automatically
+        // more info: https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error
+        if (this.resourceClassDefinitions.length === 1) {
+            Promise.resolve(null).then(() => this.form.controls.resources.setValue(this.resourceClassDefinitions[0].id));
+        }
+
     }
 
     ngOnDestroy() {
         if (this.resourceChangesSubscription !== undefined) {
             this.resourceChangesSubscription.unsubscribe();
+        }
+
+        if (this.labelChangesSubscription !== undefined) {
+            this.labelChangesSubscription.unsubscribe();
         }
     }
 

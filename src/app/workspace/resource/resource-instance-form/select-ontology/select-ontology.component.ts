@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OntologiesMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
@@ -10,7 +19,7 @@ const resolvedPromise = Promise.resolve(null);
   templateUrl: './select-ontology.component.html',
   styleUrls: ['./select-ontology.component.scss']
 })
-export class SelectOntologyComponent implements OnInit, OnDestroy {
+export class SelectOntologyComponent implements OnInit, OnDestroy, AfterViewInit {
 
     @Input() formGroup: FormGroup;
 
@@ -39,9 +48,9 @@ export class SelectOntologyComponent implements OnInit, OnDestroy {
             this.ontologySelected.emit(data.ontologies);
         });
 
-        // if there is only one ontology to choose from, select it automatically
-        if (this.ontologiesMetadata.ontologies.length === 1) {
-            this.form.controls.ontologies.setValue(this.ontologiesMetadata.ontologies[0].id);
+        // check if there is a pre-selected ontology, if so, set the value of the form control to this value
+        if (this.selectedOntology) {
+            this.form.controls.ontologies.setValue(this.selectedOntology);
         }
 
         resolvedPromise.then(() => {
@@ -49,9 +58,13 @@ export class SelectOntologyComponent implements OnInit, OnDestroy {
             this.formGroup.addControl('ontologies', this.form);
         });
 
-        // check if there is a pre-selected ontology, if so, set the value of the form control to this value
-        if (this.selectedOntology) {
-            this.form.controls.ontologies.setValue(this.selectedOntology);
+    }
+
+    ngAfterViewInit() {
+        // if there is only one ontology to choose from, select it automatically
+        // more info: https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error
+        if (this.ontologiesMetadata.ontologies.length === 1) {
+            Promise.resolve(null).then(() => this.form.controls.ontologies.setValue(this.ontologiesMetadata.ontologies[0].id));
         }
     }
 

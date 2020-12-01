@@ -1,6 +1,16 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    EventEmitter,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { StoredProject } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, StoredProject } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 
 const resolvedPromise = Promise.resolve(null);
@@ -10,7 +20,7 @@ const resolvedPromise = Promise.resolve(null);
     templateUrl: './select-project.component.html',
     styleUrls: ['./select-project.component.scss']
 })
-export class SelectProjectComponent implements OnInit, OnDestroy {
+export class SelectProjectComponent implements OnInit, OnDestroy, AfterViewInit {
 
     @Input() formGroup: FormGroup;
 
@@ -25,7 +35,9 @@ export class SelectProjectComponent implements OnInit, OnDestroy {
 
     projectChangesSubscription: Subscription;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        @Inject(FormBuilder) private _fb: FormBuilder) { }
 
     ngOnInit(): void {
 
@@ -44,16 +56,19 @@ export class SelectProjectComponent implements OnInit, OnDestroy {
             this.formGroup.addControl('projects', this.form);
         });
 
-        // if there is only one project to choose from, select it automatically
-        if (this.usersProjects.length === 1) {
-            this.form.controls.projects.setValue(this.usersProjects[0].id);
-        }
-
         // check if there is a pre-selected project, if so, set the value of the form control to this value
         if (this.selectedProject) {
             this.form.controls.projects.setValue(this.selectedProject);
         }
 
+    }
+
+    ngAfterViewInit() {
+        // if there is only one project to choose from, select it automatically
+        // more info: https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error
+        if (this.usersProjects.length === 1) {
+            Promise.resolve(null).then(() => this.form.controls.projects.setValue(this.usersProjects[0].id));
+        }
     }
 
     ngOnDestroy() {

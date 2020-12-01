@@ -1,5 +1,9 @@
 <span *ngIf="ontologiesMetadata !== undefined" [formGroup]="form">
-    <mat-form-field class="large-field">
+    <mat-form-field *ngIf="ontologiesMetadata.ontologies.length === 1" class="large-field selected-ontology">
+        <mat-label>Select an ontology</mat-label>
+        <input matInput disabled value="{{ontologiesMetadata.ontologies[0].label}}" class="onto-label">
+    </mat-form-field>
+    <mat-form-field *ngIf="ontologiesMetadata.ontologies.length > 1" class="large-field selected-ontologies">
         <mat-label>Select an ontology</mat-label>
         <mat-select placeholder="Select an ontology" formControlName="ontologies" class="select-ontology">
             <mat-option *ngFor="let onto of ontologiesMetadata.ontologies" [value]="onto.id">{{ onto.label }}</mat-option>

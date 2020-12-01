@@ -28,6 +28,8 @@ const typeGuard = <T>(o: any, className: Constructor<T>): o is T => {
     return o instanceof className;
 };
 
+const resolvedPromise = Promise.resolve(null);
+
 /**
  * Test host component to simulate parent component.
  */
@@ -66,7 +68,10 @@ class MockSelectProjectComponent implements OnInit {
             projects: [null, Validators.required]
         });
 
-        this.formGroup.addControl('projects', this.form);
+        resolvedPromise.then(() => {
+            // add form to the parent form group
+            this.formGroup.addControl('projects', this.form);
+        });
     }
 }
 
@@ -87,10 +92,13 @@ class MockSelectOntologyComponent implements OnInit {
 
     ngOnInit() {
         this.form = this._fb.group({
-            ontologies: ['null, Validators.required']
+            ontologies: [null, Validators.required]
         });
 
-        this.formGroup.addControl('ontologies', this.form);
+        resolvedPromise.then(() => {
+            // add form to the parent form group
+            this.formGroup.addControl('ontologies', this.form);
+        });
     }
 }
 
@@ -111,11 +119,14 @@ class MockSelectResourceClassComponent implements OnInit {
 
     ngOnInit() {
         this.form = this._fb.group({
-            resources: ['null' , Validators.required],
-            label: ['']
+            resources: [null , Validators.required],
+            label: [null, Validators.required]
         });
 
-        this.formGroup.addControl('resources', this.form);
+        resolvedPromise.then(() => {
+            // add form to the parent form group
+            this.formGroup.addControl('resources', this.form);
+        });
     }
 }
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { CardinalityUtil, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { ValueService } from '@dasch-swiss/dsp-ui';
@@ -69,7 +69,6 @@ export class SelectPropertiesComponent implements OnInit {
      * Called from the template when the user clicks on the add button
      */
     showAddValueForm(prop: ResourcePropertyDefinition) {
-        console.log('showAddValueForm');
         this.propId = prop.id;
         this.addValueFormIsVisible = true;
     }

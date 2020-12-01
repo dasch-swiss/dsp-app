@@ -7,7 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MockProjects, StoredProject } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockProjects, StoredProject } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { TestConfig } from 'test.config';
 import { SelectProjectComponent } from './select-project.component';
 
 
@@ -58,7 +60,13 @@ describe('SelectProjectComponent', () => {
             FormsModule,
             BrowserAnimationsModule,
             MatFormFieldModule,
-            MatSelectModule ]
+            MatSelectModule ],
+            providers: [
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                }
+            ]
         })
         .compileComponents();
     }));
