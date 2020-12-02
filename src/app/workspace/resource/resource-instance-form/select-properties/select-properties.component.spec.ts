@@ -2,7 +2,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/c
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MockOntology, PropertyDefinition, ResourceClassAndPropertyDefinitions, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { By } from '@angular/platform-browser';
+import { MockOntology, PropertyDefinition, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { SortingService } from '@dasch-swiss/dsp-ui';
 import { Properties, SelectPropertiesComponent } from './select-properties.component';
 import { SwitchPropertiesComponent } from './switch-properties/switch-properties.component';
@@ -25,6 +26,7 @@ template: `
     <app-select-properties
     #selectProps
     [ontologyInfo]="ontoInfo"
+    [resourceClass]="selectedResourceClass"
     [propertiesAsArray]="propertiesAsArray"
     [parentForm]="propertiesParentForm">
     </app-select-properties>`
@@ -37,6 +39,8 @@ class TestSelectPropertiesParentComponent implements OnInit {
 
     properties: Properties;
 
+    selectedResourceClass: ResourceClassDefinition;
+
     propertiesAsArray: Array<ResourcePropertyDefinition>;
 
     propertiesParentForm: FormGroup;
@@ -48,6 +52,8 @@ class TestSelectPropertiesParentComponent implements OnInit {
         this.propertiesParentForm = this._fb.group({});
 
         this.ontoInfo = MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing');
+
+        this.selectedResourceClass = this.ontoInfo.classes['http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'];
 
         this.properties = this._makeResourceProperties(this.ontoInfo.properties);
 
@@ -98,6 +104,7 @@ describe('SelectPropertiesComponent', () => {
     let testHostComponent: TestSelectPropertiesParentComponent;
     let testHostFixture: ComponentFixture<TestSelectPropertiesParentComponent>;
 
+
     beforeEach(async(() => {
 
         TestBed.configureTestingModule({
@@ -127,4 +134,72 @@ describe('SelectPropertiesComponent', () => {
     it('should create a value component for each property', () => {
         expect(testHostComponent.selectPropertiesComponent.switchPropertiesComponent.length).toEqual(propArrayLength);
     });
+
+    it('should create a key value pair object', () => {
+        const propsArray = [];
+
+        const keyValuePair = testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair;
+        for (const propIri in keyValuePair) {
+            if (keyValuePair.hasOwnProperty(propIri)) {
+                propsArray.push(keyValuePair[propIri]);
+            }
+        }
+
+        // each property has two entries in the keyValuePair object
+        expect(propsArray.length).toEqual(propArrayLength * 2);
+    });
+
+    describe('Add/Delete functionality', () => {
+        let hostComponentDe;
+        let selectPropertiesComponentDe;
+
+        beforeEach(() => {
+            testHostFixture = TestBed.createComponent(TestSelectPropertiesParentComponent);
+            testHostComponent = testHostFixture.componentInstance;
+            hostComponentDe = testHostFixture.debugElement;
+            selectPropertiesComponentDe = hostComponentDe.query(By.directive(SelectPropertiesComponent));
+            testHostFixture.detectChanges();
+
+            expect(testHostComponent).toBeTruthy();
+        });
+
+        it('should add a new form to the value when the add button is clicked', () => {
+            const addButtons = selectPropertiesComponentDe.queryAll(By.css('.create'));
+            const addButtonNativeElement = addButtons[0].nativeElement;
+
+            // if this fails, that likely means the property has a cardinality of 0-1 meaning the plus button should not be shown
+            expect(addButtonNativeElement).toBeDefined();
+
+            addButtonNativeElement.click();
+
+            expect(testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.propertiesAsArray[0].id].length).toEqual(2);
+        });
+
+        it('should delete a form from the value when the delete button is clicked', () => {
+            testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.propertiesAsArray[0].id] = [0, 1];
+            testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.propertiesAsArray[0].id + '-filtered'] = [0, 1];
+
+            testHostFixture.detectChanges();
+
+            let deleteButtons = selectPropertiesComponentDe.queryAll(By.css('.delete'));
+
+            const deleteButtonNativeElement = deleteButtons[0].nativeElement;
+
+            expect(deleteButtonNativeElement).toBeDefined();
+
+            deleteButtonNativeElement.click();
+
+            testHostFixture.detectChanges();
+
+            const expectedArray = [undefined, 1];
+
+            expect(testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.propertiesAsArray[0].id]).toEqual(expectedArray);
+
+            deleteButtons = selectPropertiesComponentDe.queryAll(By.css('.delete'));
+
+            expect(deleteButtons).toEqual([]);
+        });
+    });
+
+
 });

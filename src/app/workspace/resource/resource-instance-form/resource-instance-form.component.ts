@@ -157,9 +157,14 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         this.selectPropertiesComponent.switchPropertiesComponent.forEach((child) => {
             const createVal = child.createValueComponent.getNewValue();
             const iri = child.property.id;
-
             if (createVal instanceof CreateValue) {
-                this.propertiesObj[iri] = [createVal];
+                if (this.propertiesObj[iri]) {
+                    // if a key already exists, add the createVal to the array
+                    this.propertiesObj[iri].push(createVal);
+                } else {
+                    // if no key exists, add one and add the createVal as the first value of the array
+                    this.propertiesObj[iri] = [createVal];
+                }
             }
 
         });

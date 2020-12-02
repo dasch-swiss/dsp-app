@@ -1,6 +1,6 @@
 <div class="properties-container">
     <div class="properties">
-        <div *ngFor="let prop of propertiesAsArray; let last = last; let i = index" [class.border-bottom]="!last">
+        <div *ngFor="let prop of propertiesAsArray; let last = last;" [class.border-bottom]="!last">
             <div class="property" *ngIf="!prop.isLinkProperty || prop">
                 <div class="property-label">
                     <h3 class="label mat-subheading-1"
@@ -11,21 +11,37 @@
                     </h3>
                 </div>
                 <div class="property-value large-field">
-                    <app-switch-properties
-                        #switchProp
-                        [property]="prop"
-                        [parentResource]="parentResource"
-                        [parentForm]="parentForm"
-                        [formName]="prop.label + '_' + index">
-                    </app-switch-properties>
+                    <div *ngFor="let val of propertyValuesKeyValuePair[prop.id]; let i=index">
+                        <div *ngIf="val !== undefined">
+                            <div class="value">
+                                <app-switch-properties
+                                    #switchProp
+                                    [property]="prop"
+                                    [parentResource]="parentResource"
+                                    [parentForm]="parentForm"
+                                    [formName]="prop.label + '_' + i">
+                                </app-switch-properties>
+                            </div>
+                            <div class="buttons">
+                                <button *ngIf="propertyValuesKeyValuePair[prop.id + '-filtered'].length !== 1"
+                                    type="button"
+                                    title="Delete this value"
+                                    (click)="deleteValue(prop, i)"
+                                    class="delete">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Add button -->
-                    <!-- <div *ngIf="addValueIsAllowed(prop)">
-                        <button class="create" (click)="showAddValueForm(prop)" title="Add a new value">
+                    <div *ngIf="addValueIsAllowed(prop)">
+                        <button type="button" class="create" (click)="addNewValueFormToProperty(prop)" title="Add a new value">
                             <mat-icon>add_box</mat-icon>
                         </button>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+

@@ -49,8 +49,46 @@
 
             .property-value {
                 grid-column: 2 / span 3;
+
+                .value {
+                  width: 90%;
+                  vertical-align: top;
+                }
+
+                .buttons {
+                  width: 9%;
+                  vertical-align: middle;
+
+                  button {
+                    cursor: pointer;
+                    border: none;
+                    outline: none;
+                    background-color: transparent;
+                    color: #000000;
+
+                    .material-icons {
+                      font-size: 18px;
+                    }
+
+                    .mat-icon {
+                      width: 18px;
+                      height: 18px;
+                      vertical-align: middle;
+                    }
+                  }
+                }
+
+                .value,
+                .buttons {
+                  display: inline-block;
+                }
             }
         }
     }
+}
+
+// TODO: maybe find a better way to do this
+::ng-deep .form-content .large-field {
+  min-width: 0;
 }
 
