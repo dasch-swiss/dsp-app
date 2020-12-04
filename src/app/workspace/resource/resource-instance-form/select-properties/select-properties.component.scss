@@ -50,14 +50,14 @@
             .property-value {
                 grid-column: 2 / span 3;
 
-                .value {
-                  width: 90%;
-                  vertical-align: top;
-                }
+                // .value {
+                //   width: 90%;
+                //   vertical-align: top;
+                // }
 
                 .buttons {
-                  width: 9%;
-                  vertical-align: middle;
+                  // width: 9%;
+                  // vertical-align: middle;
 
                   button {
                     cursor: pointer;
@@ -78,17 +78,17 @@
                   }
                 }
 
-                .value,
-                .buttons {
-                  display: inline-block;
-                }
+                // .value,
+                // .buttons {
+                //   display: inline-block;
+                // }
             }
         }
     }
 }
 
 // TODO: maybe find a better way to do this
-::ng-deep .form-content .large-field {
-  min-width: 0;
-}
+// ::ng-deep .form-content .large-field {
+//   min-width: 0;
+// }
 
