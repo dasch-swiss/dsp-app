@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Cardinality } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { PropertyType } from '../default-data/default-properties';
 
 // property data structure
 export class Property {
-    name: string;
+    iri: string;
     label: string;
-    type: any;
+    type: PropertyType;
     multiple: boolean;
     required: boolean;
     guiAttr: string;
     // permission: string;
 
     constructor(
-        name?: string,
+        iri?: string,
         label?: string,
         type?: any,
         multiple?: boolean,
@@ -21,7 +23,7 @@ export class Property {
         guiAttr?: string
         // permission?: string
     ) {
-        this.name = name;
+        this.iri = iri;
         this.label = label;
         this.type = type;
         this.multiple = multiple;
@@ -34,7 +36,7 @@ export class Property {
 
 // property form controls
 export class PropertyForm {
-    name = new FormControl();
+    iri = new FormControl();
     label = new FormControl();
     type = new FormControl();
     multiple = new FormControl();
@@ -45,7 +47,7 @@ export class PropertyForm {
     constructor(
         property: Property
     ) {
-        this.name.setValue(property.name);
+        this.iri.setValue(property.iri);
 
         this.label.setValue(property.label);
         this.label.setValidators([Validators.required]);
@@ -142,15 +144,22 @@ export class ResourceClassFormService {
 
     /**
      * Create a unique name (id) for resource classes or properties;
-     * The name starts with the three first character of ontology iri to avoid a start with a number (which is not allowed)
      *
-     * @param  {string} ontologyIri
-     * @returns string
+     * @param ontologyIri
+     * @param [label]
+     * @returns unique name
      */
-    setUniqueName(ontologyIri: string): string {
-        const name: string = this.getOntologyName(ontologyIri).substring(0, 3) + Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
+    setUniqueName(ontologyIri: string, label?: string): string {
 
-        return name;
+        if (label) {
+            // build name from label
+            // normalize and replace spaces and special chars
+            return label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\u00a0-\u024f]/g, '').replace(/[\])}[{(]/g, '').replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase();
+        } else {
+            // build randomized name
+            // The name starts with the three first character of ontology iri to avoid a start with a number followed by randomized string
+            return this.getOntologyName(ontologyIri).substring(0, 3) + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+        }
     }
 
     /**
@@ -166,5 +175,29 @@ export class ResourceClassFormService {
         const pos = array.length - 2;
 
         return array[pos].toLowerCase();
+    }
+
+    /**
+     * Convert cardinality values (multiple? & required?) from form to DSP-JS cardinality enum 1-n, 0-n, 1, 0-1
+     * @param  {boolean} multiple
+     * @param  {boolean} required
+     * @returns Cardinality
+     */
+    translateCardinality(multiple: boolean, required: boolean): Cardinality {
+
+        if (multiple && required) {
+            // Cardinality 1-n (at least one)
+            return Cardinality._1_n;
+        } else if (multiple && !required) {
+            // Cardinality 0-n (may have many)
+            return Cardinality._0_n;
+        } else if (!multiple && required) {
+            // Cardinality 1 (required)
+            return Cardinality._1;
+        } else {
+            // Cardinality 0-1 (optional)
+            return Cardinality._0_1;
+        }
+
     }
 }

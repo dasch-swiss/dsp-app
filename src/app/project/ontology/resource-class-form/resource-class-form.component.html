@@ -12,6 +12,7 @@
                 <!-- label -->
                 <div class="large-field string-literal-container">
                     <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
+                        (enter)="nextStep($event)"
                         (dataChanged)="handleData($event, 'labels')">
                     </dsp-string-literal-input>
                     <mat-hint class="string-literal-error" *ngIf="formErrors.label">
@@ -21,7 +22,7 @@
 
                 <!-- description -->
                 <div class="large-field string-literal-container more-space-top">
-                    <dsp-string-literal-input [placeholder]="'Description'" [value]="resourceClassComments"
+                    <dsp-string-literal-input [placeholder]="'Comment'" [value]="resourceClassComments"
                         [textarea]="true" (dataChanged)="handleData($event, 'comments')"></dsp-string-literal-input>
                 </div>
             </div>
@@ -35,7 +36,7 @@
                 </span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                    <button mat-raised-button type="submit" color="primary" [disabled]="!resourceClassLabels.length"
+                    <button mat-raised-button type="button" color="primary" [disabled]="!resourceClassLabels.length"
                         (click)="nextStep($event)">
                         Next
                     </button>

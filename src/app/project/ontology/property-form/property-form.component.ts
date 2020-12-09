@@ -4,12 +4,12 @@ import { MatOption } from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSelectChange } from '@angular/material/select';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ClassDefinition, KnoraApiConnection, ListNodeInfo, ReadOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { ClassDefinition, Constants, KnoraApiConnection, ListNodeInfo, ReadOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { DefaultProperties, Property, PropertyValue } from '../default-data/default-properties';
+import { DefaultProperties, Property, PropertyType } from '../default-data/default-properties';
 
 
 // TODO: should be removed and replaced by AutocompleteItem from dsp-ui
@@ -39,7 +39,7 @@ export class PropertyFormComponent implements OnInit {
 
     @Output() deleteProperty: EventEmitter<number> = new EventEmitter();
 
-    name = new FormControl();
+    iri = new FormControl();
     label = new FormControl();
     type = new FormControl();
     multiple = new FormControl();
@@ -67,6 +67,10 @@ export class PropertyFormComponent implements OnInit {
     selectTypeLabel: string; // = this.propertyTypes[0].group + ': ' + this.propertyTypes[0].elements[0].label;
     selectedGroup: string;
 
+    existingProperty: boolean;
+
+    Constants = Constants;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
@@ -85,7 +89,6 @@ export class PropertyFormComponent implements OnInit {
     }
 
     ngOnInit() {
-
 
         if (this.propertyForm) {
             // init list of property types with first element
@@ -139,7 +142,7 @@ export class PropertyFormComponent implements OnInit {
         this.filteredProperties = this.propertyForm.controls['label'].valueChanges
             .pipe(
                 startWith(''),
-                map(prop => prop.length >= 2 ? this.filter(this.properties, prop) : [])
+                map(prop => prop.length >= 0 ? this.filter(this.properties, prop) : [])
             );
     }
 
@@ -162,9 +165,9 @@ export class PropertyFormComponent implements OnInit {
         // depending on the selected property type,
         // we have to define gui element attributes
         // e.g. iri of list or connected reresource class
-        switch (event.value.subPropOf) {
-            case 'knora-api:ListValue':
-            case 'knora-api:LinkValue':
+        switch (event.value.objectType) {
+            case Constants.ListValue:
+            case Constants.Resource:
                 this.showGuiAttr = true;
                 this.propertyForm.controls['guiAttr'].setValidators([
                     Validators.required
@@ -181,21 +184,21 @@ export class PropertyFormComponent implements OnInit {
     }
 
     /**
-     * @param  {MatOption} option
+     * @param {MatOption} option
      */
     updateFieldsDependingOnLabel(option: MatOption) {
-        this.propertyForm.controls['name'].setValue(option.value.name);
+        this.propertyForm.controls['iri'].setValue(option.value.iri);
 
         this.propertyForm.controls['label'].setValue(option.value.label);
         this.propertyForm.controls['label'].disable();
 
         if (this.ontology.properties[option.value.iri] instanceof ResourcePropertyDefinition) {
-            const tempProp: any = this.ontology.properties[option.value.iri];
+            const tempProp: any | ResourcePropertyDefinition = this.ontology.properties[option.value.iri];
 
-            let obj: PropertyValue;
+            let obj: PropertyType;
             // find gui ele from list of default property-types to set type value
             for (let group of this.propertyTypes) {
-                obj = group.elements.find(i => i.gui_ele === 'salsah-gui:' + tempProp.guiElement.split('#')[1]);
+                obj = group.elements.find(i => i.gui_ele === tempProp.guiElement && i.objectType === tempProp.objectType);
 
                 if (obj) {
                     this.propertyForm.controls['type'].setValue(obj);
@@ -205,13 +208,13 @@ export class PropertyFormComponent implements OnInit {
 
             switch (tempProp.guiElement) {
                 // prop type is a list
-                case 'http://api.knora.org/ontology/salsah-gui/v2#List':
-                case 'http://api.knora.org/ontology/salsah-gui/v2#Radio':
+                case Constants.SalsahGui + Constants.Delimiter + 'List':
+                case Constants.SalsahGui + Constants.Delimiter + 'Radio':
                     // gui attribute value for lists looks as follow: hlist=<http://rdfh.ch/lists/00FF/73d0ec0302>
                     // get index from guiAttr array where value starts with hlist=
                     let i = tempProp.guiAttributes.findIndex(element => element.includes('hlist'));
 
-                    // find content beteween pointy brackets to get list irir
+                    // find content beteween pointy brackets to get list iri
                     const re: RegExp = /\<([^)]+)\>/;
                     const listIri = tempProp.guiAttributes[i].match(re)[1];
 
@@ -220,7 +223,7 @@ export class PropertyFormComponent implements OnInit {
                     this.propertyForm.controls['guiAttr'].disable();
                     break;
                 // prop type is resource pointer
-                case 'http://api.knora.org/ontology/salsah-gui/v2#Searchbox':
+                case Constants.SalsahGui + Constants.Delimiter + 'Searchbox':
 
                     this.showGuiAttr = true;
                     this.propertyForm.controls['guiAttr'].setValue(tempProp.objectType);
@@ -234,13 +237,15 @@ export class PropertyFormComponent implements OnInit {
 
         }
         this.propertyForm.controls['type'].disable();
+        this.existingProperty = true;
 
     }
 
     resetProperty(ev: Event) {
         ev.preventDefault();
+        this.existingProperty = false;
 
-        this.propertyForm.controls['name'].reset();
+        this.propertyForm.controls['iri'].reset();
         this.propertyForm.controls['label'].setValue('');
         this.propertyForm.controls['label'].enable();
         this.propertyForm.controls['type'].setValue(this.propertyTypes[0].elements[0]);

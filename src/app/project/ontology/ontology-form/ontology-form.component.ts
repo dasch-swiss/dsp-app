@@ -53,7 +53,8 @@ export class OntologyFormComponent implements OnInit {
     nameMaxLength = 16;
 
     formErrors = {
-        'name': ''
+        'name': '',
+        'label': ''
     };
 
     validationMessages = {
@@ -63,6 +64,10 @@ export class OntologyFormComponent implements OnInit {
             'maxlength': 'Name cannot be more than ' + this.nameMaxLength + ' characters long.',
             'pattern': 'Name shouldn\'t start with a number or v + number and spaces or special characters are not allowed.',
             'existingName': 'This name is not allowed or exists already.'
+        },
+        'label': {
+            'required': 'Label is required.',
+            'minlength': 'Label must be at least ' + this.nameMinLength + ' characters long.',
         }
     };
 
@@ -117,7 +122,7 @@ export class OntologyFormComponent implements OnInit {
             );
         }
 
-        this.ontologyLabel = this.project.shortname + ' data model: ';
+        this.ontologyLabel = '';
 
         this.ontologyForm = this._fb.group({
             name: new FormControl({
@@ -130,8 +135,10 @@ export class OntologyFormComponent implements OnInit {
                 Validators.pattern(this.nameRegex)
             ]),
             label: new FormControl({
-                value: this.ontologyLabel, disabled: true
-            })
+                value: this.ontologyLabel, disabled: false
+            }, [
+                Validators.minLength(this.nameMinLength)
+            ])
         });
 
         this.ontologyForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -143,7 +150,7 @@ export class OntologyFormComponent implements OnInit {
             return;
         }
 
-        this.ontologyLabel = this.project.shortname + ' data model: ' + data.name;
+        this.ontologyLabel = data.name;
 
         Object.keys(this.formErrors).map(field => {
             this.formErrors[field] = '';
@@ -165,7 +172,7 @@ export class OntologyFormComponent implements OnInit {
         // const something: number = Math.floor(Math.random() * Math.floor(9999));
 
         const ontologyData = new CreateOntology();
-        ontologyData.label = this.ontologyLabel;
+        ontologyData.label = this.project.shortname + ': ' + (this.ontologyLabel ? this.ontologyLabel : this.ontologyForm.controls['name'].value);
         ontologyData.name = this.ontologyForm.controls['name'].value;
         ontologyData.attachedToProject = this.project.id;
 

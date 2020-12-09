@@ -25,7 +25,7 @@ $width: 304px;
 .ontology-editor {
     width: 98vw;
     max-width: 1280px;
-    min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 300px);
+    min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
     border: 1px dotted $primary_200;
     background: $primary_200;
     position: relative;
@@ -34,7 +34,7 @@ $width: 304px;
 .ontology-viewer {
     width: 98vw;
     max-width: 1280px;
-    min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 300px);
+    min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
     border: 1px dotted $primary_200;
     position: relative;
     margin: 0 auto 60px auto;
@@ -134,4 +134,22 @@ $width: 304px;
     position: absolute;
     right: 12px;
     top: 80px;
+}
+
+.mat-caption.space-reducer {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+.ontology-actions {
+  border-left: 1px solid $primary_200;
+  padding: 0 12px;
+  .mat-caption.space-reducer {
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+}
+
+button.space-reducer {
+  // max-height: 32px;
+  margin: 0;
 }

@@ -1,29 +1,27 @@
 <form [formGroup]="propertyForm" class="form-content project-data">
     <span class="index">{{index + 1}}) &nbsp;</span>
 
-    <!-- Property name; will be used for prop id -->
-    <!-- TODO: Autocomplete input with list of existing prop ids; by selecting one update the other fields and set them as disabled -->
-    <!-- <mat-form-field class="small-field">
-        <input matInput placeholder="Property name (ID) *" formControlName="name">
-    </mat-form-field> -->
+    <!-- Property name; will be used for prop id/iri -->
     <!-- name is a kind of ID, but it's a hidden field auto updated in case of already existing property selected by label -->
     <mat-form-field class="small-field hidden">
-        <input matInput placeholder="Property name (ID) *" formControlName="name">
+        <input matInput placeholder="Property iri" formControlName="iri">
     </mat-form-field>
 
     <!-- Property label -->
     <mat-form-field class="small-field">
-        <input matInput placeholder="Property label *" formControlName="label">
-        <!-- [matAutocomplete]="auto"> -->
+        <input matInput placeholder="Property label *" formControlName="label" [matAutocomplete]="auto">
+        <mat-hint *ngIf="existingProperty">
+            Already existing property.
+        </mat-hint>
     </mat-form-field>
 
-    <!-- TODO: select and reuse existing ObjectProperty doesn't work yet; s. https://github.com/dasch-swiss/knora-app/pull/229#issuecomment-598276151
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateFieldsDependingOnLabel($event.option)">
+    <!-- TODO: select and reuse existing ObjectProperty doesn't work yet; s. https://github.com/dasch-swiss/knora-app/pull/229#issuecomment-598276151 -->
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateFieldsDependingOnLabel($event.option)" [matTooltip]="existingProperty ? 'Visible' : null">
         <mat-option *ngFor="let prop of filteredProperties | async" [value]="prop"
-            matTooltip="{{ prop?.label }} ({{prop?.name}})" matTooltipPosition="after">
+            matTooltip="Label: {{ prop?.label }} (Name as part of id: {{prop?.name}})" matTooltipPosition="after">
             {{ prop?.label }}
         </mat-option>
-    </mat-autocomplete> -->
+    </mat-autocomplete>
 
     <!-- Property value type and gui element  -->
     <mat-form-field class="small-field">
@@ -46,14 +44,15 @@
                 </mat-option>
             </mat-optgroup>
         </mat-select>
-
+        <mat-hint *ngIf="existingProperty">
+            You can re-use but not edit.
+        </mat-hint>
     </mat-form-field>
 
     <!-- TODO: additional mat-form-field for settings depending on the type selection -->
     <div class="small-field" *ngIf="showGuiAttr">
-        <div [ngSwitch]="propertyForm.controls['type'].value.subPropOf">
-
-            <div *ngSwitchCase="'knora-api:ListValue'">
+        <div [ngSwitch]="propertyForm.controls['type'].value.objectType">
+            <div *ngSwitchCase="Constants.ListValue">
                 <mat-form-field>
                     <mat-label>Select list</mat-label>
                     <mat-select formControlName="guiAttr">
@@ -64,7 +63,7 @@
                 </mat-form-field>
             </div>
 
-            <div *ngSwitchCase="'knora-api:LinkValue'">
+            <div *ngSwitchCase="Constants.Resource">
                 <mat-form-field>
                     <mat-label>Select reresource class</mat-label>
                     <mat-select formControlName="guiAttr">
@@ -72,6 +71,20 @@
                             {{item.label}}
                         </mat-option>
                     </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div
+                *ngSwitchCase="propertyForm.controls['type'].value.objectType === Constants.IntValue || propertyForm.controls['type'].value.objectType === Constants.DecimalValue ? propertyForm.controls['type'].value.objectType : ''">
+                <mat-form-field>
+                    <mat-label>Define range</mat-label>
+                    <input matInput placeholder="min">
+                    <input matInput placeholder="max">
+                    <!-- <mat-select formControlName="guiAttr">
+                        <mat-option *ngFor="let item of reresourceClasss" [value]="item.id">
+                            {{item.label}}
+                        </mat-option>
+                    </mat-select> -->
                 </mat-form-field>
             </div>
             <!-- <div *ngSwitchDefault>{{propertyForm.controls['type'].value.subPropOf}} not yet implemented</div> -->
@@ -96,11 +109,13 @@
         </mat-slide-toggle>
     </div>
 
-    <!-- Permissions -->
-    <!-- <mat-form-field class="small-field">
-        <input matInput placeholder="Property permissions" formControlName="permission">
-    </mat-form-field> -->
-
+    <!-- TODO: Select Permissions -->
     <div class="small-field">
+        <!-- <mat-form-field>
+            <input matInput placeholder="Property permissions" formControlName="permission">
+        </mat-form-field> -->
+    </div>
+
+    <div class="x-small-field">
         <button mat-button class="reset-button" type="reset" (click)="resetProperty($event)">Reset</button>
     </div>
