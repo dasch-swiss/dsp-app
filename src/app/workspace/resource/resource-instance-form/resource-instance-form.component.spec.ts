@@ -3,30 +3,22 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, EventEmitter, Inject, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, Constants, CreateIntValue, CreateResource, CreateValue, MockOntology, MockProjects, MockResource, MockUsers, OntologiesEndpointV2, OntologiesMetadata, ReadOntology, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition, ResourcesEndpointV2, StoredProject, UserResponse, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, CreateIntValue, CreateResource, CreateValue, MockOntology, MockProjects, MockResource, MockUsers, OntologiesEndpointV2, OntologiesMetadata, ReadOntology, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition, ResourcesEndpointV2, StoredProject, UserResponse, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
-import { DspApiConnectionToken, IntValueComponent, ResourceViewComponent, Session, SessionService, ValueService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken, IntValueComponent, Session, SessionService, ValueService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { BaseValueComponent } from 'src/app/base-value.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ResourceInstanceFormComponent } from './resource-instance-form.component';
 import { SwitchPropertiesComponent } from './select-properties/switch-properties/switch-properties.component';
-import { BaseValueComponent } from 'src/app/base-value.component';
-import { Router } from '@angular/router';
-
-// https://dev.to/krumpet/generic-type-guard-in-typescript-258l
-type Constructor<T> = { new(...args: any[]): T };
-
-const typeGuard = <T>(o: any, className: Constructor<T>): o is T => {
-    return o instanceof className;
-};
 
 const resolvedPromise = Promise.resolve(null);
 
@@ -139,7 +131,7 @@ class MockSelectResourceClassComponent implements OnInit {
 class MockSelectPropertiesComponent {
     @ViewChildren('switchProp') switchPropertiesComponent: QueryList<SwitchPropertiesComponent>;
 
-    @Input() propertiesAsArray: Array<ResourcePropertyDefinition>;
+    @Input() properties: ResourcePropertyDefinition[];
 
     @Input() ontologyInfo: ResourceClassAndPropertyDefinitions;
 
@@ -479,18 +471,10 @@ describe('ResourceInstanceFormComponent', () => {
             }
         );
 
-        const resClasses = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2').classes;
-
-        const resClassIris = Object.keys(resClasses);
+        const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
         // get resource class definitions
-        const resourceClasses = resClassIris.filter(resClassIri => {
-            return typeGuard(resClasses[resClassIri], ResourceClassDefinition);
-        }).map(
-            (resClassIri: string) => {
-                return resClasses[resClassIri] as ResourceClassDefinition;
-            }
-        );
+        const resourceClasses = anythingOnto.getClassDefinitionsByType(ResourceClassDefinition);
 
         testHostComponent.resourceInstanceFormComponent.selectedResourceClass = resourceClasses[1];
 
@@ -498,11 +482,11 @@ describe('ResourceInstanceFormComponent', () => {
 
         testHostComponent.resourceInstanceFormComponent.showNextStepForm = false;
 
-        testHostComponent.resourceInstanceFormComponent.propertiesAsArray = new Array<ResourcePropertyDefinition>();
+        testHostComponent.resourceInstanceFormComponent.properties = new Array<ResourcePropertyDefinition>();
 
         MockResource.getTestThing().subscribe( res => {
             const resourcePropDef = (res.entityInfo as ResourceClassAndPropertyDefinitions).getAllPropertyDefinitions()[9];
-            testHostComponent.resourceInstanceFormComponent.propertiesAsArray.push(resourcePropDef as ResourcePropertyDefinition);
+            testHostComponent.resourceInstanceFormComponent.properties.push(resourcePropDef as ResourcePropertyDefinition);
         });
 
         testHostFixture.detectChanges();

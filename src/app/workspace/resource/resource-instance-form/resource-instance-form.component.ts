@@ -4,14 +4,13 @@ import { Router } from '@angular/router';
 import {
     ApiResponseData,
     ApiResponseError,
-    ClassDefinition,
     Constants,
     CreateResource,
     CreateValue,
     KnoraApiConnection,
     OntologiesMetadata,
     ProjectsResponse,
-    PropertyDefinition,
+    ReadOntology,
     ReadResource,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
@@ -22,25 +21,13 @@ import {
 import {
     DspApiConnectionToken,
     Session,
-    SessionService,
-    SortingService
+    SessionService
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { SelectOntologyComponent } from './select-ontology/select-ontology.component';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
 import { SelectResourceClassComponent } from './select-resource-class/select-resource-class.component';
-
-// https://dev.to/krumpet/generic-type-guard-in-typescript-258l
-type Constructor<T> = { new(...args: any[]): T };
-
-const typeGuard = <T>(o: any, className: Constructor<T>): o is T => {
-    return o instanceof className;
-};
-
-export interface Properties {
-    [index: string]: ResourcePropertyDefinition;
-}
 
 @Component({
     selector: 'app-resource-instance-form',
@@ -81,8 +68,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     selectedResourceClass: ResourceClassDefinition;
     resource: ReadResource;
     resourceLabel: string;
-    properties: Properties;
-    propertiesAsArray: Array<ResourcePropertyDefinition>; // properties as an Array structure
+    properties: ResourcePropertyDefinition[];
     ontologyInfo: ResourceClassAndPropertyDefinitions;
 
     valueOperationEventSubscription: Subscription;
@@ -96,8 +82,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         private _cache: CacheService,
         private _router: Router,
         private _session: SessionService,
-        private _fb: FormBuilder,
-        private _sortingService: SortingService
+        private _fb: FormBuilder
     ) {
         this.session = this._session.getSession();
         this.username = this.session.user.name;
@@ -293,13 +278,13 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 this.selectedOntology = ontologyIri;
 
                 this._dspApiConnection.v2.ontologyCache.getOntology(ontologyIri).subscribe(
-                    onto => {
-                        this.resourceClasses = this._makeResourceClassesArray(onto.get(ontologyIri).classes);
+                        (onto: Map<string, ReadOntology>) => {
+                            this.resourceClasses = onto.get(ontologyIri).getClassDefinitionsByType(ResourceClassDefinition);
 
-                        if (this.selectResourceClassComponent && this.resourceClasses.length === 1) {
-                            // since the component already exists, the ngAfterInit method of the component will not be called so we must assign the value here manually
-                            this.selectResourceClassComponent.form.controls.resources.setValue(this.resourceClasses[0].id);
-                        }
+                            if (this.selectResourceClassComponent && this.resourceClasses.length === 1) {
+                                // since the component already exists, the ngAfterInit method of the component will not be called so we must assign the value here manually
+                                this.selectResourceClassComponent.form.controls.resources.setValue(this.resourceClasses[0].id);
+                            }
                     },
                     (error: ApiResponseError) => {
                         console.error(error);
@@ -333,83 +318,19 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
             this.selectResourceClasses(this.selectedOntology);
         } else if (resourceClassIri) {
             this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
-                onto => {
+                (onto: ResourceClassAndPropertyDefinitions) => {
                     this.ontologyInfo = onto;
 
                     this.selectedResourceClass = onto.classes[resourceClassIri];
 
-                    this.properties = this._makeResourceProperties(onto.properties);
-
-                    this.convertPropObjectAsArray();
-
+                    // filter out all props that cannot be edited or are link props
+                    this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(prop => prop.isEditable && !prop.isLinkProperty);
                 }
             );
         } else {
             this.errorMessage = 'No resource class defined for the selected ontology.';
         }
 
-    }
-
-    /**
-     * Given a map of class definitions,
-     * returns an array of resource class definitions.
-     *
-     * @param classDefs a map of class definitions
-     */
-    private _makeResourceClassesArray(classDefs: { [index: string]: ClassDefinition }): ResourceClassDefinition[] {
-
-        const classIris = Object.keys(classDefs);
-
-        // get resource class defs
-        return classIris.filter(resClassIri => {
-            return typeGuard(classDefs[resClassIri], ResourceClassDefinition);
-        }).map(
-            (resClassIri: string) => {
-                return classDefs[resClassIri] as ResourceClassDefinition;
-            }
-        );
-
-    }
-
-    /**
-     * Given a map of property definitions,
-     * returns a map of resource property definitions.
-     *
-     * @param propertyDefs a map of property definitions
-     */
-    private _makeResourceProperties(propertyDefs: { [index: string]: PropertyDefinition }): Properties {
-        const resProps: Properties = {};
-
-        const propIris = Object.keys(propertyDefs);
-
-        propIris.filter(
-            (propIri: string) => {
-                return typeGuard(propertyDefs[propIri], ResourcePropertyDefinition);
-            }
-        ).forEach((propIri: string) => {
-            resProps[propIri] = (propertyDefs[propIri] as ResourcePropertyDefinition);
-        });
-
-        return resProps;
-    }
-
-    private convertPropObjectAsArray() {
-        // represent the properties as an array to be accessed by the template
-        const propsArray = [];
-
-        for (const propIri in this.properties) {
-            if (this.properties.hasOwnProperty(propIri)) {
-                const prop = this.properties[propIri];
-
-                // only list editable props that are not link value props
-                if (prop.isEditable && !prop.isLinkProperty) {
-                    propsArray.push(this.properties[propIri]);
-                }
-            }
-        }
-
-        // sort properties by label (ascending)
-        this.propertiesAsArray = this._sortingService.keySortByAlphabetical(propsArray, 'label');
     }
 
 }
