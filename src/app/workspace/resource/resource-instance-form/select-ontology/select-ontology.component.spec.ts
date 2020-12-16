@@ -97,7 +97,7 @@ describe('SelectOntologyComponent', () => {
         const initVal = await select.getValueText();
 
         // placeholder
-        expect(initVal).toEqual('Select an ontology');
+        expect(initVal).toEqual('Select a data model');
 
         await select.open();
 
