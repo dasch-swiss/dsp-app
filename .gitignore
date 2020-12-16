@@ -42,7 +42,6 @@ docs/.sass-cache
 docs/.jekyll-metadata
 docs/vendor
 docs/bin
-CHANGELOG.md
 
 # System Files
 .DS_Store
