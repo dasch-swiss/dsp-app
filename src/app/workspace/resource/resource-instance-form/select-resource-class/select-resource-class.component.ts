@@ -39,6 +39,8 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy, AfterVie
 
     form: FormGroup;
 
+    checkPattern = '^\d*[a-zA-Z0-9_]+( [a-zA-Z0-9@_.]+)*$';
+
     resourceChangesSubscription: Subscription;
 
     labelChangesSubscription: Subscription;
@@ -50,7 +52,7 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy, AfterVie
         // build a form for the named graph selection
         this.form = this._fb.group({
             resources: [null, Validators.required],
-            label: [null, Validators.required]
+            label: [null, [Validators.required, Validators.pattern(this.checkPattern)]]
         });
 
         // emit Iri of the resource when selected
