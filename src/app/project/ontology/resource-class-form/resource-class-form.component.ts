@@ -418,24 +418,24 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
             if (prop.guiAttr) {
                 switch (prop.type.gui_ele) {
 
-                    case Constants.SalsahGui + Constants.Delimiter + 'Colorpicker':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker':
                         newResProp.guiAttributes = ['ncolors=' + prop.guiAttr];
                         break;
-                    case Constants.SalsahGui + Constants.Delimiter + 'List':
-                    case Constants.SalsahGui + Constants.Delimiter + 'Pulldown':
-                    case Constants.SalsahGui + Constants.Delimiter + 'Radio':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'List':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'Pulldown':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'Radio':
                         newResProp.guiAttributes = ['hlist=<' + prop.guiAttr + '>'];
                         break;
-                    case Constants.SalsahGui + Constants.Delimiter + 'SimpleText':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText':
                         // TODO: could have two guiAttr fields: size and maxlength
                         // I suggest to use default value for size; we do not support this guiAttr in DSP-App
                         newResProp.guiAttributes = ['maxlength=' + prop.guiAttr];
                         break;
-                    case Constants.SalsahGui + Constants.Delimiter + 'Spinbox':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox':
                         // TODO: could have two guiAttr fields: min and max
                         newResProp.guiAttributes = ['min=' + prop.guiAttr, 'max=' + prop.guiAttr];
                         break;
-                    case Constants.SalsahGui + Constants.Delimiter + 'Textarea':
+                    case Constants.SalsahGui + Constants.HashDelimiter + 'Textarea':
                         // TODO: could have four guiAttr fields: width, cols, rows, wrap
                         // I suggest to use default values; we do not support this guiAttr in DSP-App
                         newResProp.guiAttributes = ['width=100%'];

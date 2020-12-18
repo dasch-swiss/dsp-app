@@ -57,3 +57,14 @@ jobs:
         run: |
           echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
           make publish-dsp-app-image
+
+  notification:
+    name: Google chat notification about release and published version
+    needs: [publish]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags')
+    steps:
+      - name: Send notification to google chat room "DSP releases"
+        uses: lakto/google-chat-action@main
+        with:
+          url: ${{ secrets.GOOGLE_CHAT_DSP_RELEASES_WEBHOOK_URL }}

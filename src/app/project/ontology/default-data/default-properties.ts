@@ -24,7 +24,7 @@ export class DefaultProperties {
                     label: 'Short',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'SimpleText',   // 'Input',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',   // 'Input',
                     group: 'Text'       // redundant information, but otherwise we don't get the main group name after selecting type
                 },
                 {
@@ -32,7 +32,7 @@ export class DefaultProperties {
                     label: 'Paragraph',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Textarea',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Textarea',
                     group: 'Text'
                 },
                 {
@@ -40,7 +40,7 @@ export class DefaultProperties {
                     label: 'Editor',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Richtext',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Richtext',
                     group: 'Text'
                 }
             ]
@@ -53,7 +53,7 @@ export class DefaultProperties {
                     label: 'Multiple choice',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Radio',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
                     group: 'List'
                 },
                 {
@@ -61,7 +61,7 @@ export class DefaultProperties {
                     label: 'Checkboxes',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Checkbox',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',
                     group: 'List'
                 },
                 {
@@ -69,7 +69,7 @@ export class DefaultProperties {
                     label: 'Dropdown',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'List',     // 'Pulldown'
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // 'Pulldown'
                     group: 'List'
                 },
                 {
@@ -77,7 +77,7 @@ export class DefaultProperties {
                     label: 'On / Off',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.BooleanValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Checkbox',    // 'Toggle',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',    // 'Toggle',
                     group: 'List'
                 }
             ]
@@ -90,7 +90,7 @@ export class DefaultProperties {
                     label: 'Date',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DateValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Date',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
                     group: 'Date / Time'
                 },
                 {
@@ -98,7 +98,7 @@ export class DefaultProperties {
                     label: 'Period',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DateValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Date',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
                     group: 'Date / Time'
                 },
                 {
@@ -106,7 +106,7 @@ export class DefaultProperties {
                     label: 'Time',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Interval',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Interval',
                     group: 'Date / Time'
                 },
                 {
@@ -114,7 +114,7 @@ export class DefaultProperties {
                     label: 'Duration',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Interval',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Interval',
                     group: 'Date / Time'
                 }
             ]
@@ -127,7 +127,7 @@ export class DefaultProperties {
                     label: 'Integer',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.IntValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Spinbox',  // 'Number',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
                     group: 'Number'
                 },
                 {
@@ -135,7 +135,7 @@ export class DefaultProperties {
                     label: 'Decimal',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DecimalValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Spinbox',  // 'Number',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
                     group: 'Number'
                 }
             ]
@@ -148,7 +148,7 @@ export class DefaultProperties {
                     label: 'Other resource e.g. Person',
                     subPropOf: Constants.HasLinkTo,
                     objectType: Constants.Resource,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Searchbox',    // 'Autocomplete',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
                     group: 'Link'
                 },
                 // {
@@ -156,7 +156,7 @@ export class DefaultProperties {
                 //     label: 'External resource',
                 //     subPropOf: Constants.HasValue,
                 //     objectType: Constants.UriValue,
-                //     gui_ele: Constants.SalsahGui + Constants.Delimiter + 'SimpleText',
+                //     gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',
                 //     group: 'Link'
                 // },
                 {
@@ -164,7 +164,7 @@ export class DefaultProperties {
                     label: 'External URL',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.UriValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'SimpleText',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',
                     group: 'Link'
                 }
             ]
@@ -177,7 +177,7 @@ export class DefaultProperties {
                     label: 'Place',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.GeonameValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Geonames',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Geonames',
                     group: 'Location'
                 }
             ]
@@ -190,7 +190,7 @@ export class DefaultProperties {
                     label: 'Color',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ColorValue,
-                    gui_ele: Constants.SalsahGui + Constants.Delimiter + 'Colorpicker',
+                    gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker',
                     group: 'Shape'
                 }
             ]

@@ -208,8 +208,8 @@ export class PropertyFormComponent implements OnInit {
 
             switch (tempProp.guiElement) {
                 // prop type is a list
-                case Constants.SalsahGui + Constants.Delimiter + 'List':
-                case Constants.SalsahGui + Constants.Delimiter + 'Radio':
+                case Constants.SalsahGui + Constants.HashDelimiter + 'List':
+                case Constants.SalsahGui + Constants.HashDelimiter + 'Radio':
                     // gui attribute value for lists looks as follow: hlist=<http://rdfh.ch/lists/00FF/73d0ec0302>
                     // get index from guiAttr array where value starts with hlist=
                     let i = tempProp.guiAttributes.findIndex(element => element.includes('hlist'));
@@ -223,7 +223,7 @@ export class PropertyFormComponent implements OnInit {
                     this.propertyForm.controls['guiAttr'].disable();
                     break;
                 // prop type is resource pointer
-                case Constants.SalsahGui + Constants.Delimiter + 'Searchbox':
+                case Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox':
 
                     this.showGuiAttr = true;
                     this.propertyForm.controls['guiAttr'].setValue(tempProp.objectType);
