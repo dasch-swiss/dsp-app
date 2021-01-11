@@ -1,4 +1,5 @@
 @import "../../../assets/style/responsive";
+@import "../../../assets/style/config";
 
 section {
   margin: 24px auto;
@@ -6,7 +7,7 @@ section {
 
 // phone devices
 @media (max-width: map-get($grid-breakpoints, phone)) {
-  
+
   .fill-remaining-space {
     display: none;
   }
@@ -40,8 +41,180 @@ section {
 
 // desktop and tablet devices
 @media (min-width: map-get($grid-breakpoints, phone)) {
-   
+
+  .more-space-bottom {
+    margin-bottom: 15px !important;
+  }
+
   .app-toolbar-mobile {
     display: none;
   }
+}
+
+.project-info-container {
+  width: 98vw;
+  max-width: 1280px;
+  position: relative;
+  margin: 0 auto 60px auto;
+
+  .left-info {
+    flex: 70%;
+  }
+
+  .right-info {
+    flex: 30%;
+    max-width: 400px;
+  }
+
+  .column {
+    padding: 15px;
+  }
+
+  .metadata-box {
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: whitesmoke;
+    border: 1px solid $primary_100;
+    border-radius: $border-radius;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+  }
+
+  .tab-contents {
+    margin-top: 20px;
+  }
+
+  .display-inline-block {
+    display: inline-block;
+  }
+
+  .copy-to-clipboard {
+    display: inline-block;
+    float: right;
+
+    button {
+      cursor: pointer;
+      border: none;
+    }
+  }
+
+  .mat-radio-button {
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  /*
+  .mat-radio-container{
+    height: 15px;
+    width: 15px;
+  }
+  .mat-radio-outer-circle{
+    height: 15px;
+    width: 15px;
+  }
+  .mat-radio-inner-circle{
+    height: 15px;
+    width: 15px;
+  }
+  .mat-radio-button .mat-radio-ripple{
+    height: 15px;
+    width: 15px;
+    left: calc(50% - 15px);
+    top: calc(50% - 15px);
+  }
+   */
+
+  .download-metadata {
+    margin-right: 10px;
+  }
+
+  .sidenav-prop-text {
+    text-align: left;
+    overflow-wrap: break-word;
+    font-weight: inherit;
+    color: #434242;
+  }
+
+  .sidenav-properties-container {
+
+    .property {
+
+      .property-label {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        text-align: left;
+        overflow-wrap: break-word;
+      }
+
+      .property-value {
+        margin-left: 20px;
+      }
+    }
+
+    .property:not(:last-child) {
+      margin-bottom: 13px;
+    }
+  }
+
+  // grid
+  ::ng-deep .properties-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+
+    .properties {
+      grid-column: 1 / span 6;
+      margin-top: 16px;
+
+      .property {
+        grid-row: 1 / 1;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 5px;
+
+        .property-label,
+        .property-value {
+          overflow-wrap: break-word;
+        }
+
+        .property-label {
+          grid-column: 1 / span 1;
+          padding: 2px;
+
+          .label {
+            text-align: right;
+            color: rgba(0,0,0,.54);
+          }
+        }
+
+        .property-value {
+          grid-column: 2 / span 3;
+          padding: 5px 2px 8px;
+        }
+      }
+    }
+  }
+
+  ::ng-deep .person  {
+
+    h4 {
+      margin-bottom: 6px;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    p {
+      margin-top: 0px;
+      margin-bottom: 8px;
+    }
+
+    .sub-details {
+      margin-top: 10px;
+      .contents {
+        margin-left: 35px;
+      }
+    }
+  }
+
 }

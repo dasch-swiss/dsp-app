@@ -1,0 +1,35 @@
+<div *ngIf="noOfDatasets > 1">
+    <h1>Selected dataset: {{ metadata['title'] }} </h1>
+    <p class="note">Click on the radio button in the right side panel to change the dataset.</p>
+</div>
+
+<div *ngIf="noOfDatasets == 1">
+    <p class="note">Default dataset is displayed, to change it click on the radio button in the right side panel. </p>
+</div>
+
+
+
+<div class="properties-container">
+    <div class="properties">
+        <div *ngFor="let prop of metadata | keyvalue; let last = last; let i = index;" [class.border-bottom]="!last">
+            <div *ngIf="excludeKeys.indexOf(prop.key) < 0;" class="property">
+                <div class="property-label">
+                    <h3 class="label mat-subheading-1">
+                        {{ prop.key }}
+                    </h3>
+                </div>
+                <div *ngIf="templateKeys.indexOf(prop.key) < 0;" class="property-value">
+                    {{ prop.value }}
+                </div>
+                <div *ngIf="templateKeys.indexOf(prop.key) > -1;" class="property-value">
+                    <div *ngIf="dateKeys.indexOf(prop.key) < 0;">
+                        <a href="{{ metadata[prop.key]['value'] }}" target="_blank"> {{ metadata[prop.key]['value'] }} </a>
+                    </div>
+                    <div *ngIf="dateKeys.indexOf(prop.key) > -1;">
+                        {{ prop.value | date:'MMMM d, yyyy' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

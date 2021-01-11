@@ -47,6 +47,7 @@
     "json2typescript": "^1.0.6",
     "jsonld": "^1.1.0",
     "moment": "^2.27.0",
+    "ngx-clipboard": "^14.0.1",
     "ngx-color-picker": "^10.0.1",
     "openseadragon": "^2.4.0",
     "rxjs": "~6.5.3",

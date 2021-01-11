@@ -6,16 +6,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import {
-    AppInitService,
-    DspActionModule,
-    DspApiConfigToken,
-    DspApiConnectionToken,
-    DspCoreModule
-} from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, DspCoreModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { TestConfig } from 'test.config';
 import { BoardComponent } from './board.component';
+import { AttributionTabViewComponent } from './attribution-tab-view/attribution-tab-view.component';
+import { ContactsTabViewComponent } from './contacts-tab-view/contacts-tab-view.component';
+import { DatasetTabViewComponent } from './dataset-tab-view/dataset-tab-view.component';
+import { ProjectTabViewComponent } from './project-tab-view/project-tab-view.component';
+import { TermsTabViewComponent } from './terms-tab-view/terms-tab-view.component';
 
 describe('BoardComponent', () => {
     let component: BoardComponent;
@@ -23,7 +22,14 @@ describe('BoardComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [BoardComponent],
+            declarations: [
+                BoardComponent,
+                AttributionTabViewComponent,
+                ContactsTabViewComponent,
+                DatasetTabViewComponent,
+                ProjectTabViewComponent,
+                TermsTabViewComponent
+            ],
             imports: [
                 DspActionModule,
                 DspCoreModule,

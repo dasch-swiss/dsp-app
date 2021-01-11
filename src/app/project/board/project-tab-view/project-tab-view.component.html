@@ -1,0 +1,94 @@
+<p>Metadata for selected project is listed below.</p>
+
+<div class="properties-container">
+    <div class="properties">
+        <div *ngFor="let prop of metadata | keyvalue; let last = last; let i = index;" class="border-bottom">
+            <div *ngIf="excludeKeys.indexOf(prop.key) < 0" class="property">
+                <div class="property-label">
+                    <h3 class="label mat-subheading-1">
+                        {{ prop.key }}
+                    </h3>
+                </div>
+                <div ngSwitch="{{ prop.key }}" class="property-value">
+
+                    <!-- #################### template for discipline ################# -->
+                    <div *ngSwitchCase="'discipline'">
+                        <a href="{{ metadata['discipline']['url'] }}" target="_blank"> {{ metadata['discipline']['name'] }} </a>
+                    </div>
+
+                    <!-- #################### template for temporalCoverage ################# -->
+                    <div *ngSwitchCase="'temporalCoverage'">
+                        <a href="{{ metadata['temporalCoverage']['url'] }}" target="_blank"> {{ metadata['temporalCoverage']['name'] }} </a>
+                    </div>
+
+                    <!-- #################### template for url ################# -->
+                    <div *ngSwitchCase="'url'">
+                        <a href="{{ metadata['url']['value'] }}" target="_blank"> {{ metadata['url']['value'] }} </a>
+                    </div>
+
+                    <!-- #################### template for keywords ################# -->
+                    <div *ngSwitchCase="'keywords'">
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let k of metadata['keywords']"> {{ k }} </mat-chip>
+                        </mat-chip-list>
+                    </div>
+
+                    <!-- #################### template for dataManagementPlan ################# -->
+                    <div *ngSwitchCase="'dataManagementPlan'">
+                        <p class="remove-top-margin"> {{ metadata['dataManagementPlan']['isAvailable']? 'Available' : 'Unavailable' }} </p>
+                        <p *ngIf="metadata['dataManagementPlan']['isAvailable']">
+                            URL: <a href="{{ metadata['dataManagementPlan']['url']['value'] }}" target="_blank"> {{ metadata['dataManagementPlan']['url']['value'] }} </a>
+                        </p>
+                    </div>
+
+                    <!-- #################### template for dataManagementPlan ################# -->
+                    <div *ngSwitchCase="'grant'">
+
+                        <div class="person">
+                            <p> {{ metadata['grant']['name'] }} </p>
+                            <div *ngIf="metadata['grant']['number']" class="mat-icon-text">
+                                <mat-icon aria-hidden="false" aria-label="Call" class="small">call</mat-icon>
+                                <a href="tel:{{ metadata['grant']['number'] }}"> {{ metadata['grant']['number'] }} </a>
+                            </div>
+
+                            <div *ngIf="metadata['grant']['url']['value']">
+                                <h4>URL:</h4>
+                                <a href="{{ metadata['grant']['url']['value'] }}" target="_blank"> {{ metadata['grant']['url']['value'] }} </a>
+                            </div>
+
+                            <div class="sub-details">
+                                <h4>Funder(s):</h4>
+                                <mat-card *ngFor="let entry of metadata['grant']['funder'] | keyvalue;" class="funder-entry">
+                                    <div *ngIf="metadata['grant']['funder'][entry.key]['name']">
+                                        <app-organisation-template  [organisation]="metadata['grant']['funder'][entry.key]"></app-organisation-template>
+                                    </div>
+                                    <div *ngIf="metadata['grant']['funder'][entry.key]['givenName']">
+                                        <app-person-template [person]="metadata['grant']['funder'][entry.key]"></app-person-template>
+                                    </div>
+                                </mat-card>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- #################### template for dataManagementPlan ################# -->
+                    <div *ngSwitchCase="'spatialCoverage'">
+                        <div *ngFor="let coverage of metadata['spatialCoverage'] | keyvalue;">
+                            {{ coverage.value['place']['name'] }} (<a href="{{ coverage.value['place']['url'] }}" target="_blank"> {{ coverage.value['place']['url'] }} </a>)
+                        </div>
+                    </div>
+
+                    <!-- #################### default template ################# -->
+                    <div *ngSwitchDefault>
+                        <div *ngIf="dateKeys.indexOf(prop.key) < 0;">
+                            {{ prop.value }}
+                        </div>
+                        <div *ngIf="dateKeys.indexOf(prop.key) > -1;">
+                            {{ prop.value | date:'MMMM d, yyyy' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
