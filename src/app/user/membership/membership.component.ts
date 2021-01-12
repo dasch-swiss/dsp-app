@@ -1,10 +1,19 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectsResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    Constants,
+    KnoraApiConnection,
+    ProjectsResponse,
+    ReadUser,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 // TODO: replace it by IPermissions from dsp-js
 export interface IPermissions {
@@ -43,6 +52,7 @@ export class MembershipComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService,
         private _router: Router
     ) { }
 
@@ -61,7 +71,7 @@ export class MembershipComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );
@@ -106,7 +116,7 @@ export class MembershipComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -143,7 +153,7 @@ export class MembershipComponent implements OnInit {
 
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );
@@ -165,7 +175,7 @@ export class MembershipComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );

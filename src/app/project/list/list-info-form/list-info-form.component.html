@@ -1,4 +1,4 @@
-<div *ngIf="!errorMessage; else errorMsg">
+<div>
 
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
@@ -45,8 +45,3 @@
     </div>
 
 </div>
-
-<!-- in the case of an API error: show the error message -->
-<ng-template #errorMsg>
-    <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
-</ng-template>

@@ -1,8 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    LogoutResponse,
+    ReadUser,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { MenuItem } from '../../main/declarations/menu-item';
 
 @Component({
@@ -22,6 +30,7 @@ export class UserMenuComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService,
         private _session: SessionService
     ) { }
 
@@ -36,7 +45,7 @@ export class UserMenuComponent implements OnInit {
                 this.user = response.body.user;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -55,7 +64,7 @@ export class UserMenuComponent implements OnInit {
                 window.location.reload();
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
 

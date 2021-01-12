@@ -3,8 +3,20 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, Project, ProjectResponse, ProjectsResponse, ReadProject, StringLiteral, UpdateProjectRequest, UserResponse } from '@dasch-swiss/dsp-js';
-import { existingNamesValidator, DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    Project,
+    ProjectResponse,
+    ProjectsResponse,
+    ReadProject,
+    StringLiteral,
+    UpdateProjectRequest,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, existingNamesValidator, SessionService } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -31,8 +43,6 @@ export class ProjectFormComponent implements OnInit {
     description: StringLiteral[];
 
     loading = true;
-
-    errorMessage: any;
 
     // is the logged-in user system admin?
     sysAdmin: boolean = false;
@@ -124,16 +134,18 @@ export class ProjectFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _session: SessionService,
+        private _errorHandler: ErrorHandlerService,
+        private _fb: FormBuilder,
         private _router: Router,
-        private _fb: FormBuilder) {
+        private _session: SessionService
+    ) {
     }
 
     ngOnInit() {
 
         // if projectcode exists, we are in edit mode
         // otherwise create new project
-        if(this.projectcode) {
+        if (this.projectcode) {
             // edit existing project
             // get origin project data first
             this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
@@ -146,7 +158,7 @@ export class ProjectFormComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                 }
             );
 
@@ -168,8 +180,7 @@ export class ProjectFormComponent implements OnInit {
                     }
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                 }
             );
 
@@ -364,7 +375,7 @@ export class ProjectFormComponent implements OnInit {
 
                 },
                 (error: ApiResponseError) => {
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                     this.loading = false;
                 }
             );
@@ -408,20 +419,19 @@ export class ProjectFormComponent implements OnInit {
                                         this._router.navigate(['/project/' + this.form.controls['shortcode'].value])
                                     );
                                 },
-                                (error: any) => {
-                                    console.error(error);
+                                (error: ApiResponseError) => {
+                                    this._errorHandler.showMessage(error);
                                 }
                             );
                         },
-                        (error: any) => {
-                            console.error(error);
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
                         }
                     );
 
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                     this.loading = false;
                 }
             );
@@ -445,7 +455,7 @@ export class ProjectFormComponent implements OnInit {
             },
             (error: ApiResponseError) => {
                 // const message: MessageData = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 /*
                 const errorRef = this._dialog.open(MessageDialogComponent, <MatDialogConfig>{
                     data: {
@@ -479,7 +489,7 @@ export class ProjectFormComponent implements OnInit {
             },
             (error: ApiResponseError) => {
                 // const message: MessageData = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 /*
                 const errorRef = this._dialog.open(MessageDialogComponent, <MatDialogConfig>{
                     data: {
@@ -508,7 +518,7 @@ export class ProjectFormComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );

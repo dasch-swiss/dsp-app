@@ -5,7 +5,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -243,7 +245,9 @@ describe('ResourceInstanceFormComponent', () => {
             imports: [
                 RouterTestingModule,
                 ReactiveFormsModule,
+                MatDialogModule,
                 MatSelectModule,
+                MatSnackBarModule,
                 MatOptionModule,
                 BrowserAnimationsModule,
                 TranslateModule.forRoot()

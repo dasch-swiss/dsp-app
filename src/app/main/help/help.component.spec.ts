@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,6 +22,7 @@ describe('HelpComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 MatButtonModule,
+                MatDialogModule,
                 MatIconModule,
                 MatSnackBarModule,
                 RouterTestingModule

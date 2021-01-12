@@ -1,7 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ReadUser, UserResponse, UsersResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    ReadUser,
+    UserResponse,
+    UsersResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-users',
@@ -17,6 +25,7 @@ export class UsersComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _errorHandler: ErrorHandlerService,
         private _titleService: Title
     ) {
         // set the page title
@@ -47,7 +56,7 @@ export class UsersComponent implements OnInit {
                             u.permissions = res.body.user.permissions;
                         },
                         (error: ApiResponseError) => {
-                            console.error(error);
+                            this._errorHandler.showMessage(error);
                         }
                     );
 
@@ -61,7 +70,7 @@ export class UsersComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }

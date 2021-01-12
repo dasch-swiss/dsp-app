@@ -1,31 +1,23 @@
-<div class="error-page" [ngSwitch]="status">
+<div class="error-page">
 
     <!-- error 403: forbidden -->
-    <div *ngSwitchCase="403" class="container">
+    <div class="container">
         <div class="image">
-            <img class="error-image" src="/assets/images/knora-app-error-403.svg" />
+            <img class="error-image" [src]="'/assets/images/' + errorMessage?.image" />
         </div>
         <div class="text error-message">
-            <h2 class="mat-title">ERROR 403</h2>
-            <h1 class="mat-headline">Forbidden</h1>
-            <p>This is not the content you were looking for.<br>But you are not authorized to see this page.
-                <br></p>
-            <br><br><br>
-            <h3 class="mat-subheading-2 link" routerLink="/">&larr; Please go back to the start page.</h3>
-        </div>
-    </div>
+            <h2 class="mat-title">ERROR {{status}}</h2>
+            <h1 class="mat-headline">{{errorMessage?.message}}</h1>
+            <p [innerHTML]="errorMessage.description"></p>
+            <div [ngSwitch]="errorMessage?.action" class="action">
+                <button *ngSwitchCase="'goback'" mat-button routerLink="/">
+                    <mat-icon>keyboard_backspace</mat-icon> Please go back to the start page.
+                </button>
+                <p *ngSwitchCase="'reload'">
+                    Please come back in a few minutes and try to <a (click)="reload()">reload the page</a>
+                </p>
+            </div>
 
-    <!-- default error: 404 not found -->
-    <div *ngSwitchDefault class="container">
-        <div class="image">
-            <img class="error-image" src="/assets/images/knora-app-error-404.svg" />
-        </div>
-        <div class="text error-message">
-            <h2 class="mat-title">ERROR 404</h2>
-            <h1 class="mat-headline">Not found</h1>
-            <p>This is not the content you were looking for.<br>But we couldn't find anything with this request.</p>
-            <br><br><br>
-            <h3 class="mat-subheading-2 link" routerLink="/">&larr; Please go back to the start page.</h3>
         </div>
     </div>
 

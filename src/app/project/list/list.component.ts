@@ -3,11 +3,21 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ListNodeInfo, ListsResponse, ProjectResponse, ReadProject, StringLiteral } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    ListNodeInfo,
+    ListsResponse,
+    ProjectResponse,
+    ReadProject,
+    StringLiteral
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-list',
@@ -60,12 +70,13 @@ export class ListComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _dialog: MatDialog,
-        private _router: Router,
-        private _fb: FormBuilder,
         private _cache: CacheService,
-        private _session: SessionService,
+        private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
+        private _fb: FormBuilder,
         private _route: ActivatedRoute,
+        private _router: Router,
+        private _session: SessionService,
         private _titleService: Title) {
 
         // get the shortcode of the current project
@@ -121,7 +132,7 @@ export class ListComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );
@@ -150,7 +161,7 @@ export class ListComponent implements OnInit {
 
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }

@@ -1,8 +1,17 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    MembersResponse,
+    ProjectResponse,
+    ReadProject,
+    ReadUser
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
 
@@ -41,8 +50,9 @@ export class CollaborationComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _session: SessionService,
+        private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
+        private _session: SessionService,
         private _titleService: Title) {
 
         // get the shortcode of the current project
@@ -94,7 +104,7 @@ export class CollaborationComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );
@@ -128,8 +138,8 @@ export class CollaborationComponent implements OnInit {
 
                 this.loading = false;
             },
-            (error: any) => {
-                console.error(error);
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
             }
         );
     }

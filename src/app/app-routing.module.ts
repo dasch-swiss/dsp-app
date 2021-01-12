@@ -172,6 +172,11 @@ const routes: Routes = [
         component: CookiePolicyComponent
     },
     {
+        path: 'teapot',
+        component: ErrorComponent,
+        data: { status: 418 }
+    },
+    {
         path: '**',
         component: ErrorComponent,
         data: { status: 404 }

@@ -1,9 +1,17 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject, CreateOntology, OntologyMetadata } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    CreateOntology,
+    KnoraApiConnection,
+    OntologyMetadata,
+    ProjectResponse,
+    ReadProject
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 export interface NewOntology {
     projectIri: string;
@@ -74,6 +82,7 @@ export class OntologyFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder) { }
 
     ngOnInit() {
@@ -93,7 +102,7 @@ export class OntologyFormComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );
@@ -186,7 +195,7 @@ export class OntologyFormComponent implements OnInit {
                 this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
                 this.loading = false;
 
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }

@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -24,8 +25,10 @@ export class DashboardComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
-        private _titleService: Title) {
+        private _titleService: Title
+    ) {
         // get username
         this.session = this._session.getSession();
         this.username = this.session.user.name;
@@ -51,7 +54,7 @@ export class DashboardComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
 

@@ -4,6 +4,7 @@ import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection }
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-select-group',
@@ -36,7 +37,8 @@ export class SelectGroupComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService
+        private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService
     ) { }
 
     ngOnInit() {
@@ -63,7 +65,7 @@ export class SelectGroupComponent implements OnInit {
                 }
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }

@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface DialogData {
     mode: string;       // switch mode
-    id: string;         // main iri
+    id: string | number;         // main iri or status code
     project?: string;   // project code
     title?: string;
     subtitle?: string;

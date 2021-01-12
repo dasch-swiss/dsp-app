@@ -1,9 +1,22 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectResponse, ReadUser, StringLiteral, UpdateUserRequest, User, UserResponse, UsersResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    Constants,
+    KnoraApiConnection,
+    ProjectResponse,
+    ReadUser,
+    StringLiteral,
+    UpdateUserRequest,
+    User,
+    UserResponse,
+    UsersResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, existingNamesValidator, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -125,11 +138,6 @@ export class UserFormComponent implements OnInit, OnChanges {
     };
 
     /**
-     * in case of an API error
-     */
-    errorMessage: any;
-
-    /**
      * success of sending data
      */
     success = false;
@@ -152,10 +160,11 @@ export class UserFormComponent implements OnInit, OnChanges {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _route: ActivatedRoute,
         private _cache: CacheService,
-        private _session: SessionService,
-        private _formBuilder: FormBuilder
+        private _errorHandler: ErrorHandlerService,
+        private _formBuilder: FormBuilder,
+        private _route: ActivatedRoute,
+        private _session: SessionService
     ) {
         // get username from url
         if (
@@ -190,8 +199,8 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this.user = response.body.user;
                     this.loading = !this.buildForm(this.user);
                 },
-                (error: any) => {
-                    console.error(error);
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
                 }
             );
         } else {
@@ -383,7 +392,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                     this.loading = false;
                     this.success = false;
                 }
@@ -425,13 +434,13 @@ export class UserFormComponent implements OnInit, OnChanges {
                                         this.closeDialog.emit(this.user);
                                         this.loading = false;
                                     },
-                                    (error: any) => {
-                                        console.error(error);
+                                    (error: ApiResponseError) => {
+                                        this._errorHandler.showMessage(error);
                                     }
                                 );
                             },
-                            (error: any) => {
-                                console.error(error);
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
                             }
                         );
                     } else {
@@ -440,7 +449,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                     }
                 },
                 (error: ApiResponseError) => {
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                     this.loading = false;
                 }
             );

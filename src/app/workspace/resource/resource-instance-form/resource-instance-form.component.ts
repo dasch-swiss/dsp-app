@@ -25,6 +25,7 @@ import {
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { SelectOntologyComponent } from './select-ontology/select-ontology.component';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
 import { SelectResourceClassComponent } from './select-resource-class/select-resource-class.component';
@@ -80,9 +81,10 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService,
+        private _fb: FormBuilder,
         private _router: Router,
-        private _session: SessionService,
-        private _fb: FormBuilder
+        private _session: SessionService
     ) {
         this.session = this._session.getSession();
         this.username = this.session.user.name;
@@ -168,7 +170,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 this.closeDialog.emit();
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -194,7 +196,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     }
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         } else if (this.session.user.sysAdmin === true) {
@@ -203,7 +205,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     this.usersProjects = response.body.projects;
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         }
@@ -252,7 +254,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                         }
                     },
                     (error: ApiResponseError) => {
-                        console.error(error);
+                        this._errorHandler.showMessage(error);
                     }
                 );
             }
@@ -297,21 +299,21 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 this.selectedOntology = ontologyIri;
 
                 this._dspApiConnection.v2.ontologyCache.getOntology(ontologyIri).subscribe(
-                        (onto: Map<string, ReadOntology>) => {
-                            this.resourceClasses = onto.get(ontologyIri).getClassDefinitionsByType(ResourceClassDefinition);
+                    (onto: Map<string, ReadOntology>) => {
+                        this.resourceClasses = onto.get(ontologyIri).getClassDefinitionsByType(ResourceClassDefinition);
 
-                            if (this.selectResourceClassComponent && this.resourceClasses.length === 1) {
-                                // since the component already exists, the ngAfterInit method of the component will not be called so we must assign the value here manually
-                                this.selectResourceClassComponent.form.controls.resources.setValue(this.resourceClasses[0].id);
-                            }
+                        if (this.selectResourceClassComponent && this.resourceClasses.length === 1) {
+                            // since the component already exists, the ngAfterInit method of the component will not be called so we must assign the value here manually
+                            this.selectResourceClassComponent.form.controls.resources.setValue(this.resourceClasses[0].id);
+                        }
 
-                            // notifies the user that the selected ontology does not have any resource classes defined yet.
-                            if ((!this.selectResourceClassComponent || this.selectOntologyComponent.form.controls.ontologies.valueChanges) && this.resourceClasses.length === 0) {
-                                this.errorMessage = 'No resources defined for the selected ontology.';
-                            }
+                        // notifies the user that the selected ontology does not have any resource classes defined yet.
+                        if ((!this.selectResourceClassComponent || this.selectOntologyComponent.form.controls.ontologies.valueChanges) && this.resourceClasses.length === 0) {
+                            this.errorMessage = 'No resources defined for the selected ontology.';
+                        }
                     },
                     (error: ApiResponseError) => {
-                        console.error(error);
+                        this._errorHandler.showMessage(error);
                     }
                 );
             }
@@ -356,7 +358,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     }
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         } else {

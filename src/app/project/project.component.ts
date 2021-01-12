@@ -6,6 +6,7 @@ import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
+import { ErrorHandlerService } from '../main/error/error-handler.service';
 
 @Component({
     selector: 'app-project',
@@ -39,6 +40,7 @@ export class ProjectComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
@@ -102,7 +104,7 @@ export class ProjectComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                     this.error = true;
                     this.loading = false;
                 }

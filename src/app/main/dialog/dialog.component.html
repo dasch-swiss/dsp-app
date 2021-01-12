@@ -227,7 +227,7 @@
     </div>
 
     <div *ngSwitchCase="'error'">
-        <dsp-message [short]="true" [message]="data.title"></dsp-message>
+        <app-error [status]="data.id"></app-error>
     </div>
 
     <!-- all about RESOURCE -->

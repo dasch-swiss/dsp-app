@@ -15,12 +15,11 @@
 
     .image,
     .text {
-        justify-self: stretch;
-        align-self: stretch;
-        box-sizing: border-box;
-        padding: 24px;
-        max-height: 280px;
-
+      justify-self: stretch;
+      align-self: stretch;
+      box-sizing: border-box;
+      padding: 24px;
+      max-height: 280px;
 
       &.error-message {
         line-height: 1.5;
@@ -33,9 +32,11 @@
         max-width: 400px;
       }
     }
-
   }
+}
 
+.action {
+  margin-top: 72px;
 }
 
 // mobile device: phone

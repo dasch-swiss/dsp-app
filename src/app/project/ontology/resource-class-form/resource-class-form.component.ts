@@ -17,10 +17,11 @@ import {
     UpdateOntologyResourceClassCardinality
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-literal-v2';
-import { DspApiConnectionToken, NotificationService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { from, of, Subscription } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { Property, ResourceClassFormService } from './resource-class-form.service';
 
 // nested form components; solution from:
@@ -77,8 +78,8 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     // progress
     loading: boolean;
 
-    // in case of an error, show message
-    errorMessage: any;
+    // in case of an error
+    error: boolean;
 
     // two step form: which should be active?
     showResourceClassForm: boolean = true;
@@ -120,10 +121,10 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService,
-        private _resourceClassFormService: ResourceClassFormService,
         private _cache: CacheService,
         private _cdr: ChangeDetectorRef,
+        private _errorHandler: ErrorHandlerService,
+        private _resourceClassFormService: ResourceClassFormService
     ) { }
 
     ngOnInit() {
@@ -159,7 +160,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -169,7 +170,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                 this._cache.set('currentOntologyLists', response.body.lists);
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -340,7 +341,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -463,7 +464,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                     this.setCardinality(response.id, classIri, prop.multiple, prop.required, index);
                 },
                 (error: ApiResponseError) => {
-                    this._notification.openSnackBar(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         })

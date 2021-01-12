@@ -4,6 +4,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -26,10 +27,11 @@ describe('MainComponent', () => {
             imports: [
                 DspActionModule,
                 MatButtonModule,
-                MatIconModule,
-                MatFormFieldModule,
-                MatSelectModule,
                 MatDividerModule,
+                MatFormFieldModule,
+                MatIconModule,
+                MatSelectModule,
+                MatSnackBarModule,
                 RouterTestingModule
             ],
             providers: [

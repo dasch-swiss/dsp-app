@@ -1,13 +1,23 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, MembersResponse, ProjectResponse, ReadUser, UserResponse, UsersResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    MembersResponse,
+    ProjectResponse,
+    ReadUser,
+    UserResponse,
+    UsersResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-add-user',
@@ -52,11 +62,6 @@ export class AddUserComponent implements OnInit {
             'existingName': 'This user is already a member of the project. You can\'t add him / her.'
         }
     };
-
-    /**
-     * message in case of an API error
-     */
-    errorMessage: any = undefined;
 
     /**
      * list of all users
@@ -110,8 +115,9 @@ export class AddUserComponent implements OnInit {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _dialog: MatDialog,
-        private _formBuilder: FormBuilder) {
-    }
+        private _errorHandler: ErrorHandlerService,
+        private _formBuilder: FormBuilder
+    ) { }
 
     ngOnInit() {
 
@@ -188,16 +194,16 @@ export class AddUserComponent implements OnInit {
                             }
                         });
                     },
-                    (err: any) => {
-                        console.error(err);
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
                     }
                 );
 
                 this.loading = false;
 
             },
-            (error: any) => {
-                console.error(error);
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -313,13 +319,13 @@ export class AddUserComponent implements OnInit {
                                     this.loading = false;
 
                                 },
-                                (error: any) => {
-                                    console.error(error);
+                                (error: ApiResponseError) => {
+                                    this._errorHandler.showMessage(error);
                                 }
                             );
                         },
-                        (error: any) => {
-                            console.error(error);
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
                         }
                     );
                 }
@@ -335,7 +341,7 @@ export class AddUserComponent implements OnInit {
 
                 } else {
                     // api error
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                 }
 
             }

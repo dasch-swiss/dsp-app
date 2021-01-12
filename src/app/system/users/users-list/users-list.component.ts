@@ -1,10 +1,22 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, Constants, GroupsResponse, KnoraApiConnection, Permissions, ProjectResponse, ReadProject, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    Constants,
+    GroupsResponse,
+    KnoraApiConnection,
+    Permissions,
+    ProjectResponse,
+    ReadProject,
+    ReadUser,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService, SortingService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-users-list',
@@ -81,12 +93,13 @@ export class UsersListComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _session: SessionService,
         private _cache: CacheService,
-        private _sortingService: SortingService,
         private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        private _session: SessionService,
+        private _sortingService: SortingService
     ) {
         // get the shortcode of the current project
         if (this._route.parent.paramMap) {
@@ -118,13 +131,13 @@ export class UsersListComponent implements OnInit {
 
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         }
 
         // sort list by defined key
-        if(localStorage.getItem('sortUsersBy')) {
+        if (localStorage.getItem('sortUsersBy')) {
             this.sortBy = localStorage.getItem('sortUsersBy');
         } else {
             localStorage.setItem('sortUsersBy', this.sortBy);
@@ -191,7 +204,7 @@ export class UsersListComponent implements OnInit {
                         this._dspApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
                             (ngResponse: ApiResponseData<UserResponse>) => { },
                             (ngError: ApiResponseError) => {
-                                console.error(ngError);
+                                this._errorHandler.showMessage(ngError);
                             }
                         );
                     }
@@ -207,7 +220,7 @@ export class UsersListComponent implements OnInit {
                             this._dspApiConnection.admin.usersEndpoint.removeUserFromGroupMembership(id, oldGroup).subscribe(
                                 (ngResponse: ApiResponseData<UserResponse>) => { },
                                 (ngError: ApiResponseError) => {
-                                    console.error(ngError);
+                                    this._errorHandler.showMessage(ngError);
                                 }
                             );
                         }
@@ -220,7 +233,7 @@ export class UsersListComponent implements OnInit {
                             this._dspApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
                                 (ngResponse: ApiResponseData<UserResponse>) => { },
                                 (ngError: ApiResponseError) => {
-                                    console.error(ngError);
+                                    this._errorHandler.showMessage(ngError);
                                 }
                             );
                         }
@@ -228,7 +241,7 @@ export class UsersListComponent implements OnInit {
                 }
             },
             (error: ApiResponseError) => {
-                console.error('getUsersGroupMemberships ', error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -269,7 +282,7 @@ export class UsersListComponent implements OnInit {
 
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         } else {
@@ -286,7 +299,7 @@ export class UsersListComponent implements OnInit {
                     }
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         }
@@ -300,7 +313,7 @@ export class UsersListComponent implements OnInit {
                 }
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -359,8 +372,7 @@ export class UsersListComponent implements OnInit {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
-                // this.errorMessage = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -377,8 +389,7 @@ export class UsersListComponent implements OnInit {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
-                // this.errorMessage = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -394,8 +405,7 @@ export class UsersListComponent implements OnInit {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
-                // this.errorMessage = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }

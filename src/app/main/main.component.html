@@ -88,12 +88,10 @@
     <section class="projects">
         <div class="content large middle">
             <h2 class="mat-title">The following projects have already stored their data in DSP-API</h2>
-            <dsp-progress-indicator [color]="'primary'" *ngIf="loading && !errorMessage"></dsp-progress-indicator>
+            <dsp-progress-indicator [color]="'primary'" *ngIf="loading"></dsp-progress-indicator>
             <div *ngIf="!loading">
                 <app-grid class="project-list" [list]="projects"></app-grid>
             </div>
-            <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
-            <!-- <app-grid ngIf="!loading && projects" [list]="projects"></app-grid> -->
         </div>
     </section>
 

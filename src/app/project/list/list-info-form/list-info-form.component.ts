@@ -1,7 +1,20 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ApiResponseData, ApiResponseError, CreateListRequest, KnoraApiConnection, List, ListInfoResponse, ListNodeInfo, ListResponse, ReadProject, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    CreateListRequest,
+    KnoraApiConnection,
+    List,
+    ListInfoResponse,
+    ListNodeInfo,
+    ListResponse,
+    ReadProject,
+    StringLiteral,
+    UpdateListInfoRequest
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-list-info-form',
@@ -64,12 +77,6 @@ export class ListInfoFormComponent implements OnInit {
         }
     };
 
-
-    /**
-     * in case of an API error
-     */
-    errorMessage: any;
-
     /**
      * success of sending data
      */
@@ -83,7 +90,8 @@ export class ListInfoFormComponent implements OnInit {
     };
 
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _errorHandler: ErrorHandlerService
     ) { }
 
     ngOnInit() {
@@ -99,7 +107,7 @@ export class ListInfoFormComponent implements OnInit {
                     this.buildForm(response.body.listinfo);
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
 
@@ -158,7 +166,7 @@ export class ListInfoFormComponent implements OnInit {
                     this.closeDialog.emit(response.body.listinfo);
                 },
                 (error: ApiResponseError) => {
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                     this.loading = false;
                     this.success = false;
                 }
@@ -195,7 +203,7 @@ export class ListInfoFormComponent implements OnInit {
                     this.createList = true;
                 },
                 (error: ApiResponseError) => {
-                    this.errorMessage = error;
+                    this._errorHandler.showMessage(error);
                     this.loading = false;
                     this.success = false;
                 }

@@ -1,9 +1,9 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConfig, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConfigToken, DspApiConnectionToken, NotificationService } from '@dasch-swiss/dsp-ui';
+import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from '../error/error-handler.service';
 import { GridItem } from '../grid/grid.component';
 
 declare let require: any;
@@ -92,7 +92,7 @@ export class HelpComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService,
+        private _errorHandler: ErrorHandlerService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry) {
 
@@ -125,7 +125,7 @@ export class HelpComponent implements OnInit {
                 this.tools[1].url += apiVersion;
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         )
 

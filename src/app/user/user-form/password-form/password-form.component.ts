@@ -1,8 +1,16 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    LoginResponse,
+    ReadUser,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspMessageData, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-password-form',
@@ -13,8 +21,6 @@ export class PasswordFormComponent implements OnInit {
 
     // progress indicator
     loading: boolean;
-    // in case of an api error
-    errorMessage: ApiResponseError;
 
     // TODO: replace RegexPassword by CustomRegex.PASSWORD_REGEX from dsp-ui
     public readonly RegexPassword = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/i;
@@ -98,8 +104,9 @@ export class PasswordFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _session: SessionService,
-        private _fb: FormBuilder
+        private _errorHandler: ErrorHandlerService,
+        private _fb: FormBuilder,
+        private _session: SessionService
     ) { }
 
     ngOnInit() {
@@ -132,7 +139,7 @@ export class PasswordFormComponent implements OnInit {
                     this.user = response.body.user;
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
 
@@ -272,7 +279,7 @@ export class PasswordFormComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.showResponse = this.apiResponses[2];
                 this.loading = false;
             }
@@ -295,13 +302,11 @@ export class PasswordFormComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
                 this.showResponse = this.apiResponses[2];
                 this.loading = false;
             }
         );
-
-
     }
 
     closeMessage(status?: number) {

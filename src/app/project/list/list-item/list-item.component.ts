@@ -1,6 +1,13 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ListNode, ListResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    ListNode,
+    ListResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
     selector: 'app-list-item',
@@ -25,7 +32,10 @@ export class ListItemComponent implements OnInit {
 
     loading: boolean;
 
-    constructor(@Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection) { }
+    constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _errorHandler: ErrorHandlerService
+    ) { }
 
     ngOnInit() {
         this.loading = true;
@@ -40,7 +50,7 @@ export class ListItemComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         }

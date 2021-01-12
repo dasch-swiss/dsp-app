@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { Observable, of, Subject, throwError } from 'rxjs';
+import { ErrorHandlerService } from '../error/error-handler.service';
 
 interface CacheContent {
     expiry: number;
@@ -21,6 +22,9 @@ export class CacheService {
     private inFlightObservables: Map<string, Subject<any>> = new Map<string, Subject<any>>();
     readonly DEFAULT_MAX_AGE: number = 3600000;  // 3600000ms => 1 Stunde
 
+    constructor(
+        private _errorHandler: ErrorHandlerService
+    ) { }
     /**
      * Gets the value from cache if the key is provided.
      * If no value exists in cache, then check if the same call exists
@@ -63,7 +67,7 @@ export class CacheService {
                 },
                 (error: ApiResponseError) => {
                     // api service error
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 });
 
         } else {

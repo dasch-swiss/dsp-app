@@ -1,4 +1,4 @@
-<div class="no-shadow" *ngIf="!errorMessage; else errorMsg">
+<div class="no-shadow">
 
     <!-- success message after updating -->
     <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
@@ -86,8 +86,8 @@
                         (click)="submitData()">
                         <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                         </dsp-progress-indicator>
-                        <mat-icon *ngIf="errorMessage && !loading">close</mat-icon>
-                        {{errorMessage ? 'Failed' : 'Submit'}}
+                        <mat-icon *ngIf="error && !loading">close</mat-icon>
+                        {{error ? 'Failed' : 'Submit'}}
                     </button>
                 </span>
             </div>
@@ -96,8 +96,3 @@
     </form>
 
 </div>
-
-<!-- in the case of an API error: show the error message -->
-<ng-template #errorMsg>
-    <dsp-message *ngIf="errorMessage" [message]="errorMessage"></dsp-message>
-</ng-template>

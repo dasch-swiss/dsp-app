@@ -1,9 +1,17 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse, ReadUser, UserResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    KnoraApiConnection,
+    LogoutResponse,
+    ReadUser,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -25,9 +33,11 @@ export class AccountComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _session: SessionService,
         private _dialog: MatDialog,
-        private _titleService: Title) {
+        private _errorHandler: ErrorHandlerService,
+        private _titleService: Title,
+        private _session: SessionService,
+    ) {
         // set the page title
         this._titleService.setTitle('Your account');
     }
@@ -45,7 +55,7 @@ export class AccountComponent implements OnInit {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -102,13 +112,12 @@ export class AccountComponent implements OnInit {
                         window.location.reload();
                     },
                     (error: ApiResponseError) => {
-                        console.error(error);
+                        this._errorHandler.showMessage(error);
                     }
                 );
             },
             (error: ApiResponseError) => {
-                // this.errorMessage = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -123,8 +132,7 @@ export class AccountComponent implements OnInit {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
-                // this.errorMessage = error;
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }

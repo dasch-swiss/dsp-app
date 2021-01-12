@@ -1,10 +1,11 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ProjectsResponse, ReadProject, UserResponse, StoredProject } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectsResponse, StoredProject, UserResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AdminPermissions } from 'src/app/main/declarations/admin-permissions';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 /**
@@ -55,8 +56,9 @@ export class ProjectsComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _session: SessionService,
         private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
+        private _session: SessionService,
         private _titleService: Title
     ) {
         // set the page title
@@ -86,7 +88,7 @@ export class ProjectsComponent implements OnInit {
             this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
 
-                    for(let project of response.body.user.projects) {
+                    for (let project of response.body.user.projects) {
                         if (project.status === true) {
                             this.active.push(project);
                         } else {
@@ -97,7 +99,7 @@ export class ProjectsComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         } else {
@@ -121,7 +123,7 @@ export class ProjectsComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         }
