@@ -49,7 +49,7 @@ export class BoardComponent implements OnInit {
     selectedDataset: string;
 
     // different metadata download formats
-    metadataDownloadFormats = ['XML', 'JSON', 'JSON-LD', 'Triplestore'];
+    metadataDownloadFormats = ['JSON-LD', 'XML', 'Triplestore', 'CSV'];
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -260,6 +260,22 @@ export class BoardComponent implements OnInit {
         this.howToCite = this.datasetMetadata['howToCite'];
         this.publicationDate = this.datasetMetadata['datePublished'];
         this.keywords = this.projectMetadata['keywords'];
+    }
+
+    // download metadata
+    downloadMetadata() {
+        const blob: Blob = new Blob([JSON.stringify(this.metadata)], {type: 'application/json'});
+        const fileName: string = 'metadata.json';
+        const objectUrl: string = URL.createObjectURL(blob);
+        const a: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement;
+
+        a.href = objectUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(objectUrl);
     }
 
     updateDataset(event: MatRadioChange) {

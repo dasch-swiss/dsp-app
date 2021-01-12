@@ -124,7 +124,10 @@ section {
    */
 
   .download-metadata {
-    margin-right: 10px;
+    margin-left: 10px;
+    pointer-events: none;
+    cursor: default;
+    color: darkgrey !important;
   }
 
   .sidenav-prop-text {

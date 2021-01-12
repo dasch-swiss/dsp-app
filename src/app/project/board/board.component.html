@@ -178,6 +178,8 @@
             <div class="metadata-box">
                 <h3>Download metadata</h3>
                 <div class="sidenav-prop-text">
+                    <a [routerLink]="" (click)="downloadMetadata()">JSON</a>
+                    <!-- Functionality to be implemented -->
                     <a href *ngFor="let dformat of metadataDownloadFormats" class="download-metadata"> {{ dformat }} </a>
                 </div>
             </div>
