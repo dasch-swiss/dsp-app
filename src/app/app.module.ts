@@ -54,7 +54,6 @@ import { GroupsListComponent } from './system/groups/groups-list/groups-list.com
 import { GroupsComponent } from './system/groups/groups.component';
 import { ProjectsListComponent } from './system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from './system/projects/projects.component';
-import { StatusComponent } from './system/status/status.component';
 import { SystemComponent } from './system/system.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
 import { UsersComponent } from './system/users/users.component';
@@ -125,7 +124,6 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         DialogComponent,
         SystemComponent,
         UsersComponent,
-        StatusComponent,
         UsersListComponent,
         DialogHeaderComponent,
         GridComponent,

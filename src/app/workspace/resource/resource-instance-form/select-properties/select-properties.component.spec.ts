@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     MockOntology,
     ResourceClassAndPropertyDefinitions,
@@ -64,6 +65,7 @@ describe('SelectPropertiesComponent', () => {
                 TestSelectPropertiesParentComponent
                 ],
             imports: [
+                BrowserAnimationsModule,
                 MatTooltipModule
             ],
             providers: [

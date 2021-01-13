@@ -1,11 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CacheService } from './cache.service';
 
 describe('CacheService', () => {
     beforeEach(() => TestBed.configureTestingModule({
         imports: [
+            BrowserAnimationsModule,
             MatDialogModule,
             MatSnackBarModule
         ]

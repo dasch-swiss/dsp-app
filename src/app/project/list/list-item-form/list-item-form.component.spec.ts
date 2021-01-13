@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import {
@@ -13,6 +14,8 @@ import {
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { ListItemFormComponent } from './list-item-form.component';
 
@@ -23,12 +26,15 @@ describe('ListItemFormComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ListItemFormComponent
+                ListItemFormComponent,
+                DialogComponent,
+                ErrorComponent
             ],
             imports: [
-                HttpClientModule,
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
+                HttpClientModule,
                 MatIconModule,
                 MatInputModule,
                 ReactiveFormsModule,

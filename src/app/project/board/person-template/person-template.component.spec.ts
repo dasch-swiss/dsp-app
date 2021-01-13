@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PersonTemplateComponent } from './person-template.component';
 import { Component, ViewChild } from '@angular/core';
+import { AddressTemplateComponent } from '../address-template/address-template.component';
 
 
 /**
@@ -34,6 +35,7 @@ describe('PersonTemplateComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostContactComponent,
+                AddressTemplateComponent,
                 PersonTemplateComponent
             ]
         })

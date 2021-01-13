@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -12,7 +11,6 @@ describe('ErrorComponent', () => {
         TestBed.configureTestingModule({
             declarations: [ErrorComponent],
             imports: [
-                CommonModule,
                 MatIconModule,
                 RouterTestingModule
             ]

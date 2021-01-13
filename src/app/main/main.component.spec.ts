@@ -6,11 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspApiConnectionToken, SessionService, DspApiConfigToken } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { TestConfig } from 'test.config';
+import { DialogComponent } from './dialog/dialog.component';
+import { ErrorComponent } from './error/error.component';
 import { FooterComponent } from './footer/footer.component';
 import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
@@ -23,8 +26,15 @@ describe('MainComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [MainComponent, FooterComponent, GridComponent],
+            declarations: [
+                MainComponent,
+                FooterComponent,
+                GridComponent,
+                DialogComponent,
+                ErrorComponent
+            ],
             imports: [
+                BrowserAnimationsModule,
                 DspActionModule,
                 MatButtonModule,
                 MatDividerModule,

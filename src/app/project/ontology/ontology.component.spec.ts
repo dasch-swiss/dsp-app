@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -10,7 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatCardModule } from '@angular/material/card';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -22,11 +23,11 @@ import {
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
-import { OntologyComponent } from './ontology.component';
 import { OntologyVisualizerComponent } from './ontology-visualizer/ontology-visualizer.component';
-import { VisualizerComponent } from './ontology-visualizer/visualizer/visualizer.component';
+import { OntologyComponent } from './ontology.component';
 
 describe('OntologyComponent', () => {
     let component: OntologyComponent;
@@ -37,12 +38,14 @@ describe('OntologyComponent', () => {
             declarations: [
                 OntologyComponent,
                 OntologyVisualizerComponent,
+                DialogComponent,
                 ErrorComponent
             ],
             imports: [
-                HttpClientTestingModule,
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
+                HttpClientTestingModule,
                 MatCardModule,
                 MatDialogModule,
                 MatDividerModule,

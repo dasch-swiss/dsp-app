@@ -28,8 +28,6 @@ import { ResultsComponent } from './workspace/results/results.component';
 import { SystemComponent } from './system/system.component';
 import { ProjectsComponent } from './system/projects/projects.component';
 import { UsersComponent } from './system/users/users.component';
-import { StatusComponent } from './system/status/status.component';
-import { GroupsComponent } from './system/groups/groups.component';
 
 const routes: Routes = [
     {
@@ -142,10 +140,6 @@ const routes: Routes = [
             {
                 path: 'users',
                 component: UsersComponent
-            },
-            {
-                path: 'status',
-                component: StatusComponent
             }
         ]
     },

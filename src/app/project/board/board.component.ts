@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatRadioChange } from '@angular/material/radio';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import {
@@ -7,15 +8,13 @@ import {
     ApiResponseError,
     KnoraApiConnection,
     ProjectResponse,
-    ReadProject,
-    ReadUser
+    ReadProject
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { ClipboardService } from 'ngx-clipboard';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
-import { MatRadioChange } from '@angular/material/radio';
-import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
     selector: 'app-board',

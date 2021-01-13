@@ -6,6 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -17,6 +18,8 @@ import {
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { SelectGroupComponent } from 'src/app/project/collaboration/select-group/select-group.component';
 import { TestConfig } from 'test.config';
 import { UsersListComponent } from './users-list.component';
@@ -27,8 +30,14 @@ describe('UsersListComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [UsersListComponent, SelectGroupComponent],
+            declarations: [
+                UsersListComponent,
+                SelectGroupComponent,
+                DialogComponent,
+                ErrorComponent
+            ],
             imports: [
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
                 MatButtonModule,

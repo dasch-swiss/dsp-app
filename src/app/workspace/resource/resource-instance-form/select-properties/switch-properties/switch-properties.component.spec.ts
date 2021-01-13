@@ -1,11 +1,11 @@
-import { Component, Inject, Input } from '@angular/core';
-import { OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateIntValue, CreateValue, MockOntology, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { IntValueComponent } from '@dasch-swiss/dsp-ui';
-
 import { SwitchPropertiesComponent } from './switch-properties.component';
+
 
 /**
  * Test host component to simulate parent component.
@@ -97,6 +97,7 @@ describe('SwitchPropertiesComponent', () => {
                 TestSwitchPropertiesParentComponent
             ],
             providers: [
+                CommonModule,
                 FormBuilder
             ]
         })

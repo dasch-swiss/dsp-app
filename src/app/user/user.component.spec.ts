@@ -21,6 +21,7 @@ import {
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
+import { DialogComponent } from '../main/dialog/dialog.component';
 import { ErrorComponent } from '../main/error/error.component';
 import { ProjectsListComponent } from '../system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from '../system/projects/projects.component';
@@ -39,14 +40,15 @@ describe('UserComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                UserComponent,
-                ErrorComponent,
-                ProfileComponent,
                 AccountComponent,
+                CollectionListComponent,
+                DialogComponent,
+                ErrorComponent,
+                PasswordFormComponent,
+                ProfileComponent,
                 ProjectsComponent,
                 ProjectsListComponent,
-                CollectionListComponent,
-                PasswordFormComponent
+                UserComponent
             ],
             imports: [
                 DspActionModule,

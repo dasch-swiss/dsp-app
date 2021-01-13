@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import {
@@ -14,6 +15,8 @@ import {
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { PasswordFormComponent } from './password-form/password-form.component';
 import { UserFormComponent } from './user-form.component';
@@ -26,9 +29,12 @@ describe('UserFormComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 UserFormComponent,
-                PasswordFormComponent
+                PasswordFormComponent,
+                DialogComponent,
+                ErrorComponent
             ],
             imports: [
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
                 MatIconModule,

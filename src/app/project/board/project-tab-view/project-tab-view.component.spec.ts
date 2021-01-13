@@ -1,6 +1,12 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProjectTabViewComponent } from './project-tab-view.component';
 import { Component, ViewChild } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { AddressTemplateComponent } from '../address-template/address-template.component';
+import { OrganisationTemplateComponent } from '../organisation-template/organisation-template.component';
+import { PersonTemplateComponent } from '../person-template/person-template.component';
+import { ProjectTabViewComponent } from './project-tab-view.component';
 
 /**
  * Test host component to simulate parent component.
@@ -94,7 +100,15 @@ describe('ProjectTabViewComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostBoardComponent,
+                AddressTemplateComponent,
+                OrganisationTemplateComponent,
+                PersonTemplateComponent,
                 ProjectTabViewComponent
+            ],
+            imports: [
+                MatCardModule,
+                MatChipsModule,
+                MatIconModule
             ]
         })
             .compileComponents();

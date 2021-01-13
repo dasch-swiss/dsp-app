@@ -1,8 +1,9 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import {
@@ -13,6 +14,8 @@ import {
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { OntologyFormComponent } from './ontology-form.component';
 
@@ -25,12 +28,15 @@ describe('OntologyFormComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                OntologyFormComponent
+                OntologyFormComponent,
+                DialogComponent,
+                ErrorComponent
             ],
             imports: [
-                HttpClientTestingModule,
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
+                HttpClientTestingModule,
                 MatFormFieldModule,
                 MatInputModule,
                 ReactiveFormsModule,

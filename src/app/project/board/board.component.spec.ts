@@ -3,14 +3,17 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, DspCoreModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
-import { BoardComponent } from './board.component';
 import { AttributionTabViewComponent } from './attribution-tab-view/attribution-tab-view.component';
+import { BoardComponent } from './board.component';
 import { ContactsTabViewComponent } from './contacts-tab-view/contacts-tab-view.component';
 import { DatasetTabViewComponent } from './dataset-tab-view/dataset-tab-view.component';
 import { ProjectTabViewComponent } from './project-tab-view/project-tab-view.component';
@@ -24,6 +27,8 @@ describe('BoardComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 BoardComponent,
+                DialogComponent,
+                ErrorComponent,
                 AttributionTabViewComponent,
                 ContactsTabViewComponent,
                 DatasetTabViewComponent,
@@ -31,6 +36,7 @@ describe('BoardComponent', () => {
                 TermsTabViewComponent
             ],
             imports: [
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
                 MatChipsModule,

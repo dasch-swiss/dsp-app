@@ -36,7 +36,7 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
             geometry = new THREE.BoxGeometry(geometricalWidth, 12, 10);
         } else {
             geometry = new THREE.SphereGeometry(10, geometricalWidth, 12);
-            geometry.applyMatrix(new THREE.Matrix4().makeScale(2, 1.0, 1.5));
+            geometry.applyMatrix4(new THREE.Matrix4().makeScale(2, 1.0, 1.5));
         }
         const material = new THREE.MeshLambertMaterial({
             color: node[`color`],

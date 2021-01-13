@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContactsTabViewComponent } from './contacts-tab-view.component';
 import { Component, ViewChild } from '@angular/core';
+import { PersonTemplateComponent } from '../person-template/person-template.component';
+import { AddressTemplateComponent } from '../address-template/address-template.component';
 
 /**
  * Test host component to simulate parent component.
@@ -33,7 +35,9 @@ describe('ContactsTabViewComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostBoardComponent,
-                ContactsTabViewComponent
+                AddressTemplateComponent,
+                ContactsTabViewComponent,
+                PersonTemplateComponent
             ]
         })
             .compileComponents();

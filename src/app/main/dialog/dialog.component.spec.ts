@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import { RouterTestingModule } from '@angular/router/testing';
 import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { ListInfoFormComponent } from 'src/app/project/list/list-info-form/list-info-form.component';
@@ -25,6 +26,7 @@ import { ProjectFormComponent } from 'src/app/project/project-form/project-form.
 import { MembershipComponent } from 'src/app/user/membership/membership.component';
 import { PasswordFormComponent } from 'src/app/user/user-form/password-form/password-form.component';
 import { UserFormComponent } from 'src/app/user/user-form/user-form.component';
+import { ErrorComponent } from '../error/error.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
 import { DialogComponent } from './dialog.component';
 
@@ -37,6 +39,7 @@ describe('DialogComponent', () => {
             declarations: [
                 DialogComponent,
                 DialogHeaderComponent,
+                ErrorComponent,
                 UserFormComponent,
                 MembershipComponent,
                 PasswordFormComponent,
@@ -64,6 +67,7 @@ describe('DialogComponent', () => {
                 MatTooltipModule,
                 MatTreeModule,
                 ReactiveFormsModule,
+                RouterTestingModule,
                 TranslateModule.forRoot()
             ],
             providers: [

@@ -8,7 +8,9 @@ import {
     DspCoreModule,
     DspViewerModule
 } from '@dasch-swiss/dsp-ui';
+import { AngularSplitModule } from 'angular-split';
 import { TestConfig } from 'test.config';
+import { ResourceComponent } from '../resource/resource.component';
 import { ResultsComponent } from './results.component';
 
 describe('ResultsComponent', () => {
@@ -18,9 +20,11 @@ describe('ResultsComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ResultsComponent
+                ResultsComponent,
+                ResourceComponent
             ],
             imports: [
+                AngularSplitModule,
                 DspCoreModule,
                 DspViewerModule,
                 RouterTestingModule

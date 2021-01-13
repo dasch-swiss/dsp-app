@@ -3,6 +3,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import {
     AppInitService,
@@ -11,6 +13,8 @@ import {
     DspApiConnectionToken,
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { ProjectsListComponent } from 'src/app/system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from 'src/app/system/projects/projects.component';
 import { TestConfig } from 'test.config';
@@ -25,15 +29,19 @@ describe('DashboardComponent', () => {
             declarations: [
                 DashboardComponent,
                 ProjectsComponent,
-                ProjectsListComponent
+                ProjectsListComponent,
+                DialogComponent,
+                ErrorComponent
             ],
             imports: [
+                BrowserAnimationsModule,
                 DspActionModule,
                 DspCoreModule,
                 MatButtonModule,
                 MatChipsModule,
                 MatIconModule,
-                MatMenuModule
+                MatMenuModule,
+                RouterTestingModule
             ],
             providers: [
                 AppInitService,

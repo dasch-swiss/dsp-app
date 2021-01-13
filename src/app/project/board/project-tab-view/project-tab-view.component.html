@@ -9,7 +9,7 @@
                         {{ prop.key }}
                     </h3>
                 </div>
-                <div ngSwitch="{{ prop.key }}" class="property-value">
+                <div [ngSwitch]="prop.key" class="property-value">
 
                     <!-- #################### template for discipline ################# -->
                     <div *ngSwitchCase="'discipline'">

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
     ActivatedRoute,
@@ -10,6 +10,7 @@ import {
     Router
 } from '@angular/router';
 import { ReadLinkValue, ReadProject } from '@dasch-swiss/dsp-js';
+import { NotificationService } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -26,10 +27,12 @@ export class ResourceComponent implements OnDestroy {
     navigationSubscription: Subscription;
 
     constructor(
+        private _notification: NotificationService,
+        private _location: Location,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _titleService: Title,
-        private _location: Location) {
+        private _titleService: Title
+    ) {
 
         if (!this.resourceIri) {
             this._route.paramMap.subscribe((params: Params) => {
@@ -57,7 +60,8 @@ export class ResourceComponent implements OnDestroy {
                 // hide loading indicator
 
                 // present error to user
-                console.error(event.error);
+                this._notification.openSnackBar(event.error);
+
             }
 
         });

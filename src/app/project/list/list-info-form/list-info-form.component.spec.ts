@@ -14,6 +14,8 @@ import {
     DspCoreModule
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { ListItemFormComponent } from '../list-item-form/list-item-form.component';
 import { ListItemComponent } from '../list-item/list-item.component';
@@ -28,7 +30,9 @@ describe('ListInfoFormComponent', () => {
             declarations: [
                 ListInfoFormComponent,
                 ListItemComponent,
-                ListItemFormComponent
+                ListItemFormComponent,
+                DialogComponent,
+                ErrorComponent
             ],
             imports: [
                 BrowserAnimationsModule,
