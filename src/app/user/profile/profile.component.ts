@@ -80,6 +80,7 @@ export class ProfileComponent implements OnInit {
     openDialog(mode: string, name: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },

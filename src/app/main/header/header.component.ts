@@ -124,6 +124,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
     openDialog(mode: string, name?: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '840px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },
@@ -145,6 +146,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
     openNewResourceForm(mode: string, name?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '840px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },

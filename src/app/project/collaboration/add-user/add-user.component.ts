@@ -351,6 +351,7 @@ export class AddUserComponent implements OnInit {
     openDialog(mode: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },

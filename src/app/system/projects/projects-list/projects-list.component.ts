@@ -143,6 +143,7 @@ export class ProjectsListComponent implements OnInit {
     openDialog(mode: string, name: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },

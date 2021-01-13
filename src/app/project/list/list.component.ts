@@ -204,6 +204,7 @@ export class ListComponent implements OnInit {
     openDialog(mode: string, name: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '640px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },

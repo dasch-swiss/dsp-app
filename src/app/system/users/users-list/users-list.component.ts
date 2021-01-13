@@ -328,6 +328,7 @@ export class UsersListComponent implements OnInit {
     openDialog(mode: string, name: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },

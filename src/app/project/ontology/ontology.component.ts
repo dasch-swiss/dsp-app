@@ -275,6 +275,7 @@ export class OntologyComponent implements OnInit {
     openOntologyForm(mode: 'createOntology' | 'editOntology', iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '640px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },
@@ -337,6 +338,7 @@ export class OntologyComponent implements OnInit {
     delete(id: string, mode: 'Ontology' | 'ResourceClass', title: string) {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
+            maxHeight: '80vh',
             position: {
                 top: '112px'
             },
