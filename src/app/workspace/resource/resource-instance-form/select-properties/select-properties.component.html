@@ -3,12 +3,17 @@
         <div *ngFor="let prop of properties; let last = last;" [class.border-bottom]="!last">
             <div class="property" *ngIf="!prop.isLinkProperty || prop">
                 <div class="property-label">
-                    <h3 class="label mat-subheading-1"
+                    <span>
+                        <h3 class="label mat-subheading-1"
                         [class.label-info]="prop.comment"
                         [matTooltip]="prop.comment"
                         matTooltipPosition="above">
                         {{prop.label}}
                     </h3>
+                    </span>
+                    <span *ngIf="propertyValuesKeyValuePair[prop.id + '-cardinality'][0] === 1" class="propIsRequired">
+                        *
+                    </span>
                 </div>
                 <div class="property-value large-field">
                     <div *ngFor="let val of propertyValuesKeyValuePair[prop.id]; let i=index">
@@ -19,7 +24,8 @@
                                     [property]="prop"
                                     [parentResource]="parentResource"
                                     [parentForm]="parentForm"
-                                    [formName]="prop.label + '_' + i">
+                                    [formName]="prop.label + '_' + i"
+                                    [isRequiredProp]="propertyValuesKeyValuePair[prop.id + '-cardinality']">
                                 </app-switch-properties>
                             </div>
                             <div class="buttons">

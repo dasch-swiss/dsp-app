@@ -36,7 +36,6 @@ export class SelectProjectComponent implements OnInit, OnDestroy, AfterViewInit 
     projectChangesSubscription: Subscription;
 
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         @Inject(FormBuilder) private _fb: FormBuilder) { }
 
     ngOnInit(): void {

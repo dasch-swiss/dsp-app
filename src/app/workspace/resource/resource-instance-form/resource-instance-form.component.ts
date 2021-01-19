@@ -133,47 +133,52 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     submitData() {
 
-        const createResource = new CreateResource();
+        if (this.propertiesParentForm.valid) {
 
-        createResource.label = this.resourceLabel;
+            const createResource = new CreateResource();
 
-        createResource.type = this.selectedResourceClass.id;
+            createResource.label = this.resourceLabel;
 
-        createResource.attachedToProject = this.selectedProject;
+            createResource.type = this.selectedResourceClass.id;
 
-        this.selectPropertiesComponent.switchPropertiesComponent.forEach((child) => {
-            const createVal = child.createValueComponent.getNewValue();
-            const iri = child.property.id;
-            if (createVal instanceof CreateValue) {
-                if (this.propertiesObj[iri]) {
-                    // if a key already exists, add the createVal to the array
-                    this.propertiesObj[iri].push(createVal);
-                } else {
-                    // if no key exists, add one and add the createVal as the first value of the array
-                    this.propertiesObj[iri] = [createVal];
+            createResource.attachedToProject = this.selectedProject;
+
+            this.selectPropertiesComponent.switchPropertiesComponent.forEach((child) => {
+                const createVal = child.createValueComponent.getNewValue();
+                const iri = child.property.id;
+                if (createVal instanceof CreateValue) {
+                    if (this.propertiesObj[iri]) {
+                        // if a key already exists, add the createVal to the array
+                        this.propertiesObj[iri].push(createVal);
+                    } else {
+                        // if no key exists, add one and add the createVal as the first value of the array
+                        this.propertiesObj[iri] = [createVal];
+                    }
                 }
-            }
 
-        });
+            });
 
-        createResource.properties = this.propertiesObj;
+            createResource.properties = this.propertiesObj;
 
-        this._dspApiConnection.v2.res.createResource(createResource).subscribe(
-            (res: ReadResource) => {
-                this.resource = res;
+            this._dspApiConnection.v2.res.createResource(createResource).subscribe(
+                (res: ReadResource) => {
+                    this.resource = res;
 
-                // navigate to the resource viewer page
-                this._router.navigateByUrl('/resource', { skipLocationChange: true }).then(() =>
-                    this._router.navigate(['/resource/' + encodeURIComponent(this.resource.id)])
-                );
+                    // navigate to the resource viewer page
+                    this._router.navigateByUrl('/resource', { skipLocationChange: true }).then(() =>
+                        this._router.navigate(['/resource/' + encodeURIComponent(this.resource.id)])
+                    );
 
-                this.closeDialog.emit();
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+                    this.closeDialog.emit();
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
 
+        } else {
+            this.propertiesParentForm.markAllAsTouched();
+        }
     }
 
     /**

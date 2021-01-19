@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CardinalityUtil, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Cardinality, CardinalityUtil, IHasProperty, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { ValueService } from '@dasch-swiss/dsp-ui';
 import { SwitchPropertiesComponent } from './switch-properties/switch-properties.component';
 
@@ -29,6 +29,8 @@ export class SelectPropertiesComponent implements OnInit {
 
     addButtonIsVisible: boolean;
 
+    isRequiredProp: boolean;
+
     constructor(private _valueService: ValueService) { }
 
     ngOnInit() {
@@ -45,12 +47,18 @@ export class SelectPropertiesComponent implements OnInit {
                     // each property will also have a filtered array to be used when deleting a value.
                     // see the deleteValue method below for more info
                     this.propertyValuesKeyValuePair[prop.id + '-filtered'] = [0];
+
+                    // each property will also have a cardinality array to be used when marking a field as required
+                    // see the isPropRequired method below for more info
+                    this.isPropRequired(prop.id);
+                    this.propertyValuesKeyValuePair[prop.id + '-cardinality'] = [this.isRequiredProp ? 1 : 0];
                 }
             }
         }
 
         this.parentResource.entityInfo = this.ontologyInfo;
     }
+
 
     /**
      * Given a resource property, check if an add button should be displayed under the property values
@@ -63,6 +71,31 @@ export class SelectPropertiesComponent implements OnInit {
             this.propertyValuesKeyValuePair[prop.id].length,
             this.ontologyInfo.classes[this.resourceClass.id]
         );
+    }
+
+    /**
+     * Check the cardinality of a property
+     * If the cardinality is 1 or 1-N, the property will be marked as required
+     * If the cardinality is 0-1 or 0-N, the property will not be required
+     *
+     * @param propId property id
+     */
+    isPropRequired(propId: string): boolean {
+        if (this.resourceClass !== undefined && propId) {
+            this.resourceClass.propertiesList.filter(
+                (card: IHasProperty) => {
+                    if (card.propertyIndex === propId) {
+                        // cardinality 1 or 1-N
+                        if (card.cardinality === Cardinality._1 || card.cardinality === Cardinality._1_n) {
+                            this.isRequiredProp = true;
+                        } else { // cardinality 0-1 or 0-N
+                            this.isRequiredProp = false;
+                        }
+                    }
+                }
+            );
+            return this.isRequiredProp;
+        }
     }
 
     /**

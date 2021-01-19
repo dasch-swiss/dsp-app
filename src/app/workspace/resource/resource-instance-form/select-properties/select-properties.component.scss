@@ -40,10 +40,20 @@
 
                 .label {
                 text-align: right;
+                display: block;
+                float: left;
+                width: 95%;
                 }
 
                 .label-info {
                 cursor: help;
+                }
+
+                .propIsRequired {
+                  color: red;
+                  display: block;
+                  float: right;
+                  width: 5%;
                 }
             }
 

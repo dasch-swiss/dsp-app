@@ -60,13 +60,7 @@ describe('SelectProjectComponent', () => {
             FormsModule,
             BrowserAnimationsModule,
             MatFormFieldModule,
-            MatSelectModule ],
-            providers: [
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
-                }
-            ]
+            MatSelectModule ]
         })
         .compileComponents();
     }));

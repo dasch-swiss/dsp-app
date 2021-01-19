@@ -97,8 +97,8 @@ describe('SelectPropertiesComponent', () => {
             }
         }
 
-        // each property has two entries in the keyValuePair object
-        expect(propsArray.length).toEqual(18 * 2);
+        // each property has three entries in the keyValuePair object
+        expect(propsArray.length).toEqual(18 * 3);
     });
 
     describe('Add/Delete functionality', () => {

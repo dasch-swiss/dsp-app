@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BaseValueComponent } from 'src/app/base-value.component';
@@ -8,7 +8,7 @@ import { BaseValueComponent } from 'src/app/base-value.component';
   templateUrl: './switch-properties.component.html',
   styleUrls: ['./switch-properties.component.scss']
 })
-export class SwitchPropertiesComponent implements OnInit, AfterViewInit {
+export class SwitchPropertiesComponent implements OnInit {
 
     @ViewChild('createVal') createValueComponent: BaseValueComponent;
 
@@ -20,23 +20,21 @@ export class SwitchPropertiesComponent implements OnInit, AfterViewInit {
 
     @Input() formName: string;
 
+    @Input() isRequiredProp: boolean;
+
     mode = 'create';
     constants = Constants;
 
     constructor() { }
 
     ngOnInit(): void {
-        // console.log('prop', this.property);
-    }
-
-    ngAfterViewInit() {
-        // console.log('createValueComponent', this.createValueComponent);
-        // this.saveNewValue();
+        // the input isRequiredProp provided by KeyValuePair is stored as a number
+        // a conversion from a number to a boolean is required by the input valueRequiredValidator
+        this.isRequiredProp = !!+this.isRequiredProp;
     }
 
     saveNewValue() {
         const createVal = this.createValueComponent.getNewValue();
-        console.log('createVal', createVal);
     }
 
 }

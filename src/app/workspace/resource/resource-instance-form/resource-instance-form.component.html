@@ -50,7 +50,11 @@
         </span>
         <span class="fill-remaining-space"></span>
         <span>
-            <button mat-raised-button type="button" color="primary" [disabled]="!selectResourceForm.valid || this.errorMessage"
+            <button
+                mat-raised-button
+                type="button"
+                color="primary"
+                [disabled]="!selectResourceForm.valid || this.errorMessage"
                 (click)="nextStep()" class="form-next">
                 Next
             </button>
@@ -60,7 +64,7 @@
 </form>
 
 <!-- Step2: create property values and submit data -->
-<form *ngIf="propertiesParentForm && !showNextStepForm" [formGroup]="propertiesParentForm" class="resource-instance-form stepTwo form-content" (ngSubmit)="submitData()">
+<form *ngIf="propertiesParentForm && !showNextStepForm" [formGroup]="propertiesParentForm" class="resource-instance-form stepTwo form-content" (ngSubmit)="submitData()" appInvalidControlScroll>
 
     <!-- create property values -->
     <app-select-properties
@@ -84,7 +88,7 @@
         </button>
         <span class="fill-remaining-space"></span>
         <span>
-            <button mat-raised-button type="submit" color="primary" [disabled]="!propertiesParentForm.valid" class="form-submit">
+            <button mat-raised-button type="submit" color="primary" class="form-submit">
                 {{ 'appLabels.form.action.submit' | translate}}
             </button>
         </span>
