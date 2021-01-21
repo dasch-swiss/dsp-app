@@ -11,34 +11,34 @@
                 </div>
                 <div [ngSwitch]="prop.key" class="property-value">
 
-                    <!-- #################### template for discipline ################# -->
+                    <!-- template for discipline -->
                     <div *ngSwitchCase="'discipline'">
                         <a href="{{ metadata.discipline.url }}" target="_blank"> {{ metadata.discipline.name }} </a>
                     </div>
 
-                    <!-- #################### template for temporalCoverage ################# -->
+                    <!-- template for temporalCoverage -->
                     <div *ngSwitchCase="'temporalCoverage'">
                         <a href="{{ metadata.temporalCoverage.url }}" target="_blank"> {{ metadata.temporalCoverage.name }} </a>
                     </div>
 
-                    <!-- #################### template for url ################# -->
+                    <!-- template for url -->
                     <div *ngSwitchCase="'url'">
                         <a href="{{ metadata.url.value }}" target="_blank"> {{ metadata.url.value }} </a>
                     </div>
 
-                    <!-- #################### template for funder ################# -->
+                    <!-- template for funder -->
                     <div *ngSwitchCase="'funder'">
                         <a href="{{ metadata.funder.id }}" target="_blank"> {{ metadata.funder.id }} </a>
                     </div>
 
-                    <!-- #################### template for keywords ################# -->
+                    <!-- template for keywords -->
                     <div *ngSwitchCase="'keywords'">
                         <mat-chip-list>
                             <mat-chip *ngFor="let kword of metadata.keywords"> {{ kword }} </mat-chip>
                         </mat-chip-list>
                     </div>
 
-                    <!-- #################### template for dataManagementPlan ################# -->
+                    <!-- template for dataManagementPlan -->
                     <div *ngSwitchCase="'dataManagementPlan'">
                         <p class="remove-top-margin"> {{ metadata.dataManagementPlan.isAvailable? 'Available' : 'Unavailable' }} </p>
                         <p *ngIf="metadata.dataManagementPlan.isAvailable">
@@ -46,7 +46,7 @@
                         </p>
                     </div>
 
-                    <!-- #################### template for dataManagementPlan ################# -->
+                    <!-- template for dataManagementPlan -->
                     <div *ngSwitchCase="'grant'">
                         <span *ngIf="metadata.grant.name"> {{ metadata.grant.name }} </span>
                         <p> Id: <a href="{{ metadata.grant.id }}" target="_blank"> {{ metadata.grant.id }} </a> </p>
@@ -58,14 +58,14 @@
                         </div>
                     </div>
 
-                    <!-- #################### template for dataManagementPlan ################# -->
+                    <!-- template for dataManagementPlan -->
                     <div *ngSwitchCase="'spatialCoverage'">
                         <div *ngFor="let coverage of metadata.spatialCoverage">
                             {{ coverage.place.name }} (<a href="{{ coverage.place.url }}" target="_blank"> {{ coverage.place.url }} </a>)
                         </div>
                     </div>
 
-                    <!-- #################### default template ################# -->
+                    <!-- default template -->
                     <div *ngSwitchDefault>
                         <div *ngIf="dateKeys.indexOf(prop.key) < 0;">
                             {{ prop.value }}

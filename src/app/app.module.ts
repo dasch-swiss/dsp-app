@@ -1,3 +1,4 @@
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
@@ -83,7 +84,6 @@ import { DatasetTabViewComponent } from './project/board/dataset-tab-view/datase
 import { AttributionTabViewComponent } from './project/board/attribution-tab-view/attribution-tab-view.component';
 import { TermsTabViewComponent } from './project/board/terms-tab-view/terms-tab-view.component';
 import { ContactsTabViewComponent } from './project/board/contacts-tab-view/contacts-tab-view.component';
-import { ClipboardModule } from 'ngx-clipboard';
 
 import { AngularSplitModule } from 'angular-split';
 import { PersonTemplateComponent } from './project/board/person-template/person-template.component';

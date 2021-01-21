@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatRadioChange } from '@angular/material/radio';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import {
@@ -11,7 +12,6 @@ import {
     ReadProject
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
-import { ClipboardService } from 'ngx-clipboard';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
@@ -71,7 +71,7 @@ export class BoardComponent implements OnInit {
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
         private _titleService: Title,
-        private _clipboardService: ClipboardService
+        private _snackBar: MatSnackBar
     ) {
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
@@ -422,8 +422,15 @@ export class BoardComponent implements OnInit {
         this.selectedDataset = this.datasets[event.value];
     }
 
-    copyHowToCiteToClipboard() {
-        this._clipboardService.copyFromContent(this.selectedDataset.howToCite);
+    // copy link to clipboard
+    copyToClipboard(msg: string) {
+        const message = 'Copied to clipboard!';
+        const action = msg;
+        this._snackBar.open(message, action, {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+        });
     }
 
     openDialog(mode: string, name: string, id?: string): void {

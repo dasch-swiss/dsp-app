@@ -125,31 +125,43 @@
             </div>
 
             <div class="metadata-box">
-                <h3 class="display-inline-block">Cite as</h3>
-                <div class="copy-to-clipboard">
-                    <button title="Copy to clipboard" (click)="copyHowToCiteToClipboard();">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                        </svg>
+                <div>
+                    <h3 class='display-inline-block'>Cite as</h3>
+                    <button mat-button class="btn-copy-to-clipboard" [cdkCopyToClipboard]="selectedDataset.howToCite"
+                        matTooltip="Copy citation url" matTooltipPosition="below" (click)="copyToClipboard('Citation link')">
+                        <mat-icon class="icon-arkurl">content_copy</mat-icon>
                     </button>
                 </div>
                 <div class="sidenav-prop-text">
                     <p [innerHTML]="selectedDataset.howToCite"></p>
                 </div>
             </div>
+
             <div class="metadata-box">
                 <div class="sidenav-properties-container">
                     <div class="property">
-                        <div class="property-label">
-                            Persistent identifier
+                        <div>
+                            <div class="property-label display-inline-block">
+                                Persistent identifier
+                            </div>
+                                <button mat-button class="btn-copy-to-clipboard" [cdkCopyToClipboard]="selectedDataset.project.id"
+                                matTooltip="Copy persistent identifier" matTooltipPosition="below" (click)="copyToClipboard('Persistent identifier')">
+                                <mat-icon class="icon-arkurl">content_copy</mat-icon>
+                            </button>
                         </div>
                         <div class="sidenav-prop-text property-value">
                             <a href="{{ selectedDataset.project.id }}" target="_blank"> {{ selectedDataset.project.id }} </a>
                         </div>
                     </div>
                     <div class="property">
-                        <div class="property-label">
-                            License
+                        <div>
+                            <div class="property-label display-inline-block">
+                                License
+                            </div>
+                                <button mat-button class="btn-copy-to-clipboard" [cdkCopyToClipboard]="selectedDataset.license.value"
+                                matTooltip="Copy license" matTooltipPosition="below" (click)="copyToClipboard('License')">
+                                <mat-icon class="icon-arkurl">content_copy</mat-icon>
+                            </button>
                         </div>
                         <div class="sidenav-prop-text property-value">
                             <a href="{{ selectedDataset.license.value }}" target="_blank"> {{ selectedDataset.license.value }} </a>

@@ -87,14 +87,9 @@ section {
     display: inline-block;
   }
 
-  .copy-to-clipboard {
-    display: inline-block;
-    float: right;
-
-    button {
-      cursor: pointer;
-      border: none;
-    }
+  .btn-copy-to-clipboard {
+    padding: 0px 10px;
+    min-width: auto;
   }
 
   .mat-radio-button {
@@ -155,7 +150,7 @@ section {
     }
 
     .property:not(:last-child) {
-      margin-bottom: 13px;
+      margin-bottom: 20px;
     }
   }
 

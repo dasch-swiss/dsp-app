@@ -18,5 +18,5 @@ export class AttributionTabViewComponent {
         if (agent.hasOwnProperty('url')){
             return 'organisation';
         } 
-    };
+    }
 }
