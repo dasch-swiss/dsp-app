@@ -1,18 +1,20 @@
 import { Component, Input } from '@angular/core';
+import { IAddress } from '../dataset-metadata';
 
 @Component({
-  selector: 'app-address-template',
-  template: `
-      <div class="sub-details">
-          <h4>Address:</h4>
-          <address class="contents">
-              <p *ngIf="address['streetAddress']">{{ address['streetAddress'] }}</p>
-              <span *ngIf="address['postalCode']" style="margin-right: 6px;">{{ address['postalCode'] }}</span>
-              <span *ngIf="address['addressLocality']">{{ address['addressLocality'] }}</span>
-          </address>
-      </div>
-  `
+    selector: 'app-address-template',
+    template: `
+        <div class="sub-details">
+            <h4>Address:</h4>
+            <address class="contents">
+                <p>{{ address.streetAddress }}</p>
+                <span class="postcode">{{ address.postalCode }}</span>
+                <span>{{ address.addressLocality }}</span>
+            </address>
+        </div>
+    `,
+    styles: ['.postcode { margin-right: 6px; }']
 })
 export class AddressTemplateComponent {
-    @Input() address: object;
+    @Input() address: IAddress;
 }

@@ -13,68 +13,55 @@
 
                     <!-- #################### template for discipline ################# -->
                     <div *ngSwitchCase="'discipline'">
-                        <a href="{{ metadata['discipline']['url'] }}" target="_blank"> {{ metadata['discipline']['name'] }} </a>
+                        <a href="{{ metadata.discipline.url }}" target="_blank"> {{ metadata.discipline.name }} </a>
                     </div>
 
                     <!-- #################### template for temporalCoverage ################# -->
                     <div *ngSwitchCase="'temporalCoverage'">
-                        <a href="{{ metadata['temporalCoverage']['url'] }}" target="_blank"> {{ metadata['temporalCoverage']['name'] }} </a>
+                        <a href="{{ metadata.temporalCoverage.url }}" target="_blank"> {{ metadata.temporalCoverage.name }} </a>
                     </div>
 
                     <!-- #################### template for url ################# -->
                     <div *ngSwitchCase="'url'">
-                        <a href="{{ metadata['url']['value'] }}" target="_blank"> {{ metadata['url']['value'] }} </a>
+                        <a href="{{ metadata.url.value }}" target="_blank"> {{ metadata.url.value }} </a>
+                    </div>
+
+                    <!-- #################### template for funder ################# -->
+                    <div *ngSwitchCase="'funder'">
+                        <a href="{{ metadata.funder.id }}" target="_blank"> {{ metadata.funder.id }} </a>
                     </div>
 
                     <!-- #################### template for keywords ################# -->
                     <div *ngSwitchCase="'keywords'">
                         <mat-chip-list>
-                            <mat-chip *ngFor="let k of metadata['keywords']"> {{ k }} </mat-chip>
+                            <mat-chip *ngFor="let kword of metadata.keywords"> {{ kword }} </mat-chip>
                         </mat-chip-list>
                     </div>
 
                     <!-- #################### template for dataManagementPlan ################# -->
                     <div *ngSwitchCase="'dataManagementPlan'">
-                        <p class="remove-top-margin"> {{ metadata['dataManagementPlan']['isAvailable']? 'Available' : 'Unavailable' }} </p>
-                        <p *ngIf="metadata['dataManagementPlan']['isAvailable']">
-                            URL: <a href="{{ metadata['dataManagementPlan']['url']['value'] }}" target="_blank"> {{ metadata['dataManagementPlan']['url']['value'] }} </a>
+                        <p class="remove-top-margin"> {{ metadata.dataManagementPlan.isAvailable? 'Available' : 'Unavailable' }} </p>
+                        <p *ngIf="metadata.dataManagementPlan.isAvailable">
+                            URL: <a href="{{ metadata.dataManagementPlan.url.value }}" target="_blank"> {{ metadata.dataManagementPlan.url.value }} </a>
                         </p>
                     </div>
 
                     <!-- #################### template for dataManagementPlan ################# -->
                     <div *ngSwitchCase="'grant'">
-
-                        <div class="person">
-                            <p> {{ metadata['grant']['name'] }} </p>
-                            <div *ngIf="metadata['grant']['number']" class="mat-icon-text">
-                                <mat-icon aria-hidden="false" aria-label="Call" class="small">call</mat-icon>
-                                <a href="tel:{{ metadata['grant']['number'] }}"> {{ metadata['grant']['number'] }} </a>
-                            </div>
-
-                            <div *ngIf="metadata['grant']['url']['value']">
-                                <h4>URL:</h4>
-                                <a href="{{ metadata['grant']['url']['value'] }}" target="_blank"> {{ metadata['grant']['url']['value'] }} </a>
-                            </div>
-
-                            <div class="sub-details">
-                                <h4>Funder(s):</h4>
-                                <mat-card *ngFor="let entry of metadata['grant']['funder'] | keyvalue;" class="funder-entry">
-                                    <div *ngIf="metadata['grant']['funder'][entry.key]['name']">
-                                        <app-organisation-template  [organisation]="metadata['grant']['funder'][entry.key]"></app-organisation-template>
-                                    </div>
-                                    <div *ngIf="metadata['grant']['funder'][entry.key]['givenName']">
-                                        <app-person-template [person]="metadata['grant']['funder'][entry.key]"></app-person-template>
-                                    </div>
-                                </mat-card>
-                            </div>
+                        <span *ngIf="metadata.grant.name"> {{ metadata.grant.name }} </span>
+                        <p> Id: <a href="{{ metadata.grant.id }}" target="_blank"> {{ metadata.grant.id }} </a> </p>
+                        <p> URL: <a href="{{ metadata.grant.url.value }}" target="_blank"> {{ metadata.grant.url.value }} </a></p>
+                        <p> Funder: <a href="{{ metadata.grant.funder.id }}" target="_blank"> {{ metadata.grant.funder.id }} </a></p>
+                        <div *ngIf="metadata.grant.number" class="mat-icon-text">
+                            <mat-icon aria-hidden="false" aria-label="Call" class="small">call</mat-icon>
+                            <a href="tel:{{ metadata.grant.number }}"> {{ metadata.grant.number }} </a>
                         </div>
-
                     </div>
 
                     <!-- #################### template for dataManagementPlan ################# -->
                     <div *ngSwitchCase="'spatialCoverage'">
-                        <div *ngFor="let coverage of metadata['spatialCoverage'] | keyvalue;">
-                            {{ coverage.value['place']['name'] }} (<a href="{{ coverage.value['place']['url'] }}" target="_blank"> {{ coverage.value['place']['url'] }} </a>)
+                        <div *ngFor="let coverage of metadata.spatialCoverage">
+                            {{ coverage.place.name }} (<a href="{{ coverage.place.url }}" target="_blank"> {{ coverage.place.url }} </a>)
                         </div>
                     </div>
 

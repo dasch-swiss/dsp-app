@@ -15,12 +15,20 @@ import { ClipboardService } from 'ngx-clipboard';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
+import { IDataset } from './dataset-metadata';
+
+export interface DatasetRadioOption {
+    name: string;
+    id: number;
+    checked: boolean;
+}
 
 @Component({
     selector: 'app-board',
     templateUrl: './board.component.html',
     styleUrls: ['./board.component.scss']
 })
+
 export class BoardComponent implements OnInit {
 
     // loading for progress indicator
@@ -40,20 +48,17 @@ export class BoardComponent implements OnInit {
     color: string = 'primary';
 
     // variables to store metadata information
+    // metadata received from backend
     metadata: object;
-    datasetMetadata: object;
-    projectMetadata: object;
-    attribution: object;
-    conditionsOfAccess: string;
-    license: object;
-    contactDetails: object;
-    projectDescription: string;
-    datasetOptions: object[];
-    howToCite: string;
-    datasetIdentifier: string;
-    publicationDate: string;
-    keywords: object;
-    selectedDataset: string;
+
+    // list of all datasets
+    datasets: IDataset[];
+
+    // metadata displayed on current page is from selected dataset
+    selectedDataset: IDataset;
+
+    // list of dataset names to display as radio buttons in right side column
+    datasetOptions: DatasetRadioOption[];
 
     // different metadata download formats
     metadataDownloadFormats = ['JSON-LD', 'XML', 'Triplestore', 'CSV'];
@@ -87,6 +92,7 @@ export class BoardComponent implements OnInit {
             this.sysAdmin = this.session.user.sysAdmin;
 
         }
+
         // get project info from backend
         this.getProject();
 
@@ -108,8 +114,6 @@ export class BoardComponent implements OnInit {
                     this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
                 }
 
-                this.datasetIdentifier = this.project['id'];
-
                 this.loading = false;
             },
             (error: ApiResponseError) => {
@@ -126,148 +130,276 @@ export class BoardComponent implements OnInit {
         //       in next iteration, it will be replace with ajax request to get
         //       metadata from backend
         this.metadata = {
-            'projectsMetadata': [{
-                'abstract': 'Dies ist ein Testprojekt.',
-                'alternativeTitle': 'test',
-                'conditionsOfAccess': 'Open Access',
-                'dateCreated': '2001-09-26',
-                'dateModified': '2020-04-26',
-                'datePublished': '2002-09-24',
-                'distribution': {'type': 'https://schema.org/DataDownload', 'value': 'https://test.dasch.swiss'},
-                'documentation': 'Work in progress',
-                'howToCite': 'Testprojekt (test), 2002, https://test.dasch.swiss',
-                'language': ['EN', 'DE', 'FR'],
-                'license': {'type': 'https://schema.org/URL', 'value': 'https://creativecommons.org/licenses/by/3.0'},
-                'qualifiedAttribution': [{'role': 'contributor', 'agent': 'http://ns.dasch.swiss/test-berry'}, {'role': 'contributor', 'agent': 'http://ns.dasch.swiss/test-hart'}, {
-                    'role': 'editor',
-                    'agent': 'http://ns.dasch.swiss/test-abraham'
-                }, {'role': 'editor', 'agent': 'http://ns.dasch.swiss/test-coleman'}, {'role': 'editor', 'agent': 'http://ns.dasch.swiss/test-jones'}],
-                'status': 'ongoing',
-                'title': 'Testprojekt',
-                'typeOfData': ['image', 'text'],
-                'project': {
-                    'alternateName': 'test',
-                    'contactPoint': {
-                        'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
-                        'email': 'stewart.abraham@test.ch',
-                        'familyName': 'Abraham',
-                        'givenName': 'Stewart',
-                        'jobTitle': 'Dr.',
-                        'memberOf': 'http://ns.dasch.swiss/test-dasch',
-                        'sameAs': {'type': 'https://schema.org/URL', 'value': 'https://orcid.org/0000-0002-1825-0097'},
-                        'organisation':  {
-                            'address': {'addressLocality': 'Toronto', 'postalCode': '40000', 'streetAddress': 'University of Toronto Street'},
-                            'email': '/info@universityoftoronto.ca',
-                            'name': 'University of Toronto',
-                            'url': {'type': 'https://schema.org/URL', 'value': 'http://www.utoronto.ca/'}
-                        }
+            'projectsMetadata': [
+                {
+                    'type': 'http://ns.dasch.swiss/repository#Dataset',
+                    'id': 'http://ns.dasch.swiss/test-dataset',
+                    'abstract': 'Dies ist ein Testprojekt.',
+                    'alternativeTitle': 'test',
+                    'conditionsOfAccess': 'Open Access',
+                    'dateCreated': '2001-09-26',
+                    'dateModified': '2020-04-26',
+                    'datePublished': '2002-09-24',
+                    'distribution': {
+                        'type': 'https://schema.org/DataDownload',
+                        'value': 'https://test.dasch.swiss'
                     },
-                    'dataManagementPlan': {'url': {'type': 'https://schema.org/URL', 'value': 'https://snf.ch'}, 'isAvailable': true},
-                    'description': 'Dies ist ein Testprojekt...alle Properties wurden verwendet, um diese zu testen',
-                    'discipline': {'name': 'SKOS UNESCO Nomenclature', 'url': 'http://skos.um.es/unesco6/11'},
-                    'endDate': '2001-01-26',
-                    'funder': 'http://ns.dasch.swiss/test-funder',
-                    'grant': {
-                        'funder': [
-                            {
-                                'address': {'addressLocality': 'Toronto', 'postalCode': '40000', 'streetAddress': 'University of Toronto Street'},
-                                'email': '/info@universityoftoronto.ca',
-                                'name': 'University of Toronto',
-                                'url': {'type': 'https://schema.org/URL', 'value': 'http://www.utoronto.ca/'}
-                            },
-                            {
-                                'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
+                    'documentation': 'Work in progress',
+                    'howToCite': 'Testprojekt (test), 2002, https://test.dasch.swiss',
+                    'language': [
+                        'EN',
+                        'DE',
+                        'FR'
+                    ],
+                    'license': {
+                        'type': 'https://schema.org/URL',
+                        'value': 'https://creativecommons.org/licenses/by/3.0'
+                    },
+                    'qualifiedAttribution': [
+                        {
+                            'type': 'http://www.w3.org/ns/prov#Attribution',
+                            'role': 'contributor',
+                            'agent': {
+                                'type': 'http://ns.dasch.swiss/repository#Person',
+                                'id': 'http://ns.dasch.swiss/test-berry',
+                                'address': {
+                                    'type': 'https://schema.org/PostalAddress',
+                                    'addressLocality': 'Basel',
+                                    'postalCode': '4000',
+                                    'streetAddress': 'Teststrasse'
+                                },
                                 'email': 'lauren.berry@unibas.ch',
                                 'familyName': 'Berry',
                                 'givenName': 'Lauren',
                                 'jobTitle': 'Dr.',
-                                'organisation':  {
-                                    'address': {'addressLocality': 'Toronto', 'postalCode': '40000', 'streetAddress': 'University of Toronto Street'},
-                                    'email': 'info@universityoftoronto.ca',
-                                    'name': 'University of Toronto',
-                                    'url': 'http://www.utoronto.ca/'
+                                'memberOf': 'http://ns.dasch.swiss/test-dasch'
+                            }
+                        },
+                        {
+                            'type': 'http://www.w3.org/ns/prov#Attribution',
+                            'role': 'contributor',
+                            'agent': {
+                                'type': 'http://ns.dasch.swiss/repository#Person',
+                                'id': 'http://ns.dasch.swiss/test-hart',
+                                'address': {
+                                    'type': 'https://schema.org/PostalAddress',
+                                    'addressLocality': 'Basel',
+                                    'postalCode': '4000',
+                                    'streetAddress': 'Teststrasse'
+                                },
+                                'email': 'leonhard.hart@test.ch',
+                                'familyName': 'Hart',
+                                'givenName': 'Leonhard',
+                                'jobTitle': 'Prof.',
+                                'memberOf': 'http://ns.dasch.swiss/test-dasch'
+                            }
+                        },
+                        {
+                            'type': 'http://www.w3.org/ns/prov#Attribution',
+                            'role': 'editor',
+                            'agent': {
+                                'type': 'http://ns.dasch.swiss/repository#Person',
+                                'id': 'http://ns.dasch.swiss/test-hart',
+                                'address': {
+                                    'type': 'https://schema.org/PostalAddress',
+                                    'addressLocality': 'Basel',
+                                    'postalCode': '4000',
+                                    'streetAddress': 'Teststrasse'
+                                },
+                                'email': 'leonhard.hart@test.ch',
+                                'familyName': 'Hart',
+                                'givenName': 'Leonhard',
+                                'jobTitle': 'Prof.',
+                                'memberOf': 'http://ns.dasch.swiss/test-dasch'
+                            }
+                        },
+                        {
+                            'type': 'http://www.w3.org/ns/prov#Attribution',
+                            'role': 'editor',
+                            'agent': {
+                                'type': 'http://ns.dasch.swiss/repository#Person',
+                                'id': 'http://ns.dasch.swiss/test-coleman',
+                                'address': {
+                                    'type': 'https://schema.org/PostalAddress',
+                                    'addressLocality': 'Basel',
+                                    'postalCode': '4000',
+                                    'streetAddress': 'Teststrasse'
+                                },
+                                'email': 'james.coleman@dasch.swiss',
+                                'familyName': 'Coleman',
+                                'givenName': 'James',
+                                'jobTitle': 'Dr. des.',
+                                'memberOf': 'http://ns.dasch.swiss/test-dasch'
+                            }
+                        },
+                        {
+                            'type': 'http://www.w3.org/ns/prov#Attribution',
+                            'role': 'editor',
+                            'agent': {
+                                'type': 'http://ns.dasch.swiss/repository#Person',
+                                'id': 'http://ns.dasch.swiss/test-jones',
+                                'address': {
+                                    'type': 'https://schema.org/PostalAddress',
+                                    'addressLocality': 'Basel',
+                                    'postalCode': '4000',
+                                    'streetAddress': 'Teststrasse'
+                                },
+                                'email': 'benjamin.jones@test.ch',
+                                'familyName': 'Jones',
+                                'givenName': 'Benjamin',
+                                'jobTitle': 'Dr. des.',
+                                'memberOf': 'http://ns.dasch.swiss/test-dasch'
+                            }
+                        }
+                    ],
+                    'status': 'ongoing',
+                    'title': 'Testprojekt',
+                    'typeOfData': [
+                        'image',
+                        'text'
+                    ],
+                    'project': {
+                        'type': 'http://ns.dasch.swiss/repository#Project',
+                        'id': 'http://ns.dasch.swiss/test-project',
+                        'alternateName': 'test',
+                        'contactPoint': {
+                            'type': 'http://ns.dasch.swiss/repository#Person',
+                            'id': 'http://ns.dasch.swiss/test-abraham',
+                            'address': {
+                                'type': 'https://schema.org/PostalAddress',
+                                'addressLocality': 'Basel',
+                                'postalCode': '4000',
+                                'streetAddress': 'Teststrasse'
+                            },
+                            'email': 'stewart.abraham@test.ch',
+                            'familyName': 'Abraham',
+                            'givenName': 'Stewart',
+                            'jobTitle': 'Dr.',
+                            'memberOf': 'http://ns.dasch.swiss/test-dasch',
+                            'sameAs': {
+                                'type': 'https://schema.org/URL',
+                                'value': 'https://orcid.org/0000-0002-1825-0097'
+                            }
+                        },
+                        'dataManagementPlan': {
+                            'type': 'http://ns.dasch.swiss/repository#DataManagementPlan',
+                            'id': 'http://ns.dasch.swiss/test-plan',
+                            'url': {
+                                'type': 'https://schema.org/URL',
+                                'value': 'https://snf.ch'
+                            },
+                            'isAvailable': true
+                        },
+                        'description': 'Dies ist ein Testprojekt...alle Properties wurden verwendet, um diese zu testen',
+                        'discipline': {
+                            'name': 'SKOS UNESCO Nomenclature',
+                            'url': 'http://skos.um.es/unesco6/11'
+                        },
+                        'endDate': '2001-01-26',
+                        'funder': {
+                            'id': 'http://ns.dasch.swiss/test-funder'
+                        },
+                        'grant': {
+                            'type': 'http://ns.dasch.swiss/repository#Grant',
+                            'id': 'http://ns.dasch.swiss/test-grant',
+                            'funder': {
+                                'id': 'http://ns.dasch.swiss/test-funder'
+                            },
+                            'name': 'Prof. test test, Prof. test Harbtestrecht',
+                            'number': '0123456789',
+                            'url': {
+                                'type': 'https://schema.org/URL',
+                                'value': 'http://p3.snf.ch/testproject'
+                            }
+                        },
+                        'keywords': [
+                            'science',
+                            'mathematics',
+                            'history of science',
+                            'history of mathematics'
+                        ],
+                        'name': 'Testprojektname (test)',
+                        'publication': 'testpublication',
+                        'shortcode': '0000',
+                        'spatialCoverage': [
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/2658434/switzerland.html'
                                 }
-                            }], 'name': 'Test Grant Name', 'number': '0123456789', 'url': {'type': 'https://schema.org/URL', 'value': 'http://p3.snf.ch/testproject'}
+                            },
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/6255148/europe.html'
+                                }
+                            },
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/3017382/republic-of-france.html'
+                                }
+                            },
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/6269131/england.html'
+                                }
+                            },
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/2017370/russian-federation.html'
+                                }
+                            },
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/2921044/federal-republic-of-germany.html'
+                                }
+                            },
+                            {
+                                'place': {
+                                    'name': 'Geonames',
+                                    'url': 'https://www.geonames.org/3175395/italian-republic.html'
+                                }
+                            }
+                        ],
+                        'startDate': '2000-07-26',
+                        'temporalCoverage': {
+                            'name': 'Chronontology Dainst',
+                            'url': 'http://chronontology.dainst.org/period/Ef9SyESSafJ1'
+                        },
+                        'url': {
+                            'type': 'https://schema.org/URL',
+                            'value': 'https://test.dasch.swiss/'
+                        }
                     },
-                    'keywords': ['science', 'mathematics', 'history of science', 'history of mathematics'],
-                    'name': 'Testprojektname (test)',
-                    'publication': 'testpublication',
-                    'shortcode': '0000',
-                    'spatialCoverage': [
-                        {'place': {'name': 'Geonames', 'url': 'https://www.geonames.org/2017370/russian-federation.html'}}, {
-                            'place': {
-                                'name': 'Geonames',
-                                'url': 'https://www.geonames.org/2658434/switzerland.html'
-                            }
-                        }, {'place': {'name': 'Geonames', 'url': 'https://www.geonames.org/3175395/italian-republic.html'}}, {
-                            'place': {
-                                'name': 'Geonames',
-                                'url': 'https://www.geonames.org/2921044/federal-republic-of-germany.html'
-                            }
-                        }, {'place': {'name': 'Geonames', 'url': 'https://www.geonames.org/3017382/republic-of-france.html'}}, {
-                            'place': {
-                                'name': 'Geonames',
-                                'url': 'https://www.geonames.org/6269131/england.html'
-                            }
-                        }, {'place': {'name': 'Geonames', 'url': 'https://www.geonames.org/6255148/europe.html'}}],
-                    'startDate': '2000-07-26',
-                    'temporalCoverage': {'name': 'Chronontology Dainst', 'url': 'http://chronontology.dainst.org/period/Ef9SyESSafJ1'},
-                    'url': {'type': 'https://schema.org/URL', 'value': 'https://test.dasch.swiss/'}
-                },
-                'sameAs': {'type': 'https://schema.org/URL', 'value': 'https://test.dasch.swiss/'}
-            }, {
-                'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
-                'email': '/benjamin.jones@test.ch',
-                'familyName': 'Jones',
-                'givenName': 'Benjamin',
-                'jobTitle': 'Dr. des.',
-                'memberOf': 'http://ns.dasch.swiss/test-dasch'
-            }, {
-                'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
-                'email': '/james.coleman@dasch.swiss',
-                'familyName': 'Coleman',
-                'givenName': 'James',
-                'jobTitle': 'Dr. des.',
-                'memberOf': 'http://ns.dasch.swiss/test-dasch'
-            }, {
-                'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
-                'email': '/lauren.berry@unibas.ch',
-                'familyName': 'Berry',
-                'givenName': 'Lauren',
-                'jobTitle': 'Dr.',
-                'memberOf': 'http://ns.dasch.swiss/test-dasch'
-            }, {
-                'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
-                'email': '/leonhard.hart@test.ch',
-                'familyName': 'Hart',
-                'givenName': 'Leonhard',
-                'jobTitle': 'Prof.',
-                'memberOf': 'http://ns.dasch.swiss/test-dasch'
-            }]
+                    'sameAs': {
+                        'type': 'https://schema.org/URL',
+                        'value': 'https://test.dasch.swiss'
+                    }
+                }
+            ]
         };
 
-        this.datasetMetadata = this.metadata['projectsMetadata'][0];
+        // convert metadata to use IDataset interface
+        this.datasets = this.metadata['projectsMetadata'] as IDataset[];
 
+        // by default display first dataset
+        this.selectedDataset = this.datasets[0];
+
+        const dsOptions = [];
         // dataset options to display radio buttons for selection in right column
-        this.datasetOptions = [
-            {'name': this.datasetMetadata['title'], 'id': 0, 'checked': true}
-        ];
+        for (let idx = 0; idx < this.datasets.length; idx++) {
+            dsOptions.push({
+                name: this.datasets[idx].title,
+                id: idx,
+                checked: idx === 0 ? true : false
+            });
+        }
 
-        // initialise metadata
-        this.initialiseMetadataVariables();
-    }
-
-    // initialise metadata variables required to display in template
-    initialiseMetadataVariables() {
-        this.projectMetadata = this.datasetMetadata['project'];
-        this.attribution = this.datasetMetadata['qualifiedAttribution'];
-        this.conditionsOfAccess = this.datasetMetadata['conditionsOfAccess'];
-        this.license = this.datasetMetadata['license'];
-        this.contactDetails = this.projectMetadata['contactPoint'];
-        this.projectDescription = this.projectMetadata['description'];
-        this.howToCite = this.datasetMetadata['howToCite'];
-        this.publicationDate = this.datasetMetadata['datePublished'];
-        this.keywords = this.projectMetadata['keywords'];
+        this.datasetOptions = dsOptions;
     }
 
     // download metadata
@@ -287,14 +419,11 @@ export class BoardComponent implements OnInit {
     }
 
     updateDataset(event: MatRadioChange) {
-        this.datasetMetadata = this.metadata['projectsMetadata'][event.value];
-
-        // initialise metadata variables again
-        this.initialiseMetadataVariables();
+        this.selectedDataset = this.datasets[event.value];
     }
 
     copyHowToCiteToClipboard() {
-        this._clipboardService.copyFromContent(this.howToCite);
+        this._clipboardService.copyFromContent(this.selectedDataset.howToCite);
     }
 
     openDialog(mode: string, name: string, id?: string): void {

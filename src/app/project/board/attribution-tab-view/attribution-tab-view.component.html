@@ -4,11 +4,17 @@
 
 <div class="tab-contents">
 
-    <mat-card *ngFor="let entry of attribution | keyvalue;" class="attribution-entry">
+    <mat-card *ngFor="let attribution of attributions" class="attribution-entry">
 
-        <h3 class="color-for-role"> {{ entry.value['role'] | titlecase }} </h3>
+        <h3 class="color-for-role"> {{ attribution.role | titlecase }} </h3>
 
-        <app-person-template [person]="people[entry.key]"></app-person-template>
+        <div *ngIf="getAgentType(attribution.agent) === 'person'">
+            <app-person-template [person]="attribution.agent"></app-person-template>
+        </div>
+
+        <div *ngIf="getAgentType(attribution.agent) === 'organisation'">
+            <app-organisation-template [organisation]="attribution.agent"></app-organisation-template>
+        </div>
 
     </mat-card>
 

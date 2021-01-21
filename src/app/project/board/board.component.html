@@ -51,13 +51,13 @@
         </div>
     </div>
 
-    <div class="project-info-container flex-panel">
+    <div class="project-info-container flex-panel" *ngIf="datasets">
 
         <div class="left-info column">
             <!-- description -->
-            <section class="project description" *ngFor="let description of project.description">
+            <section class="project description">
                 <h3>Description</h3>
-                <div [innerHtml]="projectDescription"></div>
+                <div [innerHtml]="selectedDataset.project.description"></div>
             </section>
 
             <section>
@@ -67,7 +67,7 @@
                             <mat-icon class="tab-icon">perm_data_setting</mat-icon>
                             Project
                         </ng-template>
-                        <app-project-tab-view [metadata]="projectMetadata"></app-project-tab-view>
+                        <app-project-tab-view [metadata]="selectedDataset.project"></app-project-tab-view>
                     </mat-tab>
 
                     <mat-tab>
@@ -75,7 +75,7 @@
                             <mat-icon class="tab-icon">collections</mat-icon>
                             Dataset
                         </ng-template>
-                        <app-dataset-tab-view [metadata]="datasetMetadata" [noOfDatasets]="datasetOptions.length"></app-dataset-tab-view>
+                        <app-dataset-tab-view [metadata]="selectedDataset" [noOfDatasets]="datasetOptions.length"></app-dataset-tab-view>
                     </mat-tab>
 
                     <mat-tab>
@@ -83,7 +83,7 @@
                             <mat-icon class="tab-icon">assignment</mat-icon>
                             Attribution
                         </ng-template>
-                        <app-attribution-tab-view [attribution]="attribution"></app-attribution-tab-view>
+                        <app-attribution-tab-view [attributions]="selectedDataset.qualifiedAttribution"></app-attribution-tab-view>
                     </mat-tab>
 
                     <mat-tab>
@@ -91,7 +91,7 @@
                             <mat-icon class="tab-icon">receipt</mat-icon>
                             Terms & conditions
                         </ng-template>
-                        <app-terms-tab-view [conditions]="conditionsOfAccess" [license]="license"></app-terms-tab-view>
+                        <app-terms-tab-view [conditions]="selectedDataset.conditionsOfAccess" [license]="selectedDataset.license"></app-terms-tab-view>
                     </mat-tab>
 
                     <mat-tab>
@@ -99,7 +99,7 @@
                             <mat-icon class="tab-icon">portrait</mat-icon>
                             Contact
                         </ng-template>
-                        <app-contacts-tab-view [contactDetails]="contactDetails"></app-contacts-tab-view>
+                        <app-contacts-tab-view [contactDetails]="selectedDataset.project.contactPoint"></app-contacts-tab-view>
                     </mat-tab>
                 </mat-tab-group>
             </section>
@@ -134,7 +134,7 @@
                     </button>
                 </div>
                 <div class="sidenav-prop-text">
-                    <p [innerHTML]="howToCite"></p>
+                    <p [innerHTML]="selectedDataset.howToCite"></p>
                 </div>
             </div>
             <div class="metadata-box">
@@ -144,7 +144,7 @@
                             Persistent identifier
                         </div>
                         <div class="sidenav-prop-text property-value">
-                            <a href="{{ datasetIdentifier }}" target="_blank"> {{ datasetIdentifier }} </a>
+                            <a href="{{ selectedDataset.project.id }}" target="_blank"> {{ selectedDataset.project.id }} </a>
                         </div>
                     </div>
                     <div class="property">
@@ -152,15 +152,15 @@
                             License
                         </div>
                         <div class="sidenav-prop-text property-value">
-                            <a href="{{ license['value'] }}" target="_blank"> {{ license['value'] }} </a>
+                            <a href="{{ selectedDataset.license.value }}" target="_blank"> {{ selectedDataset.license.value }} </a>
                         </div>
                     </div>
-                    <div class="property">
+                    <div class="property" *ngIf="selectedDataset.datePublished">
                         <div class="property-label">
                             Publication date
                         </div>
                         <div class="sidenav-prop-text property-value">
-                            {{ publicationDate | date:'MMMM d, yyyy' }}
+                            {{ selectedDataset.datePublished | date:'MMMM d, yyyy' }}
                         </div>
                     </div>
                 </div>
@@ -170,7 +170,7 @@
                 <h3>Keyword(s)</h3>
                 <div class="sidenav-prop-text">
                     <mat-chip-list>
-                        <mat-chip *ngFor="let k of keywords"> {{ k }} </mat-chip>
+                        <mat-chip *ngFor="let kword of selectedDataset.project.keywords"> {{ kword }} </mat-chip>
                     </mat-chip-list>
                 </div>
             </div>

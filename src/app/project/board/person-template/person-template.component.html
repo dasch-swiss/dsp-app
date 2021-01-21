@@ -1,27 +1,27 @@
 <div class="person">
-    <h3> {{ person['givenName'] }} {{person['familyName'] }} </h3>
+    <h3> {{ person.givenName }} {{person.familyName }} </h3>
 
-    <div *ngIf="person['jobTitle']">
+    <div *ngIf="person.jobTitle">
         <h4>Job title:</h4>
-        <span> {{ person['jobTitle'] }} </span>
+        <span> {{ person.jobTitle }} </span>
     </div>
 
-    <div *ngIf="person['sameAs']">
+    <div *ngIf="person.sameAs">
         <h4>sameAs:</h4>
-        <a href="{{ person['sameAs'] }}" target="_blank"> {{ person['sameAs'] }} </a>
+        <a href="{{ person.sameAs.value }}" target="_blank"> {{ person.sameAs.value }} </a>
     </div>
 
-    <div *ngIf="person['email']">
+    <div *ngIf="person.email">
         <h4>Email:</h4>
-        <a href="mailto:{{ person['email'] }}"> {{ person['email'] }} </a>
+        <a href="mailto:{{ person.email }}"> {{ person.email }} </a>
     </div>
 
-    <app-address-template *ngIf="person['address']" [address]="person['address']"></app-address-template>
+    <app-address-template *ngIf="person.address" [address]="person.address"></app-address-template>
 
-    <div *ngIf="person['organisation']" class="sub-details">
+    <div *ngIf="person.organisation" class="sub-details">
         <h4>Member of:</h4>
         <div class="contents">
-            <app-organisation-template  [organisation]="person['organisation']"></app-organisation-template>
+            <app-organisation-template  [organisation]="person.organisation"></app-organisation-template>
         </div>
     </div>
 

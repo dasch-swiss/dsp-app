@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { IProject } from '../dataset-metadata';
 
 @Component({
     selector: 'app-project-tab-view',
@@ -8,7 +9,7 @@ import { Component, Input } from '@angular/core';
 export class ProjectTabViewComponent {
 
     // metadata object
-    @Input() metadata: object;
+    @Input() metadata: IProject;
 
     // metadata keys that we do not want to display in template
     excludeKeys = ['contactPoint'];

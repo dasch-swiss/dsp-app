@@ -1,4 +1,5 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { IPerson } from '../dataset-metadata';
 
 @Component({
     selector: 'app-person-template',
@@ -6,20 +7,6 @@ import {Component, Input} from '@angular/core';
     styleUrls: ['./person-template.component.scss']
 })
 export class PersonTemplateComponent {
-
-    /*
-    Format for person object:
-    person = {
-        jobTitle: '',
-        givenName: '',
-        familyName: '',
-        email: ''.
-        sameAs: '',
-        address: '<address>',
-        organisation: '<organisation>'
-    }
-     */
     // input parameter
-    @Input() person: object;
-
+    @Input() person: IPerson;
 }
