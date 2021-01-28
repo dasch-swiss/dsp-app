@@ -32,8 +32,7 @@ import { UsersComponent } from './system/users/users.component';
 const routes: Routes = [
     {
         path: '',
-        component: LoginComponent
-        // component: MainComponent
+        component: MainComponent
     },
     {
         path: 'help',
