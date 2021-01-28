@@ -118,11 +118,11 @@ const routes: Routes = [
         component: UserComponent,
         canActivate: [AuthGuard]
     },
-    {
+    /* {
         path: 'collections',
         component: UserComponent,
         canActivate: [AuthGuard]
-    },
+    }, */
     {
         path: 'system',
         component: SystemComponent,
@@ -143,7 +143,7 @@ const routes: Routes = [
             }
         ]
     },
-    {
+    /* {
         path: 'search',
         children: [
             {
@@ -155,12 +155,12 @@ const routes: Routes = [
                 component: ResultsComponent
             }
         ]
-    },
-    {
+    }, */
+    /* {
         path: 'resource/:id',
         component: ResourceComponent,
         runGuardsAndResolvers: 'always'
-    },
+    }, */
     {
         path: 'cookie-policy',
         component: CookiePolicyComponent

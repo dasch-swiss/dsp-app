@@ -11,14 +11,15 @@
     <span class="fill-remaining-space"></span>
 
     <!-- search-panel (in desktop and tablet version) -->
-    <span class="action">
-        <dsp-search-panel
+   <!--  <span class="action"> -->
+        <!-- button to reactivate when dsp-app will be used as a research platform again: -->
+        <!-- <dsp-search-panel
             [projectfilter]="true"
             [advanced]="true"
             [expert]="true"
             (search)="doSearch($event)">
-        </dsp-search-panel>
-         <!-- advanced and expert search (in desktop and tablet version) -->
+        </dsp-search-panel> -->
+         <!-- to keep? > advanced and expert search (in desktop and tablet version) -->
          <!-- <span class="other-search-link">
             <button mat-button color="primary" class="advanced-search-link" routerLink="/search/advanced">
                 <span>Advanced search</span>
@@ -27,7 +28,7 @@
                 <span>Expert search</span>
             </button>
         </span> -->
-    </span>
+   <!--  </span> -->
 
     <span class="fill-remaining-space desktop-only"></span>
 
@@ -38,9 +39,10 @@
 
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
-        <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
+        <!-- button to reactivate when dsp-app will be used as a research platform again: -->
+        <!-- <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
             <mat-icon>add_circle_outline</mat-icon>
-        </button>
+        </button> -->
 
         <button mat-button [routerLink]="'/help'" class="main-toolbar-button help">Help</button>
 
@@ -58,7 +60,8 @@
 </div>
 
 <!-- search-panel (in phone version) -->
-<div class="search-panel-phone" *ngIf="show">
+<!-- div to reactivate when dsp-app will be used as a research platform again: -->
+<!-- <div class="search-panel-phone" *ngIf="show">
     <dsp-fulltext-search class="dsp-fulltext-search" (search)="doSearch($event)" [projectfilter]="true">
     </dsp-fulltext-search>
-</div>
+</div> -->

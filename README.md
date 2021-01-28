@@ -1,8 +1,10 @@
-# DSP APP &mdash; Generic user interface of DaSCH Service Platform
+# DSP-APP &mdash; Generic user interface of DaSCH Service Platform
 
 [![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-app?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-app)
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
 [![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
+
+> **_NOTE:_**  The current DSP-APP version presents the **admin view** only.
 
 This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the DSP-API/Knora server application in the backend. It's a system for annotation and linkage of resources in arts and humanities.
 
@@ -42,6 +44,16 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Documentation / User guidelines
 
 We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/) in a separate [repository](https://github.com/dasch-swiss/dsp-docs). The user guide is published on [docs.dasch.swiss/user-guide](https://docs.dasch.swiss/user-guide).
+
+## Work on GitHub
+
+### "main" branch
+
+- use the branch "main" to work on the DSP-ADMIN app. Any changes should be created in branches from "main" and should be merged into the "main" branch.
+
+### "develop" branch
+
+- use the branch "develop" to work on the whole DSP-APP app (admin + research parts). Any new developments should be created in branches from "develop" and should be merged into the "develop" branch.
 
 ## Publish a new version to DockerHub
 

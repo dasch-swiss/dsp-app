@@ -52,12 +52,13 @@ export class AppGlobal {
             route: '/projects',
             icon: 'assignment'
         },
-        {
+        // label to reactivate when dsp-app will be used as a research platform again: -->
+        /* {
             label: 'My Collections',
             shortLabel: 'Collections',
             route: '/collections',
             icon: 'star'
-        },
+        }, */
         {
             label: 'My Account',
             shortLabel: 'Account',
