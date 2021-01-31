@@ -1,5 +1,39 @@
 # Changelog
 
+## [4.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v3.0.0...v4.0.0) (2021-01-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* set up the login page as a starting page (DSP-1292) (#370)
+* **app+main:** comment out the search and everything related to resources (DSP-1291) (#371)
+
+### Bug Fixes
+
+* **dialog:** Diaolog box height issue fixed ([#358](https://www.github.com/dasch-swiss/dsp-app/issues/358)) ([15d1182](https://www.github.com/dasch-swiss/dsp-app/commit/15d11820ef7a3b063f2f706d9bfce7e51c9ea514))
+* **routing:** bring back the route handler in main component (DSP-1303) ([#373](https://www.github.com/dasch-swiss/dsp-app/issues/373)) ([8492c1a](https://www.github.com/dasch-swiss/dsp-app/commit/8492c1acd23da73ed143e160388eb0080ff60b17))
+
+
+### Maintenance
+
+* update pr template (DSP-1189) ([#353](https://www.github.com/dasch-swiss/dsp-app/issues/353)) ([f348e70](https://www.github.com/dasch-swiss/dsp-app/commit/f348e70c4fa4dc0aeb2573aba4e1aa62fc1725a6))
+* update the dsp-ui and dsp-js versions to the latest ([#364](https://www.github.com/dasch-swiss/dsp-app/issues/364)) ([66931f0](https://www.github.com/dasch-swiss/dsp-app/commit/66931f088d4a9ad07da219c4a6e8e81d39f4596e))
+
+
+### Enhancements
+
+* display metadata on project landing page (DSP-1065) ([#348](https://www.github.com/dasch-swiss/dsp-app/issues/348)) ([3012ef5](https://www.github.com/dasch-swiss/dsp-app/commit/3012ef5e767dea3a16c7ae380bf3f1a4b3385c9e))
+* **error:** Server error handler (DSP-710) ([#355](https://www.github.com/dasch-swiss/dsp-app/issues/355)) ([d5b77bf](https://www.github.com/dasch-swiss/dsp-app/commit/d5b77bf89470d5bb63b7850ce1b98dbc02d87223))
+* **new-resource-form:** make visible the required prop fields (DSP-1115) ([#342](https://www.github.com/dasch-swiss/dsp-app/issues/342)) ([5885b04](https://www.github.com/dasch-swiss/dsp-app/commit/5885b041c2c7c223277a50ccc0495872b1d099fe))
+* **project landing page:** add copy to clipboard functionality (DSP-1248) ([#368](https://www.github.com/dasch-swiss/dsp-app/issues/368)) ([17bf71c](https://www.github.com/dasch-swiss/dsp-app/commit/17bf71c4502074264070bd513301139c43976a58))
+* **select-resource-class:** allow accented character (DSP-1241) ([#363](https://www.github.com/dasch-swiss/dsp-app/issues/363)) ([8a2654b](https://www.github.com/dasch-swiss/dsp-app/commit/8a2654b75f3194292b2fada9239c29ffa44fe8db))
+
+
+### refactor
+
+* **app+main:** comment out the search and everything related to resources (DSP-1291) ([#371](https://www.github.com/dasch-swiss/dsp-app/issues/371)) ([50b1309](https://www.github.com/dasch-swiss/dsp-app/commit/50b13091e6437a68ea2a45bb7b50a4e655f5d85d))
+* set up the login page as a starting page (DSP-1292) ([#370](https://www.github.com/dasch-swiss/dsp-app/issues/370)) ([46dfdbb](https://www.github.com/dasch-swiss/dsp-app/commit/46dfdbba13adff1dc40eb5bb8422a3093b1e8b74))
+
 ## [3.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v2.0.1...v3.0.0) (2020-12-18)
 
 
