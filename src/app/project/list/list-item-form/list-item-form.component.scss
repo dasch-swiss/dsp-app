@@ -13,12 +13,69 @@
 }
 .add-node-btn,
 .edit-node-btn,
-.progress-indicator {
+.progress-indicator
+.update-success-btn {
   margin: 0 0 0 8px;
+}
+
+.update-success-btn {
+  color: green !important;
+  cursor: default;
 }
 
 .new-list-item {
   display: inline-flex;
   margin: 8px 0 0 40px;
   width: 640px;
+}
+
+.list-item {
+  position: relative;
+
+  .action-bubble {
+    position: absolute;
+    right: 5px;
+    top: 0px;
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+    padding: 0 1px;
+    background-color: #e4e4e4;
+    z-index: 2;
+    box-shadow: #949494 1px 4px 5px 0px;
+
+    .button-container {
+
+      button {
+        cursor: pointer;
+        border: none;
+        padding: 2px;
+        outline: none;
+        background-color: transparent;
+        color: #000000;
+        margin: 0 2px;
+        border-radius: 10px;
+        transition: background-color ease-out 0.5s;
+        min-width: inherit;
+        line-height: normal;
+
+        .material-icons {
+          font-size: 18px;
+        }
+
+        .mat-icon {
+          width: 18px;
+          height: 18px;
+          vertical-align: middle;
+        }
+      }
+
+      button.info {
+        cursor: default;
+      }
+
+      button:hover {
+        background-color: #c7c7c7;
+      }
+    }
+  }
 }

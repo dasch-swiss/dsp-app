@@ -89,6 +89,7 @@ import { AngularSplitModule } from 'angular-split';
 import { PersonTemplateComponent } from './project/board/person-template/person-template.component';
 import { AddressTemplateComponent } from './project/board/address-template/address-template.component';
 import { OrganisationTemplateComponent } from './project/board/organisation-template/organisation-template.component';
+import { EditListItemComponent } from './project/list/list-item-form/edit-list-item/edit-list-item.component';
 
 // translate: AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -160,7 +161,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         ContactsTabViewComponent,
         PersonTemplateComponent,
         AddressTemplateComponent,
-        OrganisationTemplateComponent
+        OrganisationTemplateComponent,
+        EditListItemComponent
     ],
     imports: [
         AppRoutingModule,

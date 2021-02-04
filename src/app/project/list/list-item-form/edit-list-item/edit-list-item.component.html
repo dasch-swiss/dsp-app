@@ -1,0 +1,45 @@
+<dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
+
+<div *ngIf="!loading" class="form-content list-info">
+
+    <!-- list label -->
+    <dsp-string-literal-input
+        [placeholder]="'Child node label'"
+        [value]="labels"
+        (dataChanged)="handleData($event, 'labels')">
+    </dsp-string-literal-input>
+    <span class="invalid-form" *ngIf="formInvalidMessage">{{ formInvalidMessage }}</span>
+
+    <br><br>
+
+    <!-- list description / comment -->
+    <dsp-string-literal-input
+        [textarea]="true"
+        [placeholder]="'Child node description'"
+        [value]="comments"
+        (dataChanged)="handleData($event, 'comments')"
+        [language]="labels.length ? labels[0].language : 'en'">
+    </dsp-string-literal-input>
+
+    <div class="form-panel form-action">
+        <span>
+            <button
+                mat-button
+                type="button"
+                (click)="closeDialog.emit()">
+                {{ 'appLabels.form.action.cancel' | translate }}
+            </button>
+        </span>
+        <span class="fill-remaining-space"></span>
+        <span>
+            <button
+                mat-raised-button
+                type="submit"
+                color="primary"
+                [disabled]="saveButtonDisabled"
+                (click)="updateChildNode()">
+                {{ 'appLabels.form.action.update' | translate }}
+            </button>
+        </span>
+    </div>
+</div>

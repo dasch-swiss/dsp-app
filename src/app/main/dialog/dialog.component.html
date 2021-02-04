@@ -148,6 +148,13 @@
         </app-list-info-form>
     </div>
 
+    <!-- Update list child node -->
+    <div *ngSwitchCase="'editListNode'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Edit child node'">
+        </app-dialog-header>
+        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" (closeDialog)="dialogRef.close($event)"></app-edit-list-item>
+    </div>
+
     <!-- Delete list -->
     <div *ngSwitchCase="'deleteList'">
         <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.delete' | translate"></app-dialog-header>

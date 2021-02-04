@@ -1,10 +1,10 @@
 <!-- add new node item -->
 <div class="new-list-item medium-field" *ngIf="parentIri && projectIri">
     <dsp-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
-        (dataChanged)="handleData($event)" [language]="language" (enter)="submitData()">
+        (dataChanged)="handleData($event)" [language]="language" (enter)="createChildNode()">
     </dsp-string-literal-input>
     <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="!labels && !labels?.length" class="add-node-btn"
-        (click)="submitData()">
+        (click)="createChildNode()">
         <mat-icon>
             add
         </mat-icon>
@@ -12,19 +12,23 @@
     <dsp-progress-indicator [status]="0" *ngIf="loading" class="progress-indicator"></dsp-progress-indicator>
 </div>
 
-<!-- edit node item -->
-<div class="list-item medium-field" *ngIf="!(parentIri && projectIri) && labels">
-    <!-- TODO: at the moment (2019-09-12) we can't modify a node; the api doesn't support it; this is why we set the input to readonly -->
+<!-- node item -->
+<div class="list-item medium-field"
+    *ngIf="!(parentIri && projectIri) && labels"
+    (mouseenter)="mouseEnter()"
+    (mouseleave)="mouseLeave()">
     <dsp-string-literal-input class="list-item-label"
         [placeholder]="labels | dspStringifyStringLiteral:'all' | dspTruncate: 128" [value]="labels" [readonly]="true"
-        (dataChanged)="handleData($event)" [language]="language" (touched)="toggleBtn($event)">
+        (dataChanged)="handleData($event)" [language]="language">
     </dsp-string-literal-input>
-    <!-- TODO: asap Knora api is ready to update single nodes set [disabled]="labels.length === 0" -->
-    <button *ngIf="!loading && updateData" type="submit" mat-icon-button matSuffix class="edit-node-btn"
-        [disabled]="labels.length === 0" (click)="submitData(); updateData = !updateData;">
-        <mat-icon>
-            check
-        </mat-icon>
-    </button>
-    <dsp-progress-indicator [status]="0" *ngIf="loading" class="progress-indicator"></dsp-progress-indicator>
+    <div class="action-bubble" *ngIf="showActionBubble" [@simpleFadeAnimation]="'in'">
+        <div class="button-container">
+            <button mat-button
+                    class="edit"
+                    title="edit"
+                    (click)="$event.stopPropagation(); openDialog('editListNode', labels[0].value, iri)">
+                <mat-icon>edit</mat-icon>
+            </button>
+        </div>
+    </div>
 </div>
