@@ -1,0 +1,41 @@
+site_name: DSP-APP documentation
+
+repo_url: https://github.com/dasch-swiss/dsp-app
+repo_name: dasch-swiss/dsp-app
+edit_uri: blob/main/docs/
+copyright: "&copy; 2017 - 2021 <a href='https://dasch.swiss' target='_blank'>Data and Service Center for the Humanities (DaSCH)</a>"
+
+nav:
+  - Introduction: index.md
+  - User Guide:
+    - Introduction: how-to-use/index.md
+    - Project Administration: how-to-use/project.md
+    - User Administration: how-to-use/user.md
+    - System Administration: how-to-use/system.md
+    # - Data Management: how-to-use/data.md
+    # - Publication: how-to-use/publication.md
+  - Contribution:
+    - How to contribute: how-to-contribute/index.md
+    - Docs Documentation: how-to-contribute/docs-documentation.md
+    - Release Notes: how-to-contribute/release-notes.md
+
+plugins:
+    - include-markdown
+    - search
+    - git-revision-date
+
+theme:
+  name: material
+  logo: 'assets/icons/dasch-icon-white.svg'
+  favicon: 'assets/icons/dasch-favicon.ico'
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    primary: 'deep purple'
+    accent: 'deep purple'
+  features:
+    - navigation.tabs
+    - navigation.sections
+
+extra_css:
+  - 'assets/style/theme.css'

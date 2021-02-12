@@ -8,7 +8,7 @@
 
 This app is a simple user interface for the Data and Service Center for the Humanities DaSCH, which uses the DSP-API/Knora server application in the backend. It's a system for annotation and linkage of resources in arts and humanities.
 
-DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js) to connect with [DSP-API](https://docs.dasch.swiss/developers/knora/api-reference/). DSP-API is a software framework for storing, sharing, and working with primary resources and data in the humanities.
+DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js) to connect with [DSP-API](https://docs.dasch.swiss/developers/knora/api-reference/). DSP (DaSCH Service Platform) is a software framework for storing, sharing, and working with primary resources and data in the humanities.
 
 Additionaly it's built with [DSP-UI-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-ui) &mdash; reusable DSP specific Angular modules.
 
@@ -16,56 +16,34 @@ Please check our [DSP Release Compatibility Matrix](https://docs.google.com/spre
 
 DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
-## Development server
+## Documentation
 
-Run `ng serve` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the resource files.
+### User guide
 
-## Code scaffolding
+➡ [for current deployed version](https://docs.dasch.swiss/user-guide/)
 
-Run `ng generate component component-name` to generate a new component. You can
-also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+➡ [for development version](https://dasch-swiss.github.io/dsp-app/how-to-use)
 
-## Build
+### Developer docs
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+➡ [for developers](https://dasch-swiss.github.io/dsp-app/how-to-contribute)
 
-## Running unit tests
+## Contribution
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+If you would like to contribute to the development of the DSP-APP alongside us, please consult the  [general DSP contribution guidelines](https://docs.dasch.swiss/developers/dsp/contribution/).
 
-## Running end-to-end tests
+### Work on GitHub
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+DSP-APP has two main branches at the moment:
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-
-## Documentation / User guidelines
-
-We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/) in a separate [repository](https://github.com/dasch-swiss/dsp-docs). The user guide is published on [docs.dasch.swiss/user-guide](https://docs.dasch.swiss/user-guide).
-
-## Work on GitHub
-
-### "main" branch
+#### "main" branch
 
 - use the branch "main" to work on the DSP-ADMIN app. Any changes should be created in branches from "main" and should be merged into the "main" branch.
 
-### "develop" branch
+#### "develop" branch
 
 - use the branch "develop" to work on the whole DSP-APP app (admin + research parts). Any new developments should be created in branches from "develop" and should be merged into the "develop" branch.
 
-## Publish a new version to DockerHub
+### Documentation / User guidelines
 
-Before publishing:
-
-- Update README if necessary and commit the changes.
-
-- Be sure that all dependencies to DSP-UI-LIB, DSP-JS-LIB and DSP-API are set to the correct version.
-
-A new version will be published with each Github release as it's part of Github actions' workflow. To make a new release, go to <https://github.com/dasch-swiss/dsp-app/releases> and update the draft called "Next release" by changing:
-
-- The tag version and the release title (same name) with the version number, e.g. `v3.0.0` or `v3.0.0-rc.0`
-- If this is a pre-release, check the box "This is a pre-release"
-
-New package will be available on <https://hub.docker.com/repository/docker/daschswiss/dsp-app>.
+We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/). Get more information in the appropriate [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/README.md).
