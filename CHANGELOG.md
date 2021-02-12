@@ -1,5 +1,24 @@
 # Changelog
 
+## [4.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.0.0...v4.1.0) (2021-02-12)
+
+
+### Documentation
+
+* init mkdocs and move documentation from DSP-DOCS into DSP-APP repo (DSP-380) ([#379](https://www.github.com/dasch-swiss/dsp-app/issues/379)) ([07f5067](https://www.github.com/dasch-swiss/dsp-app/commit/07f50678c75d1da4cfc2c4792917b13840b5eaf6))
+
+
+### Maintenance
+
+* bumps DSP-JS to 1.3.0 and DSP-UI to 1.2.1 ([#374](https://www.github.com/dasch-swiss/dsp-app/issues/374)) ([7b795ee](https://www.github.com/dasch-swiss/dsp-app/commit/7b795ee56026fa3a9e2f44e9c43a4d3502b5d764))
+* **deps:** bump socket.io from 2.3.0 to 2.4.1 ([#367](https://www.github.com/dasch-swiss/dsp-app/issues/367)) ([8133d87](https://www.github.com/dasch-swiss/dsp-app/commit/8133d876bb4f606293604a4a63111fddd8993e1a))
+
+
+### Enhancements
+
+* **list editor:** Adds support for editing lists (DSP-741) ([#365](https://www.github.com/dasch-swiss/dsp-app/issues/365)) ([5b6ee4b](https://www.github.com/dasch-swiss/dsp-app/commit/5b6ee4be19b1b900fcb58a789d1e2cff44cb79e6))
+* **ontology:** update cardinality in resource class (DSP-1266) ([#377](https://www.github.com/dasch-swiss/dsp-app/issues/377)) ([5a766c1](https://www.github.com/dasch-swiss/dsp-app/commit/5a766c1db06d862b2edfba49347a659f4233d1c2))
+
 ## [4.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v3.0.0...v4.0.0) (2021-01-28)
 
 
