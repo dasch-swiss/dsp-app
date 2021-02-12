@@ -40,7 +40,7 @@ build-dsp-app-image: ## build DSP APP image locally
 
 .PHONY: publish-dsp-app-image
 publish-dsp-app-image: build-dsp-app-image ## publish DSP APP Docker image to Docker-Hub
-	docker push $(DSP_APP_REPO)
+	docker image push --all-tags $(DSP_APP_REPO)
 
 .PHONY: help
 help: ## this help
