@@ -76,14 +76,13 @@ button {
     }
   }
 
-  &.delete-line,
-  &.add-new-line {
+  &.delete-line {
     position: absolute;
     right: 12px;
   }
 
   &.add-new-line {
-    bottom: 12px;
+    top: 12px;
   }
 
   &.delete-line {

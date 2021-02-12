@@ -10,11 +10,13 @@ import {
     DeleteOntologyResponse,
     DeleteResourceClass,
     KnoraApiConnection,
+    ListsResponse,
     OntologiesMetadata,
     OntologyMetadata,
     ProjectResponse,
     ReadOntology,
     ReadProject,
+    ResourceClassDefinition,
     UpdateOntology
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
@@ -147,6 +149,9 @@ export class OntologyComponent implements OnInit {
 
                 // get the ontologies for this project
                 this.initList();
+
+                // cache other things like ontology and lists
+                this.setCache();
 
                 this.ontologyForm = this._fb.group({
                     ontology: new FormControl({
@@ -308,19 +313,54 @@ export class OntologyComponent implements OnInit {
      */
     openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', subClassOf: DefaultClass): void {
 
-        // set ontology cache
-        this._cache.set('currentOntology', this.ontology);
+        // set cache for ontology and lists
+        this.setCache();
 
         const dialogConfig: MatDialogConfig = {
+            disableClose: true,
             width: '840px',
             maxHeight: '90vh',
             position: {
                 top: '112px'
             },
-            data: { name: subClassOf.iri, title: subClassOf.label, subtitle: 'Customize resource class', mode: mode, project: this.project.id }
+            data: { id: subClassOf.iri, title: subClassOf.label, subtitle: 'Customize resource class', mode: mode, project: this.project.id }
         };
 
-        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.getOntology(this.ontologyIri);
+        });
+    }
+
+
+    /**
+     * Updates cardinality
+     * @param subClassOf resource class
+     */
+    updateCard(subClassOf: ResourceClassDefinition) {
+
+        // set cache for ontology and lists
+        this.setCache();
+
+        const dialogConfig: MatDialogConfig = {
+            disableClose: true,
+            width: '840px',
+            maxHeight: '90vh',
+            position: {
+                top: '112px'
+            },
+            data: { mode: 'updateCardinality', id: subClassOf.id, title: subClassOf.label, subtitle: 'Update the metadata fields of resource class', project: this.project.id }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view
@@ -382,7 +422,7 @@ export class OntologyComponent implements OnInit {
                         break;
 
                     case 'ResourceClass':
-                        // delete reresource class and refresh the view
+                        // delete resource class and refresh the view
                         this.loadOntology = true;
                         const resClass: DeleteResourceClass = new DeleteResourceClass();
                         resClass.id = id;
@@ -413,6 +453,25 @@ export class OntologyComponent implements OnInit {
      */
     toggleView(view: 'grid' | 'graph') {
         this.view = view;
+    }
+
+    setCache() {
+
+        // get all lists; will be used to set gui attribute in list property
+        this._dspApiConnection.admin.listsEndpoint.getListsInProject(this.project.id).subscribe(
+            (response: ApiResponseData<ListsResponse>) => {
+                this._cache.set('currentOntologyLists', response.body.lists);
+                // console.log('set currentOntologyLists', response.body.lists);
+
+            },
+            (error: ApiResponseError) => {
+                // console.error('currentOntologyLists', error)
+                this._errorHandler.showMessage(error);
+            }
+        );
+
+        // set cache for current ontology
+        this._cache.set('currentOntology', this.ontology);
     }
 
 }

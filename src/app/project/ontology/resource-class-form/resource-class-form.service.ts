@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Cardinality } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, IHasProperty, PropertyDefinition, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PropertyType } from '../default-data/default-properties';
+import { DefaultProperties, PropertyType } from '../default-data/default-properties';
 
 // property data structure
 export class Property {
@@ -83,7 +83,12 @@ export class ResourceClassForm {
 
     constructor(resourceClass: ResourceClass) {
         if (resourceClass.properties) {
-            this.properties.setValue([resourceClass.properties]);
+            let i = 0;
+            this.properties.setControl
+            resourceClass.properties.forEach(prop => {
+                this.properties[i] = new FormControl(prop);
+                i++;
+            });
         }
     }
 }
@@ -113,17 +118,83 @@ export class ResourceClassFormService {
         this.resourceClassForm.next(currentResourceClass);
     }
 
+    /**
+     * Sets properties in case of update resource class' cardinalities
+     * @param resClass
+     */
+    setProperties(resClass: ResourceClassDefinition, ontoProperties: PropertyDefinition[]) {
+
+        const updateResClass = new ResourceClass();
+
+        updateResClass.properties = [];
+
+        // get cardinality and gui order and grab property definition
+        resClass.propertiesList.forEach((prop: IHasProperty) => {
+            if (prop.guiOrder >= 0) {
+
+                // get property definition
+                Object.keys(ontoProperties).forEach(key => {
+                    if (ontoProperties[key].id === prop.propertyIndex && !ontoProperties[key].isLinkValueProperty) {
+                        const propDef: ResourcePropertyDefinition = ontoProperties[key];
+
+                        const property: Property = new Property();
+                        // property.propDef = ontoProperties[key];
+
+                        property.label = propDef.label;
+
+                        if(ontoProperties[key].isLinkProperty) {
+                            property.guiAttr = propDef.objectType;
+                        } else {
+                            property.guiAttr = propDef.guiAttributes[0];
+                        }
+                        property.iri = prop.propertyIndex;
+
+                        // convert cardinality
+                        switch (prop.cardinality) {
+                            case 0:
+                                property.multiple = false;
+                                property.required = true;
+                                break;
+                            case 1:
+                                property.multiple = false;
+                                property.required = false;
+                                break;
+                            case 2:
+                                property.multiple = true;
+                                property.required = false;
+                                break;
+                            case 3:
+                                property.multiple = true;
+                                property.required = true;
+                                break;
+                        }
+
+                        // find property type in list of default properties
+                        // just a test
+                        // property.type = DefaultProperties.data[0].elements[0];
+
+                        this.addProperty(property);
+
+                    }
+                });
+
+            }
+
+        });
+
+    }
+
 
     /**
      * add new property line
      */
-    addProperty() {
+    addProperty(prop?: Property) {
         const currentResourceClass = this.resourceClassForm.getValue();
         const currentProperties = currentResourceClass.get('properties') as FormArray;
 
         currentProperties.push(
             this._fb.group(
-                new PropertyForm(new Property('', '', {}, false, false))
+                new PropertyForm((prop ? prop : new Property('', '', {}, false, false)))
             )
         );
 
@@ -149,12 +220,12 @@ export class ResourceClassFormService {
      * @param [label]
      * @returns unique name
      */
-    setUniqueName(ontologyIri: string, label?: string): string {
+    setUniqueName(ontologyIri: string, label?: string, type?: 'class' | 'prop'): string {
 
-        if (label) {
+        if (label && type) {
             // build name from label
             // normalize and replace spaces and special chars
-            return label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\u00a0-\u024f]/g, '').replace(/[\])}[{(]/g, '').replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase();
+            return type + '-' + label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\u00a0-\u024f]/g, '').replace(/[\])}[{(]/g, '').replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase();
         } else {
             // build randomized name
             // The name starts with the three first character of ontology iri to avoid a start with a number followed by randomized string
@@ -198,6 +269,6 @@ export class ResourceClassFormService {
             // Cardinality 0-1 (optional)
             return Cardinality._0_1;
         }
-
     }
+
 }

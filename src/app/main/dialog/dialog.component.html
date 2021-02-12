@@ -12,13 +12,15 @@
 
     <!-- Modify user data -->
     <div *ngSwitchCase="'editUser'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.edit' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.edit' | translate">
+        </app-dialog-header>
         <app-user-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-user-form>
     </div>
 
     <!-- Update password -->
     <div *ngSwitchCase="'editPassword'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.password' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.user.title.password' | translate">
+        </app-dialog-header>
         <app-password-form [username]="data.name" (closeDialog)="dialogRef.close()"></app-password-form>
     </div>
 
@@ -95,13 +97,15 @@
 
     <!-- Modify project information -->
     <div *ngSwitchCase="'editProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate">
+        </app-dialog-header>
         <app-project-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Delete project -->
     <div *ngSwitchCase="'deleteProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.delete' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.delete' | translate">
+        </app-dialog-header>
         Do you want to deactivate this project?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -117,7 +121,8 @@
 
     <!-- Reactivate project -->
     <div *ngSwitchCase="'activateProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.activate' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.activate' | translate">
+        </app-dialog-header>
         Do you want to reactivate this project?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -157,7 +162,8 @@
 
     <!-- Delete list -->
     <div *ngSwitchCase="'deleteList'">
-        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.delete' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.delete' | translate">
+        </app-dialog-header>
         Do you want to delete this list?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -202,7 +208,7 @@
     <!-- Ontology editor: customize and add resource class -->
     <div *ngSwitchCase="'addResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
-        <app-resource-class-form [subClassOf]="data.name" [name]="data.title" [projectIri]="data.project"
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectIri]="data.project"
             (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
         </app-resource-class-form>
     </div>
@@ -233,6 +239,14 @@
         </mat-dialog-actions>
     </div>
 
+    <div *ngSwitchCase="'updateCardinality'">
+        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
+        </app-dialog-header>
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectIri]="data.project"
+            [showResourceClassForm]="false" [edit]="true" (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
+        </app-resource-class-form>
+    </div>
+
     <div *ngSwitchCase="'error'">
         <app-error [status]="data.id"></app-error>
     </div>
@@ -242,7 +256,8 @@
     <div *ngSwitchCase="'createResource'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-instance-form (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)"></app-resource-instance-form>
+        <app-resource-instance-form (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
+        </app-resource-instance-form>
     </div>
 
     <!-- Unknown method (or not yet defined) -->

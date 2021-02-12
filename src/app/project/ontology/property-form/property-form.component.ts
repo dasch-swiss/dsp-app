@@ -46,6 +46,10 @@ export class PropertyFormComponent implements OnInit {
 
     @Input() index: number;
 
+    @Input() ontology?: ReadOntology;
+
+    @Input() resClassIri?: string;
+
     @Output() deleteProperty: EventEmitter<number> = new EventEmitter();
 
     iri = new FormControl();
@@ -62,10 +66,7 @@ export class PropertyFormComponent implements OnInit {
     // list of project specific lists (TODO: probably we have to add default knora lists?!)
     lists: ListNodeInfo[];
 
-    // current ontology
-    ontology: ReadOntology;
-
-    // reresource classs in this ontology
+    // resource classs in this ontology
     reresourceClasss: ClassDefinition[] = [];
 
     // list of existing properties
@@ -77,6 +78,8 @@ export class PropertyFormComponent implements OnInit {
     selectedGroup: string;
 
     existingProperty: boolean;
+
+    loading = false;
 
     Constants = Constants;
 
@@ -104,6 +107,19 @@ export class PropertyFormComponent implements OnInit {
         if (this.propertyForm) {
             // init list of property types with first element
             this.propertyForm.patchValue({ type: this.propertyTypes[0].elements[0] });
+
+            if (this.propertyForm.value.label) {
+
+                const existingProp: AutocompleteItem = {
+                    iri: this.propertyForm.value.iri,
+                    label: this.propertyForm.value.label,
+                    name: ''
+                }
+
+                // edit mode: this prop value exists already
+                this.loading = true;
+                this.updateFieldsDependingOnLabel(existingProp);
+            }
         }
 
         this._cache.get('currentOntology').subscribe(
@@ -112,7 +128,7 @@ export class PropertyFormComponent implements OnInit {
 
                 // set various lists to select from
                 // a) in case of link value:
-                // set list of reresource classes from response; needed for linkValue
+                // set list of resource classes from response; needed for linkValue
                 const classKeys: string[] = Object.keys(response.classes);
                 for (const c of classKeys) {
                     this.reresourceClasss.push(this.ontology.classes[c]);
@@ -122,7 +138,8 @@ export class PropertyFormComponent implements OnInit {
                 // set list of properties from response; needed for autocomplete in label to reuse existing property
                 const propKeys: string[] = Object.keys(response.properties);
                 for (const p of propKeys) {
-                    if (this.ontology.properties[p].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue') {
+                    const prop = this.ontology.properties[p];
+                    if (prop.objectType !== Constants.LinkValue && prop.objectType !== this.resClassIri) {
                         const existingProperty: AutocompleteItem = {
                             iri: this.ontology.properties[p].id,
                             name: this.ontology.properties[p].id.split('#')[1],
@@ -144,9 +161,6 @@ export class PropertyFormComponent implements OnInit {
         this._cache.get('currentOntologyLists').subscribe(
             (response: ListNodeInfo[]) => {
                 this.lists = response;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
             }
         );
 
@@ -165,7 +179,7 @@ export class PropertyFormComponent implements OnInit {
      */
     filter(list: AutocompleteItem[], label: string) {
         return list.filter(prop =>
-            prop.label.toLowerCase().includes(label.toLowerCase())
+            prop.label?.toLowerCase().includes(label.toLowerCase())
         );
     }
 
@@ -175,10 +189,10 @@ export class PropertyFormComponent implements OnInit {
         this.propertyForm.controls['guiAttr'].setValue(undefined);
         // depending on the selected property type,
         // we have to define gui element attributes
-        // e.g. iri of list or connected reresource class
+        // e.g. iri of list or connected resource class
         switch (event.value.objectType) {
             case Constants.ListValue:
-            case Constants.Resource:
+            case Constants.LinkValue:
                 this.showGuiAttr = true;
                 this.propertyForm.controls['guiAttr'].setValidators([
                     Validators.required
@@ -197,19 +211,22 @@ export class PropertyFormComponent implements OnInit {
     /**
      * @param {MatOption} option
      */
-    updateFieldsDependingOnLabel(option: MatOption) {
-        this.propertyForm.controls['iri'].setValue(option.value.iri);
+    updateFieldsDependingOnLabel(option: AutocompleteItem) {
+        this.propertyForm.controls['iri'].setValue(option.iri);
 
-        this.propertyForm.controls['label'].setValue(option.value.label);
+        // set label and disable the input
+        this.propertyForm.controls['label'].setValue(option.label);
         this.propertyForm.controls['label'].disable();
 
-        if (this.ontology.properties[option.value.iri] instanceof ResourcePropertyDefinition) {
-            const tempProp: any | ResourcePropertyDefinition = this.ontology.properties[option.value.iri];
+        // find corresponding property type
+
+        if (this.ontology.properties[option.iri] instanceof ResourcePropertyDefinition) {
+            const tempProp: any | ResourcePropertyDefinition = this.ontology.properties[option.iri];
 
             let obj: PropertyType;
             // find gui ele from list of default property-types to set type value
             for (let group of this.propertyTypes) {
-                obj = group.elements.find(i => i.gui_ele === tempProp.guiElement && i.objectType === tempProp.objectType);
+                obj = group.elements.find(i => i.gui_ele === tempProp.guiElement && (i.objectType === tempProp.objectType || i.subPropOf === tempProp.subPropertyOf[0]));
 
                 if (obj) {
                     this.propertyForm.controls['type'].setValue(obj);
@@ -233,6 +250,7 @@ export class PropertyFormComponent implements OnInit {
                     this.propertyForm.controls['guiAttr'].setValue(listIri);
                     this.propertyForm.controls['guiAttr'].disable();
                     break;
+
                 // prop type is resource pointer
                 case Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox':
 
@@ -243,13 +261,10 @@ export class PropertyFormComponent implements OnInit {
 
                 default:
                     this.showGuiAttr = false;
-
             }
-
         }
         this.propertyForm.controls['type'].disable();
         this.existingProperty = true;
-
     }
 
     resetProperty(ev: Event) {

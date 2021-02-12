@@ -2,19 +2,20 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import {
-    ApiResponseData,
     ApiResponseError,
+    ClassDefinition,
     Constants,
     CreateResourceClass,
     CreateResourceProperty,
+    IHasProperty,
     KnoraApiConnection,
-    ListsResponse,
+    PropertyDefinition,
     ReadOntology,
     ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages,
     StringLiteral,
     UpdateOntology,
-    UpdateOntologyResourceClassCardinality
+    UpdateResourceClassCardinality
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-literal-v2';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
@@ -40,10 +41,11 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     @Input() projectIri: string;
 
     /**
-     * selected resource class is a subclass from knora base (baseClassIri)
+     * create mode: iri selected resource class is a subclass from knora base (baseClassIri)
+     * edit mode: iri of resource class
      * e.g. knora-api:StillImageRepresentation
      */
-    @Input() subClassOf: string;
+    @Input() iri: string;
 
     /**
      * name of resource class e.g. Still image
@@ -52,6 +54,19 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     @Input() name: string;
     // store name as resourceClassTitle on init; in this case it can't be overwritten in the next / prev navigation
     resourceClassTitle: string;
+
+    // two step form: which should be active?
+    /**
+     * two step form: which should be active?
+     * true => step 1 shows label and comment of resource class
+     * false => step 2 shows list of properties of resource class
+     */
+    @Input() showResourceClassForm: boolean = true;
+
+    /**
+     * edit mode (true); otherwise create mode
+    */
+    @Input() edit: boolean;
 
     /**
      * emit event, when closing dialog
@@ -65,6 +80,9 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
     // current ontology; will get it from cache by key 'currentOntology'
     ontology: ReadOntology;
+
+    // set a list of properties to set res class cardinality for
+    propsForCard: Property[] = [];
 
     // success of sending data
     success = false;
@@ -81,9 +99,6 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     // in case of an error
     error: boolean;
 
-    // two step form: which should be active?
-    showResourceClassForm: boolean = true;
-
     // form group, form array (for properties) errors and validation messages
     resourceClassForm: FormGroup;
 
@@ -97,7 +112,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     // container for properties
     properties: FormArray;
 
-    // reresource class name should be unique
+    // resource class name should be unique
     existingResourceClassNames: [RegExp];
 
     existingPropertyNames: [RegExp];
@@ -137,7 +152,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
             new RegExp('anEmptyRegularExpressionWasntPossible')
         ];
 
-        // set file representation or default reresource class as title
+        // set file representation or default resource class as title
         this.resourceClassTitle = this.name;
 
         this._cache.get('currentOntology').subscribe(
@@ -153,21 +168,11 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                 for (const c of classKeys) {
                     this.existingResourceClassNames.push(
                         new RegExp('(?:^|W)' + c.split('#')[1] + '(?:$|W)')
-                    )
+                    );
                 }
 
-                const propKeys: string[] = Object.keys(response.properties);
+                // const propKeys: string[] = Object.keys(response.properties);
 
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
-
-        // get all lists; will be used to set guit attribut in list property
-        this._dspApiConnection.admin.listsEndpoint.getListsInProject(this.projectIri).subscribe(
-            (response: ApiResponseData<ListsResponse>) => {
-                this._cache.set('currentOntologyLists', response.body.lists);
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -196,12 +201,36 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         // reset properties
         this._resourceClassFormService.resetProperties();
 
-        this.resourceClassFormSub = this._resourceClassFormService.resourceClassForm$
-            .subscribe(resourceClass => {
-                this.resourceClassForm = resourceClass;
-                this.properties = this.resourceClassForm.get('properties') as FormArray;
+        if (this.edit) {
+            // edit mode
+            // get resource class and property definition first
+
+            // get list of ontology properties
+            const ontoProperties: PropertyDefinition[] = this.ontology.getAllPropertyDefinitions();
+
+            // find prop cardinality in resource class
+            const ontoClasses: ClassDefinition[] = this.ontology.getAllClassDefinitions();
+            Object.keys(ontoClasses).forEach(key => {
+                if (ontoClasses[key].id === this.iri) {
+
+                    this._resourceClassFormService.setProperties(ontoClasses[key], ontoProperties);
+
+                    this.resourceClassFormSub = this._resourceClassFormService.resourceClassForm$
+                        .subscribe(resourceClass => {
+                            this.resourceClassForm = resourceClass;
+                            this.properties = this.resourceClassForm.get('properties') as FormArray;
+                        });
+                }
             });
 
+        } else {
+            // create mode
+            this.resourceClassFormSub = this._resourceClassFormService.resourceClassForm$
+                .subscribe(resourceClass => {
+                    this.resourceClassForm = resourceClass;
+                    this.properties = this.resourceClassForm.get('properties') as FormArray;
+                });
+        }
         this.resourceClassForm.valueChanges.subscribe(data => this.onValueChanged(data));
     }
 
@@ -224,6 +253,9 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         });
 
     }
+
+    //
+    // property form: handle list of properties
 
     /**
      * add property line
@@ -278,6 +310,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
     /**
      * Go to next step: from resource-class form forward to properties form
+     * In create mode only
      */
     nextStep(ev: Event) {
 
@@ -285,7 +318,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         this.showResourceClassForm = false;
 
         // use response to go further with properties
-        this.updateParent.emit({ title: this.resourceClassLabels[0].value, subtitle: 'Define the metadata for resource class' });
+        this.updateParent.emit({ title: this.resourceClassLabels[0].value, subtitle: 'Define the metadata fields for the resource class' });
 
         // load one first property line
         if (!this.resourceClassForm.value.properties.length) {
@@ -294,10 +327,11 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     }
     /**
      * Go to previous step: from properties form back to resource-class form
+     * In create mode only
      */
     prevStep(ev: Event) {
         ev.preventDefault();
-        this.updateParent.emit({ title: this.resourceClassTitle, subtitle: 'Customize resource class' });
+        this.updateParent.emit({ title: this.resourceClassTitle, subtitle: 'Customize the resource class' });
         this.showResourceClassForm = true;
     }
 
@@ -309,45 +343,47 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
      */
     submitData() {
         this.loading = true;
+        if (this.edit) {
+            // edit mode
+            // submit properties and set cardinality
+            this.submitProps(this.resourceClassForm.value.properties, this.iri);
 
-        // set resource class name / id
-        const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id, this.resourceClassLabels[0].value);
+        } else {
+            // create mode
+            // submit resource class data to knora and create resource class incl. cardinality
 
-        const onto = new UpdateOntology<CreateResourceClass>();
+            // set resource class name / id: randomized string
+            const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id);
+            // OR const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id, this.resourceClassLabels[0].value, 'class');
 
-        onto.id = this.ontology.id;
-        onto.lastModificationDate = this.lastModificationDate;
+            const onto = new UpdateOntology<CreateResourceClass>();
 
-        const newResClass = new CreateResourceClass();
+            onto.id = this.ontology.id;
+            onto.lastModificationDate = this.lastModificationDate;
 
-        newResClass.name = uniqueClassName
-        newResClass.label = this.resourceClassLabels;
-        newResClass.comment = this.resourceClassComments;
-        newResClass.subClassOf = [this.subClassOf];
+            const newResClass = new CreateResourceClass();
 
-        onto.entity = newResClass;
+            newResClass.name = uniqueClassName
+            newResClass.label = this.resourceClassLabels;
+            newResClass.comment = this.resourceClassComments;
+            newResClass.subClassOf = [this.iri];
 
-        // submit resource class data to knora and create resource class incl. cardinality
-        // console.log('submit resource class data:', resourceClassData);
-        // let i: number = 0;
-        this._dspApiConnection.v2.onto.createResourceClass(onto).subscribe(
-            (classResponse: ResourceClassDefinitionWithAllLanguages) => {
-                // console.log('classResponse', classResponse);
-                // need lmd from classResponse
-                this.lastModificationDate = classResponse.lastModificationDate;
+            onto.entity = newResClass;
+            this._dspApiConnection.v2.onto.createResourceClass(onto).subscribe(
+                (classResponse: ResourceClassDefinitionWithAllLanguages) => {
+                    // need lmd from classResponse
+                    this.lastModificationDate = classResponse.lastModificationDate;
 
-                // post prop data; one by one
-                this.submitProps(this.resourceClassForm.value.properties, classResponse.id);
+                    // submit properties and set cardinality
+                    this.submitProps(this.resourceClassForm.value.properties, classResponse.id);
 
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
+        }
 
-
-        // show message to close dialog box
-        // this.closeMessage();
     }
 
     /**
@@ -368,11 +404,12 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                     // submit prop
                     // console.log('first pipe operator...waiting...prepare and submit prop', prop);
                     if (prop.iri) {
-                        // the defined prop exists already in this ontology. We can proceed with cardinality.
-                        this.setCardinality(prop.iri, classIri, prop.multiple, prop.required, i);
+                        // already existing property; add it to the new list of properties
+
+                        this.propsForCard.push(prop);
                     } else {
                         // the defined prop does not exist yet. We have to create it.
-                        this.createProp(prop, classIri, i);
+                        this.createProp(prop, classIri);
                     }
                     return new Promise(resolve => setTimeout(() => resolve(prop), 1200));
                 }
@@ -386,30 +423,29 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
             ))
             .subscribe(
                 (prop: Property) => {
-                    // this.getOntology(this.ontologyId);
 
                     if (i > props.length) {
                         // console.log('at the end: created', prop)
-                        // TODO: reset ontology cache
 
-                        // close the dialog box
-                        this.loading = false;
-                        this.closeDialog.emit();
+                        // all properties are created and exist
+                        // set the cardinality
+                        this.setCardinality(this.propsForCard, classIri);
                     }
                 }
             );
 
     }
 
-    createProp(prop: Property, classIri: string, index: number) {
+    createProp(prop: Property, classIri?: string) {
         return new Promise((resolve, reject) => {
 
-            // set resource property name / id
-            const uniquePropName: string = this._resourceClassFormService.setUniqueName(this.ontology.id, prop.label);
+            // set resource property name / id: randomized string
+            const uniquePropName: string = this._resourceClassFormService.setUniqueName(this.ontology.id);
 
             const onto = new UpdateOntology<CreateResourceProperty>();
 
             onto.id = this.ontology.id;
+            onto.lastModificationDate = this.lastModificationDate;
 
             // prepare payload for property
             const newResProp = new CreateResourceProperty();
@@ -448,20 +484,19 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
             if (prop.type.subPropOf === Constants.HasLinkTo) {
                 newResProp.objectType = prop.guiAttr;
-                newResProp.subjectType = classIri;
+                // newResProp.subjectType = classIri;
             } else {
                 newResProp.objectType = prop.type.objectType;
             }
-
-            onto.lastModificationDate = this.lastModificationDate;
 
             onto.entity = newResProp;
 
             this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
                 (response: ResourcePropertyDefinitionWithAllLanguages) => {
                     this.lastModificationDate = response.lastModificationDate;
-                    // update cardinality
-                    this.setCardinality(response.id, classIri, prop.multiple, prop.required, index);
+                    // prepare prop for cardinality
+                    prop.iri = response.id;
+                    this.propsForCard.push(prop);
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
@@ -470,32 +505,42 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         })
     }
 
-    setCardinality(propIri: string, classIri: string, multiple: boolean, required: boolean, index: number) {
+    setCardinality(props: Property[], classIri: string) {
+        const onto = new UpdateOntology<UpdateResourceClassCardinality>();
 
-        const addCard = new UpdateOntologyResourceClassCardinality();
+        onto.lastModificationDate = this.lastModificationDate;
 
-        addCard.lastModificationDate = this.lastModificationDate;
+        onto.id = this.ontology.id;
 
-        addCard.id = this.ontology.id;
+        const addCard = new UpdateResourceClassCardinality();
 
-        const cardinality = this._resourceClassFormService.translateCardinality(multiple, required);
+        addCard.id = classIri;
 
-        addCard.cardinalities = [
-            {
-                propertyIndex: propIri,
-                cardinality: cardinality,
-                resourceClass: classIri,
-                guiOrder: index
+        addCard.cardinalities = [];
+
+        props.forEach((prop, index) => {
+            const propCard: IHasProperty = {
+                propertyIndex: prop.iri,
+                cardinality: this._resourceClassFormService.translateCardinality(prop.multiple, prop.required),
+                guiOrder: index + 1
             }
-        ];
 
+            addCard.cardinalities.push(propCard);
+        });
 
-        this._dspApiConnection.v2.onto.addCardinalityToResourceClass(addCard).subscribe(
+        onto.entity = addCard;
+
+        this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(onto).subscribe(
             (res: ResourceClassDefinitionWithAllLanguages) => {
                 this.lastModificationDate = res.lastModificationDate;
+                // close the dialog box
+                this.loading = false;
+                this.closeDialog.emit();
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
             }
         );
-
     }
 
 }

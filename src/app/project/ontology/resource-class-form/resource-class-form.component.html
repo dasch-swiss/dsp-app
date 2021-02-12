@@ -3,7 +3,7 @@
     <!-- success message after updating -->
     <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
 
-    <!-- content: Step 1 = define reresource class -->
+    <!-- content: Step 1 = define resource class -->
     <form [formGroup]="resourceClassForm" class="form-content">
 
         <div *ngIf="showResourceClassForm" class="resource-class-data">
@@ -12,8 +12,7 @@
                 <!-- label -->
                 <div class="large-field string-literal-container">
                     <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
-                        (enter)="nextStep($event)"
-                        (dataChanged)="handleData($event, 'labels')">
+                        (enter)="nextStep($event)" (dataChanged)="handleData($event, 'labels')">
                     </dsp-string-literal-input>
                     <mat-hint class="string-literal-error" *ngIf="formErrors.label">
                         {{ formErrors.label }}
@@ -45,13 +44,15 @@
         </div>
 
 
-        <!-- content: Step 2 = define properties for reresource class -->
+        <!-- content: Step 2 = define properties for resource class -->
         <div *ngIf="!showResourceClassForm" class="properties-data">
 
             <!-- propertiy: one line, with "add" icon to add additional properties -->
             <div cdkDropList class="properties-list" (cdkDropListDropped)="drop($event)">
                 <div cdkDrag class="property-line"
                     *ngFor="let prop of properties?.controls; let last = last; let i = index;">
+
+                    <!-- <div *ngIf="prop.value.objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'"> -->
 
                     <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
 
@@ -60,34 +61,38 @@
                         <mat-icon>drag_indicator</mat-icon>
                     </button>
 
-                    <app-property-form [propertyForm]="prop" [index]="i"></app-property-form>
+                    <app-property-form [propertyForm]="prop" [index]="i" [ontology]="ontology" [resClassIri]="iri">
+                    </app-property-form>
 
                     <button *ngIf="properties.length > 1" mat-icon-button type="button" color="warn"
                         aria-label="Delete this property" class="suffix delete-line" (click)="removeProperty(i)">
                         <mat-icon>delete_outlined</mat-icon>
                     </button>
-                    <button *ngIf="last" [disabled]="!properties.valid" mat-icon-button type="button" color="primary"
-                        aria-label="Add new property" class="add-new-line" (click)="addProperty()">
-                        <mat-icon>add</mat-icon>
-                    </button>
+                <!-- </div> -->
                 </div>
-
+                <button [disabled]="!properties.valid" mat-button type="button" color="primary"
+                    aria-label="Add new property" class="add-new-line" (click)="addProperty()">
+                    <mat-icon>add</mat-icon> Add property
+                </button>
             </div>
             <!-- action buttons -->
             <div class="form-panel form-action">
                 <span>
-                    <button mat-button type="button" (click)="prevStep($event)">
+                    <button *ngIf="!edit" mat-button type="button" (click)="prevStep($event)">
                         {{ 'appLabels.form.action.back' | translate }}
+                    </button>
+                    <button *ngIf="edit" mat-button type="button" (click)="closeDialog.emit()">
+                        {{ 'appLabels.form.action.cancel' | translate }}
                     </button>
                 </span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                    <button mat-raised-button type="submit" color="primary" [disabled]="!properties.valid"
+                    <button mat-raised-button type="submit" color="primary" [disabled]="!properties?.valid"
                         (click)="submitData()">
                         <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                         </dsp-progress-indicator>
                         <mat-icon *ngIf="error && !loading">close</mat-icon>
-                        {{error ? 'Failed' : 'Submit'}}
+                        {{error ? 'Failed' : (edit ? 'Update' : 'Submit')}}
                     </button>
                 </span>
             </div>

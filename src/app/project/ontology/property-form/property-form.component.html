@@ -16,9 +16,9 @@
     </mat-form-field>
 
     <!-- TODO: select and reuse existing ObjectProperty doesn't work yet; s. https://github.com/dasch-swiss/knora-app/pull/229#issuecomment-598276151 -->
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateFieldsDependingOnLabel($event.option)" [matTooltip]="existingProperty ? 'Visible' : null">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateFieldsDependingOnLabel($event.option.value)" [matTooltip]="existingProperty ? 'Visible' : null">
         <mat-option *ngFor="let prop of filteredProperties | async" [value]="prop"
-            matTooltip="Label: {{ prop?.label }} (Name as part of id: {{prop?.name}})" matTooltipPosition="after">
+            matTooltip="Label: {{ prop?.label }} (Name is part of the id: {{prop?.name}})" matTooltipPosition="after">
             {{ prop?.label }}
         </mat-option>
     </mat-autocomplete>
@@ -63,11 +63,11 @@
                 </mat-form-field>
             </div>
 
-            <div *ngSwitchCase="Constants.Resource">
+            <div *ngSwitchCase="Constants.LinkValue">
                 <mat-form-field>
-                    <mat-label>Select reresource class</mat-label>
+                    <mat-label>Select resource class</mat-label>
                     <mat-select formControlName="guiAttr">
-                        <mat-option *ngFor="let item of reresourceClasss" [value]="item.id">
+                        <mat-option *ngFor="let item of reresourceClasss" [value]="item.id" [disabled]="(resClassIri === item.id)">
                             {{item.label}}
                         </mat-option>
                     </mat-select>

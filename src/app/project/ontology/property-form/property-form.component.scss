@@ -28,7 +28,9 @@
 }
 
 .reset-button {
-    margin: 0 0 0 auto;
+    position: absolute;
+    right: 0;
+    bottom: 12px;
 }
 
 .hidden {

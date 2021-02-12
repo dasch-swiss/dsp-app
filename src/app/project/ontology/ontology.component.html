@@ -1,6 +1,7 @@
 <div *ngIf="projectAdmin" class="desktop-only">
 
-    <p class="note warning center">This is a first version of the ontology editor. Some features may not work as intended.</p>
+    <p class="note warning center">This is a first version of the data model editor. Some features may not work as
+        intended.</p>
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- toolbar: select ontology -->
@@ -53,7 +54,7 @@
     </div>
 
     <!-- main content: overview shows resource classes of ontology -->
-    <div *ngIf="ontology" class="ontology-editor drag-drop-stop">
+    <div *ngIf="ontology" class="ontology-editor">
 
         <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
@@ -83,7 +84,7 @@
 
                 <!-- edit options -->
                 <span class="ontology-actions">
-                    <p class="mat-caption space-reducer">Ontology configuration</p>
+                    <p class="mat-caption space-reducer">Data model configuration</p>
                     <!-- TODO: remove following span as soon edit mode is implemented; it's only for tooltip to use with disabled button  -->
                     <span [matTooltip]="'Edit ontology is not yet implemented'" matTooltipPosition="above">
                         <button mat-button [disabled]="!ontology.lastModificationDate" [disabled]="true"
@@ -102,62 +103,78 @@
             </mat-toolbar-row>
         </mat-toolbar>
 
-        <p *ngIf="!ontology.lastModificationDate" class="note warning center">This ontology can't be edited because of
-            missing "lastModificationDate"!</p>
-        <div #ontologyEditor *ngIf="!loadOntology && view === 'grid'" class="ontology-editor-canvas">
-            <!-- button to select and add new resource class to the ontology -->
-            <div class="add-resource-class"
-                *ngIf="project?.status && (sysAdmin || projectAdmin) && ontologyIri && ontology.lastModificationDate">
-                <button mat-raised-button color="primary" [matMenuTriggerFor]="addResClassMenu">
-                    Add resource class&nbsp;
-                    <mat-icon>add</mat-icon>
-                </button>
-                <mat-menu #addResClassMenu="matMenu" xPosition="before">
-                    <button mat-menu-item *ngFor="let type of resourceClass"
-                        (click)="openResourceClassForm('addResourceClass', type)">
-                        {{ type?.label }}
+        <div #ontologyEditor *ngIf="!loadOntology && view === 'grid'" class="ontology-editor-container">
+
+            <div class="ontology-editor-subheader">
+                <p *ngIf="!ontology.lastModificationDate" class="note warning center">
+                    This ontology can't be edited because of missing "lastModificationDate"!
+                </p>
+                <!-- button to select and add new resource class to the ontology -->
+                <div class="add-resource-class"
+                    *ngIf="project?.status && (sysAdmin || projectAdmin) && ontologyIri && ontology.lastModificationDate">
+                    <button mat-raised-button color="primary" [matMenuTriggerFor]="addResClassMenu">
+                        Add resource class&nbsp;
+                        <mat-icon>add</mat-icon>
                     </button>
-                </mat-menu>
-            </div>
-
-
-            <!-- list of resource classs -->
-            <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
-                cdkDragBoundary=".drag-drop-stop">
-                <mat-toolbar class="resource-class-header" cdkDragHandle>
-                    <mat-toolbar-row>
-                        <h4 mat-card-title [matTooltip]="resClass.label" matTooltipPosition="above">
-                            {{resClass.label | dspTruncate: 24}}</h4>
-                        <span class="fill-remaining-space"></span>
-                        <button mat-icon-button [matMenuTriggerFor]="resClassMenu">
-                            <mat-icon>more_horiz</mat-icon>
+                    <mat-menu #addResClassMenu="matMenu" xPosition="before">
+                        <button mat-menu-item *ngFor="let type of resourceClass"
+                            (click)="openResourceClassForm('addResourceClass', type)">
+                            {{ type?.label }}
                         </button>
-                        <mat-menu #resClassMenu="matMenu" xPosition="before">
-                            <button mat-menu-item [disabled]="true"
-                                (click)="openResourceClassForm('editResourceClass', {iri: resClass.id, name: '', label: resClass.label})">Edit
-                                (not yet implemented)</button>
-                            <button mat-menu-item
-                                (click)="delete(resClass.id, 'ResourceClass', resClass.label)">Delete</button>
-                        </mat-menu>
-                    </mat-toolbar-row>
-                </mat-toolbar>
-                <div class="resource-class-properties">
-                    <ul>
-                        <span *ngFor="let prop of resClass.propertiesList">
-                            <!-- display only properties with guiOrder and they exist in list of properties
-                                and objectType is not a linkValue (otherwise we have the property twice) -->
-                            <li
-                                *ngIf="prop.guiOrder >= 0 && ontology?.properties[prop.propertyIndex] && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'">
-                                {{ontology?.properties[prop.propertyIndex].label}}
-                            </li>
-                        </span>
-
-                    </ul>
+                    </mat-menu>
                 </div>
-
             </div>
 
+            <div class="ontology-editor-canvas drag-drop-stop">
+                <div class="ontology-editor-grid">
 
+                    <!-- list of resource classs -->
+                    <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
+                        cdkDragBoundary=".drag-drop-stop">
+                        <mat-toolbar class="resource-class-header" cdkDragHandle>
+                            <mat-toolbar-row>
+                                <h4 mat-card-title [matTooltip]="resClass.label" matTooltipPosition="above">
+                                    {{resClass.label | dspTruncate: 24}}</h4>
+                                <span class="fill-remaining-space"></span>
+                                <button mat-icon-button [matMenuTriggerFor]="resClassMenu"
+                                    [matTooltip]="(ontology.lastModificationDate ? null : 'This ontology can\'t be edited because of missing lastModificationDate!')"
+                                    matTooltipPosition="above">
+                                    <mat-icon>more_horiz</mat-icon>
+                                </button>
+                                <mat-menu #resClassMenu="matMenu" xPosition="before">
+                                    <button mat-menu-item [disabled]="!ontology.lastModificationDate" [disabled]="true"
+                                        (click)="openResourceClassForm('editResourceClass', {iri: resClass.id, name: '', label: resClass.label})">
+                                        Edit info (not yet implemented)
+                                    </button>
+                                    <button mat-menu-item [disabled]="!ontology.lastModificationDate"
+                                        (click)="updateCard(resClass)">
+                                        Update corresponding properties
+                                    </button>
+                                    <button mat-menu-item [disabled]="!ontology.lastModificationDate"
+                                        (click)="delete(resClass.id, 'ResourceClass', resClass.label)">
+                                        Delete resource class
+                                    </button>
+                                </mat-menu>
+                            </mat-toolbar-row>
+                        </mat-toolbar>
+                        <div class="resource-class-properties">
+                            <ul>
+                                <span *ngFor="let prop of resClass.propertiesList">
+                                    <!-- display only properties with guiOrder and they exist in list of properties
+                                and objectType is not a linkValue (otherwise we have the property twice) -->
+                                    <li
+                                        *ngIf="prop.guiOrder >= 0 && ontology?.properties[prop.propertyIndex] && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'">
+                                        {{ontology?.properties[prop.propertyIndex].label}}
+                                    </li>
+                                </span>
+
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
         </div>
 
         <div *ngIf="view === 'graph'" class="ontology-viewer">

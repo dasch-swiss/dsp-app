@@ -147,7 +147,7 @@ export class DefaultProperties {
                     icon: 'link',
                     label: 'Other resource e.g. Person',
                     subPropOf: Constants.HasLinkTo,
-                    objectType: Constants.Resource,
+                    objectType: Constants.LinkValue,
                     gui_ele: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
                     group: 'Link'
                 },
