@@ -15,7 +15,9 @@ import {
     ResourcePropertyDefinitionWithAllLanguages,
     StringLiteral,
     UpdateOntology,
-    UpdateResourceClassCardinality
+    UpdateResourceClassCardinality,
+    UpdateResourceClassComment,
+    UpdateResourceClassLabel
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-literal-v2';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
@@ -122,7 +124,8 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
     // form errors on the following fields:
     formErrors = {
-        'label': ''
+        'label': '',
+        'comment': ''
     };
 
     // in case of form error: show message
@@ -130,6 +133,9 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         'label': {
             'required': 'Label is required.'
         },
+        'comment': {
+            'required': 'Comment is required.'
+        }
     };
 
     lastModificationDate: string;
@@ -202,26 +208,43 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         this._resourceClassFormService.resetProperties();
 
         if (this.edit) {
-            // edit mode
-            // get resource class and property definition first
 
-            // get list of ontology properties
-            const ontoProperties: PropertyDefinition[] = this.ontology.getAllPropertyDefinitions();
+            if (this.showResourceClassForm) {
+                // edit mode: res class info (label and comment)
+                // get resource class info
+                const resourceClasses: ResourceClassDefinitionWithAllLanguages[] = this.ontology.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
+                Object.keys(resourceClasses).forEach(key => {
+                    if (resourceClasses[key].id === this.iri) {
+                        this.resourceClassLabels = resourceClasses[key].labels;
+                        this.resourceClassComments = resourceClasses[key].comments;
+                    }
+                });
+                this.resourceClassFormSub = this._resourceClassFormService.resourceClassForm$
+                    .subscribe(resourceClass => {
+                        this.resourceClassForm = resourceClass;
+                    });
+                this.resourceClassForm.valueChanges.subscribe(data => this.onValueChanged(data));
 
-            // find prop cardinality in resource class
-            const ontoClasses: ClassDefinition[] = this.ontology.getAllClassDefinitions();
-            Object.keys(ontoClasses).forEach(key => {
-                if (ontoClasses[key].id === this.iri) {
+            } else {
+                // edit mode: res class cardinality
+                // get list of ontology properties
+                const ontoProperties: PropertyDefinition[] = this.ontology.getAllPropertyDefinitions();
 
-                    this._resourceClassFormService.setProperties(ontoClasses[key], ontoProperties);
+                // find prop cardinality in resource class
+                const ontoClasses: ClassDefinition[] = this.ontology.getAllClassDefinitions();
+                Object.keys(ontoClasses).forEach(key => {
+                    if (ontoClasses[key].id === this.iri) {
 
-                    this.resourceClassFormSub = this._resourceClassFormService.resourceClassForm$
-                        .subscribe(resourceClass => {
-                            this.resourceClassForm = resourceClass;
-                            this.properties = this.resourceClassForm.get('properties') as FormArray;
-                        });
-                }
-            });
+                        this._resourceClassFormService.setProperties(ontoClasses[key], ontoProperties);
+
+                        this.resourceClassFormSub = this._resourceClassFormService.resourceClassForm$
+                            .subscribe(resourceClass => {
+                                this.resourceClassForm = resourceClass;
+                                this.properties = this.resourceClassForm.get('properties') as FormArray;
+                            });
+                    }
+                });
+            }
 
         } else {
             // create mode
@@ -344,9 +367,58 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     submitData() {
         this.loading = true;
         if (this.edit) {
-            // edit mode
-            // submit properties and set cardinality
-            this.submitProps(this.resourceClassForm.value.properties, this.iri);
+
+            if (this.showResourceClassForm) {
+                // edit mode: res class info (label and comment)
+                // label
+                const onto4Label = new UpdateOntology<UpdateResourceClassLabel>();
+                onto4Label.id = this.ontology.id;
+                onto4Label.lastModificationDate = this.lastModificationDate;
+
+                const updateLabel = new UpdateResourceClassLabel();
+                updateLabel.id = this.iri;
+                updateLabel.labels = this.resourceClassLabels;
+                onto4Label.entity = updateLabel;
+
+                // comment
+                const onto4Comment = new UpdateOntology<UpdateResourceClassComment>();
+                onto4Comment.id = this.ontology.id;
+
+                const updateComment = new UpdateResourceClassComment();
+                updateComment.id = this.iri;
+                updateComment.comments = this.resourceClassComments;
+                onto4Comment.entity = updateComment;
+
+                this._dspApiConnection.v2.onto.updateResourceClass(onto4Label).subscribe(
+                    (classLabelResponse: ResourceClassDefinitionWithAllLanguages) => {
+                        this.lastModificationDate = classLabelResponse.lastModificationDate;
+                        onto4Comment.lastModificationDate = this.lastModificationDate;
+
+                        this._dspApiConnection.v2.onto.updateResourceClass(onto4Comment).subscribe(
+                            (classCommentResponse: ResourceClassDefinitionWithAllLanguages) => {
+                                this.lastModificationDate = classCommentResponse.lastModificationDate;
+
+                                // close the dialog box
+                                this.loading = false;
+                                this.closeDialog.emit();
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        )
+
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                    }
+                );
+
+
+            } else {
+                // edit mode: res class cardinality
+                // submit properties and set cardinality
+                this.submitProps(this.resourceClassForm.value.properties, this.iri);
+            }
 
         } else {
             // create mode
@@ -363,7 +435,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
             const newResClass = new CreateResourceClass();
 
-            newResClass.name = uniqueClassName
+            newResClass.name = uniqueClassName;
             newResClass.label = this.resourceClassLabels;
             newResClass.comment = this.resourceClassComments;
             newResClass.subClassOf = [this.iri];
