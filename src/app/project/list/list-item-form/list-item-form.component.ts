@@ -1,21 +1,26 @@
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseData,
     ApiResponseError,
     ChildNodeInfo,
     CreateChildNodeRequest,
+    DeleteListNodeResponse,
     KnoraApiConnection,
     ListInfoResponse,
-    ListNodeInfo,
+    ListNode,
     ListNodeInfoResponse,
     StringLiteral
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+
+export class ListNodeOperation {
+    operation: 'create' | 'update' | 'delete' | 'reposition';
+    listNode: ListNode;
+}
 
 @Component({
     selector: 'app-list-item-form',
@@ -71,7 +76,7 @@ export class ListItemFormComponent implements OnInit {
     // set main / pre-defined language
     @Input() language?: string;
 
-    @Output() refreshParent: EventEmitter<ListNodeInfo> = new EventEmitter<ListNodeInfo>();
+    @Output() refreshParent: EventEmitter<ListNodeOperation> = new EventEmitter<ListNodeOperation>();
 
     loading: boolean;
 
@@ -127,25 +132,36 @@ export class ListItemFormComponent implements OnInit {
         this.loading = true;
 
         // generate the data payload
-        const listItem: CreateChildNodeRequest = new CreateChildNodeRequest();
-        listItem.parentNodeIri = this.parentIri;
-        listItem.projectIri = this.projectIri;
-        listItem.name = this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+        const childNode: CreateChildNodeRequest = new CreateChildNodeRequest();
+        childNode.parentNodeIri = this.parentIri;
+        childNode.projectIri = this.projectIri;
+        childNode.name = this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
 
         // initialize labels
         let i = 0;
         for (const l of this.labels) {
-            listItem.labels[i] = new StringLiteral();
-            listItem.labels[i].language = l.language;
-            listItem.labels[i].value = l.value;
+            childNode.labels[i] = new StringLiteral();
+            childNode.labels[i].language = l.language;
+            childNode.labels[i].value = l.value;
             i++;
         }
-        listItem.comments = []; // TODO: comments are not yet implemented in the template
+        childNode.comments = []; // TODO: comments are not yet implemented in the template
+
+        // init data to emit to parent
+        const listNodeOperation: ListNodeOperation = new ListNodeOperation();
 
         // send payload to dsp-api's api
-        this._dspApiConnection.admin.listsEndpoint.createChildNode(listItem).subscribe(
+        this._dspApiConnection.admin.listsEndpoint.createChildNode(childNode).subscribe(
             (response: ApiResponseData<ListNodeInfoResponse>) => {
-                this.refreshParent.emit(response.body.nodeinfo);
+                // this needs to return a ListNode as opposed to a ListNodeInfo, so we make one
+                listNodeOperation.listNode = new ListNode();
+                listNodeOperation.listNode.hasRootNode = response.body.nodeinfo.hasRootNode;
+                listNodeOperation.listNode.id = response.body.nodeinfo.id;
+                listNodeOperation.listNode.labels = response.body.nodeinfo.labels;
+                listNodeOperation.listNode.name = response.body.nodeinfo.name;
+                listNodeOperation.listNode.position = response.body.nodeinfo.position;
+                listNodeOperation.operation = 'create';
+                this.refreshParent.emit(listNodeOperation);
                 this.loading = false;
             },
             (error: ApiResponseError) => {
@@ -182,7 +198,7 @@ export class ListItemFormComponent implements OnInit {
     }
 
     /**
-     * Called when the 'edit' button is clicked.
+     * Called when the 'edit' or 'delete' button is clicked.
      *
      * @param mode mode to tell DialogComponent which part of the template to show.
      * @param name label of the node; for now this is always the first label in the array.
@@ -203,12 +219,49 @@ export class ListItemFormComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe((data: ChildNodeInfo) => {
-            // update the view if data was passed back
-            // data is only passed back when clicking the 'update' button
-            if (data) {
-                this.refreshParent.emit(data as ListNodeInfo);
+        dialogRef.afterClosed().subscribe((data: ChildNodeInfo | boolean) => {
+
+            // init data to emit to parent
+            const listNodeOperation = new ListNodeOperation();
+
+            if (data instanceof ChildNodeInfo) { // update
+                // the call to DSP-API to update the node is done in the child component
+                listNodeOperation.listNode = (data as ListNode);
+                listNodeOperation.operation = 'update';
+
+                // emit data to parent to update the view
+                this.refreshParent.emit(listNodeOperation);
                 this.labels = data.labels;
+            } else if (typeof(data) === 'boolean' && data === true) { // delete
+                // delete the node
+                this._dspApiConnection.admin.listsEndpoint.deleteListNode(iri).subscribe(
+                    (response: ApiResponseData<DeleteListNodeResponse>) => {
+                        listNodeOperation.listNode = response.body.node;
+                        listNodeOperation.operation = 'delete';
+
+                        // emit data to parent to update the view
+                        this.refreshParent.emit(listNodeOperation);
+                    },
+                    (error: ApiResponseError) => {
+                        // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
+                        if (error.status === 400) {
+                            const errorDialogConfig: MatDialogConfig = {
+                                width: '640px',
+                                position: {
+                                    top: '112px'
+                                },
+                                data: { mode: 'deleteListNodeError'}
+                            };
+
+                            // open the dialog box
+                            this._dialog.open(DialogComponent, errorDialogConfig);
+                        } else {
+                            // use default error behavior
+                            this._errorHandler.showMessage(error);
+                        }
+
+                    }
+                );
             }
         });
     }

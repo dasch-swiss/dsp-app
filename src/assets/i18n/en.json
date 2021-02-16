@@ -151,7 +151,8 @@
             },
             "lists": {
                 "title": {
-                    "delete": "Delete list"
+                    "deleteList": "Delete list",
+                    "deleteListNode": "Delete list node"
                 }
             },
             "resource": {

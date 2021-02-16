@@ -17,7 +17,7 @@
         <!-- recursion: list with child nodes -->
         <app-list-item class="child-node" *ngIf="node.id === expandedNode && node.children.length > 0"
                        [language]="language" [childNode]="true" [list]="node.children" [parentIri]="node.id"
-                       [projectIri]="projectIri" [projectcode]="projectcode">
+                       [projectIri]="projectIri" [projectcode]="projectcode" (refreshChildren)="updateParentNodeChildren($event, node.position)">
         </app-list-item>
 
 

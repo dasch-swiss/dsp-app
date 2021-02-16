@@ -1,14 +1,14 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import {
     ApiResponseData,
     ApiResponseError,
-    ChildNodeInfo,
     KnoraApiConnection,
     ListNode,
     ListResponse
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ListNodeOperation } from '../list-item-form/list-item-form.component';
 
 @Component({
     selector: 'app-list-item',
@@ -29,6 +29,8 @@ export class ListItemComponent implements OnInit {
 
     @Input() language?: string;
 
+    @Output() refreshChildren: EventEmitter<ListNode[]> = new EventEmitter<ListNode[]>();
+
     expandedNode: string;
 
     constructor(
@@ -37,8 +39,7 @@ export class ListItemComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-
-        // in case of parent node: do not run the following request
+        // in case of parent node: run the following request to get the entire list
         if (!this.childNode) {
             this._dspApiConnection.admin.listsEndpoint.getList(this.parentIri).subscribe(
                 (result: ApiResponseData<ListResponse>) => {
@@ -66,7 +67,6 @@ export class ListItemComponent implements OnInit {
      * @param id id of parent node for which the 'expand' button was clicked.
      */
     toggleChildren(id: string) {
-
         if (this.showChildren(id)) {
             this.expandedNode = undefined;
         } else {
@@ -78,28 +78,54 @@ export class ListItemComponent implements OnInit {
     /**
      * Called when the 'refreshParent' event from ListItemFormComponent is triggered.
      *
-     * @param data info about the node; can be a root node or child node.
+     * @param data info about the operation that was performed on the node and should be reflected in the UI.
      * @param firstNode states whether or not the node is a new child node; defaults to false.
      */
-    updateView(data: ListNode, firstNode: boolean = false) {
+    updateView(data: ListNodeOperation, firstNode: boolean = false) {
+        // update the view by updating the existing list
+        if (data instanceof ListNodeOperation) {
+            switch (data.operation) {
+                case 'create': {
+                    if (firstNode) {
+                        // in case of new child node, we have to use the children from list
+                        const index: number = this.list.findIndex(item => item.id === this.expandedNode);
+                        this.list[index].children.push(data.listNode);
 
-        if (data instanceof ChildNodeInfo) {
-            this.list[data.position].labels = data.labels;
-            this.list[data.position].comments = data.comments;
-        } else {
-            // update the view by updating the existing list
-            if (firstNode) {
-                // in case of new child node, we have to use the children from list
-                const index: number = this.list.findIndex(item => item.id === this.expandedNode);
-                this.list[index].children.push(data);
+                    } else {
+                        this.list.push(data.listNode);
+                    }
+                    break;
+                }
+                case 'update': {
+                    // use the position from the response from DSP-API to find the correct node to update
+                    this.list[data.listNode.position].labels = data.listNode.labels;
+                    this.list[data.listNode.position].comments = data.listNode.comments;
+                    break;
+                }
+                case 'delete': {
+                    // conveniently, the response returned by DSP-API contains the entire list without the deleted node within its 'children'
+                    // we can just reassign the list to this
+                    this.list = data.listNode.children;
 
-            } else {
-                this.list.push(data);
+                    // emit the updated list of children to the parent node
+                    this.refreshChildren.emit(this.list);
+                    break;
+                }
+                default: {
+                    break;
+                }
             }
-
-            data.children = [];
         }
+    }
 
+    /**
+     * updates the children of the parent node
+     *
+     * @param children the updated list of children nodes
+     * @param position the position of the parent node
+     */
+    updateParentNodeChildren(children: ListNode[], position: number) {
+        this.list[position].children = children;
     }
 
 }
