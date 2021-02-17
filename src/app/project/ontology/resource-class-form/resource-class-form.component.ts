@@ -23,6 +23,7 @@ import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-litera
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { from, of, Subscription } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
+import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { Property, ResourceClassFormService } from './resource-class-form.service';
@@ -140,6 +141,11 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
     lastModificationDate: string;
 
+    // for the language selector
+    selectedLanguage = 'en';
+    languages: StringLiteral[] = AppGlobal.languagesList;
+
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
@@ -223,7 +229,6 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                     .subscribe(resourceClass => {
                         this.resourceClassForm = resourceClass;
                     });
-                this.resourceClassForm.valueChanges.subscribe(data => this.onValueChanged(data));
 
             } else {
                 // edit mode: res class cardinality
@@ -242,6 +247,9 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                                 this.resourceClassForm = resourceClass;
                                 this.properties = this.resourceClassForm.get('properties') as FormArray;
                             });
+
+                        // set default property language from resource class / first element
+                        this.resourceClassForm.controls.language.setValue(ontoClasses[key].labels[0].language);
                     }
                 });
             }
@@ -254,6 +262,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                     this.properties = this.resourceClassForm.get('properties') as FormArray;
                 });
         }
+
         this.resourceClassForm.valueChanges.subscribe(data => this.onValueChanged(data));
     }
 
@@ -342,6 +351,9 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
         // use response to go further with properties
         this.updateParent.emit({ title: this.resourceClassLabels[0].value, subtitle: 'Define the metadata fields for the resource class' });
+
+        // set default property language from res class label
+        this.resourceClassForm.controls.language.setValue(this.resourceClassLabels[0].language);
 
         // load one first property line
         if (!this.resourceClassForm.value.properties.length) {
@@ -523,7 +535,12 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
             const newResProp = new CreateResourceProperty();
             newResProp.name = uniquePropName;
             // TODO: update prop.label and use StringLiteralInput in property-form
-            newResProp.label = [{ "value": prop.label }];
+            newResProp.label = [
+                {
+                    'value': prop.label,
+                    'language': this.resourceClassForm.value['language']
+                }
+            ];
             if (prop.guiAttr) {
                 switch (prop.type.gui_ele) {
 

@@ -133,7 +133,7 @@
                         cdkDragBoundary=".drag-drop-stop">
                         <mat-toolbar class="resource-class-header" cdkDragHandle>
                             <mat-toolbar-row>
-                                <h4 mat-card-title [matTooltip]="resClass.label" matTooltipPosition="above">
+                                <h4 mat-card-title [matTooltip]="resClass.comment" matTooltipPosition="above">
                                     {{resClass.label | dspTruncate: 24}}</h4>
                                 <span class="fill-remaining-space"></span>
                                 <button mat-icon-button [matMenuTriggerFor]="resClassMenu"

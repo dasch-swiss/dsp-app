@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Cardinality, Constants, IHasProperty, PropertyDefinition, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants, IHasProperty, PropertyDefinition, ResourceClassDefinition, ResourcePropertyDefinition, StringLiteral } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DefaultProperties, PropertyType } from '../default-data/default-properties';
 
@@ -69,9 +69,11 @@ export class PropertyForm {
 
 // resource class data structure
 export class ResourceClass {
+    language: string;
     properties: Property[];
 
-    constructor(properties?: Property[]) {
+    constructor(language = 'en', properties?: Property[]) {
+        this.language = language;
         this.properties = properties;
     }
 }
@@ -79,12 +81,14 @@ export class ResourceClass {
 
 // resource class form controls
 export class ResourceClassForm {
+    language = new FormControl();
     properties = new FormArray([]);
 
     constructor(resourceClass: ResourceClass) {
+        this.language.setValue('en');
         if (resourceClass.properties) {
             let i = 0;
-            this.properties.setControl
+            this.properties.setControl;
             resourceClass.properties.forEach(prop => {
                 this.properties[i] = new FormControl(prop);
                 i++;

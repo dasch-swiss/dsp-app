@@ -36,6 +36,12 @@
   margin-bottom: 2px;
 }
 
+.properties-language {
+  position: absolute;
+  margin-left: 600px;
+  margin-top: -$header-height;
+}
+
 // properties
 .property-line {
   display: flex;
