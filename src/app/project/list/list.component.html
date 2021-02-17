@@ -66,9 +66,15 @@
                 <p class="mat-body" [matTooltip]="list.comments | dspStringifyStringLiteral" matTooltipPosition="above">
                     {{list.comments | dspStringifyStringLiteral | dspTruncate:64}}</p>
                 <span class="fill-remaining-space"></span>
-                <button mat-stroked-button
-                    (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)">
-                    Edit info
+                <button mat-button
+                    (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
+                    matTooltip="Edit info">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-button class="delete"
+                    (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
+                    matTooltip="Delete list">
+                    <mat-icon>delete</mat-icon>
                 </button>
             </mat-toolbar-row>
         </mat-toolbar>

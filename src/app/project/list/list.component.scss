@@ -16,3 +16,17 @@
     min-width: 140px;
   }
 }
+
+.list-editor {
+  mat-toolbar-row {
+    button {
+      margin: 0% 0.5%;
+      padding: 1%;
+      min-width: 6%;
+      border-radius: 40px;
+    }
+    button:hover {
+      background-color: #ebebeb;
+    }
+  }
+}

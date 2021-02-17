@@ -6,6 +6,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
     ApiResponseData,
     ApiResponseError,
+    DeleteListResponse,
     KnoraApiConnection,
     ListNodeInfo,
     ListsResponse,
@@ -216,7 +217,35 @@ export class ListComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(() => {
+        dialogRef.afterClosed().subscribe((data) => {
+            if (mode === 'deleteList' && typeof(data) === 'boolean' && data === true) {
+                this._dspApiConnection.admin.listsEndpoint.deleteListNode(this.listIri).subscribe(
+                    (res: ApiResponseData<DeleteListResponse>) => {
+                        this.lists = this.lists.filter(list => list.id !== res.body.iri);
+                        this.listIri = this.lists[0].id;
+                        this.listForm.controls.list.setValue(this.listIri);
+                        this.openList(this.listIri);
+                    },
+                    (error: ApiResponseError) => {
+                        // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
+                        if (error.status === 400) {
+                            const errorDialogConfig: MatDialogConfig = {
+                                width: '640px',
+                                position: {
+                                    top: '112px'
+                                },
+                                data: { mode: 'deleteListNodeError'}
+                            };
+
+                            // open the dialog box
+                            this._dialog.open(DialogComponent, errorDialogConfig);
+                        } else {
+                            // use default error behavior
+                            this._errorHandler.showMessage(error);
+                        }
+                    }
+                );
+            }
             // update the view
             this.initList();
         });
