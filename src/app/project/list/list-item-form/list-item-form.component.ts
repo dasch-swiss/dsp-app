@@ -11,6 +11,7 @@ import {
     ListInfoResponse,
     ListNode,
     ListNodeInfoResponse,
+    RepositionChildNodeRequest,
     StringLiteral
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
@@ -75,6 +76,11 @@ export class ListItemFormComponent implements OnInit {
 
     // set main / pre-defined language
     @Input() language?: string;
+
+    @Input() position: number;
+
+    // is this node in the last position of the list
+    @Input() lastPosition: boolean = false;
 
     @Output() refreshParent: EventEmitter<ListNodeOperation> = new EventEmitter<ListNodeOperation>();
 
@@ -264,5 +270,23 @@ export class ListItemFormComponent implements OnInit {
                 );
             }
         });
+    }
+
+    repositionNode(direction: 'up' | 'down') {
+        const listNodeOperation = new ListNodeOperation();
+
+        listNodeOperation.operation = 'reposition';
+        listNodeOperation.listNode = new ListNode();
+
+        // set desired node position
+        if (direction === 'up') {
+            listNodeOperation.listNode.position = this.position - 1;
+        } else {
+            listNodeOperation.listNode.position = this.position + 1;
+        }
+
+        listNodeOperation.listNode.id = this.iri;
+
+        this.refreshParent.emit(listNodeOperation);
     }
 }

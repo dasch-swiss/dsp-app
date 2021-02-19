@@ -4,7 +4,9 @@ import {
     ApiResponseError,
     KnoraApiConnection,
     ListNode,
-    ListResponse
+    ListResponse,
+    RepositionChildNodeRequest,
+    RepositionChildNodeResponse
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
@@ -72,7 +74,6 @@ export class ListItemComponent implements OnInit {
         } else {
             this.expandedNode = id;
         }
-
     }
 
     /**
@@ -109,6 +110,21 @@ export class ListItemComponent implements OnInit {
 
                     // emit the updated list of children to the parent node
                     this.refreshChildren.emit(this.list);
+                    break;
+                }
+                case 'reposition': {
+                    const repositionRequest: RepositionChildNodeRequest = new RepositionChildNodeRequest();
+                    repositionRequest.parentNodeIri = this.parentIri;
+                    repositionRequest.position = data.listNode.position;
+
+                    // since we don't have any way to know the parent IRI from the ListItemForm component, we need to do the API call here
+                    this._dspApiConnection.admin.listsEndpoint.repositionChildNode(data.listNode.id, repositionRequest).subscribe(
+                        (res: ApiResponseData<RepositionChildNodeResponse>) => {
+                            this.list = res.body.node.children;
+
+                            this.refreshChildren.emit(this.list);
+                        }
+                    );
                     break;
                 }
                 default: {

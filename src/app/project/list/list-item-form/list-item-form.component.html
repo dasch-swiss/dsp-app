@@ -24,6 +24,20 @@
     <div class="action-bubble" *ngIf="showActionBubble" [@simpleFadeAnimation]="'in'">
         <div class="button-container">
             <button mat-button
+                    *ngIf="position > 0"
+                    title="move up"
+                    (click)="$event.stopPropagation(); repositionNode('up')"
+                    class="reposition up">
+                <mat-icon>arrow_upward</mat-icon>
+            </button>
+            <button mat-button
+                    *ngIf="!lastPosition"
+                    title="move down"
+                    (click)="$event.stopPropagation(); repositionNode('down')"
+                    class="reposition down">
+                <mat-icon>arrow_downward</mat-icon>
+            </button>
+            <button mat-button
                     class="edit"
                     title="edit"
                     (click)="$event.stopPropagation(); openDialog('editListNode', labels[0].value, iri)">

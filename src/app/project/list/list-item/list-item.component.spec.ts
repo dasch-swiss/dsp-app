@@ -1,19 +1,15 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, resolveForwardRef, ViewChild } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ApiResponseData, ListNode, ListNodeInfo, ListResponse, ListsEndpointAdmin, StringLiteral } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ListNode, ListNodeInfo, ListResponse, ListsEndpointAdmin, RepositionChildNodeResponse } from '@dasch-swiss/dsp-js';
 import {
     DspActionModule,
     DspApiConnectionToken
 } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorComponent } from 'src/app/main/error/error.component';
-import { ListItemFormComponent, ListNodeOperation } from '../list-item-form/list-item-form.component';
+import { ListNodeOperation } from '../list-item-form/list-item-form.component';
 import { ListItemComponent } from './list-item.component';
 
 /**
@@ -72,7 +68,7 @@ describe('ListItemComponent', () => {
 
         const listsEndpointSpyObj = {
             admin: {
-                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getList'])
+                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getList', 'repositionChildNode'])
             }
         };
 
@@ -200,5 +196,56 @@ describe('ListItemComponent', () => {
         expect(testHostComponent.listItem.list.length).toEqual(1);
 
         expect(testHostComponent.listItem.list[0].labels).toEqual([{value: 'Tree List Node 02', language: 'en'}]);
+    });
+
+    it('should reposition the node in position 1 to position 0', () => {
+
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).repositionChildNode.and.callFake(
+            () => {
+                const response = new RepositionChildNodeResponse();
+                response.node.id = 'http://rdfh.ch/lists/0001/otherTreeList';
+                response.node.isRootNode = true;
+                response.node.labels = [{value: 'Tree List Node Root', language: 'en'}];
+                response.node.children = [
+                    {
+                        comments: [],
+                        labels: [{value: 'Tree List Node 02', language: 'en'}],
+                        id: 'http://rdfh.ch/lists/0001/otherTreeList02',
+                        children: [],
+                        position: 0
+                    },
+                    {
+                        comments: [],
+                        labels: [{value: 'Tree List Node 01', language: 'en'}],
+                        id: 'http://rdfh.ch/lists/0001/otherTreeList01',
+                        children: [
+                            {
+                                comments: [],
+                                labels: [{value: 'Tree List Node 03', language: 'en'}],
+                                id: 'http://rdfh.ch/lists/0001/otherTreeList03',
+                                children: []
+                            }
+                        ],
+                        position: 1
+                    }
+                ];
+                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+            }
+        );
+
+        expect(testHostComponent.listItem.list[1].id).toEqual('http://rdfh.ch/lists/0001/otherTreeList02');
+
+        const listNodeOperation: ListNodeOperation = new ListNodeOperation();
+        listNodeOperation.listNode = new ListNode();
+        listNodeOperation.listNode.position = 0;
+        listNodeOperation.operation = 'reposition';
+
+        testHostComponent.listItem.updateView(listNodeOperation);
+
+        expect(testHostComponent.listItem.list.length).toEqual(2);
+
+        expect(testHostComponent.listItem.list[0].id).toEqual('http://rdfh.ch/lists/0001/otherTreeList02');
     });
 });
