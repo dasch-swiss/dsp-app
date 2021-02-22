@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.1.0...v4.2.0) (2021-02-22)
+
+
+### Enhancements
+
+* **list-editor:** add deletion functionality (DSP-1334) ([#378](https://www.github.com/dasch-swiss/dsp-app/issues/378)) ([34c74a6](https://www.github.com/dasch-swiss/dsp-app/commit/34c74a6474aead06f0ee822488df7d4a702385e8))
+* **list-editor:** delete list root node (DSP-1356) ([#386](https://www.github.com/dasch-swiss/dsp-app/issues/386)) ([5d5eabf](https://www.github.com/dasch-swiss/dsp-app/commit/5d5eabf2521bd71a2b3055fc1f8b5b0c6ff043a5))
+* **list-editor:** reposition a child node amongst its siblings (DSP-1340) ([#388](https://www.github.com/dasch-swiss/dsp-app/issues/388)) ([0a9be0e](https://www.github.com/dasch-swiss/dsp-app/commit/0a9be0ea8f73dfe72bf34bdc86c941bf7ac93c41))
+* **ontology:** default language for property label ([#382](https://www.github.com/dasch-swiss/dsp-app/issues/382)) ([97230d1](https://www.github.com/dasch-swiss/dsp-app/commit/97230d1a3bba0ff27dc33674a47cfba126e19434))
+* **ontology:** edit res class info (DSP-1209) ([#380](https://www.github.com/dasch-swiss/dsp-app/issues/380)) ([2debd03](https://www.github.com/dasch-swiss/dsp-app/commit/2debd036db2da4e224625ddb793133fb0fde5668))
+* **ontology:** refactor list of properties in resource class (DSP-1360) ([#389](https://www.github.com/dasch-swiss/dsp-app/issues/389)) ([aa565b3](https://www.github.com/dasch-swiss/dsp-app/commit/aa565b3f5265cc0416e05282db400bfe9194836e))
+
 ## [4.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.0.0...v4.1.0) (2021-02-12)
 
 
