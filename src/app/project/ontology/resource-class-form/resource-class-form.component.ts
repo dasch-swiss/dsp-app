@@ -173,7 +173,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
                 this.lastModificationDate = this.ontology.lastModificationDate;
 
-                // get all ontology resource classs:
+                // get all ontology resource classes:
                 // can be used to select resource class as gui attribute in link property,
                 // but also to avoid same name which should be unique
                 const classKeys: string[] = Object.keys(response.classes);
@@ -250,6 +250,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
                         // set default property language from resource class / first element
                         this.resourceClassForm.controls.language.setValue(ontoClasses[key].labels[0].language);
+                        this.resourceClassForm.controls.language.disable();
                     }
                 });
             }
@@ -538,7 +539,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
             newResProp.label = [
                 {
                     'value': prop.label,
-                    'language': this.resourceClassForm.value['language']
+                    'language': this.resourceClassForm.controls.language.value
                 }
             ];
             if (prop.guiAttr) {

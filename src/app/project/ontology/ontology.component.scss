@@ -1,7 +1,7 @@
 @import "~@angular/material/theming";
 @import "../../../assets/style/config";
 
-$width: 304px;
+$width: 340px;
 
 .app-toolbar-action {
   &.select-form {
@@ -50,10 +50,9 @@ $width: 304px;
 
     .ontology-editor-grid {
       display: grid;
+      grid-template-rows: auto; // value would be "masonry" as soon it's implemented in all browsers
       grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
-      grid-column-gap: 12px;
-      grid-row-gap: 12px;
-      // padding-top: 60px;
+      grid-gap: 6px;
     }
   }
 }
@@ -65,7 +64,7 @@ $width: 304px;
   @include mat-elevation-transition;
   @include mat-elevation(2);
   padding: 12px;
-  margin: 12px;
+  margin: 6px;
   background-color: #fff;
 
   .resource-class-header {
@@ -77,7 +76,8 @@ $width: 304px;
   }
 
   .resource-class-properties {
-    li {
+    li.property-info {
+      list-style-type: none;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

@@ -37,9 +37,10 @@
 }
 
 .properties-language {
-  position: absolute;
-  margin-left: 600px;
   margin-top: -$header-height;
+  margin-right: 0;
+  margin-left: auto;
+  display: table;
 }
 
 // properties

@@ -1,7 +1,8 @@
 <div *ngIf="projectAdmin" class="desktop-only">
 
-    <p class="note warning center">This is a first version of the data model editor. Some features may not work as
-        intended.</p>
+    <p class="note warning center">
+        This is a first version of the data model editor. Some features may not work as intended.
+    </p>
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- toolbar: select ontology -->
@@ -54,7 +55,7 @@
     </div>
 
     <!-- main content: overview shows resource classes of ontology -->
-    <div *ngIf="ontology" class="ontology-editor">
+    <div *ngIf="!loading && ontology" class="ontology-editor">
 
         <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
@@ -128,7 +129,7 @@
             <div class="ontology-editor-canvas drag-drop-stop">
                 <div class="ontology-editor-grid">
 
-                    <!-- list of resource classs -->
+                    <!-- list of resource classes -->
                     <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
                         cdkDragBoundary=".drag-drop-stop">
                         <mat-toolbar class="resource-class-header" cdkDragHandle>
@@ -157,19 +158,18 @@
                                 </mat-menu>
                             </mat-toolbar-row>
                         </mat-toolbar>
-                        <div class="resource-class-properties">
-                            <ul>
-                                <span *ngFor="let prop of resClass.propertiesList">
-                                    <!-- display only properties with guiOrder and they exist in list of properties
-                                and objectType is not a linkValue (otherwise we have the property twice) -->
-                                    <li
-                                        *ngIf="prop.guiOrder >= 0 && ontology?.properties[prop.propertyIndex] && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'">
-                                        {{ontology?.properties[prop.propertyIndex].label}}
-                                    </li>
-                                </span>
-
-                            </ul>
-                        </div>
+                        <mat-list class="resource-class-properties">
+                            <span *ngFor="let prop of resClass.propertiesList">
+                                <!-- display only properties with guiOrder and if they exist in list of properties;
+                                         objectType is not a linkValue (otherwise we have the property twice) -->
+                                <app-property-info
+                                    *ngIf="ontology?.properties[prop.propertyIndex]
+                                        && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'"
+                                    [propDef]="ontology?.properties[prop.propertyIndex]" [propCard]="prop"
+                                    [projectcode]="projectcode">
+                                </app-property-info>
+                            </span>
+                        </mat-list>
 
                     </div>
 

@@ -50,13 +50,12 @@
             </div>
         </div>
 
-
         <!-- content: Step 2 = define properties for resource class -->
         <div *ngIf="!showResourceClassForm" class="properties-data">
             <!-- default language selector -->
             <mat-form-field class="properties-language">
                 <mat-label>Default language for the labels</mat-label>
-                <mat-select [formControl]="resourceClassForm.controls['language']" [value]="resourceClassForm.value['language']" [disabled]="edit">
+                <mat-select [formControl]="resourceClassForm.controls['language']" [value]="resourceClassForm.value['language']">
                     <mat-option *ngFor="let option of languages" [value]="option.language">
                         {{ option.value }}
                     </mat-option>

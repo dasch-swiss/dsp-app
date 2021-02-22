@@ -28,6 +28,7 @@ import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { OntologyVisualizerComponent } from './ontology-visualizer/ontology-visualizer.component';
 import { OntologyComponent } from './ontology.component';
+import { PropertyInfoComponent } from './property-info/property-info.component';
 
 describe('OntologyComponent', () => {
     let component: OntologyComponent;
@@ -39,7 +40,8 @@ describe('OntologyComponent', () => {
                 OntologyComponent,
                 OntologyVisualizerComponent,
                 DialogComponent,
-                ErrorComponent
+                ErrorComponent,
+                PropertyInfoComponent
             ],
             imports: [
                 BrowserAnimationsModule,

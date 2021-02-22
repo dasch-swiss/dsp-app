@@ -67,7 +67,7 @@
                 <mat-form-field>
                     <mat-label>Select resource class</mat-label>
                     <mat-select formControlName="guiAttr">
-                        <mat-option *ngFor="let item of reresourceClasss" [value]="item.id" [disabled]="(resClassIri === item.id)">
+                        <mat-option *ngFor="let item of resourceClass" [value]="item.id">
                             {{item.label}}
                         </mat-option>
                     </mat-select>
@@ -81,7 +81,7 @@
                     <input matInput placeholder="min">
                     <input matInput placeholder="max">
                     <!-- <mat-select formControlName="guiAttr">
-                        <mat-option *ngFor="let item of reresourceClasss" [value]="item.id">
+                        <mat-option *ngFor="let item of resourceClass" [value]="item.id">
                             {{item.label}}
                         </mat-option>
                     </mat-select> -->

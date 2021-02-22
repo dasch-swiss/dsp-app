@@ -1,0 +1,23 @@
+<mat-list-item>
+    <span *ngIf="propCard.guiOrder >=0" mat-list-icon class="order additional-info">{{propCard.guiOrder}})</span>
+
+    <div mat-line class="title">
+        <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label" matTooltipPosition="above">
+            <span *ngIf="propType?.label === 'Integer' || propType?.label === 'Decimal'; else defaultIcons">
+                <mat-icon class="type" [svgIcon]="propType?.icon"></mat-icon>
+            </span>
+            <ng-template #defaultIcons>
+                <mat-icon class="type">{{propType?.icon}}</mat-icon>
+            </ng-template>
+        </span>
+        <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above">
+            {{propDef?.label}}
+        </span>
+        <!-- property is linked to a class or to a list: display connected class or list -->
+        <span class="attribute additional-info" *ngIf="propAttribute" [innerHTML]="'&rarr;&nbsp;' + propAttribute"></span>
+    </div>
+    <div mat-line class="info additional-info">
+        <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> multiple
+        <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> required
+    </div>
+</mat-list-item>

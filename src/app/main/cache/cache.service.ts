@@ -71,7 +71,7 @@ export class CacheService {
                 });
 
         } else {
-            return throwError('Requested key is not available in Cache');
+            return throwError('Requested key "' + key + '" is not available in Cache');
         }
 
     }

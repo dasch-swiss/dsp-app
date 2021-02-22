@@ -18,7 +18,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import { DefaultProperties, Property, PropertyType } from '../default-data/default-properties';
+import { DefaultProperties, Category, PropertyType } from '../default-data/default-properties';
 
 
 // TODO: should be removed and replaced by AutocompleteItem from dsp-ui
@@ -59,15 +59,15 @@ export class PropertyFormComponent implements OnInit {
     required = new FormControl();
 
     // selection of default property types
-    propertyTypes: Property[] = DefaultProperties.data;
+    propertyTypes: Category[] = DefaultProperties.data;
 
     showGuiAttr: boolean = false;
 
     // list of project specific lists (TODO: probably we have to add default knora lists?!)
     lists: ListNodeInfo[];
 
-    // resource classs in this ontology
-    reresourceClasss: ClassDefinition[] = [];
+    // resource classes in this ontology
+    resourceClass: ClassDefinition[] = [];
 
     // list of existing properties
     properties: AutocompleteItem[] = [];
@@ -131,7 +131,7 @@ export class PropertyFormComponent implements OnInit {
                 // set list of resource classes from response; needed for linkValue
                 const classKeys: string[] = Object.keys(response.classes);
                 for (const c of classKeys) {
-                    this.reresourceClasss.push(this.ontology.classes[c]);
+                    this.resourceClass.push(this.ontology.classes[c]);
                 }
 
                 // b) in case of already existing label:
