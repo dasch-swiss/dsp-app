@@ -7,7 +7,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Constants, IHasProperty, MockOntology, ReadOntology, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { Constants, IHasProperty, ListNodeInfo, MockOntology, ReadOntology, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { PropertyInfoComponent } from './property-info.component';
@@ -98,12 +98,61 @@ class LinkHostComponent {
 
 }
 
+/**
+ * Test host component to simulate parent component
+ * Property is of type list dropdown
+ */
+@Component({
+    template: '<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>'
+})
+class ListHostComponent {
+
+    @ViewChild('propertyInfo') propertyInfoComponent: PropertyInfoComponent;
+
+    propertyCardinality: IHasProperty = {
+        "propertyIndex": "http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem",
+        "cardinality": 2,
+        "guiOrder": 0,
+        "isInherited": true
+    };
+    propertyDefinition: ResourcePropertyDefinitionWithAllLanguages = {
+        "id": "http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem",
+        "subPropertyOf": ["http://api.knora.org/ontology/knora-api/v2#hasValue"],
+        "label": "Listenelement",
+        "guiElement": "http://api.knora.org/ontology/salsah-gui/v2#List",
+        "subjectType": "http://0.0.0.0:3333/ontology/0001/anything/v2#Thing",
+        "objectType": "http://api.knora.org/ontology/knora-api/v2#ListValue",
+        "isLinkProperty": false,
+        "isLinkValueProperty": false,
+        "isEditable": true,
+        "guiAttributes": ["hlist=<http://rdfh.ch/lists/0001/treeList>"],
+        "comments": [],
+        "labels": [{
+            "language": "de",
+            "value": "Listenelement"
+        }, {
+            "language": "en",
+            "value": "List element"
+        }, {
+            "language": "fr",
+            "value": "Elément de liste"
+        }, {
+            "language": "it",
+            "value": "Elemento di lista"
+        }]
+    };
+
+}
+
 describe('PropertyInfoComponent', () => {
     let simpleTextHostComponent: SimpleTextHostComponent;
     let simpleTextHostFixture: ComponentFixture<SimpleTextHostComponent>;
 
     let linkHostComponent: LinkHostComponent;
     let linkHostFixture: ComponentFixture<LinkHostComponent>;
+
+    let listHostComponent: ListHostComponent;
+    let listHostFixture: ComponentFixture<ListHostComponent>;
 
     beforeEach(async(() => {
         const dspConnSpy = {
@@ -117,6 +166,7 @@ describe('PropertyInfoComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 LinkHostComponent,
+                ListHostComponent,
                 SimpleTextHostComponent,
                 PropertyInfoComponent
             ],
@@ -139,6 +189,14 @@ describe('PropertyInfoComponent', () => {
     }));
 
     beforeEach(() => {
+        simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
+        simpleTextHostComponent = simpleTextHostFixture.componentInstance;
+        simpleTextHostFixture.detectChanges();
+
+        expect(simpleTextHostComponent).toBeTruthy();
+    });
+
+    beforeEach(() => {
         // mock cache service for currentOntology
         const cacheSpy = TestBed.inject(CacheService);
 
@@ -149,19 +207,69 @@ describe('PropertyInfoComponent', () => {
             }
         );
 
-        simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
-        simpleTextHostComponent = simpleTextHostFixture.componentInstance;
-        simpleTextHostFixture.detectChanges();
-
-        expect(simpleTextHostComponent).toBeTruthy();
-    });
-
-    beforeEach(() => {
         linkHostFixture = TestBed.createComponent(LinkHostComponent);
         linkHostComponent = linkHostFixture.componentInstance;
         linkHostFixture.detectChanges();
 
         expect(linkHostComponent).toBeTruthy();
+    });
+
+    beforeEach(() => {
+        // mock cache service for currentOntology
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            (key = 'currentOntologyLists') => {
+                let response: ListNodeInfo[] = [{
+                    "comments": [],
+                    "id": "http://rdfh.ch/lists/0001/otherTreeList",
+                    "isRootNode": true,
+                    "labels": [{
+                        "language": "en",
+                        "value": "Tree list root"
+                    }],
+                    "projectIri": "http://rdfh.ch/projects/0001"
+                }, {
+                    "comments": [{
+                        "language": "en",
+                        "value": "a list that is not in used in ontology or data"
+                    }],
+                    "id": "http://rdfh.ch/lists/0001/notUsedList",
+                    "isRootNode": true,
+                    "labels": [{
+                        "language": "de",
+                        "value": "unbenutzte Liste"
+                    }, {
+                        "language": "en",
+                        "value": "a list that is not used"
+                    }],
+                    "name": "notUsedList",
+                    "projectIri": "http://rdfh.ch/projects/0001"
+                }, {
+                    "comments": [{
+                        "language": "en",
+                        "value": "Anything Tree List"
+                    }],
+                    "id": "http://rdfh.ch/lists/0001/treeList",
+                    "isRootNode": true,
+                    "labels": [{
+                        "language": "de",
+                        "value": "Listenwurzel"
+                    }, {
+                        "language": "en",
+                        "value": "Tree list root"
+                    }],
+                    "name": "treelistroot",
+                    "projectIri": "http://rdfh.ch/projects/0001"
+                }];
+                return of(response);
+            }
+        );
+        listHostFixture = TestBed.createComponent(ListHostComponent);
+        listHostComponent = listHostFixture.componentInstance;
+        listHostFixture.detectChanges();
+
+        expect(listHostComponent).toBeTruthy();
     });
 
     it('should create an instance', () => {
@@ -236,5 +344,16 @@ describe('PropertyInfoComponent', () => {
         expect(multipleIcon.nativeElement.innerText).toEqual('check_box');
         // and cardinality 2 means also "not required value"
         expect(requiredIcon.nativeElement.innerText).toEqual('check_box_outline_blank');
+    });
+
+    it('expect list property with connection to list "Listenwurzel"', () => {
+        expect(listHostComponent.propertyInfoComponent).toBeTruthy();
+        expect(listHostComponent.propertyInfoComponent.propDef).toBeDefined();
+
+        const hostCompDe = listHostFixture.debugElement;
+
+        const attribute: DebugElement = hostCompDe.query(By.css('.attribute'));
+        // expect list called "Listenwurzel"
+        expect(attribute.nativeElement.innerText).toContain('Listenwurzel');
     });
 });

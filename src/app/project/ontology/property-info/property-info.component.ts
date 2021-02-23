@@ -5,6 +5,7 @@ import {
     ApiResponseData,
     Constants,
     IHasProperty,
+    ListNodeInfo,
     ListsResponse,
     ReadOntology,
     ResourcePropertyDefinitionWithAllLanguages
@@ -119,11 +120,12 @@ export class PropertyInfoComponent implements OnInit, AfterContentInit {
             // this property is a list property
             // get current ontology lists to get linked list information
             this._cache.get('currentOntologyLists').subscribe(
-                (response: ApiResponseData<ListsResponse>) => {
+                (response: ListNodeInfo[]) => {
                     const re: RegExp = /\<([^)]+)\>/;
                     const listIri = this.propDef.guiAttributes[0].match(re)[1];
                     const listUrl = `/project/${this.projectcode}/lists/${encodeURIComponent(listIri)}`;
-                    this.propAttribute = `<a href="${listUrl}">${response[0].labels[0].value}</a>`;
+                    const list = response.find(i => i.id === listIri);
+                    this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
                 }
             );
         }
