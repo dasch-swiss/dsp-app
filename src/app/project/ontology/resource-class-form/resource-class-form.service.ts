@@ -71,7 +71,7 @@ export class ResourceClass {
     language: string;
     properties: Property[];
 
-    constructor(language = 'en', properties?: Property[]) {
+    constructor(language: 'en' | 'de' | 'fr' | 'it' = 'en', properties?: Property[]) {
         this.language = language;
         this.properties = properties;
     }
@@ -86,7 +86,7 @@ export class ResourceClassForm {
         this.language.setValue('en');
         if (resourceClass.properties) {
             let i = 0;
-            this.properties.setControl;
+            // this.properties.setControl;
             resourceClass.properties.forEach(prop => {
                 this.properties[i] = new FormControl(prop);
                 i++;
@@ -222,7 +222,7 @@ export class ResourceClassFormService {
             return type + '-' + label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\u00a0-\u024f]/g, '').replace(/[\])}[{(]/g, '').replace(/\s+/g, '-').replace(/\//g, '-').toLowerCase();
         } else {
             // build randomized name
-            // The name starts with the three first character of ontology iri to avoid a start with a number followed by randomized string
+            // the name starts with the three first character of ontology iri to avoid a start with a number followed by randomized string
             return this.getOntologyName(ontologyIri).substring(0, 3) + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
         }
     }
@@ -251,16 +251,16 @@ export class ResourceClassFormService {
     translateCardinality(multiple: boolean, required: boolean): Cardinality {
 
         if (multiple && required) {
-            // Cardinality 1-n (at least one)
+            // cardinality 1-n (at least one)
             return Cardinality._1_n;
         } else if (multiple && !required) {
-            // Cardinality 0-n (may have many)
+            // cardinality 0-n (may have many)
             return Cardinality._0_n;
         } else if (!multiple && required) {
-            // Cardinality 1 (required)
+            // cardinality 1 (required)
             return Cardinality._1;
         } else {
-            // Cardinality 0-1 (optional)
+            // cardinality 0-1 (optional)
             return Cardinality._0_1;
         }
     }

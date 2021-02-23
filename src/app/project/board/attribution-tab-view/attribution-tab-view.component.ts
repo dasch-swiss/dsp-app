@@ -11,12 +11,12 @@ export class AttributionTabViewComponent {
     @Input() attributions: IAttribution[];
 
     // return the type of agent to use correct template to display it
-    getAgentType (agent: IPerson | IOrganisation) {
-        if (agent.hasOwnProperty('familyName')){
+    getAgentType(agent: IPerson | IOrganisation) {
+        if (agent.hasOwnProperty('familyName')) {
             return 'person';
         }
-        if (agent.hasOwnProperty('url')){
+        if (agent.hasOwnProperty('url')) {
             return 'organisation';
-        } 
+        }
     }
 }

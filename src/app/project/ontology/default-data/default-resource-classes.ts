@@ -14,27 +14,27 @@ export class DefaultResourceClasses {
             label: 'Object without file representation (metadata only)'
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + "StillImageRepresentation",
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'StillImageRepresentation',
             label: 'Still Image'
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + "MovingImageRepresentation",
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'MovingImageRepresentation',
             label: 'Moving Image'
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + "AudioRepresentation",
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'AudioRepresentation',
             label: 'Audio'
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + "TextRepresentation",
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'TextRepresentation',
             label: 'Text'
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + "DocumentRepresentation",
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DocumentRepresentation',
             label: 'Document (Word, PDF, etc.)'
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + "DDDRepresentation",
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DDDRepresentation',
             label: 'RTI Image'
         }
     ];

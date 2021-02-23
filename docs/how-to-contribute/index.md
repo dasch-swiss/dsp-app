@@ -3,7 +3,7 @@
 <!-- TODO: the following section is moved from the main README and has to be updated -->
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the resource files.
+Run `ng serve` or `npm run start` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the resource files.
 
 ## Code scaffolding
 
@@ -12,15 +12,29 @@ also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `npm run build` to build the app. The build artifacts will be stored in the `dist/` directory. Run the command `npm run build-prod` for a production build.
 
-## Running unit tests
+## Test
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+The following tests (unit, e2e and lint) are part of the Github Actions (CI) workflow and has to be run successfully before the code can be merged into the main branch.
 
-## Running end-to-end tests
+### Running unit tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Run `npm run test-local` to execute the unit tests via [Karma](https://karma-runner.github.io) on your local computer.
+
+Run `npm run test-ci` to execute the unit tests via [Karma](https://karma-runner.github.io) without a browser. It is used in the Github Actions (CI) workflow.
+
+### Running end-to-end tests
+
+Run `npm run test-e2e-protractor` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+### Running code linter
+
+Run `npm run lint` to execute the lint service via [tslint](https://palantir.github.io/tslint/).
+
+> :warning: **tslint is deprecated and will be replaced by eslint**
+> 
+> Get more info here: <https://dasch.myjetbrains.com/youtrack/issue/DSP-1260>
 
 ## Further help
 

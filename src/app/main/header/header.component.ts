@@ -15,7 +15,7 @@ const { version: appVersion } = require('../../../../package.json');
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnDestroy{
+export class HeaderComponent implements OnInit, OnDestroy {
 
     session: boolean = false;
     show: boolean = false;
@@ -108,7 +108,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
         // to (resource) list view directly
         this.searchParams = search;
 
-        if(this.searchParams.mode && this.searchParams.query) {
+        if (this.searchParams.mode && this.searchParams.query) {
 
             let doSearchRoute = '/search/' + this.searchParams.mode + '/' + encodeURIComponent(this.searchParams.query);
 

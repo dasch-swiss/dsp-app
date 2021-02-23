@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { BaseValueComponent } from 'src/app/base-value.component';
+import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 
 @Component({
   selector: 'app-switch-properties',
@@ -10,7 +10,7 @@ import { BaseValueComponent } from 'src/app/base-value.component';
 })
 export class SwitchPropertiesComponent implements OnInit {
 
-    @ViewChild('createVal') createValueComponent: BaseValueComponent;
+    @ViewChild('createVal') createValueComponent: BaseValueDirective;
 
     @Input() property: ResourcePropertyDefinition;
 

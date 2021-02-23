@@ -75,7 +75,7 @@ export class OntologyVisualizerComponent implements OnInit {
     addResourceClassesToNodes() {
         for (const res of this.ontoClasses) {
             const resInfo =  this.createLabelFromIRI(res.id);
-            const node = {'id': res.id, 'label': resInfo.newLabel, 'group': 'resource', 'class': 'native'}
+            const node = {'id': res.id, 'label': resInfo.newLabel, 'group': 'resource', 'class': 'native'};
             this.nodes.push(node);
         }
     }

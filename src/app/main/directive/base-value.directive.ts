@@ -4,7 +4,7 @@ import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from
 import { Subscription } from 'rxjs';
 
 @Directive()
-export abstract class BaseValueComponent {
+export abstract class BaseValueDirective {
 
     shouldShowComment = false;
 
@@ -71,7 +71,7 @@ export abstract class BaseValueComponent {
 
                 return invalid ? { valueNotChanged: { value: control.value } } : null;
             };
-        };
+        }
 
     /**
      * Returns the initially given value set via displayValue.

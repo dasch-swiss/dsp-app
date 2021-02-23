@@ -78,7 +78,7 @@ export class MainComponent implements OnInit {
             this._router.navigate(['dashboard']);
         } else {
             // if session does not exist, redirect to login page
-            // NOTE: this is a temporary solution for DSP-ADMIN-APP
+            // --> NOTE: this is a temporary solution for DSP-ADMIN-APP
             this._router.navigate(['login']);
         }
     }

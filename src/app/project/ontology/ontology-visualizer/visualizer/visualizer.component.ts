@@ -5,6 +5,13 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import ForceGraph3D from '3d-force-graph';
 import * as THREE from 'three';
 import SpriteText from 'three-spritetext';
+import { NodeObject } from 'jsonld';
+
+export interface Coordinates {
+    x: number;
+    y: number;
+    z: number;
+}
 
 @Component({
   selector: 'app-visualizer',
@@ -20,7 +27,7 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
     showNodeLabel = false;
     linkDistance = 20;
     constructor() { }
-    designNode(node) {
+    designNode(node: NodeObject | string) {
         let depthWrite = true;
         if (this.showNodeLabel) {
             depthWrite = false;
@@ -53,10 +60,10 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
         return obj;
     }
 
-    calcMiddlePos(start, end) {
+    calcMiddlePos(start: Coordinates, end: Coordinates) {
         const middlePosX = start.x + (end.x - start.x) / 2;
         const middlePosY = start.y + (end.y - start.y) / 2;
-        let middlePosZ;
+        let middlePosZ: number;
         if (this.dimension === '3') {
             middlePosZ = start.z + (end.z - start.z) / 2 ;
         } else {
@@ -93,7 +100,7 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
                 return sprite;
             });
             this.graph.linkPositionUpdate((sprite, {start, end}) => {
-                // Position sprite
+                // position sprite
                 Object.assign(sprite.position, this.calcMiddlePos(start, end));
                 return false;
             });
@@ -125,16 +132,16 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
 
     LinkLabelHandler(showlinkLabel: MatSlideToggle) {
         this.showLinkLabel = showlinkLabel.checked;
-        this.ngOnInit(); // Re-heat simulation
+        this.ngOnInit(); // re-heat simulation
     }
 
     NodeLabelHandler(showNodeLabel: MatSlideToggle) {
         this.showNodeLabel = showNodeLabel.checked;
-        this.ngOnInit(); // Re-heat simulation
+        this.ngOnInit(); // re-heat simulation
     }
 
     updateLinkDistance(event: any) {
         this.linkDistance = event.value;
-        this.ngOnInit(); // Re-heat simulation
+        this.ngOnInit(); // re-heat simulation
     }
 }

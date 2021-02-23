@@ -122,7 +122,7 @@ export class OntologyFormComponent implements OnInit {
         for (const name of this.existingOntologyNames) {
             this.existingNames.push(
                 new RegExp('(?:^|W)' + name + '(?:$|W)')
-            )
+            );
         }
 
         for (const name of this.forbiddenNames) {

@@ -78,11 +78,11 @@ export class ResourceComponent implements OnDestroy {
     }
 
     // open project in new tab
-    openProject(project: ReadProject){
-        window.open('/project/' + project.shortcode, "_blank");
+    openProject(project: ReadProject) {
+        window.open('/project/' + project.shortcode, '_blank');
     }
 
     openResource(linkValue: ReadLinkValue) {
-        window.open('/resource/' + encodeURIComponent(linkValue.linkedResource.id), "_blank");
+        window.open('/resource/' + encodeURIComponent(linkValue.linkedResource.id), '_blank');
     }
 }

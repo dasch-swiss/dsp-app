@@ -127,7 +127,7 @@ export class HelpComponent implements OnInit {
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
             }
-        )
+        );
 
     }
 

@@ -11,14 +11,34 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, CreateIntValue, CreateResource, CreateValue, MockOntology, MockProjects, MockResource, MockUsers, OntologiesEndpointV2, OntologiesMetadata, ReadOntology, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition, ResourcesEndpointV2, StoredProject, UserResponse, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    CreateIntValue,
+    CreateResource,
+    CreateValue,
+    MockOntology,
+    MockProjects,
+    MockResource,
+    MockUsers,
+    OntologiesEndpointV2,
+    OntologiesMetadata,
+    ReadOntology,
+    ReadResource,
+    ResourceClassAndPropertyDefinitions,
+    ResourceClassDefinition,
+    ResourcePropertyDefinition,
+    ResourcesEndpointV2,
+    StoredProject,
+    UserResponse,
+    UsersEndpointAdmin
+} from '@dasch-swiss/dsp-js';
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
 import { DspApiConnectionToken, IntValueComponent, Session, SessionService, ValueService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { BaseValueComponent } from 'src/app/base-value.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { ResourceInstanceFormComponent } from './resource-instance-form.component';
 import { SwitchPropertiesComponent } from './select-properties/switch-properties/switch-properties.component';
 
@@ -35,7 +55,7 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('resourceInstanceFormComp') resourceInstanceFormComponent: ResourceInstanceFormComponent;
 
-    constructor() {}
+    constructor() { }
 
     ngOnInit() {
     }
@@ -113,7 +133,7 @@ class MockSelectResourceClassComponent implements OnInit {
 
     ngOnInit() {
         this.form = this._fb.group({
-            resources: [null , Validators.required],
+            resources: [null, Validators.required],
             label: [null, Validators.required]
         });
 
@@ -153,7 +173,7 @@ class MockSelectPropertiesComponent {
     selector: `app-switch-properties`
 })
 class MockSwitchPropertiesComponent {
-    @ViewChild('createVal') createValueComponent: BaseValueComponent;
+    @ViewChild('createVal') createValueComponent: BaseValueDirective;
 
     @Input() property: ResourcePropertyDefinition;
 
@@ -272,7 +292,7 @@ describe('ResourceInstanceFormComponent', () => {
                 ValueService
             ]
         })
-        .compileComponents();
+            .compileComponents();
 
     }));
 
@@ -309,7 +329,7 @@ describe('ResourceInstanceFormComponent', () => {
 
                 response.user.projects.push(project.body.project);
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
@@ -450,7 +470,7 @@ describe('ResourceInstanceFormComponent', () => {
 
         expect(testHostComponent.resourceInstanceFormComponent.selectResourceForm.valid).toBeTruthy();
 
-        const nextButton = await loader.getHarness(MatButtonHarness.with({selector: '.form-next'}));
+        const nextButton = await loader.getHarness(MatButtonHarness.with({ selector: '.form-next' }));
 
         await nextButton.click();
 
@@ -488,7 +508,7 @@ describe('ResourceInstanceFormComponent', () => {
 
         testHostComponent.resourceInstanceFormComponent.properties = new Array<ResourcePropertyDefinition>();
 
-        MockResource.getTestThing().subscribe( res => {
+        MockResource.getTestThing().subscribe(res => {
             const resourcePropDef = (res.entityInfo as ResourceClassAndPropertyDefinitions).getAllPropertyDefinitions()[9];
             testHostComponent.resourceInstanceFormComponent.properties.push(resourcePropDef as ResourcePropertyDefinition);
         });

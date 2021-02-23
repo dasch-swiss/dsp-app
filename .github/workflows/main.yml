@@ -28,6 +28,8 @@ jobs:
         run: |
           npm run webdriver-update
           npm run test-e2e-protractor
+      - name: Run lint
+        run: npm run lint
 
   release-please:
     name: Prepare next release

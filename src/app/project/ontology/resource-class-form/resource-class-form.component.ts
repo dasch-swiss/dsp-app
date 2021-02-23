@@ -418,7 +418,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
                             }
-                        )
+                        );
 
                     },
                     (error: ApiResponseError) => {
@@ -439,7 +439,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
             // set resource class name / id: randomized string
             const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id);
-            // OR const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id, this.resourceClassLabels[0].value, 'class');
+            // or const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id, this.resourceClassLabels[0].value, 'class');
 
             const onto = new UpdateOntology<CreateResourceClass>();
 
@@ -555,7 +555,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                         break;
                     case Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText':
                         // TODO: could have two guiAttr fields: size and maxlength
-                        // I suggest to use default value for size; we do not support this guiAttr in DSP-App
+                        // we suggest to use default value for size; we do not support this guiAttr in DSP-App
                         newResProp.guiAttributes = ['maxlength=' + prop.guiAttr];
                         break;
                     case Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox':
@@ -564,7 +564,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                         break;
                     case Constants.SalsahGui + Constants.HashDelimiter + 'Textarea':
                         // TODO: could have four guiAttr fields: width, cols, rows, wrap
-                        // I suggest to use default values; we do not support this guiAttr in DSP-App
+                        // we suggest to use default values; we do not support this guiAttr in DSP-App
                         newResProp.guiAttributes = ['width=100%'];
                         break;
                 }
@@ -592,7 +592,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                     this._errorHandler.showMessage(error);
                 }
             );
-        })
+        });
     }
 
     setCardinality(props: Property[], classIri: string) {
@@ -613,7 +613,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                 propertyIndex: prop.iri,
                 cardinality: this._resourceClassFormService.translateCardinality(prop.multiple, prop.required),
                 guiOrder: index + 1
-            }
+            };
 
             addCard.cardinalities.push(propCard);
         });

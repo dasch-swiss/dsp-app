@@ -114,7 +114,7 @@ export class PropertyFormComponent implements OnInit {
                     iri: this.propertyForm.value.iri,
                     label: this.propertyForm.value.label,
                     name: ''
-                }
+                };
 
                 // edit mode: this prop value exists already
                 this.loading = true;
@@ -225,7 +225,7 @@ export class PropertyFormComponent implements OnInit {
 
             let obj: PropertyType;
             // find gui ele from list of default property-types to set type value
-            for (let group of this.propertyTypes) {
+            for (const group of this.propertyTypes) {
                 obj = group.elements.find(i => i.gui_ele === tempProp.guiElement && (i.objectType === tempProp.objectType || i.subPropOf === tempProp.subPropertyOf[0]));
 
                 if (obj) {
@@ -240,7 +240,7 @@ export class PropertyFormComponent implements OnInit {
                 case Constants.SalsahGui + Constants.HashDelimiter + 'Radio':
                     // gui attribute value for lists looks as follow: hlist=<http://rdfh.ch/lists/00FF/73d0ec0302>
                     // get index from guiAttr array where value starts with hlist=
-                    let i = tempProp.guiAttributes.findIndex(element => element.includes('hlist'));
+                    const i = tempProp.guiAttributes.findIndex(element => element.includes('hlist'));
 
                     // find content beteween pointy brackets to get list iri
                     const re: RegExp = /\<([^)]+)\>/;

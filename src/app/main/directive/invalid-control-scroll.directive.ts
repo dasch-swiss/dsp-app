@@ -11,7 +11,7 @@ export class InvalidControlScrollDirective {
         private _formGroupDir: FormGroupDirective
     ) { }
 
-    @HostListener("ngSubmit") submitData() {
+    @HostListener('ngSubmit') submitData() {
         if (this._formGroupDir.control.invalid) {
           this._scrollToFirstInvalidControl();
         }
@@ -23,14 +23,14 @@ export class InvalidControlScrollDirective {
     private _scrollToFirstInvalidControl() {
         // target the first invalid form field
         const firstInvalidControl: HTMLElement = this._el.nativeElement.querySelector(
-            "form .ng-invalid"
+            'form .ng-invalid'
         );
 
         // scroll to the first invalid element in a smooth way
         firstInvalidControl.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "nearest"
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest'
         });
     }
 

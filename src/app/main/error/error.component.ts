@@ -23,7 +23,7 @@ export class ErrorComponent implements OnInit {
     errorMessages: ErrorMsg[] = [
         {
             status: 0,
-            message: "Undefined Error",
+            message: 'Undefined Error',
             description: `Maybe I'm a teapot, maybe not.<br>
             But anyway, something undefined went wrong.`,
             action: 'goback',
@@ -31,7 +31,7 @@ export class ErrorComponent implements OnInit {
         },
         {
             status: 403,
-            message: "Forbidden",
+            message: 'Forbidden',
             description: `Invalid Permissions.<br>
             Your request was valid but you do not have the<br>
             necessary permissions to access it.`,
@@ -40,14 +40,14 @@ export class ErrorComponent implements OnInit {
         },
         {
             status: 404,
-            message: "Not found",
+            message: 'Not found',
             description: `The content you were looking for cannot be found.`,
             action: 'goback',
             image: 'dsp-error-404.svg'
         },
         {
             status: 500,
-            message: "Internal Server Error",
+            message: 'Internal Server Error',
             description: `The DaSCH Service Platform is not available at the moment.<br>
             An error has occured in a server side script.`,
             action: 'reload',
@@ -55,7 +55,7 @@ export class ErrorComponent implements OnInit {
         },
         {
             status: 503,
-            message: "Service unavailable",
+            message: 'Service unavailable',
             description: `The DaSCH Service Platform is not available at the moment.<br>
             The server is currently unavailable (overloaded or down).`,
             action: 'reload',

@@ -88,7 +88,7 @@ export class ProjectsComponent implements OnInit {
             this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
 
-                    for (let project of response.body.user.projects) {
+                    for (const project of response.body.user.projects) {
                         if (project.status === true) {
                             this.active.push(project);
                         } else {

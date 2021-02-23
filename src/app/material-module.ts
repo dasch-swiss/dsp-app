@@ -63,7 +63,7 @@ const matModules = [
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule
-]
+];
 
 @NgModule({
     imports: [ matModules ],
