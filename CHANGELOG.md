@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.2.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.2.0...v4.2.1) (2021-02-24)
+
+
+### Bug Fixes
+
+* **ontology:** bug fix in list property (DSP-1368) ([#390](https://www.github.com/dasch-swiss/dsp-app/issues/390)) ([2fb448e](https://www.github.com/dasch-swiss/dsp-app/commit/2fb448e5ae7d0a96d6e1edbd42717ea837371c20))
+
 ## [4.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.1.0...v4.2.0) (2021-02-22)
 
 
