@@ -22,6 +22,8 @@ jobs:
         run: npm install
       - name: Build app in prod mode
         run: npm run build-prod
+      - name: Find ignored tests
+        run: ./find-ignored-tests.sh
       - name: Run unit tests
         run: npm run test-ci
       - name: Run e2e tests

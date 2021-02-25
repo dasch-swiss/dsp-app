@@ -1,7 +1,7 @@
 import { browser } from 'protractor';
 import { FooterPage } from './page-objects/footer.po';
 
-fdescribe('footer', () => {
+describe('footer', () => {
     let footer: FooterPage;
 
     beforeEach(() => {
