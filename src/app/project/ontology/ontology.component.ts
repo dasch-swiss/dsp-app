@@ -15,12 +15,13 @@ import {
     OntologiesMetadata,
     OntologyMetadata,
     ProjectResponse,
+    PropertyDefinition,
     ReadOntology,
     ReadProject,
     ResourceClassDefinition,
     UpdateOntology
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken, Session, SessionService, SortingService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
@@ -67,6 +68,8 @@ export class OntologyComponent implements OnInit {
 
     ontoClasses: ClassDefinition[];
 
+    ontoProperties: PropertyDefinition[];
+
     // selected ontology id
     ontologyIri: string = undefined;
 
@@ -74,7 +77,7 @@ export class OntologyComponent implements OnInit {
     ontologyForm: FormGroup;
 
     // display resource classes as grid or as graph
-    view: 'grid' | 'graph' = 'grid';
+    view: 'classes' | 'properties' | 'graph' = 'classes';
 
     // i18n setup
     itemPluralMapping = {
@@ -105,6 +108,7 @@ export class OntologyComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
+        private _sortingService: SortingService,
         private _titleService: Title
     ) {
 
@@ -113,10 +117,19 @@ export class OntologyComponent implements OnInit {
             this.projectcode = params.get('shortcode');
         });
 
-        // get ontology iri from route
-        if (this._route.snapshot && this._route.snapshot.params.id) {
-            this.ontologyIri = decodeURIComponent(this._route.snapshot.params.id);
-            // set the page title in case of only one project ontology
+        if (this._route.snapshot) {
+            // get ontology iri from route
+            if (this._route.snapshot.params.id) {
+                this.ontologyIri = decodeURIComponent(this._route.snapshot.params.id);
+            }
+            // get view from route: classes, properties or graph
+            this.view = (this._route.snapshot.params.view ? this._route.snapshot.params.view : 'classes');
+        }
+
+        //
+
+        // set the page title
+        if (this.ontologyIri) {
             this._titleService.setTitle('Project ' + this.projectcode + ' | Data model');
         } else {
             // set the page title in case of more than one existing project ontologies
@@ -217,7 +230,7 @@ export class OntologyComponent implements OnInit {
                     // because there will be no form to select ontlogy
                     if (response.ontologies.length === 1) {
                         // open this ontology
-                        this.openOntologyRoute(response.ontologies[0].id);
+                        this.openOntologyRoute(response.ontologies[0].id, this.view);
                         this.ontologyIri = response.ontologies[0].id;
                     }
                     loadAndCache();
@@ -246,10 +259,14 @@ export class OntologyComponent implements OnInit {
 
     }
 
-    // open ontology route by iri
-    openOntologyRoute(id: string) {
-        this.loadOntology = true;
-        const goto = 'project/' + this.projectcode + '/ontologies/' + encodeURIComponent(id);
+    /**
+     * Opens ontology route by iri
+     * @param id ontology id/iri
+     * @param view 'classes' | 'properties' | ' graph'
+     */
+    openOntologyRoute(id: string, view: 'classes' | 'properties' | 'graph' = 'classes') {
+        this.view = view;
+        const goto = 'project/' + this.projectcode + '/ontologies/' + encodeURIComponent(id) + '/' + view;
         this._router.navigateByUrl(goto, { skipLocationChange: false });
     }
 
@@ -274,10 +291,24 @@ export class OntologyComponent implements OnInit {
                     for (const c of classKeys) {
                         const splittedSubClass = this.ontology.classes[c].subClassOf[0].split('#');
 
-                        if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag') {
+                        if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag' && splittedSubClass[1] !== 'StandoffEventTag') {
                             this.ontoClasses.push(this.ontology.classes[c]);
                         }
                     }
+                    this.ontoClasses = this._sortingService.keySortByAlphabetical(this.ontoClasses, 'label');
+
+                    // grab the onto properties information to display
+                    this.ontoProperties = [];
+                    const propKeys: string[] = Object.keys(response.properties);
+                    // create list of resource classes without standoff classes
+                    for (const p of propKeys) {
+                        const standoff = (this.ontology.properties[p].subjectType ? this.ontology.properties[p].subjectType.includes('Standoff') : false);
+                        if (this.ontology.properties[p].objectType !== Constants.LinkValue && !standoff) {
+                            this.ontoProperties.push(this.ontology.properties[p]);
+                        }
+                    }
+
+                    this.ontoProperties = this._sortingService.keySortByAlphabetical(this.ontoProperties, 'label');
 
                     this.loadOntology = false;
                 }
@@ -294,7 +325,7 @@ export class OntologyComponent implements OnInit {
 
         this.ontology = undefined;
         this.ontoClasses = [];
-        this.openOntologyRoute(id);
+        this.openOntologyRoute(id, this.view);
         this.getOntology(id);
 
     }
@@ -476,14 +507,6 @@ export class OntologyComponent implements OnInit {
 
             }
         });
-    }
-
-    /**
-     *
-     * @param view 'grid' | ' graph'
-     */
-    toggleView(view: 'grid' | 'graph') {
-        this.view = view;
     }
 
     setCache() {

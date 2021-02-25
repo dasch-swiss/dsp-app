@@ -2,12 +2,11 @@ import { AfterContentInit, Component, Input, OnInit } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
-    ApiResponseData,
     Constants,
     IHasProperty,
     ListNodeInfo,
-    ListsResponse,
     ReadOntology,
+    ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from 'src/app/main/cache/cache.service';
@@ -23,7 +22,7 @@ export class PropertyInfoComponent implements OnInit, AfterContentInit {
 
     @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
-    @Input() propCard: IHasProperty;
+    @Input() propCard?: IHasProperty;
 
     @Input() projectcode: string;
 
@@ -35,6 +34,9 @@ export class PropertyInfoComponent implements OnInit, AfterContentInit {
     propertyTypes: Category[] = DefaultProperties.data;
 
     propAttribute: string;
+
+    // list of resource classes where the property is used
+    resClasses: ResourceClassDefinitionWithAllLanguages[] = [];
 
     constructor(
         private _cache: CacheService,
@@ -55,23 +57,26 @@ export class PropertyInfoComponent implements OnInit, AfterContentInit {
 
     ngOnInit(): void {
         // convert cardinality from js-lib convention to app convention
-        switch (this.propCard.cardinality) {
-            case 0:
-                this.propInfo.multiple = false;
-                this.propInfo.required = true;
-                break;
-            case 1:
-                this.propInfo.multiple = false;
-                this.propInfo.required = false;
-                break;
-            case 2:
-                this.propInfo.multiple = true;
-                this.propInfo.required = false;
-                break;
-            case 3:
-                this.propInfo.multiple = true;
-                this.propInfo.required = true;
-                break;
+        // if cardinality is defined; only in resource class view
+        if (this.propCard) {
+            switch (this.propCard.cardinality) {
+                case 0:
+                    this.propInfo.multiple = false;
+                    this.propInfo.required = true;
+                    break;
+                case 1:
+                    this.propInfo.multiple = false;
+                    this.propInfo.required = false;
+                    break;
+                case 2:
+                    this.propInfo.multiple = true;
+                    this.propInfo.required = false;
+                    break;
+                case 3:
+                    this.propInfo.multiple = true;
+                    this.propInfo.required = true;
+                    break;
+            }
         }
 
         // find gui ele from list of default property-types to set type value
@@ -128,6 +133,28 @@ export class PropertyInfoComponent implements OnInit, AfterContentInit {
                     this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
                 }
             );
+        }
+
+        // get all classes where the property is used
+        if (!this.propCard) {
+            this._cache.get('currentOntology').subscribe(
+                (ontology: ReadOntology) => {
+                    const classes = ontology.getAllClassDefinitions();
+                    for (const c of classes) {
+                        if (c.propertiesList.find(i => i.propertyIndex === this.propDef.id)) {
+                            this.resClasses.push(c as ResourceClassDefinitionWithAllLanguages);
+                        }
+                        // const splittedSubClass = ontology.classes[c].subClassOf[0].split('#');
+
+                        // if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag') {
+                        //     this.ontoClasses.push(this.ontology.classes[c]);
+                        // }
+                    }
+                }
+            );
+
+
+
         }
 
     }

@@ -81,6 +81,11 @@ const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
+                path: 'ontologies/:id/:view',
+                component: OntologyComponent,
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'lists',
                 component: ListComponent,
                 canActivate: [AuthGuard]

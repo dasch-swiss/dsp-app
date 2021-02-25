@@ -1,5 +1,5 @@
 <mat-list-item>
-    <span *ngIf="propCard.guiOrder >=0" mat-list-icon class="order additional-info">{{propCard.guiOrder}})</span>
+    <span *ngIf="propCard && propCard.guiOrder >=0" mat-list-icon class="order additional-info">{{propCard.guiOrder}})</span>
 
     <div mat-line class="title">
         <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label" matTooltipPosition="above">
@@ -17,7 +17,25 @@
         <span class="attribute additional-info" *ngIf="propAttribute" [innerHTML]="'&rarr;&nbsp;' + propAttribute"></span>
     </div>
     <div mat-line class="info additional-info">
-        <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> multiple
-        <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> required
+        <!-- in case of res class: display cardinality -->
+        <span *ngIf="propCard">
+            <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> multiple
+            <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> required
+        </span>
+        <!-- in case of ontology property: display corresponding resource class -->
+        <span *ngIf="!propCard">
+            <span *ngIf="resClasses.length; else notUsed">
+                Property is used in:
+                <!-- <span>{{ resClasses.join(", ") }}</span> -->
+                <span *ngFor="let c of resClasses; let last = last">
+                    <span [matTooltip]="c.comment" matTooltipPosition="above">{{c.label}}</span>
+                    <span *ngIf="!last">,&nbsp;</span>
+                </span>
+            </span>
+            <ng-template #notUsed>
+                <span class="not-used">This property is not used in a class</span>
+            </ng-template>
+
+        </span>
     </div>
 </mat-list-item>
