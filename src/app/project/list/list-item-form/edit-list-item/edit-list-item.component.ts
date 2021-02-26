@@ -1,5 +1,16 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { ApiResponseData, ApiResponseError, ChildNodeInfoResponse, KnoraApiConnection, List, ListNodeInfo, ListNodeInfoResponse, StringLiteral, UpdateChildNodeRequest } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    ChildNodeInfoResponse,
+    CreateChildNodeRequest,
+    KnoraApiConnection,
+    List,
+    ListNodeInfo,
+    ListNodeInfoResponse,
+    StringLiteral,
+    UpdateChildNodeRequest
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 
 @Component({
@@ -11,6 +22,14 @@ export class EditListItemComponent implements OnInit {
     loading: boolean;
 
     @Input() iri: string;
+
+    @Input() mode: 'insert' | 'update';
+
+    @Input() parentIri?: string;
+
+    @Input() position?: number;
+
+    @Input() projectCode?: string;
 
     @Input() projectIri: string;
 
@@ -46,16 +65,23 @@ export class EditListItemComponent implements OnInit {
     ngOnInit(): void {
         this.loading = true;
 
-        // get list
-        this._dspApiConnection.admin.listsEndpoint.getListNodeInfo(this.iri).subscribe(
-            (response: ApiResponseData<ListNodeInfoResponse>) => {
-                this.listNode = response.body.nodeinfo;
-                this.buildForm(response.body.nodeinfo);
-            },
-            (error: ApiResponseError) => {
-                console.error(error);
-            }
-        );
+        // if updating a node, get the existing node info
+        if (this.mode === 'update') {
+            this._dspApiConnection.admin.listsEndpoint.getListNodeInfo(this.iri).subscribe(
+                (response: ApiResponseData<ListNodeInfoResponse>) => {
+                    this.listNode = response.body.nodeinfo;
+                    this.buildForm(response.body.nodeinfo);
+                },
+                (error: ApiResponseError) => {
+                    console.error(error);
+                }
+            );
+        } else {
+            this.labels = [];
+            this.comments = [];
+
+            this.loading = false;
+        }
     }
 
     /**
@@ -105,8 +131,8 @@ export class EditListItemComponent implements OnInit {
     }
 
     /**
-     * Called from the template when the 'update' button is clicked.
-     * Sends a request to DSP-API to update the list node with the data inside the two local arrays.
+     * Called from the template when the 'submit' button is clicked in update mode.
+     * Sends a request to DSP-API to update the list child node with the data inside the two local arrays.
      */
     updateChildNode() {
         const childNodeUpdateData: UpdateChildNodeRequest = new UpdateChildNodeRequest();
@@ -117,6 +143,32 @@ export class EditListItemComponent implements OnInit {
 
         this._dspApiConnection.admin.listsEndpoint.updateChildNode(childNodeUpdateData).subscribe(
             (response: ApiResponseData<ChildNodeInfoResponse>) => {
+                this.loading = false;
+                this.closeDialog.emit(response.body.nodeinfo);
+            },
+            (error: ApiResponseError) => {
+                this.errorMessage = error;
+                this.loading = false;
+            }
+        );
+    }
+
+    /**
+     * Called from the template when the 'submit' button is clicked in insert mode.
+     * Sends a request to DSP-API to insert a new list child node in the provided position.
+     */
+    insertChildNode() {
+        const createChildNodeRequest: CreateChildNodeRequest = new CreateChildNodeRequest();
+
+        createChildNodeRequest.name = this.projectCode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+        createChildNodeRequest.parentNodeIri = this.parentIri;
+        createChildNodeRequest.labels = this.labels;
+        createChildNodeRequest.comments = this.comments.length > 0 ? this.comments : [];
+        createChildNodeRequest.projectIri = this.projectIri;
+        createChildNodeRequest.position = this.position;
+
+        this._dspApiConnection.admin.listsEndpoint.createChildNode(createChildNodeRequest).subscribe(
+            (response: ApiResponseData<ListNodeInfoResponse>) => {
                 this.loading = false;
                 this.closeDialog.emit(response.body.nodeinfo);
             },

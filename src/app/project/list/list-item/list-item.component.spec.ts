@@ -172,6 +172,70 @@ describe('ListItemComponent', () => {
         expect(testHostComponent.listItem.list[0].labels).toEqual([{value: 'Tree List Node 0123', language: 'en'}]);
     });
 
+    it('should update the view to show an inserted node', () => {
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getList.and.callFake(
+            () => {
+                const response = new ListResponse();
+                response.list.listinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList';
+                response.list.listinfo.isRootNode = true;
+                response.list.listinfo.labels = [{value: 'Tree List Node Root', language: 'en'}];
+                response.list.children = [
+                    {
+                        comments: [],
+                        labels: [{value: 'Tree List Node 01', language: 'en'}],
+                        id: 'http://rdfh.ch/lists/0001/otherTreeList01',
+                        children: [
+                            {
+                                comments: [],
+                                labels: [{value: 'Tree List Node 03', language: 'en'}],
+                                id: 'http://rdfh.ch/lists/0001/otherTreeList03',
+                                children: []
+                            }
+                        ]
+                    },
+                    {
+                        comments: [],
+                        labels: [{value: 'Tree List Node 04 between node 01 and node 02', language: 'en'}],
+                        id: 'http://rdfh.ch/lists/0001/otherTreeList04',
+                        children: []
+                    },
+                    {
+                        comments: [],
+                        labels: [{value: 'Tree List Node 02', language: 'en'}],
+                        id: 'http://rdfh.ch/lists/0001/otherTreeList02',
+                        children: []
+                    }
+                ];
+                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+            }
+        );
+
+        const listNodeOperation: ListNodeOperation = new ListNodeOperation();
+        listNodeOperation.listNode = {
+                children: undefined,
+                comments: [],
+                hasRootNode: 'http://rdfh.ch/lists/0001/otherTreeList',
+                id: 'http://rdfh.ch/lists/0001/otherTreeList04',
+                labels: [{value: 'Tree List Node 04 between node 01 and node 02', language: 'en'}],
+                position: 1
+        };
+
+        listNodeOperation.operation = 'insert';
+
+        testHostComponent.listItem.updateView(listNodeOperation);
+
+        expect(testHostComponent.listItem.list.length).toEqual(3);
+
+        expect(testHostComponent.listItem.list[1].labels).toEqual([{value: 'Tree List Node 04 between node 01 and node 02', language: 'en'}]);
+
+        expect(dspConnSpy.admin.listsEndpoint.getList).toHaveBeenCalledWith(testHostComponent.parentIri);
+
+        // getList is called twice because it is also called in ngOnInit
+        expect(dspConnSpy.admin.listsEndpoint.getList).toHaveBeenCalledTimes(2);
+    });
+
     it('should update the view to remove a deleted node', () => {
         const listNodeOperation: ListNodeOperation = new ListNodeOperation();
         listNodeOperation.listNode = {

@@ -1,5 +1,5 @@
 <!-- add new node item -->
-<div class="new-list-item medium-field" *ngIf="parentIri && projectIri">
+<div class="new-list-item medium-field" *ngIf="newNode">
     <dsp-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
         (dataChanged)="handleData($event)" [language]="language" (enter)="createChildNode()">
     </dsp-string-literal-input>
@@ -14,7 +14,7 @@
 
 <!-- node item -->
 <div class="list-item medium-field"
-    *ngIf="!(parentIri && projectIri) && labels"
+    *ngIf="!newNode"
     (mouseenter)="mouseEnter()"
     (mouseleave)="mouseLeave()">
     <dsp-string-literal-input class="list-item-label"
@@ -36,6 +36,12 @@
                     (click)="$event.stopPropagation(); repositionNode('down')"
                     class="reposition down">
                 <mat-icon>arrow_downward</mat-icon>
+            </button>
+            <button mat-button
+                    title="insert new child node above"
+                    (click)="$event.stopPropagation(); openDialog('insertListNode', labels[0].value, iri)"
+                    class="insert">
+                <mat-icon>vertical_align_top</mat-icon>
             </button>
             <button mat-button
                     class="edit"
