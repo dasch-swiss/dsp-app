@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.2.1...v4.3.0) (2021-03-02)
+
+
+### Bug Fixes
+
+* **ontology:** set the cache earlier in case of only one ontology (DSP-1374) ([#397](https://www.github.com/dasch-swiss/dsp-app/issues/397)) ([c23ae61](https://www.github.com/dasch-swiss/dsp-app/commit/c23ae6101bb307273cf3a267248eb4ac4976b4c2))
+
+
+### Enhancements
+
+* **list-editor:** insert a child node at a specific position (DSP-1301) ([#395](https://www.github.com/dasch-swiss/dsp-app/issues/395)) ([5107200](https://www.github.com/dasch-swiss/dsp-app/commit/5107200dc769d5690f5356bb467f05143a05abd1))
+* **ontology:** separate list of ontology properties (DSP-1364) ([#391](https://www.github.com/dasch-swiss/dsp-app/issues/391)) ([0f94df6](https://www.github.com/dasch-swiss/dsp-app/commit/0f94df6a32554c58e02ed863458724a6d4e0bb8c))
+
+
+### Maintenance
+
+* **deps:** bump three from 0.118.3 to 0.125.0 ([#402](https://www.github.com/dasch-swiss/dsp-app/issues/402)) ([5ab9c49](https://www.github.com/dasch-swiss/dsp-app/commit/5ab9c4904c609e77ff208adaced55ddd8f569270))
+* **gh-ci:** update release please configuration (DSP-1381) ([#399](https://www.github.com/dasch-swiss/dsp-app/issues/399)) ([040df19](https://www.github.com/dasch-swiss/dsp-app/commit/040df19bad31cc4cbdf13f8253e8bde23bdf144c))
+* **project landing page:** use metadata endpoint to get data from backend (DSP-1199) ([#400](https://www.github.com/dasch-swiss/dsp-app/issues/400)) ([5dde42f](https://www.github.com/dasch-swiss/dsp-app/commit/5dde42f2d5a1e2e47d5f60bc734d74200c425dea))
+* **tests:** script to find ignored tests ([#396](https://www.github.com/dasch-swiss/dsp-app/issues/396)) ([9ca249d](https://www.github.com/dasch-swiss/dsp-app/commit/9ca249d35de895cd96d9bc08a82f3957f6945e8e))
+
 ### [4.2.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.2.0...v4.2.1) (2021-02-24)
 
 
