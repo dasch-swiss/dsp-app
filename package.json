@@ -52,7 +52,7 @@
     "rxjs": "~6.5.3",
     "semver": "^6.1.1",
     "svg-overlay": "github:openseadragon/svg-overlay",
-    "three": "^0.118.3",
+    "three": "^0.125.0",
     "three-spritetext": "^1.5.1",
     "ts-md5": "^1.2.4",
     "tslib": "^1.10.0",
