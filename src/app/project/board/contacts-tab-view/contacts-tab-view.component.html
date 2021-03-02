@@ -1,5 +1,19 @@
-<h1>Contact</h1>
-
-<div class="tab-contents">
-    <app-person-template [person]="contactDetails"></app-person-template>
+<div *ngIf="!contactDetails">
+    <p>Contact point is not available!</p>
 </div>
+<div *ngIf="contactDetails">
+    <div class="tab-contents">
+        <mat-card *ngFor="let contact of contactsList">
+    
+            <div *ngIf="contactType === 'person'">
+                <app-person-template [person]="contact" [subProperties]="subProperties"></app-person-template>
+            </div>
+    
+            <div *ngIf="contactType === 'organisation'">
+                <app-organisation-template [organisation]="contact"></app-organisation-template>
+            </div>
+    
+        </mat-card>
+    </div>
+</div>
+

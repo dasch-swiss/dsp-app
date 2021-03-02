@@ -1,15 +1,25 @@
-<h1>Terms & Conditions</h1>
+<div class="tab-content">
+    <div class="metadata-property">
+        <div class="property-label display-inline-block">
+            Conditions of access:
+        </div>
+        <div class="display-inline-block add-left-margin">
+            {{ conditions }}
+        </div>
+    </div>
 
-<div class="tab-contents">
+    <br>
 
-    <section>
-        <h3 class="display-inline-block">Conditions of access:</h3>
-        <p  class="display-inline-block add-left-margin"> {{ conditions }} </p>
-    </section>
-
-    <section>
-        <h3>License:</h3>
-        <img class="license-image" src="/assets/images/cc-license.png" />
-        <a href="{{ license['value'] }}" target="_blank"> {{ license['value'] }} </a>
-    </section>
+    <div class="metadata-property">
+        <div class="property-label">
+            License:
+        </div>
+        <div *ngFor="let entry of license">
+            <p *ngIf="entry.url">
+                <img src="/assets/images/cc-license.png" class="license-image" />
+                <a href="{{ entry.url }}" target="_blank"> {{ entry.url }} </a>
+            </p>
+        </div>
+        
+    </div>
 </div>

@@ -1,20 +1,19 @@
 import { Component, Input } from '@angular/core';
-import { IAddress } from '../dataset-metadata';
+import { Address } from '@dasch-swiss/dsp-js';
 
 @Component({
     selector: 'app-address-template',
     template: `
-        <div class="sub-details">
-            <h4>Address:</h4>
-            <address class="contents">
-                <p>{{ address.streetAddress }}</p>
-                <span class="postcode">{{ address.postalCode }}</span>
-                <span>{{ address.addressLocality }}</span>
-            </address>
+        <div class='metadata-property'>
+            <div class='property-label display-inline-block'>
+                Address:
+            </div>
+            <div class='display-inline-block add-left-margin'>
+                <span>{{ address.streetAddress }}, {{ address.postalCode }} {{ address.addressLocality }}</span>
+            </div>
         </div>
-    `,
-    styles: ['.postcode { margin-right: 6px; }']
+    `
 })
 export class AddressTemplateComponent {
-    @Input() address: IAddress;
+    @Input() address: Address;
 }

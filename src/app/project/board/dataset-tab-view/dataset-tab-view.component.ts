@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IDataset } from '../dataset-metadata';
+import { Dataset } from '@dasch-swiss/dsp-js';
 
 @Component({
     selector: 'app-dataset-tab-view',
@@ -9,7 +9,7 @@ import { IDataset } from '../dataset-metadata';
 export class DatasetTabViewComponent {
 
     // metadata input object
-    @Input() metadata: IDataset;
+    @Input() metadata: Dataset;
 
     // number of datasets available for this project
     @Input() noOfDatasets: number;
@@ -18,7 +18,7 @@ export class DatasetTabViewComponent {
     excludeKeys = ['project', 'qualifiedAttribution'];
 
     // metadata keys that require specific format to display
-    templateKeys = ['distribution', 'license', 'sameAs'];
+    templateKeys = ['license', 'sameAs'];
 
     // date keys from metadata object for formatting
     dateKeys = ['dateCreated', 'dateModified', 'datePublished'];

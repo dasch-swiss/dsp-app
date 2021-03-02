@@ -114,4 +114,5 @@ describe('BoardComponent', () => {
 
     // todo: check the project name, if there is description and keywords, check if we can edit the project info if the user is project admin or system admin (edit btn displayed)
     // check if you get the project by shortcode
+    // check if you get the project metadata
 });

@@ -15,7 +15,7 @@ class TestHostBoardComponent {
 
     // input parameters
     conditionsOfAccess = 'Open Access';
-    license = {'type': 'https://schema.org/URL', 'value': 'https://creativecommons.org/licenses/by/3.0'};
+    license = [{'type': 'https://schema.org/URL', 'value': 'https://creativecommons.org/licenses/by/3.0', 'url': 'https://creativecommons.org/licenses/by/3.0'}];
 }
 
 describe('TermsTabViewComponent', () => {
