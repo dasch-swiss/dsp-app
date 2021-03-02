@@ -3,7 +3,7 @@
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
     <!-- toolbar: select ontology -->
-    <div class="content large middle" *ngIf="!loading && ontologies">
+    <div class="content large middle" *ngIf="!loading">
         <div class="app-toolbar transparent more-space-bottom">
             <div class="app-toolbar-row toolbar-subtitle">
                 <h3 class="mat-body subtitle">Define your metadata</h3>
@@ -30,7 +30,7 @@
                                     Open from list...
                                 </mat-label>
                                 <mat-select [formControl]="ontologyForm.controls['ontology']" [(value)]="ontologyIri">
-                                    <mat-option *ngFor="let onto of ontologies; let first = first" [value]="onto.id">
+                                    <mat-option *ngFor="let onto of ontologies" [value]="onto.id">
                                         {{onto.label}}
                                     </mat-option>
                                 </mat-select>
@@ -52,7 +52,7 @@
     </div>
 
     <!-- main content: overview shows resource classes of ontology -->
-    <div *ngIf="!loading && ontology" class="ontology-editor">
+    <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
 
         <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
@@ -141,14 +141,6 @@
                 </mat-list>
             </mat-sidenav>
 
-            <!-- <div class="ontology-editor-subheader">
-                <p *ngIf="!ontology.lastModificationDate" class="note warning center">
-                    This data model can't be edited because of missing "lastModificationDate"!
-                </p>
-                <!-- button to select and add new resource class to the ontology --
-
-            </div> -->
-
             <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
                 <div class="ontology-editor-grid" *ngIf="view === 'classes'">
 
@@ -213,7 +205,7 @@
             <app-ontology-visualizer [ontology]="ontology" [ontoClasses]="ontoClasses"></app-ontology-visualizer>
         </div>
 
-        <dsp-progress-indicator *ngIf="loadOntology"></dsp-progress-indicator>
+        <dsp-progress-indicator *ngIf="loadOntology && view !== 'graph'"></dsp-progress-indicator>
     </div>
 
 </div>

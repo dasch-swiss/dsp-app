@@ -126,8 +126,6 @@ export class OntologyComponent implements OnInit {
             this.view = (this._route.snapshot.params.view ? this._route.snapshot.params.view : 'classes');
         }
 
-        //
-
         // set the page title
         if (this.ontologyIri) {
             this._titleService.setTitle('Project ' + this.projectcode + ' | Data model');
@@ -138,7 +136,7 @@ export class OntologyComponent implements OnInit {
     }
 
     ngOnInit() {
-        // this.loading = true;
+        this.loading = true;
 
         // get information about the logged-in user
         this.session = this._session.getSession();
@@ -148,7 +146,7 @@ export class OntologyComponent implements OnInit {
         // default value for projectAdmin
         this.projectAdmin = this.sysAdmin;
 
-        // set the cache
+        // set the project cache
         this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
         // get the project data from cache
@@ -160,7 +158,7 @@ export class OntologyComponent implements OnInit {
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
                 // get the ontologies for this project
-                this.initList();
+                this.initOntologiesList();
 
                 this.ontologyForm = this._fb.group({
                     ontology: new FormControl({
@@ -178,30 +176,11 @@ export class OntologyComponent implements OnInit {
         );
     }
 
-
     /**
-     * Asyncs for each: Get all ontologies of project as ReadOntology
-     * @param ontologies
-     * @param callback
+     * build the list of project ontologies
+     * and cache them as ReadOntology array
      */
-    async asyncForEach(ontologies: OntologyMetadata[], callback: any) {
-        for (let i = 0; i < ontologies.length; i++) {
-            // set list of already existing ontology names
-            // it will be used in ontology form
-            // because ontology name has to be unique
-            const name = this._resourceClassFormService.getOntologyName(ontologies[i].id);
-            this.existingOntologyNames.push(name);
-
-            // get each ontology
-            this.getOntology(ontologies[i].id, true);
-            await callback(ontologies[i]);
-        }
-    }
-
-    /**
-     * build the list of ontologies
-     */
-    initList(): void {
+    initOntologiesList(): void {
 
         this.loading = true;
 
@@ -209,37 +188,94 @@ export class OntologyComponent implements OnInit {
         this.existingOntologyNames = [];
         this.ontologies = [];
 
-        const waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
-
         this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
             (response: OntologiesMetadata) => {
-
-                const loadAndCache = async () => {
-                    await this.asyncForEach(response.ontologies, async (onto: OntologyMetadata) => {
-                        await waitFor(200);
-                        if (this.ontologies.length === response.ontologies.length) {
-                            this.setCache();
-                        }
-                    });
-                };
 
                 if (!response.ontologies.length) {
                     this.setCache();
                 } else {
                     // in case project has only one ontology: open this ontology
-                    // because there will be no form to select ontlogy
+                    // because there will be no form to select an ontlogy
                     if (response.ontologies.length === 1) {
                         // open this ontology
                         this.openOntologyRoute(response.ontologies[0].id, this.view);
                         this.ontologyIri = response.ontologies[0].id;
                     }
-                    loadAndCache();
+
+                    response.ontologies.forEach((ontoMeta, index, array) => {
+                        // set list of already existing ontology names
+                        // it will be used in ontology form
+                        // because ontology name has to be unique
+                        const name = this._resourceClassFormService.getOntologyName(ontoMeta.id);
+                        this.existingOntologyNames.push(name);
+
+                        // get each ontology
+                        this._dspApiConnection.v2.onto.getOntology(ontoMeta.id, true).subscribe(
+                            (readOnto: ReadOntology) => {
+                                this.ontologies.push(readOnto);
+
+                                if (ontoMeta.id === this.ontologyIri) {
+                                    // one ontology is selected:
+                                    // get all information to display this ontology
+                                    // with all classes, properties and connected lists
+                                    this.loadOntology = true;
+                                    this.ontology = readOnto;
+                                    this._cache.set('currentOntology', this.ontology);
+
+                                    // grab the onto class information to display
+                                    const allOntoClasses = readOnto.getAllClassDefinitions();
+
+                                    // reset the ontology classes
+                                    this.ontoClasses = [];
+
+                                    // display only the classes which are not a subClass of Standoff
+                                    allOntoClasses.forEach(resClass => {
+                                        if (resClass.subClassOf.length) {
+                                            const splittedSubClass = resClass.subClassOf[0].split('#');
+                                            if (!splittedSubClass[0].includes(Constants.StandoffOntology) && !splittedSubClass[1].includes('Standoff')) {
+                                                this.ontoClasses.push(resClass);
+                                            }
+                                        }
+                                    });
+                                    // sort classes by label
+                                    // --> TODO: add sort functionallity to the gui
+                                    this.ontoClasses = this._sortingService.keySortByAlphabetical(this.ontoClasses, 'label');
+
+                                    // grab the onto properties information to display
+                                    const allOntoProperties = readOnto.getAllPropertyDefinitions();
+
+                                    // reset the ontology properties
+                                    this.ontoProperties = [];
+
+                                    // display only the properties which are not a subjectType of Standoff
+                                    allOntoProperties.forEach(resProp => {
+                                        const standoff = (resProp.subjectType ? resProp.subjectType.includes('Standoff') : false);
+                                        if (resProp.objectType !== Constants.LinkValue && !standoff) {
+                                            this.ontoProperties.push(resProp);
+                                        }
+                                    });
+                                    // sort properties by label
+                                    // --> TODO: add sort functionallity to the gui
+                                    this.ontoProperties = this._sortingService.keySortByAlphabetical(this.ontoProperties, 'label');
+
+                                    this.loadOntology = false;
+                                }
+                                if (response.ontologies.length === this.ontologies.length) {
+                                    this._cache.set('currentProjectOntologies', this.ontologies);
+                                    this.setCache();
+                                }
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        );
+
+                    });
+
                 }
 
             },
             (error: ApiResponseError) => {
-                // temporary solution. There's a bug in js-lib in case of 0 ontologies
-                // s. youtrack issue DSP-863
                 this.ontologies = [];
                 this._errorHandler.showMessage(error);
                 this.loading = false;
@@ -270,63 +306,12 @@ export class OntologyComponent implements OnInit {
         this._router.navigateByUrl(goto, { skipLocationChange: false });
     }
 
-    // get ontology info
-    getOntology(id: string, updateOntologiesList: boolean = false) {
-        this._dspApiConnection.v2.onto.getOntology(id, true).subscribe(
-            (response: ReadOntology) => {
-
-                if (updateOntologiesList) {
-                    this.ontologies.push(response);
-                }
-
-                // get current ontology as a separate part
-                if (response.id === this.ontologyIri) {
-                    this.ontology = response;
-                    // the ontology is the selected one
-                    // grab the onto class information to display
-                    this.ontoClasses = [];
-
-                    const classKeys: string[] = Object.keys(response.classes);
-                    // create list of resource classes without standoff classes
-                    for (const c of classKeys) {
-                        const splittedSubClass = this.ontology.classes[c].subClassOf[0].split('#');
-
-                        if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag' && splittedSubClass[1] !== 'StandoffEventTag') {
-                            this.ontoClasses.push(this.ontology.classes[c]);
-                        }
-                    }
-                    this.ontoClasses = this._sortingService.keySortByAlphabetical(this.ontoClasses, 'label');
-
-                    // grab the onto properties information to display
-                    this.ontoProperties = [];
-                    const propKeys: string[] = Object.keys(response.properties);
-                    // create list of resource classes without standoff classes
-                    for (const p of propKeys) {
-                        const standoff = (this.ontology.properties[p].subjectType ? this.ontology.properties[p].subjectType.includes('Standoff') : false);
-                        if (this.ontology.properties[p].objectType !== Constants.LinkValue && !standoff) {
-                            this.ontoProperties.push(this.ontology.properties[p]);
-                        }
-                    }
-
-                    this.ontoProperties = this._sortingService.keySortByAlphabetical(this.ontoProperties, 'label');
-
-                    this.loadOntology = false;
-                }
-
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loadOntology = false;
-            }
-        );
-    }
-
     resetOntology(id: string) {
 
         this.ontology = undefined;
         this.ontoClasses = [];
         this.openOntologyRoute(id, this.view);
-        this.getOntology(id);
+        this.initOntologiesList();
 
     }
 
@@ -362,7 +347,7 @@ export class OntologyComponent implements OnInit {
                 // reset and open selected ontology
                 this.ontologyForm.controls['ontology'].setValue(this.ontologyIri);
             } else {
-                this.initList();
+                this.initOntologiesList();
             }
         });
     }
@@ -373,9 +358,6 @@ export class OntologyComponent implements OnInit {
      * @param resClassInfo (could be subClassOf (create mode) or resource class itself (edit mode))
      */
     openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', resClassInfo: DefaultClass): void {
-
-        // set cache for ontology and lists
-        this.setCache();
 
         const dialogConfig: MatDialogConfig = {
             disableClose: true,
@@ -394,8 +376,7 @@ export class OntologyComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view
-            this.initList();
-            this.getOntology(this.ontologyIri);
+            this.initOntologiesList();
         });
     }
 
@@ -405,9 +386,6 @@ export class OntologyComponent implements OnInit {
      * @param subClassOf resource class
      */
     updateCard(subClassOf: ResourceClassDefinition) {
-
-        // set cache for ontology and lists
-        this.setCache();
 
         const dialogConfig: MatDialogConfig = {
             disableClose: true,
@@ -426,8 +404,7 @@ export class OntologyComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             // update the view
-            this.initList();
-            this.getOntology(this.ontologyIri);
+            this.initOntologiesList();
         });
     }
 
@@ -468,7 +445,7 @@ export class OntologyComponent implements OnInit {
                                 // reset current ontology
                                 this.ontology = undefined;
                                 // get the ontologies for this project
-                                this.initList();
+                                this.initOntologiesList();
                                 // go to project ontology page
                                 const goto = 'project/' + this.projectcode + '/ontologies/';
                                 this._router.navigateByUrl(goto, { skipLocationChange: false });
@@ -479,7 +456,6 @@ export class OntologyComponent implements OnInit {
                                 this.loadOntology = false;
                             }
                         );
-
                         break;
 
                     case 'ResourceClass':
@@ -488,13 +464,10 @@ export class OntologyComponent implements OnInit {
                         const resClass: DeleteResourceClass = new DeleteResourceClass();
                         resClass.id = id;
                         resClass.lastModificationDate = this.ontology.lastModificationDate;
-
-
                         this._dspApiConnection.v2.onto.deleteResourceClass(resClass).subscribe(
                             (response: OntologyMetadata) => {
                                 this.loading = false;
                                 this.resetOntology(this.ontologyIri);
-                                // this.getOntology(this.ontologyIri);
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
@@ -510,18 +483,13 @@ export class OntologyComponent implements OnInit {
     }
 
     setCache() {
-        // set cache for current ontology
-        this._cache.set('currentOntology', this.ontology);
-        this._cache.set('currentProjectOntologies', this.ontologies);
-
         // get all lists from the project
         // it will be used to set gui attribute in a list property
         this._dspApiConnection.admin.listsEndpoint.getListsInProject(this.project.id).subscribe(
             (response: ApiResponseData<ListsResponse>) => {
                 this._cache.set('currentOntologyLists', response.body.lists);
-
-                this.loading = false;
                 this.loadOntology = false;
+                this.loading = false;
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);

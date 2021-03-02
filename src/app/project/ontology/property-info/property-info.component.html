@@ -11,7 +11,7 @@
             </ng-template>
         </span>
         <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above">
-            {{propDef?.label}}
+            {{propDef?.label}} <span *ngIf="!propDef.label">{{propDef.id}}</span>
         </span>
         <!-- property is linked to a class or to a list: display connected class or list -->
         <span class="attribute additional-info" *ngIf="propAttribute" [innerHTML]="'&rarr;&nbsp;' + propAttribute"></span>
