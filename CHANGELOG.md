@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.3.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.3.0...v4.3.1) (2021-03-03)
+
+
+### Bug Fixes
+
+* **project:** disable error handler in metadata request (DSP-1395) ([#404](https://www.github.com/dasch-swiss/dsp-app/issues/404)) ([86ebfcf](https://www.github.com/dasch-swiss/dsp-app/commit/86ebfcf6a6d62e7ddc0e45899726d24f0b1a0c4a))
+
 ## [4.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.2.1...v4.3.0) (2021-03-02)
 
 
