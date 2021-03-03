@@ -164,7 +164,8 @@ export class BoardComponent implements OnInit {
                 this.getProjectForDataset();
             },
             (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
+                // --> TODO: enable the error handler as soon as DSP-1391 is solved
+                // this._errorHandler.showMessage(error);
             }
         );
 
