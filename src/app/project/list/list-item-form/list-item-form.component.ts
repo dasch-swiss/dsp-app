@@ -31,23 +31,23 @@ export class ListNodeOperation {
         // https://www.kdechant.com/blog/angular-animations-fade-in-and-fade-out
         trigger('simpleFadeAnimation', [
 
-          // the "in" style determines the "resting" state of the element when it is visible.
-          state('in', style({opacity: 1})),
+            // the "in" style determines the "resting" state of the element when it is visible.
+            state('in', style({ opacity: 1 })),
 
-          // fade in when created.
-          transition(':enter', [
+            // fade in when created.
+            transition(':enter', [
             // the styles start from this point when the element appears
-            style({opacity: 0}),
-            // and animate toward the "in" state above
-            animate(150)
-          ]),
+                style({ opacity: 0 }),
+                // and animate toward the "in" state above
+                animate(150)
+            ]),
 
-          // fade out when destroyed.
-          transition(':leave',
+            // fade out when destroyed.
+            transition(':leave',
             // fading out uses a different syntax, with the "style" being passed into animate()
-            animate(150, style({opacity: 0})))
+                animate(150, style({ opacity: 0 })))
         ])
-      ]
+    ]
 })
 export class ListItemFormComponent implements OnInit {
 
@@ -79,9 +79,9 @@ export class ListItemFormComponent implements OnInit {
     @Input() position: number;
 
     // is this node in the last position of the list
-    @Input() lastPosition: boolean = false;
+    @Input() lastPosition = false;
 
-    @Input() newNode: boolean = false;
+    @Input() newNode = false;
 
     @Output() refreshParent: EventEmitter<ListNodeOperation> = new EventEmitter<ListNodeOperation>();
 
@@ -89,9 +89,9 @@ export class ListItemFormComponent implements OnInit {
 
     initComponent: boolean;
 
-    placeholder: string = 'Append item to ';
+    placeholder = 'Append item to ';
 
-    showActionBubble: boolean = false;
+    showActionBubble = false;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -127,7 +127,7 @@ export class ListItemFormComponent implements OnInit {
     }
 
     /**
-     * Called from the template when the plus button is clicked.
+     * called from the template when the plus button is clicked.
      * Sends the info to make a new child node to DSP-API and refreshes the UI to show the newly added node at the end of the list.
      */
     createChildNode() {
@@ -152,7 +152,7 @@ export class ListItemFormComponent implements OnInit {
             childNode.labels[i].value = l.value;
             i++;
         }
-        childNode.comments = []; // TODO: comments are not yet implemented in the template
+        childNode.comments = []; // --> TODO comments are not yet implemented in the template
 
         // init data to emit to parent
         const listNodeOperation: ListNodeOperation = new ListNodeOperation();
@@ -178,7 +178,7 @@ export class ListItemFormComponent implements OnInit {
     }
 
     /**
-     * Called from the template any time the label changes.
+     * called from the template any time the label changes.
      * Currently only implemented for labels because entering comments is not yet supported.
      *
      * @param data the data that was changed.
@@ -191,21 +191,21 @@ export class ListItemFormComponent implements OnInit {
     }
 
     /**
-     * Show action bubble with various CRUD buttons when hovered over.
+     * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
         this.showActionBubble = true;
     }
 
     /**
-     * Hide action bubble with various CRUD buttons when not hovered over.
+     * hide action bubble with various CRUD buttons when not hovered over.
      */
     mouseLeave() {
         this.showActionBubble = false;
     }
 
     /**
-     * Called when the 'edit' or 'delete' button is clicked.
+     * called when the 'edit' or 'delete' button is clicked.
      *
      * @param mode mode to tell DialogComponent which part of the template to show.
      * @param name label of the node; for now this is always the first label in the array.
@@ -271,7 +271,7 @@ export class ListItemFormComponent implements OnInit {
                                 position: {
                                     top: '112px'
                                 },
-                                data: { mode: 'deleteListNodeError'}
+                                data: { mode: 'deleteListNodeError' }
                             };
 
                             // open the dialog box
@@ -288,7 +288,7 @@ export class ListItemFormComponent implements OnInit {
     }
 
     /**
-     * Called from the template when either of the two reposition buttons is clicked
+     * called from the template when either of the two reposition buttons is clicked
      * @param direction in which direction the node should move
      */
     repositionNode(direction: 'up' | 'down') {

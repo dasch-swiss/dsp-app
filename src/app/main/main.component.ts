@@ -15,11 +15,11 @@ export class MainComponent implements OnInit {
 
     loading: boolean;
 
-    showCookieBanner: boolean = true;
+    showCookieBanner = true;
 
-    researchField: string = 'qualitative';
+    researchField = 'qualitative';
 
-    session: boolean = false;
+    session = false;
 
     disabledProjects: string[] = [
         Constants.SystemProjectIRI,
@@ -96,7 +96,7 @@ export class MainComponent implements OnInit {
         this.loading = true;
         this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
             (response: ApiResponseData<ProjectsResponse>) => {
-                const sliceLength: number = 160;
+                const sliceLength = 160;
 
                 for (const project of response.body.projects) {
                     // disable default test projects

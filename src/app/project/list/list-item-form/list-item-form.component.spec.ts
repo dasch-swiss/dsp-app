@@ -22,7 +22,7 @@ import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ListItemFormComponent, ListNodeOperation } from './list-item-form.component';
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     template: `
@@ -148,20 +148,20 @@ describe('ListItemFormComponent', () => {
 
                 const response = deleteListNodeResponse;
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
         spyOn(testHostComponent.listItemForm.refreshParent, 'emit');
 
-        const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({selector: '.delete'}));
+        const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
         await deleteButton.click();
 
         const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
         expect(dialogHarnesses.length).toEqual(1);
 
-        const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({selector: '.confirm-button'}));
+        const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.confirm-button' }));
 
         await confirmButton.click();
 

@@ -22,8 +22,8 @@ export class ProjectComponent implements OnInit {
 
     // permissions of logged-in user
     session: Session;
-    sysAdmin: boolean = false;
-    projectAdmin: boolean = false;
+    sysAdmin = false;
+    projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
     projectcode: string;
@@ -31,10 +31,10 @@ export class ProjectComponent implements OnInit {
     // project data
     project: ReadProject;
 
-    color: string = 'primary';
+    color = 'primary';
 
     // for the sidenav
-    open: boolean = true;
+    open = true;
 
     navigation: MenuItem[] = AppGlobal.projectNav;
 
@@ -111,12 +111,12 @@ export class ProjectComponent implements OnInit {
             );
         } else {
             // shortcode isn't valid
-            // TODO: show an error page
+            // --> TODO show an error page
         }
     }
 
     /**
-     * Checks if the shortcode is valid: hexadecimal and length = 4
+     * checks if the shortcode is valid: hexadecimal and length = 4
      *
      * @param code project shortcode which is a parameter in the route
      */

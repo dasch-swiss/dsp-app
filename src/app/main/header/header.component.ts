@@ -17,8 +17,8 @@ const { version: appVersion } = require('../../../../package.json');
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-    session: boolean = false;
-    show: boolean = false;
+    session = false;
+    show = false;
     searchParams: SearchParams;
 
     appVersion: string = 'v' + appVersion;
@@ -70,7 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.componentCommsSubscription = this._componentCommsService.on(
-            Events.LoginSuccess, () => this.showMessage = true);
+            Events.loginSuccess, () => this.showMessage = true);
     }
 
     ngOnDestroy() {
@@ -81,7 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Navigate to the login page
+     * navigate to the login page
      */
     goToLogin() {
         // console.log(decodeURI(this._router.url));
@@ -93,7 +93,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Show or hide search bar in phone version
+     * show or hide search bar in phone version
      */
     showSearchBar() {
         this.show = !this.show;
@@ -150,7 +150,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             position: {
                 top: '112px'
             },
-            data: { mode: mode, title: 'New resource',  subtitle: 'Create new resource'},
+            data: { mode: mode, title: 'New resource',  subtitle: 'Create new resource' },
             disableClose: true
         };
 

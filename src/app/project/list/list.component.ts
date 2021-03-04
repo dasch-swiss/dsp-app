@@ -33,8 +33,8 @@ export class ListComponent implements OnInit {
 
     // permissions of logged-in user
     session: Session;
-    sysAdmin: boolean = false;
-    projectAdmin: boolean = false;
+    sysAdmin = false;
+    projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
     projectcode: string;
@@ -234,7 +234,7 @@ export class ListComponent implements OnInit {
                                 position: {
                                     top: '112px'
                                 },
-                                data: { mode: 'deleteListNodeError'}
+                                data: { mode: 'deleteListNodeError' }
                             };
 
                             // open the dialog box

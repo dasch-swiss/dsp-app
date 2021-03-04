@@ -18,7 +18,7 @@ export class ExternalLinksDirective implements OnChanges {
     ngOnChanges() {
         this.hrefAttr = this.href;
 
-        if (this.isLinkExternal()) {
+        if (this._isLinkExternal()) {
             // makes sure that the new browser tab does not run on the same process and prevent it from accessing window.opener
             this.relAttr = 'noopener';
             // open the page in a new tab
@@ -27,9 +27,9 @@ export class ExternalLinksDirective implements OnChanges {
     }
 
     /**
-     * Check if the link opens an external page
+     * check if the link opens an external page
      */
-    private isLinkExternal() {
+    private _isLinkExternal() {
         return (
             // get a token value from platformId to run the code only on the client and prevents errors
             isPlatformBrowser(this.platformId) &&

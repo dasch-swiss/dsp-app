@@ -15,9 +15,9 @@ import { Subscription } from 'rxjs';
 const resolvedPromise = Promise.resolve(null);
 
 @Component({
-  selector: 'app-select-ontology',
-  templateUrl: './select-ontology.component.html',
-  styleUrls: ['./select-ontology.component.scss']
+    selector: 'app-select-ontology',
+    templateUrl: './select-ontology.component.html',
+    styleUrls: ['./select-ontology.component.scss']
 })
 export class SelectOntologyComponent implements OnInit, OnDestroy, AfterViewInit {
 

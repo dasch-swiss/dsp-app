@@ -14,7 +14,7 @@ import { SelectProjectComponent } from './select-project.component';
 
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     template: `
@@ -54,15 +54,15 @@ describe('SelectProjectComponent', () => {
     beforeEach(async(() => {
 
         TestBed.configureTestingModule({
-        declarations: [ SelectProjectComponent, TestHostComponent ],
-        imports: [
-            ReactiveFormsModule,
-            FormsModule,
-            BrowserAnimationsModule,
-            MatFormFieldModule,
-            MatSelectModule ]
+            declarations: [ SelectProjectComponent, TestHostComponent ],
+            imports: [
+                ReactiveFormsModule,
+                FormsModule,
+                BrowserAnimationsModule,
+                MatFormFieldModule,
+                MatSelectModule ]
         })
-        .compileComponents();
+            .compileComponents();
     }));
 
     beforeEach(() => {

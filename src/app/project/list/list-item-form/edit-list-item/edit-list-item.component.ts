@@ -12,14 +12,14 @@ import {
     UpdateChildNodeRequest
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
-  selector: 'app-edit-list-item',
-  templateUrl: './edit-list-item.component.html',
-  styleUrls: ['./edit-list-item.component.scss']
+    selector: 'app-edit-list-item',
+    templateUrl: './edit-list-item.component.html',
+    styleUrls: ['./edit-list-item.component.scss']
 })
 export class EditListItemComponent implements OnInit {
-    loading: boolean;
 
     @Input() iri: string;
 
@@ -34,6 +34,8 @@ export class EditListItemComponent implements OnInit {
     @Input() projectIri: string;
 
     @Output() closeDialog: EventEmitter<List | ListNodeInfo> = new EventEmitter<List>();
+
+    loading: boolean;
 
     // the list node being edited
     listNode: ListNodeInfo;
@@ -60,7 +62,10 @@ export class EditListItemComponent implements OnInit {
 
     formInvalidMessage: string;
 
-    constructor(@Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection) { }
+    constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _errorHandler: ErrorHandlerService
+    ) { }
 
     ngOnInit(): void {
         this.loading = true;
@@ -73,7 +78,7 @@ export class EditListItemComponent implements OnInit {
                     this.buildForm(response.body.nodeinfo);
                 },
                 (error: ApiResponseError) => {
-                    console.error(error);
+                    this._errorHandler.showMessage(error);
                 }
             );
         } else {
@@ -85,7 +90,7 @@ export class EditListItemComponent implements OnInit {
     }
 
     /**
-     * Separates the labels and comments of a list node into two local arrays.
+     * separates the labels and comments of a list node into two local arrays.
      *
      * @param listNode info about a list node
      */
@@ -103,7 +108,7 @@ export class EditListItemComponent implements OnInit {
     }
 
     /**
-     * Called from the template any time the labels or comments are changed to update the local arrays.
+     * called from the template any time the labels or comments are changed to update the local arrays.
      * At least one label is required. Otherwise, the 'update' button will be disabled.
      *
      * @param data the data that was changed
@@ -131,8 +136,8 @@ export class EditListItemComponent implements OnInit {
     }
 
     /**
-     * Called from the template when the 'submit' button is clicked in update mode.
-     * Sends a request to DSP-API to update the list child node with the data inside the two local arrays.
+     * called from the template when the 'submit' button is clicked in update mode.
+     * sends a request to DSP-API to update the list child node with the data inside the two local arrays.
      */
     updateChildNode() {
         const childNodeUpdateData: UpdateChildNodeRequest = new UpdateChildNodeRequest();
@@ -154,7 +159,7 @@ export class EditListItemComponent implements OnInit {
     }
 
     /**
-     * Called from the template when the 'submit' button is clicked in insert mode.
+     * called from the template when the 'submit' button is clicked in insert mode.
      * Sends a request to DSP-API to insert a new list child node in the provided position.
      */
     insertChildNode() {

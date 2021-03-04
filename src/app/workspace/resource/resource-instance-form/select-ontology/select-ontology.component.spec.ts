@@ -12,7 +12,7 @@ import { MockOntology, OntologiesMetadata } from '@dasch-swiss/dsp-js';
 import { SelectOntologyComponent } from './select-ontology.component';
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     template: `
@@ -51,16 +51,16 @@ describe('SelectOntologyComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-        declarations: [ SelectOntologyComponent, TestHostComponent ],
-        imports: [
-            ReactiveFormsModule,
-            FormsModule,
-            BrowserAnimationsModule,
-            MatFormFieldModule,
-            MatSelectModule
+            declarations: [ SelectOntologyComponent, TestHostComponent ],
+            imports: [
+                ReactiveFormsModule,
+                FormsModule,
+                BrowserAnimationsModule,
+                MatFormFieldModule,
+                MatSelectModule
             ]
         })
-        .compileComponents();
+            .compileComponents();
     }));
 
     beforeEach(() => {

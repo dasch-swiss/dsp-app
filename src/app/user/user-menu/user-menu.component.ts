@@ -23,7 +23,7 @@ export class UserMenuComponent implements OnInit {
 
     username: string;
 
-    sysAdmin: boolean = false;
+    sysAdmin = false;
 
     navigation: MenuItem[];
 

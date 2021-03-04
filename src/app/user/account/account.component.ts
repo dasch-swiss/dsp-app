@@ -21,14 +21,14 @@ import { CacheService } from '../../main/cache/cache.service';
 })
 export class AccountComponent implements OnInit {
 
-    loading: boolean;
+    // in case of modification
+    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() username: string;
 
-    user: ReadUser;
+    loading: boolean;
 
-    // in case of modification
-    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
+    user: ReadUser;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,

@@ -12,7 +12,7 @@ export class ComponentCommunicationEventService {
     private _subject$ = new Subject();
 
     // used in the listening component.
-    // i.e. this.componentCommunicationEventService = this._componentCommunicationEventService.on(Events.LoginSuccess, () => doSomething());
+    // i.e. this.componentCommunicationEventService = this._componentCommunicationEventService.on(Events.loginSuccess, () => doSomething());
     on(event: Events, action: () => void): Subscription {
         return this._subject$
             .pipe(
@@ -24,7 +24,7 @@ export class ComponentCommunicationEventService {
     }
 
     // used in the emitting component.
-    // i.e. this.componentCommunicationEventService.emit(new EmitEvent(Events.LoginSuccess));
+    // i.e. this.componentCommunicationEventService.emit(new EmitEvent(Events.loginSuccess));
     emit(event: EmitEvent) {
         this._subject$.next(event);
     }
@@ -36,5 +36,5 @@ export class EmitEvent {
 
 // possible events that can be emitted.
 export enum Events {
-    LoginSuccess
+    loginSuccess
 }

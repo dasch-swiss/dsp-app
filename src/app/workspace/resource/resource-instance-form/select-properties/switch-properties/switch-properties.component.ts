@@ -4,9 +4,9 @@ import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swis
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 
 @Component({
-  selector: 'app-switch-properties',
-  templateUrl: './switch-properties.component.html',
-  styleUrls: ['./switch-properties.component.scss']
+    selector: 'app-switch-properties',
+    templateUrl: './switch-properties.component.html',
+    styleUrls: ['./switch-properties.component.scss']
 })
 export class SwitchPropertiesComponent implements OnInit {
 

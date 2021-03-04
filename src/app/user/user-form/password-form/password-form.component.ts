@@ -19,11 +19,20 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 })
 export class PasswordFormComponent implements OnInit {
 
+    // update password for:
+    @Input() username: string;
+
+    // output to close dialog
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
+
+    // in case of child component inside parent form
+    @Output() sendToParent: EventEmitter<string> = new EventEmitter<string>();
+
     // progress indicator
     loading: boolean;
 
-    // TODO: replace RegexPassword by CustomRegex.PASSWORD_REGEX from dsp-ui
-    public readonly RegexPassword = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/i;
+    // --> TODO replace regexPassword by CustomRegex.PASSWORD_REGEX from dsp-ui
+    public readonly REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/i;
 
     // in case of updating data: was it succesful or does it failed
     apiResponses: DspMessageData[] = [
@@ -44,17 +53,9 @@ export class PasswordFormComponent implements OnInit {
 
     showResponse: DspMessageData;
 
-    // update password for:
-    @Input() username: string;
     user: ReadUser;
 
     loggedInUserName: string;
-
-    // output to close dialog
-    @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
-
-    // in case of child component inside parent form
-    @Output() sendToParent: EventEmitter<string> = new EventEmitter<string>();
 
     // who is logged in?
     // loggedInUserName: string;
@@ -67,7 +68,7 @@ export class PasswordFormComponent implements OnInit {
     // password form
     form: FormGroup;
 
-    matchingPasswords: boolean = false;
+    matchingPasswords = false;
 
     // in case of change not own password, we need a sys admin confirm password form
     confirmForm: FormGroup;
@@ -170,7 +171,9 @@ export class PasswordFormComponent implements OnInit {
             )
         });
 
-        this.confirmForm.valueChanges.subscribe(data => { this.onValueChanged(this.confirmForm, data); });
+        this.confirmForm.valueChanges.subscribe(data => {
+            this.onValueChanged(this.confirmForm, data);
+        });
 
         this.onValueChanged(this.confirmForm); // (re)set validation messages now
 
@@ -205,7 +208,7 @@ export class PasswordFormComponent implements OnInit {
                 [
                     Validators.required,
                     Validators.minLength(8),
-                    Validators.pattern(this.RegexPassword) // TODO: replace by CustomRegex.PASSWORD_REGEX from dsp-ui
+                    Validators.pattern(this.REGEX_PASSWORD) // --> TODO replace by CustomRegex.PASSWORD_REGEX from dsp-ui
                 ]
             ),
             confirmPassword: new FormControl(

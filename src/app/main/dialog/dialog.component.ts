@@ -32,7 +32,7 @@ export class DialogComponent implements OnInit {
         this.dialogRef.close();
     }
 
-    replaceTitle(heading: { title: string, subtitle?: string }) {
+    replaceTitle(heading: { title: string; subtitle?: string }) {
         this.data.title = heading.title;
 
         if (heading.subtitle) {

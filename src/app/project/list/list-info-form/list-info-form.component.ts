@@ -23,7 +23,6 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 })
 export class ListInfoFormComponent implements OnInit {
 
-    loading: boolean;
 
     @Input() iri?: string;
 
@@ -35,6 +34,8 @@ export class ListInfoFormComponent implements OnInit {
     @Output() closeDialog: EventEmitter<List | ListNodeInfo> = new EventEmitter<List>();
 
     @Output() updateParent: EventEmitter<{ title: string }> = new EventEmitter<{ title: string }>();
+
+    loading: boolean;
 
     project: ReadProject;
 
@@ -48,7 +49,7 @@ export class ListInfoFormComponent implements OnInit {
      * true after adding list
      *
      */
-    createList: boolean = false;
+    createList = false;
     newList: List;
 
     nameMinLength = 3;
@@ -212,7 +213,7 @@ export class ListInfoFormComponent implements OnInit {
     }
 
     /**
-     * Reset the form
+     * reset the form
      */
     resetForm(ev: Event, list?: ListNodeInfo) {
 

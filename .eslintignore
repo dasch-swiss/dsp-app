@@ -1,0 +1,11 @@
+# Ignore miscellaneous folders
+.github/
+.idea/
+.vscode/
+.yalc/
+node_modules/
+dist/
+tmp/
+
+# Ignore certain project files
+docs/assets/js/

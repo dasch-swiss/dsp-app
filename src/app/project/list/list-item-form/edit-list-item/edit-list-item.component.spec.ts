@@ -1,4 +1,4 @@
-import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
+import { Component, DebugElement, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -10,10 +10,10 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { EditListItemComponent } from './edit-list-item.component';
 
 /**
- * Test host component to simulate parent component for updating an existing child node.
+ * test host component to simulate parent component for updating an existing child node.
  */
 @Component({
-    template: `<app-edit-list-item #editListItem [iri]="iri" [mode]="mode" [projectIri]="projectIri"></app-edit-list-item>`
+    template: '<app-edit-list-item #editListItem [iri]="iri" [mode]="mode" [projectIri]="projectIri"></app-edit-list-item>'
 })
 class TestHostUpdateChildNodeComponent {
 
@@ -29,10 +29,10 @@ class TestHostUpdateChildNodeComponent {
 }
 
 /**
- * Test host component to simulate parent component for inserting a new child node.
+ * test host component to simulate parent component for inserting a new child node.
  */
 @Component({
-    template: `<app-edit-list-item #editListItem [iri]="iri" [mode]="mode" [parentIri]="parentIri" [position]="position" [projectCode]="projectCode" [projectIri]="projectIri"></app-edit-list-item>`
+    template: '<app-edit-list-item #editListItem [iri]="iri" [mode]="mode" [parentIri]="parentIri" [position]="position" [projectCode]="projectCode" [projectIri]="projectIri"></app-edit-list-item>'
 })
 class TestHostInsertChildNodeComponent {
 
@@ -97,9 +97,9 @@ describe('EditListItemComponent', () => {
                 () => {
                     const response = new ListNodeInfoResponse();
                     response.nodeinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList01';
-                    response.nodeinfo.labels = [{'value': 'Tree list node 01', 'language': 'en'}];
-                    response.nodeinfo.comments = [{'value': 'My comment', 'language': 'en'}];
-                    return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                    response.nodeinfo.labels = [{ 'value': 'Tree list node 01', 'language': 'en' }];
+                    response.nodeinfo.comments = [{ 'value': 'My comment', 'language': 'en' }];
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
                 }
             );
 
@@ -116,16 +116,16 @@ describe('EditListItemComponent', () => {
 
         it('should assign labels and comments', () => {
             const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-            expect(testHostComponent.editListItem.labels).toEqual([{'value': 'Tree list node 01', 'language': 'en'}]);
-            expect(testHostComponent.editListItem.comments).toEqual([{'value': 'My comment', 'language': 'en'}]);
+            expect(testHostComponent.editListItem.labels).toEqual([{ 'value': 'Tree list node 01', 'language': 'en' }]);
+            expect(testHostComponent.editListItem.comments).toEqual([{ 'value': 'My comment', 'language': 'en' }]);
             expect(dspConnSpy.admin.listsEndpoint.getListNodeInfo).toHaveBeenCalledTimes(1);
             expect(dspConnSpy.admin.listsEndpoint.getListNodeInfo).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/otherTreeList01');
         });
 
         it('should update labels when the value changes', () => {
-            expect(testHostComponent.editListItem.labels).toEqual([{'value': 'Tree list node 01', 'language': 'en'}]);
-            testHostComponent.editListItem.handleData([{'value': 'Tree list node 01', 'language': 'en'}, {'value': 'Baumlistenknoten 01', 'language': 'de'}], 'labels');
-            expect(testHostComponent.editListItem.labels).toEqual([{'value': 'Tree list node 01', 'language': 'en'}, {'value': 'Baumlistenknoten 01', 'language': 'de'}]);
+            expect(testHostComponent.editListItem.labels).toEqual([{ 'value': 'Tree list node 01', 'language': 'en' }]);
+            testHostComponent.editListItem.handleData([{ 'value': 'Tree list node 01', 'language': 'en' }, { 'value': 'Baumlistenknoten 01', 'language': 'de' }], 'labels');
+            expect(testHostComponent.editListItem.labels).toEqual([{ 'value': 'Tree list node 01', 'language': 'en' }, { 'value': 'Baumlistenknoten 01', 'language': 'de' }]);
             expect(testHostComponent.editListItem.saveButtonDisabled).toBeFalsy();
             testHostComponent.editListItem.handleData([], 'labels');
             expect(testHostComponent.editListItem.saveButtonDisabled).toBeTruthy();
@@ -135,9 +135,9 @@ describe('EditListItemComponent', () => {
         });
 
         it('should update comments when the value changes', () => {
-            expect(testHostComponent.editListItem.comments).toEqual([{'value': 'My comment', 'language': 'en'}]);
-            testHostComponent.editListItem.handleData([{'value': 'My comment', 'language': 'en'}, {'value': 'Mein Kommentar', 'language': 'de'}], 'comments');
-            expect(testHostComponent.editListItem.comments).toEqual([{'value': 'My comment', 'language': 'en'}, {'value': 'Mein Kommentar', 'language': 'de'}]);
+            expect(testHostComponent.editListItem.comments).toEqual([{ 'value': 'My comment', 'language': 'en' }]);
+            testHostComponent.editListItem.handleData([{ 'value': 'My comment', 'language': 'en' }, { 'value': 'Mein Kommentar', 'language': 'de' }], 'comments');
+            expect(testHostComponent.editListItem.comments).toEqual([{ 'value': 'My comment', 'language': 'en' }, { 'value': 'Mein Kommentar', 'language': 'de' }]);
             expect(testHostComponent.editListItem.saveButtonDisabled).toBeFalsy();
             testHostComponent.editListItem.handleData([], 'comments');
             expect(testHostComponent.editListItem.saveButtonDisabled).toBeFalsy();
@@ -146,20 +146,20 @@ describe('EditListItemComponent', () => {
         it('should update the child node info', () => {
             const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-            testHostComponent.editListItem.handleData([{'value': 'Tree list node 01', 'language': 'en'}, {'value': 'Baumlistenknoten 01', 'language': 'de'}], 'labels');
-            testHostComponent.editListItem.handleData([{'value': 'My comment', 'language': 'en'}, {'value': 'Mein Kommentar', 'language': 'de'}], 'comments');
+            testHostComponent.editListItem.handleData([{ 'value': 'Tree list node 01', 'language': 'en' }, { 'value': 'Baumlistenknoten 01', 'language': 'de' }], 'labels');
+            testHostComponent.editListItem.handleData([{ 'value': 'My comment', 'language': 'en' }, { 'value': 'Mein Kommentar', 'language': 'de' }], 'comments');
 
             (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).updateChildNode.and.callFake(
                 () => {
                     const response = new ListNodeInfoResponse();
                     response.nodeinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList01';
-                    response.nodeinfo.labels = [{'value': 'Tree list node 01', 'language': 'en'}, {'value': 'Baumlistenknoten 01', 'language': 'de'}];
-                    response.nodeinfo.comments = [{'value': 'My comment', 'language': 'en'}, {'value': 'Mein Kommentar', 'language': 'de'}];
+                    response.nodeinfo.labels = [{ 'value': 'Tree list node 01', 'language': 'en' }, { 'value': 'Baumlistenknoten 01', 'language': 'de' }];
+                    response.nodeinfo.comments = [{ 'value': 'My comment', 'language': 'en' }, { 'value': 'Mein Kommentar', 'language': 'de' }];
 
                     expect(testHostComponent.editListItem.labels).toEqual(response.nodeinfo.labels);
                     expect(testHostComponent.editListItem.comments).toEqual(response.nodeinfo.comments);
 
-                    return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
                 }
             );
 
@@ -196,23 +196,23 @@ describe('EditListItemComponent', () => {
         it('should create (insert) a new child node', () => {
             const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-            testHostComponent.editListItem.handleData([{'value': 'My new child node value', 'language': 'en'}], 'labels');
-            testHostComponent.editListItem.handleData([{'value': 'My new child node comment', 'language': 'en'}], 'comments');
+            testHostComponent.editListItem.handleData([{ 'value': 'My new child node value', 'language': 'en' }], 'labels');
+            testHostComponent.editListItem.handleData([{ 'value': 'My new child node comment', 'language': 'en' }], 'comments');
 
             (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).createChildNode.and.callFake(
                 () => {
                     const response = new ListNodeInfoResponse();
                     response.nodeinfo.name = 'My new child node';
                     response.nodeinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList0123';
-                    response.nodeinfo.labels = [{'value': 'My new child node value', 'language': 'en'}];
-                    response.nodeinfo.comments = [{'value': 'My new child node comment', 'language': 'en'}];
+                    response.nodeinfo.labels = [{ 'value': 'My new child node value', 'language': 'en' }];
+                    response.nodeinfo.comments = [{ 'value': 'My new child node comment', 'language': 'en' }];
                     response.nodeinfo.position = 0;
 
                     expect(testHostComponent.editListItem.labels).toEqual(response.nodeinfo.labels);
                     expect(testHostComponent.editListItem.comments).toEqual(response.nodeinfo.comments);
                     expect(testHostComponent.editListItem.position).toEqual(response.nodeinfo.position);
 
-                    return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
                 }
             );
 

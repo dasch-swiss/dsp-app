@@ -34,7 +34,7 @@ export class LoginComponent {
                 // otherwise go to the dashboard
                 this._router.navigate(['dashboard']);
             }
-            this._componentCommsService.emit(new EmitEvent(Events.LoginSuccess, true));
+            this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, true));
         }
     }
 

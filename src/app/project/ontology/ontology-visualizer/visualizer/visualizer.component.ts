@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ElementRef, AfterViewInit, Input} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Input } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
@@ -14,12 +14,12 @@ export interface Coordinates {
 }
 
 @Component({
-  selector: 'app-visualizer',
-  templateUrl: './visualizer.component.html',
-  styleUrls: ['./visualizer.component.scss']
+    selector: 'app-visualizer',
+    templateUrl: './visualizer.component.html',
+    styleUrls: ['./visualizer.component.scss']
 })
 export class VisualizerComponent implements OnInit, AfterViewInit {
-    @ViewChild('graphcontainer', {read: ElementRef}) graphcontainer: ElementRef;
+    @ViewChild('graphcontainer', { read: ElementRef }) graphcontainer: ElementRef;
     @Input() graphInfo;
     graph = ForceGraph3D();
     dimension = '3';
@@ -32,21 +32,21 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
         if (this.showNodeLabel) {
             depthWrite = false;
         }
-        const sprite = new SpriteText(node[`label`], 1);
+        const sprite = new SpriteText(node['label'], 1);
         sprite.fontFace = 'Arial';
         sprite.fontWeight = 'bold';
         sprite.textHeight = 8;
         sprite.color = 'black';
         const geometricalWidth = sprite.text.length + 5;
         let geometry;
-        if (node[`group`] === 'literal') {
+        if (node['group'] === 'literal') {
             geometry = new THREE.BoxGeometry(geometricalWidth, 12, 10);
         } else {
             geometry = new THREE.SphereGeometry(10, geometricalWidth, 12);
             geometry.applyMatrix4(new THREE.Matrix4().makeScale(2, 1.0, 1.5));
         }
         const material = new THREE.MeshLambertMaterial({
-            color: node[`color`],
+            color: node['color'],
             depthWrite: depthWrite,
             transparent: false,
             opacity: 1
@@ -73,7 +73,7 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
         return middlePos;
     }
     ngOnInit(): void {
-        const gData = {'nodes': this.graphInfo.nodes, 'links': this.graphInfo.links};
+        const gData = { 'nodes': this.graphInfo.nodes, 'links': this.graphInfo.links };
         this.graph.graphData(gData);
         this.graph.width(1280);
         // node design
@@ -93,13 +93,13 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
         if (this.showLinkLabel === true) {
             this.graph.linkThreeObject(link => {
                 // extend link with text sprite
-                const sprite = new SpriteText(link[`label`]);
+                const sprite = new SpriteText(link['label']);
                 sprite.color = 'lightgrey';
                 sprite.textHeight = 3;
                 sprite.fontWeight = 'bold';
                 return sprite;
             });
-            this.graph.linkPositionUpdate((sprite, {start, end}) => {
+            this.graph.linkPositionUpdate((sprite, { start, end }) => {
                 // position sprite
                 Object.assign(sprite.position, this.calcMiddlePos(start, end));
                 return false;
@@ -130,12 +130,12 @@ export class VisualizerComponent implements OnInit, AfterViewInit {
         }
     }
 
-    LinkLabelHandler(showlinkLabel: MatSlideToggle) {
+    linkLabelHandler(showlinkLabel: MatSlideToggle) {
         this.showLinkLabel = showlinkLabel.checked;
         this.ngOnInit(); // re-heat simulation
     }
 
-    NodeLabelHandler(showNodeLabel: MatSlideToggle) {
+    nodeLabelHandler(showNodeLabel: MatSlideToggle) {
         this.showNodeLabel = showNodeLabel.checked;
         this.ngOnInit(); // re-heat simulation
     }

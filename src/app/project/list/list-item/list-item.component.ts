@@ -57,7 +57,7 @@ export class ListItemComponent implements OnInit {
     }
 
     /**
-     * Checks if parent node should show its children.
+     * checks if parent node should show its children.
      * @param id id of parent node.
      */
     showChildren(id: string): boolean {
@@ -65,7 +65,7 @@ export class ListItemComponent implements OnInit {
     }
 
     /**
-     * Called from template when the 'expand' button is clicked.
+     * called from template when the 'expand' button is clicked.
      *
      * @param id id of parent node for which the 'expand' button was clicked.
      */
@@ -78,7 +78,7 @@ export class ListItemComponent implements OnInit {
     }
 
     /**
-     * Called when the 'refreshParent' event from ListItemFormComponent is triggered.
+     * called when the 'refreshParent' event from ListItemFormComponent is triggered.
      *
      * @param data info about the operation that was performed on the node and should be reflected in the UI.
      * @param firstNode states whether or not the node is a new child node; defaults to false.

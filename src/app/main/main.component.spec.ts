@@ -64,9 +64,7 @@ describe('MainComponent', () => {
         let store = {};
 
         spyOn(sessionStorage, 'getItem').and.callFake(
-            (key: string): string => {
-                return store[key] || null;
-            }
+            (key: string): string => store[key] || null
         );
         spyOn(sessionStorage, 'removeItem').and.callFake(
             (key: string): void => {
@@ -74,18 +72,14 @@ describe('MainComponent', () => {
             }
         );
         spyOn(sessionStorage, 'setItem').and.callFake(
-            (key: string, value: string): string => {
-                return (store[key] = <any>value);
-            }
+            (key: string, value: string): string => (store[key] = <any>value)
         );
         spyOn(sessionStorage, 'clear').and.callFake(() => {
             store = {};
         });
 
         spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): string => {
-                return store[key] || null;
-            }
+            (key: string): string => store[key] || null
         );
         spyOn(localStorage, 'removeItem').and.callFake(
             (key: string): void => {
@@ -93,9 +87,7 @@ describe('MainComponent', () => {
             }
         );
         spyOn(localStorage, 'setItem').and.callFake(
-            (key: string, value: string): string => {
-                return (store[key] = <any>value);
-            }
+            (key: string, value: string): string => (store[key] = <any>value)
         );
         spyOn(localStorage, 'clear').and.callFake(() => {
             store = {};
@@ -153,7 +145,23 @@ describe('MainComponent', () => {
                                 id: 'http://rdfh.ch/projects/0803',
                                 description: [
                                     {
-                                        value: '<p>Das interdisziplinäre Forschungsprojekt "<b><em>Die Bilderfolgen der Basler Frühdrucke: Spätmittelalterliche Didaxe als Bild-Text-Lektüre</em></b>" verbindet eine umfassende kunstwissenschaftliche Analyse der Bezüge zwischen den Bildern und Texten in den illustrierten Basler Inkunabeln mit der Digitalisierung der Bestände der Universitätsbibliothek und der Entwicklung einer elektronischen Edition in der Form einer neuartigen Web-0.2-Applikation. </p> <p>Das Projekt wird durchgeführt vom <a href="http://kunsthist.unibas.ch">Kunsthistorischen Seminar</a> der Universität Basel (Prof. B. Schellewald) und dem <a href="http://www.dhlab.unibas.ch">Digital Humanities Lab</a> der Universität Basel (PD Dr. L. Rosenthaler). </p> <p> Das Kernstück der digitalen Edition besteht aus rund zwanzig reich bebilderten Frühdrucken aus vier verschiedenen Basler Offizinen. Viele davon sind bereits vor 1500 in mehreren Ausgaben erschienen, einige fast gleichzeitig auf Deutsch und Lateinisch. Es handelt sich um eine ausserordentlich vielfältige Produktion; neben dem Heilsspiegel finden sich ein Roman, die Melusine, die Reisebeschreibungen des Jean de Mandeville, einige Gebets- und Erbauungsbüchlein, theologische Schriften, Fastenpredigten, die Leben der Heiligen Fridolin und Meinrad, das berühmte Narrenschiff sowie die Exempelsammlung des Ritters vom Thurn. </p> Die Internetpublikation macht das digitalisierte Korpus dieser Frühdrucke durch die Möglichkeiten nichtlinearer Verknüpfung und Kommentierung der Bilder und Texte, für die wissenschaftliche Edition sowie für die Erforschung der Bilder und Texte nutzbar machen. Auch können bereits bestehende und entstehende Online-Editionen damit verknüpft werden , wodurch die Nutzung von Datenbanken anderer Institutionen im Hinblick auf unser Corpus optimiert wird. </p>'
+                                        value: '<p>Das interdisziplinäre Forschungsprojekt "<b><em>Die Bilderfolgen der Basler Frühdrucke: ' +
+                                        'Spätmittelalterliche Didaxe als Bild-Text-Lektüre</em></b>" verbindet eine umfassende kunstwissenschaftliche ' +
+                                        'Analyse der Bezüge zwischen den Bildern und Texten in den illustrierten Basler Inkunabeln mit der Digitalisierung ' +
+                                        'der Bestände der Universitätsbibliothek und der Entwicklung einer elektronischen Edition in der Form einer ' +
+                                        'neuartigen Web-0.2-Applikation. </p> <p>Das Projekt wird durchgeführt vom ' +
+                                        '<a href="http://kunsthist.unibas.ch">Kunsthistorischen Seminar</a> der Universität Basel (Prof. B. Schellewald) ' +
+                                        'und dem <a href="http://www.dhlab.unibas.ch">Digital Humanities Lab</a> der Universität Basel (PD Dr. L. Rosenthaler).</p>' +
+                                        '<p> Das Kernstück der digitalen Edition besteht aus rund zwanzig reich bebilderten Frühdrucken aus vier verschiedenen ' +
+                                        'Basler Offizinen. Viele davon sind bereits vor 1500 in mehreren Ausgaben erschienen, einige fast gleichzeitig auf Deutsch ' +
+                                        'und Lateinisch. Es handelt sich um eine ausserordentlich vielfältige Produktion; neben dem Heilsspiegel finden sich ein Roman, ' +
+                                        'die Melusine, die Reisebeschreibungen des Jean de Mandeville, einige Gebets- und Erbauungsbüchlein, theologische Schriften, ' +
+                                        'Fastenpredigten, die Leben der Heiligen Fridolin und Meinrad, das berühmte Narrenschiff sowie die Exempelsammlung ' +
+                                        'des Ritters vom Thurn. </p> Die Internetpublikation macht das digitalisierte Korpus dieser Frühdrucke durch die ' +
+                                        'Möglichkeiten nichtlinearer Verknüpfung und Kommentierung der Bilder und Texte, für die wissenschaftliche Edition ' +
+                                        'sowie für die Erforschung der Bilder und Texte nutzbar machen. Auch können bereits bestehende und entstehende ' +
+                                        'Online-Editionen damit verknüpft werden , wodurch die Nutzung von Datenbanken anderer Institutionen im Hinblick auf ' +
+                                        'unser Corpus optimiert wird. </p>'
                                     }
                                 ],
                                 keywords: [

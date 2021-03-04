@@ -102,8 +102,8 @@ describe('HeaderComponent', () => {
         expect(searchPanel).toBeDefined();
     });
 
-    it('should display the login success message when the LoginSuccess event is emitted', () => {
-        componentCommsService.emit(new EmitEvent(Events.LoginSuccess));
+    it('should display the login success message when the loginSuccess event is emitted', () => {
+        componentCommsService.emit(new EmitEvent(Events.loginSuccess));
         fixture.detectChanges();
         const message = fixture.debugElement.query(By.directive(MessageComponent));
         expect(message).toBeTruthy();

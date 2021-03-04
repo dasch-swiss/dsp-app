@@ -8,10 +8,10 @@ import { SwitchPropertiesComponent } from './switch-properties.component';
 
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
-template: `
+    template: `
     <app-switch-properties
     #switchProps
     [property]="property"
@@ -34,19 +34,19 @@ class TestSwitchPropertiesParentComponent implements OnInit {
 
     ngOnInit() {
         this.property = MockOntology.mockReadOntology(
-                            'http://0.0.0.0:3333/ontology/0001/anything/v2'
-                        ).properties[
-                            'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
-                        ] as ResourcePropertyDefinition;
+            'http://0.0.0.0:3333/ontology/0001/anything/v2'
+        ).properties[
+            'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
+        ] as ResourcePropertyDefinition;
     }
 
 }
 
 /**
- * Mock value component to use in tests.
+ * mock value component to use in tests.
  */
 @Component({
-    selector: `dsp-int-value`
+    selector: 'dsp-int-value'
 })
 class MockCreateIntValueComponent implements OnInit {
 
@@ -101,7 +101,7 @@ describe('SwitchPropertiesComponent', () => {
                 FormBuilder
             ]
         })
-        .compileComponents();
+            .compileComponents();
     }));
 
     beforeEach(() => {

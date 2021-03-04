@@ -13,11 +13,11 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { PropertyInfoComponent } from './property-info.component';
 
 /**
- * Test host component to simulate parent component
+ * test host component to simulate parent component
  * Property is of type simple text
  */
 @Component({
-    template: `<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>`
+    template: '<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>'
 })
 class SimpleTextHostComponent {
 
@@ -53,11 +53,11 @@ class SimpleTextHostComponent {
 }
 
 /**
- * Test host component to simulate parent component
+ * test host component to simulate parent component
  * Property is of type resource link
  */
 @Component({
-    template: `<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>`
+    template: '<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>'
 })
 class LinkHostComponent {
 
@@ -99,11 +99,11 @@ class LinkHostComponent {
 }
 
 /**
- * Test host component to simulate parent component
+ * test host component to simulate parent component
  * Property is of type list dropdown
  */
 @Component({
-    template: `<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>`
+    template: '<app-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-property-info>'
 })
 class ListHostComponent {
 

@@ -33,16 +33,6 @@ export class UserFormComponent implements OnInit, OnChanges {
     // => so, this component has to know who is who and who is doing what;
     // the form needs then some permission checks
 
-    public readonly RegexUsername = /^[a-zA-Z0-9]+$/;
-
-    // TODO: replace RegexEmail by CustomRegex.EMAIL_REGEX from dsp-ui
-    public readonly RegexEmail = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-
-    /**
-     * status for the progress indicator
-     */
-    loading: boolean = true;
-
     /**
      * user iri, email or username: in case of edit
      *
@@ -58,6 +48,22 @@ export class UserFormComponent implements OnInit, OnChanges {
     @Input() name?: string;
 
     /**
+     * send user data to parent component;
+     * in case of dialog box?
+     */
+    @Output() closeDialog: EventEmitter<any> = new EventEmitter<ReadUser>();
+
+    public readonly REGEX_USERNAME = /^[a-zA-Z0-9]+$/;
+
+    // --> TODO replace REGEX_EMAIL by CustomRegex.EMAIL_REGEX from dsp-ui
+    public readonly REGEX_EMAIL = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+    /**
+     * status for the progress indicator
+     */
+    loading = true;
+
+    /**
      * user data
      */
     user: ReadUser;
@@ -66,15 +72,9 @@ export class UserFormComponent implements OnInit, OnChanges {
     subtitle: string;
 
     /**
-     * send user data to parent component;
-     * in case of dialog box?
-     */
-    @Output() closeDialog: EventEmitter<any> = new EventEmitter<ReadUser>();
-
-    /**
      * define, if the user has system administration permission
      */
-    sysAdminPermission: boolean = false;
+    sysAdminPermission = false;
 
     /**
      * username should be unique
@@ -82,7 +82,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     existingUsernames: [RegExp] = [
         new RegExp('anEmptyRegularExpressionWasntPossible')
     ];
-    usernameMinLength: number = 4;
+    usernameMinLength = 4;
 
     /**
      * email should be unique
@@ -156,7 +156,7 @@ export class UserFormComponent implements OnInit, OnChanges {
 
     // permissions of logged-in user
     session: Session;
-    sysAdmin: boolean = false;
+    sysAdmin = false;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -231,8 +231,8 @@ export class UserFormComponent implements OnInit, OnChanges {
                     // const name: string = this._route.snapshot.queryParams['value'];
                     const newUser: ReadUser = new ReadUser();
 
-                    // TODO: replace this.RegexEmail by CustomRegex.EMAIL_REGEX from dsp-ui
-                    if (this.RegexEmail.test(this.name)) {
+                    // --> TODO replace this.REGEX_EMAIL by CustomRegex.EMAIL_REGEX from dsp-ui
+                    if (this.REGEX_EMAIL.test(this.name)) {
                         newUser.email = this.name;
                     } else {
                         newUser.username = this.name;
@@ -262,7 +262,7 @@ export class UserFormComponent implements OnInit, OnChanges {
 
         // if user is defined, we're in the edit mode
         // otherwise "create new user" mode is active
-        const editMode: boolean = !!user.id;
+        const editMode = !!user.id;
 
         this.form = this._formBuilder.group({
             givenName: new FormControl(
@@ -286,7 +286,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                 },
                 [
                     Validators.required,
-                    Validators.pattern(this.RegexEmail), // TODO: replace this.RegexEmail by CustomRegex.EMAIL_REGEX from dsp-ui
+                    Validators.pattern(this.REGEX_EMAIL), // --> TODO replace this.REGEX_EMAIL by CustomRegex.EMAIL_REGEX from dsp-ui
                     existingNamesValidator(this.existingEmails)
                 ]
             ),
@@ -298,7 +298,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                 [
                     Validators.required,
                     Validators.minLength(4),
-                    Validators.pattern(this.RegexUsername),
+                    Validators.pattern(this.REGEX_USERNAME),
                     existingNamesValidator(this.existingUsernames)
                 ]
             ),
@@ -457,7 +457,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     }
 
     /**
-     * Reset the form
+     * reset the form
      */
     resetForm(ev: Event, user?: ReadUser) {
         ev.preventDefault();

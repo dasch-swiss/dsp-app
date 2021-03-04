@@ -12,9 +12,9 @@ import { SessionService } from '@dasch-swiss/dsp-ui';
 })
 export class SystemComponent implements OnInit {
 
-    loading: boolean = true;
+    loading = true;
 
-    sysAdmin: boolean = false;
+    sysAdmin = false;
 
     navigation: MenuItem[] = AppGlobal.systemNav;
 

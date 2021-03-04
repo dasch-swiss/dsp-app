@@ -25,12 +25,6 @@ import { CacheService } from '../../main/cache/cache.service';
 export class ProjectsComponent implements OnInit {
 
     /**
-     * general variables
-     */
-    loading: boolean;
-    error: any;
-
-    /**
      * if username is definded: show only projects,
      * where this user is member of;
      * otherwise show all projects
@@ -39,6 +33,12 @@ export class ProjectsComponent implements OnInit {
 
     // do we still need this? NO!
     @Input() system?: boolean = true;
+
+    /**
+     * general variables
+     */
+    loading: boolean;
+    error: any;
 
     /**
      * who is logged-in? does he have project-admin, system-admin or no rights?

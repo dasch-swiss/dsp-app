@@ -14,7 +14,7 @@ import { SelectResourceClassComponent } from './select-resource-class.component'
 import { By } from '@angular/platform-browser';
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     template: `
@@ -66,24 +66,24 @@ describe('SelectResourceClassComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-        declarations: [ SelectResourceClassComponent, TestHostComponent ],
-        imports: [
-            ReactiveFormsModule,
-            FormsModule,
-            BrowserAnimationsModule,
-            MatFormFieldModule,
-            MatSelectModule,
-            MatInputModule ]
+            declarations: [ SelectResourceClassComponent, TestHostComponent ],
+            imports: [
+                ReactiveFormsModule,
+                FormsModule,
+                BrowserAnimationsModule,
+                MatFormFieldModule,
+                MatSelectModule,
+                MatInputModule ]
         })
-        .compileComponents();
+            .compileComponents();
     }));
 
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
-            testHostComponent = testHostFixture.componentInstance;
-            loader = TestbedHarnessEnvironment.loader(testHostFixture);
+        testHostComponent = testHostFixture.componentInstance;
+        loader = TestbedHarnessEnvironment.loader(testHostFixture);
 
-            testHostFixture.detectChanges();
+        testHostFixture.detectChanges();
     });
 
     it('should create', () => {
@@ -165,7 +165,7 @@ describe('SelectResourceClassComponent', () => {
 
     it('should emit the label of the resource class', async () => {
 
-        const inputElement = await loader.getHarness(MatInputHarness.with({selector: 'input.label'}));
+        const inputElement = await loader.getHarness(MatInputHarness.with({ selector: 'input.label' }));
 
         expect(await inputElement.getValue()).toEqual('');
         expect(testHostComponent.resLabel).toBeUndefined();

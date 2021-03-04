@@ -45,7 +45,7 @@ import { SwitchPropertiesComponent } from './select-properties/switch-properties
 const resolvedPromise = Promise.resolve(null);
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     template: `
@@ -63,10 +63,10 @@ class TestHostComponent implements OnInit {
 }
 
 /**
- * Mock select-project component to use in tests.
+ * mock select-project component to use in tests.
  */
 @Component({
-    selector: `app-select-project`
+    selector: 'app-select-project'
 })
 class MockSelectProjectComponent implements OnInit {
     @Input() formGroup: FormGroup;
@@ -90,10 +90,10 @@ class MockSelectProjectComponent implements OnInit {
 }
 
 /**
- * Mock select-ontology component to use in tests.
+ * mock select-ontology component to use in tests.
  */
 @Component({
-    selector: `app-select-ontology`
+    selector: 'app-select-ontology'
 })
 class MockSelectOntologyComponent implements OnInit {
     @Input() formGroup: FormGroup;
@@ -117,10 +117,10 @@ class MockSelectOntologyComponent implements OnInit {
 }
 
 /**
- * Mock select-resource-class component to use in tests.
+ * mock select-resource-class component to use in tests.
  */
 @Component({
-    selector: `app-select-resource-class`
+    selector: 'app-select-resource-class'
 })
 class MockSelectResourceClassComponent implements OnInit {
     @Input() formGroup: FormGroup;
@@ -145,10 +145,10 @@ class MockSelectResourceClassComponent implements OnInit {
 }
 
 /**
- * Mock select-properties component to use in tests.
+ * mock select-properties component to use in tests.
  */
 @Component({
-    selector: `app-select-properties`
+    selector: 'app-select-properties'
 })
 class MockSelectPropertiesComponent {
     @ViewChildren('switchProp') switchPropertiesComponent: QueryList<SwitchPropertiesComponent>;
@@ -167,10 +167,10 @@ class MockSelectPropertiesComponent {
 }
 
 /**
- * Mock switch-properties component to use in tests.
+ * mock switch-properties component to use in tests.
  */
 @Component({
-    selector: `app-switch-properties`
+    selector: 'app-switch-properties'
 })
 class MockSwitchPropertiesComponent {
     @ViewChild('createVal') createValueComponent: BaseValueDirective;
@@ -185,10 +185,10 @@ class MockSwitchPropertiesComponent {
 }
 
 /**
- * Mock value component to use in tests.
+ * mock value component to use in tests.
  */
 @Component({
-    selector: `dsp-int-value`
+    selector: 'dsp-int-value'
 })
 class MockCreateIntValueComponent implements OnInit {
 
@@ -529,12 +529,12 @@ describe('ResourceInstanceFormComponent', () => {
         expectedCreateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
         expectedCreateResource.properties = props;
 
-        // TODO: create a Router spy to mock the navigation
+        // --> TODO create a Router spy to mock the navigation
         testHostComponent.resourceInstanceFormComponent.submitData();
 
         expect(dspConnSpy.v2.res.createResource).toHaveBeenCalledTimes(1);
 
-        // TODO: check if the spy was called with the correct argument
+        // --> TODO check if the spy was called with the correct argument
         // expect(dspConnSpy.v2.res.createResource).toHaveBeenCalledWith(expectedCreateResource);
 
     });

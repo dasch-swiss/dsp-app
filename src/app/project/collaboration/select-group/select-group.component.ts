@@ -12,8 +12,6 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
     styleUrls: ['./select-group.component.scss']
 })
 export class SelectGroupComponent implements OnInit {
-    // send data only, when the selection has changed
-    sendData: boolean = false;
 
     // project short code
     @Input() projectcode: string;
@@ -34,6 +32,9 @@ export class SelectGroupComponent implements OnInit {
     projectGroups: AutocompleteItem[] = [];
 
     groupCtrl = new FormControl();
+
+    // send data only, when the selection has changed
+    sendData = false;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -91,11 +92,11 @@ export class SelectGroupComponent implements OnInit {
 
     /**
      * compare two arrays and return true, if they are different
-     * @param arr_1 string array
-     * @param arr_2 string array
+     * @param arrOne string array
+     * @param arrTwo string array
      */
-    compare(arr_1: string[], arr_2: string[]): boolean {
-        arr_1 = arr_1.sort((n1, n2) => {
+    compare(arrOne: string[], arrTwo: string[]): boolean {
+        arrOne = arrOne.sort((n1, n2) => {
             if (n1 > n2) {
                 return 1;
             }
@@ -107,7 +108,7 @@ export class SelectGroupComponent implements OnInit {
             return 0;
         });
 
-        arr_2 = arr_2.sort((n1, n2) => {
+        arrTwo = arrTwo.sort((n1, n2) => {
             if (n1 > n2) {
                 return 1;
             }
@@ -119,6 +120,6 @@ export class SelectGroupComponent implements OnInit {
             return 0;
         });
 
-        return JSON.stringify(arr_1) !== JSON.stringify(arr_2);
+        return JSON.stringify(arrOne) !== JSON.stringify(arrTwo);
     }
 }

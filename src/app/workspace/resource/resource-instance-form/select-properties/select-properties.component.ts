@@ -1,13 +1,21 @@
-import { AfterViewInit, Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Cardinality, CardinalityUtil, IHasProperty, ReadResource, ResourceClassAndPropertyDefinitions, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import {
+    Cardinality,
+    CardinalityUtil,
+    IHasProperty,
+    ReadResource,
+    ResourceClassAndPropertyDefinitions,
+    ResourceClassDefinition,
+    ResourcePropertyDefinition
+} from '@dasch-swiss/dsp-js';
 import { ValueService } from '@dasch-swiss/dsp-ui';
 import { SwitchPropertiesComponent } from './switch-properties/switch-properties.component';
 
 @Component({
-  selector: 'app-select-properties',
-  templateUrl: './select-properties.component.html',
-  styleUrls: ['./select-properties.component.scss']
+    selector: 'app-select-properties',
+    templateUrl: './select-properties.component.html',
+    styleUrls: ['./select-properties.component.scss']
 })
 export class SelectPropertiesComponent implements OnInit {
 
@@ -61,7 +69,7 @@ export class SelectPropertiesComponent implements OnInit {
 
 
     /**
-     * Given a resource property, check if an add button should be displayed under the property values
+     * given a resource property, check if an add button should be displayed under the property values
      *
      * @param prop the resource property
      */
@@ -74,7 +82,7 @@ export class SelectPropertiesComponent implements OnInit {
     }
 
     /**
-     * Check the cardinality of a property
+     * check the cardinality of a property
      * If the cardinality is 1 or 1-N, the property will be marked as required
      * If the cardinality is 0-1 or 0-N, the property will not be required
      *
@@ -99,7 +107,7 @@ export class SelectPropertiesComponent implements OnInit {
     }
 
     /**
-     * Called from the template when the user clicks on the add button
+     * called from the template when the user clicks on the add button
      */
     addNewValueFormToProperty(prop: ResourcePropertyDefinition) {
         // get the length of the corresponding property values array
@@ -123,18 +131,16 @@ export class SelectPropertiesComponent implements OnInit {
         // update the filtered version of the corresponding property values array.
         // used in the template to calculate if the delete button should be shown.
         // e.i don't show the delete button if there is only one value
-        this.propertyValuesKeyValuePair[prop.id + '-filtered'] = this.filterValueArray(this.propertyValuesKeyValuePair[prop.id]);
+        this.propertyValuesKeyValuePair[prop.id + '-filtered'] = this._filterValueArray(this.propertyValuesKeyValuePair[prop.id]);
     }
 
     /**
-     * Given an array of numbers, returns a filtered list with no undefined elements
+     * given an array of numbers, returns a filtered list with no undefined elements
      *
      * @param arrayToFilter an array of number containing undefined elements you wish to filter
      */
-    private filterValueArray(arrayToFilter: number[]): number[] {
-        arrayToFilter = arrayToFilter.filter( element => {
-            return element !== undefined;
-        });
+    private _filterValueArray(arrayToFilter: number[]): number[] {
+        arrayToFilter = arrayToFilter.filter(element => element !== undefined);
 
         return arrayToFilter;
 

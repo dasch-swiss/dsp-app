@@ -5,7 +5,7 @@ import { AddressTemplateComponent } from '../address-template/address-template.c
 
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     selector: 'app-contact-host-component',
@@ -17,7 +17,7 @@ class TestHostContactComponent {
 
     // input parameters
     contactDetails = {
-        'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
+        'address': { 'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse' },
         'email': ['stewart.abraham@test.ch'],
         'familyName': 'Abraham',
         'givenName': 'Stewart',
@@ -25,15 +25,15 @@ class TestHostContactComponent {
         'id': 'http://ns.dasch.swiss/repository#test-berry',
         'memberOf': [
             {
-                'address': {'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse'},
+                'address': { 'addressLocality': 'Basel', 'postalCode': '4000', 'streetAddress': 'Teststrasse' },
                 'email': 'info@dasch.swiss',
                 'id': 'http://ns.dasch.swiss/repository#test-dasch',
                 'name': ['TEST'],
                 'type': 'http://ns.dasch.swiss/repository#Organization',
-                'url': [{'type': 'https://schema.org/URL', 'url': 'https://test.swiss'}]
+                'url': [{ 'type': 'https://schema.org/URL', 'url': 'https://test.swiss' }]
             }
         ],
-        'sameAs': [{'type': 'https://schema.org/URL', 'value': 'https://orcid.org/0000-0002-1825-0097', 'url': 'https://orcid.org/0000-0002-1825-0097'}]
+        'sameAs': [{ 'type': 'https://schema.org/URL', 'value': 'https://orcid.org/0000-0002-1825-0097', 'url': 'https://orcid.org/0000-0002-1825-0097' }]
     };
 }
 

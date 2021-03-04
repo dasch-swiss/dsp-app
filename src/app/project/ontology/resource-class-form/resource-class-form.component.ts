@@ -55,8 +55,6 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
      * this will be used to update title of resource class form
      */
     @Input() name: string;
-    // store name as resourceClassTitle on init; in this case it can't be overwritten in the next / prev navigation
-    resourceClassTitle: string;
 
     // two step form: which should be active?
     /**
@@ -64,7 +62,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
      * true => step 1 shows label and comment of resource class
      * false => step 2 shows list of properties of resource class
      */
-    @Input() showResourceClassForm: boolean = true;
+    @Input() showResourceClassForm = true;
 
     /**
      * edit mode (true); otherwise create mode
@@ -79,7 +77,10 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     /**
      * update title and subtitle in dialog header (by switching from step 1 (resource class) to step 2 (properties))
      */
-    @Output() updateParent: EventEmitter<{ title: string, subtitle: string }> = new EventEmitter<{ title: string, subtitle: string }>();
+    @Output() updateParent: EventEmitter<{ title: string; subtitle: string }> = new EventEmitter<{ title: string; subtitle: string }>();
+
+    // store name as resourceClassTitle on init; in this case it can't be overwritten in the next / prev navigation
+    resourceClassTitle: string;
 
     // current ontology; will get it from cache by key 'currentOntology'
     ontology: ReadOntology;
@@ -120,7 +121,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
     existingPropertyNames: [RegExp];
 
-    // TODO: move to knora-api-js-lib
+    // --> TODO move to knora-api-js-lib
     // nameRegex: RegExp = /^(?![0-9]).(?![\u00C0-\u017F]).[a-zA-Z0-9]+\S*$/;
 
     // form errors on the following fields:
@@ -341,7 +342,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     // form navigation:
 
     /**
-     * Go to next step: from resource-class form forward to properties form
+     * go to next step: from resource-class form forward to properties form
      * In create mode only
      */
     nextStep(ev: Event) {
@@ -361,7 +362,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         }
     }
     /**
-     * Go to previous step: from properties form back to resource-class form
+     * go to previous step: from properties form back to resource-class form
      * In create mode only
      */
     prevStep(ev: Event) {
@@ -374,7 +375,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     // submit
 
     /**
-     * Submit data to create resource class with properties and cardinalities
+     * submit data to create resource class with properties and cardinalities
      */
     submitData() {
         this.loading = true;
@@ -470,7 +471,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     }
 
     /**
-     * Close dialog box and reset all forms
+     * close dialog box and reset all forms
      */
     closeMessage() {
         this.resourceClassForm.reset();
@@ -533,7 +534,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
             // prepare payload for property
             const newResProp = new CreateResourceProperty();
             newResProp.name = uniquePropName;
-            // TODO: update prop.label and use StringLiteralInput in property-form
+            // --> TODO update prop.label and use StringLiteralInput in property-form
             newResProp.label = [
                 {
                     'value': prop.label,
@@ -541,7 +542,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                 }
             ];
             if (prop.guiAttr) {
-                switch (prop.type.gui_ele) {
+                switch (prop.type.guiEle) {
 
                     case Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker':
                         newResProp.guiAttributes = ['ncolors=' + prop.guiAttr];
@@ -552,22 +553,22 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                         newResProp.guiAttributes = ['hlist=<' + prop.guiAttr + '>'];
                         break;
                     case Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText':
-                        // TODO: could have two guiAttr fields: size and maxlength
+                        // --> TODO could have two guiAttr fields: size and maxlength
                         // we suggest to use default value for size; we do not support this guiAttr in DSP-App
                         newResProp.guiAttributes = ['maxlength=' + prop.guiAttr];
                         break;
                     case Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox':
-                        // TODO: could have two guiAttr fields: min and max
+                        // --> TODO could have two guiAttr fields: min and max
                         newResProp.guiAttributes = ['min=' + prop.guiAttr, 'max=' + prop.guiAttr];
                         break;
                     case Constants.SalsahGui + Constants.HashDelimiter + 'Textarea':
-                        // TODO: could have four guiAttr fields: width, cols, rows, wrap
+                        // --> TODO could have four guiAttr fields: width, cols, rows, wrap
                         // we suggest to use default values; we do not support this guiAttr in DSP-App
                         newResProp.guiAttributes = ['width=100%'];
                         break;
                 }
             }
-            newResProp.guiElement = prop.type.gui_ele;
+            newResProp.guiElement = prop.type.guiEle;
             newResProp.subPropertyOf = [prop.type.subPropOf];
 
             if (prop.type.subPropOf === Constants.HasLinkTo) {

@@ -22,7 +22,7 @@ export class UserComponent implements OnInit {
     route: string;
 
     // for the sidenav
-    open: boolean = true;
+    open = true;
 
     navigation: MenuItem[] = AppGlobal.userNav;
 

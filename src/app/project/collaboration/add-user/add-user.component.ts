@@ -27,11 +27,6 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 export class AddUserComponent implements OnInit {
 
     /**
-     * status for the progress indicator
-     */
-    loading: boolean = true;
-
-    /**
      * project name to get existing team members
      * or to know where to add selected user
      */
@@ -41,6 +36,11 @@ export class AddUserComponent implements OnInit {
      * event emitter, when the selected user will be added to the list
      */
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
+
+    /**
+     * status for the progress indicator
+     */
+    loading = true;
 
     /**
      * form group
@@ -157,7 +157,7 @@ export class AddUserComponent implements OnInit {
                             );
                         }
 
-                        let i: number = 0;
+                        let i = 0;
                         for (const u of response.body.users) {
 
                             // if the user is already member of the project
@@ -170,7 +170,7 @@ export class AddUserComponent implements OnInit {
                                 new RegExp('(?:^|\W)' + u.username.toLowerCase() + '(?:$|\W)')
                             );
 
-                            let existsInProject: string = '';
+                            let existsInProject = '';
 
                             if (members && members.indexOf(u.id) > -1) {
                                 existsInProject = '* ';
@@ -277,13 +277,13 @@ export class AddUserComponent implements OnInit {
     }
 
     /**
-     * Add user to the project
+     * add user to the project
      *
      * @param val The value can be e-mail address or username
      */
     addUser(val: string) {
 
-        // TODO: add getUserByEmail
+        // --> TODO add getUserByEmail
         // you can type username or email. We have to check, what we have now
         this._dspApiConnection.admin.usersEndpoint.getUserByUsername(val).subscribe(
             (response: ApiResponseData<UserResponse>) => {

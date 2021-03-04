@@ -27,14 +27,14 @@ import { CacheService } from '../../main/cache/cache.service';
 export class ProjectFormComponent implements OnInit {
 
     /**
-     * Param of project form component:
+     * param of project form component:
      * Optional projectcode; if exists we are in edit mode
      * otherwise we build empty form to create new project
      */
     @Input() projectcode?: string;
 
     /**
-     * Output of project form component:
+     * output of project form component:
      * emits info to parent that dialog box was closed
      */
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
@@ -45,7 +45,7 @@ export class ProjectFormComponent implements OnInit {
     loading = true;
 
     // is the logged-in user system admin?
-    sysAdmin: boolean = false;
+    sysAdmin = false;
 
     /**
      * shortcode and shortname must be unique
@@ -195,7 +195,7 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Build form with project data
+     * build form with project data
      * Project data contains exising data (edit mode)
      * or no data (create mode) => new ReadProject()
      *
@@ -207,7 +207,7 @@ export class ProjectFormComponent implements OnInit {
         // edit mode is true, when a projectcode exists
 
         // disabled is true, if project status is false (= archived);
-        const disabled: boolean = (!project.status);
+        const disabled = (!project.status);
 
         // separate description
         if (!this.projectcode) {
@@ -258,7 +258,7 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * This method is for the form error handling
+     * this method is for the form error handling
      *
      * @param data Data which changed.
      */
@@ -284,7 +284,7 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Gets string literal
+     * gets string literal
      * @param data
      */
     getStringLiteral(data: StringLiteral[]) {
@@ -334,8 +334,8 @@ export class ProjectFormComponent implements OnInit {
         // this.form.controls['keywords'].disabled = !this.project.status;
 
         // b) update description field / multi language preparation
-        // FIXME: this is a quick (hardcoded) hack:
-        // TODO: create multi language input fields
+        // fIXME: this is a quick (hardcoded) hack:
+        // --> TODO create multi language input fields
         // this.form.controls['description'].setValue([{
         //     'language': 'en',
         //     'value': this.form.controls['description'].value
@@ -439,12 +439,12 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Deactivate project
+     * deactivate project
      * @param id Project Iri
      */
     delete(id: string) {
         // ev.preventDefault();
-        // TODO: "are you sure?"-dialog
+        // --> TODO "are you sure?"-dialog
 
         // if true
         this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
@@ -472,7 +472,7 @@ export class ProjectFormComponent implements OnInit {
     }
 
     /**
-     * Activate already deleted project
+     * activate already deleted project
      *
      * @param id Project Iri
      */
@@ -537,7 +537,7 @@ export class ProjectFormComponent implements OnInit {
 
         this.buildForm(project);
 
-        // TODO: fix "set value" for keywords field
+        // --> TODO fix "set value" for keywords field
         //        this.form.controls['keywords'].setValue(this.keywords);
     }
 

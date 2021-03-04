@@ -33,7 +33,7 @@ class TestLinkHostComponent implements OnInit {
             control1: new FormControl(),
             control2: new FormControl(),
             control3: new FormControl()
-         });
+        });
     }
 
     onSubmit() {

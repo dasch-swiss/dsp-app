@@ -39,8 +39,8 @@ export class BoardComponent implements OnInit {
 
     // permissions of logged-in user
     session: Session;
-    sysAdmin: boolean = false;
-    projectAdmin: boolean = false;
+    sysAdmin = false;
+    projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
     projectcode: string;
@@ -48,7 +48,7 @@ export class BoardComponent implements OnInit {
     // project data
     project: ReadProject;
 
-    color: string = 'primary';
+    color = 'primary';
 
     // variables to store metadata information
     projectsMetadata: ProjectsMetadata;
@@ -189,8 +189,8 @@ export class BoardComponent implements OnInit {
 
     // download metadata
     downloadMetadata() {
-        const blob: Blob = new Blob([JSON.stringify(this.projectsMetadata)], {type: 'application/json'});
-        const fileName: string = 'metadata.json';
+        const blob: Blob = new Blob([JSON.stringify(this.projectsMetadata)], { type: 'application/json' });
+        const fileName = 'metadata.json';
         const objectUrl: string = URL.createObjectURL(blob);
         const a: HTMLAnchorElement = document.createElement('a') as HTMLAnchorElement;
 
@@ -227,7 +227,7 @@ export class BoardComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: {mode: mode, title: name, project: id}
+            data: { mode: mode, title: name, project: id }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

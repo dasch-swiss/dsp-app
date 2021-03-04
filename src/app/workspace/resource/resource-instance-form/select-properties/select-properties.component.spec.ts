@@ -14,10 +14,10 @@ import { SelectPropertiesComponent } from './select-properties.component';
 import { SwitchPropertiesComponent } from './switch-properties/switch-properties.component';
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
-template: `
+    template: `
     <app-select-properties
     #selectProps
     [ontologyInfo]="ontoInfo"
@@ -63,7 +63,7 @@ describe('SelectPropertiesComponent', () => {
                 SelectPropertiesComponent,
                 SwitchPropertiesComponent,
                 TestSelectPropertiesParentComponent
-                ],
+            ],
             imports: [
                 BrowserAnimationsModule,
                 MatTooltipModule
@@ -73,7 +73,7 @@ describe('SelectPropertiesComponent', () => {
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         })
-        .compileComponents();
+            .compileComponents();
     }));
 
     beforeEach(() => {

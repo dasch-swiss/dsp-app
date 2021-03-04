@@ -16,7 +16,7 @@ import { ResourceClassInfoComponent } from './resource-class-info.component';
  * Property is of type simple text
  */
 @Component({
-    template: `<app-resource-class-info #resClassInfo [resourceClass]="resourceClass"></app-resource-class-info>`
+    template: '<app-resource-class-info #resClassInfo [resourceClass]="resourceClass"></app-resource-class-info>'
 })
 class HostComponent implements OnInit {
 

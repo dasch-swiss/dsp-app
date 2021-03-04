@@ -33,28 +33,28 @@ import { TestConfig } from 'test.config';
 import { ListComponent } from './list.component';
 
 /**
- * Test Host Component
+ * test Host Component
  */
 @Component({
-    template: `<app-list #listComponent></app-list>`
+    template: '<app-list #listComponent></app-list>'
 })
 class TestHostComponent {
     @ViewChild('listComponent') listComponent: ListComponent;
 }
 
 /**
- * Mock ListItem.
+ * mock ListItem.
  */
 @Component({
-    template: `<app-list-item></app-list-item>`
+    template: '<app-list-item></app-list-item>'
 })
 class MockListItemComponent { }
 
 /**
- * Mock ListItemForm.
+ * mock ListItemForm.
  */
 @Component({
-    template: `<app-list-item-form></app-list-item-form>`
+    template: '<app-list-item-form></app-list-item-form>'
 })
 class MockListItemFormComponent { }
 
@@ -178,7 +178,7 @@ describe('ListComponent', () => {
 
                 response.project = mockProjects.body.projects[0];
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
@@ -201,19 +201,19 @@ describe('ListComponent', () => {
                 mockList1.comments = [];
                 mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
                 mockList1.isRootNode = true;
-                mockList1.labels = [{language: 'en', value: 'Mock List 01'}];
+                mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
                 mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
                 const mockList2 = new ListNodeInfo();
                 mockList2.comments = [];
                 mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
                 mockList2.isRootNode = true;
-                mockList2.labels = [{language: 'en', value: 'Mock List 02'}];
+                mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
                 mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
                 response.lists.push(mockList1, mockList2);
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
@@ -233,7 +233,7 @@ describe('ListComponent', () => {
 
                 response.project = mockProjects.body.projects[0];
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
@@ -262,14 +262,14 @@ describe('ListComponent', () => {
         list1.comments = [];
         list1.id = 'http://rdfh.ch/lists/0001/mockList01';
         list1.isRootNode = true;
-        list1.labels = [{language: 'en', value: 'Mock List 01'}];
+        list1.labels = [{ language: 'en', value: 'Mock List 01' }];
         list1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
         const list2 = new ListNodeInfo();
         list2.comments = [];
         list2.id = 'http://rdfh.ch/lists/0001/mockList02';
         list2.isRootNode = true;
-        list2.labels = [{language: 'en', value: 'Mock List 02'}];
+        list2.labels = [{ language: 'en', value: 'Mock List 02' }];
         list2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
         listOfLists.push(list1, list2);
@@ -282,7 +282,7 @@ describe('ListComponent', () => {
 
         await select.open();
 
-        const options = await select.getOptions({ text: 'Mock List 01 (en)'});
+        const options = await select.getOptions({ text: 'Mock List 01 (en)' });
 
         expect(options.length).toEqual(1);
 
@@ -303,7 +303,7 @@ describe('ListComponent', () => {
             () => {
                 const response = deleteListResponse;
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
@@ -320,12 +320,12 @@ describe('ListComponent', () => {
                 mockList2.comments = [];
                 mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
                 mockList2.isRootNode = true;
-                mockList2.labels = [{language: 'en', value: 'Mock List 02'}];
+                mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
                 mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
                 response.lists.push(mockList2);
 
-                return of(ApiResponseData.fromAjaxResponse({response} as AjaxResponse));
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
 
@@ -334,14 +334,14 @@ describe('ListComponent', () => {
 
         await select.open();
 
-        const options = await select.getOptions({ text: 'Mock List 01 (en)'});
+        const options = await select.getOptions({ text: 'Mock List 01 (en)' });
 
         expect(options.length).toEqual(1);
 
         await options[0].click();
 
         // click delete button
-        const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({selector: '.delete'}));
+        const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
         await deleteButton.click();
 
         // get dialog harness
@@ -350,7 +350,7 @@ describe('ListComponent', () => {
         expect(dialogHarnesses.length).toEqual(1);
 
         // click confirm button
-        const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({selector: '.confirm-button'}));
+        const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.confirm-button' }));
 
         await confirmButton.click();
 

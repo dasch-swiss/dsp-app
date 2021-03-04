@@ -12,13 +12,13 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 })
 export class DashboardComponent implements OnInit {
 
-    loading: boolean = true;
+    loading = true;
 
     user: ReadUser;
 
     session: Session;
     username: string;
-    sysAdmin: boolean = false;
+    sysAdmin = false;
 
     showSystemProjects: boolean = this.sysAdmin;
 

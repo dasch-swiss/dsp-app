@@ -41,7 +41,7 @@ export class ErrorComponent implements OnInit {
         {
             status: 404,
             message: 'Not found',
-            description: `The content you were looking for cannot be found.`,
+            description: 'The content you were looking for cannot be found.',
             action: 'goback',
             image: 'dsp-error-404.svg'
         },
@@ -96,7 +96,7 @@ export class ErrorComponent implements OnInit {
 
     getErrorMsgByStatus(status: number): ErrorMsg {
         return this.errorMessages.filter(x => x.status === status)[0];
-      }
+    }
 
     reload() {
         window.location.reload();

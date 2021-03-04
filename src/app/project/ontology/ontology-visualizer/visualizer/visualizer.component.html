@@ -11,8 +11,8 @@
      <mat-slider [min]=20 [max]=200 [step]=5 (change)="updateLinkDistance($event)" [thumbLabel]="true"></mat-slider>
     </span>
     <span class="showLabels">
-      <mat-slide-toggle labelPosition="before" (change)="NodeLabelHandler($event)">Show Node Labels</mat-slide-toggle>
-      <mat-slide-toggle labelPosition="before" (change)="LinkLabelHandler($event)">Show Link Labels</mat-slide-toggle>
+      <mat-slide-toggle labelPosition="before" (change)="nodeLabelHandler($event)">Show Node Labels</mat-slide-toggle>
+      <mat-slide-toggle labelPosition="before" (change)="linkLabelHandler($event)">Show Link Labels</mat-slide-toggle>
     </span>
 
 </div>

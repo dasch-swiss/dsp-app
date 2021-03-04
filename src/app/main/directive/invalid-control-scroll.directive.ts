@@ -2,7 +2,7 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
 
 @Directive({
-  selector: '[appInvalidControlScroll]'
+    selector: '[appInvalidControlScroll]'
 })
 export class InvalidControlScrollDirective {
 
@@ -13,12 +13,12 @@ export class InvalidControlScrollDirective {
 
     @HostListener('ngSubmit') submitData() {
         if (this._formGroupDir.control.invalid) {
-          this._scrollToFirstInvalidControl();
+            this._scrollToFirstInvalidControl();
         }
-      }
+    }
 
     /**
-     * Target the first invalid element of the resource-instance form (2nd panel property) and scroll to it
+     * target the first invalid element of the resource-instance form (2nd panel property) and scroll to it
      */
     private _scrollToFirstInvalidControl() {
         // target the first invalid form field

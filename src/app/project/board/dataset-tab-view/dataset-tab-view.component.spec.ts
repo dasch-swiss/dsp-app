@@ -1,10 +1,9 @@
+import { Component, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DatasetTabViewComponent } from './dataset-tab-view.component';
-import { Component, ViewChild } from '@angular/core';
-
 
 /**
-* Test host component to simulate parent component.
+* test host component to simulate parent component.
 */
 @Component({
     selector: 'app-board-host-component',
@@ -29,7 +28,7 @@ describe('DatasetTabViewComponent', () => {
                 DatasetTabViewComponent
             ]
         })
-        .compileComponents();
+            .compileComponents();
     }));
 
     beforeEach(() => {

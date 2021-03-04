@@ -3,7 +3,7 @@ import { TermsTabViewComponent } from './terms-tab-view.component';
 import { Component, ViewChild } from '@angular/core';
 
 /**
- * Test host component to simulate parent component.
+ * test host component to simulate parent component.
  */
 @Component({
     selector: 'app-board-host-component',
@@ -15,7 +15,7 @@ class TestHostBoardComponent {
 
     // input parameters
     conditionsOfAccess = 'Open Access';
-    license = [{'type': 'https://schema.org/URL', 'value': 'https://creativecommons.org/licenses/by/3.0', 'url': 'https://creativecommons.org/licenses/by/3.0'}];
+    license = [{ 'type': 'https://schema.org/URL', 'value': 'https://creativecommons.org/licenses/by/3.0', 'url': 'https://creativecommons.org/licenses/by/3.0' }];
 }
 
 describe('TermsTabViewComponent', () => {

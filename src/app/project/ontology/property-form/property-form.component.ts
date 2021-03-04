@@ -20,7 +20,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { Category, DefaultProperties, PropertyType } from '../default-data/default-properties';
 
-// TODO: should be removed and replaced by AutocompleteItem from dsp-ui
+// --> TODO should be removed and replaced by AutocompleteItem from dsp-ui
 /**
  * a list, which is used in the mat-autocomplete form field
  * contains objects with id and name. the id is usual the iri
@@ -60,7 +60,7 @@ export class PropertyFormComponent implements OnInit {
     // selection of default property types
     propertyTypes: Category[] = DefaultProperties.data;
 
-    showGuiAttr: boolean = false;
+    showGuiAttr = false;
 
     // list of project specific lists (TODO: probably we have to add default knora lists?!)
     lists: ListNodeInfo[];
@@ -80,7 +80,7 @@ export class PropertyFormComponent implements OnInit {
 
     loading = false;
 
-    Constants = Constants;
+    dspConstants = Constants;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -225,7 +225,7 @@ export class PropertyFormComponent implements OnInit {
             let obj: PropertyType;
             // find gui ele from list of default property-types to set type value
             for (const group of this.propertyTypes) {
-                obj = group.elements.find(i => i.gui_ele === tempProp.guiElement && (i.objectType === tempProp.objectType || i.subPropOf === tempProp.subPropertyOf[0]));
+                obj = group.elements.find(i => i.guiEle === tempProp.guiElement && (i.objectType === tempProp.objectType || i.subPropOf === tempProp.subPropertyOf[0]));
 
                 if (obj) {
                     this.propertyForm.controls['type'].setValue(obj);
@@ -242,7 +242,7 @@ export class PropertyFormComponent implements OnInit {
                     const i = tempProp.guiAttributes.findIndex(element => element.includes('hlist'));
 
                     // find content beteween pointy brackets to get list iri
-                    const re: RegExp = /\<([^)]+)\>/;
+                    const re = /\<([^)]+)\>/;
                     const listIri = tempProp.guiAttributes[i].match(re)[1];
 
                     this.showGuiAttr = true;

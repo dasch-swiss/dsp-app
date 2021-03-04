@@ -1,22 +1,22 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-add-group',
-  templateUrl: './add-group.component.html',
-  styleUrls: ['./add-group.component.scss']
+    selector: 'app-add-group',
+    templateUrl: './add-group.component.html',
+    styleUrls: ['./add-group.component.scss']
 })
 export class AddGroupComponent implements OnInit {
 
-  @Input() projectcode: string;
+    @Input() projectcode: string;
 
-  @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
+    @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor () { }
+    constructor () { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  buildForm(): void {
+    buildForm(): void {
 
-  }
+    }
 }

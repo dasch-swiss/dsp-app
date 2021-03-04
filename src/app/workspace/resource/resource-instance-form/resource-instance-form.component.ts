@@ -43,7 +43,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     /**
      * update title and subtitle in dialog header (by switching from step 1 (resource class) to step 2 (properties))
      */
-    @Output() updateParent: EventEmitter<{ title: string, subtitle: string }> = new EventEmitter<{ title: string, subtitle: string }>();
+    @Output() updateParent: EventEmitter<{ title: string; subtitle: string }> = new EventEmitter<{ title: string; subtitle: string }>();
 
     @ViewChild('selectProps') selectPropertiesComponent: SelectPropertiesComponent;
     @ViewChild('selectResourceClass') selectResourceClassComponent: SelectResourceClassComponent;
@@ -113,7 +113,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Go to the next form page: from project/onto/resource selections to properties form
+     * go to the next form page: from project/onto/resource selections to properties form
      */
     nextStep() {
         this.showNextStepForm = !this.showNextStepForm;
@@ -123,7 +123,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Go to previous step: from properties form back to project/onto/resource selections
+     * go to previous step: from properties form back to project/onto/resource selections
      */
     prevStep(ev: Event) {
         ev.preventDefault();
@@ -182,7 +182,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Get the user's project(s)
+     * get the user's project(s)
      */
     initializeProjects(): void {
         this.usersProjects = [];
@@ -218,7 +218,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Get all the ontologies of the selected project
+     * get all the ontologies of the selected project
      * @param projectIri
      */
     selectOntologies(projectIri: string) {
@@ -269,7 +269,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Get all the resource classes of the selected ontology
+     * get all the resource classes of the selected ontology
      * @param ontologyIri
      */
     selectResourceClasses(ontologyIri: string) {
@@ -328,7 +328,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Get the resource label typed in the form in select-resource-class
+     * get the resource label typed in the form in select-resource-class
      * @param label
      */
     getResourceLabel(label: string) {
@@ -336,7 +336,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Get all the properties of the selected resource class
+     * get all the properties of the selected resource class
      * @param resourceClassIri
      */
     selectProperties(resourceClassIri: string) {

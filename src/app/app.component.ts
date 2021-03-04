@@ -8,7 +8,7 @@ import { Title } from '@angular/platform-browser';
 })
 export class AppComponent implements OnInit {
 
-    session: boolean = false;
+    session = false;
 
     constructor(
         private _titleService: Title) {

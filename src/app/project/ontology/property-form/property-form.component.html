@@ -52,7 +52,7 @@
     <!-- TODO: additional mat-form-field for settings depending on the type selection -->
     <div class="small-field" *ngIf="showGuiAttr">
         <div [ngSwitch]="propertyForm.controls['type'].value.objectType">
-            <div *ngSwitchCase="Constants.ListValue">
+            <div *ngSwitchCase="dspConstants.ListValue">
                 <mat-form-field>
                     <mat-label>Select list</mat-label>
                     <mat-select formControlName="guiAttr">
@@ -63,7 +63,7 @@
                 </mat-form-field>
             </div>
 
-            <div *ngSwitchCase="Constants.LinkValue">
+            <div *ngSwitchCase="dspConstants.LinkValue">
                 <mat-form-field>
                     <mat-label>Select resource class</mat-label>
                     <mat-select formControlName="guiAttr">
@@ -75,7 +75,7 @@
             </div>
 
             <div
-                *ngSwitchCase="propertyForm.controls['type'].value.objectType === Constants.IntValue || propertyForm.controls['type'].value.objectType === Constants.DecimalValue ? propertyForm.controls['type'].value.objectType : ''">
+                *ngSwitchCase="propertyForm.controls['type'].value.objectType === dspConstants.IntValue || propertyForm.controls['type'].value.objectType === dspConstants.DecimalValue ? propertyForm.controls['type'].value.objectType : ''">
                 <mat-form-field>
                     <mat-label>Define range</mat-label>
                     <input matInput placeholder="min">

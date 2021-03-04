@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit, Output} from '@angular/core';
+import { Component, Inject, Input, OnInit, Output } from '@angular/core';
 import { ClassDefinition, KnoraApiConnection, ReadOntology } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { Link, Node } from '../../../../../node_modules/d3-force-3d';
@@ -51,13 +51,13 @@ export class OntologyVisualizerComponent implements OnInit {
             newLabel = iri;
         }
 
-        return {'ontoName': ontoName, 'type': type, 'newLabel': newLabel};
+        return { 'ontoName': ontoName, 'type': type, 'newLabel': newLabel };
     }
     getSubclassLinksAndExternalResources(res: ClassDefinition): void {
         for (const item of res.subClassOf) {
             if (!this.isInNodes(item)) {
                 const nodeInfo = this.createLabelFromIRI(item);
-                this.nodes.push({'id': item, 'label': nodeInfo.newLabel, 'group': 'resource', 'class': 'external'});
+                this.nodes.push({ 'id': item, 'label': nodeInfo.newLabel, 'group': 'resource', 'class': 'external' });
             }
             const source = res.id;
             const target = item;
@@ -67,7 +67,7 @@ export class OntologyVisualizerComponent implements OnInit {
                 rotation = 1;
                 curvature = 0.5;
             }
-            const link = {'source': res.id, 'target': item, 'label': 'subClassOf', 'rotation': rotation, 'curvature': curvature};
+            const link = { 'source': res.id, 'target': item, 'label': 'subClassOf', 'rotation': rotation, 'curvature': curvature };
             this.links.push(link);
         }
     }
@@ -75,7 +75,7 @@ export class OntologyVisualizerComponent implements OnInit {
     addResourceClassesToNodes() {
         for (const res of this.ontoClasses) {
             const resInfo =  this.createLabelFromIRI(res.id);
-            const node = {'id': res.id, 'label': resInfo.newLabel, 'group': 'resource', 'class': 'native'};
+            const node = { 'id': res.id, 'label': resInfo.newLabel, 'group': 'resource', 'class': 'native' };
             this.nodes.push(node);
         }
     }
@@ -85,10 +85,10 @@ export class OntologyVisualizerComponent implements OnInit {
         const nodeInfo = this.createLabelFromIRI(targetID);
         if (targetID.endsWith('Value')) {
             targetID = resLabel + '_' + propID.split('#', 2)[1];
-            newNode = {'id': targetID, 'label': nodeInfo.newLabel, 'group': 'literal', 'class': nodeInfo.type};
+            newNode = { 'id': targetID, 'label': nodeInfo.newLabel, 'group': 'literal', 'class': nodeInfo.type };
         // object Value is a resource defined in another ontology
         } else {
-            newNode = {'id': targetID, 'label': nodeInfo.newLabel, 'group': 'resource', 'class': 'external'};
+            newNode = { 'id': targetID, 'label': nodeInfo.newLabel, 'group': 'resource', 'class': 'external' };
         }
         if (!this.isInNodes(targetID)) {
             this.nodes.push(newNode);
@@ -112,13 +112,13 @@ export class OntologyVisualizerComponent implements OnInit {
                         rotation = 1;
                         curvature = 0.5;
                     }
-                    const link = {'source': source, 'target': target, 'label': proplabel, 'rotation': rotation, 'curvature': curvature};
+                    const link = { 'source': source, 'target': target, 'label': proplabel, 'rotation': rotation, 'curvature': curvature };
                     this.links.push(link);
 
                 }
             }
         }
-        return { 'nodes': this.nodes, 'links': this.links};
+        return { 'nodes': this.nodes, 'links': this.links };
     }
     ngOnInit() {
         this.graphInfo = this.convertOntolologytoGraph();

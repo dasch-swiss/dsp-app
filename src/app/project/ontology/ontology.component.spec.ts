@@ -95,9 +95,7 @@ describe('OntologyComponent', () => {
         let store = {};
 
         spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): string => {
-                return store[key] || null;
-            }
+            (key: string): string => store[key] || null
         );
         spyOn(localStorage, 'removeItem').and.callFake(
             (key: string): void => {
@@ -105,9 +103,7 @@ describe('OntologyComponent', () => {
             }
         );
         spyOn(localStorage, 'setItem').and.callFake(
-            (key: string, value: string): string => {
-                return (store[key] = <any>value);
-            }
+            (key: string, value: string): string => (store[key] = <any>value)
         );
         spyOn(localStorage, 'clear').and.callFake(() => {
             store = {};

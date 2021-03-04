@@ -7,7 +7,7 @@ import { Title } from '@angular/platform-browser';
     styleUrls: ['./collection-list.component.scss']
 })
 export class CollectionListComponent implements OnInit {
-    loading: boolean = false;
+    loading = false;
 
     constructor(private _titleService: Title) {
         // set the page title

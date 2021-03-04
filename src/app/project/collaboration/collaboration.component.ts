@@ -22,13 +22,15 @@ import { AddUserComponent } from './add-user/add-user.component';
 })
 export class CollaborationComponent implements OnInit {
 
+    @ViewChild('addUserComponent') addUser: AddUserComponent;
+
     // loading for progess indicator
     loading: boolean;
 
     // permissions of logged-in user
     session: Session;
-    sysAdmin: boolean = false;
-    projectAdmin: boolean = false;
+    sysAdmin = false;
+    projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
     projectcode: string;
@@ -44,8 +46,6 @@ export class CollaborationComponent implements OnInit {
     active: ReadUser[] = [];
     // list of inactive (deleted) users
     inactive: ReadUser[] = [];
-
-    @ViewChild('addUserComponent') addUser: AddUserComponent;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -63,7 +63,7 @@ export class CollaborationComponent implements OnInit {
         // set the page title
         this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
 
-        // TODO: go back to project page, if the logged-in user has no admin rights
+        // --> TODO go back to project page, if the logged-in user has no admin rights
         // is the logged-in user a project admin?
         /*
         const session: Session = JSON.parse(

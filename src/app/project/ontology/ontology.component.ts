@@ -40,6 +40,8 @@ export interface OntologyInfo {
 })
 export class OntologyComponent implements OnInit {
 
+    @ViewChild('ontologyEditor', { read: ViewContainerRef }) ontologyEditor: ViewContainerRef;
+
     // general loading status for progess indicator
     loading: boolean;
 
@@ -48,8 +50,8 @@ export class OntologyComponent implements OnInit {
 
     // permissions of logged-in user
     session: Session;
-    sysAdmin: boolean = false;
-    projectAdmin: boolean = false;
+    sysAdmin = false;
+    projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
     projectcode: string;
@@ -91,8 +93,6 @@ export class OntologyComponent implements OnInit {
      * list of all default resource classes (sub class of)
      */
     defaultClasses: DefaultInfo[] = DefaultResourceClasses.data;
-
-    @ViewChild('ontologyEditor', { read: ViewContainerRef }) ontologyEditor: ViewContainerRef;
 
     // @ViewChild(AddToDirective, { static: false }) addToHost: AddToDirective;
 
@@ -298,7 +298,7 @@ export class OntologyComponent implements OnInit {
     }
 
     /**
-     * Opens ontology route by iri
+     * opens ontology route by iri
      * @param id ontology id/iri
      * @param view 'classes' | 'properties' | ' graph'
      */
@@ -322,7 +322,7 @@ export class OntologyComponent implements OnInit {
     }
 
     /**
-     * Opens ontology form
+     * opens ontology form
      * @param mode
      * @param [iri] only in edit mode
      */
@@ -355,7 +355,7 @@ export class OntologyComponent implements OnInit {
     }
 
     /**
-     * Opens resource class form
+     * opens resource class form
      * @param mode
      * @param resClassInfo (could be subClassOf (create mode) or resource class itself (edit mode))
      */
@@ -383,7 +383,7 @@ export class OntologyComponent implements OnInit {
     }
 
     /**
-     * Updates cardinality
+     * updates cardinality
      * @param subClassOf resource class
      */
     updateCard(subClassOf: ResourceClassDefinition) {
@@ -410,7 +410,7 @@ export class OntologyComponent implements OnInit {
     }
 
     /**
-    * Delete either ontology or resource class
+    * delete either ontology or resource class
     *
     * @param mode Can be 'Ontology' or 'ResourceClass'
     * @param id
