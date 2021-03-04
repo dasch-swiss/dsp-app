@@ -160,7 +160,7 @@ export class DefaultProperties {
                 //     group: 'Link'
                 // },
                 {
-                    icon: 'http',
+                    icon: 'language',
                     label: 'External URL',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.UriValue,

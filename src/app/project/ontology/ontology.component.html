@@ -104,7 +104,7 @@
                     <span
                         [matTooltip]="(ontology.lastModificationDate ? 'Delete data model' : 'This data model can\'t be edited because of missing lastModificationDate!')">
                         <button mat-button [disabled]="!ontology.lastModificationDate"
-                            (click)="$event.stopPropagation(); delete(ontologyIri, 'Ontology', ontology.label)">
+                            (click)="$event.stopPropagation(); delete('Ontology', {iri: ontologyIri, label: ontology.label})">
                             <mat-icon>delete</mat-icon>
                             Delete
                         </button>
@@ -129,9 +129,9 @@
                             Add class
                         </button>
                         <mat-menu #addResClassMenu="matMenu" xPosition="before">
-                            <button mat-menu-item *ngFor="let type of resourceClass"
+                            <button mat-menu-item *ngFor="let type of defaultClasses"
                                 (click)="openResourceClassForm('addResourceClass', type)">
-                                {{ type?.label }}
+                                <mat-icon>{{type.icons[0]}}</mat-icon> {{ type.label }}
                             </button>
                         </mat-menu>
                     </span>
@@ -145,46 +145,12 @@
                 <div class="ontology-editor-grid" *ngIf="view === 'classes'">
 
                     <!-- list of resource classes -->
-                    <div *ngFor="let resClass of ontoClasses; let i = index" class="resource-class" cdkDrag
-                        cdkDragBoundary=".drag-drop-stop">
-                        <mat-toolbar class="resource-class-header" cdkDragHandle>
-                            <mat-toolbar-row>
-                                <h4 mat-card-title [matTooltip]="resClass.comment" matTooltipPosition="above">
-                                    {{resClass.label | dspTruncate: 24}}</h4>
-                                <span class="fill-remaining-space"></span>
-                                <span
-                                    [matTooltip]="(ontology.lastModificationDate ? 'more' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                                    <button mat-icon-button [matMenuTriggerFor]="resClassMenu" [disabled]="!ontology.lastModificationDate">
-                                        <mat-icon>more_horiz</mat-icon>
-                                    </button>
-                                </span>
-                                <mat-menu #resClassMenu="matMenu" xPosition="before">
-                                    <button mat-menu-item (click)="openResourceClassForm('editResourceClass', {iri: resClass.id, name: '', label: resClass.label})">
-                                        Edit resource class info
-                                    </button>
-                                    <button mat-menu-item (click)="updateCard(resClass)">
-                                        Update corresponding properties
-                                    </button>
-                                    <button mat-menu-item (click)="delete(resClass.id, 'ResourceClass', resClass.label)">
-                                        Delete resource class
-                                    </button>
-                                </mat-menu>
-                            </mat-toolbar-row>
-                        </mat-toolbar>
-                        <mat-list class="resource-class-properties">
-                            <span *ngFor="let prop of resClass.propertiesList">
-                                <!-- display only properties with guiOrder and if they exist in list of properties;
-                                         objectType is not a linkValue (otherwise we have the property twice) -->
-                                <app-property-info *ngIf="ontology?.properties[prop.propertyIndex]
-                                        && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'
-                                        && !ontology?.properties[prop.propertyIndex].subjectType?.includes('Standoff')"
-                                    [propDef]="ontology?.properties[prop.propertyIndex]" [propCard]="prop"
-                                    [projectcode]="projectcode">
-                                </app-property-info>
-                            </span>
-                        </mat-list>
-
-                    </div>
+                    <app-resource-class-info *ngFor="let resClass of ontoClasses"
+                        [resourceClass]="resClass"
+                        (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
+                        (updateCardinality)="updateCard($event)"
+                        (deleteResourceClass)="delete('ResourceClass', $event)">
+                    </app-resource-class-info>
 
                 </div>
                 <div class="ontology-editor-list" *ngIf="view === 'properties'">
@@ -213,7 +179,6 @@
 <div *ngIf="!projectAdmin" class="content large middle">
     <app-error [status]="403"></app-error>
 </div>
-
 
 <div class="mobile-only">
     <dsp-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">

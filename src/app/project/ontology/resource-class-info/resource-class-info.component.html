@@ -1,0 +1,57 @@
+<mat-card class="resource-class" cdkDrag cdkDragBoundary=".drag-drop-stop">
+    <!-- class card header -->
+    <mat-card-header class="resource-class-header" cdkDragHandle>
+        <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
+        <!-- <mat-icon mat-card-avatar>{{resourceClass.icon}}</mat-icon> -->
+        <mat-card-title [matTooltip]="resourceClass.comment" matTooltipPosition="above">
+            {{resourceClass.label | dspTruncate: 24}}
+        </mat-card-title>
+        <mat-card-subtitle>
+            <span matTooltip="subclass of" matTooltipPosition="above">
+                {{subClassOfLabel}}
+            </span>
+        </mat-card-subtitle>
+        <span class="resource-class-header-action">
+            <span class="resource-class-more"
+                [matTooltip]="(ontology.lastModificationDate ? 'more' : 'This data model can\'t be edited because of missing lastModificationDate!')">
+                <button mat-icon-button [matMenuTriggerFor]="resClassMenu" [disabled]="!ontology.lastModificationDate">
+                    <mat-icon>more_horiz</mat-icon>
+                </button>
+            </span>
+            <span class="resource-class-size" [matTooltip]="(expanded ? 'Collapse class' : 'Expand class')">
+                <button mat-icon-button (click)="expanded = !expanded">
+                    <mat-icon>{{expanded ? "expand_less" : "expand_more"}}</mat-icon>
+                </button>
+            </span>
+        </span>
+        <mat-menu #resClassMenu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="editResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
+                Edit resource class info
+            </button>
+            <button mat-menu-item (click)="updateCardinality.emit(resourceClass)">
+                Update corresponding properties
+            </button>
+            <button mat-menu-item
+                (click)="deleteResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
+                Delete resource class
+            </button>
+        </mat-menu>
+    </mat-card-header>
+    <!-- resource class card content with list of properties -->
+    <mat-card-content>
+        <mat-list class="resource-class-properties">
+            <span *ngFor="let prop of resourceClass.propertiesList; let i = index">
+                <!-- display only properties with guiOrder and if they exist in list of properties;
+                     objectType is not a linkValue (otherwise we have the property twice) -->
+                <app-property-info *ngIf="ontology?.properties[prop.propertyIndex]
+                    && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'
+                    && !ontology?.properties[prop.propertyIndex].subjectType?.includes('Standoff')
+                    && expanded" [propDef]="ontology?.properties[prop.propertyIndex]"
+                    [propCard]="prop" [projectcode]="projectcode">
+                </app-property-info>
+            </span>
+        </mat-list>
+    </mat-card-content>
+    <!-- resource class card actions; TODO: can be reacitviated if we decide to add some special buttons to res class card -->
+    <!-- <mat-card-actions class="resource-class-footer"></mat-card-actions> -->
+</mat-card>

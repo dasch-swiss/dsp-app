@@ -29,6 +29,12 @@ $width: 340px;
   border: 1px dotted $primary_200;
   position: relative;
   margin: 0 auto 60px auto;
+  z-index: 0;
+
+  .ontology-editor-header {
+    z-index: 2;
+    top: 121px;
+  }
 }
 .ontology-viewer {
   width: 98vw;
@@ -69,39 +75,6 @@ $width: 340px;
   }
 }
 
-.resource-class {
-  min-height: 120px;
-  height: auto;
-  position: relative;
-  @include mat-elevation-transition;
-  @include mat-elevation(2);
-  padding: 12px;
-  margin: 6px;
-  background-color: #fff;
-
-  .resource-class-header {
-    margin: -12px -12px 0 -12px;
-    width: calc(100% + 24px);
-    min-height: 48px !important;
-    height: 48px;
-    cursor: move;
-  }
-
-  .resource-class-properties {
-    li.property-info {
-      list-style-type: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-left: -24px;
-      list-style-position: inside;
-    }
-  }
-
-  &:active {
-    @include mat-elevation(8);
-  }
-}
 .ontology-editor-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   position: sticky !important;

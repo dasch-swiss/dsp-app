@@ -145,7 +145,6 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     selectedLanguage = 'en';
     languages: StringLiteral[] = AppGlobal.languagesList;
 
-
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
@@ -425,7 +424,6 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                         this._errorHandler.showMessage(error);
                     }
                 );
-
 
             } else {
                 // edit mode: res class cardinality

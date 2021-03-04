@@ -18,8 +18,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import { DefaultProperties, Category, PropertyType } from '../default-data/default-properties';
-
+import { Category, DefaultProperties, PropertyType } from '../default-data/default-properties';
 
 // TODO: should be removed and replaced by AutocompleteItem from dsp-ui
 /**

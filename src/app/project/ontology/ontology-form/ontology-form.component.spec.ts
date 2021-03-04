@@ -70,7 +70,6 @@ describe('OntologyFormComponent', () => {
             label: null
         });
 
-
         fixture.detectChanges();
     });
 

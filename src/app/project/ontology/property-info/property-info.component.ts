@@ -152,9 +152,6 @@ export class PropertyInfoComponent implements OnInit, AfterContentInit {
                     }
                 }
             );
-
-
-
         }
 
     }
