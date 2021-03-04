@@ -16,21 +16,16 @@
                         {{ prop.key }}
                     </h3>
                 </div>
-                <div *ngIf="templateKeys.indexOf(prop.key) < 0 && dateKeys.indexOf(prop.key) < 0 && prop.key !== 'distribution';" class="property-value">
-                    {{ prop.value }}
-                </div>
-                <div *ngIf="templateKeys.indexOf(prop.key) > -1;" class="property-value">
-                    <p *ngFor="let entry of prop.value" class="remove-top-margin">
-                        <a *ngIf="entry.url" href="{{ entry.url }}" target="_blank"> {{ entry.url }} </a>
-                    </p>
-                </div>
-                <div *ngIf="prop.key === 'distribution'" class="property-value">
-                    <p *ngIf="prop.value.url" class="remove-top-margin">
-                        <a href="{{ prop.value.url }}" target="_blank"> {{ prop.value.url }} </a>
-                    </p>
-                </div>
-                <div *ngIf="dateKeys.indexOf(prop.key) > -1;">
-                    {{ prop.value | date:'MMMM d, yyyy' }}
+                <div class="property-value">
+                    <div *ngIf="templateKeys.indexOf(prop.key) < 0 && dateKeys.indexOf(prop.key) < 0">
+                        {{ prop.value }}
+                    </div>
+                    <div *ngIf="templateKeys.indexOf(prop.key) > -1;">
+                        <app-url-template [urls]="prop.value"></app-url-template>
+                    </div>
+                    <div *ngIf="dateKeys.indexOf(prop.key) > -1;">
+                        {{ prop.value | date:'MMMM d, yyyy' }}
+                    </div>
                 </div>
             </div>
         </div>

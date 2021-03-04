@@ -13,15 +13,8 @@ import { Organization } from '@dasch-swiss/dsp-js';
                 </div>
             </div>
 
-            <div *ngIf="organisation.url" class="metadata-property">
-                <div class="property-label display-inline-block">
-                    URL(s):
-                </div>
-                <div class="display-inline-block add-left-margin">
-                    <span *ngFor="let entry of organisation.url" class="comma">
-                        <a href="{{ entry.url }}" target="_blank"> {{ entry.url }} </a>
-                    </span>
-                </div>
+            <div *ngIf="organisation.url">
+                <app-url-template [urls]="organisation.url" [displayLabel]='true'></app-url-template>
             </div>
 
             <div *ngIf="organisation.email" class="metadata-property">

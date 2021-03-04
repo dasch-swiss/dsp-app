@@ -11,23 +11,6 @@
                 </div>
                 <div [ngSwitch]="prop.key" class="property-value">
 
-                    <!-- template for discipline -->
-                    <div *ngSwitchCase="'discipline'">
-                        <a href="{{ selectedProject.discipline[0].url }}" target="_blank"> {{ selectedProject.discipline[0].name }} </a>
-                    </div>
-
-                    <!-- template for temporalCoverage -->
-                    <div *ngSwitchCase="'temporalCoverage'">
-                        <a href="{{ selectedProject.temporalCoverage[0].url }}" target="_blank"> {{ selectedProject.temporalCoverage[0].name }} </a>
-                    </div>
-
-                    <!-- template for url -->
-                    <div *ngSwitchCase="'url'">
-                        <p class="remove-top-margin" *ngFor="let link of selectedProject.url">
-                            <a *ngIf="link.url" href="{{ link.url }}" target="_blank"> {{ link.url }} </a>
-                        </p>
-                    </div>
-
                     <!-- template for funder -->
                     <div *ngSwitchCase="'funder'">
                         <div *ngFor="let funder of funders" class="funder">
@@ -45,7 +28,7 @@
                     <!-- template for keywords -->
                     <div *ngSwitchCase="'keywords'">
                         <mat-chip-list>
-                            <mat-chip *ngFor="let kword of selectedProject.keywords"> {{ kword }} </mat-chip>
+                            <mat-chip *ngFor="let kword of prop.value"> {{ kword }} </mat-chip>
                         </mat-chip-list>
                     </div>
 
@@ -53,11 +36,8 @@
                     <div *ngSwitchCase="'dataManagementPlan'">
                         <div *ngFor="let dmp of dmps">
                             <p class="remove-top-margin"> {{ dmp.isAvailable? 'Available' : 'Unavailable' }} </p>
-                            <div *ngIf="!dmp.isAvailable">
-                                <p *ngIf="dmp.url.name"> Name: {{ dmp.url.url }} </p>
-                                <p *ngIf="dmp.url.url">
-                                    URL: <a href="{{ dmp.url.url }}" target="_blank"> {{ dmp.url.url }} </a>
-                                </p>
+                            <div *ngIf="dmp.isAvailable">
+                                <app-url-template [urls]='dmp.url'></app-url-template>
                             </div>
                         </div>
                     </div>
@@ -73,16 +53,7 @@
                                 </div>
                             </div>
 
-                            <div *ngIf="grant.url" class="metadata-property">
-                                <div class="property-label display-inline-block">
-                                    URL(s):
-                                </div>
-                                <div class="display-inline-block add-left-margin">
-                                    <span *ngFor="let entry of grant.url" class="comma">
-                                        <a href="{{ entry.url }}" target="_blank"> {{ entry.url }} </a>
-                                    </span>
-                                </div>
-                            </div>
+                            <app-url-template [urls]='grant.url' [displayLabel]='true'></app-url-template>
 
                             <div *ngIf="grant.number" class="metadata-property">
                                 <div class="property-label display-inline-block">
@@ -118,17 +89,20 @@
                     <!-- template for spatialCoverage -->
                     <div *ngSwitchCase="'spatialCoverage'">
                         <div *ngFor="let coverage of selectedProject.spatialCoverage">
-                            {{ coverage.place.name }} (<a href="{{ coverage.place.url }}" target="_blank"> {{ coverage.place.url }} </a>)
+                            <app-url-template [urls]='coverage.place'></app-url-template>
                         </div>
                     </div>
 
                     <!-- default template -->
                     <div *ngSwitchDefault>
-                        <div *ngIf="dateKeys.indexOf(prop.key) < 0;">
+                        <div *ngIf="dateKeys.indexOf(prop.key) < 0 && iUrlTemplatesKeys.indexOf(prop.key) < 0">
                             {{ prop.value }}
                         </div>
                         <div *ngIf="dateKeys.indexOf(prop.key) > -1;">
                             {{ prop.value | date:'MMMM d, yyyy' }}
+                        </div>
+                        <div *ngIf="iUrlTemplatesKeys.indexOf(prop.key) > -1;">
+                            <app-url-template [urls]='prop.value'></app-url-template>
                         </div>
                     </div>
                 </div>

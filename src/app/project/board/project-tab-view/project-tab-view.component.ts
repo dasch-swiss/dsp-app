@@ -23,6 +23,9 @@ export class ProjectTabViewComponent implements OnInit {
     // used for formatting
     dateKeys = ['startDate', 'endDate'];
 
+    // keys that require IUrl template
+    iUrlTemplatesKeys = ['discipline', 'temporalCoverage', 'url'];
+
     dmps: DataManagementPlan[] = [];
     funders: Person[] | Organization[] = [];
     funderType: string;

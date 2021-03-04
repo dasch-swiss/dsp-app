@@ -9,7 +9,6 @@ export class MetadataService {
     constructor() { }
 
     /**
-     * used in project metadata page
      * determine if the object is of type Person or Organization or Iid
      * @param obj Person | Organization | IId
      */
@@ -21,5 +20,4 @@ export class MetadataService {
         }
         return undefined;
     }
-
 }

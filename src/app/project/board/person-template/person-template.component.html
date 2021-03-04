@@ -10,13 +10,8 @@
         </div>
     </div>
     
-    <div *ngIf="person.sameAs" class="metadata-property">
-        <div class="property-label display-inline-block">
-            ORCID:
-        </div>
-        <div class="display-inline-block add-left-margin">
-            <a href="{{ person.sameAs[0].url }}" target="_blank"> {{ person.sameAs[0].url }} </a>
-        </div>
+    <div *ngIf="person.sameAs">
+        <app-url-template [urls]="person.sameAs" [displayLabel]="true" [label]="'ORCID'"></app-url-template>
     </div>
     
     <div *ngIf="person.email" class="metadata-property">

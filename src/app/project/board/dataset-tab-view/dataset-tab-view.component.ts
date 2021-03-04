@@ -18,9 +18,8 @@ export class DatasetTabViewComponent {
     excludeKeys = ['project', 'qualifiedAttribution'];
 
     // metadata keys that require specific format to display
-    templateKeys = ['license', 'sameAs'];
+    templateKeys = ['abstract', 'distribution', 'documentation', 'license', 'sameAs', ];
 
     // date keys from metadata object for formatting
     dateKeys = ['dateCreated', 'dateModified', 'datePublished'];
-
 }
