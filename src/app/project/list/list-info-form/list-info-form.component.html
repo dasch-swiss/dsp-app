@@ -1,19 +1,13 @@
 <div>
-
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
-    <!-- success message after updating -->
-    <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
-
-    <div *ngIf="!loading && !createList" class="form-content list-info">
+    <div *ngIf="!loading" class="form-content list-info">
 
         <!-- list label -->
         <dsp-string-literal-input [placeholder]="'List label'" [value]="labels"
             (dataChanged)="handleData($event, 'labels')">
         </dsp-string-literal-input>
-        <!-- TODO: we should support mat hint in the string literal input        <mat-hint *ngIf="formErrors.label">
-            {{ formErrors.label }}
-        </mat-hint> -->
+        <mat-hint class="invalid-form" *ngIf="labelInvalidMessage">{{ labelInvalidMessage }}</mat-hint>
 
         <br><br>
 
@@ -31,17 +25,10 @@
             <span class="fill-remaining-space"></span>
             <span>
                 <button mat-raised-button type="submit" color="primary" [disabled]="labels.length === 0"
-                    (click)="submitData()">
-                    {{ iri ? 'Update' : 'Next' }}
+                    (click)="submitData()" class="list-submit">
+                    {{ mode === 'update' ? 'Update' : 'Create' | translate }}
                 </button>
             </span>
         </div>
     </div>
-
-    <div class="create-list-items" *ngIf="!loading && createList && newList">
-        <app-list-item [projectcode]="projectcode" [projectIri]="projectIri" [parentIri]="newList.listinfo.id"
-            [language]="labels[0].language">
-        </app-list-item>
-    </div>
-
 </div>

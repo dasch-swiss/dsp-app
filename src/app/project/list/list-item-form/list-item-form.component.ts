@@ -212,7 +212,6 @@ export class ListItemFormComponent implements OnInit {
      * @param iri iri of the node.
      */
     openDialog(mode: string, name: string, iri?: string): void {
-
         const dialogConfig: MatDialogConfig = {
             width: '640px',
             position: {
@@ -220,7 +219,7 @@ export class ListItemFormComponent implements OnInit {
             },
             data: {
                 mode: mode,
-                title: mode === 'editListNode' ? name : 'Insert new child node',
+                title: mode === 'editListNode' || 'deleteListNode' ? name : '',
                 id: iri,
                 project: this.projectIri,
                 projectCode: this.projectcode,

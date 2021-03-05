@@ -37,8 +37,8 @@
                 type="submit"
                 color="primary"
                 [disabled]="saveButtonDisabled"
-                (click)=" mode === 'editListNode' ? updateChildNode() : insertChildNode()">
-                {{ mode === 'editListNode' ? 'appLabels.form.action.update' : 'appLabels.form.action.submit' | translate }}
+                (click)=" mode === 'update' ? updateChildNode() : insertChildNode()">
+                {{ mode === 'update' ? ('appLabels.form.action.update' | translate) : ('appLabels.form.action.submit' | translate) }}
             </button>
         </span>
     </div>

@@ -23,8 +23,9 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 })
 export class ListInfoFormComponent implements OnInit {
 
-
     @Input() iri?: string;
+
+    @Input() mode: 'create' | 'update';
 
     // project short code
     @Input() projectcode: string;
@@ -32,8 +33,6 @@ export class ListInfoFormComponent implements OnInit {
     @Input() projectIri: string;
 
     @Output() closeDialog: EventEmitter<List | ListNodeInfo> = new EventEmitter<List>();
-
-    @Output() updateParent: EventEmitter<{ title: string }> = new EventEmitter<{ title: string }>();
 
     loading: boolean;
 
@@ -44,51 +43,16 @@ export class ListInfoFormComponent implements OnInit {
     labels: StringLiteral[];
     comments: StringLiteral[];
 
-    /**
-     * by adding new list, it starts with the list info and the next section is "creating the list";
-     * true after adding list
-     *
-     */
-    createList = false;
-    newList: List;
-
-    nameMinLength = 3;
-    nameMaxLength = 16;
-
-    /**
-     * form group for the form controller
-     */
-    form: FormGroup;
-
-    /**
-     * error checking on the following fields
-     */
-    formErrors = {
-        label: ''
-    };
-
-    /**
-     * error hints
-     */
-    validationMessages = {
+    // possible errors for the label
+    labelErrors = {
         label: {
-            'required': 'Name is required.',
-            'minlength': 'Name must be at least ' + this.nameMinLength + ' characters long.',
-            'maxlength': 'Name cannot be more than ' + this.nameMaxLength + ' characters long.'
+            'required': 'A label is required.'
         }
     };
 
-    /**
-     * success of sending data
-     */
-    success = false;
-    /**
-     * message after successful post
-     */
-    successMessage: any = {
-        status: 200,
-        statusText: "You have successfully updated list's info."
-    };
+    saveButtonDisabled = false;
+
+    labelInvalidMessage: string;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -99,13 +63,13 @@ export class ListInfoFormComponent implements OnInit {
 
         this.loading = true;
 
-        // get list info in case of edit mode: this.iri is not undefined
-        if (this.iri) {
+        // get list info in case of edit mode
+        if (this.mode === 'update') {
             // edit mode, get list
             this._dspApiConnection.admin.listsEndpoint.getListInfo(this.iri).subscribe(
                 (response: ApiResponseData<ListInfoResponse>) => {
                     this.list = response.body.listinfo;
-                    this.buildForm(response.body.listinfo);
+                    this.buildLists(response.body.listinfo);
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
@@ -114,11 +78,11 @@ export class ListInfoFormComponent implements OnInit {
 
         } else {
             // build the form
-            this.buildForm();
+            this.buildLists();
         }
     }
 
-    buildForm(list?: ListNodeInfo): void {
+    buildLists(list?: ListNodeInfo): void {
 
         this.loading = true;
         this.labels = [];
@@ -129,47 +93,28 @@ export class ListInfoFormComponent implements OnInit {
             this.comments = list.comments;
         }
 
-        setTimeout(() => {
-            this.loading = false;
-        });
+        this.loading = false;
     }
 
     submitData(): void {
         this.loading = true;
 
-        if (this.iri) {
+        if (this.mode === 'update') {
             // edit mode: update list info
             const listInfoUpdateData: UpdateListInfoRequest = new UpdateListInfoRequest();
             listInfoUpdateData.projectIri = this.projectIri;
             listInfoUpdateData.listIri = this.iri;
-
-            // initialize labels
-            let i = 0;
-            for (const l of this.labels) {
-                listInfoUpdateData.labels[i] = new StringLiteral();
-                listInfoUpdateData.labels[i].language = l.language;
-                listInfoUpdateData.labels[i].value = l.value;
-                i++;
-            }
-            // initialize comments
-            let j = 0;
-            for (const c of this.comments) {
-                listInfoUpdateData.comments[j] = new StringLiteral();
-                listInfoUpdateData.comments[j].language = c.language;
-                listInfoUpdateData.comments[j].value = c.value;
-                j++;
-            }
+            listInfoUpdateData.labels = this.labels;
+            listInfoUpdateData.comments = this.comments;
 
             this._dspApiConnection.admin.listsEndpoint.updateListInfo(listInfoUpdateData).subscribe(
                 (response: ApiResponseData<ListInfoResponse>) => {
-                    this.success = true;
                     this.loading = false;
                     this.closeDialog.emit(response.body.listinfo);
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                     this.loading = false;
-                    this.success = false;
                 }
             );
 
@@ -177,36 +122,17 @@ export class ListInfoFormComponent implements OnInit {
             // new: create list
             const listInfoData: CreateListRequest = new CreateListRequest();
             listInfoData.projectIri = this.projectIri;
-
-            // initialize labels
-            let i = 0;
-            for (const l of this.labels) {
-                listInfoData.labels[i] = new StringLiteral();
-                listInfoData.labels[i].language = l.language;
-                listInfoData.labels[i].value = l.value;
-                i++;
-            }
-            // initialize comments
-            let j = 0;
-            for (const c of this.comments) {
-                listInfoData.comments[j] = new StringLiteral();
-                listInfoData.comments[j].language = c.language;
-                listInfoData.comments[j].value = c.value;
-                j++;
-            }
+            listInfoData.labels = this.labels;
+            listInfoData.comments = this.comments;
 
             this._dspApiConnection.admin.listsEndpoint.createList(listInfoData).subscribe(
                 (response: ApiResponseData<ListResponse>) => {
-                    this.newList = response.body.list;
-
-                    this.updateParent.emit({ title: response.body.list.listinfo.labels[0].value + ' (' + response.body.list.listinfo.labels[0].language + ')' });
+                    this.closeDialog.emit(response.body.list);
                     this.loading = false;
-                    this.createList = true;
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                     this.loading = false;
-                    this.success = false;
                 }
             );
         }
@@ -215,13 +141,13 @@ export class ListInfoFormComponent implements OnInit {
     /**
      * reset the form
      */
-    resetForm(ev: Event, list?: ListNodeInfo) {
+    resetLists(ev: Event, list?: ListNodeInfo) {
 
         ev.preventDefault();
 
         list = list ? list : new ListNodeInfo();
 
-        this.buildForm(list);
+        this.buildLists(list);
     }
 
     handleData(data: StringLiteral[], type: string) {
@@ -235,5 +161,15 @@ export class ListInfoFormComponent implements OnInit {
                 this.comments = data;
                 break;
         }
+
+        if (this.labels.length === 0) {
+            // invalid label, don't let user submit
+            this.saveButtonDisabled = true;
+            this.labelInvalidMessage = this.labelErrors.label.required;
+        } else {
+            this.saveButtonDisabled = false;
+            this.labelInvalidMessage = null;
+        }
     }
+
 }

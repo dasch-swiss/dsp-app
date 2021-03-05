@@ -44,7 +44,7 @@
 <div class="list" *ngIf="list && list.length === 0">
     <div class="list-node">
         <app-list-item-form [parentIri]="parentIri" [projectIri]="projectIri" [projectcode]="projectcode"
-                            [language]="language" (refreshParent)="updateView($event)">
+                            [language]="language" [newNode]="true" (refreshParent)="updateView($event)">
         </app-list-item-form>
     </div>
 </div>

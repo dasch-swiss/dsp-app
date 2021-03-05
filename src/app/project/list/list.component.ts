@@ -8,6 +8,7 @@ import {
     ApiResponseError,
     DeleteListResponse,
     KnoraApiConnection,
+    List,
     ListNodeInfo,
     ListsResponse,
     ProjectResponse,
@@ -218,36 +219,53 @@ export class ListComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((data) => {
-            if (mode === 'deleteList' && typeof(data) === 'boolean' && data === true) {
-                this._dspApiConnection.admin.listsEndpoint.deleteListNode(this.listIri).subscribe(
-                    (res: ApiResponseData<DeleteListResponse>) => {
-                        this.lists = this.lists.filter(list => list.id !== res.body.iri);
-                        this.listIri = this.lists[0].id;
+            switch (mode) {
+                case 'createList': {
+                    if (data instanceof List) {
+                        this.listIri = data.listinfo.id;
                         this.listForm.controls.list.setValue(this.listIri);
                         this.openList(this.listIri);
-                    },
-                    (error: ApiResponseError) => {
-                        // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
-                        if (error.status === 400) {
-                            const errorDialogConfig: MatDialogConfig = {
-                                width: '640px',
-                                position: {
-                                    top: '112px'
-                                },
-                                data: { mode: 'deleteListNodeError' }
-                            };
-
-                            // open the dialog box
-                            this._dialog.open(DialogComponent, errorDialogConfig);
-                        } else {
-                            // use default error behavior
-                            this._errorHandler.showMessage(error);
-                        }
+                        this.initList();
                     }
-                );
+                    break;
+                }
+                case 'editListInfo': {
+                    this.initList();
+                    break;
+                }
+                case 'deleteList': {
+                    if (typeof(data) === 'boolean' && data === true) {
+                        this._dspApiConnection.admin.listsEndpoint.deleteListNode(this.listIri).subscribe(
+                            (res: ApiResponseData<DeleteListResponse>) => {
+                                this.lists = this.lists.filter(list => list.id !== res.body.iri);
+                                this.listIri = this.lists[0].id;
+                                this.listForm.controls.list.setValue(this.listIri);
+                                this.openList(this.listIri);
+                                this.initList();
+                            },
+                            (error: ApiResponseError) => {
+                                // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
+                                if (error.status === 400) {
+                                    const errorDialogConfig: MatDialogConfig = {
+                                        width: '640px',
+                                        position: {
+                                            top: '112px'
+                                        },
+                                        data: { mode: 'deleteListNodeError' }
+                                    };
+
+                                    // open the dialog box
+                                    this._dialog.open(DialogComponent, errorDialogConfig);
+                                } else {
+                                    // use default error behavior
+                                    this._errorHandler.showMessage(error);
+                                }
+                            }
+                        );
+                    }
+                    break;
+                }
             }
-            // update the view
-            this.initList();
         });
     }
 
