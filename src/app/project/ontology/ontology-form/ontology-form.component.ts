@@ -7,11 +7,14 @@ import {
     KnoraApiConnection,
     OntologyMetadata,
     ProjectResponse,
-    ReadProject
+    ReadOntology,
+    ReadProject,
+    UpdateOntologyMetadata
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ResourceClassFormService } from '../resource-class-form/resource-class-form.service';
 
 export interface NewOntology {
     projectIri: string;
@@ -26,9 +29,11 @@ export interface NewOntology {
 })
 export class OntologyFormComponent implements OnInit {
 
-
     // project short code
     @Input() projectcode: string;
+
+    // ontology iri in case of edit
+    @Input() iri: string;
 
     // existing ontology names; name has to be unique
     @Input() existingOntologyNames: string[];
@@ -43,7 +48,10 @@ export class OntologyFormComponent implements OnInit {
 
     ontologyForm: FormGroup;
 
-    ontologyLabel = '';
+    ontologyLabel: string;
+    ontologyComment: string;
+
+    lastModificationDate: string;
 
     nameRegex = /^(?![vV][0-9]|[0-9]|[\u00C0-\u017F]).[a-zA-Z0-9]+\S*$/;
 
@@ -80,11 +88,15 @@ export class OntologyFormComponent implements OnInit {
         }
     };
 
+    error = false;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder) { }
+        private _fb: FormBuilder,
+        private _resourceClassFormService: ResourceClassFormService
+    ) { }
 
     ngOnInit() {
 
@@ -107,6 +119,29 @@ export class OntologyFormComponent implements OnInit {
                 this.loading = false;
             }
         );
+
+        if (this.iri) {
+            // edit mode: get current ontology
+            this._cache.get('currentOntology').subscribe(
+                (response: ReadOntology) => {
+                    // add values to the ontology form
+                    this.ontologyForm.controls['name'].disable();
+                    const name = this._resourceClassFormService.getOntologyName(this.iri);
+                    this.ontologyForm.controls['name'].setValue(name);
+                    this.ontologyForm.controls['label'].setValue(response.label);
+                    this.ontologyForm.controls['label'].setValidators(
+                        [Validators.required]
+                    );
+                    this.ontologyForm.controls['comment'].setValue(response.comment);
+                    // disable name input
+
+                    this.lastModificationDate = response.lastModificationDate;
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
+        }
 
     }
 
@@ -148,7 +183,10 @@ export class OntologyFormComponent implements OnInit {
                 value: this.ontologyLabel, disabled: false
             }, [
                 Validators.minLength(this.nameMinLength)
-            ])
+            ]),
+            comment: new FormControl({
+                value: this.ontologyComment, disabled: false
+            })
         });
 
         this.ontologyForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -160,7 +198,9 @@ export class OntologyFormComponent implements OnInit {
             return;
         }
 
-        this.ontologyLabel = data.name;
+        if (!this.iri) {
+            this.ontologyLabel = this.capitalizeFirstLetter(data.name);
+        }
 
         Object.keys(this.formErrors).map(field => {
             this.formErrors[field] = '';
@@ -176,40 +216,59 @@ export class OntologyFormComponent implements OnInit {
 
     }
 
-    createOntology() {
+    submitData() {
         this.loading = true;
 
-        // const something: number = Math.floor(Math.random() * Math.floor(9999));
+        if (this.iri) {
+            // edit mode
+            const ontologyData = new UpdateOntologyMetadata();
+            ontologyData.id = this.iri;
+            ontologyData.lastModificationDate = this.lastModificationDate;
+            ontologyData.label = this.ontologyForm.controls['label'].value;
+            ontologyData.comment = this.ontologyForm.controls['comment'].value;
 
-        const ontologyData = new CreateOntology();
-        ontologyData.label = this.project.shortname + ': ' + (this.ontologyLabel ? this.ontologyLabel : this.ontologyForm.controls['name'].value);
-        ontologyData.name = this.ontologyForm.controls['name'].value;
-        ontologyData.attachedToProject = this.project.id;
+            this._dspApiConnection.v2.onto.updateOntology(ontologyData).subscribe(
+                (response: OntologyMetadata) => {
+                    this.updateParent.emit(response.id);
+                    this.closeDialog.emit(response.id);
+                },
+                (error: ApiResponseError) => {
+                    // in case of an error
+                    this.loading = false;
+                    this.error = true;
 
-        this._dspApiConnection.v2.onto.createOntology(ontologyData).subscribe(
-            (response: OntologyMetadata) => {
-                this.updateParent.emit(response.id);
-                this.closeDialog.emit(response.id);
-            },
-            (error: ApiResponseError) => {
-                // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
-                this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
-                this.loading = false;
+                    this._errorHandler.showMessage(error);
+                }
+            );
 
-                this._errorHandler.showMessage(error);
-            }
-        );
+        } else {
+            // create mode
+
+            const ontologyData = new CreateOntology();
+            ontologyData.label = this.project.shortname + ': ' + (this.ontologyLabel ? this.ontologyLabel : this.ontologyForm.controls['name'].value);
+            ontologyData.name = this.ontologyForm.controls['name'].value;
+            ontologyData.comment = this.ontologyForm.controls['comment'].value;
+            ontologyData.attachedToProject = this.project.id;
+
+            this._dspApiConnection.v2.onto.createOntology(ontologyData).subscribe(
+                (response: OntologyMetadata) => {
+                    this.updateParent.emit(response.id);
+                    this.closeDialog.emit(response.id);
+                },
+                (error: ApiResponseError) => {
+                    // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
+                    this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
+                    this.loading = false;
+
+                    this._errorHandler.showMessage(error);
+                }
+            );
+        }
     }
 
-    /**
-     * reset the form
-     */
-    resetForm(ev: Event, resourceClass?: any) {
-
-        this.ontologyLabel = this.project.shortname + ' ontology (data model): ';
-
-        this.buildForm();
-
+    capitalizeFirstLetter(text: string) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
     }
+
 
 }

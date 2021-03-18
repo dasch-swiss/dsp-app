@@ -57,7 +57,11 @@
         <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
                 <span class="ontology-info">
-                    <h3 class="mat-title space-reducer" [matTooltip]="ontology.id">{{ontology?.label}}</h3>
+                    <h3 class="mat-title space-reducer"
+                        [matTooltip]="ontology.comment ? ontology.comment : ontology.id"
+                        matTooltipPosition="above">
+                        {{ontology?.label}}
+                    </h3>
                     <p class="mat-caption" [matTooltip]="'Last modification date: ' + ontology.lastModificationDate"
                         matTooltipPosition="above">
                         <span *ngIf="ontology.lastModificationDate; else noModificationDate">
@@ -94,8 +98,8 @@
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <!-- TODO: remove following span as soon edit mode is implemented; it's only for tooltip to use with disabled button  -->
                     <span
-                        [matTooltip]="(ontology.lastModificationDate ? 'Edit data model info (not yet implemented)' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                        <button mat-button [disabled]="!ontology.lastModificationDate" [disabled]="true"
+                        [matTooltip]="(ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!')">
+                        <button mat-button [disabled]="!ontology.lastModificationDate" [disabled]="!ontology.lastModificationDate"
                             (click)="$event.stopPropagation(); openOntologyForm('editOntology', ontology.id)">
                             <mat-icon>edit</mat-icon>
                             Edit

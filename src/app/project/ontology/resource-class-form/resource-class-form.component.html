@@ -102,7 +102,7 @@
                 </span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                    <button mat-raised-button type="submit" color="primary" [disabled]="!properties?.valid"
+                    <button mat-raised-button type="submit" [color]="error ? 'warning' : 'primary'" [disabled]="!properties?.valid"
                         (click)="submitData()">
                         <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                         </dsp-progress-indicator>

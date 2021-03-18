@@ -327,13 +327,16 @@ export class OntologyComponent implements OnInit {
      * @param [iri] only in edit mode
      */
     openOntologyForm(mode: 'createOntology' | 'editOntology', iri?: string): void {
+
+        const title = (iri ? this.ontology.label : 'Data model');
+
         const dialogConfig: MatDialogConfig = {
             width: '640px',
             maxHeight: '80vh',
             position: {
                 top: '112px'
             },
-            data: { mode: mode, title: name, id: iri, project: this.project.shortcode, existing: this.existingOntologyNames }
+            data: { mode: mode, title: title, id: iri, project: this.project.shortcode, existing: this.existingOntologyNames }
         };
 
         const dialogRef = this._dialog.open(
