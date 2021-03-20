@@ -14,7 +14,7 @@ import {
     ReadProject,
     SingleProject
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken, NotificationService, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
@@ -72,7 +72,8 @@ export class BoardComponent implements OnInit {
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
         private _titleService: Title,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
+        private _notification: NotificationService,
     ) {
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
@@ -92,7 +93,6 @@ export class BoardComponent implements OnInit {
             this.session = this._session.getSession();
             // is the logged-in user system admin?
             this.sysAdmin = this.session.user.sysAdmin;
-
         }
 
         // get project info from backend
@@ -164,12 +164,18 @@ export class BoardComponent implements OnInit {
                 this.getProjectForDataset();
             },
             (error: ApiResponseError) => {
-                // --> TODO: enable the error handler as soon as DSP-1391 is solved
-                // this._errorHandler.showMessage(error);
+                if (error.status === 404) {
+                    // the DSP-API returns a 404 with generic message if metadata is not defined
+                    // for the selected project. Below we update the error message.
+                    this._notification.openSnackBar('Metadata is not defined for the selected project');
+                } else {
+                    // use default error behavior
+                    this._errorHandler.showMessage(error);
+                }
+
+                this.metadataLoading = false;
             }
         );
-
-        this.metadataLoading = false;
     }
 
     getProjectForDataset() {
