@@ -1,5 +1,27 @@
 # Changelog
 
+## [4.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.3.1...v4.4.0) (2021-03-23)
+
+
+### Bug Fixes
+
+* **deps:** package dependency build errors (DSP-1400) ([#410](https://www.github.com/dasch-swiss/dsp-app/issues/410)) ([17e0e1a](https://www.github.com/dasch-swiss/dsp-app/commit/17e0e1ab2beefc0a9a6ca5bce0cc77c9c4196db4))
+
+
+### Maintenance
+
+* **list-editor:** new list form refactor (DSP-1392) ([#403](https://www.github.com/dasch-swiss/dsp-app/issues/403)) ([8824682](https://www.github.com/dasch-swiss/dsp-app/commit/88246828c2e0868a058ce10f3b8e80f7802ff06d))
+* **ontology:** improve ontology editor design (DSP-1376) ([#401](https://www.github.com/dasch-swiss/dsp-app/issues/401)) ([6de83b8](https://www.github.com/dasch-swiss/dsp-app/commit/6de83b801b0414311112e13e90298308c6c6df79))
+* **project landing page:** update metadata typings (DSP-1393) ([#407](https://www.github.com/dasch-swiss/dsp-app/issues/407)) ([b4f101b](https://www.github.com/dasch-swiss/dsp-app/commit/b4f101b0425f12919cfa071903fc788ea44aa561))
+* **project metadata page:** enable error handler ([#411](https://www.github.com/dasch-swiss/dsp-app/issues/411)) ([a4004ed](https://www.github.com/dasch-swiss/dsp-app/commit/a4004eddbb22dc92a7b81c32214c0a3956fbe6ca))
+
+
+### Enhancements
+
+* **eslint:** migrate tslint to eslint (DSP-1372) ([#394](https://www.github.com/dasch-swiss/dsp-app/issues/394)) ([6ffc3b6](https://www.github.com/dasch-swiss/dsp-app/commit/6ffc3b6b8803ddf0e47a1f921ff85b7881f027d2))
+* **ontology:** edit data model info (DSP-1208) ([#385](https://www.github.com/dasch-swiss/dsp-app/issues/385)) ([86a5fb8](https://www.github.com/dasch-swiss/dsp-app/commit/86a5fb819146707d8b44d5f027f2fccfb4b00791))
+* **ontology:** form to create and edit property (DSP-1210) ([#406](https://www.github.com/dasch-swiss/dsp-app/issues/406)) ([91ebb68](https://www.github.com/dasch-swiss/dsp-app/commit/91ebb6845838f7370b320b805877c829904ded0e))
+
 ### [4.3.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.3.0...v4.3.1) (2021-03-03)
 
 
