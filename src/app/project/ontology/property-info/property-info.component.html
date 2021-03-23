@@ -1,26 +1,31 @@
-<mat-list-item>
-    <span *ngIf="propCard && propCard.guiOrder >=0" mat-list-icon class="order additional-info">{{propCard.guiOrder}})</span>
+<mat-list-item (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+    <span *ngIf="propCard && propCard.guiOrder >=0" mat-list-icon
+        class="order additional-info">{{propCard.guiOrder}})</span>
 
     <div mat-line class="title">
-        <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label" matTooltipPosition="above">
-            <span *ngIf="propType?.label === 'Integer' || propType?.label === 'Decimal'; else defaultIcons">
-                <mat-icon class="type" [svgIcon]="propType?.icon"></mat-icon>
-            </span>
-            <ng-template #defaultIcons>
-                <mat-icon class="type">{{propType?.icon}}</mat-icon>
-            </ng-template>
+        <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label"
+            matTooltipPosition="above">
+            <mat-icon class="type">{{propType?.icon}}</mat-icon>
         </span>
         <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above">
-            {{propDef?.label}} <span *ngIf="!propDef.label">{{propDef.id}}</span>
+            <!-- display label if cardinality exists (in case the component is used in resource class view) -->
+            <span *ngIf="propCard; else displayAllLabels">{{propDef.label ? propDef.label : propDef.id}}</span>
+            <!-- otherwise display label in all languages (if defined) -->
+            <ng-template #displayAllLabels>{{!propDef.labels.length ? propDef?.label : propDef.labels |
+                dspStringifyStringLiteral:'all'}}</ng-template>
         </span>
         <!-- property is linked to a class or to a list: display connected class or list -->
-        <span class="attribute additional-info" *ngIf="propAttribute" [innerHTML]="'&rarr;&nbsp;' + propAttribute"></span>
+        <span class="attribute additional-info" *ngIf="propAttribute" [matTooltip]="propAttributeComment"
+            matTooltipPosition="above" [innerHTML]="'&rarr;&nbsp;' + propAttribute">
+        </span>
     </div>
     <div mat-line class="info additional-info">
         <!-- in case of res class: display cardinality -->
         <span *ngIf="propCard">
-            <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> multiple
-            <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon> required
+            <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+            multiple
+            <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+            required
         </span>
         <!-- in case of ontology property: display corresponding resource class -->
         <span *ngIf="!propCard">
@@ -28,7 +33,8 @@
                 Property is used in:
                 <!-- <span>{{ resClasses.join(", ") }}</span> -->
                 <span *ngFor="let c of resClasses; let last = last">
-                    <span [matTooltip]="c.comment" matTooltipPosition="above">{{c.label}}</span>
+                    <span [matTooltip]="c.comment" matTooltipPosition="above" class="link"
+                        (click)="clickedOnClass.emit(c)">{{c.label}}</span>
                     <span *ngIf="!last">,&nbsp;</span>
                 </span>
             </span>
@@ -37,5 +43,21 @@
             </ng-template>
 
         </span>
+    </div>
+    <div class="action-bubble" *ngIf="!propCard && ontology?.lastModificationDate && showActionBubble"
+        [@simpleFadeAnimation]="'in'">
+        <div class="button-container">
+            <button mat-button [disabled]="!propDef.isEditable" class="edit" title="edit" [matTooltip]="'Edit property'"
+                (click)="editResourceProperty.emit({propDef: propDef, propType: propType})">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <span
+                [matTooltip]="(resClasses.length > 0 ? 'The property can\'t be deleted because it\'s used in a class' : 'Delete property')">
+                <button mat-button [disabled]="resClasses.length > 0" class="delete"
+                    (click)="deleteResourceProperty.emit({iri: propDef.id, label: propDef.label})">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </span>
+        </div>
     </div>
 </mat-list-item>

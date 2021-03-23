@@ -10,6 +10,7 @@ import {
     Constants,
     DeleteOntologyResponse,
     DeleteResourceClass,
+    DeleteResourceProperty,
     KnoraApiConnection,
     ListsResponse,
     OntologiesMetadata,
@@ -25,7 +26,8 @@ import { DspApiConnectionToken, Session, SessionService, SortingService } from '
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import { DefaultInfo, DefaultResourceClasses } from './default-data/default-resource-classes';
+import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from './default-data/default-properties';
+import { DefaultClass, DefaultResourceClasses } from './default-data/default-resource-classes';
 import { ResourceClassFormService } from './resource-class-form/resource-class-form.service';
 
 export interface OntologyInfo {
@@ -54,7 +56,7 @@ export class OntologyComponent implements OnInit {
     projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
-    projectcode: string;
+    projectCode: string;
 
     // project data
     project: ReadProject;
@@ -69,6 +71,7 @@ export class OntologyComponent implements OnInit {
     ontology: ReadOntology;
 
     ontoClasses: ClassDefinition[];
+    expandClasses = false;
 
     ontoProperties: PropertyDefinition[];
 
@@ -92,7 +95,8 @@ export class OntologyComponent implements OnInit {
     /**
      * list of all default resource classes (sub class of)
      */
-    defaultClasses: DefaultInfo[] = DefaultResourceClasses.data;
+    defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
+    defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
     // @ViewChild(AddToDirective, { static: false }) addToHost: AddToDirective;
 
@@ -114,7 +118,7 @@ export class OntologyComponent implements OnInit {
 
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectcode = params.get('shortcode');
+            this.projectCode = params.get('shortcode');
         });
 
         if (this._route.snapshot) {
@@ -128,10 +132,10 @@ export class OntologyComponent implements OnInit {
 
         // set the page title
         if (this.ontologyIri) {
-            this._titleService.setTitle('Project ' + this.projectcode + ' | Data model');
+            this._titleService.setTitle('Project ' + this.projectCode + ' | Data model');
         } else {
             // set the page title in case of more than one existing project ontologies
-            this._titleService.setTitle('Project ' + this.projectcode + ' | Data models');
+            this._titleService.setTitle('Project ' + this.projectCode + ' | Data models');
         }
     }
 
@@ -147,10 +151,10 @@ export class OntologyComponent implements OnInit {
         this.projectAdmin = this.sysAdmin;
 
         // set the project cache
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
+        this._cache.get(this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode));
 
         // get the project data from cache
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+        this._cache.get(this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode)).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 
@@ -304,7 +308,7 @@ export class OntologyComponent implements OnInit {
      */
     openOntologyRoute(id: string, view: 'classes' | 'properties' | 'graph' = 'classes') {
         this.view = view;
-        const goto = 'project/' + this.projectcode + '/ontologies/' + encodeURIComponent(id) + '/' + view;
+        const goto = 'project/' + this.projectCode + '/ontologies/' + encodeURIComponent(id) + '/' + view;
         this._router.navigateByUrl(goto, { skipLocationChange: false });
     }
 
@@ -362,7 +366,7 @@ export class OntologyComponent implements OnInit {
      * @param mode
      * @param resClassInfo (could be subClassOf (create mode) or resource class itself (edit mode))
      */
-    openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', resClassInfo: DefaultInfo): void {
+    openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', resClassInfo: DefaultClass): void {
 
         const dialogConfig: MatDialogConfig = {
             disableClose: true,
@@ -386,6 +390,37 @@ export class OntologyComponent implements OnInit {
     }
 
     /**
+     * opens property form
+     * @param mode
+     * @param propertyInfo (could be subClassOf (create mode) or resource class itself (edit mode))
+     */
+    openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
+
+        const title = (propertyInfo.propDef ? propertyInfo.propDef.label : propertyInfo.propType.label);
+
+        const dialogConfig: MatDialogConfig = {
+            disableClose: false,
+            width: '640px',
+            maxHeight: '90vh',
+            position: {
+                top: '112px'
+            },
+            data: { propInfo: propertyInfo, title: title, subtitle: 'Customize property', mode: mode, project: this.project.id }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            this.initOntologiesList();
+        });
+    }
+
+
+    /**
      * updates cardinality
      * @param subClassOf resource class
      */
@@ -398,7 +433,7 @@ export class OntologyComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { mode: 'updateCardinality', id: subClassOf.id, title: subClassOf.label, subtitle: 'Update the metadata fields of resource class', project: this.project.id }
+            data: { mode: 'updateCardinality', id: subClassOf.id, title: subClassOf.label, subtitle: 'Update the metadata fields of resource class', project: this.projectCode }
         };
 
         const dialogRef = this._dialog.open(
@@ -419,7 +454,7 @@ export class OntologyComponent implements OnInit {
     * @param id
     * @param title
     */
-    delete(mode: 'Ontology' | 'ResourceClass', info: DefaultInfo) {
+    delete(mode: 'Ontology' | 'ResourceClass' | 'Property', info: DefaultClass) {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',
@@ -451,7 +486,7 @@ export class OntologyComponent implements OnInit {
                                 // get the ontologies for this project
                                 this.initOntologiesList();
                                 // go to project ontology page
-                                const goto = 'project/' + this.projectcode + '/ontologies/';
+                                const goto = 'project/' + this.projectCode + '/ontologies/';
                                 this._router.navigateByUrl(goto, { skipLocationChange: false });
                             },
                             (error: ApiResponseError) => {
@@ -469,6 +504,24 @@ export class OntologyComponent implements OnInit {
                         resClass.id = info.iri;
                         resClass.lastModificationDate = this.ontology.lastModificationDate;
                         this._dspApiConnection.v2.onto.deleteResourceClass(resClass).subscribe(
+                            (response: OntologyMetadata) => {
+                                this.loading = false;
+                                this.resetOntology(this.ontologyIri);
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                                this.loading = false;
+                                this.loadOntology = false;
+                            }
+                        );
+                        break;
+                    case 'Property':
+                        // delete resource property and refresh the view
+                        this.loadOntology = true;
+                        const resProp: DeleteResourceProperty = new DeleteResourceProperty();
+                        resProp.id = info.iri;
+                        resProp.lastModificationDate = this.ontology.lastModificationDate;
+                        this._dspApiConnection.v2.onto.deleteResourceProperty(resProp).subscribe(
                             (response: OntologyMetadata) => {
                                 this.loading = false;
                                 this.resetOntology(this.ontologyIri);

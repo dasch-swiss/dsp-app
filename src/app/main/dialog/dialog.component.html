@@ -141,7 +141,8 @@
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
         <app-dialog-header [title]="'Create new list'" [subtitle]=""></app-dialog-header>
-        <app-list-info-form [projectcode]="data.project" [mode]="'create'" [projectIri]="data.id" (closeDialog)="dialogRef.close($event)">
+        <app-list-info-form [projectcode]="data.project" [mode]="'create'" [projectIri]="data.id"
+            (closeDialog)="dialogRef.close($event)">
         </app-list-info-form>
     </div>
 
@@ -149,14 +150,17 @@
     <div *ngSwitchCase="'insertListNode'">
         <app-dialog-header [title]="'Insert new child node'" [subtitle]="">
         </app-dialog-header>
-        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" mode="insert" [projectCode]="data.projectCode" [parentIri]="data.parentIri" [position]="data.position" (closeDialog)="dialogRef.close($event)"></app-edit-list-item>
+        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" mode="insert" [projectCode]="data.projectCode"
+            [parentIri]="data.parentIri" [position]="data.position" (closeDialog)="dialogRef.close($event)">
+        </app-edit-list-item>
     </div>
 
     <!-- Update list info -->
     <div *ngSwitchCase="'editListInfo'">
         <app-dialog-header [title]="data.title" [subtitle]="'Edit list info'">
         </app-dialog-header>
-        <app-list-info-form [iri]="data.id" [mode]="'update'" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
+        <app-list-info-form [iri]="data.id" [mode]="'update'" [projectIri]="data.project"
+            (closeDialog)="dialogRef.close()">
         </app-list-info-form>
     </div>
 
@@ -164,12 +168,14 @@
     <div *ngSwitchCase="'editListNode'">
         <app-dialog-header [title]="data.title" [subtitle]="'Edit child node'">
         </app-dialog-header>
-        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" mode="update" (closeDialog)="dialogRef.close($event)"></app-edit-list-item>
+        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" mode="update"
+            (closeDialog)="dialogRef.close($event)"></app-edit-list-item>
     </div>
 
     <!-- Delete list node-->
     <div *ngSwitchCase="'deleteListNode'">
-        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.deleteListNode' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.deleteListNode' | translate">
+        </app-dialog-header>
         Do you want to delete this node?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -197,7 +203,8 @@
 
     <!-- Delete list -->
     <div *ngSwitchCase="'deleteList'">
-        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.deleteList' | translate"></app-dialog-header>
+        <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.deleteList' | translate">
+        </app-dialog-header>
         Do you want to delete this list?
         <mat-dialog-actions>
             <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
@@ -251,7 +258,7 @@
     <div *ngSwitchCase="'editResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectIri]="data.project"
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project"
             [showResourceClassForm]="true" [edit]="true" (closeDialog)="dialogRef.close()">
         </app-resource-class-form>
     </div>
@@ -274,13 +281,39 @@
     <div *ngSwitchCase="'updateCardinality'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectIri]="data.project"
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project"
             [showResourceClassForm]="false" [edit]="true" (closeDialog)="dialogRef.close()">
         </app-resource-class-form>
     </div>
 
-    <div *ngSwitchCase="'error'">
-        <app-error [status]="data.id"></app-error>
+    <div *ngSwitchCase="'createProperty'">
+        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
+        </app-dialog-header>
+        <app-property-form [propertyInfo]="data.propInfo" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
+        </app-property-form>
+    </div>
+
+    <div *ngSwitchCase="'editProperty'">
+        <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
+        </app-dialog-header>
+        <app-property-form [propertyInfo]="data.propInfo" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
+        </app-property-form>
+    </div>
+
+
+    <div *ngSwitchCase="'deleteProperty'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete property'"></app-dialog-header>
+        Do you want to delete this property?
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+                Cancel
+            </button>
+            <span class="fill-remaining-space"></span>
+            <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center"
+                [mat-dialog-close]="true">
+                Delete
+            </button>
+        </mat-dialog-actions>
     </div>
 
     <!-- all about RESOURCE -->
@@ -292,11 +325,23 @@
         </app-resource-instance-form>
     </div>
 
+    <!-- general error message -->
+    <div *ngSwitchCase="'error'">
+        <app-error [status]="data.id"></app-error>
+    </div>
+
     <!-- Unknown method (or not yet defined) -->
     <!-- Default dialog content component -->
     <div *ngSwitchDefault>
         <app-dialog-header [title]="'Not yet implemented'" [subtitle]="'ERROR 400'" (close)="dialogRef.close()">
         </app-dialog-header>
         <p class="todo" [innerHtml]="notYetImplemented"></p>
+        <mat-dialog-actions>
+            <span class="fill-remaining-space"></span>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+                OK
+            </button>
+            <span class="fill-remaining-space"></span>
+        </mat-dialog-actions>
     </div>
 </div>

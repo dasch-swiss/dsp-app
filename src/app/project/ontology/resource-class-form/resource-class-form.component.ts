@@ -39,9 +39,9 @@ import { Property, ResourceClassFormService } from './resource-class-form.servic
 export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     /**
-     * current project iri
+     * current project shortcode
      */
-    @Input() projectIri: string;
+    @Input() projectCode: string;
 
     /**
      * create mode: iri selected resource class is a subclass from knora base (baseClassIri)
@@ -51,7 +51,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
     @Input() iri: string;
 
     /**
-     * name of resource class e.g. Still image
+     * name of resource class type e.g. Still image
      * this will be used to update title of resource class form
      */
     @Input() name: string;

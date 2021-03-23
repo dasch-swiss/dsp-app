@@ -130,7 +130,7 @@ describe('EditListItemComponent', () => {
             testHostComponent.editListItem.handleData([], 'labels');
             expect(testHostComponent.editListItem.saveButtonDisabled).toBeTruthy();
             testHostFixture.detectChanges();
-            formInvalidMessageDe = editListItemComponentDe.query(By.css('span.invalid-form'));
+            formInvalidMessageDe = editListItemComponentDe.query(By.css('mat-hint.invalid-form'));
             expect(formInvalidMessageDe.nativeElement.innerText).toEqual('A label is required.');
         });
 

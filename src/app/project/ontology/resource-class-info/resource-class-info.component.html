@@ -47,7 +47,7 @@
                     && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'
                     && !ontology?.properties[prop.propertyIndex].subjectType?.includes('Standoff')
                     && expanded" [propDef]="ontology?.properties[prop.propertyIndex]"
-                    [propCard]="prop" [projectcode]="projectcode">
+                    [propCard]="prop" [projectCode]="projectCode">
                 </app-property-info>
             </span>
         </mat-list>

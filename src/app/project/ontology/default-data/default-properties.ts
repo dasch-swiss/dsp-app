@@ -1,11 +1,28 @@
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Constants, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 
-export interface Category {
-    group: string;
-    elements: PropertyType[];
+/**
+ * property object with all information to create or edit a property
+ */
+export interface PropertyInfoObject {
+    propDef?: ResourcePropertyDefinitionWithAllLanguages;
+    propType: DefaultProperty;
 }
 
-export interface PropertyType {
+/**
+ * property category can be
+ * text, list, data and time, number, link, location and shape
+ */
+export interface PropertyCategory {
+    group: string;
+    elements: DefaultProperty[];
+}
+
+/**
+ * own default property defined for the gui
+ * with this information we can build the correct
+ * property object to send it to the API
+ */
+export interface DefaultProperty {
     icon: string;
     label: string;
     subPropOf: string;
@@ -15,7 +32,7 @@ export interface PropertyType {
 }
 
 export class DefaultProperties {
-    public static data: Category[] = [
+    public static data: PropertyCategory[] = [
         {
             group: 'Text',
             elements: [
@@ -49,11 +66,11 @@ export class DefaultProperties {
             group: 'List',
             elements: [
                 {
-                    icon: 'radio_button_checked',
-                    label: 'Multiple choice',
+                    icon: 'arrow_drop_down_circle',
+                    label: 'Dropdown',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // 'Pulldown'
                     group: 'List'
                 },
                 {
@@ -65,11 +82,11 @@ export class DefaultProperties {
                     group: 'List'
                 },
                 {
-                    icon: 'arrow_drop_down_circle',
-                    label: 'Dropdown',
+                    icon: 'radio_button_checked',
+                    label: 'Multiple choice',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // 'Pulldown'
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
                     group: 'List'
                 },
                 {
@@ -103,10 +120,10 @@ export class DefaultProperties {
                 },
                 {
                     icon: 'access_time',
-                    label: 'Time',
+                    label: 'Timestamp',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Interval',
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'TimeStamp',
                     group: 'Date / Time'
                 },
                 {
@@ -123,7 +140,7 @@ export class DefaultProperties {
             group: 'Number',
             elements: [
                 {
-                    icon: 'integer_icon',
+                    icon: 'money',
                     label: 'Integer',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.IntValue,
@@ -131,7 +148,7 @@ export class DefaultProperties {
                     group: 'Number'
                 },
                 {
-                    icon: 'decimal_icon',
+                    icon: 'functions',
                     label: 'Decimal',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DecimalValue,
@@ -145,12 +162,20 @@ export class DefaultProperties {
             elements: [
                 {
                     icon: 'link',
-                    label: 'Other resource e.g. Person',
+                    label: 'Resource class',
                     subPropOf: Constants.HasLinkTo,
                     objectType: Constants.LinkValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
                     group: 'Link'
                 },
+                // {
+                //     icon: 'picture_in_picture',
+                //     label: 'Part of resource class',
+                //     subPropOf: Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf',
+                //     objectType: Constants.LinkValue,
+                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
+                //     group: 'Link'
+                // },
                 // {
                 //     icon: 'compare_arrows',
                 //     label: 'External resource',
@@ -186,11 +211,19 @@ export class DefaultProperties {
             group: 'Shape',
             elements: [
                 {
-                    icon: 'color_lens',
+                    icon: 'palette',
                     label: 'Color',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ColorValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker',
+                    group: 'Shape'
+                },
+                {
+                    icon: 'format_shapes',
+                    label: 'Geometry',
+                    subPropOf: Constants.HasValue,
+                    objectType: Constants.GeomValue,
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Geometry',
                     group: 'Shape'
                 }
             ]

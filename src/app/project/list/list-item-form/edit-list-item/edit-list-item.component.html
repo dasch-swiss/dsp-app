@@ -4,11 +4,11 @@
 
     <!-- list label -->
     <dsp-string-literal-input
-        [placeholder]="'Child node label'"
+        [placeholder]="'Child node label *'"
         [value]="labels"
         (dataChanged)="handleData($event, 'labels')">
     </dsp-string-literal-input>
-    <span class="invalid-form" *ngIf="formInvalidMessage">{{ formInvalidMessage }}</span>
+    <mat-hint class="invalid-form string-literal-error" *ngIf="formInvalidMessage">{{ formInvalidMessage }}</mat-hint>
 
     <br><br>
 

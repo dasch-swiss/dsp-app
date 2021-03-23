@@ -1,6 +1,11 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -8,8 +13,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Constants, IHasProperty, ListNodeInfo, MockOntology, ReadOntology, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { PropertyFormComponent } from '../property-form/property-form.component';
 import { PropertyInfoComponent } from './property-info.component';
 
 /**
@@ -154,24 +163,27 @@ describe('PropertyInfoComponent', () => {
     let listHostComponent: ListHostComponent;
     let listHostFixture: ComponentFixture<ListHostComponent>;
 
+    let rootLoader: HarnessLoader;
+    let overlayContainer: OverlayContainer;
+
     beforeEach(async(() => {
-        const dspConnSpy = {
-            v2: {
-                ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology']),
-            }
-        };
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
         TestBed.configureTestingModule({
             declarations: [
+                DialogComponent,
+                DialogHeaderComponent,
                 LinkHostComponent,
                 ListHostComponent,
                 SimpleTextHostComponent,
-                PropertyInfoComponent
+                PropertyFormComponent,
+                PropertyInfoComponent,
             ],
             imports: [
                 BrowserAnimationsModule,
+                DspActionModule,
+                MatButtonModule,
                 MatDialogModule,
                 MatIconModule,
                 MatListModule,
@@ -182,7 +194,15 @@ describe('PropertyInfoComponent', () => {
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpy
-                }
+                },
+                {
+                    provide: MAT_DIALOG_DATA,
+                    useValue: {}
+                },
+                {
+                    provide: MatDialogRef,
+                    useValue: {}
+                },
             ]
         })
             .compileComponents();
@@ -194,6 +214,13 @@ describe('PropertyInfoComponent', () => {
         simpleTextHostFixture.detectChanges();
 
         expect(simpleTextHostComponent).toBeTruthy();
+
+        simpleTextHostComponent.propertyInfoComponent.showActionBubble = true;
+        simpleTextHostFixture.detectChanges();
+
+        overlayContainer = TestBed.inject(OverlayContainer);
+        rootLoader = TestbedHarnessEnvironment.documentRootLoader(simpleTextHostFixture);
+
     });
 
     beforeEach(() => {
@@ -215,11 +242,11 @@ describe('PropertyInfoComponent', () => {
     });
 
     beforeEach(() => {
-        // mock cache service for currentOntology
+        // mock cache service for currentOntologyLists
         const cacheSpy = TestBed.inject(CacheService);
 
         (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
-            (key = 'currentOntologyLists') => {
+            () => {
                 const response: ListNodeInfo[] = [{
                     'comments': [],
                     'id': 'http://rdfh.ch/lists/0001/otherTreeList',
@@ -270,6 +297,14 @@ describe('PropertyInfoComponent', () => {
         listHostFixture.detectChanges();
 
         expect(listHostComponent).toBeTruthy();
+    });
+
+    afterEach(async () => {
+        const dialogs = await rootLoader.getAllHarnesses(MatDialogHarness);
+        await Promise.all(dialogs.map(async d => await d.close()));
+
+        // angular won't call this for us so we need to do it ourselves to avoid leaks.
+        overlayContainer.ngOnDestroy();
     });
 
     it('should create an instance', () => {

@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Cardinality, IHasProperty, PropertyDefinition, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PropertyType } from '../default-data/default-properties';
+import { DefaultProperty } from '../default-data/default-properties';
 
 // property data structure
 export class Property {
     iri: string;
     label: string;
-    type: PropertyType;
+    type: DefaultProperty;
     multiple: boolean;
     required: boolean;
     guiAttr: string;
@@ -194,6 +194,7 @@ export class ResourceClassFormService {
 
         this.resourceClassForm.next(currentResourceClass);
     }
+
     /**
      * delete property line by index i
      *

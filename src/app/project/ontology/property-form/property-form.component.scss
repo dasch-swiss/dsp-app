@@ -1,38 +1,44 @@
-:host {
-  margin: 12px 0 0 20px;
+@import "../../../../assets/style/config";
+@import "../../../../assets/style/mixins";
 
-  form {
-    margin: 0 0 16px 0;
+.form-content {
+  width: 100%;
+  margin-top: 0;
+
+  .form-panel {
     width: 100%;
+  }
+
+  .large-field,
+  .medium-field,
+  .small-field {
+    margin: 0 2px;
+
+    &.string-literal-container {
+      display: inline-block;
+      position: relative;
+      top: -3px;
+    }
+  }
+
+  .form-action {
+    margin-top: 48px;
   }
 }
 
-.large-field,
-.medium-field,
-.small-field,
-.x-small-field {
-  margin: 0 2px;
-  display: inline-flex;
-}
+.property-type {
+  .property-type-icon {
+    width: 36px;
+    padding: 0 8px;
+    display: block;
+  }
 
-.index {
-  color: rgba(0, 0, 0, 0.54);
-  font-size: small;
-  margin-left: -12px;
-  margin-right: 6px;
-}
-
-.empty-index {
-    display: inline-block;
-    width: 12px;
-}
-
-.reset-button {
-    position: absolute;
-    right: 0;
-    bottom: 12px;
-}
-
-.hidden {
-    display: none;
+  mat-label,
+  mat-select,
+  input {
+    margin-left: 12px;
+  }
+  mat-select {
+    width: calc(100% - 12px);
+  }
 }

@@ -1,118 +1,135 @@
-<div class="no-shadow">
+<!-- content: Step 1 = define resource class -->
+<form [formGroup]="resourceClassForm" class="form-content"
+    *ngIf="ontology.lastModificationDate; else missingLastModificationDate">
 
-    <!-- success message after updating -->
-    <dsp-message *ngIf="success" [message]="successMessage" [short]="true"></dsp-message>
+    <div *ngIf="showResourceClassForm" class="resource-class-data">
+        <div class="center more-space-top">
 
-    <!-- content: Step 1 = define resource class -->
-    <form [formGroup]="resourceClassForm" class="form-content">
-
-        <div *ngIf="showResourceClassForm" class="resource-class-data">
-            <div class="center more-space-top">
-
-                <!-- label -->
-                <div class="large-field string-literal-container">
-                    <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
-                        (enter)="(edit ? submitData($event) : nextStep($event))" (dataChanged)="handleData($event, 'labels')">
-                    </dsp-string-literal-input>
-                    <mat-hint class="string-literal-error" *ngIf="formErrors.label">
-                        {{ formErrors.label }}
-                    </mat-hint>
-                </div>
-
-                <!-- description -->
-                <div class="large-field string-literal-container more-space-top">
-                    <dsp-string-literal-input [placeholder]="'Comment *'" [value]="resourceClassComments"
-                        [textarea]="true" (dataChanged)="handleData($event, 'comments')"></dsp-string-literal-input>
-                </div>
+            <!-- label -->
+            <div class="large-field string-literal-container">
+                <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
+                    (enter)="(edit ? submitData($event) : nextStep($event))"
+                    (dataChanged)="handleData($event, 'labels')">
+                </dsp-string-literal-input>
+                <mat-hint class="string-literal-error" *ngIf="formErrors.label">
+                    {{ formErrors.label }}
+                </mat-hint>
             </div>
 
-            <!-- action buttons -->
-            <div class="form-panel form-action">
-                <span>
-                    <button mat-button type="button" (click)="closeDialog.emit()">
-                        {{ 'appLabels.form.action.cancel' | translate }}
-                    </button>
-                </span>
-                <span class="fill-remaining-space"></span>
-                <span>
-                    <button *ngIf="!edit" mat-raised-button type="button" color="primary" [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
-                         (click)="nextStep($event)">
-                         Next
-                     </button>
-                     <button *ngIf="edit" mat-raised-button type="button" color="primary" [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
-                         (click)="submitData($event)">
-                         <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-                         </dsp-progress-indicator>
-                         <mat-icon *ngIf="error && !loading">close</mat-icon>
-                         {{error ? 'Failed' : 'Update'}}
-                     </button>
-                </span>
+            <!-- description -->
+            <div class="large-field string-literal-container more-space-top">
+                <dsp-string-literal-input [placeholder]="'Comment *'" [value]="resourceClassComments" [textarea]="true"
+                    (dataChanged)="handleData($event, 'comments')"></dsp-string-literal-input>
             </div>
         </div>
 
-        <!-- content: Step 2 = define properties for resource class -->
-        <div *ngIf="!showResourceClassForm" class="properties-data">
-            <!-- default language selector -->
-            <mat-form-field class="properties-language">
-                <mat-label>Default language for the labels</mat-label>
-                <mat-select [formControl]="resourceClassForm.controls['language']" [value]="resourceClassForm.value['language']">
-                    <mat-option *ngFor="let option of languages" [value]="option.language">
-                        {{ option.value }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-
-            <!-- propertiy: one line, with "add" icon to add additional properties -->
-            <div cdkDropList class="properties-list" (cdkDropListDropped)="drop($event)">
-                <div cdkDrag class="property-line"
-                    *ngFor="let prop of properties?.controls; let last = last; let i = index;">
-
-                    <!-- <div *ngIf="prop.value.objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'"> -->
-
-                    <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
-
-                    <button *ngIf="properties.length > 1" cdkDragHandle mat-icon-button type="button"
-                        aria-label="Change order of properties" class="prefix drag-n-drop-line">
-                        <mat-icon>drag_indicator</mat-icon>
-                    </button>
-
-                    <app-property-form [propertyForm]="prop" [index]="i" [ontology]="ontology" [resClassIri]="iri">
-                    </app-property-form>
-
-                    <button *ngIf="properties.length > 1" mat-icon-button type="button" color="warn"
-                        aria-label="Delete this property" class="suffix delete-line" (click)="removeProperty(i)">
-                        <mat-icon>delete_outlined</mat-icon>
-                    </button>
-                    <!-- </div> -->
-                </div>
-                <button [disabled]="!properties.valid" mat-button type="button" color="primary"
-                    aria-label="Add new property" class="add-new-line" (click)="addProperty()">
-                    <mat-icon>add</mat-icon> Add property
+        <!-- action buttons -->
+        <div class="form-panel form-action">
+            <span>
+                <button mat-button type="button" (click)="closeDialog.emit()">
+                    {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
-            </div>
-            <!-- action buttons -->
-            <div class="form-panel form-action">
-                <span>
-                    <button *ngIf="!edit" mat-button type="button" (click)="prevStep($event)">
-                        {{ 'appLabels.form.action.back' | translate }}
-                    </button>
-                    <button mat-button type="button" (click)="closeDialog.emit()">
-                        {{ 'appLabels.form.action.cancel' | translate }}
-                    </button>
-                </span>
-                <span class="fill-remaining-space"></span>
-                <span>
-                    <button mat-raised-button type="submit" [color]="error ? 'warning' : 'primary'" [disabled]="!properties?.valid"
-                        (click)="submitData()">
-                        <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-                        </dsp-progress-indicator>
-                        <mat-icon *ngIf="error && !loading">close</mat-icon>
-                        {{error ? 'Failed' : (edit ? 'Update' : 'Submit')}}
-                    </button>
-                </span>
-            </div>
-
+            </span>
+            <span class="fill-remaining-space"></span>
+            <span>
+                <button *ngIf="!edit" mat-raised-button type="button" color="primary"
+                    [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
+                    (click)="nextStep($event)">
+                    Next
+                </button>
+                <button *ngIf="edit" mat-raised-button type="button" color="primary"
+                    [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
+                    (click)="submitData($event)">
+                    <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                    </dsp-progress-indicator>
+                    <mat-icon *ngIf="error && !loading">close</mat-icon>
+                    {{error ? 'Failed' : 'Update'}}
+                </button>
+            </span>
         </div>
-    </form>
+    </div>
 
-</div>
+    <!-- content: Step 2 = define properties for resource class -->
+    <div *ngIf="!showResourceClassForm" class="properties-data">
+        <!-- default language selector -->
+        <mat-form-field class="properties-language">
+            <mat-label>Default language for the labels</mat-label>
+            <mat-select [formControl]="resourceClassForm.controls['language']"
+                [value]="resourceClassForm.value['language']">
+                <mat-option *ngFor="let option of languages" [value]="option.language">
+                    {{ option.value }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- propertiy: one line, with "add" icon to add additional properties -->
+        <div cdkDropList class="properties-list" (cdkDropListDropped)="drop($event)">
+            <div cdkDrag class="property-line"
+                *ngFor="let prop of properties?.controls; let last = last; let i = index;">
+
+                <!-- <div *ngIf="prop.value.objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'"> -->
+
+                <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
+
+                <button *ngIf="properties.length > 1" cdkDragHandle mat-icon-button type="button"
+                    aria-label="Change order of properties" class="prefix drag-n-drop-line">
+                    <mat-icon>drag_indicator</mat-icon>
+                </button>
+
+                <app-resource-class-property-form [propertyForm]="prop" [index]="i" [resClassIri]="iri">
+                </app-resource-class-property-form>
+
+                <button *ngIf="properties.length > 1" mat-icon-button type="button" color="warn"
+                    aria-label="Delete this property" class="suffix delete-line" (click)="removeProperty(i)">
+                    <mat-icon>delete_outlined</mat-icon>
+                </button>
+                <!-- </div> -->
+            </div>
+            <button [disabled]="!properties.valid" mat-button type="button" color="primary"
+                aria-label="Add new property" class="add-new-line" (click)="addProperty()">
+                <mat-icon>add</mat-icon> Add property
+            </button>
+        </div>
+
+        <!-- action buttons -->
+        <div class="form-panel form-action">
+            <span>
+                <button *ngIf="!edit" mat-button type="button" (click)="prevStep($event)">
+                    {{ 'appLabels.form.action.back' | translate }}
+                </button>
+                <button mat-button type="button" (click)="closeDialog.emit()">
+                    {{ 'appLabels.form.action.cancel' | translate }}
+                </button>
+            </span>
+            <span class="fill-remaining-space"></span>
+            <span>
+
+                <button mat-raised-button type="submit" [color]="error ? 'warning' : 'primary'"
+                    [disabled]="!properties?.valid" (click)="submitData()">
+                    <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                    </dsp-progress-indicator>
+                    <mat-icon *ngIf="error && !loading">close</mat-icon>
+                    {{error ? 'Failed' : (edit ? 'Update' : 'Submit')}}
+                </button>
+            </span>
+        </div>
+    </div>
+</form>
+<!-- in case the last modification date is not defined,
+    it's not possible to edit the resource class;
+    display message
+ -->
+<ng-template #missingLastModificationDate>
+    <p class="note warning center">The resource class can't be edited because of missing "lastModificationDate"!</p>
+
+    <app-resource-class-info [resourceClass]="ontology.classes[iri]" [expanded]="true" [projectCode]="projectCode">
+    </app-resource-class-info>
+
+    <mat-dialog-actions>
+        <span class="fill-remaining-space"></span>
+        <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+            close
+        </button>
+        <span class="fill-remaining-space"></span>
+    </mat-dialog-actions>
+</ng-template>

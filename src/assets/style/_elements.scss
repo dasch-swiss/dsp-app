@@ -5,10 +5,9 @@
      Every toolbar row uses a flexbox row layout. */
   flex: 1 1 auto;
 }
-.space-reducer{
+.space-reducer {
   max-height: 14px;
 }
-
 
 // --------------------------------------
 
@@ -134,13 +133,6 @@ a,
 
 //
 // menu
-/*
-.cdk-overlay-connected-position-bounding-box {
-  top: 12px !important;
-  right: 12px !important;
-}
-*/
-
 .menu-header,
 .menu-content,
 .menu-footer {
@@ -386,7 +378,6 @@ $gc-small: $form-width - $gc-large - 4;
 
 .form-content {
   margin: 24px auto;
-  //  padding: 0 20px;
   width: $form-width;
 
   .x-small-field,
@@ -429,26 +420,13 @@ $gc-small: $form-width - $gc-large - 4;
 .string-literal-error {
   font-size: 75%;
   color: $warn;
-  top: -16px;
+  top: -14px;
   position: relative;
+  text-align: left;
+  left: 64px;
+  display: block;
 }
 
-// global drag-n-drop setup, when moving element in list
-// at the moment (2019-07) it's used in ontology editor
-/* TODO: probabyl this was deleted in a previous PR. I had a conflict on this.
-.cdk-drag-preview {
-  // show the first mat-form-field only; in this case it's the label
-  .small-field:nth-child(n + 4) {
-    display: none !important;
-  }
-  button {
-    &.add-new-line,
-    &.delete-line {
-      display: none;
-    }
-  }
-}
-*/
 // in case of an error:
 .mat-form-field-invalid {
   .mat-form-field-label,
@@ -541,6 +519,96 @@ $gc-small: $form-width - $gc-large - 4;
 .cdk-overlay-pane {
   .mat-dialog-container {
     overflow-y: auto;
+  }
+}
+
+// --------------------------------------
+
+//
+// action bubble
+.action-bubble {
+  position: absolute;
+  right: 18px;
+  top: -9px;
+  border: 1px solid #e4e4e4;
+  border-radius: 14px;
+  padding: 0;
+  background-color: #e4e4e4;
+  z-index: 2;
+  @include box-shadow();
+
+  .button-container {
+    button {
+      // cursor: pointer;
+      border: none;
+      padding: 2px;
+      outline: none;
+      background-color: transparent;
+      color: #000000;
+      margin: 0 2px;
+      border-radius: 50%;
+      transition: background-color ease-out 0.5s;
+      min-width: inherit;
+      line-height: normal;
+
+      &:first-child {
+        margin: 0 2px 0 -1px;
+      }
+
+      &:last-child {
+        margin: 0 -1px 0 2px;
+      }
+
+      .material-icons {
+        font-size: 18px;
+      }
+
+      .mat-icon {
+        padding: 2px;
+        width: 18px;
+        height: 18px;
+        vertical-align: middle;
+      }
+    }
+
+    button.info {
+      cursor: default;
+    }
+
+    button:hover {
+      background-color: #c7c7c7;
+    }
+  }
+}
+
+// --------------------------------------
+
+//
+// nested mat-menu switch arrow to the left in case the menu position is on the right hand side
+.switch-nested-menu {
+
+  width: 180px;
+
+  button[mat-menu-item] {
+    padding-left: 32px;
+
+    &.mat-menu-item-submenu-trigger {
+      &::after {
+        border-width: 5px 5px 5px 0;
+        border-color: transparent currentColor transparent transparent;
+        right: 0;
+        left: 16px;
+      }
+    }
+  }
+}
+.switch-nested-sub-menu {
+  width: 180px;
+  margin-left: -360px !important;
+
+  &.mat-menu-panel {
+    margin-top: 8px;
+    min-height: 48px !important;
   }
 }
 

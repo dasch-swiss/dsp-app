@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { AutocompleteItem, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({

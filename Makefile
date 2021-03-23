@@ -7,6 +7,13 @@ CURRENT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 include vars.mk
 
 #################################
+# Test and lint targets
+#################################
+.PHONY: find-ignored-tests
+find-ignored-tests: ## find all ignored tests (e.g. fdescribe)
+	./find-ignored-tests.sh
+
+#################################
 # Documentation targets
 #################################
 

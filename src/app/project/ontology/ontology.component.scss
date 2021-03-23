@@ -34,6 +34,13 @@ $width: 340px;
   .ontology-editor-header {
     z-index: 2;
     top: 121px;
+    .mat-toolbar-row {
+      padding-right: 0;
+
+      .ontology-actions {
+        width: 176px;
+      }
+    }
   }
 }
 .ontology-viewer {
@@ -51,7 +58,7 @@ $width: 340px;
   }
 
   .ontology-editor-sidenav {
-    width: 160px;
+    width: 200px;
 
     button {
       width: 100%;
@@ -71,6 +78,11 @@ $width: 340px;
     }
     .ontology-editor-list {
       margin: 16px;
+
+      &.properties {
+        width: 80%;
+        margin: 16px 10%;
+      }
     }
   }
 }

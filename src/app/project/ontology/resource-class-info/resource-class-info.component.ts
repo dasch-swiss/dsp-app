@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiResponseError, ClassDefinition, ReadOntology } from '@dasch-swiss/dsp-js';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import { DefaultInfo, DefaultResourceClasses } from '../default-data/default-resource-classes';
+import { DefaultClass, DefaultResourceClasses } from '../default-data/default-resource-classes';
 
 @Component({
     selector: 'app-resource-class-info',
@@ -17,16 +17,18 @@ export class ResourceClassInfoComponent implements OnInit {
 
     @Input() resourceClass: ClassDefinition;
 
-    @Output() editResourceClass: EventEmitter<DefaultInfo> = new EventEmitter<DefaultInfo>();
+    @Input() projectCode: string;
+
+    @Output() editResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
     @Output() updateCardinality: EventEmitter<ClassDefinition> = new EventEmitter<ClassDefinition>();
-    @Output() deleteResourceClass: EventEmitter<DefaultInfo> = new EventEmitter<DefaultInfo>();
+    @Output() deleteResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
     ontology: ReadOntology;
 
     subClassOfLabel = '';
 
     // list of default classes
-    defaultClasses: DefaultInfo[] = DefaultResourceClasses.data;
+    defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
 
     constructor(
         private _cache: CacheService,

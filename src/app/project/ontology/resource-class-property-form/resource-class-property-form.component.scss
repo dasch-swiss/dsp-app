@@ -1,0 +1,38 @@
+:host {
+  margin: 12px 0 0 20px;
+
+  form {
+    margin: 0 0 16px 0;
+    width: 100%;
+  }
+}
+
+.large-field,
+.medium-field,
+.small-field,
+.x-small-field {
+  margin: 0 2px;
+  display: inline-flex;
+}
+
+.index {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: small;
+  margin-left: -12px;
+  margin-right: 6px;
+}
+
+.empty-index {
+  display: inline-block;
+  width: 12px;
+}
+
+.reset-button {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+}
+
+.hidden {
+  display: none;
+}

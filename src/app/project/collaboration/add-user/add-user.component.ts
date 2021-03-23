@@ -11,11 +11,10 @@ import {
     UserResponse,
     UsersResponse
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
+import { AutocompleteItem, DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 

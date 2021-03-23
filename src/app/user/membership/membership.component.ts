@@ -10,9 +10,8 @@ import {
     ReadUser,
     UserResponse
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session } from '@dasch-swiss/dsp-ui';
+import { AutocompleteItem, DspApiConnectionToken, Session } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { AutocompleteItem } from 'src/app/main/declarations/autocomplete-item';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 // --> TODO replace it by IPermissions from dsp-js

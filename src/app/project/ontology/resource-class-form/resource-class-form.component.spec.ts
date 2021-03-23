@@ -7,11 +7,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
 import {
     AppInitService,
     DspActionModule,
@@ -19,6 +20,8 @@ import {
     DspApiConnectionToken
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
@@ -28,6 +31,8 @@ import { ResourceClassFormComponent } from './resource-class-form.component';
 describe('ResourceClassFormComponent', () => {
     let component: ResourceClassFormComponent;
     let fixture: ComponentFixture<ResourceClassFormComponent>;
+
+    const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -45,6 +50,7 @@ describe('ResourceClassFormComponent', () => {
                 MatFormFieldModule,
                 MatIconModule,
                 MatInputModule,
+                MatListModule,
                 MatOptionModule,
                 MatSelectModule,
                 MatSlideToggleModule,
@@ -62,6 +68,10 @@ describe('ResourceClassFormComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
                 }
             ]
         })
@@ -69,6 +79,16 @@ describe('ResourceClassFormComponent', () => {
     }));
 
     beforeEach(() => {
+        // mock cache service for currentOntology
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+                return of(response);
+            }
+        );
+
         fixture = TestBed.createComponent(ResourceClassFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
