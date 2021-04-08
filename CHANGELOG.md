@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.4.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.4.0...v4.4.1) (2021-04-08)
+
+
+### Maintenance
+
+* **migrate to angular10:** changes (DSP-1415) ([#412](https://www.github.com/dasch-swiss/dsp-app/issues/412)) ([cec564d](https://www.github.com/dasch-swiss/dsp-app/commit/cec564d9eb00c1e11d7fb93b3c8e94a56dc33c39))
+
 ## [4.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.3.1...v4.4.0) (2021-03-23)
 
 
