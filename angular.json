@@ -23,6 +23,12 @@
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "src/tsconfig.app.json",
+                        "allowedCommonJsDependencies": [
+                            "json2typescript",
+                            "ngraph.graph",
+                            "ngraph.forcelayout",
+                            "tinycolor2"
+                        ],
                         "assets": [
                             "src/favicon.ico",
                             "src/assets",
