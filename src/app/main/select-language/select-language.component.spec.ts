@@ -1,5 +1,5 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatMenuModule } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -15,7 +15,7 @@ describe('SelectLanguageComponent', () => {
     let translate: TranslateService;
     let http: HttpTestingController;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [SelectLanguageComponent],
             imports: [

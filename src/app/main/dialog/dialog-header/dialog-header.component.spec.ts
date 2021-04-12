@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { DialogHeaderComponent } from './dialog-header.component';
 
@@ -6,7 +6,7 @@ describe('DialogHeaderComponent', () => {
     let component: DialogHeaderComponent;
     let fixture: ComponentFixture<DialogHeaderComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
                 MatIconModule

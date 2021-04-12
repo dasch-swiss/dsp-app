@@ -1,5 +1,5 @@
 import { Component, DebugElement, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiResponseData, CreateChildNodeRequest, ListNodeInfoResponse, ListsEndpointAdmin, UpdateChildNodeRequest } from '@dasch-swiss/dsp-js';
@@ -59,7 +59,7 @@ describe('EditListItemComponent', () => {
     let editListItemComponentDe: DebugElement;
     let formInvalidMessageDe: DebugElement;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
 
         const listsEndpointSpyObj = {
             admin: {

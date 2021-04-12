@@ -2,7 +2,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -69,7 +69,7 @@ describe('ListItemFormComponent', () => {
     let rootLoader: HarnessLoader;
     let overlayContainer: OverlayContainer;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
 
         const listsEndpointSpyObj = {
             admin: {

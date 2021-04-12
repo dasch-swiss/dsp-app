@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateIntValue, CreateValue, MockOntology, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { IntValueComponent } from '@dasch-swiss/dsp-ui';
@@ -89,7 +89,7 @@ describe('SwitchPropertiesComponent', () => {
     let testHostComponent: TestSwitchPropertiesParentComponent;
     let testHostFixture: ComponentFixture<TestSwitchPropertiesParentComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 SwitchPropertiesComponent,

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -49,7 +49,7 @@ describe('SelectOntologyComponent', () => {
     let testHostFixture: ComponentFixture<TestHostComponent>;
     let loader: HarnessLoader;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [ SelectOntologyComponent, TestHostComponent ],
             imports: [
@@ -76,7 +76,7 @@ describe('SelectOntologyComponent', () => {
         expect(testHostComponent.selectOntology).toBeTruthy();
     });
 
-    it('should add a new control to the parent form', async(() => {
+    it('should add a new control to the parent form', waitForAsync(() => {
         // the control is added to the form as an async operation
         // https://angular.io/guide/testing#async-test-with-async
         testHostFixture.whenStable().then(

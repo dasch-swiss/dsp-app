@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { async, ComponentFixture, inject, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +15,7 @@ describe('CookiePolicyComponent', () => {
         back: jasmine.createSpy('back')
     };
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [CookiePolicyComponent],
             imports: [

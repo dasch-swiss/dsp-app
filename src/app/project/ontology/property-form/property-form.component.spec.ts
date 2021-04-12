@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, DebugElement, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -129,7 +129,7 @@ describe('PropertyFormComponent', () => {
     let linkHostComponent: LinkHostComponent;
     let linkHostFixture: ComponentFixture<LinkHostComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
 
         const cacheServiceSpyOnto = jasmine.createSpyObj('CacheServiceOnto', ['get']);
         const cacheServiceSpyLists = jasmine.createSpyObj('CacheServiceLists', ['get']);

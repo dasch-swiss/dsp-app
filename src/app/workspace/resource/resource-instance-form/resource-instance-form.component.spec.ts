@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, EventEmitter, Inject, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatOptionModule } from '@angular/material/core';
@@ -233,7 +233,7 @@ describe('ResourceInstanceFormComponent', () => {
     let resourceInstanceFormComponentDe: DebugElement;
     let loader: HarnessLoader;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         const dspConnSpy = {
             admin: {
                 usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername'])

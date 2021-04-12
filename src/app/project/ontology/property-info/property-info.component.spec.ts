@@ -2,7 +2,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
@@ -166,7 +166,7 @@ describe('PropertyInfoComponent', () => {
     let rootLoader: HarnessLoader;
     let overlayContainer: OverlayContainer;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 

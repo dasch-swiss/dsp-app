@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { CollectionListComponent } from './collection-list.component';
 
@@ -6,7 +6,7 @@ describe('CollectionListComponent', () => {
     let component: CollectionListComponent;
     let fixture: ComponentFixture<CollectionListComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [CollectionListComponent],
             imports: [

@@ -2,7 +2,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -64,7 +64,7 @@ describe('ListComponent', () => {
     let rootLoader: HarnessLoader;
     let overlayContainer: OverlayContainer;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
 
         const dspConnSpyObj = {
             admin: {

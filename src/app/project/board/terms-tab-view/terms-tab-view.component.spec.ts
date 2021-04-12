@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TermsTabViewComponent } from './terms-tab-view.component';
 import { Component, ViewChild } from '@angular/core';
 
@@ -22,7 +22,7 @@ describe('TermsTabViewComponent', () => {
     let testHostComponent: TestHostBoardComponent;
     let testHostFixture: ComponentFixture<TestHostBoardComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostBoardComponent,

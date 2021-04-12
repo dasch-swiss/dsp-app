@@ -1,5 +1,5 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -66,7 +66,7 @@ describe('ResourceClassInfoComponent', () => {
     let hostComponent: HostComponent;
     let hostFixture: ComponentFixture<HostComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         const dspConnSpy = {
             v2: {
                 onto: jasmine.createSpyObj('onto', ['getOntology']),

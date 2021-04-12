@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
@@ -66,7 +66,7 @@ describe('OntologyVisualizerComponent', () => {
     circularValuePropertyDefinition.subjectType = 'http://www.knora.org/ontology/0000/testontology/v2#testResource1';
     testOntology.properties['http://www.knora.org/ontology/0000/testontology/v2#hasCopy'] = circularValuePropertyDefinition;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 OntologyVisualizerComponent,
@@ -103,18 +103,18 @@ describe('OntologyVisualizerComponent', () => {
         testHostComponent.ontology = testOntology;
         testHostFixture.detectChanges();
     });
-    it('should check the component input (ontology and ontoClasses)', async( () => {
+    it('should check the component input (ontology and ontoClasses)', waitForAsync( () => {
         expect(testHostComponent.ontoClasses.length).toEqual(1);
         expect(testHostComponent.ontoClasses[0].propertiesList.length).toEqual(2);
         expect(testHostComponent.ontology.id).toMatch('http://www.knora.org/ontology/0000/testontology');
     }));
-    it('should get ontology prefix, resource label, and combination of both from class IRI', async( () => {
+    it('should get ontology prefix, resource label, and combination of both from class IRI', waitForAsync( () => {
         const resLabelInfo = testHostComponent.createLabelFromIRI('http://www.knora.org/ontology/0000/testontology/v2#testResource1');
         expect(resLabelInfo.ontoName).toEqual('testontology');
         expect(resLabelInfo.type).toEqual('testResource1');
         expect(resLabelInfo.newLabel).toEqual(resLabelInfo.ontoName + ':' + resLabelInfo.type);
     }));
-    it('should convert resource classes defined in ontology to nodes', async( () => {
+    it('should convert resource classes defined in ontology to nodes', waitForAsync( () => {
         expect(testHostComponent.nodes.length).toEqual(4);
         const nodeForTestResource1 = testHostComponent.nodes[0];
         expect(nodeForTestResource1['id']).toEqual('http://www.knora.org/ontology/0000/testontology/v2#testResource1');
@@ -122,7 +122,7 @@ describe('OntologyVisualizerComponent', () => {
         expect(nodeForTestResource1['class']).toEqual('native');
         expect(nodeForTestResource1['group']).toEqual('resource');
     }));
-    it('should convert super classes defined for resources to nodes as external resource', async( () => {
+    it('should convert super classes defined for resources to nodes as external resource', waitForAsync( () => {
         const nodeForKnoraResource = {
             'id': 'http://api.knora.org/ontology/knora-api/v2#Resource',
             'label': 'knora-api:Resource',
@@ -138,11 +138,11 @@ describe('OntologyVisualizerComponent', () => {
         };
         expect(testHostComponent.nodes).toContain(nodeForbiboResource);
     }));
-    it('should check if a resource class is in nodes list with its IRI', async( () => {
+    it('should check if a resource class is in nodes list with its IRI', waitForAsync( () => {
         expect(testHostComponent.isInNodes('http://www.knora.org/ontology/0000/testontology/v2#testResource1')).toBeTruthy();
 
     }));
-    it('should create links defining subclass relations', async( () => {
+    it('should create links defining subclass relations', waitForAsync( () => {
         expect(testHostComponent.links.length).toEqual(4);
         const subClassofKnoraAPiResource = {
             'source': 'http://www.knora.org/ontology/0000/testontology/v2#testResource1',
@@ -162,7 +162,7 @@ describe('OntologyVisualizerComponent', () => {
         expect(testHostComponent.links).toContain(subClassofBiboResource);
         expect(testHostComponent.links).toContain(subClassofKnoraAPiResource);
     }));
-    it('should convert literal object type to a node', async( () => {
+    it('should convert literal object type to a node', waitForAsync( () => {
         const targetnodeID = testHostComponent.addObjectTypeToNodes('http://api.knora.org/ontology/knora-api/v2#TextValue',
             'http://www.knora.org/ontology/0000/testontology/v2#hasText', 'Test Resource 1');
         expect(targetnodeID).toEqual('Test Resource 1_hasText');
@@ -174,7 +174,7 @@ describe('OntologyVisualizerComponent', () => {
         };
         expect(testHostComponent.nodes).toContain(textValueNode);
     }));
-    it('should convert property to link', async( () => {
+    it('should convert property to link', waitForAsync( () => {
         const textValueLink = {
             'source': 'http://www.knora.org/ontology/0000/testontology/v2#testResource1',
             'target': 'Test Resource 1_hasText',
@@ -184,7 +184,7 @@ describe('OntologyVisualizerComponent', () => {
         };
         expect(testHostComponent.links).toContain(textValueLink);
     }));
-    it('should convert property to a circular link', async( () => {
+    it('should convert property to a circular link', waitForAsync( () => {
         const circularLink = {
             'source': 'http://www.knora.org/ontology/0000/testontology/v2#testResource1',
             'target': 'http://www.knora.org/ontology/0000/testontology/v2#testResource1',

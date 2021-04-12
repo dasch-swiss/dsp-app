@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -95,7 +95,7 @@ describe('ProjectTabViewComponent', () => {
     let testHostComponent: TestHostBoardComponent;
     let testHostFixture: ComponentFixture<TestHostBoardComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostBoardComponent,

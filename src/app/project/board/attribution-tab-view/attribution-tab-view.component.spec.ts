@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PersonTemplateComponent } from '../person-template/person-template.component';
 import { AttributionTabViewComponent } from './attribution-tab-view.component';
 
@@ -7,7 +7,7 @@ describe('AttributionTabViewComponent', () => {
     let component: AttributionTabViewComponent;
     let fixture: ComponentFixture<AttributionTabViewComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 AttributionTabViewComponent, PersonTemplateComponent

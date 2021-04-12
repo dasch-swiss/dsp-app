@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PersonTemplateComponent } from './person-template.component';
 import { Component, ViewChild } from '@angular/core';
 import { AddressTemplateComponent } from '../address-template/address-template.component';
@@ -41,7 +41,7 @@ describe('PersonTemplateComponent', () => {
     let testHostComponent: TestHostContactComponent;
     let testHostFixture: ComponentFixture<TestHostContactComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostContactComponent,

@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiResponseData, ListNode, ListNodeInfo, ListResponse, ListsEndpointAdmin, RepositionChildNodeResponse } from '@dasch-swiss/dsp-js';
@@ -64,7 +64,7 @@ describe('ListItemComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
 
         const listsEndpointSpyObj = {
             admin: {
