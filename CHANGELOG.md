@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.4.3](https://www.github.com/dasch-swiss/dsp-app/compare/v4.4.2...v4.4.3) (2021-04-14)
+
+
+### Bug Fixes
+
+* **ontology:** Bug fix in ontology form ([#417](https://www.github.com/dasch-swiss/dsp-app/issues/417)) ([96dc804](https://www.github.com/dasch-swiss/dsp-app/commit/96dc8042a6dc07c50f55c2992b48f196adf0f093))
+
 ### [4.4.2](https://www.github.com/dasch-swiss/dsp-app/compare/v4.4.1...v4.4.2) (2021-04-12)
 
 
