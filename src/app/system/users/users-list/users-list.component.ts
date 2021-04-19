@@ -266,7 +266,7 @@ export class UsersListComponent implements OnInit {
                         // open dialog to confirm and
                         // redirect to project page
                         // update the cache of logged-in user and the session
-                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username');
+                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username').subscribe();
 
                         if (this.sysAdmin) {
                             // logged-in user is system admin:
@@ -295,7 +295,7 @@ export class UsersListComponent implements OnInit {
                     } else {
                         // the logged-in user (system admin) added himself as project admin
                         // update the cache of logged-in user and the session
-                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username');
+                        this._session.setSession(this.session.user.jwt, this.session.user.name, 'username').subscribe();
                         this.refreshParent.emit();
                     }
                 },
