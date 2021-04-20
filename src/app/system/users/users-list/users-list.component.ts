@@ -119,13 +119,11 @@ export class UsersListComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         if (this.projectcode) {
-            // set the cache
-            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
 
-            // get project information
-            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
-                    this.project = response.body.project;
+            // get the project data from cache
+            this._cache.get(this.projectcode).subscribe(
+                (response: ReadProject) => {
+                    this.project = response;
                     // is logged-in user projectAdmin?
                     this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
                     this.loading = false;

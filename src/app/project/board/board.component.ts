@@ -100,13 +100,10 @@ export class BoardComponent implements OnInit {
     }
 
     getProject() {
-        // set the cache
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-
-        // get project data from cache
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
-                this.project = response.body.project;
+        // get the project data from cache
+        this._cache.get(this.projectcode).subscribe(
+            (response: ReadProject) => {
+                this.project = response;
 
                 // get project and dataset metadata from backend
                 this.getProjectMetadata();

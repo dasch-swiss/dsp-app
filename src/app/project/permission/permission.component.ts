@@ -70,13 +70,10 @@ export class PermissionComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        // set the cache
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-
         // get the project data from cache
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
-                this.project = response.body.project;
+        this._cache.get(this.projectcode).subscribe(
+            (response: ReadProject) => {
+                this.project = response;
 
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);

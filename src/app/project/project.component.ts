@@ -6,7 +6,6 @@ import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { MenuItem } from '../main/declarations/menu-item';
-import { ErrorHandlerService } from '../main/error/error-handler.service';
 
 @Component({
     selector: 'app-project',
@@ -40,7 +39,6 @@ export class ProjectComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
@@ -63,19 +61,13 @@ export class ProjectComponent implements OnInit {
 
         if (!this.error) {
             this.loading = true;
-            // set the cache here:
-            // current project data, project members and project groups
-            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-
-            // get information about the logged-in user, if one is logged-in
-            if (this.session) {
-
-            }
-
-            // get the project data from cache
-            this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+            // get current project data, project members and project groups
+            // and set the project cache here
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
+
+                    this._cache.set(this.projectcode, this.project);
 
                     if (!this.project.status) {
                         this.color = 'warn';
@@ -101,17 +93,15 @@ export class ProjectComponent implements OnInit {
                         this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
                     }
 
-                    this.loading = false;
+                    if (this._cache.has(this.projectcode)) {
+                        this.loading = false;
+                    }
                 },
                 (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
                     this.error = true;
                     this.loading = false;
                 }
             );
-        } else {
-            // shortcode isn't valid
-            // --> TODO show an error page
         }
     }
 

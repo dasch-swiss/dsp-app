@@ -150,13 +150,10 @@ export class OntologyComponent implements OnInit {
         // default value for projectAdmin
         this.projectAdmin = this.sysAdmin;
 
-        // set the project cache
-        this._cache.get(this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode));
-
         // get the project data from cache
-        this._cache.get(this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode)).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
-                this.project = response.body.project;
+        this._cache.get(this.projectCode).subscribe(
+            (response: ReadProject) => {
+                this.project = response;
 
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);

@@ -15,7 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiResponseData, DeleteListResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockProjects, ProjectResponse, ProjectsEndpointAdmin } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, DeleteListResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockProjects, ProjectResponse, ProjectsEndpointAdmin, ReadProject } from '@dasch-swiss/dsp-js';
 import {
     DspActionModule,
     DspApiConnectionToken,
@@ -178,7 +178,7 @@ describe('ListComponent', () => {
 
                 response.project = mockProjects.body.projects[0];
 
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                return of(response.project as ReadProject);
             }
         );
 

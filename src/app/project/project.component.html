@@ -12,12 +12,12 @@
 
     <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
 
-    <router-outlet></router-outlet>
+    <router-outlet *ngIf="!loading"></router-outlet>
 
 </div>
 
 <ng-template #errorMsg>
     <div class="content large middle">
-        <app-error *ngIf="error"></app-error>
+        <app-error *ngIf="error" [status]="404"></app-error>
     </div>
 </ng-template>
