@@ -102,14 +102,9 @@ export class OntologyFormComponent implements OnInit {
 
         this.loading = true;
 
-        // set the cache
-        this._cache.get(this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode));
-
-        // get project
-        this._cache.get(this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode)).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
-                this.project = response.body.project;
-
+        this._cache.get(this.projectCode).subscribe(
+            (response: ReadProject) => {
+                this.project = response;
                 this.buildForm();
 
                 this.loading = false;
