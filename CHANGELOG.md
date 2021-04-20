@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.4.3...v4.5.0) (2021-04-20)
+
+
+### Bug Fixes
+
+* **users:** update session the correct way (DSP-690) ([#419](https://www.github.com/dasch-swiss/dsp-app/issues/419)) ([3ec049e](https://www.github.com/dasch-swiss/dsp-app/commit/3ec049e76df1c66a80026f0cb1d83bfea5178319))
+
+
+### Enhancements
+
+* **project:** better error handler in case a project does not exist (DSP-1401) ([#421](https://www.github.com/dasch-swiss/dsp-app/issues/421)) ([d7470a0](https://www.github.com/dasch-swiss/dsp-app/commit/d7470a0807688ef19209f43185d6bebbe890f991))
+
 ### [4.4.3](https://www.github.com/dasch-swiss/dsp-app/compare/v4.4.2...v4.4.3) (2021-04-14)
 
 
