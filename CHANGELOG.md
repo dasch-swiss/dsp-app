@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.5.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.5.0...v4.5.1) (2021-04-20)
+
+
+### Bug Fixes
+
+* **ontology:** bug fix in create ontology process (DSP-1558) ([#423](https://www.github.com/dasch-swiss/dsp-app/issues/423)) ([bbd825b](https://www.github.com/dasch-swiss/dsp-app/commit/bbd825b659aa695b6b1ba9d58fe5a09b91071a8b))
+
 ## [4.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.4.3...v4.5.0) (2021-04-20)
 
 
