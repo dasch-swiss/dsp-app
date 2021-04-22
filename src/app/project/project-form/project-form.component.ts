@@ -509,10 +509,12 @@ export class ProjectFormComponent implements OnInit {
         this.loading = true;
         // update the cache
         this._cache.del(this.projectcode);
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode));
-        this._cache.get(this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode)).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
+
+                this._cache.set(this.projectcode, this.project);
+
                 this.buildForm(this.project);
                 window.location.reload();
                 this.loading = false;

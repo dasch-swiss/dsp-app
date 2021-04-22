@@ -7,6 +7,7 @@ import {
     KnoraApiConnection,
     MembersResponse,
     ProjectResponse,
+    ReadProject,
     ReadUser,
     UserResponse,
     UsersResponse
@@ -298,9 +299,9 @@ export class AddUserComponent implements OnInit {
 
                     // get project iri by projectcode
                     this._cache.get(this.projectcode).subscribe(
-                        (p: ApiResponseData<ProjectResponse>) => {
+                        (p: ReadProject) => {
                             // add user to project
-                            this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.body.project.id).subscribe(
+                            this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.id).subscribe(
                                 (userAdded: ApiResponseData<UserResponse>) => {
 
                                     // successful post
