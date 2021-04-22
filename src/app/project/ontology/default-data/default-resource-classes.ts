@@ -13,8 +13,8 @@ export class DefaultResourceClasses {
             iri: Constants.Resource,
             label: 'Object without representation',
             icons: [
-                'person',
                 'person_outline',
+                'person',
                 'group',
                 'groups',
                 'people_alt',
@@ -128,7 +128,7 @@ export class DefaultResourceClasses {
         },
         {
             iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DocumentRepresentation',
-            label: 'Document (Word, PDF, etc.)',
+            label: 'Document (PDF, etc.)',
             icons: [
                 'description',
                 'article',
@@ -140,15 +140,18 @@ export class DefaultResourceClasses {
                 'drafts',
                 'library_books'
             ]
-        },
-        {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DDDRepresentation',
-            label: 'RTI Image',
-            icons: [
-                'view_in_ar',
-                'layers'
-            ]
         }
     ];
-
 }
+
+/* --> DSP-1559: disable RTI class;
+    the following object can be added again to the default classes as soon as a RTI viewer is implemented
+    {
+        iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DDDRepresentation',
+        label: 'RTI Image',
+        icons: [
+            'view_in_ar',
+            'layers'
+        ]
+    }
+*/
