@@ -88,14 +88,19 @@ export class DefaultProperties {
                     objectType: Constants.ListValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
                     group: 'List'
-                },
+                }
+            ]
+        },
+        {
+            group: 'Selection (boolean)',
+            elements: [
                 {
                     icon: 'toggle_off',
-                    label: 'On / Off',
+                    label: 'Yes / No',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.BooleanValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',    // 'Toggle',
-                    group: 'List'
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',    // should be 'Toggle' but it's not supported in DSP-Tangoh,
+                    group: 'Selection (boolean)'
                 }
             ]
         },
