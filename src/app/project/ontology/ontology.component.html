@@ -79,6 +79,7 @@
                 <span class="fill-remaining-space"></span>
 
                 <!-- toggle view -->
+                <!-- DSP-1560: disable graph view option in ontology editor
                 <span class="ontology-actions">
                     <p class="mat-caption space-reducer">Display as</p>
                     <button mat-button [class.active]="view === 'classes' || view === 'properties'"
@@ -92,11 +93,11 @@
                         Graph
                     </button>
                 </span>
+                -->
 
                 <!-- edit options -->
                 <span class="ontology-actions">
                     <p class="mat-caption space-reducer">Data model configuration</p>
-                    <!-- TODO: remove following span as soon edit mode is implemented; it's only for tooltip to use with disabled button  -->
                     <span
                         [matTooltip]="(ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!')">
                         <button mat-button [disabled]="!ontology.lastModificationDate" [disabled]="!ontology.lastModificationDate"
