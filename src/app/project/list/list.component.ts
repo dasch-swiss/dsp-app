@@ -235,10 +235,17 @@ export class ListComponent implements OnInit {
                         this._dspApiConnection.admin.listsEndpoint.deleteListNode(this.listIri).subscribe(
                             (res: ApiResponseData<DeleteListResponse>) => {
                                 this.lists = this.lists.filter(list => list.id !== res.body.iri);
-                                this.listIri = this.lists[0].id;
-                                this.listForm.controls.list.setValue(this.listIri);
-                                this.openList(this.listIri);
-                                this.initList();
+
+                                // if there are still lists remaining after deleting a list, load the first list among lists
+                                if (this.lists.length) {
+                                    this.listIri = this.lists[0].id;
+                                    this.listForm.controls.list.setValue(this.listIri);
+                                    this.openList(this.listIri);
+                                    this.initList();
+                                } else { // else set the list to null to remove it from the UI
+                                    this.list = null;
+                                    this.listIri = undefined;
+                                }
                             },
                             (error: ApiResponseError) => {
                                 // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this

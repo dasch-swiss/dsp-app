@@ -145,102 +145,6 @@ describe('ListComponent', () => {
         }).compileComponents();
     }));
 
-    beforeEach(() => {
-
-        // mock session service
-        const sessionSpy = TestBed.inject(SessionService);
-
-        (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-            () => {
-                const session: Session = {
-                    id: 12345,
-                    user: {
-                        name: 'username',
-                        jwt: 'myToken',
-                        lang: 'en',
-                        sysAdmin: true,
-                        projectAdmin: []
-                    }
-                };
-
-                return session;
-            }
-        );
-
-        // mock cache service
-        const cacheSpy = TestBed.inject(CacheService);
-
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
-            () => {
-                const response: ProjectResponse = new ProjectResponse();
-
-                const mockProjects = MockProjects.mockProjects();
-
-                response.project = mockProjects.body.projects[0];
-
-                return of(response.project as ReadProject);
-            }
-        );
-
-        // mock router
-        const routerSpy = TestBed.inject(Router);
-
-        (routerSpy as jasmine.SpyObj<Router>).navigate.and.stub();
-        (routerSpy as jasmine.SpyObj<Router>).navigateByUrl.and.stub();
-
-        // mock lists endpoint
-        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-
-        (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
-            () => {
-                const response = new ListsResponse();
-
-                response.lists = new Array<ListNodeInfo>();
-
-                const mockList1 = new ListNodeInfo();
-                mockList1.comments = [];
-                mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
-                mockList1.isRootNode = true;
-                mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
-                mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
-
-                const mockList2 = new ListNodeInfo();
-                mockList2.comments = [];
-                mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
-                mockList2.isRootNode = true;
-                mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
-                mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
-
-                response.lists.push(mockList1, mockList2);
-
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-            }
-        );
-
-        testHostFixture = TestBed.createComponent(TestHostComponent);
-        testHostComponent = testHostFixture.componentInstance;
-        testHostFixture.detectChanges();
-
-        overlayContainer = TestBed.inject(OverlayContainer);
-        rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
-
-        // mock projects endpoint
-        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
-            () => {
-                const response = new ProjectResponse();
-
-                const mockProjects = MockProjects.mockProjects();
-
-                response.project = mockProjects.body.projects[0];
-
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-            }
-        );
-
-        expect(testHostComponent.listComponent.session).toBeTruthy();
-        expect(testHostComponent).toBeTruthy();
-    });
-
     afterEach(async () => {
         const dialogs = await rootLoader.getAllHarnesses(MatDialogHarness);
         await Promise.all(dialogs.map(async d => await d.close()));
@@ -249,119 +153,472 @@ describe('ListComponent', () => {
         overlayContainer.ngOnDestroy();
     });
 
-    it('should get the project', () => {
-        const mockProject = MockProjects.mockProjects().body.projects[0];
+    describe('Displaying lists', () => {
+        beforeEach(() => {
 
-        expect(testHostComponent.listComponent.project).toEqual(mockProject);
-    });
+            // mock session service
+            const sessionSpy = TestBed.inject(SessionService);
 
-    it('should initialize the list of lists', () => {
-        const listOfLists = new Array<ListNodeInfo>();
+            (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
+                () => {
+                    const session: Session = {
+                        id: 12345,
+                        user: {
+                            name: 'username',
+                            jwt: 'myToken',
+                            lang: 'en',
+                            sysAdmin: true,
+                            projectAdmin: []
+                        }
+                    };
 
-        const list1 = new ListNodeInfo();
-        list1.comments = [];
-        list1.id = 'http://rdfh.ch/lists/0001/mockList01';
-        list1.isRootNode = true;
-        list1.labels = [{ language: 'en', value: 'Mock List 01' }];
-        list1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+                    return session;
+                }
+            );
 
-        const list2 = new ListNodeInfo();
-        list2.comments = [];
-        list2.id = 'http://rdfh.ch/lists/0001/mockList02';
-        list2.isRootNode = true;
-        list2.labels = [{ language: 'en', value: 'Mock List 02' }];
-        list2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+            // mock cache service
+            const cacheSpy = TestBed.inject(CacheService);
 
-        listOfLists.push(list1, list2);
+            (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+                () => {
+                    const response: ProjectResponse = new ProjectResponse();
 
-        expect(testHostComponent.listComponent.lists).toEqual(listOfLists);
-    });
+                    const mockProjects = MockProjects.mockProjects();
 
-    it('should open a list', async () => {
-        const select = await rootLoader.getHarness(MatSelectHarness);
+                    response.project = mockProjects.body.projects[0];
 
-        await select.open();
+                    return of(response.project as ReadProject);
+                }
+            );
 
-        const options = await select.getOptions({ text: 'Mock List 01 (en)' });
+            // mock router
+            const routerSpy = TestBed.inject(Router);
 
-        expect(options.length).toEqual(1);
+            (routerSpy as jasmine.SpyObj<Router>).navigate.and.stub();
+            (routerSpy as jasmine.SpyObj<Router>).navigateByUrl.and.stub();
 
-        await options[0].click();
+            // mock lists endpoint
+            const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-        expect(testHostComponent.listComponent.list.id).toEqual('http://rdfh.ch/lists/0001/mockList01');
-    });
+            (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
+                () => {
+                    const response = new ListsResponse();
 
-    it('should delete a root node', async () => {
-        const deleteListResponse: DeleteListResponse = new DeleteListResponse();
-        deleteListResponse.deleted = true;
-        deleteListResponse.iri = 'http://rdfh.ch/lists/0001/mockList01';
+                    response.lists = new Array<ListNodeInfo>();
 
-        const listSpy = TestBed.inject(DspApiConnectionToken);
+                    const mockList1 = new ListNodeInfo();
+                    mockList1.comments = [];
+                    mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
+                    mockList1.isRootNode = true;
+                    mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
+                    mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-        // mock delete list root node response
-        (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).deleteListNode.and.callFake(
-            () => {
-                const response = deleteListResponse;
+                    const mockList2 = new ListNodeInfo();
+                    mockList2.comments = [];
+                    mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
+                    mockList2.isRootNode = true;
+                    mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
+                    mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-            }
-        );
+                    response.lists.push(mockList1, mockList2);
 
-        // mock the call to the API again because we call the API again after deletion to get the lists
-        // therefore the mock call in the BeforeEach method above will not work since it returns two lists
-        // after deletion, we should only have one list
-        (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
-            () => {
-                const response = new ListsResponse();
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
 
-                response.lists = new Array<ListNodeInfo>();
+            testHostFixture = TestBed.createComponent(TestHostComponent);
+            testHostComponent = testHostFixture.componentInstance;
+            testHostFixture.detectChanges();
 
-                const mockList2 = new ListNodeInfo();
-                mockList2.comments = [];
-                mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
-                mockList2.isRootNode = true;
-                mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
-                mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+            overlayContainer = TestBed.inject(OverlayContainer);
+            rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
 
-                response.lists.push(mockList2);
+            // mock projects endpoint
+            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+                () => {
+                    const response = new ProjectResponse();
 
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-            }
-        );
+                    const mockProjects = MockProjects.mockProjects();
 
-        // open first list among lists
-        const select = await rootLoader.getHarness(MatSelectHarness);
+                    response.project = mockProjects.body.projects[0];
 
-        await select.open();
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
 
-        const options = await select.getOptions({ text: 'Mock List 01 (en)' });
+            expect(testHostComponent.listComponent.session).toBeTruthy();
+            expect(testHostComponent).toBeTruthy();
+        });
 
-        expect(options.length).toEqual(1);
+        it('should get the project', () => {
+            const mockProject = MockProjects.mockProjects().body.projects[0];
 
-        await options[0].click();
+            expect(testHostComponent.listComponent.project).toEqual(mockProject);
+        });
 
-        // click delete button
-        const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
-        await deleteButton.click();
+        it('should initialize the list of lists', () => {
+            const listOfLists = new Array<ListNodeInfo>();
 
-        // get dialog harness
-        const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
+            const list1 = new ListNodeInfo();
+            list1.comments = [];
+            list1.id = 'http://rdfh.ch/lists/0001/mockList01';
+            list1.isRootNode = true;
+            list1.labels = [{ language: 'en', value: 'Mock List 01' }];
+            list1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-        expect(dialogHarnesses.length).toEqual(1);
+            const list2 = new ListNodeInfo();
+            list2.comments = [];
+            list2.id = 'http://rdfh.ch/lists/0001/mockList02';
+            list2.isRootNode = true;
+            list2.labels = [{ language: 'en', value: 'Mock List 02' }];
+            list2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-        // click confirm button
-        const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.confirm-button' }));
+            listOfLists.push(list1, list2);
 
-        await confirmButton.click();
+            expect(testHostComponent.listComponent.lists).toEqual(listOfLists);
+        });
 
-        testHostFixture.whenStable().then(() => {
-            expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/mockList01');
-            expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledTimes(1);
+        it('should open a list', async () => {
+            const select = await rootLoader.getHarness(MatSelectHarness);
 
-            expect(testHostComponent.listComponent.lists.length).toEqual(1);
-            expect(testHostComponent.listComponent.lists[0].id).toEqual('http://rdfh.ch/lists/0001/mockList02');
+            await select.open();
 
-            expect(testHostComponent.listComponent.listIri).toEqual(testHostComponent.listComponent.lists[0].id);
+            const options = await select.getOptions({ text: 'Mock List 01 (en)' });
+
+            expect(options.length).toEqual(1);
+
+            await options[0].click();
+
+            expect(testHostComponent.listComponent.list.id).toEqual('http://rdfh.ch/lists/0001/mockList01');
         });
     });
+
+    describe('Delete list with lists remaining after deletion', () => {
+        beforeEach(() => {
+
+            // mock session service
+            const sessionSpy = TestBed.inject(SessionService);
+
+            (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
+                () => {
+                    const session: Session = {
+                        id: 12345,
+                        user: {
+                            name: 'username',
+                            jwt: 'myToken',
+                            lang: 'en',
+                            sysAdmin: true,
+                            projectAdmin: []
+                        }
+                    };
+
+                    return session;
+                }
+            );
+
+            // mock cache service
+            const cacheSpy = TestBed.inject(CacheService);
+
+            (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+                () => {
+                    const response: ProjectResponse = new ProjectResponse();
+
+                    const mockProjects = MockProjects.mockProjects();
+
+                    response.project = mockProjects.body.projects[0];
+
+                    return of(response.project as ReadProject);
+                }
+            );
+
+            // mock router
+            const routerSpy = TestBed.inject(Router);
+
+            (routerSpy as jasmine.SpyObj<Router>).navigate.and.stub();
+            (routerSpy as jasmine.SpyObj<Router>).navigateByUrl.and.stub();
+
+            // mock lists endpoint
+            const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+            (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
+                () => {
+                    const response = new ListsResponse();
+
+                    response.lists = new Array<ListNodeInfo>();
+
+                    const mockList1 = new ListNodeInfo();
+                    mockList1.comments = [];
+                    mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
+                    mockList1.isRootNode = true;
+                    mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
+                    mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+
+                    const mockList2 = new ListNodeInfo();
+                    mockList2.comments = [];
+                    mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
+                    mockList2.isRootNode = true;
+                    mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
+                    mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+
+                    response.lists.push(mockList1, mockList2);
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            testHostFixture = TestBed.createComponent(TestHostComponent);
+            testHostComponent = testHostFixture.componentInstance;
+            testHostFixture.detectChanges();
+
+            overlayContainer = TestBed.inject(OverlayContainer);
+            rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+
+            // mock projects endpoint
+            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+                () => {
+                    const response = new ProjectResponse();
+
+                    const mockProjects = MockProjects.mockProjects();
+
+                    response.project = mockProjects.body.projects[0];
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            expect(testHostComponent.listComponent.session).toBeTruthy();
+            expect(testHostComponent).toBeTruthy();
+        });
+
+        it('should delete a root node and the first of the remaining lists should be shown', async () => {
+            const deleteListResponse: DeleteListResponse = new DeleteListResponse();
+            deleteListResponse.deleted = true;
+            deleteListResponse.iri = 'http://rdfh.ch/lists/0001/mockList01';
+
+            const listSpy = TestBed.inject(DspApiConnectionToken);
+
+            // mock delete list root node response
+            (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).deleteListNode.and.callFake(
+                () => {
+                    const response = deleteListResponse;
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            // mock the call to the API again because we call the API again after deletion to get the lists
+            // therefore the mock call in the BeforeEach method above will not work since it returns two lists
+            // after deletion, we should only have one list
+            (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
+                () => {
+                    const response = new ListsResponse();
+
+                    response.lists = new Array<ListNodeInfo>();
+
+                    const mockList2 = new ListNodeInfo();
+                    mockList2.comments = [];
+                    mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
+                    mockList2.isRootNode = true;
+                    mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
+                    mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+
+                    response.lists.push(mockList2);
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            // open first list among lists
+            const select = await rootLoader.getHarness(MatSelectHarness);
+
+            await select.open();
+
+            const options = await select.getOptions({ text: 'Mock List 01 (en)' });
+
+            expect(options.length).toEqual(1);
+
+            await options[0].click();
+
+            // click delete button
+            const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
+            await deleteButton.click();
+
+            // get dialog harness
+            const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
+
+            expect(dialogHarnesses.length).toEqual(1);
+
+            // click confirm button
+            const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.confirm-button' }));
+
+            await confirmButton.click();
+
+            testHostFixture.whenStable().then(() => {
+                expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/mockList01');
+                expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledTimes(1);
+
+                expect(testHostComponent.listComponent.lists.length).toEqual(1);
+                expect(testHostComponent.listComponent.lists[0].id).toEqual('http://rdfh.ch/lists/0001/mockList02');
+
+                expect(testHostComponent.listComponent.listIri).toEqual(testHostComponent.listComponent.lists[0].id);
+            });
+        });
+    });
+
+    describe('Delete list with no lists remaining after deletion', () => {
+        beforeEach(() => {
+
+            // mock session service
+            const sessionSpy = TestBed.inject(SessionService);
+
+            (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
+                () => {
+                    const session: Session = {
+                        id: 12345,
+                        user: {
+                            name: 'username',
+                            jwt: 'myToken',
+                            lang: 'en',
+                            sysAdmin: true,
+                            projectAdmin: []
+                        }
+                    };
+
+                    return session;
+                }
+            );
+
+            // mock cache service
+            const cacheSpy = TestBed.inject(CacheService);
+
+            (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+                () => {
+                    const response: ProjectResponse = new ProjectResponse();
+
+                    const mockProjects = MockProjects.mockProjects();
+
+                    response.project = mockProjects.body.projects[0];
+
+                    return of(response.project as ReadProject);
+                }
+            );
+
+            // mock router
+            const routerSpy = TestBed.inject(Router);
+
+            (routerSpy as jasmine.SpyObj<Router>).navigate.and.stub();
+            (routerSpy as jasmine.SpyObj<Router>).navigateByUrl.and.stub();
+
+            // mock lists endpoint
+            const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+            (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
+                () => {
+                    const response = new ListsResponse();
+
+                    response.lists = new Array<ListNodeInfo>();
+
+                    const mockList1 = new ListNodeInfo();
+                    mockList1.comments = [];
+                    mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
+                    mockList1.isRootNode = true;
+                    mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
+                    mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+
+                    response.lists.push(mockList1);
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            testHostFixture = TestBed.createComponent(TestHostComponent);
+            testHostComponent = testHostFixture.componentInstance;
+            testHostFixture.detectChanges();
+
+            overlayContainer = TestBed.inject(OverlayContainer);
+            rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+
+            // mock projects endpoint
+            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+                () => {
+                    const response = new ProjectResponse();
+
+                    const mockProjects = MockProjects.mockProjects();
+
+                    response.project = mockProjects.body.projects[0];
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            expect(testHostComponent.listComponent.session).toBeTruthy();
+            expect(testHostComponent).toBeTruthy();
+        });
+
+        it('should delete a root node and no list should be shown', async () => {
+            const deleteListResponse: DeleteListResponse = new DeleteListResponse();
+            deleteListResponse.deleted = true;
+            deleteListResponse.iri = 'http://rdfh.ch/lists/0001/mockList01';
+
+            const listSpy = TestBed.inject(DspApiConnectionToken);
+
+            // mock delete list root node response
+            (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).deleteListNode.and.callFake(
+                () => {
+                    const response = deleteListResponse;
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            // mock the call to the API again because we call the API again after deletion to get the lists
+            // therefore the mock call in the BeforeEach method above will not work since it returns two lists
+            // after deletion, we should only have NO lists remaining
+            (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
+                () => {
+                    const response = new ListsResponse();
+
+                    response.lists = new Array<ListNodeInfo>();
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            // open first list among lists
+            const select = await rootLoader.getHarness(MatSelectHarness);
+
+            await select.open();
+
+            const options = await select.getOptions({ text: 'Mock List 01 (en)' });
+
+            expect(options.length).toEqual(1);
+
+            await options[0].click();
+
+            // click delete button
+            const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
+            await deleteButton.click();
+
+            // get dialog harness
+            const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
+
+            expect(dialogHarnesses.length).toEqual(1);
+
+            // click confirm button
+            const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.confirm-button' }));
+
+            await confirmButton.click();
+
+            testHostFixture.whenStable().then(() => {
+                expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/mockList01');
+                expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledTimes(1);
+
+                expect(testHostComponent.listComponent.lists.length).toEqual(0);
+
+                expect(testHostComponent.listComponent.list).toBeNull();
+                expect(testHostComponent.listComponent.listIri).toBeUndefined();
+            });
+        });
+    });
+
 });
