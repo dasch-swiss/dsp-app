@@ -1,5 +1,20 @@
 # Changelog
 
+### [4.5.2](https://www.github.com/dasch-swiss/dsp-app/compare/v4.5.1...v4.5.2) (2021-04-22)
+
+
+### Bug Fixes
+
+* **list:** list no longer displays after deletion if it was the only list among lists ([#429](https://www.github.com/dasch-swiss/dsp-app/issues/429)) ([b05484e](https://www.github.com/dasch-swiss/dsp-app/commit/b05484ee2407ce52e2bc61f18907e5c21ff3e94c))
+* **project:** bug fix in project member management (DSP-1563) ([#425](https://www.github.com/dasch-swiss/dsp-app/issues/425)) ([ac820dd](https://www.github.com/dasch-swiss/dsp-app/commit/ac820dd54637430b4bdbcebfbfa8ccdf9f4dea22))
+
+
+### Maintenance
+
+* **ontology:** disable ontology graph view (DSP-1560) ([#427](https://www.github.com/dasch-swiss/dsp-app/issues/427)) ([0a567d2](https://www.github.com/dasch-swiss/dsp-app/commit/0a567d2cfdba6a9824fe6707b3c1130877fc13d7))
+* **ontology:** disable rti image class (DSP-1559) ([#430](https://www.github.com/dasch-swiss/dsp-app/issues/430)) ([48c3c76](https://www.github.com/dasch-swiss/dsp-app/commit/48c3c761d146d78f349b6ed711cffeeea6e354bb))
+* **ontology:** rename boolean prop type (DSP-1561) ([#426](https://www.github.com/dasch-swiss/dsp-app/issues/426)) ([4dd23d3](https://www.github.com/dasch-swiss/dsp-app/commit/4dd23d3027af7e32b5df57d84bd8df0d8c20832c))
+
 ### [4.5.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.5.0...v4.5.1) (2021-04-20)
 
 
