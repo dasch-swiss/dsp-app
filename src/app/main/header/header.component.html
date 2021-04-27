@@ -11,15 +11,15 @@
     <span class="fill-remaining-space"></span>
 
     <!-- search-panel (in desktop and tablet version) -->
-   <!--  <span class="action"> -->
+    <span class="action">
         <!-- button to reactivate when dsp-app will be used as a research platform again: -->
-        <!-- <dsp-search-panel
+        <dsp-search-panel
             [projectfilter]="true"
             [advanced]="true"
             [expert]="true"
             (search)="doSearch($event)">
-        </dsp-search-panel> -->
-         <!-- to keep? > advanced and expert search (in desktop and tablet version) -->
+        </dsp-search-panel>
+         <!-- to keep? > advanced and expert search (in desktop and tablet version) > already implemented in dsp-search-panel > we can delete the following commented code -->
          <!-- <span class="other-search-link">
             <button mat-button color="primary" class="advanced-search-link" routerLink="/search/advanced">
                 <span>Advanced search</span>
@@ -28,7 +28,7 @@
                 <span>Expert search</span>
             </button>
         </span> -->
-   <!--  </span> -->
+    </span>
 
     <span class="fill-remaining-space desktop-only"></span>
 
@@ -39,10 +39,10 @@
 
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
-        <!-- button to reactivate when dsp-app will be used as a research platform again: -->
-        <!-- <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
+
+        <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
             <mat-icon>add_circle_outline</mat-icon>
-        </button> -->
+        </button>
 
         <button mat-button [routerLink]="'/help'" class="main-toolbar-button help">Help</button>
 
