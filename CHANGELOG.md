@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.5.2...v4.6.0) (2021-04-27)
+
+
+### Enhancements
+
+* **DMP:** bring back the workspace ([#431](https://www.github.com/dasch-swiss/dsp-app/issues/431)) ([e8b1c8e](https://www.github.com/dasch-swiss/dsp-app/commit/e8b1c8e97c244152b7e7df172c2e9932ee4991ae))
+
 ### [4.5.2](https://www.github.com/dasch-swiss/dsp-app/compare/v4.5.1...v4.5.2) (2021-04-22)
 
 
