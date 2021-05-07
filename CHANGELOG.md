@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.7.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.6.0...v4.7.0) (2021-05-07)
+
+
+### Maintenance
+
+* **search results:** disable grid view (DSP-1597) ([#435](https://www.github.com/dasch-swiss/dsp-app/issues/435)) ([c4726fe](https://www.github.com/dasch-swiss/dsp-app/commit/c4726fe08db97a907a2b98dc38d3287323ffa55e))
+
+
+### Enhancements
+
+* **DMP:** own resource viewer (DSP-1586) ([#434](https://www.github.com/dasch-swiss/dsp-app/issues/434)) ([35bd7b3](https://www.github.com/dasch-swiss/dsp-app/commit/35bd7b342424e1db6d6c788cf3dff0c4c4e5d446))
+
 ## [4.6.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.5.2...v4.6.0) (2021-04-27)
 
 
