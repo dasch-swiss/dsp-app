@@ -1,0 +1,78 @@
+<div class="still-image-viewer">
+
+    <!-- main content with navigation and osd viewer -->
+    <div class="content">
+
+        <!-- openseadragon (osd) viewer -->
+        <div class="osd-container">
+            <div class="action horizontal top">
+                <!-- caption -->
+                <span class="overlay caption mat-caption">{{imageCaption}}</span>
+                <span class="fill-remaining-space"></span>
+                <!-- image action tools e.g. zoom, rotate and flip -->
+                <!-- zoom buttons -->
+                <span class="overlay">
+                    <button mat-icon-button id="DSP_OSD_ZOOM_OUT" matTooltip="Zoom out">
+                        <mat-icon>remove_circle_outline</mat-icon>
+                    </button>
+                    <button mat-icon-button id="DSP_OSD_HOME" matTooltip="Reset zoom">
+                        <mat-icon>adjust</mat-icon>
+                    </button>
+                    <button mat-icon-button id="DSP_OSD_ZOOM_IN" matTooltip="Zoom in">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <!-- window button -->
+                    <button mat-icon-button id="DSP_OSD_FULL_PAGE"  matTooltip="Open in fullscreen">
+                        <mat-icon>fullscreen</mat-icon>
+                    </button>
+                </span>
+            </div>
+
+            <!-- navigation in case of compound object: previous and next page -->
+            <div class="navigation vertical previous" *ngIf="compoundNavigation">
+                <button mat-button class="full-size" [disabled]="compoundNavigation.page <= 1"
+                    (click)="goToPage.emit(compoundNavigation.page - 1)">
+                    <mat-icon>keyboard_arrow_left</mat-icon>
+                </button>
+            </div>
+            <div class="navigation vertical next" *ngIf="compoundNavigation">
+                <button mat-button class="full-size"
+                    [disabled]="compoundNavigation.page >= compoundNavigation.totalPages"
+                    (click)="goToPage.emit(compoundNavigation.page + 1)">
+                    <mat-icon>keyboard_arrow_right</mat-icon>
+                </button>
+            </div>
+        </div>
+        <!-- footer with image caption e.g. copyright information -->
+        <div class="navigation horizontal">
+            <span class="compound-nav" *ngIf="compoundNavigation">
+                <button mat-icon-button [disabled]="compoundNavigation.page <= 1" matTooltip="First page"
+                    (click)="goToPage.emit(1)">
+                    <mat-icon>first_page</mat-icon>
+                </button>
+                <button mat-icon-button [disabled]="compoundNavigation.page <= 1" matTooltip="Previous page"
+                    (click)="goToPage.emit(compoundNavigation.page - 1)">
+                    <mat-icon>navigate_before</mat-icon>
+                </button>
+
+                <mat-slider [color]="'primary'" [disabled]="compoundNavigation.totalPages < 2"
+                    [max]="compoundNavigation.totalPages" [min]="1" [step]="1" [thumbLabel]="true"
+                    [tickInterval]="'auto'" [(ngModel)]="compoundNavigation.page"
+                    (change)="goToPage.emit($event.value)">
+                </mat-slider>
+
+                <button mat-icon-button [disabled]="compoundNavigation.page >= compoundNavigation.totalPages"
+                    matTooltip="Next page" (click)="goToPage.emit(compoundNavigation.page + 1)">
+                    <mat-icon>navigate_next</mat-icon>
+                </button>
+                <button mat-icon-button [disabled]="compoundNavigation.page === compoundNavigation.totalPages"
+                    matTooltip="Last page" (click)="goToPage.emit(compoundNavigation.totalPages)">
+                    <mat-icon>last_page</mat-icon>
+                </button>
+            </span>
+        </div>
+        <!-- /openseadragon (osd) -->
+
+    </div>
+
+</div>

@@ -494,7 +494,6 @@ $gc-small: $form-width - $gc-large - 4;
 .mat-tab-header {
   background: #fff;
   position: sticky !important;
-  top: 64px;
   z-index: 1;
 }
 
@@ -613,3 +612,14 @@ $gc-small: $form-width - $gc-large - 4;
 }
 
 // --------------------------------------
+
+//
+// slider in compound object viewer
+.navigation.horizontal {
+  .mat-slider-track-background {
+    background-color: $primary_200;
+  }
+  .mat-slider-thumb {
+    background-color: $primary_400;
+  }
+}

@@ -1,0 +1,71 @@
+
+<div class="toolbar" *ngIf="project">
+    <!-- project info -->
+    <h3 class="label mat-title">
+        {{resource.label}}
+    </h3>
+    <span class="fill-remaining-space"></span>
+
+    <!-- tools: share, add to favorites, edit, delete etc. -->
+    <span>
+        <!-- TODO: activate favorite action to add resource to collection -->
+        <!--
+        <button mat-button class="add-res-to-collection">
+            <mat-icon>star_border</mat-icon>
+        </button>
+        -->
+
+        <!-- Toggle list of properties: all or only the ones with value -->
+        <button mat-button class="toggle-props" matTooltip="Toggle list of properties" matTooltipPosition="above"
+            (click)="toggleProps.emit(!showAllProps)">
+            <mat-icon>{{showAllProps ? 'unfold_less' : 'unfold_more'}}</mat-icon>
+            <span class="desktop-only">{{showAllProps ? 'Hide empty' : 'Show all'}} properties</span>
+        </button>
+
+        <!-- TODO: activate delete action to delete the whole resource -->
+        <!--
+        <button mat-button class="delete-res">
+            <mat-icon>delete</mat-icon>
+        </button>
+        -->
+
+        <!-- Share resource by copying the ark url -->
+        <button mat-button class="share-res" matTooltip="Share resource by copying ARK url" matTooltipPosition="above"
+            [matMenuTriggerFor]="share">
+            <mat-icon>share</mat-icon>
+            <span class="desktop-only">Citation Link</span>
+        </button>
+        <mat-menu #share="matMenu" class="res-share-menu">
+            <!-- citation link - ARK URL -->
+            <div class="ark-url-label mat-body">
+                <label for="clipboard-arkurl">Citation Link (ARK URL)</label>
+            </div>
+            <div class="ark-url-input">
+                <input id="clipboard-arkurl" class="clipboard-arkurl" cols="30" rows="10" readonly
+                    [(ngModel)]="resource.versionArkUrl" />
+                <button mat-button class="btn-copy-arkurl" [cdkCopyToClipboard]="resource.versionArkUrl"
+                    matTooltip="Copy ARK url" matTooltipPosition="below" (click)="openSnackBar()">
+                    <mat-icon class="icon-arkurl">content_copy</mat-icon>
+                </button>
+            </div>
+        </mat-menu>
+
+
+    </span>
+
+</div>
+<!-- additional line with project and user information -->
+<div class="infobar mat-caption" *ngIf="project && user">
+    <p>This resource belongs to the project
+        <span class="project link" (click)="projectClicked(project)" (mouseover)="projectHovered(project)">
+            <b>{{project?.shortname}}</b>
+            <mat-icon inline>open_in_new</mat-icon>
+        </span>
+    </p>
+    <span class="fill-remaining-space"></span>
+    <p *ngIf="user || resource.creationDate">
+        Created
+        <span *ngIf="user">by {{(user.username ? user.username : user.givenName + ' ' + user.familyName)}}</span>
+        <span *ngIf="resource.creationDate"> on {{resource.creationDate | date}}</span>
+    </p>
+</div>
