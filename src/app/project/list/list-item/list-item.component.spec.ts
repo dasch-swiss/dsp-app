@@ -22,7 +22,7 @@ import { ListItemComponent } from './list-item.component';
         [list]="list"
         [parentIri]="parentIri"
         [projectIri]="projectIri"
-        [projectcode]="projectCode">
+        [projectCode]="projectCode">
     </app-list-item>`
 })
 class TestHostComponent implements OnInit {

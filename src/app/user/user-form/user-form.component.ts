@@ -45,7 +45,7 @@ export class UserFormComponent implements OnInit, OnChanges {
      * we get a project shortcode and a name (e-mail or username)
      * from the "add-user-autocomplete" input
      */
-    @Input() projectcode?: string;
+    @Input() projectCode?: string;
     @Input() name?: string;
 
     /**
@@ -228,7 +228,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                     }
 
                     // get parameters from url, if they exist
-                    // this.projectcode = this._route.snapshot.queryParams['project'];
+                    // this.projectCode = this._route.snapshot.queryParams['project'];
                     // const name: string = this._route.snapshot.queryParams['value'];
                     const newUser: ReadUser = new ReadUser();
 
@@ -420,16 +420,16 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this._cache.del('allUsers');
                     this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers());
 
-                    if (this.projectcode) {
-                        // if a projectcode exists, add the user to the project
-                        // get project iri by projectcode
-                        this._cache.get(this.projectcode).subscribe(
+                    if (this.projectCode) {
+                        // if a projectCode exists, add the user to the project
+                        // get project iri by projectCode
+                        this._cache.get(this.projectCode).subscribe(
                             (res: ReadProject) => {
                                 // add user to project
                                 this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, res.id).subscribe(
                                     () => {
                                         // update project cache and member of project cache
-                                        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
+                                        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode));
                                         this.closeDialog.emit(this.user);
                                         this.loading = false;
                                     },

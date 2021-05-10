@@ -1,15 +1,18 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, EventEmitter, Inject, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
     ApiResponseData,
@@ -33,7 +36,7 @@ import {
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
-import { DspApiConnectionToken, IntValueComponent, Session, SessionService, ValueService } from '@dasch-swiss/dsp-ui';
+import { DspActionModule, DspApiConnectionToken, IntValueComponent, Session, SessionService, ValueService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -263,13 +266,16 @@ describe('ResourceInstanceFormComponent', () => {
                 MockCreateIntValueComponent
             ],
             imports: [
-                RouterTestingModule,
-                ReactiveFormsModule,
+                BrowserAnimationsModule,
+                DspActionModule,
+                MatButtonModule,
                 MatDialogModule,
+                MatFormFieldModule,
+                MatOptionModule,
                 MatSelectModule,
                 MatSnackBarModule,
-                MatOptionModule,
-                BrowserAnimationsModule,
+                ReactiveFormsModule,
+                RouterTestingModule,
                 TranslateModule.forRoot()
             ],
             providers: [

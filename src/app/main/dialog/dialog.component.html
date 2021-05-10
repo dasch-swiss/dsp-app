@@ -6,7 +6,7 @@
         <app-dialog-header [title]="'appLabels.form.user.title.profile' | translate"
             [subtitle]="'appLabels.form.user.title.new' | translate">
         </app-dialog-header>
-        <app-user-form [name]="data.name" [projectcode]="data.project" (closeDialog)="dialogRef.close()">
+        <app-user-form [name]="data.name" [projectCode]="data.project" (closeDialog)="dialogRef.close()">
         </app-user-form>
     </div>
 
@@ -99,7 +99,7 @@
     <div *ngSwitchCase="'editProject'">
         <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate">
         </app-dialog-header>
-        <app-project-form [projectcode]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
+        <app-project-form [projectCode]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Delete project -->
@@ -141,7 +141,7 @@
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
         <app-dialog-header [title]="'Create new list'" [subtitle]=""></app-dialog-header>
-        <app-list-info-form [projectcode]="data.project" [mode]="'create'" [projectIri]="data.id"
+        <app-list-info-form [projectCode]="data.project" [mode]="'create'" [projectIri]="data.id"
             (closeDialog)="dialogRef.close($event)">
         </app-list-info-form>
     </div>
@@ -248,9 +248,9 @@
     </div>
 
     <!-- Ontology editor: customize and add resource class -->
-    <div *ngSwitchCase="'addResourceClass'">
+    <div *ngSwitchCase="'createResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectIri]="data.project"
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project"
             (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
         </app-resource-class-form>
     </div>
@@ -289,14 +289,14 @@
     <div *ngSwitchCase="'createProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
     <div *ngSwitchCase="'editProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 

@@ -28,10 +28,10 @@ export class ProjectFormComponent implements OnInit {
 
     /**
      * param of project form component:
-     * Optional projectcode; if exists we are in edit mode
+     * Optional projectCode; if exists we are in edit mode
      * otherwise we build empty form to create new project
      */
-    @Input() projectcode?: string;
+    @Input() projectCode?: string;
 
     /**
      * output of project form component:
@@ -143,12 +143,12 @@ export class ProjectFormComponent implements OnInit {
 
     ngOnInit() {
 
-        // if projectcode exists, we are in edit mode
+        // if projectCode exists, we are in edit mode
         // otherwise create new project
-        if (this.projectcode) {
+        if (this.projectCode) {
             // edit existing project
             // get origin project data first
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     // save the origin project data in case of reset
                     this.project = response.body.project;
@@ -204,13 +204,13 @@ export class ProjectFormComponent implements OnInit {
     buildForm(project: ReadProject): void {
         // if project is defined, we're in the edit mode
         // otherwise "create new project" mode is active
-        // edit mode is true, when a projectcode exists
+        // edit mode is true, when a projectCode exists
 
         // disabled is true, if project status is false (= archived);
         const disabled = (!project.status);
 
         // separate description
-        if (!this.projectcode) {
+        if (!this.projectCode) {
             this.description = [new StringLiteral()];
             this.formErrors['description'] = '';
         }
@@ -220,7 +220,7 @@ export class ProjectFormComponent implements OnInit {
 
         this.form = this._fb.group({
             'shortname': new FormControl({
-                value: project.shortname, disabled: (this.projectcode)
+                value: project.shortname, disabled: (this.projectCode)
             }, [
                 Validators.required,
                 Validators.minLength(this.shortnameMinLength),
@@ -234,7 +234,7 @@ export class ProjectFormComponent implements OnInit {
                 Validators.required
             ]),
             'shortcode': new FormControl({
-                value: project.shortcode, disabled: ((this.projectcode) && project.shortcode !== null)
+                value: project.shortcode, disabled: ((this.projectCode) && project.shortcode !== null)
             }, [
                 Validators.required,
                 Validators.minLength(this.shortcodeMinLength),
@@ -342,7 +342,7 @@ export class ProjectFormComponent implements OnInit {
         // }]);
 
 
-        if (this.projectcode) {
+        if (this.projectCode) {
             const projectData: UpdateProjectRequest = new UpdateProjectRequest();
             projectData.description = [new StringLiteral()];
             // projectData.description = this.description;
@@ -367,7 +367,7 @@ export class ProjectFormComponent implements OnInit {
                     this.buildForm(this.project);
 
                     // update cache
-                    this._cache.set(this.projectcode, response);
+                    this._cache.set(this.projectCode, response);
 
                     this.success = true;
 
@@ -508,12 +508,12 @@ export class ProjectFormComponent implements OnInit {
         // refresh the component
         this.loading = true;
         // update the cache
-        this._cache.del(this.projectcode);
-        this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
+        this._cache.del(this.projectCode);
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 
-                this._cache.set(this.projectcode, this.project);
+                this._cache.set(this.projectCode, this.project);
 
                 this.buildForm(this.project);
                 window.location.reload();

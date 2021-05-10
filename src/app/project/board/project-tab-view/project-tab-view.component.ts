@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {
     DataManagementPlan,
-    Grant, IId, Organization, Person, SingleProject
+    Grant, IId, IUrl, Organization, Person, Place, SingleProject
 } from '@dasch-swiss/dsp-js';
 import { MetadataService } from '../dataset-metadata.service';
 
@@ -15,6 +15,8 @@ export class ProjectTabViewComponent implements OnInit {
     // metadata object
     @Input() selectedProject: SingleProject;
     @Input() subProperties: Object;
+
+    projectObject: {[key: string]: any};
 
     // metadata keys that we do not want to display in template
     excludeKeys = ['contactPoint'];
@@ -35,6 +37,8 @@ export class ProjectTabViewComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.projectObject = this.selectedProject;
 
         // get DMP
         if (this.selectedProject.dataManagementPlan) {

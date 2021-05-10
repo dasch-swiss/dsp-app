@@ -156,7 +156,7 @@ export class ProjectsComponent implements OnInit {
         // referesh the component
         this.loading = true;
         // update the cache
-        // this._cache.del('members_of_' + this.projectcode);
+        // this._cache.del('members_of_' + this.projectCode);
         this.initList();
 
         // refresh child component: add user

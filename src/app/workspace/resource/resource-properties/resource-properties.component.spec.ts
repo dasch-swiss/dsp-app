@@ -20,8 +20,6 @@ import {
     DspActionModule,
     DspApiConfigToken,
     DspApiConnectionToken,
-    DspCoreModule,
-    DspViewerModule,
     EmitEvent,
     Events,
     PropertyInfoValues,
@@ -157,6 +155,7 @@ describe('ResourcePropertiesComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
+                DspActionModule,
                 MatIconModule,
                 MatTooltipModule
             ],

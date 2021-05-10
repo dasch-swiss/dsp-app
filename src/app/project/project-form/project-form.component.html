@@ -104,9 +104,9 @@
             <span>
                 <!-- TODO: description is required! Disable submit button, if description is empty -->
                 <button mat-raised-button type="submit" color="primary"
-                    [disabled]="!form.valid || !this.description.length || (projectcode && !project.status)">
-                    <span *ngIf="projectcode">{{ 'appLabels.form.action.update' | translate }}</span>
-                    <span *ngIf="!projectcode">{{ 'appLabels.form.action.submit' | translate }}</span>
+                    [disabled]="!form.valid || !this.description.length || (projectCode && !project.status)">
+                    <span *ngIf="projectCode">{{ 'appLabels.form.action.update' | translate }}</span>
+                    <span *ngIf="!projectCode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>
             </span>
         </div>

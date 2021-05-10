@@ -140,7 +140,7 @@
                             </button>
                             <mat-menu #addResClassMenu="matMenu" xPosition="before">
                                 <button mat-menu-item *ngFor="let type of defaultClasses"
-                                    (click)="openResourceClassForm('addResourceClass', type)">
+                                    (click)="openResourceClassForm('createResourceClass', type)">
                                     <mat-icon>{{type.icons[0]}}</mat-icon> {{ type.label }}
                                 </button>
                             </mat-menu>
@@ -193,7 +193,6 @@
                                      objectType is not a linkValue (otherwise we have the property twice) -->
                             <app-property-info [propDef]="ontology?.properties[prop.id]"
                                 [projectCode]="projectCode"
-                                [editable]="(ontology.lastModificationDate)"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
                                 (deleteResourceProperty)="delete('Property', $event)"
                                 (clickedOnClass)="updateCard($event)">

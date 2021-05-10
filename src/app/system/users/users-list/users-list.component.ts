@@ -63,7 +63,7 @@ export class UsersListComponent implements OnInit {
     adminGroupIri: string = Constants.ProjectAdminGroupIRI;
 
     // project shortcode; as identifier in project cache service
-    projectcode: string;
+    projectCode: string;
 
     // project data
     project: ReadProject;
@@ -105,7 +105,7 @@ export class UsersListComponent implements OnInit {
         // get the shortcode of the current project
         if (this._route.parent.paramMap) {
             this._route.parent.paramMap.subscribe((params: Params) => {
-                this.projectcode = params.get('shortcode');
+                this.projectCode = params.get('shortcode');
             });
         }
     }
@@ -118,10 +118,10 @@ export class UsersListComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        if (this.projectcode) {
+        if (this.projectCode) {
 
             // get the project data from cache
-            this._cache.get(this.projectcode).subscribe(
+            this._cache.get(this.projectCode).subscribe(
                 (response: ReadProject) => {
                     this.project = response;
                     // is logged-in user projectAdmin?
@@ -273,7 +273,7 @@ export class UsersListComponent implements OnInit {
                             // logged-in user is NOT system admin:
                             // go to project page and reload project admin interface
                             this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                                () => this._router.navigate(['/project/' + this.projectcode])
+                                () => this._router.navigate(['/project/' + this.projectCode])
                             );
                         }
 
@@ -324,7 +324,7 @@ export class UsersListComponent implements OnInit {
      * delete and reactivate user
      *
      */
-    openDialog(mode: string, name: string, iri?: string): void {
+    openDialog(mode: string, name?: string, iri?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',

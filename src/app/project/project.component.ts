@@ -25,7 +25,7 @@ export class ProjectComponent implements OnInit {
     projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
-    projectcode: string;
+    projectCode: string;
 
     // project data
     project: ReadProject;
@@ -45,16 +45,16 @@ export class ProjectComponent implements OnInit {
         private _titleService: Title
     ) {
         // get the shortcode of the current project
-        this.projectcode = this._route.snapshot.params.shortcode;
+        this.projectCode = this._route.snapshot.params.shortcode;
 
         // get session
         this.session = this._session.getSession();
 
         // set the page title
-        this._titleService.setTitle('Project ' + this.projectcode);
+        this._titleService.setTitle('Project ' + this.projectCode);
 
         // error handling in case of wrong project shortcode
-        this.error = this.validateShortcode(this.projectcode);
+        this.error = this.validateShortcode(this.projectCode);
     }
 
     ngOnInit() {
@@ -63,11 +63,11 @@ export class ProjectComponent implements OnInit {
             this.loading = true;
             // get current project data, project members and project groups
             // and set the project cache here
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectcode).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 
-                    this._cache.set(this.projectcode, this.project);
+                    this._cache.set(this.projectCode, this.project);
 
                     if (!this.project.status) {
                         this.color = 'warn';
@@ -89,11 +89,11 @@ export class ProjectComponent implements OnInit {
 
                     // set the cache for project members and groups
                     if (this.projectAdmin) {
-                        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
-                        this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
+                        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode));
+                        this._cache.get('groups_of_' + this.projectCode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
                     }
 
-                    if (this._cache.has(this.projectcode)) {
+                    if (this._cache.has(this.projectCode)) {
                         this.loading = false;
                     }
                 },

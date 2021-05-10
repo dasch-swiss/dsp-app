@@ -247,7 +247,7 @@ describe('PropertyFormComponent', () => {
 
         const hostCompDe = simpleTextHostFixture.debugElement;
         const submitButton: DebugElement = hostCompDe.query(By.css('button.submit'));
-        expect(submitButton.nativeElement.innerText).toEqual(' Update ');
+        expect(submitButton.nativeElement.innerText).toContain('Update');
 
         simpleTextHostComponent.propertyFormComponent.handleData([], 'labels');
         simpleTextHostFixture.detectChanges();

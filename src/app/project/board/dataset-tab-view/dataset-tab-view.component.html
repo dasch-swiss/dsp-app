@@ -9,7 +9,7 @@
 
 <div class="properties-container">
     <div class="properties">
-        <div *ngFor="let prop of metadata | keyvalue; let last = last; let i = index;" [class.border-bottom]="!last">
+        <div *ngFor="let prop of metadataObject | keyvalue; let last = last; let i = index;" [class.border-bottom]="!last">
             <div *ngIf="excludeKeys.indexOf(prop.key) < 0;" class="property">
                 <div class="property-label">
                     <h3 class="label mat-subheading-1">

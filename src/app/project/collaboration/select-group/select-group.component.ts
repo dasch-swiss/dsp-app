@@ -13,7 +13,7 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 export class SelectGroupComponent implements OnInit {
 
     // project short code
-    @Input() projectcode: string;
+    @Input() projectCode: string;
 
     // project iri
     @Input() projectid: string;
@@ -50,10 +50,10 @@ export class SelectGroupComponent implements OnInit {
 
     setList() {
         // set cache for groups
-        this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
+        this._cache.get('groups_of_' + this.projectCode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
 
         // update list of groups with the project specific groups
-        this._cache.get('groups_of_' + this.projectcode, this._dspApiConnection.admin.groupsEndpoint.getGroups()).subscribe(
+        this._cache.get('groups_of_' + this.projectCode, this._dspApiConnection.admin.groupsEndpoint.getGroups()).subscribe(
             (response: ApiResponseData<GroupsResponse>) => {
                 for (const group of response.body.groups) {
                     if (group.project.id === this.projectid) {

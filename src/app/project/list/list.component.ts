@@ -38,7 +38,7 @@ export class ListComponent implements OnInit {
     projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
-    projectcode: string;
+    projectCode: string;
 
     // project data
     project: ReadProject;
@@ -83,7 +83,7 @@ export class ListComponent implements OnInit {
 
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectcode = params.get('shortcode');
+            this.projectCode = params.get('shortcode');
         });
 
         // get list iri from route
@@ -93,9 +93,9 @@ export class ListComponent implements OnInit {
 
         // set the page title
         if (this.listIri) {
-            this._titleService.setTitle('Project ' + this.projectcode + ' | List');
+            this._titleService.setTitle('Project ' + this.projectCode + ' | List');
         } else {
-            this._titleService.setTitle('Project ' + this.projectcode + ' | Lists');
+            this._titleService.setTitle('Project ' + this.projectCode + ' | Lists');
         }
     }
 
@@ -110,7 +110,7 @@ export class ListComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectcode).subscribe(
+        this._cache.get(this.projectCode).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -186,7 +186,7 @@ export class ListComponent implements OnInit {
 
         this.list = this.lists.find(i => i.id === id);
 
-        const goto = 'project/' + this.projectcode + '/lists/' + encodeURIComponent(id);
+        const goto = 'project/' + this.projectCode + '/lists/' + encodeURIComponent(id);
         this._router.navigateByUrl(goto, { skipLocationChange: false });
 
         setTimeout(() => {

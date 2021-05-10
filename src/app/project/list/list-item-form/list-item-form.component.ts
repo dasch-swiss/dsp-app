@@ -59,7 +59,7 @@ export class ListItemFormComponent implements OnInit {
     /**
      * project shortcode
      */
-    @Input() projectcode?: string;
+    @Input() projectCode?: string;
 
     /**
      * project id
@@ -142,7 +142,7 @@ export class ListItemFormComponent implements OnInit {
         const childNode: CreateChildNodeRequest = new CreateChildNodeRequest();
         childNode.parentNodeIri = this.parentIri;
         childNode.projectIri = this.projectIri;
-        childNode.name = this.projectcode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+        childNode.name = this.projectCode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
 
         // initialize labels
         let i = 0;
@@ -222,7 +222,7 @@ export class ListItemFormComponent implements OnInit {
                 title: mode === 'editListNode' || 'deleteListNode' ? name : '',
                 id: iri,
                 project: this.projectIri,
-                projectCode: this.projectcode,
+                projectCode: this.projectCode,
                 parentIri: this.parentIri,
                 position: this.position
             }

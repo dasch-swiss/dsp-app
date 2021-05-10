@@ -10,6 +10,7 @@ import {
     ReadUser,
     UserResponse
 } from '@dasch-swiss/dsp-js';
+import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import { AutocompleteItem, DspApiConnectionToken, Session } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
@@ -124,10 +125,10 @@ export class MembershipComponent implements OnInit {
         // --> TODO update cache of project
 
         // get shortcode from iri; not the best way right now
-        const projectcode: string = iri.replace('http://rdfh.ch/projects/', '');
+        const projectCode: string = iri.replace('http://rdfh.ch/projects/', '');
 
         // reset the cache of project members
-        this._cache.get('members_of_' + projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(projectcode));
+        this._cache.get('members_of_' + projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(projectCode));
 
     }
 
@@ -190,7 +191,7 @@ export class MembershipComponent implements OnInit {
      * @param  [iri] project id
      * @returns boolean
      */
-    userIsProjectAdmin(permissions: IPermissions, iri: string): boolean {
+    userIsProjectAdmin(permissions: PermissionsData, iri: string): boolean {
         return (permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1);
     }
 

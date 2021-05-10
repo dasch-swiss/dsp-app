@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -52,6 +53,7 @@ describe('DialogComponent', () => {
                 PropertyFormComponent
             ],
             imports: [
+                CommonModule,
                 DspActionModule,
                 MatAutocompleteModule,
                 MatButtonModule,

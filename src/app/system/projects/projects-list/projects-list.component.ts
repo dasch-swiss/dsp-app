@@ -129,7 +129,7 @@ export class ProjectsListComponent implements OnInit {
      * @param code
      * @param page
      */
-    openProjectPage(code: string, page: 'collaboration' | 'ontologies' | 'lists') {
+    openProjectPage(code: string, page?: 'collaboration' | 'ontologies' | 'lists') {
         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
             () => {
                 if (page) {
@@ -141,7 +141,7 @@ export class ProjectsListComponent implements OnInit {
         );
     }
 
-    openDialog(mode: string, name: string, id?: string): void {
+    openDialog(mode: string, name?: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',

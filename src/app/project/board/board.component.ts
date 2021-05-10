@@ -43,7 +43,7 @@ export class BoardComponent implements OnInit {
     projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
-    projectcode: string;
+    projectCode: string;
 
     // project data
     project: ReadProject;
@@ -77,11 +77,11 @@ export class BoardComponent implements OnInit {
     ) {
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectcode = params.get('shortcode');
+            this.projectCode = params.get('shortcode');
         });
 
         // set the page title
-        this._titleService.setTitle('Project ' + this.projectcode);
+        this._titleService.setTitle('Project ' + this.projectCode);
     }
 
     ngOnInit() {
@@ -101,7 +101,7 @@ export class BoardComponent implements OnInit {
 
     getProject() {
         // get the project data from cache
-        this._cache.get(this.projectcode).subscribe(
+        this._cache.get(this.projectCode).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 

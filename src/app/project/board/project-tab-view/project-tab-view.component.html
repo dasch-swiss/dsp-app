@@ -2,7 +2,7 @@
 
 <div class="properties-container">
     <div class="properties">
-        <div *ngFor="let prop of selectedProject | keyvalue; let last = last; let i = index;" class="border-bottom">
+        <div *ngFor="let prop of projectObject | keyvalue; let last = last; let i = index;" class="border-bottom">
             <div *ngIf="excludeKeys.indexOf(prop.key) < 0" class="property">
                 <div class="property-label">
                     <h3 class="label mat-subheading-1">

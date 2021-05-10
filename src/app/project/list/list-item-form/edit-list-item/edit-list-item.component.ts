@@ -8,10 +8,12 @@ import {
     List,
     ListNodeInfo,
     ListNodeInfoResponse,
+    ReadProject,
     StringLiteral,
     UpdateChildNodeRequest
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 
 @Component({
@@ -64,11 +66,22 @@ export class EditListItemComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _cache: CacheService,
         private _errorHandler: ErrorHandlerService
     ) { }
 
     ngOnInit(): void {
         this.loading = true;
+
+        // get the project data from cache
+        this._cache.get(this.projectCode).subscribe(
+            (response: ReadProject) => {
+                this.projectIri = response.id;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
 
         // if updating a node, get the existing node info
         if (this.mode === 'update') {

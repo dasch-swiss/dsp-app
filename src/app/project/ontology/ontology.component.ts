@@ -372,7 +372,7 @@ export class OntologyComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { id: resClassInfo.iri, title: resClassInfo.label, subtitle: 'Customize resource class', mode: mode, project: this.project.id }
+            data: { id: resClassInfo.iri, title: resClassInfo.label, subtitle: 'Customize resource class', mode: mode, project: this.projectCode }
         };
 
         const dialogRef = this._dialog.open(

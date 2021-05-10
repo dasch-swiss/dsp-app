@@ -28,7 +28,7 @@ export class ListInfoFormComponent implements OnInit {
     @Input() mode: 'create' | 'update';
 
     // project short code
-    @Input() projectcode: string;
+    @Input() projectCode: string;
 
     @Input() projectIri: string;
 

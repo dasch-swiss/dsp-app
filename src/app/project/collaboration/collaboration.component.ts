@@ -33,7 +33,7 @@ export class CollaborationComponent implements OnInit {
     projectAdmin = false;
 
     // project shortcode; as identifier in project cache service
-    projectcode: string;
+    projectCode: string;
 
     // project data
     project: ReadProject;
@@ -57,11 +57,11 @@ export class CollaborationComponent implements OnInit {
 
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectcode = params.get('shortcode');
+            this.projectCode = params.get('shortcode');
         });
 
         // set the page title
-        this._titleService.setTitle('Project ' + this.projectcode + ' | Collaboration');
+        this._titleService.setTitle('Project ' + this.projectCode + ' | Collaboration');
 
         // --> TODO go back to project page, if the logged-in user has no admin rights
         // is the logged-in user a project admin?
@@ -86,7 +86,7 @@ export class CollaborationComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectcode).subscribe(
+        this._cache.get(this.projectCode).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -112,10 +112,10 @@ export class CollaborationComponent implements OnInit {
      */
     initList(): void {
         // set the cache
-        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode));
+        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode));
 
         // get the project data from cache
-        this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
+        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode)).subscribe(
             (response: ApiResponseData<MembersResponse>) => {
                 this.projectMembers = response.body.members;
 
@@ -148,7 +148,7 @@ export class CollaborationComponent implements OnInit {
         // referesh the component
         this.loading = true;
         // update the cache
-        this._cache.del('members_of_' + this.projectcode);
+        this._cache.del('members_of_' + this.projectCode);
 
         this.initList();
 

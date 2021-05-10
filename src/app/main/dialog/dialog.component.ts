@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { PropertyInfoObject } from 'src/app/project/ontology/default-data/default-properties';
 
 export interface DialogData {
     mode: string;       // switch mode
@@ -10,6 +11,10 @@ export interface DialogData {
     comment?: string;
     name?: string;
     existing?: string[];
+    propInfo?: PropertyInfoObject;
+    position?: number;
+    parentIri?: string;
+    projectCode?: string;
 }
 
 @Component({

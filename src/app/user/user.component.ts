@@ -38,7 +38,7 @@ export class UserComponent implements OnInit {
 
         /*
         parent.paramMap.subscribe((params: Params) => {
-            this.projectcode = params.get('shortcode');
+            this.projectCode = params.get('shortcode');
         });
         */
 

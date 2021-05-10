@@ -30,7 +30,7 @@ export class AddUserComponent implements OnInit {
      * project name to get existing team members
      * or to know where to add selected user
      */
-    @Input() projectcode: string;
+    @Input() projectCode: string;
 
     /**
      * event emitter, when the selected user will be added to the list
@@ -141,7 +141,7 @@ export class AddUserComponent implements OnInit {
                 const members: string[] = [];
 
                 // get all members of this project; response from cache
-                this._cache.get('members_of_' + this.projectcode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectcode)).subscribe(
+                this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode)).subscribe(
                     (res: ApiResponseData<MembersResponse>) => {
                         for (const m of res.body.members) {
                             members.push(m.id);
@@ -291,14 +291,14 @@ export class AddUserComponent implements OnInit {
                 this.selectedUser = response.body.user;
 
                 // the following request should never start
-                this.isAlreadyMember = (!!response.body.user.projects.find(p => p.shortcode === this.projectcode));
+                this.isAlreadyMember = (!!response.body.user.projects.find(p => p.shortcode === this.projectCode));
 
                 if (!this.isAlreadyMember) {
 
                     this.loading = true;
 
-                    // get project iri by projectcode
-                    this._cache.get(this.projectcode).subscribe(
+                    // get project iri by projectCode
+                    this._cache.get(this.projectCode).subscribe(
                         (p: ReadProject) => {
                             // add user to project
                             this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.id).subscribe(
@@ -355,7 +355,7 @@ export class AddUserComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { project: this.projectcode, name: this.selectUserForm.controls['username'].value, mode: mode }
+            data: { project: this.projectCode, name: this.selectUserForm.controls['username'].value, mode: mode }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

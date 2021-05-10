@@ -32,7 +32,7 @@ import { ListItemFormComponent, ListNodeOperation } from './list-item-form.compo
         [language]="language"
         (refreshParent)="updateView($event)"
         [projectIri]="projectIri"
-        [projectcode]="projectCode"
+        [projectCode]="projectCode"
         [labels]="labels">
     </app-list-item-form>`
 })
