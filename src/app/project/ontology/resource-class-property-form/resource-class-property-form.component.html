@@ -15,7 +15,7 @@
         </mat-hint>
     </mat-form-field>
 
-    <!-- TODO: select and reuse existing ObjectProperty doesn't work yet; s. https://github.com/dasch-swiss/knora-app/pull/229#issuecomment-598276151 -->
+    <!-- TODO: select and reuse existing ObjectProperty doesn't work yet; s. https://github.com/dasch-swiss/dsp-app/pull/229#issuecomment-598276151 -->
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="updateFieldsDependingOnLabel($event.option.value)" [matTooltip]="existingProperty ? 'Visible' : null">
         <mat-option *ngFor="let prop of filteredProperties | async" [value]="prop"
             matTooltip="Label: {{ prop?.label }} (Name is part of the id: {{prop?.name}})" matTooltipPosition="after">

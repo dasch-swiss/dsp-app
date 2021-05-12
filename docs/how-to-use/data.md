@@ -31,7 +31,7 @@ DSP-APP offers the possibility to the user to search in 3 different ways: **full
 
 ### Full text search
 
-Full text search performs queries including one or more terms or phrases, and returns data that matches search conditions. By default, the search is performed in all projects stored in Knora. However, it is possible to filter by project using the menu "Filter by project" on the left side of the search bar.
+Full text search performs queries including one or more terms or phrases, and returns data that matches search conditions. By default, the search is performed in all projects stored in DSP. However, it is possible to filter by project using the menu "Filter by project" on the left side of the search bar.
 
 ![Filter your full text search by specific project](../assets/images/search-fulltext-filterByProject.png)*https://app2.dasch.swiss - Search 1: Full text search*
 
@@ -70,12 +70,11 @@ The expert search can be more powerful than the advanced search, but requires kn
 
 ![Expert search is a text area in which you can create Gravsearch queries.](../assets/images/search-expert.png)*https://app2.dasch.swiss/search/expert - Search 3: Expert search is a text area in which you can create Gravsearch queries. Here is the default example you can find in the app.*
 
-To learn Gravsearch, go to the Knora documentation [&rarr; Gravsearch](https://docs.knora.org/paradox/03-apis/api-v2/query-language.html)
+To learn Gravsearch, go to the DSP-API documentation [&rarr; Gravsearch](https://docs-api.dasch.swiss/03-apis/api-v2/query-language/)
 
 ---
 
 ## Search results
-
 
 ### Simple list
 The results of the search are displayed in an organised list with a small preview. You can select one result at a time to get more information.

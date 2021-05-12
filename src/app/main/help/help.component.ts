@@ -1,6 +1,4 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { ErrorHandlerService } from '../error/error-handler.service';
@@ -92,19 +90,7 @@ export class HelpComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService,
-        private _domSanitizer: DomSanitizer,
-        private _matIconRegistry: MatIconRegistry) {
-
-        // create tool icons to use them in mat-icons
-        this._matIconRegistry.addSvgIcon(
-            'knora_app_icon',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-app-icon.svg')
-        );
-        this._matIconRegistry.addSvgIcon(
-            'knora_icon',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-icon.svg')
-        );
+        private _errorHandler: ErrorHandlerService) {
     }
 
     ngOnInit() {

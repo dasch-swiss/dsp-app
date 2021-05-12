@@ -52,7 +52,7 @@ describe('help page', () => {
         });
     });
 
-    it('should route to knora-app release note page', async () => {
+    it('should route to dsp-app release note page', async () => {
         await browser.waitForAngularEnabled(false);
         page.navigateTo();
         await browser.waitForAngularEnabled(true);

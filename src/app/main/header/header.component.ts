@@ -41,16 +41,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         private _componentCommsService: ComponentCommunicationEventService) {
 
         // create tool icons to use them in mat-icons
-        // knora-app icon with text
-        this._matIconRegistry.addSvgIcon(
-            'dsp_app_banner',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-app-banner.svg')
-        );
-        // knora-app icon (for smaller screens)
-        this._matIconRegistry.addSvgIcon(
-            'dsp_app_icon',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/knora-app-icon.svg')
-        );
         this._matIconRegistry.addSvgIcon(
             'dasch_icon_black',
             this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/dasch-icon-black.svg')

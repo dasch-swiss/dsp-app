@@ -29,7 +29,7 @@ export class UsersComponent implements OnInit {
         private _titleService: Title
     ) {
         // set the page title
-        this._titleService.setTitle('All users in Knora');
+        this._titleService.setTitle('All users in DSP');
     }
 
     ngOnInit() {

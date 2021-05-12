@@ -65,7 +65,7 @@ export class ProjectsComponent implements OnInit {
         if (this.username) {
             this._titleService.setTitle('Your projects');
         } else {
-            this._titleService.setTitle('All projects from Knora');
+            this._titleService.setTitle('All projects from DSP');
         }
     }
 

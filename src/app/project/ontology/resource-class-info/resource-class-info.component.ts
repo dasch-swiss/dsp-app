@@ -50,7 +50,7 @@ export class ResourceClassInfoComponent implements OnInit {
 
     /**
      * translates iri from "sub class of" array
-     * - display label from default resource classes (as part of Knora System Project)
+     * - display label from default resource classes (as part of DSP System Project)
      * - in case the class is a subclass of another class in the same ontology: display this class label
      * - in none of those cases display the name from the class IRI
      *

@@ -2,7 +2,7 @@
 
 <span style="color:red">&#9888; Only for System administrator</span>
 
-System administrators can get an overview of all projects and all users stored in Knora. 
+System administrators can get an overview of all projects and all users stored in DSP.
 
 ![Get access to the system admin part from the user menu](../assets/images/system-user-menu.png)*System administration part is accessible from the user menu in the header.*
 
@@ -10,7 +10,7 @@ System administrators can get an overview of all projects and all users stored i
 
 ## All projects
 
-System admin gets the list of all activated projects as well as archived projects. It is possible to create a new research project, the required information must be filled in. 
+System admin gets the list of all activated projects as well as archived projects. It is possible to create a new research project, the required information must be filled in.
 For each project, the system admin has the possibility to edit the project information and archive the project.
 
 ![Overview of all projects](../assets/images/system-all-projects.png)*Overview of all activated projects, the list of archived projects is displayed below.*
@@ -19,8 +19,8 @@ For each project, the system admin has the possibility to edit the project infor
 
 ## All users
 
-System admin gets the list of all activated and suspended users registered in Knora.
-New users can be created from this page only (button "Create new"). 
+System admin gets the list of all activated and suspended users registered in DSP.
+New users can be created from this page only (button "Create new").
 
 ![Overview of all users](../assets/images/system-all-users.png)*Overview of all users where the system admin has access to several actions.*
 
@@ -39,4 +39,3 @@ For each user, the system admin has access to several actions:
 ![System admin can add a user as a member user of a project](../assets/images/system-manage-project-membership.png)
 
 - *Suspend user*: the user is deactivated and has no more access to DSP-APP. The system admin can reactivate it at any time.
-

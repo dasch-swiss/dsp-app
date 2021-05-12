@@ -9,8 +9,10 @@
   .home-button {
     display: inline-block;
     .mat-icon {
-      height: 40px;
-      margin: 0 6px 6px 0;
+      margin: 6px 6px 6px 0;
+      min-width: 40px;
+      height: auto;
+      max-height: 40px;
 
       &.small {
         width: 40px;

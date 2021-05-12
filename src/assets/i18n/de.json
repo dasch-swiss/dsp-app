@@ -3,7 +3,7 @@
         "dashboardComponent": {
             "firstParagraph": "Willkommen bei DSP-APP – einer web-basierten virtuellen Forschungsumgebung, die Forschern in den Humanities bei der Arbeit mit digitalen Daten unterstützt. DSP-APP erlaubt die Annotation und die Verknüpfung mit beliebigen Quellen, seien es digitale Texte, bewegte oder unbewegte Bilder oder Ton.",
             "secondParagraph": "DSP-APP ist eine (generische) Benutzerschnittstelle um auf Daten von einem Haupt-Repository zuzugreifen, das hier beschrieben ist: ",
-            "projectsIntro": "Öffentliche Projekte in Knora"
+            "projectsIntro": "Öffentliche Projekte in DSP"
         },
         "frameworkForListings": {
             "list": {
