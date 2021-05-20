@@ -1,0 +1,8 @@
+{
+    "apiProtocol": "https",
+    "apiHost": "api.test.dasch.swiss",
+    "apiPort": 443,
+    "apiPath": "",
+    "jsonWebToken": "",
+    "logErrors": true
+}
