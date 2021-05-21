@@ -15,7 +15,6 @@ import {
     ListsResponse,
     OntologiesMetadata,
     OntologyMetadata,
-    ProjectResponse,
     PropertyDefinition,
     ReadOntology,
     ReadProject,
@@ -26,7 +25,7 @@ import { DspApiConnectionToken, Session, SessionService, SortingService } from '
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from './default-data/default-properties';
+import { DefaultProperties, PropertyCategory, PropertyInfoObject } from './default-data/default-properties';
 import { DefaultClass, DefaultResourceClasses } from './default-data/default-resource-classes';
 import { ResourceClassFormService } from './resource-class-form/resource-class-form.service';
 
@@ -69,6 +68,8 @@ export class OntologyComponent implements OnInit {
 
     // current/selected ontology
     ontology: ReadOntology;
+
+    lastModificationDate: string;
 
     ontoClasses: ClassDefinition[];
     expandClasses = false;
@@ -222,6 +223,7 @@ export class OntologyComponent implements OnInit {
                                     // with all classes, properties and connected lists
                                     this.loadOntology = true;
                                     this.ontology = readOnto;
+                                    this.lastModificationDate = this.ontology.lastModificationDate;
                                     this._cache.set('currentOntology', this.ontology);
 
                                     // grab the onto class information to display

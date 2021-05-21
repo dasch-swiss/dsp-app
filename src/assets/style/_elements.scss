@@ -486,6 +486,21 @@ $gc-small: $form-width - $gc-large - 4;
   }
 }
 
+.mat-snack-bar-container {
+  &.success {
+    color: #000;
+    background-color: rgba($active, 0.9);
+  }
+  &.failed {
+    color: #fff;
+    background-color: rgba($warn, 0.9);
+  }
+  &.note {
+    color: #000;
+    background-color: rgba($accent_100, 0.9);
+  }
+}
+
 // --------------------------------------
 
 //
@@ -585,7 +600,6 @@ $gc-small: $form-width - $gc-large - 4;
 //
 // nested mat-menu switch arrow to the left in case the menu position is on the right hand side
 .switch-nested-menu {
-
   width: 180px;
 
   button[mat-menu-item] {

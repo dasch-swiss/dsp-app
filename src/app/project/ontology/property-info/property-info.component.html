@@ -1,6 +1,4 @@
-<mat-list-item (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
-    <span *ngIf="propCard && propCard.guiOrder >=0" mat-list-icon
-        class="order additional-info">{{propCard.guiOrder}})</span>
+<div class="property-info" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
 
     <div mat-line class="title">
         <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label"
@@ -60,4 +58,4 @@
             </span>
         </div>
     </div>
-</mat-list-item>
+</div>

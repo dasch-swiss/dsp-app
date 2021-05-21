@@ -63,18 +63,11 @@
         </mat-form-field>
 
         <!-- propertiy: one line, with "add" icon to add additional properties -->
-        <div cdkDropList class="properties-list" (cdkDropListDropped)="drop($event)">
-            <div cdkDrag class="property-line"
+        <div class="properties-list">
+            <div class="property-line"
                 *ngFor="let prop of properties?.controls; let last = last; let i = index;">
 
                 <!-- <div *ngIf="prop.value.objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'"> -->
-
-                <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
-
-                <button *ngIf="properties.length > 1" cdkDragHandle mat-icon-button type="button"
-                    aria-label="Change order of properties" class="prefix drag-n-drop-line">
-                    <mat-icon>drag_indicator</mat-icon>
-                </button>
 
                 <app-resource-class-property-form [propertyForm]="prop" [index]="i" [resClassIri]="iri">
                 </app-resource-class-property-form>

@@ -1,14 +1,17 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { ClassDefinition, Constants, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspActionModule, SortingService } from '@dasch-swiss/dsp-ui';
+import { DspActionModule, DspApiConnectionToken, SortingService } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { PropertyInfoComponent } from '../property-info/property-info.component';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
 
 /**
@@ -67,9 +70,9 @@ describe('ResourceClassInfoComponent', () => {
     let hostFixture: ComponentFixture<HostComponent>;
 
     beforeEach(waitForAsync(() => {
-        const dspConnSpy = {
+        const ontologyEndpointSpyObj = {
             v2: {
-                onto: jasmine.createSpyObj('onto', ['getOntology']),
+                onto: jasmine.createSpyObj('onto', ['getOntology', 'replaceGuiOrderOfCardinalities'])
             }
         };
 
@@ -88,6 +91,10 @@ describe('ResourceClassInfoComponent', () => {
                 MatTooltipModule
             ],
             providers: [
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: ontologyEndpointSpyObj
+                },
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpy

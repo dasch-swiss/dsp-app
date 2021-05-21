@@ -1,4 +1,3 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import {
@@ -309,17 +308,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
         this._resourceClassFormService.resetProperties();
         this.addProperty();
     }
-    /**
-     * drag and drop property line
-     */
-    drop(event: CdkDragDrop<string[]>) {
 
-        // set sort order for child component
-        moveItemInArray(this.properties.controls, event.previousIndex, event.currentIndex);
-
-        // set sort order in form value
-        moveItemInArray(this.resourceClassForm.value.properties, event.previousIndex, event.currentIndex);
-    }
     /**
      * set stringLiterals for label or comment from dsp-string-literal-input
      * @param  {StringLiteral[]} data
@@ -619,6 +608,8 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
 
         onto.entity = addCard;
 
+        onto.entity = addCard;
+
         this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(onto).subscribe(
             (res: ResourceClassDefinitionWithAllLanguages) => {
                 this.lastModificationDate = res.lastModificationDate;
@@ -630,6 +621,8 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy, AfterViewC
                 this._errorHandler.showMessage(error);
             }
         );
-    }
 
+        this.loading = false;
+        this.closeDialog.emit();
+    }
 }

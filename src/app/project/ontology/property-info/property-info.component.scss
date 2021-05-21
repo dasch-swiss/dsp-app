@@ -1,22 +1,12 @@
 @import "~@angular/material/theming";
 @import "../../../../assets/style/config";
 
-.mat-list-item {
-  height: 56px !important;
-  margin: 4px 0;
-  &:hover {
-    background-color: $black-12-opacity;
-  }
+:host {
+  width: 100%;
 }
 
 .additional-info {
   color: $primary_700;
-}
-
-.mat-list-icon.order {
-  font-size: 16px;
-  height: 16px;
-  width: 16px;
 }
 
 .mat-line.title {

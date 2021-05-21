@@ -39,17 +39,25 @@
     </mat-card-header>
     <!-- resource class card content with list of properties -->
     <mat-card-content>
-        <mat-list class="resource-class-properties">
-            <span *ngFor="let prop of resourceClass.propertiesList; let i = index">
-                <!-- display only properties with guiOrder and if they exist in list of properties;
+        <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)">
+            <div cdkDrag [cdkDragDisabled]="!ontology.lastModificationDate" *ngFor="let prop of propsToDisplay; let i = index">
+                <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
+                <mat-list-item  class="drag-n-drop-property" *ngIf="expanded">
+
+                    <span cdkDragHandle mat-list-icon class="gui-order">
+                        <span *ngIf="prop.guiOrder" [class.hide-on-hover]="cardinalityUpdateEnabled">{{i + 1}})</span>
+                        <span *ngIf="lastModificationDate && cardinalityUpdateEnabled" class="display-on-hover drag-n-drop-handle">
+                            <mat-icon>drag_indicator</mat-icon>
+                        </span>
+                    </span>
+
+                    <!-- display only properties with guiOrder and if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
-                <app-property-info *ngIf="ontology?.properties[prop.propertyIndex]
-                    && ontology?.properties[prop.propertyIndex].objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'
-                    && !ontology?.properties[prop.propertyIndex].subjectType?.includes('Standoff')
-                    && expanded" [propDef]="ontology?.properties[prop.propertyIndex]"
-                    [propCard]="prop" [projectCode]="projectCode">
-                </app-property-info>
-            </span>
+                    <app-property-info class="property-info" [propDef]="ontology?.properties[prop.propertyIndex]" [propCard]="propsToDisplay[i]"
+                        [projectCode]="projectCode">
+                    </app-property-info>
+                </mat-list-item>
+            </div>
         </mat-list>
     </mat-card-content>
     <!-- resource class card actions; TODO: can be reacitviated if we decide to add some special buttons to res class card -->

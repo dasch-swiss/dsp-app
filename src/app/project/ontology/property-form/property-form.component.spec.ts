@@ -136,7 +136,7 @@ describe('PropertyFormComponent', () => {
 
         const ontologyEndpointSpyObj = {
             v2: {
-                ontologyEndpoint: jasmine.createSpyObj('onto', ['updateResourceProperty', 'createResourceProperty'])
+                onto: jasmine.createSpyObj('onto', ['updateResourceProperty', 'createResourceProperty'])
             }
         };
 

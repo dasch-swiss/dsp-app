@@ -82,6 +82,15 @@ $width: 340px;
       &.properties {
         width: 80%;
         margin: 16px 10%;
+
+        .property {
+          height: 56px !important;
+          margin: 4px 0;
+
+          &:hover {
+            background-color: $black-12-opacity;
+          }
+        }
       }
     }
   }

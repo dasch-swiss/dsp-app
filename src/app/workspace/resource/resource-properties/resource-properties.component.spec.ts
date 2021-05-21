@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
+import { RouterTestingModule } from '@angular/router/testing';
 import {
     ApiResponseError,
     Constants,
@@ -157,7 +158,8 @@ describe('ResourcePropertiesComponent', () => {
             imports: [
                 DspActionModule,
                 MatIconModule,
-                MatTooltipModule
+                MatTooltipModule,
+                RouterTestingModule
             ],
             declarations: [
                 TestPropertyParentComponent,

@@ -180,6 +180,8 @@
                     <app-resource-class-info *ngFor="let resClass of ontoClasses" [resourceClass]="resClass"
                         [expanded]="expandClasses"
                         [projectCode]="projectCode"
+                        [lastModificationDate]="lastModificationDate"
+                        (updateParent)="lastModificationDate = $event"
                         (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
                         (updateCardinality)="updateCard($event)"
                         (deleteResourceClass)="delete('ResourceClass', $event)">
@@ -188,7 +190,7 @@
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
                     <!-- list of resource properties -->
                     <mat-list>
-                        <span *ngFor="let prop of ontoProperties">
+                        <mat-list-item class="property" *ngFor="let prop of ontoProperties">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
                                      objectType is not a linkValue (otherwise we have the property twice) -->
                             <app-property-info [propDef]="ontology?.properties[prop.id]"
@@ -197,7 +199,7 @@
                                 (deleteResourceProperty)="delete('Property', $event)"
                                 (clickedOnClass)="updateCard($event)">
                             </app-property-info>
-                        </span>
+                        </mat-list-item>
                         <!-- <mat-list-item *ngFor="let prop of ontoProperties">{{prop.label}}</mat-list-item> -->
                     </mat-list>
                 </div>
