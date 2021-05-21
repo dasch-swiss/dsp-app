@@ -172,10 +172,10 @@ export class ProjectFormComponent implements OnInit {
 
                     for (const project of response.body.projects) {
 
-                        this.existingShortNames.push(new RegExp('(?:^|\W)' + project.shortname.toLowerCase() + '(?:$|\W)'));
+                        this.existingShortNames.push(new RegExp('(?:^|W)' + project.shortname.toLowerCase() + '(?:$|W)'));
 
                         if (project.shortcode !== null) {
-                            this.existingShortcodes.push(new RegExp('(?:^|\W)' + project.shortcode.toLowerCase() + '(?:$|\W)'));
+                            this.existingShortcodes.push(new RegExp('(?:^|W)' + project.shortcode.toLowerCase() + '(?:$|W)'));
                         }
                     }
                 },

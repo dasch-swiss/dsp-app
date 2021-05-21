@@ -149,11 +149,11 @@ export class AddUserComponent implements OnInit {
                             // if the user is already member of the project
                             // add the email to the list of existing
                             this.existingEmailInProject.push(
-                                new RegExp('(?:^|\W)' + m.email.toLowerCase() + '(?:$|\W)')
+                                new RegExp('(?:^|W)' + m.email.toLowerCase() + '(?:$|W)')
                             );
                             // add username to the list of existing
                             this.existingUsernameInProject.push(
-                                new RegExp('(?:^|\W)' + m.username.toLowerCase() + '(?:$|\W)')
+                                new RegExp('(?:^|W)' + m.username.toLowerCase() + '(?:$|W)')
                             );
                         }
 
@@ -163,11 +163,11 @@ export class AddUserComponent implements OnInit {
                             // if the user is already member of the project
                             // add the email to the list of existing
                             this.existingEmails.push(
-                                new RegExp('(?:^|\W)' + u.email.toLowerCase() + '(?:$|\W)')
+                                new RegExp('(?:^|W)' + u.email.toLowerCase() + '(?:$|W)')
                             );
                             // add username to the list of existing
                             this.existingUsernames.push(
-                                new RegExp('(?:^|\W)' + u.username.toLowerCase() + '(?:$|\W)')
+                                new RegExp('(?:^|W)' + u.username.toLowerCase() + '(?:$|W)')
                             );
 
                             let existsInProject = '';
