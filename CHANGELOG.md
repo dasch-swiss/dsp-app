@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.8.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.7.0...v4.8.0) (2021-05-21)
+
+
+### Maintenance
+
+* **CD/CI:** automatically detect common vulnerabilities and coding errors ([#438](https://www.github.com/dasch-swiss/dsp-app/issues/438)) ([af02332](https://www.github.com/dasch-swiss/dsp-app/commit/af023322f1fd03c2659c7127adcd856ac9e6f25d))
+* **compiler:** enable strict template (DSP-1403) ([#432](https://www.github.com/dasch-swiss/dsp-app/issues/432)) ([583a338](https://www.github.com/dasch-swiss/dsp-app/commit/583a338d99fa8dca74c07182d0471219c382f9d1))
+* **environment:** add test-server config (DSP-1650) ([#443](https://www.github.com/dasch-swiss/dsp-app/issues/443)) ([a56a45b](https://www.github.com/dasch-swiss/dsp-app/commit/a56a45ba84f3f62e7b5b1d32fc42954099827280))
+* Replace favicon and term Knora by DSP (DSP-1181 / DSP-1342) ([#441](https://www.github.com/dasch-swiss/dsp-app/issues/441)) ([3b038b6](https://www.github.com/dasch-swiss/dsp-app/commit/3b038b688f8db9da86aa74c2811d93250541d860))
+
+
+### Enhancements
+
+* **ontology:** new method to change gui order (DSP-1567/DSP-1646) ([#440](https://www.github.com/dasch-swiss/dsp-app/issues/440)) ([dfd0ce0](https://www.github.com/dasch-swiss/dsp-app/commit/dfd0ce094fbfb047a16d86c59e4edc6f005281d2))
+
 ## [4.7.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.6.0...v4.7.0) (2021-05-07)
 
 
