@@ -106,8 +106,10 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
         // subscribe to the ValueOperationEventService and listen for an event to be emitted
         this.valueOperationEventSubscriptions.push(this._valueOperationEventService.on(
             Events.ValueAdded, (newValue: AddedEventValue) => {
-                this.addValueToResource(newValue.addedValue);
-                this.hideAddValueForm();
+                if (newValue) {
+                    this.addValueToResource(newValue.addedValue);
+                    this.hideAddValueForm();
+                }
             }));
 
         this.valueOperationEventSubscriptions.push(this._valueOperationEventService.on(
