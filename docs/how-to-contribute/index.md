@@ -3,7 +3,14 @@
 <!-- TODO: the following section is moved from the main README and has to be updated -->
 ## Development server
 
-Run `ng serve` or `npm run start` for a dev server. Navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the resource files.
+DSP-APP is built with [Angular](https://angular.io/) and uses [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 
+
+You have to install the corresponding packages with `npm i`. Now you have to possibilites to run the application in developer mode:
+
+- With a local installed [DSP-API environment](https://docs-api.dasch.swiss/04-publishing-deployment/getting-started/) run `ng serve` or `npm run start`.
+- If you want to connect to the DSP-API on our test server run `ng serve --configuration=test-server` or `npm run start-with-test-server`. Please consider which version of DSP-API is currently running on the test server (see webapi: <https://api.test.dasch.swiss/version>). With this solution you will also have access to all the representation files.
+
+In both case navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the resource files.
 
 ## Code scaffolding
 
@@ -34,9 +41,9 @@ Run `npm run lint-local` to execute the lint service via [ESLint](https://eslint
 
 To integrate ESLint with Visual Studio Code, do the following:
 
-* Install the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension.
-* Create a task via the **Tasks: Configure Task** command and select `npm: lint-local`.
-* In the resulting `tasks.json` file, configure the problem matcher to be `$eslint-stylish`.
+- Install the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension.
+- Create a task via the **Tasks: Configure Task** command and select `npm: lint-local`.
+- In the resulting `tasks.json` file, configure the problem matcher to be `$eslint-stylish`.
 
 ## Further help
 
