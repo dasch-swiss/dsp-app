@@ -1,4 +1,5 @@
-<div class="content" *ngIf="searchParams">
+<!-- In case if results present -->
+<div class="content" *ngIf="searchParams && !loading && (numberOfAllResults > 0)">
     <as-split direction="horizontal">
         <as-split-area [size]="40">
             <dsp-list-view [search]="searchParams" [displayViewSwitch]="false" (resourceSelected)="openResource($event)"></dsp-list-view>
@@ -8,4 +9,16 @@
             <app-resource [resourceIri]="resourceIri"></app-resource>
         </as-split-area>
     </as-split>
+</div>
+
+<!-- In case of 0 result -->
+<div class="no-results" *ngIf="!loading && numberOfAllResults === 0">
+    <p>Your search <span *ngIf="searchMode === 'fulltext'">- <strong> {{searchQuery}}</strong> -</span> did not match any documents.</p>
+    <p>Suggestions:</p>
+    <ul>
+        <li>Make sure that all words are spelled correctly.</li>
+        <li>Try different keywords.</li>
+        <li>Try more general keywords.</li>
+        <li>Try fewer keywords.</li>
+    </ul>
 </div>

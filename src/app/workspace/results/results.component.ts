@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { SearchParams } from '@dasch-swiss/dsp-ui';
+import { ApiResponseError, CountQueryResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, NotificationService, SearchParams } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-results',
     templateUrl: './results.component.html',
     styleUrls: ['./results.component.scss']
 })
-export class ResultsComponent implements OnInit {
+export class ResultsComponent {
 
     searchParams: SearchParams;
 
@@ -16,15 +17,32 @@ export class ResultsComponent implements OnInit {
 
     resourceIri: string;
 
+    // number of all results
+    numberOfAllResults: number;
+
+    // search params
+    searchQuery: string;
+    searchMode: 'fulltext' | 'gravsearch';
+
+    // progress status
+    loading = true;
+
     constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _notification: NotificationService,
         private _route: ActivatedRoute,
         private _titleService: Title
     ) {
 
         this._route.paramMap.subscribe((params: Params) => {
+            this.searchQuery = decodeURIComponent(params.get('q'));
+            this.searchMode = (decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch');
+
+            this.checkResourceCount();
+
             this.searchParams = {
-                query: decodeURIComponent(params.get('q')),
-                mode: (decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch')
+                query: this.searchQuery,
+                mode: this.searchMode
             };
             // get the project iri if exists
             if (params.get('project')) {
@@ -39,7 +57,37 @@ export class ResultsComponent implements OnInit {
         this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
     }
 
-    ngOnInit() {
+    // get the number of search results for given query
+    checkResourceCount() {
+
+        this.loading = true;
+
+        if (this.searchMode === 'fulltext') {
+            // perform count query
+            this._dspApiConnection.v2.search.doFulltextSearchCountQuery(this.searchQuery).subscribe(
+                (response: CountQueryResponse) => {
+                    this.numberOfAllResults = response.numberOfResults;
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    this._notification.openSnackBar(error);
+                    this.loading = false;
+                }
+            );
+        } else if (this.searchMode === 'gravsearch') {
+            // search mode: gravsearch
+            // perform count query
+            this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.searchQuery).subscribe(
+                (response: CountQueryResponse) => {
+                    this.numberOfAllResults = response.numberOfResults;
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    this._notification.openSnackBar(error);
+                    this.loading = false;
+                }
+            );
+        }
     }
 
     openResource(id: string) {
