@@ -1,6 +1,12 @@
+@import "../../../assets/style/config";
+
 .previousBtn {
   margin: 24px 48px;
   position: absolute;
+}
+
+.active {
+  border: 1px solid $primary_800;
 }
 
 @media (max-width: 1024px) {

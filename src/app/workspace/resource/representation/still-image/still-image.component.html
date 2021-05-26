@@ -5,13 +5,13 @@
 
         <!-- openseadragon (osd) viewer -->
         <div class="osd-container">
-            <div class="action horizontal top">
+            <div class="action horizontal top overlay">
                 <!-- caption -->
-                <span class="overlay caption mat-caption">{{imageCaption}}</span>
+                <span class="caption mat-caption">{{imageCaption}}</span>
                 <span class="fill-remaining-space"></span>
                 <!-- image action tools e.g. zoom, rotate and flip -->
                 <!-- zoom buttons -->
-                <span class="overlay">
+                <span>
                     <button mat-icon-button id="DSP_OSD_ZOOM_OUT" matTooltip="Zoom out">
                         <mat-icon>remove_circle_outline</mat-icon>
                     </button>
@@ -44,8 +44,8 @@
             </div>
         </div>
         <!-- footer with image caption e.g. copyright information -->
-        <div class="navigation horizontal">
-            <span class="compound-nav" *ngIf="compoundNavigation">
+        <div class="navigation horizontal bottom" *ngIf="compoundNavigation">
+            <span class="compound-nav">
                 <button mat-icon-button [disabled]="compoundNavigation.page <= 1" matTooltip="First page"
                     (click)="goToPage.emit(1)">
                     <mat-icon>first_page</mat-icon>

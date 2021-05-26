@@ -16,6 +16,13 @@ $bright: #ccc;
     height: 300px;
   }
 
+  .caption {
+    padding: 10px 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .action {
     z-index: 1;
     position: absolute;
@@ -24,15 +31,8 @@ $bright: #ccc;
     // background: rgba(200, 200, 200, 0.3);
     color: $bright;
 
-    .overlay {
+    &.overlay {
       background: rgba(0, 0, 0, 0.3);
-
-      &.caption {
-        padding: 10px 16px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
     }
 
     &.vertical {
