@@ -1,5 +1,30 @@
 # Changelog
 
+## [4.9.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.8.0...v4.9.0) (2021-05-26)
+
+
+### Bug Fixes
+
+* disable progress bar if search results are empty (DSP-1575) ([#442](https://www.github.com/dasch-swiss/dsp-app/issues/442)) ([8c67d60](https://www.github.com/dasch-swiss/dsp-app/commit/8c67d6007f5d268bac337c6e9702a39ca01704ad))
+* **resource:** add if condition (DSP-1655) ([#448](https://www.github.com/dasch-swiss/dsp-app/issues/448)) ([656da04](https://www.github.com/dasch-swiss/dsp-app/commit/656da04effaedb8cb62c8cd6ad31081a4763adc0))
+
+
+### Documentation
+
+* update documentation about contribution (DSP-1657) ([#449](https://www.github.com/dasch-swiss/dsp-app/issues/449)) ([c25280d](https://www.github.com/dasch-swiss/dsp-app/commit/c25280db676b7d5e9fd59583b1151b846f64ce8e))
+
+
+### Enhancements
+
+* **resource:** display region annotations in still images (DSP-1585) ([#445](https://www.github.com/dasch-swiss/dsp-app/issues/445)) ([86e75b9](https://www.github.com/dasch-swiss/dsp-app/commit/86e75b9fc540dde01590257d786fb65ee7af2c9c))
+* **search:** specify linked resource in advanced search (DSP-1661) ([#451](https://www.github.com/dasch-swiss/dsp-app/issues/451)) ([3f0d6d9](https://www.github.com/dasch-swiss/dsp-app/commit/3f0d6d9a29a9ec299bf38cfa7782ef2eaec151bb))
+
+
+### Maintenance
+
+* **deps:** update packages to resolve security issues ([#450](https://www.github.com/dasch-swiss/dsp-app/issues/450)) ([8e927f7](https://www.github.com/dasch-swiss/dsp-app/commit/8e927f777c9c9801ab724d4750f6fccd2bcd97d0))
+* **project:** resolve regex term (DSP-1654) ([#444](https://www.github.com/dasch-swiss/dsp-app/issues/444)) ([739beba](https://www.github.com/dasch-swiss/dsp-app/commit/739bebab58e6a89cb79a8d85cf1d3d5f514f23f0))
+
 ## [4.8.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.7.0...v4.8.0) (2021-05-21)
 
 
