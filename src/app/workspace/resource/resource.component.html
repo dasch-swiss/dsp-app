@@ -5,10 +5,10 @@
         <div class="center" *ngIf="representationsToDisplay.length">
 
             <!-- still image view -->
-            <app-still-image
-                [images]="representationsToDisplay"
+            <app-still-image [images]="representationsToDisplay"
                 [imageCaption]="(incomingResource ? resource.res.label + ': ' + incomingResource.res.label : resource.res.label)"
-                [compoundNavigation]="compoundPosition" (goToPage)="compoundNavigation($event)" (regionClicked)="openRegion($event)">
+                [compoundNavigation]="compoundPosition" (goToPage)="compoundNavigation($event)"
+                (regionClicked)="openRegion($event)">
             </app-still-image>
             <!-- TODO: here we'll add more viewers and players dsp-moving-image, dsp-audio etc. -->
 
@@ -18,74 +18,35 @@
         <mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTab">
             <!-- first tab for the main resource e.g. book -->
             <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
-                <!-- dsp-property-toolbar with action buttons and project information -->
-                <app-resource-toolbar *ngIf="resource.res" [resource]="resource.res" [showAllProps]="showAllProps"
-                    (toggleProps)="showAllProps = !showAllProps" (referredProjectClicked)="openProject($event)">
-                </app-resource-toolbar>
-                <!-- (referredProjectHovered)="referredProjectHovered.emit($event)" -->
-
-                <!-- dsp-property-view -->
-                <app-resource-properties
-                    *ngIf="resource.resProps.length !== 0 || resource.systemProps.length !== 0; else noPropertyMain"
-                    [parentResource]="resource.res" [propArray]="resource.resProps"
-                    [systemPropArray]="resource.systemProps" [showAllProps]="showAllProps"
-                    (referredResourceClicked)="openResource($event)">
-                </app-resource-properties>
-
-                <ng-template #noPropertyMain>The resource {{resource?.res.resourceClassLabel}} has no defined
-                    properties.</ng-template>
+                <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true">
+                </app-properties>
             </mat-tab>
 
             <!-- incoming resource -->
             <mat-tab *ngIf="incomingResource"
                 [label]="incomingResource.res.entityInfo.classes[incomingResource.res.type].label">
-                <!-- dsp-property-toolbar with action buttons and project information -->
-                <app-resource-toolbar [resource]="incomingResource.res" [showAllProps]="showAllProps"
-                    (toggleProps)="showAllProps = !showAllProps" (referredProjectClicked)="openProject($event)">
-                </app-resource-toolbar>
-                <!-- (referredProjectHovered)="referredProjectHovered.emit($event)" -->
-
-                <!-- dsp-property-view -->
-
-                <app-resource-properties
-                    *ngIf="incomingResource.resProps.length !== 0 || incomingResource.systemProps.length !== 0; else noPropertyIncoming"
-                    [parentResource]="incomingResource.res" [propArray]="incomingResource.resProps"
-                    [systemPropArray]="incomingResource.systemProps" [showAllProps]="showAllProps"
-                    (referredResourceClicked)="openResource($event)">
-                </app-resource-properties>
-
-                <ng-template #noPropertyIncoming>The resource {{resource?.res.resourceClassLabel}} has no defined properties.</ng-template>
+                <app-properties *ngIf="incomingResource.res" [resource]="incomingResource" [displayProjectInfo]="false">
+                </app-properties>
             </mat-tab>
 
             <!-- annotations -->
-            <mat-tab *ngIf="representationsToDisplay" >
+            <mat-tab *ngIf="representationsToDisplay.length">
                 <ng-template matTabLabel class="annotations">
-                    <span [matBadge]="representationsToDisplay[0]?.regions.length" matBadgeColor="primary" matBadgeOverlap="false">
+                    <span [matBadge]="representationsToDisplay[0]?.regions.length"
+                        [matBadgeHidden]="representationsToDisplay[0]?.regions.length === 0" matBadgeColor="primary"
+                        matBadgeOverlap="false">
                         Annotations
                     </span>
                 </ng-template>
-                <div class="region-property" *ngFor="let annotation of annotationResources"
-                    [id]="annotation.res.id" [class.active]="annotation.res.id === selectedRegion">
-                    <!-- dsp-property-toolbar with action buttons and project information -->
-                    <app-resource-toolbar [resource]="annotation.res" [showAllProps]="showAllProps"
-                        (toggleProps)="showAllProps = !showAllProps" (referredProjectClicked)="openProject($event)">
-                    </app-resource-toolbar>
-
-                    <!-- dsp-property-view -->
-                    <app-resource-properties
-                    *ngIf="annotation.resProps.length !== 0 || annotation.systemProps.length !== 0; else noPropertyAnnotation"
-                    [parentResource]="annotation.res" [propArray]="annotation.resProps"
-                    [systemPropArray]="annotation.systemProps" [showAllProps]="showAllProps"
-                    (referredResourceClicked)="openResource($event)">
-                    </app-resource-properties>
-                    <ng-template #noPropertyAnnotation>The resource {{resource?.res.resourceClassLabel}} has no defined properties.</ng-template>
+                <div class="region-property" *ngFor="let annotation of annotationResources" [id]="annotation.res.id"
+                    [class.active]="annotation.res.id === selectedRegion">
+                    <app-properties [resource]="annotation" [displayProjectInfo]="false">
+                    </app-properties>
                 </div>
-
 
             </mat-tab>
         </mat-tab-group>
-
-        <!-- progress indicator -->
     </div>
+    <!-- progress indicator -->
     <dsp-progress-indicator *ngIf="!resource"></dsp-progress-indicator>
 </div>

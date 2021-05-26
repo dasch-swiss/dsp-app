@@ -1,79 +1,79 @@
+import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
-    Component, EventEmitter,
-    Inject,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {
+    ApiResponseData,
+    ApiResponseError,
     CardinalityUtil,
     Constants,
     DeleteValue,
     KnoraApiConnection,
     PermissionUtil,
+    ProjectResponse,
     ReadLinkValue,
-    ReadResource,
+    ReadProject,
     ReadResourceSequence,
     ReadTextValueAsXml,
+    ReadUser,
     ReadValue,
     ResourcePropertyDefinition,
-    SystemPropertyDefinition
+    UserResponse
 } from '@dasch-swiss/dsp-js';
 import {
     AddedEventValue,
-    AddValueComponent,
     DeletedEventValue,
-    DisplayEditComponent,
     DspApiConnectionToken,
     Events,
+    NotificationService,
     PropertyInfoValues,
     UpdatedEventValues,
+    UserService,
     ValueOperationEventService,
     ValueService
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
+import { DspResource } from '../dsp-resource';
 
 @Component({
-    selector: 'app-resource-properties',
-    templateUrl: './resource-properties.component.html',
-    styleUrls: ['./resource-properties.component.scss']
+    selector: 'app-properties',
+    templateUrl: './properties.component.html',
+    styleUrls: ['./properties.component.scss']
 })
-export class ResourcePropertiesComponent implements OnInit, OnDestroy {
-
-    @ViewChild('displayEdit') displayEditComponent: DisplayEditComponent;
-    @ViewChild('addValue') addValueComponent: AddValueComponent;
-    /**
-     * parent resource
-     *
-     * @param (parentResource)
-     */
-    @Input() parentResource: ReadResource;
+export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     /**
-     * array of property object with ontology class prop def, list of properties and corresponding values
-     *
-     * @param (propArray)
+     * input `resource` of properties component:
+     * complete information about the current resource
      */
-    @Input() propArray: PropertyInfoValues[];
+    @Input() resource: DspResource;
 
     /**
-     * array of system property object with list of system properties
-     *
-     * @param (systemPropArray)
+     * input `displayProjectInfo` of properties component:
+     * display project info or not; "This resource belongs to project XYZ"
      */
-    @Input() systemPropArray: SystemPropertyDefinition[];
+    @Input() displayProjectInfo: false;
 
     /**
-     * show all properties, even if they don't have a value.
-     *
-     * @param  (showAllProps)
+     * output `referredProjectClicked` of resource view component:
+     * can be used to go to project page
      */
-    @Input() showAllProps = false;
+    @Output() referredProjectClicked: EventEmitter<ReadProject> = new EventEmitter<ReadProject>();
 
+    /**
+     * output `referredProjectHovered` of resource view component:
+     * can be used for preview when hovering on project
+     */
+    @Output() referredProjectHovered: EventEmitter<ReadProject> = new EventEmitter<ReadProject>();
+
+    /**
+     * output `referredResourceClicked` of resource view component:
+     * can be used to open resource
+     */
     @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
+    /**
+     * output `referredResourceHovered` of resource view component:
+     * can be used for preview when hovering on resource
+     */
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
     addButtonIsVisible: boolean; // used to toggle add value button
@@ -82,17 +82,25 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
 
     valueOperationEventSubscriptions: Subscription[] = []; // array of ValueOperationEvent subscriptions
 
+    project: ReadProject;
+    user: ReadUser;
+
+    showAllProps = false;   // show or hide empty properties
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _notification: NotificationService,
+        private _snackBar: MatSnackBar,
+        private _userService: UserService,
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService
     ) { }
 
-    ngOnInit() {
-        if (this.parentResource) {
+    ngOnInit(): void {
+        if (this.resource.res) {
             // get user permissions
             const allPermissions = PermissionUtil.allUserPermissions(
-                this.parentResource.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
+                this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
             );
 
             // if user has modify permissions, set addButtonIsVisible to true so the user see's the add button
@@ -123,6 +131,25 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
         ));
     }
 
+    ngOnChanges(): void {
+        // get project information
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.resource.res.attachedToProject).subscribe(
+            (response: ApiResponseData<ProjectResponse>) => {
+                this.project = response.body.project;
+            },
+            (error: ApiResponseError) => {
+                this._notification.openSnackBar(error);
+            }
+        );
+
+        // get user information
+        this._userService.getUser(this.resource.res.attachedToUser).subscribe(
+            (response: UserResponse) => {
+                this.user = response.user;
+            }
+        );
+    }
+
     ngOnDestroy() {
         // unsubscribe from the event bus when component is destroyed
         // if (this.valueOperationEventSubscription !== undefined) {
@@ -132,6 +159,43 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
         if (this.valueOperationEventSubscriptions !== undefined) {
             this.valueOperationEventSubscriptions.forEach(sub => sub.unsubscribe());
         }
+    }
+
+    /**
+     * opens project
+     * @param linkValue
+     */
+    openProject(project: ReadProject) {
+        window.open('/project/' + project.shortcode, '_blank');
+    }
+
+    previewProject(project: ReadProject) {
+        // --> TODO: pop up project preview on hover
+    }
+
+    /**
+     * opens resource
+     * @param linkValue
+     */
+    openResource(linkValue: ReadLinkValue) {
+        window.open('/resource/' + encodeURIComponent(linkValue.linkedResource.id), '_blank');
+    }
+
+    previewResource(linkValue: ReadLinkValue) {
+        // --> TODO: pop up resource preview on hover
+    }
+
+    /**
+    * display message to confirm the copy of the citation link (ARK URL)
+    */
+    openSnackBar() {
+        const message = 'Copied to clipboard!';
+        const action = 'Citation Link';
+        this._snackBar.open(message, action, {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+        });
     }
 
     /**
@@ -165,7 +229,7 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
         }
 
         const isAllowed = CardinalityUtil.createValueForPropertyAllowed(
-            prop.propDef.id, prop.values.length, this.parentResource.entityInfo.classes[this.parentResource.type]);
+            prop.propDef.id, prop.values.length, this.resource.res.entityInfo.classes[this.resource.res.type]);
 
         // check if:
         // cardinality allows for a value to be added
@@ -180,8 +244,8 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
      * @param valueToAdd the value to add to the end of the values array of the filtered property
      */
     addValueToResource(valueToAdd: ReadValue): void {
-        if (this.propArray) {
-            this.propArray
+        if (this.resource.resProps) {
+            this.resource.resProps
                 .filter(propInfoValueArray =>
                     propInfoValueArray.propDef.id === valueToAdd.property) // filter to the correct property
                 .forEach(propInfoValue =>
@@ -190,6 +254,7 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
                 this._updateStandoffLinkValue();
             }
         } else {
+            // --> TODO: better error handler!
             console.error('No properties exist for this resource');
         }
     }
@@ -201,8 +266,8 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
      * @param updatedValue the value to replace valueToReplace with
      */
     updateValueInResource(valueToReplace: ReadValue, updatedValue: ReadValue): void {
-        if (this.propArray && updatedValue !== null) {
-            this.propArray
+        if (this.resource.resProps && updatedValue !== null) {
+            this.resource.resProps
                 .filter(propInfoValueArray =>
                     propInfoValueArray.propDef.id === valueToReplace.property) // filter to the correct property
                 .forEach(filteredpropInfoValueArray => {
@@ -226,8 +291,8 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
      * @param valueToDelete the value to remove from the values array of the filtered property
      */
     deleteValueFromResource(valueToDelete: DeleteValue): void {
-        if (this.propArray) {
-            this.propArray
+        if (this.resource.resProps) {
+            this.resource.resProps
                 .filter(propInfoValueArray =>  // filter to the correct type
                     this._valueService.compareObjectTypeWithValueType(propInfoValueArray.propDef.objectType, valueToDelete.type))
                 .forEach(filteredpropInfoValueArray => {
@@ -252,7 +317,7 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
      */
     private _updateStandoffLinkValue(): void {
 
-        if (this.parentResource === undefined) {
+        if (this.resource.res === undefined) {
             // this should never happen:
             // if the user was able to click on a standoff link,
             // then the resource must have been initialised before.
@@ -265,7 +330,7 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
          ?res knora-api:isMainResource true .
          ?res knora-api:hasStandoffLinkTo ?target .
      } WHERE {
-         BIND(<${this.parentResource.id}> as ?res) .
+         BIND(<${this.resource.res.id}> as ?res) .
          OPTIONAL {
              ?res knora-api:hasStandoffLinkTo ?target .
          }
@@ -283,7 +348,7 @@ export class ResourcePropertiesComponent implements OnInit, OnDestroy {
 
                 const newStandoffLinkVals = res.resources[0].getValuesAs(Constants.HasStandoffLinkToValue, ReadLinkValue);
 
-                this.propArray.filter(
+                this.resource.resProps.filter(
                     resPropInfoVal => (resPropInfoVal.propDef.id === Constants.HasStandoffLinkToValue)
                 ).forEach(
                     standoffLinkResPropInfoVal => {

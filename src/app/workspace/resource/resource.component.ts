@@ -144,15 +144,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     // general methods
     // ------------------------------------------------------------------------
 
-    // open project in new tab
-    openProject(project: ReadProject) {
-        window.open('/project/' + project.shortcode, '_blank');
-    }
-
-    openResource(linkValue: ReadLinkValue) {
-        window.open('/resource/' + encodeURIComponent(linkValue.linkedResource.id), '_blank');
-    }
-
     compoundNavigation(page: number) {
         this.selectedRegion = undefined;
 
