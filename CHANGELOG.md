@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.9.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.9.0...v4.9.1) (2021-05-26)
+
+
+### Maintenance
+
+* **resource:** improve list of properties in resource viewer ([#453](https://www.github.com/dasch-swiss/dsp-app/issues/453)) ([49d9b7f](https://www.github.com/dasch-swiss/dsp-app/commit/49d9b7f2c1689c7fa7f572e09b47516253c05b60))
+
 ## [4.9.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.8.0...v4.9.0) (2021-05-26)
 
 
