@@ -1,15 +1,28 @@
 <!-- content: Step 1 = define resource class -->
 <!-- <form [formGroup]="propertyForm"
 -->
-<form [formGroup]="propertyForm" class="form-content" *ngIf="!loading">
+<form [formGroup]="propertyForm" class="form-content">
 
-    <div class="center more-space-top">
+    <p *ngIf="resClassIri && propertyInfo.propDef" class="note warning mat-caption">
+        This property already exists.
+        Be careful when editing it, it could have an effect in other resource classes if it is used there.
+    </p>
+
+    <div class="center">
+
+        <!-- property type -->
+        <mat-form-field *ngIf="propertyInfo.propType" class="large-field property-type">
+            <span matPrefix class="property-type-icon">
+                <mat-icon>{{propertyInfo.propType?.icon}}</mat-icon>&nbsp;
+            </span>
+            <mat-label>Property type</mat-label>
+            <input matInput [value]="propertyInfo.propType.group + ': ' + propertyInfo.propType.label"
+                [disabled]="true">
+        </mat-form-field>
 
         <!-- label -->
         <div class="large-field string-literal-container">
-            <dsp-string-literal-input
-                [placeholder]="'Property label *'"
-                [value]="labels"
+            <dsp-string-literal-input [placeholder]="'Property label *'" [value]="labels"
                 (dataChanged)="handleData($event, 'labels')">
             </dsp-string-literal-input>
             <mat-hint class="string-literal-error" *ngIf="!labels.length">
@@ -18,23 +31,11 @@
         </div>
 
         <!-- comment/description -->
-        <div class="large-field string-literal-container more-space-top">
-            <dsp-string-literal-input
-                [textarea]="true"
-                [placeholder]="'Comment'"
-                [value]="comments"
+        <div class="large-field string-literal-container">
+            <dsp-string-literal-input [textarea]="true" [placeholder]="'Comment'" [value]="comments"
                 (dataChanged)="handleData($event, 'comments')">
             </dsp-string-literal-input>
         </div>
-
-        <!-- property type -->
-        <mat-form-field *ngIf="propertyInfo.propType" class="large-field property-type more-space-top">
-            <span matPrefix class="property-type-icon">
-                <mat-icon>{{propertyInfo.propType?.icon}}</mat-icon>&nbsp;
-            </span>
-                <mat-label>Property type</mat-label>
-                <input matInput [value]="propertyInfo.propType.group + ': ' + propertyInfo.propType.label" [disabled]="true">
-        </mat-form-field>
 
         <!-- depending on type: display gui attribute -->
         <div *ngIf="showGuiAttr" [ngSwitch]="propertyInfo.propType.objectType">
@@ -56,7 +57,7 @@
                 </span>
                 <mat-label>Select resource class</mat-label>
                 <mat-select formControlName="guiAttr">
-                    <mat-option *ngFor="let item of resourceClass" [value]="item.id">
+                    <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
                         {{item.label}}
                     </mat-option>
                 </mat-select>
@@ -72,7 +73,7 @@
                 <input matInput placeholder="min">
                 <input matInput placeholder="max">
                 <!-- <mat-select formControlName="guiAttr">
-                            <mat-option *ngFor="let item of resourceClass" [value]="item.id">
+                            <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
                                 {{item.label}}
                             </mat-option>
                         </mat-select> -->
@@ -83,6 +84,19 @@
             <!-- <div *ngSwitchDefault>{{propertyInfo.propType.subPropOf}} not yet implemented</div> -->
         </div>
 
+        <!-- TODO: in case of cardinality: diplay required and multiple checkboxes -->
+        <div class="large-field cardinality" *ngIf="resClassIri">
+            <mat-slide-toggle formControlName="multiple"
+                [matTooltip]="'The property in this class can have multiple values'" [matTooltipPosition]="'above'">
+                Multiple values?
+            </mat-slide-toggle>
+
+            <mat-slide-toggle formControlName="required" [matTooltip]="'The property in this class must have one value'"
+                [matTooltipPosition]="'above'">
+                Required field?
+            </mat-slide-toggle>
+        </div>
+
     </div>
 
     <!-- action buttons -->
@@ -91,12 +105,13 @@
             {{ 'appLabels.form.action.cancel' | translate }}
         </button>
         <span class="fill-remaining-space"></span>
-        <button mat-raised-button type="button" color="primary" [disabled]="!labels.length || (propertyForm.enabled && !propertyForm.valid)"
-            (click)="submitData()" class="submit">
+        <button mat-raised-button type="button" color="primary"
+            [disabled]="!labels.length || (propertyForm.enabled && !propertyForm.valid)" (click)="submitData()"
+            class="submit">
             <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
             </dsp-progress-indicator>
             <mat-icon *ngIf="error && !loading">close</mat-icon>
-            {{error ? 'Failed' : (propertyInfo.propDef ? 'Update' : 'Save')}}
+            {{error ? 'Failed' : (resClassIri ? 'Add to class' : (propertyInfo.propDef ? 'Update' : 'Save'))}}
         </button>
     </div>
 </form>

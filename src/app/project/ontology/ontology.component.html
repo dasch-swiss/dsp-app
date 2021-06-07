@@ -54,6 +54,7 @@
     <!-- main content: overview shows resource classes of ontology -->
     <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
 
+        <!-- TODO: add here the select ontology functionality -->
         <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
                 <span class="ontology-info">
@@ -62,10 +63,10 @@
                         matTooltipPosition="above">
                         {{ontology?.label}}
                     </h3>
-                    <p class="mat-caption" [matTooltip]="'Last modification date: ' + ontology.lastModificationDate"
+                    <p class="mat-caption" [matTooltip]="'Last modification date: ' + lastModificationDate"
                         matTooltipPosition="above">
-                        <span *ngIf="ontology.lastModificationDate; else noModificationDate">
-                            Updated on: {{ontology.lastModificationDate | date:'medium'}}
+                        <span *ngIf="lastModificationDate; else noModificationDate">
+                            Updated on: {{lastModificationDate | date:'medium'}}
                         </span>
                         <ng-template #noModificationDate>
                             <span class="note warning">
@@ -96,6 +97,7 @@
                 -->
 
                 <!-- edit options -->
+                <!-- TODO: move edit and delete function to config menu and add "Create new data model" to this place -->
                 <span class="ontology-actions">
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
@@ -168,7 +170,6 @@
                                     </button>
                                 </mat-menu>
                             </ng-container>
-
                         </mat-menu>
                     </span>
                 </mat-list>
@@ -177,14 +178,15 @@
             <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
                 <div class="ontology-editor-grid classes" *ngIf="view === 'classes'">
                     <!-- list of resource classes -->
-                    <app-resource-class-info *ngFor="let resClass of ontoClasses" [resourceClass]="resClass"
-                        [expanded]="expandClasses"
+                    <app-resource-class-info *ngFor="let resClass of ontoClasses"
+                        [resourceClass]="resClass"
                         [projectCode]="projectCode"
-                        [lastModificationDate]="lastModificationDate"
-                        (updateParent)="lastModificationDate = $event"
+                        [ontoProperties]="ontoProperties"
+                        [expanded]="expandClasses"
+                        [(lastModificationDate)]="lastModificationDate"
                         (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
-                        (updateCardinality)="updateCard($event)"
-                        (deleteResourceClass)="delete('ResourceClass', $event)">
+                        (deleteResourceClass)="delete('ResourceClass', $event)"
+                        (updateCardinality)="initOntology($event)">
                     </app-resource-class-info>
                 </div>
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
@@ -193,11 +195,12 @@
                         <mat-list-item class="property" *ngFor="let prop of ontoProperties">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
                                      objectType is not a linkValue (otherwise we have the property twice) -->
-                            <app-property-info [propDef]="ontology?.properties[prop.id]"
+                            <app-property-info
+                                [propDef]="ontology?.properties[prop.id]"
                                 [projectCode]="projectCode"
+                                [(lastModificationDate)]="lastModificationDate"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
-                                (deleteResourceProperty)="delete('Property', $event)"
-                                (clickedOnClass)="updateCard($event)">
+                                (deleteResourceProperty)="delete('Property', $event)">
                             </app-property-info>
                         </mat-list-item>
                         <!-- <mat-list-item *ngFor="let prop of ontoProperties">{{prop.label}}</mat-list-item> -->

@@ -258,8 +258,8 @@
     <div *ngSwitchCase="'editResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project"
-            [showResourceClassForm]="true" [edit]="true" (closeDialog)="dialogRef.close()">
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project" [edit]="true"
+            (closeDialog)="dialogRef.close()">
         </app-resource-class-form>
     </div>
 
@@ -281,22 +281,21 @@
     <div *ngSwitchCase="'updateCardinality'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project"
-            [showResourceClassForm]="false" [edit]="true" (closeDialog)="dialogRef.close()">
-        </app-resource-class-form>
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" (closeDialog)="dialogRef.close()">
+        </app-property-form>
     </div>
 
     <div *ngSwitchCase="'createProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
     <div *ngSwitchCase="'editProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 

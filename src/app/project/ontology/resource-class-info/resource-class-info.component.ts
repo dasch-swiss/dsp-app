@@ -1,20 +1,25 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseError,
     ClassDefinition,
     IHasProperty,
     KnoraApiConnection,
+    PropertyDefinition,
     ReadOntology,
     ResourceClassDefinitionWithAllLanguages,
+    ResourcePropertyDefinitionWithAllLanguages,
     UpdateOntology,
     UpdateResourceClassCardinality
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken, NotificationService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { DefaultClass, DefaultResourceClasses } from '../default-data/default-resource-classes';
+import { CardinalityInfo } from '../ontology.component';
 
 @Component({
     selector: 'app-resource-class-info',
@@ -30,13 +35,23 @@ export class ResourceClassInfoComponent implements OnInit {
 
     @Input() projectCode: string;
 
+    @Input() ontoProperties: ResourcePropertyDefinitionWithAllLanguages[] = [];
+
     @Input() lastModificationDate?: string;
 
+    // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
+    @Output() lastModificationDateChange: EventEmitter<string> = new EventEmitter<string>();
+
+    // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
+    @Output() ontoPropertiesChange: EventEmitter<PropertyDefinition[]> = new EventEmitter<PropertyDefinition[]>();
+
+    // to update the resource class itself (edit or delete)
     @Output() editResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
-    @Output() updateCardinality: EventEmitter<ClassDefinition> = new EventEmitter<ClassDefinition>();
     @Output() deleteResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
-    @Output() updateParent: EventEmitter<string> = new EventEmitter<string>();
+    // to update the cardinality we need the information about property (incl. propType) and resource class
+    @Output() updateCardinality: EventEmitter<string> = new EventEmitter<string>();
+
 
     ontology: ReadOntology;
 
@@ -47,17 +62,25 @@ export class ResourceClassInfoComponent implements OnInit {
 
     subClassOfLabel = '';
 
-    // list of default classes
+    // list of default resource classes
     defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
+
+    // list of default property types
+    defaultProperties: PropertyCategory[] = DefaultProperties.data;
+
+    // list of existing ontology properties, which are not in this resource class
+    existingProperties: PropertyInfoObject[];
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
+        private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
-        private _snackBar: MatSnackBar
+        private _notification: NotificationService
     ) { }
 
     ngOnInit(): void {
+
         this._cache.get('currentOntology').subscribe(
             (response: ReadOntology) => {
                 this.ontology = response;
@@ -80,6 +103,9 @@ export class ResourceClassInfoComponent implements OnInit {
      * @param classIris
      */
     translateSubClassOfIri(classIris: string[]) {
+
+        // reset the label
+        this.subClassOfLabel = '';
 
         classIris.forEach((iri, index) => {
             // get ontology iri from class iri
@@ -132,8 +158,11 @@ export class ResourceClassInfoComponent implements OnInit {
 
         // reset properties to display
         this.propsToDisplay = [];
+        // reset existing properties to select from
+        this.existingProperties = [];
 
-        classProps.forEach((hasProp) => {
+        classProps.forEach((hasProp: IHasProperty) => {
+
             const propToDisplay = ontoProps.find(obj =>
                 obj.id === hasProp.propertyIndex &&
                 (obj.objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue' ||
@@ -142,12 +171,189 @@ export class ResourceClassInfoComponent implements OnInit {
             );
 
             if (propToDisplay) {
+                // add to list of properties to display in res class
                 this.propsToDisplay.push(hasProp);
+                // and remove from list of existing properties which can be added
+                this.ontoProperties = this.ontoProperties.filter(prop => !(prop.id === propToDisplay.id));
             }
 
         });
 
+        this.ontoProperties.forEach((availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
+            let propType: DefaultProperty;
+            // find corresponding default property to have more prop info
+            if (availableProp.guiElement) {
+                for (const group of this.defaultProperties) {
+                    propType = group.elements.find(i =>
+                        i.guiEle === availableProp.guiElement &&
+                        (i.objectType === availableProp.objectType || i.subPropOf === availableProp.subPropertyOf[0])
+                    );
+
+                    if (propType) {
+                        break;
+                    }
+                }
+            }
+            this.existingProperties.push(
+                {
+                    propType: propType,
+                    propDef: availableProp
+                }
+            );
+        });
+
     }
+
+    addNewProperty(propType: DefaultProperty) {
+        const cardinality: CardinalityInfo = {
+            resClass: this.resourceClass,
+            property: {
+                propType: propType
+            }
+        };
+        this.updateCard(cardinality);
+    }
+
+    addExistingProperty(propDef: ResourcePropertyDefinitionWithAllLanguages) {
+        let propType: DefaultProperty;
+        for (const group of this.defaultProperties) {
+            propType = group.elements.find(i =>
+                i.guiEle === propDef.guiElement &&
+                (i.objectType === propDef.objectType || i.subPropOf === propDef.subPropertyOf[0])
+            );
+
+            if (propType) {
+                break;
+            }
+        }
+        const cardinality: CardinalityInfo = {
+            resClass: this.resourceClass,
+            property: {
+                propType: propType,
+                propDef: propDef,
+            }
+        };
+
+        this.updateCard(cardinality);
+    }
+
+    /**
+     * removes property from resource class
+     * @param property
+     */
+    removeProperty(property: DefaultClass) {
+
+        const onto = new UpdateOntology<UpdateResourceClassCardinality>();
+
+        onto.lastModificationDate = this.lastModificationDate;
+
+        onto.id = this.ontology.id;
+
+        const addCard = new UpdateResourceClassCardinality();
+
+        addCard.id = this.resourceClass.id;
+
+        addCard.cardinalities = [];
+
+        this.propsToDisplay = this.propsToDisplay.filter(prop => !(prop.propertyIndex === property.iri));
+
+        addCard.cardinalities = this.propsToDisplay;
+        onto.entity = addCard;
+
+        this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(onto).subscribe(
+            (res: ResourceClassDefinitionWithAllLanguages) => {
+                this.lastModificationDate = res.lastModificationDate;
+                this.lastModificationDateChange.emit(this.lastModificationDate);
+                this.preparePropsToDisplay(this.propsToDisplay);
+
+                this.updateCardinality.emit(this.ontology.id);
+                // display success message
+                this._notification.openSnackBar(`You have successfully removed "${property.label}" from "${this.resourceClass.label}".`);
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
+
+    }
+
+    /**
+     * updates cardinality
+     * @param card cardinality info object
+     */
+    updateCard(card: CardinalityInfo) {
+
+        if (card) {
+            const classLabel = card.resClass.label;
+
+            let mode: 'createProperty' | 'updateCardinality' = 'createProperty';
+            let propLabel = card.property.propType.group + ': ' + card.property.propType.label;
+            let title = 'Add new property of type "' + propLabel + '" to class "' + classLabel + '"';
+
+            if (card.property.propDef) {
+                // the property exists already
+                mode = 'updateCardinality';
+                propLabel = card.property.propDef.label;
+                title = 'Add existing property "' + propLabel + '" to class "' + classLabel + '"';
+            }
+
+            const dialogConfig: MatDialogConfig = {
+                width: '640px',
+                maxHeight: '80vh',
+                position: {
+                    top: '112px'
+                },
+                data: { propInfo: card.property, title: title, subtitle: 'Customize property and cardinality', mode: mode, parentIri: card.resClass.id, position: this.propsToDisplay.length }
+            };
+
+            const dialogRef = this._dialog.open(
+                DialogComponent,
+                dialogConfig
+            );
+
+            dialogRef.afterClosed().subscribe(result => {
+                // update the view: list of properties in resource class
+                this.updateCardinality.emit(this.ontology.id);
+            });
+        } else {
+
+        }
+
+    }
+
+    /**
+     * opens property form
+     * @param mode
+     * @param propertyInfo (could be subClassOf (create mode) or resource class itself (edit mode))
+     */
+    openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
+
+        const title = (propertyInfo.propDef ? propertyInfo.propDef.label : propertyInfo.propType.group + ': ' + propertyInfo.propType.label);
+
+        const dialogConfig: MatDialogConfig = {
+            width: '640px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: { propInfo: propertyInfo, title: title, subtitle: 'Customize property as part of ' + this.resourceClass.label, mode: mode, parentIri: this.resourceClass.id }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view
+            // this.initOntologiesList();
+            this.ngOnInit();
+        });
+    }
+    // open dialog box with property-form
+    // create new property or add existing property
+    // form includes cardinality and gui-attribute
+
 
     /**
      * drag and drop property line
@@ -193,15 +399,10 @@ export class ResourceClassInfoComponent implements OnInit {
                     // successful request: update the view
                     this.preparePropsToDisplay(this.propsToDisplay);
 
-                    this.updateParent.emit(this.lastModificationDate);
+                    this.lastModificationDateChange.emit(this.lastModificationDate);
 
                     // display success message
-                    this._snackBar.open(`You have successfully changed the order of properties in the resource class "${this.resourceClass.label}".`, '', {
-                        horizontalPosition: 'center',
-                        verticalPosition: 'top',
-                        duration: 2500,
-                        panelClass: 'success'
-                    });
+                    this._notification.openSnackBar(`You have successfully changed the order of properties in the resource class "${this.resourceClass.label}".`);
 
                 },
                 (error: ApiResponseError) => {

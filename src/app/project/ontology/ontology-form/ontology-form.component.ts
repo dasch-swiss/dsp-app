@@ -1,12 +1,10 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
-    ApiResponseData,
     ApiResponseError,
     CreateOntology,
     KnoraApiConnection,
     OntologyMetadata,
-    ProjectResponse,
     ReadOntology,
     ReadProject,
     UpdateOntologyMetadata
@@ -14,7 +12,7 @@ import {
 import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import { ResourceClassFormService } from '../resource-class-form/resource-class-form.service';
+import { OntologyService } from '../ontology.service';
 
 export interface NewOntology {
     projectIri: string;
@@ -95,7 +93,7 @@ export class OntologyFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _resourceClassFormService: ResourceClassFormService
+        private _ontologyService: OntologyService
     ) { }
 
     ngOnInit() {
@@ -121,7 +119,7 @@ export class OntologyFormComponent implements OnInit {
                 (response: ReadOntology) => {
                     // add values to the ontology form
                     this.ontologyForm.controls['name'].disable();
-                    const name = this._resourceClassFormService.getOntologyName(this.iri);
+                    const name = this._ontologyService.getOntologyName(this.iri);
                     this.ontologyForm.controls['name'].setValue(name);
                     this.ontologyForm.controls['label'].setValue(response.label);
                     this.ontologyForm.controls['label'].setValidators(

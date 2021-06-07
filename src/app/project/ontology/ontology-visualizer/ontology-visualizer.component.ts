@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit, Output } from '@angular/core';
 import { ClassDefinition, KnoraApiConnection, ReadOntology } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { Link, Node } from '../../../../../node_modules/d3-force-3d';
-import { ResourceClassFormService } from '../resource-class-form/resource-class-form.service';
+import { OntologyService } from '../ontology.service';
 
 export interface NewOntology {
     projectIri: string;
@@ -26,7 +26,7 @@ export class OntologyVisualizerComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _resourceClassFormService: ResourceClassFormService) { }
+        private _ontologyService: OntologyService) { }
 
     isInNodes(item: string) {
         for (const node of this.nodes) {
@@ -43,7 +43,7 @@ export class OntologyVisualizerComponent implements OnInit {
         let newLabel: string;
         if (resourceInfo[1] !== undefined) {
             type = resourceInfo[1];
-            ontoName = this._resourceClassFormService.getOntologyName(resourceInfo[0]);
+            ontoName = this._ontologyService.getOntologyName(resourceInfo[0]);
             newLabel = ontoName + ':' + type;
         } else {
             type = iri.split('/').pop();

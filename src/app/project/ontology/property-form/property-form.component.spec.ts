@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, DebugElement, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,14 +12,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
+import { DspActionModule, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { TestConfig } from 'test.config';
 import { PropertyInfoObject } from '../default-data/default-properties';
-import { ResourceClassFormService } from '../resource-class-form/resource-class-form.service';
 import { PropertyFormComponent } from './property-form.component';
 
 /**
@@ -173,8 +171,7 @@ describe('PropertyFormComponent', () => {
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpyLists
-                },
-                ResourceClassFormService
+                }
             ]
         })
             .compileComponents();

@@ -2,3 +2,8 @@
 .md-tabs {
   background-color: rgb(89, 73, 167) !important;
 }
+
+em {
+    font-size: smaller;
+    text-align: center;
+}

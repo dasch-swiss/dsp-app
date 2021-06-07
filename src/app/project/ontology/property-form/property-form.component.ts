@@ -5,21 +5,23 @@ import {
     ClassDefinition,
     Constants,
     CreateResourceProperty,
+    IHasProperty,
     KnoraApiConnection,
     ListNodeInfo,
     ReadOntology,
+    ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages,
     StringLiteral,
     UpdateOntology,
+    UpdateResourceClassCardinality,
     UpdateResourcePropertyComment,
     UpdateResourcePropertyLabel
 } from '@dasch-swiss/dsp-js';
 import { AutocompleteItem, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
-import { Observable } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
-import { ResourceClassFormService } from '../resource-class-form/resource-class-form.service';
+import { OntologyService } from '../ontology.service';
 
 @Component({
     selector: 'app-property-form',
@@ -34,6 +36,19 @@ export class PropertyFormComponent implements OnInit {
      */
     @Input() propertyInfo: PropertyInfoObject;
 
+    /**
+     * iri of resClassIri; will be used to set cardinality
+     */
+    @Input() resClassIri?: string;
+
+    /**
+     * position of property in case of cardinality update
+     */
+    @Input() guiOrder?: number = 0;
+
+    /**
+     * output closeDialog of property form component to update parent component
+     */
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
     /**
@@ -68,7 +83,7 @@ export class PropertyFormComponent implements OnInit {
     lists: ListNodeInfo[];
 
     // resource classes in this ontology
-    resourceClass: ClassDefinition[] = [];
+    resourceClasses: ClassDefinition[] = [];
 
     loading = false;
 
@@ -85,7 +100,7 @@ export class PropertyFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _resourceClassFormService: ResourceClassFormService
+        private _ontologyService: OntologyService
     ) { }
 
     ngOnInit() {
@@ -100,8 +115,7 @@ export class PropertyFormComponent implements OnInit {
                 // set various lists to select from
                 // a) in case of link value:
                 // set list of resource classes from response; needed for linkValue
-                this.resourceClass = response.getAllClassDefinitions();
-
+                this.resourceClasses = response.getAllClassDefinitions();
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -133,7 +147,9 @@ export class PropertyFormComponent implements OnInit {
         this.propertyForm = this._fb.group({
             'guiAttr': new FormControl({
                 value: this.guiAttributes
-            })
+            }),
+            'multiple': new FormControl(),
+            'required': new FormControl()
         });
 
         this.updateAttributeField(this.propertyInfo.propType);
@@ -230,7 +246,6 @@ export class PropertyFormComponent implements OnInit {
                     this.showGuiAttr = false;
             }
 
-
         } else {
             // depending on the selected property type,
             // we have to define gui element attributes
@@ -256,9 +271,10 @@ export class PropertyFormComponent implements OnInit {
     }
 
     submitData() {
+        this.loading = true;
         // do something with your data
         if (this.propertyInfo.propDef) {
-            // edit mode: res property info (label and comment)
+            // edit mode: update res property info (label and comment)
             // label
             const onto4Label = new UpdateOntology<UpdateResourcePropertyLabel>();
             onto4Label.id = this.ontology.id;
@@ -280,24 +296,35 @@ export class PropertyFormComponent implements OnInit {
 
             this._dspApiConnection.v2.onto.updateResourceProperty(onto4Label).subscribe(
                 (classLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                    this.ontology.lastModificationDate = classLabelResponse.lastModificationDate;
-                    onto4Comment.lastModificationDate = this.ontology.lastModificationDate;
+                    this.lastModificationDate = classLabelResponse.lastModificationDate;
+                    onto4Comment.lastModificationDate = this.lastModificationDate;
 
                     this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
                         (classCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                            this.ontology.lastModificationDate = classCommentResponse.lastModificationDate;
+                            this.lastModificationDate = classCommentResponse.lastModificationDate;
 
-                            // close the dialog box
-                            this.loading = false;
-                            this.closeDialog.emit();
+                            if (this.resClassIri && classCommentResponse.lastModificationDate) {
+                                // edit cardinality mode: update cardinality of existing property in res class
+                                this.setCardinality(this.propertyInfo.propDef);
+                            } else {
+                                // close the dialog box
+                                this.loading = false;
+                                this.closeDialog.emit();
+                            }
+
                         },
                         (error: ApiResponseError) => {
+                            this.error = true;
+                            this.loading = false;
                             this._errorHandler.showMessage(error);
                         }
                     );
 
+
                 },
                 (error: ApiResponseError) => {
+                    this.error = true;
+                    this.loading = false;
                     this._errorHandler.showMessage(error);
                 }
             );
@@ -307,7 +334,7 @@ export class PropertyFormComponent implements OnInit {
             // submit property
             // this.submitProps(this.resourceClassForm.value.properties, this.propertyInfo.propDef.id);
             // set resource property name / id: randomized string
-            const uniquePropName: string = this._resourceClassFormService.setUniqueName(this.ontology.id);
+            const uniquePropName: string = this._ontologyService.setUniqueName(this.ontology.id);
 
             const onto = new UpdateOntology<CreateResourceProperty>();
 
@@ -317,7 +344,6 @@ export class PropertyFormComponent implements OnInit {
             // prepare payload for property
             const newResProp = new CreateResourceProperty();
             newResProp.name = uniquePropName;
-            // --> TODO update prop.label and use StringLiteralInput in property-form
             newResProp.label = this.labels;
             newResProp.comment = (this.comments.length ? this.comments : this.labels);
             const guiAttr = this.propertyForm.controls['guiAttr'].value;
@@ -363,16 +389,66 @@ export class PropertyFormComponent implements OnInit {
             this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
                 (response: ResourcePropertyDefinitionWithAllLanguages) => {
                     this.lastModificationDate = response.lastModificationDate;
-                    // close the dialog box
-                    this.loading = false;
-                    this.closeDialog.emit();
+
+                    if (this.resClassIri && response.lastModificationDate) {
+                        // set cardinality
+                        this.setCardinality(response);
+                    } else {
+                        // close the dialog box
+                        this.loading = false;
+                        this.closeDialog.emit();
+                    }
+
                 },
                 (error: ApiResponseError) => {
+                    this.error = true;
+                    this.loading = false;
                     this._errorHandler.showMessage(error);
                 }
             );
 
         }
+    }
+
+    setCardinality(prop: ResourcePropertyDefinitionWithAllLanguages) {
+
+        const onto = new UpdateOntology<UpdateResourceClassCardinality>();
+
+        onto.lastModificationDate = this.lastModificationDate;
+
+        onto.id = this.ontology.id;
+
+        const addCard = new UpdateResourceClassCardinality();
+
+        addCard.id = this.resClassIri;
+
+        addCard.cardinalities = [];
+
+        const propCard: IHasProperty = {
+            propertyIndex: prop.id,
+            cardinality: this._ontologyService.translateCardinality(this.propertyForm.value.multiple, this.propertyForm.value.required),
+            guiOrder: this.guiOrder  // add new property to the end of current list of properties
+        };
+
+        addCard.cardinalities.push(propCard);
+
+        onto.entity = addCard;
+
+        this._dspApiConnection.v2.onto.addCardinalityToResourceClass(onto).subscribe(
+            (res: ResourceClassDefinitionWithAllLanguages) => {
+
+                this.lastModificationDate = res.lastModificationDate;
+                // close the dialog box
+                this.loading = false;
+                this.closeDialog.emit();
+            },
+            (error: ApiResponseError) => {
+                this.error = true;
+                this.loading = false;
+                this._errorHandler.showMessage(error);
+            }
+        );
+
     }
 
 }

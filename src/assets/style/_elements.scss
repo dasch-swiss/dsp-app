@@ -50,6 +50,11 @@
     flex-direction: row;
     align-items: center;
     white-space: nowrap;
+
+    .mat-title {
+      word-wrap: normal;
+      white-space: normal;
+    }
   }
 
   .app-toolbar-action.button {
@@ -435,6 +440,13 @@ $gc-small: $form-width - $gc-large - 4;
   }
 }
 
+// progress indicator icon on submit button
+.submit-progress {
+  display: inline-block;
+  margin-right: 6px;
+  margin-bottom: 2px;
+}
+
 // --------------------------------------
 
 //
@@ -618,7 +630,9 @@ $gc-small: $form-width - $gc-large - 4;
 .switch-nested-sub-menu {
   width: 180px;
   margin-left: -360px !important;
-
+}
+.switch-nested-sub-menu,
+.default-nested-sub-menu {
   &.mat-menu-panel {
     margin-top: 8px;
     min-height: 48px !important;

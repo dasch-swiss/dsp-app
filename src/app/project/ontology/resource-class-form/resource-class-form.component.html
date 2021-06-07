@@ -2,13 +2,13 @@
 <form [formGroup]="resourceClassForm" class="form-content"
     *ngIf="ontology.lastModificationDate; else missingLastModificationDate">
 
-    <div *ngIf="showResourceClassForm" class="resource-class-data">
+    <div class="resource-class-data">
         <div class="center more-space-top">
 
             <!-- label -->
             <div class="large-field string-literal-container">
                 <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
-                    (enter)="(edit ? submitData() : nextStep($event))"
+                    (enter)="submitData()"
                     (dataChanged)="handleData($event, 'labels')">
                 </dsp-string-literal-input>
                 <mat-hint class="string-literal-error" *ngIf="formErrors.label">
@@ -34,8 +34,8 @@
             <span>
                 <button *ngIf="!edit" mat-raised-button type="button" color="primary"
                     [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
-                    (click)="nextStep($event)">
-                    Next
+                    (click)="submitData()">
+                    Submit
                 </button>
                 <button *ngIf="edit" mat-raised-button type="button" color="primary"
                     [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
@@ -49,64 +49,6 @@
         </div>
     </div>
 
-    <!-- content: Step 2 = define properties for resource class -->
-    <div *ngIf="!showResourceClassForm" class="properties-data">
-        <!-- default language selector -->
-        <mat-form-field class="properties-language">
-            <mat-label>Default language for the labels</mat-label>
-            <mat-select [formControl]="resourceClassForm.controls['language']"
-                [value]="resourceClassForm.value['language']">
-                <mat-option *ngFor="let option of languages" [value]="option.language">
-                    {{ option.value }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <!-- propertiy: one line, with "add" icon to add additional properties -->
-        <div class="properties-list">
-            <div class="property-line"
-                *ngFor="let prop of properties?.controls; let last = last; let i = index;">
-
-                <!-- <div *ngIf="prop.value.objectType !== 'http://api.knora.org/ontology/knora-api/v2#LinkValue'"> -->
-
-                <app-resource-class-property-form [propertyForm]="prop" [index]="i" [resClassIri]="iri">
-                </app-resource-class-property-form>
-
-                <button *ngIf="properties.length > 1" mat-icon-button type="button" color="warn"
-                    aria-label="Delete this property" class="suffix delete-line" (click)="removeProperty(i)">
-                    <mat-icon>delete_outlined</mat-icon>
-                </button>
-                <!-- </div> -->
-            </div>
-            <button [disabled]="!properties.valid" mat-button type="button" color="primary"
-                aria-label="Add new property" class="add-new-line" (click)="addProperty()">
-                <mat-icon>add</mat-icon> Add property
-            </button>
-        </div>
-
-        <!-- action buttons -->
-        <div class="form-panel form-action">
-            <span>
-                <button *ngIf="!edit" mat-button type="button" (click)="prevStep($event)">
-                    {{ 'appLabels.form.action.back' | translate }}
-                </button>
-                <button mat-button type="button" (click)="closeDialog.emit()">
-                    {{ 'appLabels.form.action.cancel' | translate }}
-                </button>
-            </span>
-            <span class="fill-remaining-space"></span>
-            <span>
-
-                <button mat-raised-button type="submit" [color]="error ? 'warning' : 'primary'"
-                    [disabled]="!properties?.valid" (click)="submitData()">
-                    <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-                    </dsp-progress-indicator>
-                    <mat-icon *ngIf="error && !loading">close</mat-icon>
-                    {{error ? 'Failed' : (edit ? 'Update' : 'Submit')}}
-                </button>
-            </span>
-        </div>
-    </div>
 </form>
 <!-- in case the last modification date is not defined,
     it's not possible to edit the resource class;

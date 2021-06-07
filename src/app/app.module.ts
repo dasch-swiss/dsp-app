@@ -71,7 +71,6 @@ import { PropertyFormComponent } from './project/ontology/property-form/property
 import { PropertyInfoComponent } from './project/ontology/property-info/property-info.component';
 import { ResourceClassFormComponent } from './project/ontology/resource-class-form/resource-class-form.component';
 import { ResourceClassInfoComponent } from './project/ontology/resource-class-info/resource-class-info.component';
-import { ResourceClassPropertyFormComponent } from './project/ontology/resource-class-property-form/resource-class-property-form.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResourceInstanceFormComponent } from './workspace/resource/resource-instance-form/resource-instance-form.component';
 import { ResultsComponent } from './workspace/results/results.component';
@@ -150,7 +149,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         PropertyInfoComponent,
         ResourceClassFormComponent,
         ResourceClassInfoComponent,
-        ResourceClassPropertyFormComponent,
         ResourceComponent,
         ResourceInstanceFormComponent,
         ResultsComponent,

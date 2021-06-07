@@ -17,6 +17,7 @@
             matTooltipPosition="above" [innerHTML]="'&rarr;&nbsp;' + propAttribute">
         </span>
     </div>
+
     <div mat-line class="info additional-info">
         <!-- in case of res class: display cardinality -->
         <span *ngIf="propCard">
@@ -25,7 +26,7 @@
             <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
             required
         </span>
-        <!-- in case of ontology property: display corresponding resource class -->
+        <!-- in case of ontology property: display corresponding resource classes -->
         <span *ngIf="!propCard">
             <span *ngIf="resClasses.length; else notUsed">
                 Property is used in:
@@ -42,9 +43,25 @@
 
         </span>
     </div>
-    <div class="action-bubble" *ngIf="!propCard && ontology?.lastModificationDate && showActionBubble"
-        [@simpleFadeAnimation]="'in'">
-        <div class="button-container">
+
+    <div class="action-bubble" *ngIf="lastModificationDate && showActionBubble" [@simpleFadeAnimation]="'in'">
+        <!-- property action in case of resource class' view has different buttons and actions -->
+        <div class="button-container" *ngIf="propCard">
+            <!-- TODO: edit cardinality is disabled for the moment. Will be activated as soon as we use DSP-API 13.9.1 -->
+            <button mat-button [disabled]="true" [matTooltip]="'Edit property and cardinality'">
+                <mat-icon>tune</mat-icon>
+            </button>
+            <span
+                [matTooltip]="(resClasses.length > 0 ? 'The property can\'t be removed because it\'s in use' : 'Remove property from resource class')">
+                <!-- TODO: add "disabled" param as soon as we use DSP-API 13.9.1 and DSP-JS 2.4.0; use same value in matTooltip above  -->
+                <button mat-button class="delete"
+                    (click)="removePropertyFromClass.emit({iri: propDef.id, label: propDef.label})">
+                    <mat-icon>backspace</mat-icon>
+                </button>
+            </span>
+        </div>
+        <!-- property action in case of properties' list view -->
+        <div class="button-container" *ngIf="!propCard">
             <button mat-button [disabled]="!propDef.isEditable" class="edit" title="edit" [matTooltip]="'Edit property'"
                 (click)="editResourceProperty.emit({propDef: propDef, propType: propType})">
                 <mat-icon>edit</mat-icon>
