@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.10.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.9.1...v4.10.0) (2021-06-07)
+
+
+### Enhancements
+
+* **ontology:** new cardinality workflow (DSP-1652) ([#455](https://www.github.com/dasch-swiss/dsp-app/issues/455)) ([f1d049c](https://www.github.com/dasch-swiss/dsp-app/commit/f1d049cce629ce212a80b00c857a1b9778977f4f))
+
 ### [4.9.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.9.0...v4.9.1) (2021-05-26)
 
 
