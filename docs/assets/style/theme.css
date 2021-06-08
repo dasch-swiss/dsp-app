@@ -3,6 +3,11 @@
   background-color: rgb(89, 73, 167) !important;
 }
 
+.md-header-nav__button.md-logo img {
+    width: 1.5rem;
+    height: auto;
+}
+
 em {
     font-size: smaller;
     text-align: center;

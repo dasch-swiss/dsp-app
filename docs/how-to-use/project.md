@@ -107,7 +107,7 @@ There are two possibilites to add properties to a resource class:
 
 If you have already created some properties in another resource classes or in the property section <!-- TODO: add link to property section as soon this section exists --> you can select one of them to add it to the resource class. This way you have to define — for example — a "Title" property only once.
 
-![Data model editor | Step 3: Add properties to your resource class by selecting from list of already existing properties](/assets/images/data-model-property-select-existing.png)*Data model editor | Step 3: Add properties to your resource class by selecting from list of already existing properties*
+![Data model editor | Step 3: Add properties to your resource class by selecting from list of already existing properties](../assets/images/data-model-property-select-existing.png)*Data model editor | Step 3: Add properties to your resource class by selecting from list of already existing properties*
 
 In both cases it will open the property form where you have to define a label and optional a comment. If you have selected an existing property, you can also change the label and comment. Be careful in this case, because it can have an effect on other resource classes that use the same property! 
 
