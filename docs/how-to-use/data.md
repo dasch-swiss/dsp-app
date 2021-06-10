@@ -33,7 +33,7 @@ DSP-APP offers the possibility to the user to search in 3 different ways: **full
 
 Full text search performs queries including one or more terms or phrases, and returns data that matches search conditions. By default, the search is performed in all projects stored in DSP. However, it is possible to filter by project using the menu "Filter by project" on the left side of the search bar.
 
-![Filter your full text search by specific project](../assets/images/search-fulltext-filterByProject.png)*https://app2.dasch.swiss - Search 1: Full text search*
+![Filter your full text search by specific project](../assets/images/search-fulltext-filterByProject.png)*<https://admin.dasch.swiss> - Search 1: Full text search*
 
 When clicking on the search bar, the search history panel is displayed. The **10** last searches are registered. It is also possible to clear the search history list (*Clear list* button at the bottom of the panel).
 
@@ -54,7 +54,7 @@ The advanced search allows you to filter by project, by source type, or by the m
 
 In addition, for a metadata field that is connected to another source type, it's possible to filter by this second source type.
 
-![Search 2: Advanced search offers many filter combinations and is a powerful search tool.](../assets/images/search-advanced.png)*https://app2.dasch.swiss/search/advanced - Search 2: Advanced search offers many filter combinations and is a powerful search tool.*
+![Search 2: Advanced search offers many filter combinations and is a powerful search tool.](../assets/images/search-advanced.png)*<https://admin.dasch.swiss/search/advanced> - Search 2: Advanced search offers many filter combinations and is a powerful search tool.*
 
 Currently, it is possible to search for only **one** source.
 
@@ -68,7 +68,7 @@ The expert search can be more powerful than the advanced search, but requires kn
 
 **For example**: you could search for a page in a manuscript that contains a certain element and also mentions a person, who lived in the same country as another person, who is the author of another author.
 
-![Expert search is a text area in which you can create Gravsearch queries.](../assets/images/search-expert.png)*https://app2.dasch.swiss/search/expert - Search 3: Expert search is a text area in which you can create Gravsearch queries. Here is the default example you can find in the app.*
+![Expert search is a text area in which you can create Gravsearch queries.](../assets/images/search-expert.png)*<https://admin.dasch.swiss/search/expert> - Search 3: Expert search is a text area in which you can create Gravsearch queries. Here is the default example you can find in the app.*
 
 To learn Gravsearch, go to the DSP-API documentation [&rarr; Gravsearch](https://docs-api.dasch.swiss/03-apis/api-v2/query-language/)
 

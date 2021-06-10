@@ -10,8 +10,8 @@ nav:
   - User Guide:
     - Introduction: how-to-use/index.md
     - Project Administration: how-to-use/project.md
-    - User Administration: how-to-use/user.md
     - System Administration: how-to-use/system.md
+    - User Profile: how-to-use/user.md
     # - Data Management: how-to-use/data.md
     # - Publication: how-to-use/publication.md
   - Contribution:

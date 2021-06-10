@@ -4,7 +4,7 @@
 
 Once you are [logged in](/user-guide/#login), the dashboard displays the list of your project(s). If you are a project administrator or a system administrator, you can edit the project information or archive your project from the project menu. Archived projects are stored in a list on your dashboard and they can be "reactivated" at any time.
 
-![Project list and project menu](../assets/images/project-list.png)*<https://admin.dasch.swiss/dashboard> - By clicking on the project name, you get access to the full project information.*
+![Project list and project menu](../assets/images/dashboard.png)*<https://admin.dasch.swiss/dashboard> - By clicking on the project name, you get access to the full project information.*
 
 System administrator can create your new research project. Essential information are required such as the project name, a short project description and institution information.
 
@@ -135,7 +135,7 @@ E.g., For the metadata "Photographer" in resource type "Photograph", you should 
 
 Projects often need to define lists or hierarchies of categories that can be assigned to many different sources. Lists can be created by project admin and system admin. 
 
-![Project lists](../assets/images/project-lists.png)*https://app2.dasch.swiss/project/0803/lists - Project lists: create a new list, add items by selecting the language and enter the corresponding value, repeat for each translation and press the + sign to create another item to the same level.*
+![Project lists](../assets/images/project-lists.png)*<https://admin.dasch.swiss/project/0803/lists> - Project lists: create a new list, add items by selecting the language and enter the corresponding value, repeat for each translation and press the + sign to create another item to the same level.*
 
 **The edition of items and child items will be implemented in a later version.**
 -->
