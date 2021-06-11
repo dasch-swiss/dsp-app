@@ -74,32 +74,6 @@ section {
   }
 }
 
-.cookie-banner {
-  position: fixed;
-  bottom: 0;
-  height: 128px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  z-index: 100;
-  // display: inline-flex;
-  padding: 24px 0;
-
-  .note {
-    text-align: center;
-
-    a {
-      color: inherit;
-      text-decoration: underline;
-    }
-  }
-
-  .action button {
-    margin: 0 auto 24px auto;
-    display: block;
-  }
-}
-
 .app-headline {
   line-height: 1.5;
   letter-spacing: 2px;
@@ -117,14 +91,6 @@ section {
 @media (max-width: map-get($grid-breakpoints, phone)) {
   .cookie-banner {
     height: 140px;
-  }
-
-  .help-page,
-  .landing-page {
-    .features,
-    .projects {
-      //   width: calc(100% - 16px);
-    }
   }
 
   .research {

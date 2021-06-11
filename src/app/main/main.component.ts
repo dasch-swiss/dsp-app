@@ -84,11 +84,6 @@ export class MainComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (sessionStorage.getItem('cookieBanner') === null) {
-            sessionStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
-        } else {
-            this.showCookieBanner = JSON.parse(sessionStorage.getItem('cookieBanner'));
-        }
         this.loadProjects();
     }
 
@@ -127,8 +122,4 @@ export class MainComponent implements OnInit {
         );
     }
 
-    closeCookieBanner() {
-        this.showCookieBanner = !this.showCookieBanner;
-        sessionStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
-    }
 }
