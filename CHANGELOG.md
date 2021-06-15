@@ -1,5 +1,19 @@
 # Changelog
 
+### [4.10.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.10.0...v4.10.1) (2021-06-15)
+
+
+### Documentation
+
+* fix dead links and replace screenshots in project ([#460](https://www.github.com/dasch-swiss/dsp-app/issues/460)) ([a13b8ba](https://www.github.com/dasch-swiss/dsp-app/commit/a13b8bafaf3771a406d5d3264c70bebb917baedc))
+* prepare documentation for docs.dasch.swiss (DSP-1721) ([#458](https://www.github.com/dasch-swiss/dsp-app/issues/458)) ([09259f1](https://www.github.com/dasch-swiss/dsp-app/commit/09259f1ad5badc1bd0eb910776417f07fdc62c68))
+
+
+### Maintenance
+
+* **analytics:** add fathom ([#462](https://www.github.com/dasch-swiss/dsp-app/issues/462)) ([f1e0244](https://www.github.com/dasch-swiss/dsp-app/commit/f1e0244289f58810dbdd269aa73fb00c15a012ea))
+* **cookie-policy:** reactivate the cookie policy banner (DSP-1727) ([#461](https://www.github.com/dasch-swiss/dsp-app/issues/461)) ([ac99fbc](https://www.github.com/dasch-swiss/dsp-app/commit/ac99fbc74c0322eaa50a6bb510124714c72aa070))
+
 ## [4.10.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.9.1...v4.10.0) (2021-06-07)
 
 
