@@ -109,8 +109,8 @@
                         </button>
                     </span>
                     <span
-                        [matTooltip]="(ontology.lastModificationDate ? 'Delete data model' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                        <button mat-button [disabled]="!ontology.lastModificationDate"
+                        [matTooltip]="(ontology.lastModificationDate ? (ontologyCanBeDeleted ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!')">
+                        <button mat-button [disabled]="!ontology.lastModificationDate || !ontologyCanBeDeleted"
                             (click)="$event.stopPropagation(); delete('Ontology', {iri: ontologyIri, label: ontology.label})">
                             <mat-icon>delete</mat-icon>
                             Delete

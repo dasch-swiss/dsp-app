@@ -1,15 +1,20 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterContentInit, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
 import {
+    ApiResponseError,
+    CanDoResponse,
     Constants,
     IHasProperty,
+    KnoraApiConnection,
     ListNodeInfo,
     ReadOntology,
     ReadProject,
     ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages
 } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import {
     DefaultProperties,
     DefaultProperty,
@@ -101,6 +106,8 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     propAttribute: string;
     propAttributeComment: string;
 
+    propCanBeDeleted: boolean;
+
     ontology: ReadOntology;
 
     project: ReadProject;
@@ -114,7 +121,9 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     showActionBubble = false;
 
     constructor(
-        private _cache: CacheService
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _cache: CacheService,
+        private _errorHandler: ErrorHandlerService
     ) { }
 
     ngOnChanges(): void {
@@ -207,6 +216,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
         // get all classes where the property is used
         if (!this.propCard) {
+
             this._cache.get('currentOntology').subscribe(
                 (response: ReadOntology) => {
                     this.ontology = response;
@@ -221,6 +231,16 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                         //     this.ontoClasses.push(this.ontology.classes[c]);
                         // }
                     }
+                }
+            );
+
+            // check if the property can be deleted
+            this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe(
+                (response: CanDoResponse) => {
+                    this.propCanBeDeleted = response.canDo;
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
                 }
             );
         }

@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseError,
+    CanDoResponse,
     ClassDefinition,
     IHasProperty,
     KnoraApiConnection,
@@ -57,6 +58,8 @@ export class ResourceClassInfoComponent implements OnInit {
 
     cardinalityUpdateEnabled: boolean;
 
+    classCanBeDeleted: boolean;
+
     // list of properties that can be displayed (not all of the props should be displayed)
     propsToDisplay: IHasProperty[] = [];
 
@@ -87,11 +90,21 @@ export class ResourceClassInfoComponent implements OnInit {
                 this.lastModificationDate = this.ontology.lastModificationDate;
                 this.translateSubClassOfIri(this.resourceClass.subClassOf);
                 this.preparePropsToDisplay(this.resourceClass.propertiesList);
+                // check if the class can be deleted
+                this._dspApiConnection.v2.onto.canDeleteResourceClass(this.resourceClass.id).subscribe(
+                    (res: CanDoResponse) => {
+                        this.classCanBeDeleted = res.canDo;
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                    }
+                );
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
             }
         );
+
     }
 
     /**
@@ -202,6 +215,19 @@ export class ResourceClassInfoComponent implements OnInit {
             );
         });
 
+    }
+
+    canBeDeleted() {
+
+        // check if the class can be deleted
+        this._dspApiConnection.v2.onto.canDeleteResourceClass(this.resourceClass.id).subscribe(
+            (response: CanDoResponse) => {
+                this.classCanBeDeleted = response.canDo;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 
     addNewProperty(propType: DefaultProperty) {

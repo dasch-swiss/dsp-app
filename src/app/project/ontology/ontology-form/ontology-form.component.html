@@ -1,6 +1,4 @@
-<dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
-
-<form [formGroup]="ontologyForm" (ngSubmit)="submitData()" class="form" *ngIf="!loading">
+<form [formGroup]="ontologyForm" (ngSubmit)="submitData()" class="form">
     <!-- auto complete list to select resource classes -->
     <div class="form-content">
         <mat-form-field class="large-field ontology-name">

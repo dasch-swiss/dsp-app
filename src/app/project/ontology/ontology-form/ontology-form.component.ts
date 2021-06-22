@@ -223,6 +223,7 @@ export class OntologyFormComponent implements OnInit {
             this._dspApiConnection.v2.onto.updateOntology(ontologyData).subscribe(
                 (response: OntologyMetadata) => {
                     this.updateParent.emit(response.id);
+                    this.loading = false;
                     this.closeDialog.emit(response.id);
                 },
                 (error: ApiResponseError) => {
@@ -246,6 +247,7 @@ export class OntologyFormComponent implements OnInit {
             this._dspApiConnection.v2.onto.createOntology(ontologyData).subscribe(
                 (response: OntologyMetadata) => {
                     this.updateParent.emit(response.id);
+                    this.loading = false;
                     this.closeDialog.emit(response.id);
                 },
                 (error: ApiResponseError) => {

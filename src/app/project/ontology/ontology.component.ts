@@ -6,6 +6,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
     ApiResponseData,
     ApiResponseError,
+    CanDoResponse,
     ClassDefinition,
     Constants,
     DeleteOntologyResponse,
@@ -80,6 +81,8 @@ export class OntologyComponent implements OnInit {
     // the lastModificationDate is the most important key
     // when updating something inside the ontology
     lastModificationDate: string;
+
+    ontologyCanBeDeleted: boolean;
 
     // all resource classes in the current ontology
     ontoClasses: ClassDefinition[];
@@ -343,6 +346,16 @@ export class OntologyComponent implements OnInit {
 
         // grab the onto properties information to display
         this.initOntoProperties(ontology.getAllPropertyDefinitions());
+
+        // check if the ontology can be deleted
+        this._dspApiConnection.v2.onto.canDeleteOntology(this.ontology.id).subscribe(
+            (response: CanDoResponse) => {
+                this.ontologyCanBeDeleted = response.canDo;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
 
         this.loadOntology = false;
     }

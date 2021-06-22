@@ -2,7 +2,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
@@ -12,8 +12,17 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Constants, IHasProperty, ListNodeInfo, MockOntology, ReadOntology, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
+import {
+    CanDoResponse,
+    Constants,
+    IHasProperty,
+    ListNodeInfo,
+    MockOntology,
+    OntologiesEndpointV2,
+    ReadOntology,
+    ResourcePropertyDefinitionWithAllLanguages
+} from '@dasch-swiss/dsp-js';
+import { DspActionModule, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
@@ -170,6 +179,12 @@ describe('PropertyInfoComponent', () => {
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
+        const ontologyEndpointSpyObj = {
+            v2: {
+                onto: jasmine.createSpyObj('onto', ['canDeleteResourceProperty'])
+            }
+        };
+
         TestBed.configureTestingModule({
             declarations: [
                 DialogComponent,
@@ -192,6 +207,10 @@ describe('PropertyInfoComponent', () => {
             ],
             providers: [
                 {
+                    provide: DspApiConnectionToken,
+                    useValue: ontologyEndpointSpyObj
+                },
+                {
                     provide: CacheService,
                     useValue: cacheServiceSpy
                 },
@@ -207,6 +226,19 @@ describe('PropertyInfoComponent', () => {
         })
             .compileComponents();
     }));
+
+    beforeEach(() => {
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canDeleteResourceProperty.and.callFake(
+            () => {
+                const deleteResProp: CanDoResponse = {
+                    'canDo': false
+                };
+
+                return of(deleteResProp);
+            }
+        );
+    });
 
     beforeEach(() => {
         simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);

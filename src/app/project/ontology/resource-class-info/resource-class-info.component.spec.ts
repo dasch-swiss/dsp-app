@@ -5,10 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
-import { ClassDefinition, Constants, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspApiConnectionToken, SortingService } from '@dasch-swiss/dsp-ui';
+import { CanDoResponse, ClassDefinition, Constants, MockOntology, OntologiesEndpointV2, ReadOntology } from '@dasch-swiss/dsp-js';
+import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, SortingService } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { TestConfig } from 'test.config';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
 
 /**
@@ -69,7 +70,7 @@ describe('ResourceClassInfoComponent', () => {
     beforeEach(waitForAsync(() => {
         const ontologyEndpointSpyObj = {
             v2: {
-                onto: jasmine.createSpyObj('onto', ['getOntology', 'replaceGuiOrderOfCardinalities'])
+                onto: jasmine.createSpyObj('onto', ['replaceGuiOrderOfCardinalities', 'canDeleteResourceClass'])
             }
         };
 
@@ -112,6 +113,18 @@ describe('ResourceClassInfoComponent', () => {
             }
         );
 
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canDeleteResourceClass.and.callFake(
+            () => {
+                const deleteResClass: CanDoResponse = {
+                    'canDo': false
+                };
+
+                return of(deleteResClass);
+            }
+        );
+
         hostFixture = TestBed.createComponent(HostComponent);
         hostComponent = hostFixture.componentInstance;
         hostFixture.detectChanges();
@@ -133,5 +146,19 @@ describe('ResourceClassInfoComponent', () => {
         const subtitle: DebugElement = hostCompDe.query(By.css('mat-card-subtitle'));
 
         expect(subtitle.nativeElement.innerText).toEqual('Thing');
+    });
+
+    it('expect delete res class button should be disabled', () => {
+        expect(hostComponent.resourceClassInfoComponent).toBeTruthy();
+        expect(hostComponent.resourceClassInfoComponent.resourceClass).toBeDefined();
+
+        const hostCompDe = hostFixture.debugElement;
+
+        const moreBtn: DebugElement = hostCompDe.query(By.css('.res-class-menu'));
+        moreBtn.nativeElement.click();
+
+        const deleteBtn: DebugElement = hostCompDe.query(By.css('.res-class-delete'));
+        expect(deleteBtn.nativeElement.disabled).toBeTruthy();
+
     });
 });
