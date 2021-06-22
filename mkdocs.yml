@@ -11,13 +11,13 @@ nav:
     - Introduction: how-to-use/index.md
     - Project Administration: how-to-use/project.md
     - System Administration: how-to-use/system.md
+    - Data Management: how-to-use/data.md
     - User Profile: how-to-use/user.md
-    # - Data Management: how-to-use/data.md
     # - Publication: how-to-use/publication.md
   - Contribution:
-    - How to contribute: how-to-contribute/index.md
-    - Docs Documentation: how-to-contribute/docs-documentation.md
-    - Release Notes: how-to-contribute/release-notes.md
+    - How to contribute: contribution/index.md
+    - Docs Documentation: contribution/docs-documentation.md
+    - Release Notes: contribution/release-notes.md
 
 plugins:
     - include-markdown

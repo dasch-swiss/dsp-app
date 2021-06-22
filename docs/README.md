@@ -12,13 +12,13 @@ If you would like to add your own contributions to the docs, please read the fol
 The documentation consists of three main topics with subordinate themes:
 
 1. **index** contains all information about the DSP-APP
-1. **how-to-use** contains the DSP-APP user guide
+1. **user-guide** contains the DSP-APP user guide
     - Index = Introduction: All about login, registration and DSP APP information in general.
     - Project = All about project administration; part of DSP-ADMIN
     - User = All about user administration; part of DSP-ADMIN
     - System = All about system administration; part of DSP-ADMIN
     - Data = All about data management; part of VRE. In the current DSP-APP ADMIN version it's commented out
-1. **how-to-contribute** contains all information for people who wants to contribute to DSP-APP
+1. **contribution** contains all information for people who wants to contribute to DSP-APP
     - Index = How to contribute incl. link to the general DSP contribution guidelines (<https://docs.dasch.swiss/developers/dsp/contribution/>)
     - Release Notes = Contains the CHANGELOG file of DSP-APP
 

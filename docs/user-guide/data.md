@@ -87,6 +87,7 @@ It is not possible yet to sort or order by criteria when searching with the full
 ---
 
 ### Grid list: Lighttable
+&#9888; *NOT YET IMPLEMENTED*
 
 The results of the search are displayed in a grid list with a big preview. You can select one result at a time to get more information.
 
