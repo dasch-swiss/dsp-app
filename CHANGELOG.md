@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.11.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.10.1...v4.11.0) (2021-06-22)
+
+
+### Enhancements
+
+* **ontology:** check if an ontology, a class or a property can be deleted (DSP-1750) ([#457](https://www.github.com/dasch-swiss/dsp-app/issues/457)) ([fb0c275](https://www.github.com/dasch-swiss/dsp-app/commit/fb0c275c224a58823ab00a76460c83c024ef735b))
+
+
+### Maintenance
+
+* empty landing page instead login (DSP-1756) ([#466](https://www.github.com/dasch-swiss/dsp-app/issues/466)) ([32cd462](https://www.github.com/dasch-swiss/dsp-app/commit/32cd4622624799ae4884f5cede342629b2ab5719))
+* **gh-ci:** update docs deployment (DSP-1741) ([#463](https://www.github.com/dasch-swiss/dsp-app/issues/463)) ([6415152](https://www.github.com/dasch-swiss/dsp-app/commit/6415152debca4ed218c917ab0243d100e31d0708))
+
+
+### Documentation
+
+* refactor documentation and set correct links ([#467](https://www.github.com/dasch-swiss/dsp-app/issues/467)) ([cbeb274](https://www.github.com/dasch-swiss/dsp-app/commit/cbeb274f5cf871df2362003f30a5a3bf474ec81b))
+
 ### [4.10.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.10.0...v4.10.1) (2021-06-15)
 
 
