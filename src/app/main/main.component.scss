@@ -2,6 +2,11 @@
 @import "../../assets/style/mixins";
 @import "../../assets/style/responsive";
 
+:host {
+  // hide the landing page for the moment
+  display: none;
+}
+
 section {
   background-color: #fff;
   min-height: 38vh;
