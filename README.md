@@ -20,11 +20,11 @@ DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), relea
 
 ### User guide
 
-➡ [for latest released version](https://docs.dasch.swiss/dsp-app/user-guide/)
+➡ [for latest released version](https://docs.dasch.swiss/DSP-APP/user-guide/)
 
 ### Developer docs
 
-➡ [for developers](https://docs.dasch.swiss/dsp-app/contribution)
+➡ [for developers](https://docs.dasch.swiss/DSP-APP/contribution)
 
 ## Contribution
 
