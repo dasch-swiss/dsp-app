@@ -8,12 +8,12 @@ copyright: "&copy; 2017 - 2021 <a href='https://dasch.swiss' target='_blank'>Dat
 nav:
   - Introduction: index.md
   - User Guide:
-    - Introduction: how-to-use/index.md
-    - Project Administration: how-to-use/project.md
-    - System Administration: how-to-use/system.md
-    - Data Management: how-to-use/data.md
-    - User Profile: how-to-use/user.md
-    # - Publication: how-to-use/publication.md
+    - Introduction: user-guide/index.md
+    - Project Administration: user-guide/project.md
+    - System Administration: user-guide/system.md
+    - Data Management: user-guide/data.md
+    - User Profile: user-guide/user.md
+    # - Publication: user-guide/publication.md
   - Contribution:
     - How to contribute: contribution/index.md
     - Docs Documentation: contribution/docs-documentation.md
