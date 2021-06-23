@@ -1,5 +1,18 @@
 # Changelog
 
+### [4.11.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.11.0...v4.11.1) (2021-06-23)
+
+
+### Documentation
+
+* **search:** add advanced search user guide (DSP-1662) ([#470](https://www.github.com/dasch-swiss/dsp-app/issues/470)) ([30edc96](https://www.github.com/dasch-swiss/dsp-app/commit/30edc96a3568ee45424b557ad2a6eea6381e486a))
+* **user-guide:** fix navigation links ([#468](https://www.github.com/dasch-swiss/dsp-app/issues/468)) ([49c68f8](https://www.github.com/dasch-swiss/dsp-app/commit/49c68f803b646761a38deb00cd29681e40cf7d62))
+
+
+### Maintenance
+
+* fix dead links to the documentation ([#471](https://www.github.com/dasch-swiss/dsp-app/issues/471)) ([d7ae022](https://www.github.com/dasch-swiss/dsp-app/commit/d7ae0223b75fc21ab9b976ea831adbd86ec32a5c))
+
 ## [4.11.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.10.1...v4.11.0) (2021-06-22)
 
 
