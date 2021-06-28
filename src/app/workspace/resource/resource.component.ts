@@ -81,10 +81,10 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         private _titleService: Title
     ) {
 
-        if (!this.resourceIri) {
-            this.resourceIri = this._route.snapshot.params.id;
+        this._route.params.subscribe(params => {
+            this.resourceIri = params['id'];
             this.getResource(this.resourceIri);
-        }
+        });
 
         this._router.events.subscribe((event) => {
 

@@ -91,6 +91,7 @@ import { UserMenuComponent } from './user/user-menu/user-menu.component';
 import { UsersComponent } from './system/users/users.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
 import { VisualizerComponent } from './project/ontology/ontology-visualizer/visualizer/visualizer.component';
+import { UploadComponent } from './workspace/resource/representation/upload/upload.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -169,6 +170,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UsersComponent,
         UsersListComponent,
         VisualizerComponent,
+        UploadComponent,
     ],
     imports: [
         AppRoutingModule,

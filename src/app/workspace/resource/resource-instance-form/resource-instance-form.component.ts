@@ -5,6 +5,7 @@ import {
     ApiResponseData,
     ApiResponseError,
     Constants,
+    CreateFileValue,
     CreateResource,
     CreateValue,
     KnoraApiConnection,
@@ -71,6 +72,11 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     resourceLabel: string;
     properties: ResourcePropertyDefinition[];
     ontologyInfo: ResourceClassAndPropertyDefinitions;
+
+    // selected resource class has a file value property: display the corresponding upload form
+    hasFileValue: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text';
+
+    fileValue: CreateFileValue;
 
     valueOperationEventSubscription: Subscription;
 
@@ -158,16 +164,18 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
             });
 
+            if (this.fileValue) {
+                this.propertiesObj[Constants.HasStillImageFileValue] = [this.fileValue];
+            }
+
             createResource.properties = this.propertiesObj;
 
             this._dspApiConnection.v2.res.createResource(createResource).subscribe(
                 (res: ReadResource) => {
                     this.resource = res;
 
-                    // navigate to the resource viewer page
-                    this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(() =>
-                        this._router.navigate(['/resource/' + encodeURIComponent(this.resource.id)])
-                    );
+                    const goto = '/resource/' + encodeURIComponent(this.resource.id);
+                    this._router.navigateByUrl(goto, { skipLocationChange: false });
 
                     this.closeDialog.emit();
                 },
@@ -192,7 +200,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 (response: ApiResponseData<UserResponse>) => {
 
                     for (const project of response.body.user.projects) {
-                        this.usersProjects.push(project);
+                        if (project.status) {
+                            this.usersProjects.push(project);
+                        }
                     }
 
                     // notifies the user that he/she is not part of any project
@@ -207,7 +217,11 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         } else if (this.session.user.sysAdmin === true) {
             this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
                 (response: ApiResponseData<ProjectsResponse>) => {
-                    this.usersProjects = response.body.projects;
+                    for (const project of response.body.projects) {
+                        if (project.status && project.id !== Constants.SystemProjectIRI && project.id !== Constants.DefaultSharedOntologyIRI) {
+                            this.usersProjects.push(project);
+                        }
+                    }
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
@@ -354,8 +368,13 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
                     this.selectedResourceClass = onto.classes[resourceClassIri];
 
-                    // filter out all props that cannot be edited or are link props
-                    this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(prop => prop.isEditable && !prop.isLinkProperty);
+                    // filter out all props that cannot be edited or are link props but also the hasFileValue props
+                    this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
+                        prop => prop.isEditable && !prop.isLinkProperty && prop.id !== Constants.HasStillImageFileValue);
+
+                    if (onto.properties[Constants.HasStillImageFileValue]) {
+                        this.hasFileValue = 'stillImage';
+                    }
 
                     // notifies the user that the selected resource does not have any properties defined yet.
                     if (!this.selectPropertiesComponent && this.properties.length === 0) {
@@ -370,6 +389,10 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
             this.errorMessage = 'No resource class defined for the selected ontology.';
         }
 
+    }
+
+    setFileValue(file: CreateFileValue) {
+        this.fileValue = file;
     }
 
 }

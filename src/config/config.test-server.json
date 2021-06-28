@@ -4,5 +4,7 @@
     "apiPort": 443,
     "apiPath": "",
     "jsonWebToken": "",
-    "logErrors": true
+    "logErrors": true,
+    "iiifUrl": "https://iiif.test.dasch.swiss",
+    "geonameToken": "knora"
 }
