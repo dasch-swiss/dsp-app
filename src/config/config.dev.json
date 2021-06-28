@@ -4,5 +4,6 @@
     "apiPort": 3333,
     "apiPath": "",
     "jsonWebToken": "",
-    "logErrors": true
+    "logErrors": true,
+    "geonameToken": "knora"
 }
