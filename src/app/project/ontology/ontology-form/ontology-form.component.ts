@@ -86,6 +86,16 @@ export class OntologyFormComponent implements OnInit {
         }
     };
 
+    ontologyNameInfo = `
+    The unique name
+        - must be at least 3 characters long
+        - shouldn't begin with a number
+        - shouldn't begin with the letter v and a number
+        - spaces or special characters are not allowed
+        - may not contain these reserved words: knora, ontology, salsah, shared, simple or standoff
+        - can't be changed afterwards
+    `;
+
     error = false;
 
     constructor(

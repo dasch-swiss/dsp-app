@@ -66,7 +66,13 @@ Go to your project, select the tab `Data model` and click on button `New data mo
 > - shouldn't begin with a number
 > - shouldn't begin with the letter v and a number
 > - spaces or special characters are not allowed
-> - the term "ontology" is not allowed
+> - may not contain these reserved words:
+>   - knora
+>   - ontology
+>   - salsah
+>   - shared
+>   - simple
+>   - standoff
 > - the unique name can't be changed afterwards
 
 The label is a combination of project's shortname and the unique name. You can replace with any other string.
