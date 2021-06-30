@@ -281,21 +281,21 @@
     <div *ngSwitchCase="'updateCardinality'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
     <div *ngSwitchCase="'createProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
     <div *ngSwitchCase="'editProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 

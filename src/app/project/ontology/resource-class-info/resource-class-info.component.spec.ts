@@ -6,10 +6,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { CanDoResponse, ClassDefinition, Constants, MockOntology, OntologiesEndpointV2, ReadOntology } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, SortingService } from '@dasch-swiss/dsp-ui';
+import { DspActionModule, DspApiConnectionToken, SortingService } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { TestConfig } from 'test.config';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
 
 /**
@@ -70,7 +69,7 @@ describe('ResourceClassInfoComponent', () => {
     beforeEach(waitForAsync(() => {
         const ontologyEndpointSpyObj = {
             v2: {
-                onto: jasmine.createSpyObj('onto', ['replaceGuiOrderOfCardinalities', 'canDeleteResourceClass'])
+                onto: jasmine.createSpyObj('onto', ['replaceGuiOrderOfCardinalities', 'canDeleteResourceClass', 'canReplaceCardinalityOfResourceClass'])
             }
         };
 
@@ -122,6 +121,16 @@ describe('ResourceClassInfoComponent', () => {
                 };
 
                 return of(deleteResClass);
+            }
+        );
+
+        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canReplaceCardinalityOfResourceClass.and.callFake(
+            () => {
+                const replaceCardinalityOfResClass: CanDoResponse = {
+                    'canDo': false
+                };
+
+                return of(replaceCardinalityOfResClass);
             }
         );
 

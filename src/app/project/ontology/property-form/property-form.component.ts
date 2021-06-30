@@ -42,6 +42,12 @@ export class PropertyFormComponent implements OnInit {
     @Input() resClassIri?: string;
 
     /**
+     * info if the cardinality can be fully set or not
+     * (depending on canReplaceCardinalityOfResourceClass request)
+     */
+    @Input() canSetFullCardinality?: boolean = true;
+
+    /**
      * position of property in case of cardinality update
      */
     @Input() guiOrder?: number = 0;
@@ -148,8 +154,11 @@ export class PropertyFormComponent implements OnInit {
             'guiAttr': new FormControl({
                 value: this.guiAttributes
             }),
-            'multiple': new FormControl(),
-            'required': new FormControl()
+            'multiple': new FormControl(),  // --> TODO: here we will check, if it can be updated; case updateCardinality: disabled if !canSetFullCardinality && multiple.value !== true
+            'required': new FormControl({
+                value: '',
+                disabled: !this.canSetFullCardinality
+            })
         });
 
         this.updateAttributeField(this.propertyInfo.propType);

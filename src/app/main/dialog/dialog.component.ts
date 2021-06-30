@@ -12,6 +12,7 @@ export interface DialogData {
     name?: string;
     existing?: string[];
     propInfo?: PropertyInfoObject;
+    canBeUpdated?: boolean;
     position?: number;
     parentIri?: string;
     projectCode?: string;

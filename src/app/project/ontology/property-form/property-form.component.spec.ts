@@ -25,7 +25,7 @@ import { PropertyFormComponent } from './property-form.component';
  * Property is of type simple text
  */
 @Component({
-    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo"></app-property-form>'
+    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo" [canSetFullCardinality]="false"></app-property-form>'
 })
 class SimpleTextHostComponent {
 
@@ -256,7 +256,6 @@ describe('PropertyFormComponent', () => {
 
     });
 
-
     it('expect link to other resource called "Thing"', () => {
         expect(linkHostComponent.propertyFormComponent).toBeTruthy();
         expect(linkHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
@@ -265,6 +264,26 @@ describe('PropertyFormComponent', () => {
         const form = linkHostComponent.propertyFormComponent.propertyForm;
 
         expect(form.controls['guiAttr'].value).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing');
+
+    });
+
+    it('expect "required" toggle switch (cardinality) to be disabled', () => {
+        expect(simpleTextHostComponent.propertyFormComponent).toBeTruthy();
+        expect(simpleTextHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
+        expect(simpleTextHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
+
+        const form = simpleTextHostComponent.propertyFormComponent.propertyForm;
+        expect(form.controls['required'].disabled).toBeTruthy();
+
+    });
+
+    it('expect "required" toggle switch (cardinality) to be enabled', () => {
+        expect(linkHostComponent.propertyFormComponent).toBeTruthy();
+        expect(linkHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
+        expect(linkHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
+
+        const form = linkHostComponent.propertyFormComponent.propertyForm;
+        expect(form.controls['required'].disabled).toBeFalsy();
 
     });
 });

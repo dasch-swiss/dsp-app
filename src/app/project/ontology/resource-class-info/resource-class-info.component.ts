@@ -60,6 +60,8 @@ export class ResourceClassInfoComponent implements OnInit {
 
     classCanBeDeleted: boolean;
 
+    classCanReplaceCardinality: boolean;
+
     // list of properties that can be displayed (not all of the props should be displayed)
     propsToDisplay: IHasProperty[] = [];
 
@@ -88,17 +90,14 @@ export class ResourceClassInfoComponent implements OnInit {
             (response: ReadOntology) => {
                 this.ontology = response;
                 this.lastModificationDate = this.ontology.lastModificationDate;
+                // translate iris from "sub class of" array
                 this.translateSubClassOfIri(this.resourceClass.subClassOf);
+                // prepare list of properties to display
                 this.preparePropsToDisplay(this.resourceClass.propertiesList);
                 // check if the class can be deleted
-                this._dspApiConnection.v2.onto.canDeleteResourceClass(this.resourceClass.id).subscribe(
-                    (res: CanDoResponse) => {
-                        this.classCanBeDeleted = res.canDo;
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
+                this.canBeDeleted();
+                // check if the cardinalities can be changed
+                this.canReplaceCardinality();
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -108,7 +107,7 @@ export class ResourceClassInfoComponent implements OnInit {
     }
 
     /**
-     * translates iri from "sub class of" array
+     * translates iris from "sub class of" array
      * - display label from default resource classes (as part of DSP System Project)
      * - in case the class is a subclass of another class in the same ontology: display this class label
      * - in none of those cases display the name from the class IRI
@@ -230,6 +229,17 @@ export class ResourceClassInfoComponent implements OnInit {
         );
     }
 
+    canReplaceCardinality() {
+        this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resourceClass.id).subscribe(
+            (response: CanDoResponse) => {
+                this.classCanReplaceCardinality = response.canDo;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
     addNewProperty(propType: DefaultProperty) {
         const cardinality: CardinalityInfo = {
             resClass: this.resourceClass,
@@ -329,7 +339,15 @@ export class ResourceClassInfoComponent implements OnInit {
                 position: {
                     top: '112px'
                 },
-                data: { propInfo: card.property, title: title, subtitle: 'Customize property and cardinality', mode: mode, parentIri: card.resClass.id, position: this.propsToDisplay.length }
+                data: {
+                    propInfo: card.property,
+                    title: title,
+                    subtitle: 'Customize property and cardinality',
+                    mode: mode,
+                    parentIri: card.resClass.id,
+                    position: this.propsToDisplay.length,
+                    canBeUpdated: this.classCanReplaceCardinality
+                }
             };
 
             const dialogRef = this._dialog.open(
@@ -341,44 +359,9 @@ export class ResourceClassInfoComponent implements OnInit {
                 // update the view: list of properties in resource class
                 this.updateCardinality.emit(this.ontology.id);
             });
-        } else {
-
         }
 
     }
-
-    /**
-     * opens property form
-     * @param mode
-     * @param propertyInfo (could be subClassOf (create mode) or resource class itself (edit mode))
-     */
-    openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
-
-        const title = (propertyInfo.propDef ? propertyInfo.propDef.label : propertyInfo.propType.group + ': ' + propertyInfo.propType.label);
-
-        const dialogConfig: MatDialogConfig = {
-            width: '640px',
-            maxHeight: '80vh',
-            position: {
-                top: '112px'
-            },
-            data: { propInfo: propertyInfo, title: title, subtitle: 'Customize property as part of ' + this.resourceClass.label, mode: mode, parentIri: this.resourceClass.id }
-        };
-
-        const dialogRef = this._dialog.open(
-            DialogComponent,
-            dialogConfig
-        );
-
-        dialogRef.afterClosed().subscribe(result => {
-            // update the view
-            // this.initOntologiesList();
-            this.ngOnInit();
-        });
-    }
-    // open dialog box with property-form
-    // create new property or add existing property
-    // form includes cardinality and gui-attribute
 
 
     /**
