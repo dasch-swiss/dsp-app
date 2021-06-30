@@ -61,6 +61,7 @@ class SimpleTextHostComponent {
         'propType': {
             'icon': 'short_text',
             'label': 'Short',
+            'description': 'Small text such as title or name',
             'subPropOf': 'http://api.knora.org/ontology/knora-api/v2#hasValue',
             'objectType': 'http://api.knora.org/ontology/knora-api/v2#TextValue',
             'guiEle': 'http://api.knora.org/ontology/salsah-gui/v2#SimpleText',
@@ -111,6 +112,7 @@ class LinkHostComponent {
         'propType': {
             'icon': 'link',
             'label': 'Resource class',
+            'description': 'Refers to a resource class',
             'subPropOf': 'http://api.knora.org/ontology/knora-api/v2#hasLinkTo',
             'objectType': 'http://api.knora.org/ontology/knora-api/v2#LinkValue',
             'guiEle': 'http://api.knora.org/ontology/salsah-gui/v2#Searchbox',

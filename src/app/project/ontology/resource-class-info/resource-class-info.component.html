@@ -87,15 +87,18 @@
                 <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                 <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
                     <!-- <button *ngFor="let subItem of my_menu[mainItem]" mat-menu-item>{{ subItem }}</button> -->
-                    <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele" (click)="addNewProperty(ele)">
-                        <!-- (click)="openPropertyForm('createProperty', {propType: ele})"  -->
+                    <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele"
+                        [matTooltip]="ele.description" matTooltipPosition="after"
+                        (click)="addNewProperty(ele)">
                         <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
                     </button>
                 </mat-menu>
             </ng-container>
         </mat-menu>
         <mat-menu #addExistingProp="matMenu" class="default-nested-sub-menu">
-            <button mat-menu-item *ngFor="let prop of existingProperties" (click)="addExistingProperty(prop.propDef)">
+            <button mat-menu-item *ngFor="let prop of existingProperties"
+                [matTooltip]="prop.propDef.comment" matTooltipPosition="after"
+                (click)="addExistingProperty(prop.propDef)">
                 <mat-icon>{{prop.propType?.icon}}</mat-icon> {{prop.propDef.label}}
             </button>
         </mat-menu>

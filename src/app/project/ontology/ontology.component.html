@@ -165,6 +165,7 @@
                                 <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
                                     <!-- <button *ngFor="let subItem of my_menu[mainItem]" mat-menu-item>{{ subItem }}</button> -->
                                     <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele"
+                                        [matTooltip]="ele.description" matTooltipPosition="before"
                                         (click)="openPropertyForm('createProperty', {propType: ele})">
                                         <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
                                     </button>

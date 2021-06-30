@@ -25,6 +25,7 @@ export interface PropertyCategory {
 export interface DefaultProperty {
     icon: string;
     label: string;
+    description: string;
     subPropOf: string;
     objectType?: string;
     guiEle: string;
@@ -39,6 +40,7 @@ export class DefaultProperties {
                 {
                     icon: 'short_text',
                     label: 'Short',
+                    description: 'Short text such as title or name',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',   // 'Input',
@@ -47,6 +49,7 @@ export class DefaultProperties {
                 {
                     icon: 'subject',
                     label: 'Paragraph',
+                    description: 'Long text such as description; could have line breaks',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Textarea',
@@ -54,7 +57,8 @@ export class DefaultProperties {
                 },
                 {
                     icon: 'line_style',
-                    label: 'Editor',
+                    label: 'Rich Text',
+                    description: 'A rich text editor with formatting options',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Richtext',
@@ -68,39 +72,43 @@ export class DefaultProperties {
                 {
                     icon: 'arrow_drop_down_circle',
                     label: 'Dropdown',
+                    description: 'Dropdown menu with values from predefined list',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // 'Pulldown'
                     group: 'List'
-                },
-                {
-                    icon: 'check_box',
-                    label: 'Checkboxes',
-                    subPropOf: Constants.HasValue,
-                    objectType: Constants.ListValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',
-                    group: 'List'
-                },
-                {
-                    icon: 'radio_button_checked',
-                    label: 'Multiple choice',
-                    subPropOf: Constants.HasValue,
-                    objectType: Constants.ListValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
-                    group: 'List'
                 }
+                // {
+                //     icon: 'check_box',
+                //     label: 'Checkboxes',
+                //     description: 'Select multiple values from predefined short list',
+                //     subPropOf: Constants.HasValue,
+                //     objectType: Constants.ListValue,
+                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',
+                //     group: 'List'
+                // },
+                // {
+                //     icon: 'radio_button_checked',
+                //     label: 'Multiple choice',
+                //     description: 'Select only one value from predefined short list',
+                //     subPropOf: Constants.HasValue,
+                //     objectType: Constants.ListValue,
+                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
+                //     group: 'List'
+                // }
             ]
         },
         {
-            group: 'Selection (boolean)',
+            group: 'Boolean',
             elements: [
                 {
                     icon: 'toggle_off',
                     label: 'Yes / No',
+                    description: 'Yes or no, 1 or 0, true or false',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.BooleanValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',    // should be 'Toggle' but it's not supported in DSP-Tangoh,
-                    group: 'Selection (boolean)'
+                    group: 'Boolean'
                 }
             ]
         },
@@ -110,6 +118,7 @@ export class DefaultProperties {
                 {
                     icon: 'calendar_today',
                     label: 'Date',
+                    description: 'A date picker with day, month and year',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DateValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
@@ -118,6 +127,7 @@ export class DefaultProperties {
                 {
                     icon: 'date_range',
                     label: 'Period',
+                    description: 'A period of time between two dates',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DateValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
@@ -126,6 +136,7 @@ export class DefaultProperties {
                 {
                     icon: 'access_time',
                     label: 'Timestamp',
+                    description: 'A single timestamp on a timeline',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'TimeStamp',
@@ -133,7 +144,8 @@ export class DefaultProperties {
                 },
                 {
                     icon: 'timelapse',
-                    label: 'Duration',
+                    label: 'Time sequence',
+                    description: 'A time sequence with start and end point on a timeline',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Interval',
@@ -147,6 +159,7 @@ export class DefaultProperties {
                 {
                     icon: 'money',
                     label: 'Integer',
+                    description: 'Integer value',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.IntValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
@@ -155,6 +168,7 @@ export class DefaultProperties {
                 {
                     icon: 'functions',
                     label: 'Decimal',
+                    description: 'Decimal value',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DecimalValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
@@ -163,15 +177,16 @@ export class DefaultProperties {
             ]
         },
         {
-            group: 'Link',
+            group: 'Link / Relation',
             elements: [
                 {
                     icon: 'link',
                     label: 'Resource class',
+                    description: 'Refers to a resource class',
                     subPropOf: Constants.HasLinkTo,
                     objectType: Constants.LinkValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
-                    group: 'Link'
+                    group: 'Link / Relation'
                 },
                 // {
                 //     icon: 'picture_in_picture',
@@ -192,6 +207,7 @@ export class DefaultProperties {
                 {
                     icon: 'language',
                     label: 'External URL',
+                    description: 'Link to an external website',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.UriValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',
@@ -205,6 +221,7 @@ export class DefaultProperties {
                 {
                     icon: 'place',
                     label: 'Place',
+                    description: 'Geographical location',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.GeonameValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Geonames',
@@ -218,17 +235,10 @@ export class DefaultProperties {
                 {
                     icon: 'palette',
                     label: 'Color',
+                    description: 'A simple color value',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ColorValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker',
-                    group: 'Shape'
-                },
-                {
-                    icon: 'format_shapes',
-                    label: 'Geometry',
-                    subPropOf: Constants.HasValue,
-                    objectType: Constants.GeomValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Geometry',
                     group: 'Shape'
                 }
             ]
