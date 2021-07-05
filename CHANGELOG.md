@@ -1,5 +1,31 @@
 # Changelog
 
+## [5.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.11.1...v5.0.0) (2021-07-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **upload:** add upload form for still images (DSP-1761) (#472)
+* **config:** add geoname config (DSP-1672) (#473)
+
+### Documentation
+
+* **ontology:** update docs and show hint in ontology-form (DSP-1139) ([#476](https://www.github.com/dasch-swiss/dsp-app/issues/476)) ([927237d](https://www.github.com/dasch-swiss/dsp-app/commit/927237ddc5d36ea5ff6f59a48465890d607ba8c0))
+
+
+### Enhancements
+
+* **config:** add geoname config (DSP-1672) ([#473](https://www.github.com/dasch-swiss/dsp-app/issues/473)) ([d4222ba](https://www.github.com/dasch-swiss/dsp-app/commit/d4222bacb3e8d85ecaf23eb9881e81c183f96681))
+* **ontology:** add property to res class that is in use (DSP-1631) ([#477](https://www.github.com/dasch-swiss/dsp-app/issues/477)) ([b18e6ec](https://www.github.com/dasch-swiss/dsp-app/commit/b18e6ecba2afb3059ef75fb20c3d5699468e8335))
+* **ontology:** change gui element for text value properties ([#478](https://www.github.com/dasch-swiss/dsp-app/issues/478)) ([6af1f7e](https://www.github.com/dasch-swiss/dsp-app/commit/6af1f7e74dd9199bda236a5d088a59a17b2dc5d8))
+* **ontology:** display description for default and existing props (DSP-1154) ([#475](https://www.github.com/dasch-swiss/dsp-app/issues/475)) ([8be7e55](https://www.github.com/dasch-swiss/dsp-app/commit/8be7e5514f548b2f7be8cd53dbc2ca749ccda9c5))
+* **upload:** add upload form for still images (DSP-1761) ([#472](https://www.github.com/dasch-swiss/dsp-app/issues/472)) ([2f314a2](https://www.github.com/dasch-swiss/dsp-app/commit/2f314a281cd257671c6c789d90e31936c87da01f))
+
+
+### Maintenance
+
+* **deps:** bump jdnconvertiblecalendar to v0.0.7 (DSP-1770) ([#479](https://www.github.com/dasch-swiss/dsp-app/issues/479)) ([b2ec64a](https://www.github.com/dasch-swiss/dsp-app/commit/b2ec64a7193159237009db30baccff51d540405f))
+
 ### [4.11.1](https://www.github.com/dasch-swiss/dsp-app/compare/v4.11.0...v4.11.1) (2021-06-23)
 
 
