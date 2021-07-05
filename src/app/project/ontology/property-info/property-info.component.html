@@ -5,7 +5,7 @@
             matTooltipPosition="above">
             <mat-icon class="type">{{propType?.icon}}</mat-icon>
         </span>
-        <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above">
+        <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above" matTooltipClass="multi-line-tooltip">
             <!-- display label if cardinality exists (in case the component is used in resource class view) -->
             <span *ngIf="propCard; else displayAllLabels">{{propDef.label ? propDef.label : propDef.id}}</span>
             <!-- otherwise display label in all languages (if defined) -->

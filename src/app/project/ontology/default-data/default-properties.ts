@@ -43,7 +43,7 @@ export class DefaultProperties {
                     description: 'Short text such as title or name',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',   // 'Input',
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',   // better element would be: 'Input',
                     group: 'Text'       // redundant information, but otherwise we don't get the main group name after selecting type
                 },
                 {
@@ -75,27 +75,9 @@ export class DefaultProperties {
                     description: 'Dropdown menu with values from predefined list',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // 'Pulldown'
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // better element would be: 'Pulldown' or 'Select'
                     group: 'List'
                 }
-                // {
-                //     icon: 'check_box',
-                //     label: 'Checkboxes',
-                //     description: 'Select multiple values from predefined short list',
-                //     subPropOf: Constants.HasValue,
-                //     objectType: Constants.ListValue,
-                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',
-                //     group: 'List'
-                // },
-                // {
-                //     icon: 'radio_button_checked',
-                //     label: 'Multiple choice',
-                //     description: 'Select only one value from predefined short list',
-                //     subPropOf: Constants.HasValue,
-                //     objectType: Constants.ListValue,
-                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Radio',
-                //     group: 'List'
-                // }
             ]
         },
         {
@@ -118,21 +100,21 @@ export class DefaultProperties {
                 {
                     icon: 'calendar_today',
                     label: 'Date',
-                    description: 'A date picker with day, month and year',
+                    description: 'A date field with day, month and year',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DateValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
                     group: 'Date / Time'
                 },
-                {
-                    icon: 'date_range',
-                    label: 'Period',
-                    description: 'A period of time between two dates',
-                    subPropOf: Constants.HasValue,
-                    objectType: Constants.DateValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
-                    group: 'Date / Time'
-                },
+                // {
+                //     icon: 'date_range',
+                //     label: 'Period',
+                //     description: 'A period of time between two dates',
+                //     subPropOf: Constants.HasValue,
+                //     objectType: Constants.DateValue,
+                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
+                //     group: 'Date / Time'
+                // },
                 {
                     icon: 'access_time',
                     label: 'Timestamp',
@@ -147,7 +129,7 @@ export class DefaultProperties {
                     label: 'Time sequence',
                     description: 'A time sequence with start and end point on a timeline',
                     subPropOf: Constants.HasValue,
-                    objectType: Constants.TimeValue,
+                    objectType: Constants.IntervalValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Interval',
                     group: 'Date / Time'
                 }
@@ -188,22 +170,6 @@ export class DefaultProperties {
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
                     group: 'Link / Relation'
                 },
-                // {
-                //     icon: 'picture_in_picture',
-                //     label: 'Part of resource class',
-                //     subPropOf: Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf',
-                //     objectType: Constants.LinkValue,
-                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
-                //     group: 'Link'
-                // },
-                // {
-                //     icon: 'compare_arrows',
-                //     label: 'External resource',
-                //     subPropOf: Constants.HasValue,
-                //     objectType: Constants.UriValue,
-                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',
-                //     group: 'Link'
-                // },
                 {
                     icon: 'language',
                     label: 'External URL',

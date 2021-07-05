@@ -136,7 +136,7 @@ describe('PropertyFormComponent', () => {
 
         const ontologyEndpointSpyObj = {
             v2: {
-                onto: jasmine.createSpyObj('onto', ['updateResourceProperty', 'createResourceProperty'])
+                onto: jasmine.createSpyObj('onto', ['updateResourceProperty', 'createResourceProperty', 'replaceGuiElementOfProperty'])
             }
         };
 
@@ -205,8 +205,6 @@ describe('PropertyFormComponent', () => {
         expect(linkHostComponent).toBeTruthy();
 
     });
-
-
 
     it('should create an instance', () => {
         expect(simpleTextHostComponent.propertyFormComponent).toBeTruthy();

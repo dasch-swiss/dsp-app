@@ -3,9 +3,9 @@
 -->
 <form [formGroup]="propertyForm" class="form-content">
 
-    <p *ngIf="resClassIri && propertyInfo.propDef" class="note warning mat-caption">
-        This property already exists.
-        Be careful when editing it, it could have an effect in other resource classes if it is used there.
+    <p *ngIf="resClassIri && propertyInfo.propDef" class="note warning mat-caption center">
+        This property already exists. If you want to modify it, go to the "properties" view.
+        <!-- Be careful when editing it, it could have an effect in other resource classes if it is used there. -->
     </p>
 
     <div class="center">
@@ -13,16 +13,27 @@
         <!-- property type -->
         <mat-form-field *ngIf="propertyInfo.propType" class="large-field property-type">
             <span matPrefix class="property-type-icon">
-                <mat-icon>{{propertyInfo.propType?.icon}}</mat-icon>&nbsp;
+                <mat-icon>{{propertyForm.controls['propType'].value.icon}}</mat-icon>&nbsp;
             </span>
             <mat-label>Property type</mat-label>
-            <input matInput [value]="propertyInfo.propType.group + ': ' + propertyInfo.propType.label"
-                [disabled]="true">
+            <!-- in case of edit property, the user can change the property type within the same group -->
+            <mat-select formControlName="propType">
+                <mat-select-trigger>
+                    {{propertyForm.controls['propType'].value.group}}:&nbsp;
+                    {{propertyForm.controls['propType'].value.label}}
+                </mat-select-trigger>
+
+                <mat-optgroup *ngFor="let type of restrictedPropertyTypes" [label]="type.group" [disabled]="propertyForm.controls['propType'].value.group !== type.group">
+                    <mat-option *ngFor="let ele of type.elements" [value]="ele">
+                        <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
+                    </mat-option>
+                </mat-optgroup>
+            </mat-select>
         </mat-form-field>
 
         <!-- label -->
         <div class="large-field string-literal-container">
-            <dsp-string-literal-input [placeholder]="'Property label *'" [value]="labels"
+            <dsp-string-literal-input [placeholder]="'Property label *'" [value]="labels" [disabled]="(resClassIri && propertyInfo.propDef)"
                 (dataChanged)="handleData($event, 'labels')">
             </dsp-string-literal-input>
             <mat-hint class="string-literal-error" *ngIf="!labels.length">
@@ -32,7 +43,7 @@
 
         <!-- comment/description -->
         <div class="large-field string-literal-container">
-            <dsp-string-literal-input [textarea]="true" [placeholder]="'Comment'" [value]="comments"
+            <dsp-string-literal-input [textarea]="true" [placeholder]="'Comment'" [value]="comments" [disabled]="(resClassIri && propertyInfo.propDef)"
                 (dataChanged)="handleData($event, 'comments')">
             </dsp-string-literal-input>
         </div>

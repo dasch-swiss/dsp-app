@@ -113,7 +113,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     project: ReadProject;
 
     // list of default property types
-    propertyTypes: PropertyCategory[] = DefaultProperties.data;
+    defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
     // list of resource classes where the property is used
     resClasses: ResourceClassDefinitionWithAllLanguages[] = [];
@@ -153,11 +153,16 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
         // find gui ele from list of default property-types to set type value
         if (this.propDef.guiElement) {
-            for (const group of this.propertyTypes) {
-                this.propType = group.elements.find(i =>
-                    i.guiEle === this.propDef.guiElement &&
-                    (i.objectType === this.propDef.objectType || i.subPropOf === this.propDef.subPropertyOf[0])
-                );
+            for (const group of this.defaultProperties) {
+                if (this.propDef.subPropertyOf[0] !== Constants.HasLinkTo) {
+                    this.propType = group.elements.find(i =>
+                        i.guiEle === this.propDef.guiElement && i.objectType === this.propDef.objectType
+                    );
+                } else {
+                    this.propType = group.elements.find(i =>
+                        i.guiEle === this.propDef.guiElement && i.subPropOf === this.propDef.subPropertyOf[0]
+                    );
+                }
 
                 if (this.propType) {
                     break;

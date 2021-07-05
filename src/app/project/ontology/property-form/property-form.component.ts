@@ -15,6 +15,7 @@ import {
     UpdateOntology,
     UpdateResourceClassCardinality,
     UpdateResourcePropertyComment,
+    UpdateResourcePropertyGuiElement,
     UpdateResourcePropertyLabel
 } from '@dasch-swiss/dsp-js';
 import { AutocompleteItem, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
@@ -80,7 +81,10 @@ export class PropertyFormComponent implements OnInit {
     lastModificationDate: string;
 
     // selection of default property types
-    propertyTypes: PropertyCategory[] = DefaultProperties.data;
+    defaultProperties: PropertyCategory[] = DefaultProperties.data;
+
+    // selection of possible property types in case of edit prop
+    restrictedPropertyTypes: PropertyCategory[];
 
     showGuiAttr = false;
     guiAttrIcon = 'tune';
@@ -142,21 +146,55 @@ export class PropertyFormComponent implements OnInit {
 
     buildForm() {
 
+        let disablePropType = true;
+
         // if property definition exists
         // we are in edit mode: prepare form to edit label and/or comment
+        // and to edit gui element (which is part of property type)
         if (this.propertyInfo.propDef) {
             this.labels = this.propertyInfo.propDef.labels;
             this.comments = this.propertyInfo.propDef.comments;
             this.guiAttributes = this.propertyInfo.propDef.guiAttributes;
+
+            // prepare list of restricted property types
+            this.restrictedPropertyTypes = [{
+                group: this.propertyInfo.propType.group,
+                elements: []
+            }];
+
+            // filter property types by group
+            const restrictedElements: DefaultProperty[] = this.filterPropertyTypesByGroup(this.propertyInfo.propType.group);
+
+            // slice array
+            // this slice value will be kept
+            // because there was the idea to shorten the array of restrcited elements
+            // in case e.g. richtext can't be changed to simple text, then we shouldn't list the simple text item
+            const slice = 0;
+
+            // there's only the object type "text", where we can change the gui element;
+            disablePropType = (this.propertyInfo.propType.objectType !== Constants.TextValue);
+
+            this.restrictedPropertyTypes[0].elements = restrictedElements.slice(slice);
+        } else {
+            this.restrictedPropertyTypes = this.defaultProperties;
         }
 
         this.propertyForm = this._fb.group({
+            'propType': new FormControl({
+                value: this.propertyInfo.propType,
+                disabled: disablePropType || this.resClassIri
+            }),
             'guiAttr': new FormControl({
                 value: this.guiAttributes
             }),
-            'multiple': new FormControl(),  // --> TODO: here we will check, if it can be updated; case updateCardinality: disabled if !canSetFullCardinality && multiple.value !== true
+            'multiple': new FormControl({
+                value: '',  // --> TODO: will be set in update cardinality task
+                disabled: this.propertyInfo.propType.objectType === Constants.BooleanValue
+                // --> TODO: here we also have to check, if it can be updated (update cardinality task);
+                // case updateCardinality: disabled if !canSetFullCardinality && multiple.value !== true
+            }),
             'required': new FormControl({
-                value: '',
+                value: '',  // --> TODO: will be set in update cardinality task
                 disabled: !this.canSetFullCardinality
             })
         });
@@ -216,6 +254,19 @@ export class PropertyFormComponent implements OnInit {
         return list.filter(prop =>
             prop.label?.toLowerCase().includes(label.toLowerCase())
         );
+    }
+
+    /**
+     * filters property types by group; it's used
+     * in case of editing a property to restrict
+     * the list of property types and elements
+     * @param group
+     * @returns an array of elements
+     */
+    filterPropertyTypesByGroup(group: string): DefaultProperty[] {
+        const groups: PropertyCategory[] = this.defaultProperties.filter(item => item.group === group);
+
+        return (groups.length ? groups[0].elements : []);
     }
 
     updateAttributeField(type: DefaultProperty) {
@@ -281,67 +332,92 @@ export class PropertyFormComponent implements OnInit {
 
     submitData() {
         this.loading = true;
-        // do something with your data
+
+        // the property exist already; update label, comment and/or gui element
         if (this.propertyInfo.propDef) {
-            // edit mode: update res property info (label and comment)
-            // label
-            const onto4Label = new UpdateOntology<UpdateResourcePropertyLabel>();
-            onto4Label.id = this.ontology.id;
-            onto4Label.lastModificationDate = this.lastModificationDate;
 
-            const updateLabel = new UpdateResourcePropertyLabel();
-            updateLabel.id = this.propertyInfo.propDef.id;
-            updateLabel.labels = this.labels;
-            onto4Label.entity = updateLabel;
+            if (this.resClassIri) {
+                // set cardinality with existing property in res class
+                this.setCardinality(this.propertyInfo.propDef);
+            } else {
+                // edit property mode: update res property info (label and comment) or gui element and attribute
 
-            // comment
-            const onto4Comment = new UpdateOntology<UpdateResourcePropertyComment>();
-            onto4Comment.id = this.ontology.id;
+                // label
+                const onto4Label = new UpdateOntology<UpdateResourcePropertyLabel>();
+                onto4Label.id = this.ontology.id;
+                onto4Label.lastModificationDate = this.lastModificationDate;
 
-            const updateComment = new UpdateResourcePropertyComment();
-            updateComment.id = this.propertyInfo.propDef.id;
-            updateComment.comments = (this.comments.length ? this.comments : this.labels);
-            onto4Comment.entity = updateComment;
+                const updateLabel = new UpdateResourcePropertyLabel();
+                updateLabel.id = this.propertyInfo.propDef.id;
+                updateLabel.labels = this.labels;
+                onto4Label.entity = updateLabel;
 
-            this._dspApiConnection.v2.onto.updateResourceProperty(onto4Label).subscribe(
-                (classLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                    this.lastModificationDate = classLabelResponse.lastModificationDate;
-                    onto4Comment.lastModificationDate = this.lastModificationDate;
+                // comment
+                const onto4Comment = new UpdateOntology<UpdateResourcePropertyComment>();
+                onto4Comment.id = this.ontology.id;
 
-                    this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
-                        (classCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                            this.lastModificationDate = classCommentResponse.lastModificationDate;
+                const updateComment = new UpdateResourcePropertyComment();
+                updateComment.id = this.propertyInfo.propDef.id;
+                updateComment.comments = (this.comments.length ? this.comments : this.labels);
+                onto4Comment.entity = updateComment;
 
-                            if (this.resClassIri && classCommentResponse.lastModificationDate) {
-                                // edit cardinality mode: update cardinality of existing property in res class
-                                this.setCardinality(this.propertyInfo.propDef);
-                            } else {
-                                // close the dialog box
+                this._dspApiConnection.v2.onto.updateResourceProperty(onto4Label).subscribe(
+                    (classLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                        this.lastModificationDate = classLabelResponse.lastModificationDate;
+                        onto4Comment.lastModificationDate = this.lastModificationDate;
+
+                        this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
+                            (classCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                                this.lastModificationDate = classCommentResponse.lastModificationDate;
+
+                                const onto4guiEle = new UpdateOntology<UpdateResourcePropertyGuiElement>();
+                                onto4guiEle.id = this.ontology.id;
+                                onto4guiEle.lastModificationDate = this.lastModificationDate;
+
+                                const updateGuiEle = new UpdateResourcePropertyGuiElement();
+                                updateGuiEle.id = this.propertyInfo.propDef.id;
+                                updateGuiEle.guiElement = this.propertyForm.controls['propType'].value.guiEle;
+
+                                const guiAttr = this.propertyForm.controls['guiAttr'].value;
+                                if (guiAttr) {
+                                    updateGuiEle.guiAttributes = this.setGuiAttribute(guiAttr);
+                                }
+
+                                onto4guiEle.entity = updateGuiEle;
+
+                                this._dspApiConnection.v2.onto.replaceGuiElementOfProperty(onto4guiEle).subscribe(
+                                    (guiEleResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                                        this.lastModificationDate = guiEleResponse.lastModificationDate;
+                                        // close the dialog box
+                                        this.loading = false;
+                                        this.closeDialog.emit();
+                                    },
+                                    (error: ApiResponseError) => {
+                                        this.error = true;
+                                        this.loading = false;
+                                        this._errorHandler.showMessage(error);
+                                    }
+                                );
+
+                            },
+                            (error: ApiResponseError) => {
+                                this.error = true;
                                 this.loading = false;
-                                this.closeDialog.emit();
+                                this._errorHandler.showMessage(error);
                             }
+                        );
 
-                        },
-                        (error: ApiResponseError) => {
-                            this.error = true;
-                            this.loading = false;
-                            this._errorHandler.showMessage(error);
-                        }
-                    );
-
-
-                },
-                (error: ApiResponseError) => {
-                    this.error = true;
-                    this.loading = false;
-                    this._errorHandler.showMessage(error);
-                }
-            );
-
+                    },
+                    (error: ApiResponseError) => {
+                        this.error = true;
+                        this.loading = false;
+                        this._errorHandler.showMessage(error);
+                    }
+                );
+            }
         } else {
             // create mode: new property incl. gui type and attribute
             // submit property
-            // this.submitProps(this.resourceClassForm.value.properties, this.propertyInfo.propDef.id);
             // set resource property name / id: randomized string
             const uniquePropName: string = this._ontologyService.setUniqueName(this.ontology.id);
 
@@ -357,31 +433,7 @@ export class PropertyFormComponent implements OnInit {
             newResProp.comment = (this.comments.length ? this.comments : this.labels);
             const guiAttr = this.propertyForm.controls['guiAttr'].value;
             if (guiAttr) {
-                switch (this.propertyInfo.propType.guiEle) {
-
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker':
-                        newResProp.guiAttributes = ['ncolors=' + guiAttr];
-                        break;
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'List':
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'Pulldown':
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'Radio':
-                        newResProp.guiAttributes = ['hlist=<' + guiAttr + '>'];
-                        break;
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText':
-                        // --> TODO could have two guiAttr fields: size and maxlength
-                        // we suggest to use default value for size; we do not support this guiAttr in DSP-App
-                        newResProp.guiAttributes = ['maxlength=' + guiAttr];
-                        break;
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox':
-                        // --> TODO could have two guiAttr fields: min and max
-                        newResProp.guiAttributes = ['min=' + guiAttr, 'max=' + guiAttr];
-                        break;
-                    case Constants.SalsahGui + Constants.HashDelimiter + 'Textarea':
-                        // --> TODO could have four guiAttr fields: width, cols, rows, wrap
-                        // we suggest to use default values; we do not support this guiAttr in DSP-App
-                        newResProp.guiAttributes = ['width=100%'];
-                        break;
-                }
+                newResProp.guiAttributes = this.setGuiAttribute(guiAttr);
             }
             newResProp.guiElement = this.propertyInfo.propType.guiEle;
             newResProp.subPropertyOf = [this.propertyInfo.propType.subPropOf];
@@ -458,6 +510,39 @@ export class PropertyFormComponent implements OnInit {
             }
         );
 
+    }
+
+    setGuiAttribute(guiAttr: string): string[] {
+
+        let guiAttributes: string[];
+
+        switch (this.propertyInfo.propType.guiEle) {
+
+            case Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker':
+                guiAttributes = ['ncolors=' + guiAttr];
+                break;
+            case Constants.SalsahGui + Constants.HashDelimiter + 'List':
+            case Constants.SalsahGui + Constants.HashDelimiter + 'Pulldown':
+            case Constants.SalsahGui + Constants.HashDelimiter + 'Radio':
+                guiAttributes = ['hlist=<' + guiAttr + '>'];
+                break;
+            case Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText':
+                // --> TODO could have two guiAttr fields: size and maxlength
+                // we suggest to use default value for size; we do not support this guiAttr in DSP-App
+                guiAttributes = ['maxlength=' + guiAttr];
+                break;
+            case Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox':
+                // --> TODO could have two guiAttr fields: min and max
+                guiAttributes = ['min=' + guiAttr, 'max=' + guiAttr];
+                break;
+            case Constants.SalsahGui + Constants.HashDelimiter + 'Textarea':
+                // --> TODO could have four guiAttr fields: width, cols, rows, wrap
+                // we suggest to use default values; we do not support this guiAttr in DSP-App
+                guiAttributes = ['width=100%'];
+                break;
+        }
+
+        return guiAttributes;
     }
 
 }

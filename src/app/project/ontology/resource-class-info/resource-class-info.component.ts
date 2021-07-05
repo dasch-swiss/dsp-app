@@ -5,6 +5,7 @@ import {
     ApiResponseError,
     CanDoResponse,
     ClassDefinition,
+    Constants,
     IHasProperty,
     KnoraApiConnection,
     PropertyDefinition,
@@ -196,10 +197,15 @@ export class ResourceClassInfoComponent implements OnInit {
             // find corresponding default property to have more prop info
             if (availableProp.guiElement) {
                 for (const group of this.defaultProperties) {
-                    propType = group.elements.find(i =>
-                        i.guiEle === availableProp.guiElement &&
-                        (i.objectType === availableProp.objectType || i.subPropOf === availableProp.subPropertyOf[0])
-                    );
+                    if (availableProp.subPropertyOf[0] !== Constants.HasLinkTo) {
+                        propType = group.elements.find(i =>
+                            i.guiEle === availableProp.guiElement && i.objectType === availableProp.objectType
+                        );
+                    } else {
+                        propType = group.elements.find(i =>
+                            i.guiEle === availableProp.guiElement && i.subPropOf === availableProp.subPropertyOf[0]
+                        );
+                    }
 
                     if (propType) {
                         break;
