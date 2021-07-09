@@ -92,6 +92,7 @@ import { UsersComponent } from './system/users/users.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
 import { VisualizerComponent } from './project/ontology/ontology-visualizer/visualizer/visualizer.component';
 import { UploadComponent } from './workspace/resource/representation/upload/upload.component';
+import { SplitPipe } from './main/pipes/split.pipe';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -171,6 +172,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UsersListComponent,
         VisualizerComponent,
         UploadComponent,
+        SplitPipe,
     ],
     imports: [
         AppRoutingModule,

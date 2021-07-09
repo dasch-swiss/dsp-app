@@ -1,33 +1,27 @@
 <div class="form-container">
     <form [formGroup]="form">
-        <div dspDragDrop
-            *ngIf="isLoading || !file"
-            (click)="fileInput.click()"
-            (fileDropped)="addFile($event)"
+        <div dspDragDrop *ngIf="isLoading || !file" (click)="fileInput.click()" (fileDropped)="addFile($event)"
             class="dd-container">
-            <input hidden
-                type="file"
-                (change)="addFile($event)"
-                #fileInput />
-            <mat-icon *ngIf="!isLoading"
-                class="upload-icon">
+            <input hidden type="file" (change)="addFile($event)" #fileInput />
+            <mat-icon *ngIf="!isLoading" class="upload-icon">
                 cloud_upload
             </mat-icon>
             <dsp-progress-indicator *ngIf="isLoading"></dsp-progress-indicator>
-            <div class="title">Upload file</div>
+            <p class="title">Upload file<br>
+                <span class="mat-body-1">The following file types are supported:<br>
+                    <span *ngFor="let item of allowedFileTypes; let last = last">{{ item | split: '/':1 }}<span
+                            *ngIf="!last">,&nbsp;</span></span>
+                </span>
+            </p>
             <div class="bottom-line">
                 Drag and drop or click to upload
             </div>
         </div>
 
         <ng-container *ngIf="!isLoading && file">
-            <div class="thumbnail">
-                <img src="{{ thumbnailUrl }}"
-                    alt="thumbnail" />
-                <button mat-button
-                    class="delete-file"
-                    title="delete file"
-                    (click)="deleteAttachment()">
+            <div *ngIf="thumbnailUrl" class="thumbnail">
+                <img src="{{ thumbnailUrl }}" alt="thumbnail" />
+                <button mat-button class="delete-file" title="delete file" (click)="deleteAttachment()">
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
@@ -48,9 +42,7 @@
                             <td>{{ convertBytes(file.size) }}</td>
                             <td>{{ convertDate(file.lastModified) }}</td>
                             <td>
-                                <button mat-icon-button
-                                    class="delete-file"
-                                    title="delete file"
+                                <button mat-icon-button class="delete-file" title="delete file"
                                     (click)="deleteAttachment()">
                                     <mat-icon>delete</mat-icon>
                                 </button>

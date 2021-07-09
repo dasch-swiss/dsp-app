@@ -4,9 +4,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { Constants, CreateStillImageFileValue } from '@dasch-swiss/dsp-js';
+import { CreateStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
+import { SplitPipe } from 'src/app/main/pipes/split.pipe';
 import { UploadFileService } from './upload-file.service';
 import { UploadComponent } from './upload.component';
 
@@ -49,7 +50,8 @@ describe('UploadComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 UploadComponent,
-                TestHostComponent
+                TestHostComponent,
+                SplitPipe
             ],
             imports: [
                 DspActionModule,

@@ -1,13 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
+    CreateDocumentFileValue,
     CreateFileValue,
     CreateStillImageFileValue,
+    UpdateDocumentFileValue,
     UpdateFileValue,
     UpdateStillImageFileValue
 } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/dsp-ui';
-import { UploadedFile, UploadedFileResponse, UploadFileService } from './upload-file.service';
+import { UploadedFileResponse, UploadFileService } from './upload-file.service';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -22,7 +24,8 @@ export class UploadComponent implements OnInit {
 
     @Input() parentForm?: FormGroup;
 
-    @Input() representation: string; // only StillImageRepresentation supported so far
+    @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text';
+    // only StillImageRepresentation and DocumentPresentation is supported so far
 
     @Input() formName: string;
 
@@ -34,8 +37,10 @@ export class UploadComponent implements OnInit {
     isLoading = false;
     thumbnailUrl: string;
 
+    allowedFileTypes: string[];
     // todo: maybe we can use this list to display which file format is allowed to
     supportedImageTypes = ['image/jpeg', 'image/jp2', 'image/tiff', 'image/tiff-fx', 'image/png'];
+    supportedDocumentTypes = ['application/pdf'];
 
     // readonly fromLabels = {
     //     upload: 'Upload file',
@@ -49,6 +54,7 @@ export class UploadComponent implements OnInit {
 
     ngOnInit(): void {
         this.initializeForm();
+        this._supportedFileTypes();
     }
 
     /**
@@ -80,14 +86,28 @@ export class UploadComponent implements OnInit {
                 formData.append(this.file.name, this.file);
                 this._upload.upload(formData).subscribe(
                     (res: UploadedFileResponse) => {
-                        const temporaryUrl = res.uploadedFiles[0].temporaryUrl;
-                        const thumbnailUri = '/full/256,/0/default.jpg';
-                        this.thumbnailUrl = `${temporaryUrl}${thumbnailUri}`;
+
+                        switch (this.representation) {
+                            case 'stillImage':
+                                const temporaryUrl = res.uploadedFiles[0].temporaryUrl;
+                                const thumbnailUri = '/full/256,/0/default.jpg';
+                                this.thumbnailUrl = `${temporaryUrl}${thumbnailUri}`;
+                                break;
+
+                            case 'document':
+                                // the preview thumbnail is deactivated for the moment;
+                                // --> TODO: it will be activated as soon as we implement a pdf viewer
+                                // this.thumbnailUrl = res.uploadedFiles[0].temporaryUrl;
+                                this.thumbnailUrl = undefined;
+                                break;
+
+                            default:
+                                this.thumbnailUrl = undefined;
+                                break;
+                        }
 
                         this.fileControl.setValue(res.uploadedFiles[0]);
                         const fileValue = this.getNewValue();
-                        // console.log('here we should emit the values', res)
-                        // console.log(fileValue);
 
                         if (fileValue) {
                             this.fileInfo.emit(fileValue);
@@ -184,9 +204,22 @@ export class UploadComponent implements OnInit {
 
         const filename = this.fileControl.value.internalFilename;
 
-        // --> TODO: handle different file types
+        let fileValue: CreateStillImageFileValue | CreateDocumentFileValue;
 
-        const fileValue = new CreateStillImageFileValue();
+        switch (this.representation) {
+            case 'stillImage':
+                fileValue = new CreateStillImageFileValue();
+                break;
+
+            case 'document':
+                fileValue = new CreateDocumentFileValue();
+                break;
+
+            default:
+                // --> TODO for UPLOAD: expand with other representation file types
+                break;
+        }
+
         fileValue.filename = filename;
 
         return fileValue;
@@ -206,9 +239,23 @@ export class UploadComponent implements OnInit {
 
         const filename = this.fileControl.value.internalFilename;
 
-        // --> TODO: handle different file types
+        let fileValue: UpdateStillImageFileValue | UpdateDocumentFileValue;
 
-        const fileValue = new UpdateStillImageFileValue();
+
+        switch (this.representation) {
+            case 'stillImage':
+                fileValue = new UpdateStillImageFileValue();
+                break;
+
+            case 'document':
+                fileValue = new UpdateDocumentFileValue();
+                break;
+            default:
+                // --> TODO for UPLOAD: expand with other representation file types
+                break;
+        }
+
+        // const fileValue = new UpdateStillImageFileValue();
         fileValue.filename = filename;
         fileValue.id = id;
 
@@ -228,16 +275,19 @@ export class UploadComponent implements OnInit {
      * returns supported file types list for certain resource type
      */
     private _supportedFileTypes(): string[] {
-        let allowedFileTypes: string[];
+        this.allowedFileTypes = [];
         switch (this.representation) {
             case 'stillImage':
-                allowedFileTypes = this.supportedImageTypes;
+                this.allowedFileTypes = this.supportedImageTypes;
+                break;
+            case 'document':
+                this.allowedFileTypes = this.supportedDocumentTypes;
                 break;
             default:
-                allowedFileTypes = [];
+                this.allowedFileTypes = [];
                 break;
         }
-        return allowedFileTypes;
+        return this.allowedFileTypes;
     }
 
     /**

@@ -165,7 +165,14 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
             });
 
             if (this.fileValue) {
-                this.propertiesObj[Constants.HasStillImageFileValue] = [this.fileValue];
+                switch (this.hasFileValue) {
+                    case 'stillImage':
+                        this.propertiesObj[Constants.HasStillImageFileValue] = [this.fileValue];
+                        break;
+                    case 'document':
+                        this.propertiesObj[Constants.HasDocumentFileValue] = [this.fileValue];
+                        break;
+                }
             }
 
             createResource.properties = this.propertiesObj;
@@ -370,10 +377,18 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
                     // filter out all props that cannot be edited or are link props but also the hasFileValue props
                     this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
-                        prop => prop.isEditable && !prop.isLinkProperty && prop.id !== Constants.HasStillImageFileValue);
+                        prop =>
+                            !prop.isLinkProperty &&
+                            prop.isEditable &&
+                            prop.id !== Constants.HasStillImageFileValue &&
+                            prop.id !== Constants.HasDocumentFileValue  // --> TODO for UPLOAD: expand with other representation file values
+                    );
 
                     if (onto.properties[Constants.HasStillImageFileValue]) {
                         this.hasFileValue = 'stillImage';
+                    }
+                    if (onto.properties[Constants.HasDocumentFileValue]) {
+                        this.hasFileValue = 'document';
                     }
 
                     // notifies the user that the selected resource does not have any properties defined yet.
