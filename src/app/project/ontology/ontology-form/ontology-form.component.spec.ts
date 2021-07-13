@@ -126,6 +126,50 @@ describe('OntologyFormComponent', () => {
 
     });
 
+    it('should test form validity with not allowed names', () => {
+        const form = ontologyFormComponent.ontologyForm;
+        expect(form.valid).toBeFalsy();
+
+        const nameInput = form.controls.name;
+
+        nameInput.setValue('v2onto');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('my-onto');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('2ndOnto');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('-notAllowed');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('_notAllowed');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('not-allowed');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('not_allowed');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('not.allowed');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('no$or€');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('no spaces');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('ältereOnto');
+        expect(form.valid).toBeFalsy();
+
+        nameInput.setValue('bestOnto');
+        expect(form.valid).toBeTruthy();
+
+    });
+
     it('should test form validity without label', () => {
         const form = ontologyFormComponent.ontologyForm;
         expect(form.valid).toBeFalsy();

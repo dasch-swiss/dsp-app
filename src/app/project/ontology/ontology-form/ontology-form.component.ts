@@ -51,8 +51,10 @@ export class OntologyFormComponent implements OnInit {
 
     lastModificationDate: string;
 
-    nameRegex = /^(?![vV][0-9]|[0-9]|[\u00C0-\u017F]).[a-zA-Z0-9]+\S*$/;
+    // regex to check ontology name: shouldn't start with a number or with 'v' followed by a number, spaces or special characters are not allowed
+    nameRegex = /^(?![vV]+[0-9])+^([a-zA-Z])[a-zA-Z0-9]*$/;
 
+    // ontology name must not contain one of the following words
     forbiddenNames: string[] = [
         'knora',
         'salsah',
