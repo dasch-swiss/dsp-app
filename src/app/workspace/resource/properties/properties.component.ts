@@ -82,6 +82,14 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     valueOperationEventSubscriptions: Subscription[] = []; // array of ValueOperationEvent subscriptions
 
+    representationConstants = {
+        'stillImage': Constants.HasStillImageFileValue,
+        'movingImage': Constants.HasMovingImageFileValue,
+        'audio': Constants.HasAudioFileValue,
+        'document': Constants.HasDocumentFileValue,
+        'text': Constants.HasTextFileValue
+    };
+
     project: ReadProject;
     user: ReadUser;
 

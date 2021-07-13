@@ -76,7 +76,13 @@
         <!-- list of properties -->
         <div *ngFor="let prop of resource.resProps; let last = last">
             <!-- show property; all in case of showAll === true or only the ones with prop.values -->
-            <div *ngIf="!prop.propDef['isLinkProperty'] && showAllProps || ( prop.values && prop.values.length > 0 )"
+            <div *ngIf="(showAllProps || ( prop.values && prop.values.length > 0 )) &&
+                        (!prop.propDef['isLinkProperty'] &&
+                        prop.guiDef.propertyIndex !== representationConstants.stillImage &&
+                        prop.guiDef.propertyIndex !== representationConstants.movingImage &&
+                        prop.guiDef.propertyIndex !== representationConstants.audio &&
+                        prop.guiDef.propertyIndex !== representationConstants.document &&
+                        prop.guiDef.propertyIndex !== representationConstants.text)"
                 [class.border-bottom]="prop.values && !last"
                 class="property">
                 <div class="property-label">
