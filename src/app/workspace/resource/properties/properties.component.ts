@@ -32,6 +32,7 @@ import {
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { DspResource } from '../dsp-resource';
+import { RepresentationConstants } from '../representation/file-representation';
 
 @Component({
     selector: 'app-properties',
@@ -82,13 +83,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     valueOperationEventSubscriptions: Subscription[] = []; // array of ValueOperationEvent subscriptions
 
-    representationConstants = {
-        'stillImage': Constants.HasStillImageFileValue,
-        'movingImage': Constants.HasMovingImageFileValue,
-        'audio': Constants.HasAudioFileValue,
-        'document': Constants.HasDocumentFileValue,
-        'text': Constants.HasTextFileValue
-    };
+    representationConstants = RepresentationConstants;
 
     project: ReadProject;
     user: ReadUser;

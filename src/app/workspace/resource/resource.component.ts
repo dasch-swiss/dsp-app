@@ -14,12 +14,9 @@ import {
     CountQueryResponse,
     IHasPropertyWithPropertyDefinition,
     KnoraApiConnection,
-    ReadLinkValue,
-    ReadProject,
-    ReadResource,
+    ReadDocumentFileValue, ReadResource,
     ReadResourceSequence,
-    ReadStillImageFileValue,
-    SystemPropertyDefinition
+    ReadStillImageFileValue, SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import {
     DspApiConnectionToken,
@@ -30,7 +27,8 @@ import {
 import { Subscription } from 'rxjs';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { IncomingService } from './incoming.service';
-import { Region, StillImageRepresentation } from './representation/still-image/still-image.component';
+import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
+import { Region } from './representation/still-image/still-image.component';
 
 @Component({
     selector: 'app-resource',
@@ -58,7 +56,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     // list of representations to be displayed
     // --> TODO: will be expanded with | MovingImageRepresentation[] | AudioRepresentation[] etc.
-    representationsToDisplay: StillImageRepresentation[] = [];
+    representationsToDisplay: FileRepresentation[] = [];
+
+    representationConstants = RepresentationConstants;
 
     // in case of compound object,
     // this will store the current page position information
@@ -166,7 +166,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         this.compoundPosition.position = position;
         this.compoundPosition.page = page;
 
-        this.collectImagesAndRegionsForResource(this.incomingResource);
+        this.collectRepresentationsAndAnnotations(this.incomingResource);
 
     }
 
@@ -191,8 +191,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 this.resource = res;
 
-                this.collectImagesAndRegionsForResource(this.resource);
-
+                this.collectRepresentationsAndAnnotations(this.resource);
 
                 if (!this.representationsToDisplay.length && !this.compoundPosition) {
                     // the resource could be a compound object
@@ -235,7 +234,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 res.resProps = this.initProps(response);
                 res.systemProps = this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
-                this.collectImagesAndRegionsForResource(this.incomingResource);
+                this.collectRepresentationsAndAnnotations(this.incomingResource);
 
                 if (this.representationsToDisplay.length && this.compoundPosition) {
                     this.getIncomingRegions(this.incomingResource, 0);
@@ -262,7 +261,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                             values: resource.getValuesAs(prop.propertyIndex, ReadStillImageFileValue)
                         };
 
-                        const stillImageRepresentations = [new StillImageRepresentation(
+                        const stillImageRepresentations = [new FileRepresentation(
                             resource.getValuesAs(Constants.HasStillImageFileValue, ReadStillImageFileValue)[0], [])
                         ];
 
@@ -300,18 +299,17 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
      * @param resource The resource to get the images for.
      * @returns A collection of images for the given resource.
      */
-    // --> TODO: rename to collectRepresentationsAndAnnotations
-    protected collectImagesAndRegionsForResource(resource: DspResource): any {
+    protected collectRepresentationsAndAnnotations(resource: DspResource): any {
 
         if (!resource) {
             return;
         }
 
         // --> TODO: should be a general object for all kind of representations
-        const representations: StillImageRepresentation[] = [];
+        const representations: FileRepresentation[] = [];
 
         // --> TODO: use a switch here to go throught the different representation types
-        if (resource.res.properties[Constants.HasStillImageFileValue] !== undefined) {
+        if (resource.res.properties[Constants.HasStillImageFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // resource has StillImageFileValues that are directly attached to it (properties)
 
@@ -340,14 +338,23 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 }
 
-                const stillImage = new StillImageRepresentation(img, regions);
+                const stillImage = new FileRepresentation(img, regions);
+
                 representations.push(stillImage);
 
                 this.annotationResources = annotations;
             }
 
-        }
+        } else if (resource.res.properties[Constants.HasDocumentFileValue]) {
 
+            const fileValues: ReadDocumentFileValue[] = resource.res.properties[Constants.HasDocumentFileValue] as ReadDocumentFileValue[];
+            for (const doc of fileValues) {
+
+                const document = new FileRepresentation(doc);
+                representations.push(document);
+            }
+
+        }
         this.representationsToDisplay = representations;
 
     }
@@ -401,7 +408,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // request incoming regions --> TODO: add case to get incoming sequences in case of video and audio
-        if (resource.res.properties[Constants.HasStillImageFileValue]) {
+        if (resource.res.properties[Constants.HasStillImageFileValue] || resource.res.properties[Constants.HasDocumentFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // the resource is a StillImageRepresentation, check if there are regions pointing to it
 
@@ -437,7 +444,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 // prepare regions to be displayed
                 // triggers ngOnChanges of StillImageComponent
-                this.collectImagesAndRegionsForResource(resource);
+                this.collectRepresentationsAndAnnotations(resource);
 
 
             },

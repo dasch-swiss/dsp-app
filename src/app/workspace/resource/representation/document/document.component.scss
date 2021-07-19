@@ -1,0 +1,33 @@
+@import "../../../../../assets/style/config";
+
+// sizes
+$max-width: 800px;
+$panelSize: 40px;
+
+$osd-height: 460px;
+
+// colors
+$dark: #000;
+$bright: #ccc;
+
+:host {
+
+  .pdf-container {
+    color: $bright;
+    background-color: $dark;
+    height: 100%;
+  }
+
+  .pdf-searchbox {
+    border-radius: $border-radius;
+    border: none;
+    padding: 4px;
+
+    &:active {
+      border: none;
+    }
+  }
+
+
+}
+

@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { By } from '@angular/platform-browser';
 import { Constants, ReadGeomValue, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
+import { FileRepresentation } from '../file-representation';
 import { Region, StillImageComponent, StillImageRepresentation } from './still-image.component';
 
 // --> TODO: get test data from dsp-js
@@ -151,7 +152,7 @@ class TestHostComponent implements OnInit {
 
     @ViewChild(StillImageComponent) osdViewerComp: StillImageComponent;
 
-    stillImageFileRepresentations: StillImageRepresentation[] = [];
+    stillImageFileRepresentations: FileRepresentation[] = [];
     caption = 'test image';
     inputActivateRegion: string;
 
@@ -161,7 +162,7 @@ class TestHostComponent implements OnInit {
 
         this.stillImageFileRepresentations
             = [
-                new StillImageRepresentation(stillImageFileValue,
+                new FileRepresentation(stillImageFileValue,
                     [
                         new Region(makeRegion([rectangleGeom], 'first')),
                         new Region(makeRegion([polygonGeom], 'second')),

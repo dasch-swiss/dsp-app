@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Constants, Point2D, ReadGeomValue, ReadResource, ReadStillImageFileValue, RegionGeometry } from '@dasch-swiss/dsp-js';
+import { Constants, Point2D, ReadFileValue, ReadGeomValue, ReadResource, ReadStillImageFileValue, RegionGeometry } from '@dasch-swiss/dsp-js';
 import { DspCompoundPosition } from '../../dsp-resource';
+import { FileRepresentation } from '../file-representation';
 
 
 // this component needs the openseadragon library itself, as well as the openseadragon plugin openseadragon-svg-overlay
@@ -80,7 +81,7 @@ interface PolygonsForRegion {
 })
 export class StillImageComponent implements OnChanges, OnDestroy {
 
-    @Input() images: StillImageRepresentation[];
+    @Input() images: FileRepresentation[];
     @Input() imageCaption?: string;
     @Input() activateRegion?: string; // highlight a region
 
@@ -277,8 +278,8 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         // the first image has its left side at x = 0, and all images are scaled to have a width of 1 in viewport coordinates.
         // see also: https://openseadragon.github.io/examples/viewport-coordinates/
 
-        const fileValues: ReadStillImageFileValue[] = this.images.map(
-            (img) => (img.stillImageFileValue)
+        const fileValues: ReadFileValue[] = this.images.map(
+            (img) => (img.fileValue)
         );
 
         // display only the defined range of this.images
@@ -290,17 +291,19 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     }
 
     /**
-     * prepare tile sources from the given sequence of [[ReadStillImageFileValue]].
+     * prepare tile sources from the given sequence of [[ReadFileValue]].
      *
      * @param imagesToDisplay the given file values to de displayed.
      * @returns the tile sources to be passed to OSD _viewer.
      */
-    private _prepareTileSourcesFromFileValues(imagesToDisplay: ReadStillImageFileValue[]): object[] {
+    private _prepareTileSourcesFromFileValues(imagesToDisplay: ReadFileValue[]): object[] {
+        const images = imagesToDisplay as ReadStillImageFileValue[];
+
         let imageXOffset = 0;
         const imageYOffset = 0;
         const tileSources = [];
 
-        for (const image of imagesToDisplay) {
+        for (const image of images) {
             const sipiBasePath = image.iiifBaseUrl + '/' + image.filename;
             const width = image.dimX;
             const height = image.dimY;
@@ -370,11 +373,13 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         let imageXOffset = 0; // see documentation in this.openImages() for the usage of imageXOffset
 
         for (const image of this.images) {
-            const aspectRatio = (image.stillImageFileValue.dimY / image.stillImageFileValue.dimX);
+
+            const stillImage = image.fileValue as ReadStillImageFileValue;
+            const aspectRatio = (stillImage.dimY / stillImage.dimX);
 
             // collect all geometries belonging to this page
             const geometries: GeometryForRegion[] = [];
-            image.regions.map((reg) => {
+            image.annotations.map((reg) => {
 
                 this._regions[reg.regionResource.id] = [];
                 const geoms = reg.getGeometries();

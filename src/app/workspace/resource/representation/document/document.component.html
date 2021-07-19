@@ -1,0 +1,39 @@
+<div class="pdf-container">
+    <div class="action horizontal top overlay">
+        <!-- caption -->
+        <span class="caption mat-caption">
+            <input
+                #queryInp
+                type="text"
+                id="searchbox"
+                name="searchbox"
+                class="pdf-searchbox"
+                placeholder="Search in pdf..."
+                [value]="pdfQuery"
+                (input)="searchQueryChanged($event.target.value)"
+                (keyup.enter)="searchQueryChanged(queryInp.value)"
+            />
+        </span>
+        <span class="fill-remaining-space"></span>
+        <!-- image action tools e.g. zoom, rotate and flip -->
+        <span>
+            <!-- zoom buttons -->
+            <button mat-icon-button id="DSP_PDF_ZOOM_OUT" matTooltip="Zoom out" (click)="zoomFactor = zoomFactor - 0.2">
+                <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+            <button mat-icon-button id="DSP_PDF_HOME" matTooltip="Reset zoom" (click)="zoomFactor = 1.0">
+                <mat-icon>adjust</mat-icon>
+            </button>
+            <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoomFactor = zoomFactor + 0.2">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <a [href]="document.fileValue.fileUrl" download mat-icon-button id="DSP_PDF_DOWNLOAD" matTooltip="Open pdf in new tab">
+                <mat-icon>launch</mat-icon>
+            </a>
+        </span>
+    </div>
+
+    <pdf-viewer [src]="document.fileValue.fileUrl" [original-size]="false" [autoresize]="true" [show-all]="true"
+        [show-borders]="true" [zoom]="zoomFactor" [zoom-scale]="'page-width'">
+    </pdf-viewer>
+</div>
