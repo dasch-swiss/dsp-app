@@ -11,9 +11,10 @@
                 (regionClicked)="openRegion($event)">
             </app-still-image>
 
-            <app-document class="dsp-representation" *ngSwitchCase="representationConstants.document" [document]="representationsToDisplay[0]">
-
+            <app-document class="dsp-representation" *ngSwitchCase="representationConstants.document" [src]="representationsToDisplay[0]">
             </app-document>
+
+            <app-audio class="dsp-representation audio" *ngSwitchCase="representationConstants.audio" [src]="representationsToDisplay[0]"></app-audio>
 
             <span *ngSwitchDefault>
                 The file representation type "{{representationsToDisplay[0].fileValue.type}}" is not yet implemented

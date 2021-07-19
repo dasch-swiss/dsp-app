@@ -9,7 +9,7 @@ import { FileRepresentation } from '../file-representation';
 })
 export class DocumentComponent implements OnInit {
 
-    @Input() document: FileRepresentation;
+    @Input() src: FileRepresentation;
 
     @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
 

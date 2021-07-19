@@ -290,6 +290,10 @@ a,
   display: block;
   position: relative;
   padding: 0;
+
+  &.audio {
+    height: auto;
+  }
   .caption {
     padding: 10px 16px;
     white-space: nowrap;
