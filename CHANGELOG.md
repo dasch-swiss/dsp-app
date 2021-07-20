@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.0.0...v5.1.0) (2021-07-20)
+
+
+### Bug Fixes
+
+* **ontology:** fix regex pattern in ontology form (DSP-1139) ([#483](https://www.github.com/dasch-swiss/dsp-app/issues/483)) ([4d0703f](https://www.github.com/dasch-swiss/dsp-app/commit/4d0703fde8d42d55a2bf90ecd62c40c269251abd))
+
+
+### Documentation
+
+* **user-guide:** update user-guide about ontology (DSP-976) ([#480](https://www.github.com/dasch-swiss/dsp-app/issues/480)) ([e12f196](https://www.github.com/dasch-swiss/dsp-app/commit/e12f1966a4c354a2e613d9a4deb6989196482dfc))
+
+
+### Enhancements
+
+* **resource:** add document viewer with download (DSP-1791) ([#485](https://www.github.com/dasch-swiss/dsp-app/issues/485)) ([ce51bce](https://www.github.com/dasch-swiss/dsp-app/commit/ce51bce48b63fc7abb4bb6f55ea2de0de435ece9))
+* **resource:** upload pdf document (DSP-1776) ([#481](https://www.github.com/dasch-swiss/dsp-app/issues/481)) ([d916b4b](https://www.github.com/dasch-swiss/dsp-app/commit/d916b4be6189fb764a6e4a92aa0999a88d71f40a))
+
+
+### Maintenance
+
+* **ontology:** better regex for onto name (DSP-1139) ([#488](https://www.github.com/dasch-swiss/dsp-app/issues/488)) ([ec881ef](https://www.github.com/dasch-swiss/dsp-app/commit/ec881ef60a2c802a2b65a3e047a40d768bc08cf6))
+* **resource:** hide file value in properties (DSP-1261) ([#484](https://www.github.com/dasch-swiss/dsp-app/issues/484)) ([4ade17f](https://www.github.com/dasch-swiss/dsp-app/commit/4ade17f86e91d28b9a751e63b4d6480dfa1d5939))
+
 ## [5.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.11.1...v5.0.0) (2021-07-05)
 
 
