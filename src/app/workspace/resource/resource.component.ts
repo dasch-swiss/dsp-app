@@ -12,6 +12,7 @@ import {
     ApiResponseError,
     Constants,
     CountQueryResponse,
+    DeleteResourceResponse,
     IHasPropertyWithPropertyDefinition,
     KnoraApiConnection,
     ReadDocumentFileValue, ReadResource,
@@ -22,6 +23,8 @@ import {
     DspApiConnectionToken,
     NotificationService,
     PropertyInfoValues,
+    Session,
+    SessionService,
     ValueOperationEventService
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
@@ -70,6 +73,11 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     refresh: boolean;
 
+    // permissions of logged-in user
+    session: Session;
+    adminPermissions = false;
+    editPermissions = false;
+
     navigationSubscription: Subscription;
 
     constructor(
@@ -78,6 +86,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         private _notification: NotificationService,
         private _route: ActivatedRoute,
         private _router: Router,
+        private _session: SessionService,
         private _titleService: Title
     ) {
 
@@ -114,7 +123,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnInit() {
-
 
     }
 
@@ -191,6 +199,16 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 this.resource = res;
 
+                // get information about the logged-in user, if one is logged-in
+                if (this._session.getSession()) {
+                    this.session = this._session.getSession();
+                    // is the logged-in user project member?
+                    // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
+                    this.editPermissions = true;
+                    // is the logged-in user system admin or project admin?
+                    this.adminPermissions = this.session.user.sysAdmin ? this.session.user.sysAdmin : this.session.user.projectAdmin.some(e => e === res.res.attachedToProject);
+                }
+
                 this.collectRepresentationsAndAnnotations(this.resource);
 
                 if (!this.representationsToDisplay.length && !this.compoundPosition) {
@@ -220,7 +238,15 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 this.loading = false;
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this.loading = false;
+                if (error.status === 404) {
+                    // resource not found: maybe it's deleted or the iri is wrong
+                    // display message that it couldn't be found
+
+                } else {
+                    this._notification.openSnackBar(error);
+                }
+
             }
         );
     }

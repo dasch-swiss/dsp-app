@@ -1,17 +1,19 @@
 <div class="content large middle">
-    <div class="resource-view" *ngIf="resource">
+    <div class="resource-view" *ngIf="resource && !loading">
 
         <!-- dsp-resource-representation -->
         <div class="representation-container center" *ngIf="representationsToDisplay.length"
             [ngSwitch]="representationsToDisplay[0].fileValue.type">
             <!-- still image view -->
-            <app-still-image class="dsp-representation" *ngSwitchCase="representationConstants.stillImage" [images]="representationsToDisplay"
+            <app-still-image class="dsp-representation" *ngSwitchCase="representationConstants.stillImage"
+                [images]="representationsToDisplay"
                 [imageCaption]="(incomingResource ? resource.res.label + ': ' + incomingResource.res.label : resource.res.label)"
                 [compoundNavigation]="compoundPosition" (goToPage)="compoundNavigation($event)"
                 (regionClicked)="openRegion($event)">
             </app-still-image>
 
-            <app-document class="dsp-representation" *ngSwitchCase="representationConstants.document" [document]="representationsToDisplay[0]">
+            <app-document class="dsp-representation" *ngSwitchCase="representationConstants.document"
+                [document]="representationsToDisplay[0]">
 
             </app-document>
 
@@ -27,19 +29,22 @@
         <mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTab">
             <!-- first tab for the main resource e.g. book -->
             <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
-                <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true">
+                <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
+                [adminPermissions]="adminPermissions" [editPermissions]="editPermissions">
                 </app-properties>
             </mat-tab>
 
             <!-- incoming resource -->
             <mat-tab *ngIf="incomingResource"
                 [label]="incomingResource.res.entityInfo.classes[incomingResource.res.type].label">
-                <app-properties *ngIf="incomingResource.res" [resource]="incomingResource" [displayProjectInfo]="false">
+                <app-properties *ngIf="incomingResource.res" [resource]="incomingResource" [displayProjectInfo]="false"
+                [adminPermissions]="adminPermissions" [editPermissions]="editPermissions">
                 </app-properties>
             </mat-tab>
 
             <!-- annotations -->
-            <mat-tab *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
+            <mat-tab
+                *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
                 <ng-template matTabLabel class="annotations">
                     <span [matBadge]="representationsToDisplay[0]?.annotations.length"
                         [matBadgeHidden]="representationsToDisplay[0]?.annotations.length === 0" matBadgeColor="primary"
@@ -49,7 +54,8 @@
                 </ng-template>
                 <div class="region-property" *ngFor="let annotation of annotationResources" [id]="annotation.res.id"
                     [class.active]="annotation.res.id === selectedRegion">
-                    <app-properties [resource]="annotation" [displayProjectInfo]="false">
+                    <app-properties [resource]="annotation" [displayProjectInfo]="false"
+                    [adminPermissions]="adminPermissions" [editPermissions]="editPermissions">
                     </app-properties>
                 </div>
 
@@ -57,5 +63,16 @@
         </mat-tab-group>
     </div>
     <!-- progress indicator -->
-    <dsp-progress-indicator *ngIf="!resource"></dsp-progress-indicator>
+    <dsp-progress-indicator *ngIf="!resource && loading"></dsp-progress-indicator>
+
+    <!-- resource not found  -->
+    <div *ngIf="!resource && !loading" class="no-results">
+        <p>The resource <span *ngIf="resourceIri">- <strong> {{resourceIri}}</strong> -</span> could not
+            be found.</p>
+        <p>Reasons:</p>
+        <ul>
+            <li>It could be a deleted resource and does not exist anymore.</li>
+            <li>The identifier or the ARK URL is wrong.</li>
+        </ul>
+    </div>
 </div>

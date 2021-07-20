@@ -22,6 +22,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .action button {
+    border-radius: 0;
+  }
 }
 
 .infobar {

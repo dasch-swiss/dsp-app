@@ -34,7 +34,7 @@
     "@angular/platform-browser-dynamic": "^11.2.9",
     "@angular/router": "^11.2.9",
     "@ckeditor/ckeditor5-angular": "^1.2.3",
-    "@dasch-swiss/dsp-js": "^2.6.1",
+    "@dasch-swiss/dsp-js": "^2.7.0",
     "@dasch-swiss/dsp-ui": "^1.6.0",
     "@ngx-translate/core": "^12.1.2",
     "@ngx-translate/http-loader": "5.0.0",

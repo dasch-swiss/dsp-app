@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
     ApiResponseData,
     ApiResponseError,
     CardinalityUtil,
     Constants,
+    DeleteResource,
+    DeleteResourceResponse,
     DeleteValue,
     KnoraApiConnection,
     PermissionUtil,
@@ -31,6 +34,8 @@ import {
     ValueService
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
+import { ConfirmationWithComment, DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 
@@ -52,6 +57,16 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * display project info or not; "This resource belongs to project XYZ"
      */
     @Input() displayProjectInfo: false;
+
+    /**
+     * does the logged-in user has system or project admin permissions?
+     */
+    @Input() adminPermissions: false;
+
+    /**
+     * is the logged-in user project member?
+     */
+    @Input() editPermissions: false;
 
     /**
      * output `referredProjectClicked` of resource view component:
@@ -77,6 +92,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
+    deletedResource = false;
+
     addButtonIsVisible: boolean; // used to toggle add value button
     addValueFormIsVisible: boolean; // used to toggle add value form field
     propID: string; // used in template to show only the add value form of the corresponding value
@@ -92,8 +109,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
-        private _snackBar: MatSnackBar,
         private _userService: UserService,
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService
@@ -180,25 +198,78 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * opens resource
      * @param linkValue
      */
-    openResource(linkValue: ReadLinkValue) {
-        window.open('/resource/' + encodeURIComponent(linkValue.linkedResource.id), '_blank');
+    openResource(linkValue: ReadLinkValue | string) {
+        const id = ((typeof linkValue == 'string') ? linkValue : linkValue.linkedResourceIri);
+        window.open('/resource/' + encodeURIComponent(id), '_blank');
     }
 
     previewResource(linkValue: ReadLinkValue) {
         // --> TODO: pop up resource preview on hover
     }
 
+    openDialog(type: 'delete' | 'erase') {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: { mode: type+'Resource', title: this.resource.res.label }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((answer: ConfirmationWithComment) => {
+
+            if (answer.confirmed === true) {
+
+                const payload = new DeleteResource();
+                payload.id = this.resource.res.id;
+                payload.type = this.resource.res.type;
+                payload.deleteComment = answer.comment ? answer.comment : undefined;
+                // delete and refresh the view
+                switch (type) {
+                    case 'delete':
+                        this._dspApiConnection.v2.res.deleteResource(payload).subscribe(
+                            (response: DeleteResourceResponse) => {
+                                // display notification and mark resource as 'deleted'
+                                this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+                                this.deletedResource = true;
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        );
+                        break;
+
+                    case 'erase':
+                        // delete resource class and refresh the view
+                        this._dspApiConnection.v2.res.eraseResource(payload).subscribe(
+                            (response: DeleteResourceResponse) => {
+                                // display notification and mark resource as 'erased'
+                                this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+                                this.deletedResource = true;
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        );
+                        break;
+                }
+
+            }
+        });
+    }
+
     /**
     * display message to confirm the copy of the citation link (ARK URL)
     */
     openSnackBar() {
-        const message = 'Copied to clipboard!';
-        const action = 'Citation Link';
-        this._snackBar.open(message, action, {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-        });
+        const message = 'ARK URL copied to clipboard!';
+        this._notification.openSnackBar(message);
     }
 
     /**

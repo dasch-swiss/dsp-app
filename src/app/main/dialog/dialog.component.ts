@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PropertyInfoObject } from 'src/app/project/ontology/default-data/default-properties';
 
@@ -18,6 +18,11 @@ export interface DialogData {
     projectCode?: string;
 }
 
+export interface ConfirmationWithComment {
+    confirmed: boolean;
+    comment?: string;
+}
+
 @Component({
     selector: 'app-material-dialog',
     templateUrl: './dialog.component.html',
@@ -26,6 +31,8 @@ export interface DialogData {
 export class DialogComponent implements OnInit {
 
     notYetImplemented = `The component <strong>${this.data.mode}</strong> is not implemented yet.`;
+
+    comment?: string;
 
     constructor(
         public dialogRef: MatDialogRef<DialogComponent>,
@@ -44,5 +51,9 @@ export class DialogComponent implements OnInit {
         if (heading.subtitle) {
             this.data.subtitle = heading.subtitle;
         }
+    }
+
+    onKey(event: KeyboardEvent) {
+        this.comment = (event.target as HTMLInputElement).value;
     }
 }

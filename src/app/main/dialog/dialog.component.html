@@ -324,6 +324,45 @@
         </app-resource-instance-form>
     </div>
 
+    <div *ngSwitchCase="'deleteResource'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource instance'"></app-dialog-header>
+        <mat-dialog-content>
+            Do you want to delete this resource?
+            <textarea
+                matinput
+                class="deletion-comment"
+                type="text"
+                (keyup)="onKey($event)"
+                [placeholder]="'Comment why resource is being deleted'"
+            ></textarea>
+        </mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="{confirmed: false, comment: comment}">
+                No, keep it
+            </button>
+            <span class="fill-remaining-space"></span>
+            <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center"
+                [mat-dialog-close]="{confirmed: true, comment: comment}">
+                Yes, delete
+            </button>
+        </mat-dialog-actions>
+    </div>
+
+    <div *ngSwitchCase="'eraseResource'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource'"></app-dialog-header>
+        Do you want to erase this resource forever?<br>WARNING: This action cannot be undone, so use it with care.
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="{confirmed: false, comment: comment}">
+                No, keep it
+            </button>
+            <span class="fill-remaining-space"></span>
+            <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center"
+                [mat-dialog-close]="{confirmed: true, comment: comment}">
+                Yes, erase forever
+            </button>
+        </mat-dialog-actions>
+    </div>
+
     <!-- general error message -->
     <div *ngSwitchCase="'error'">
         <app-error [status]="data.id"></app-error>
