@@ -136,7 +136,13 @@ describe('OntologyFormComponent', () => {
         expect(form.valid).toBeFalsy();
 
         nameInput.setValue('my-onto');
-        expect(form.valid).toBeFalsy();
+        expect(form.valid).toBeTruthy();
+
+        nameInput.setValue('my_onto');
+        expect(form.valid).toBeTruthy();
+
+        nameInput.setValue('my.onto');
+        expect(form.valid).toBeTruthy();
 
         nameInput.setValue('2ndOnto');
         expect(form.valid).toBeFalsy();
@@ -145,15 +151,6 @@ describe('OntologyFormComponent', () => {
         expect(form.valid).toBeFalsy();
 
         nameInput.setValue('_notAllowed');
-        expect(form.valid).toBeFalsy();
-
-        nameInput.setValue('not-allowed');
-        expect(form.valid).toBeFalsy();
-
-        nameInput.setValue('not_allowed');
-        expect(form.valid).toBeFalsy();
-
-        nameInput.setValue('not.allowed');
         expect(form.valid).toBeFalsy();
 
         nameInput.setValue('no$or€');
