@@ -14,6 +14,7 @@ import {
     CountQueryResponse,
     IHasPropertyWithPropertyDefinition,
     KnoraApiConnection,
+    ReadAudioFileValue,
     ReadDocumentFileValue, ReadResource,
     ReadResourceSequence,
     ReadStillImageFileValue, SystemPropertyDefinition
@@ -354,6 +355,11 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 representations.push(document);
             }
 
+        } else if (resource.res.properties[Constants.HasAudioFileValue]) {
+
+            const fileValue: ReadAudioFileValue = resource.res.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue;
+            const audio = new FileRepresentation(fileValue);
+            representations.push(audio);
         }
         this.representationsToDisplay = representations;
 
@@ -408,7 +414,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // request incoming regions --> TODO: add case to get incoming sequences in case of video and audio
-        if (resource.res.properties[Constants.HasStillImageFileValue] || resource.res.properties[Constants.HasDocumentFileValue]) {
+        if (resource.res.properties[Constants.HasStillImageFileValue] || resource.res.properties[Constants.HasDocumentFileValue] || resource.res.properties[Constants.HasAudioFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // the resource is a StillImageRepresentation, check if there are regions pointing to it
 

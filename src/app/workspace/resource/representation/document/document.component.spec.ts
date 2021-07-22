@@ -6,7 +6,6 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FileRepresentation } from '../file-representation';
 import { DocumentComponent } from './document.component';
 
-
 // --> TODO: get test data from dsp-js or from dsp-api test data
 const documentFileValue = {
     'type': 'http://api.knora.org/ontology/knora-api/v2#DocumentFileValue',
@@ -31,7 +30,7 @@ const documentFileValue = {
 
 @Component({
     template: `
-        <app-document [document]="documnetFileRepresentation">
+        <app-document [src]="documnetFileRepresentation">
         </app-document>`
 })
 class TestHostComponent implements OnInit {

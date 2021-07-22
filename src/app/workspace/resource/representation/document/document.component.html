@@ -27,13 +27,13 @@
             <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoomFactor = zoomFactor + 0.2">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
-            <a [href]="document.fileValue.fileUrl" download mat-icon-button id="DSP_PDF_DOWNLOAD" matTooltip="Open pdf in new tab">
+            <a [href]="src.fileValue.fileUrl" download mat-icon-button id="DSP_PDF_DOWNLOAD" matTooltip="Open pdf in new tab">
                 <mat-icon>launch</mat-icon>
             </a>
         </span>
     </div>
 
-    <pdf-viewer [src]="document.fileValue.fileUrl" [original-size]="false" [autoresize]="true" [show-all]="true"
+    <pdf-viewer [src]="src.fileValue.fileUrl" [original-size]="false" [autoresize]="true" [show-all]="true"
         [show-borders]="true" [zoom]="zoomFactor" [zoom-scale]="'page-width'">
     </pdf-viewer>
 </div>
