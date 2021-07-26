@@ -2,11 +2,22 @@
 <div class="content" *ngIf="searchParams && !loading && (numberOfAllResults > 0)">
     <as-split direction="horizontal">
         <as-split-area [size]="40">
-            <dsp-list-view [search]="searchParams" [displayViewSwitch]="false" (resourceSelected)="openResource($event)"></dsp-list-view>
+            <dsp-list-view [search]="searchParams"
+                [displayViewSwitch]="false"
+                [withMultipleSelection]="true"
+                (multipleResourcesSelected)="openMultipleResources($event)"
+                (singleResourceSelected)="openResource($event)">
+            </dsp-list-view>
         </as-split-area>
         <as-split-area [size]="60">
-            <!-- <dsp-resource-view [iri]="resourceIri" (openProject)="openProject($event)"></dsp-resource-view> -->
-            <app-resource [resourceIri]="resourceIri"></app-resource>
+            <!-- single resource view -->
+            <app-resource [resourceIri]="resourceIri" *ngIf="!multipleSelection"></app-resource>
+
+            <!-- multiple resources view / comparison viewer -->
+            <dsp-multiple-resources-view *ngIf="multipleSelection"
+                [noOfResources]="multipleResources.count"
+                [resourceIds]="multipleResources.resIds">
+            </dsp-multiple-resources-view>
         </as-split-area>
     </as-split>
 </div>

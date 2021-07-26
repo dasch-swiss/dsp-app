@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ApiResponseError, CountQueryResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, NotificationService, SearchParams } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken, FilteredResouces, NotificationService, SearchParams } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-results',
@@ -16,6 +16,10 @@ export class ResultsComponent {
     resIri: string;
 
     resourceIri: string;
+
+    // display single resource or intermediate page in case of multiple selection
+    multipleSelection = false;
+    multipleResources: FilteredResouces;
 
     // number of all results
     numberOfAllResults: number;
@@ -91,7 +95,19 @@ export class ResultsComponent {
     }
 
     openResource(id: string) {
+        this.multipleSelection = false;
+        this.multipleResources = undefined;
         this.resourceIri = id;
+    }
+
+    // this funtion is called when 'withMultipleSelection' is true and
+    // multiple resources are selected for comparision
+    openMultipleResources(resources: FilteredResouces) {
+
+        this.multipleSelection = (resources && resources.count > 0);
+
+        this.multipleResources = (this.multipleSelection ? resources : undefined);
+
     }
 
 }
