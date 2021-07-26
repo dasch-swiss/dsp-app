@@ -1,5 +1,32 @@
 # Changelog
 
+## [5.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.0.0...v5.1.0) (2021-07-26)
+
+
+### Bug Fixes
+
+* **ontology:** fix regex pattern in ontology form (DSP-1139) ([#483](https://www.github.com/dasch-swiss/dsp-app/issues/483)) ([4d0703f](https://www.github.com/dasch-swiss/dsp-app/commit/4d0703fde8d42d55a2bf90ecd62c40c269251abd))
+
+
+### Documentation
+
+* **user-guide:** update user-guide about ontology (DSP-976) ([#480](https://www.github.com/dasch-swiss/dsp-app/issues/480)) ([e12f196](https://www.github.com/dasch-swiss/dsp-app/commit/e12f1966a4c354a2e613d9a4deb6989196482dfc))
+
+
+### Maintenance
+
+* **ontology:** better regex for onto name (DSP-1139) ([#488](https://www.github.com/dasch-swiss/dsp-app/issues/488)) ([ec881ef](https://www.github.com/dasch-swiss/dsp-app/commit/ec881ef60a2c802a2b65a3e047a40d768bc08cf6))
+* **resource:** hide file value in properties (DSP-1261) ([#484](https://www.github.com/dasch-swiss/dsp-app/issues/484)) ([4ade17f](https://www.github.com/dasch-swiss/dsp-app/commit/4ade17f86e91d28b9a751e63b4d6480dfa1d5939))
+
+
+### Enhancements
+
+* **resource:** add document viewer with download (DSP-1791) ([#485](https://www.github.com/dasch-swiss/dsp-app/issues/485)) ([ce51bce](https://www.github.com/dasch-swiss/dsp-app/commit/ce51bce48b63fc7abb4bb6f55ea2de0de435ece9))
+* **resource:** audio player (DSP-1805) ([#487](https://www.github.com/dasch-swiss/dsp-app/issues/487)) ([bf372dc](https://www.github.com/dasch-swiss/dsp-app/commit/bf372dc41c7da0a4c2e3263f1d3cace5e7eedc64))
+* **resource:** delete and erase resource (DSP-1228) ([#489](https://www.github.com/dasch-swiss/dsp-app/issues/489)) ([8b1fdba](https://www.github.com/dasch-swiss/dsp-app/commit/8b1fdbae18e112a81af0150cb9ac102a5e408628))
+* **resource:** upload audio (DSP-1799) ([#486](https://www.github.com/dasch-swiss/dsp-app/issues/486)) ([d865df5](https://www.github.com/dasch-swiss/dsp-app/commit/d865df5fc95a9c26a02aafbd18b8ed9621f81d0e))
+* **resource:** upload pdf document (DSP-1776) ([#481](https://www.github.com/dasch-swiss/dsp-app/issues/481)) ([d916b4b](https://www.github.com/dasch-swiss/dsp-app/commit/d916b4be6189fb764a6e4a92aa0999a88d71f40a))
+
 ## [5.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v4.11.1...v5.0.0) (2021-07-05)
 
 
