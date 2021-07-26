@@ -172,6 +172,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     case 'document':
                         this.propertiesObj[Constants.HasDocumentFileValue] = [this.fileValue];
                         break;
+                    case 'audio':
+                        this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
+                        break;
                 }
             }
 
@@ -381,14 +384,18 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                             !prop.isLinkProperty &&
                             prop.isEditable &&
                             prop.id !== Constants.HasStillImageFileValue &&
-                            prop.id !== Constants.HasDocumentFileValue  // --> TODO for UPLOAD: expand with other representation file values
+                            prop.id !== Constants.HasDocumentFileValue &&
+                            prop.id !== Constants.HasAudioFileValue  // --> TODO for UPLOAD: expand with other representation file values
                     );
 
                     if (onto.properties[Constants.HasStillImageFileValue]) {
                         this.hasFileValue = 'stillImage';
-                    }
-                    if (onto.properties[Constants.HasDocumentFileValue]) {
+                    } else if (onto.properties[Constants.HasDocumentFileValue]) {
                         this.hasFileValue = 'document';
+                    } else if (onto.properties[Constants.HasAudioFileValue]) {
+                        this.hasFileValue = 'audio';
+                    } else {
+                        this.hasFileValue = undefined;
                     }
 
                     // notifies the user that the selected resource does not have any properties defined yet.

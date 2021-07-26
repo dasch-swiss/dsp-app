@@ -91,7 +91,7 @@
         </button>
         <span class="fill-remaining-space"></span>
         <span>
-            <button mat-raised-button type="submit" color="primary" class="form-submit">
+            <button mat-raised-button type="submit" color="primary" class="form-submit" [disabled]="!propertiesParentForm.valid">
                 {{ 'appLabels.form.action.submit' | translate}}
             </button>
         </span>

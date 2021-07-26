@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
+    CreateAudioFileValue,
     CreateDocumentFileValue,
     CreateFileValue,
     CreateStillImageFileValue,
+    UpdateAudioFileValue,
     UpdateDocumentFileValue,
     UpdateFileValue,
     UpdateStillImageFileValue
@@ -41,6 +43,7 @@ export class UploadComponent implements OnInit {
     // todo: maybe we can use this list to display which file format is allowed to
     supportedImageTypes = ['image/jpeg', 'image/jp2', 'image/tiff', 'image/tiff-fx', 'image/png'];
     supportedDocumentTypes = ['application/pdf'];
+    supportedAudioTypes = ['audio/mpeg'];
 
     // readonly fromLabels = {
     //     upload: 'Upload file',
@@ -87,6 +90,7 @@ export class UploadComponent implements OnInit {
                 this._upload.upload(formData).subscribe(
                     (res: UploadedFileResponse) => {
 
+                        // prepare thumbnail url to display something after upload
                         switch (this.representation) {
                             case 'stillImage':
                                 const temporaryUrl = res.uploadedFiles[0].temporaryUrl;
@@ -157,6 +161,7 @@ export class UploadComponent implements OnInit {
      */
     deleteAttachment(): void {
         this.fileControl.reset();
+        this.fileInfo.emit(undefined);
     }
 
     /**
@@ -215,6 +220,10 @@ export class UploadComponent implements OnInit {
                 fileValue = new CreateDocumentFileValue();
                 break;
 
+            case 'audio':
+                fileValue = new CreateAudioFileValue();
+                break;
+
             default:
                 // --> TODO for UPLOAD: expand with other representation file types
                 break;
@@ -239,7 +248,7 @@ export class UploadComponent implements OnInit {
 
         const filename = this.fileControl.value.internalFilename;
 
-        let fileValue: UpdateStillImageFileValue | UpdateDocumentFileValue;
+        let fileValue: UpdateStillImageFileValue | UpdateDocumentFileValue | UpdateAudioFileValue;
 
 
         switch (this.representation) {
@@ -250,6 +259,11 @@ export class UploadComponent implements OnInit {
             case 'document':
                 fileValue = new UpdateDocumentFileValue();
                 break;
+
+            case 'audio':
+                fileValue = new UpdateAudioFileValue();
+                break;
+
             default:
                 // --> TODO for UPLOAD: expand with other representation file types
                 break;
@@ -280,9 +294,15 @@ export class UploadComponent implements OnInit {
             case 'stillImage':
                 this.allowedFileTypes = this.supportedImageTypes;
                 break;
+
             case 'document':
                 this.allowedFileTypes = this.supportedDocumentTypes;
                 break;
+
+            case 'audio':
+                this.allowedFileTypes = this.supportedAudioTypes;
+                break;
+
             default:
                 this.allowedFileTypes = [];
                 break;

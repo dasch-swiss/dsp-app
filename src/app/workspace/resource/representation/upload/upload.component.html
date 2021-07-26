@@ -9,8 +9,10 @@
             <dsp-progress-indicator *ngIf="isLoading"></dsp-progress-indicator>
             <p class="title">Upload file<br>
                 <span class="mat-body-1">The following file types are supported:<br>
-                    <span *ngFor="let item of allowedFileTypes; let last = last">{{ item | split: '/':1 }}<span
-                            *ngIf="!last">,&nbsp;</span></span>
+                    <span *ngFor="let item of allowedFileTypes; let last = last">{{ item | split: '/':1 }}
+                        <span *ngIf="!last">,&nbsp;</span>
+                    </span>
+                    <span *ngIf="representation === 'audio'">&nbsp;(= mp3)</span>
                 </span>
             </p>
             <div class="bottom-line">
