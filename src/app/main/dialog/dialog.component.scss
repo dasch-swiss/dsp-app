@@ -1,6 +1,13 @@
 .todo {
-    background-color: bisque;
-    padding: 6px;
-    border-radius: 4px;
-    text-align: center;
+  background-color: bisque;
+  padding: 6px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.deletion-comment {
+  width: calc(100% - 48px);
+  margin: 8px;
+  padding: 8px;
+  height: 64px;
 }

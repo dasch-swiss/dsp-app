@@ -13,7 +13,11 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .toolbar {
-  background: whitesmoke;
+  background: $primary_200;
+
+  &.deleted {
+    background: $warn;
+  }
 
   .label {
     margin: 0 !important;
@@ -21,6 +25,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .action button {
+    border-radius: 0;
   }
 }
 

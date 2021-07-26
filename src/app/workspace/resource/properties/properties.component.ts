@@ -1,16 +1,20 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
     ApiResponseData,
     ApiResponseError,
     CardinalityUtil,
     Constants,
+    DeleteResource,
+    DeleteResourceResponse,
     DeleteValue,
     KnoraApiConnection,
     PermissionUtil,
     ProjectResponse,
     ReadLinkValue,
     ReadProject,
+    ReadResource,
     ReadResourceSequence,
     ReadTextValueAsXml,
     ReadUser,
@@ -31,6 +35,8 @@ import {
     ValueService
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
+import { ConfirmationWithComment, DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 
@@ -52,6 +58,16 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * display project info or not; "This resource belongs to project XYZ"
      */
     @Input() displayProjectInfo: false;
+
+    /**
+     * does the logged-in user has system or project admin permissions?
+     */
+    @Input() adminPermissions: false;
+
+    /**
+     * is the logged-in user project member?
+     */
+    @Input() editPermissions: false;
 
     /**
      * output `referredProjectClicked` of resource view component:
@@ -77,6 +93,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
+    lastModificationDate: string;
+
+    deletedResource = false;
+
     addButtonIsVisible: boolean; // used to toggle add value button
     addValueFormIsVisible: boolean; // used to toggle add value form field
     propID: string; // used in template to show only the add value form of the corresponding value
@@ -92,8 +112,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
-        private _snackBar: MatSnackBar,
         private _userService: UserService,
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService
@@ -105,6 +126,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             const allPermissions = PermissionUtil.allUserPermissions(
                 this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
             );
+
+            // get last modification date
+            this.lastModificationDate = this.resource.res.lastModificationDate;
 
             // if user has modify permissions, set addButtonIsVisible to true so the user see's the add button
             this.addButtonIsVisible = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
@@ -118,6 +142,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         this.valueOperationEventSubscriptions.push(this._valueOperationEventService.on(
             Events.ValueAdded, (newValue: AddedEventValue) => {
                 if (newValue) {
+                    this.lastModificationDate = newValue.addedValue.valueCreationDate;
                     this.addValueToResource(newValue.addedValue);
                     this.hideAddValueForm();
                 }
@@ -125,13 +150,25 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
         this.valueOperationEventSubscriptions.push(this._valueOperationEventService.on(
             Events.ValueUpdated, (updatedValue: UpdatedEventValues) => {
+                this.lastModificationDate = updatedValue.updatedValue.valueCreationDate;
                 this.updateValueInResource(updatedValue.currentValue, updatedValue.updatedValue);
                 this.hideAddValueForm();
             }));
 
         this.valueOperationEventSubscriptions.push(this._valueOperationEventService.on(
-            Events.ValueDeleted, (deletedValue: DeletedEventValue) => this.deleteValueFromResource(deletedValue.deletedValue)
-        ));
+            Events.ValueDeleted, (deletedValue: DeletedEventValue) => {
+                // the DeletedEventValue does not contain a creation or last modification date
+                // so, we have to grab it from res info
+                this._getLastModificationDate(this.resource.res.id);
+                this.deleteValueFromResource(deletedValue.deletedValue);
+            }));
+
+        // keep the information if the user wants to display all properties or not
+        if (localStorage.getItem('showAllProps')) {
+            this.showAllProps = JSON.parse(localStorage.getItem('showAllProps'));
+        } else {
+            localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
+        }
     }
 
     ngOnChanges(): void {
@@ -180,25 +217,79 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * opens resource
      * @param linkValue
      */
-    openResource(linkValue: ReadLinkValue) {
-        window.open('/resource/' + encodeURIComponent(linkValue.linkedResource.id), '_blank');
+    openResource(linkValue: ReadLinkValue | string) {
+        const id = ((typeof linkValue == 'string') ? linkValue : linkValue.linkedResourceIri);
+        window.open('/resource/' + encodeURIComponent(id), '_blank');
     }
 
     previewResource(linkValue: ReadLinkValue) {
         // --> TODO: pop up resource preview on hover
     }
 
+    openDialog(type: 'delete' | 'erase') {
+        const dialogConfig: MatDialogConfig = {
+            width: '560px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: { mode: type + 'Resource', title: this.resource.res.label }
+        };
+
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((answer: ConfirmationWithComment) => {
+
+            if (answer.confirmed === true) {
+
+                const payload = new DeleteResource();
+                payload.id = this.resource.res.id;
+                payload.type = this.resource.res.type;
+                payload.deleteComment = answer.comment ? answer.comment : undefined;
+                payload.lastModificationDate = this.lastModificationDate;
+                switch (type) {
+                    case 'delete':
+                        // delete the resource and refresh the view
+                        this._dspApiConnection.v2.res.deleteResource(payload).subscribe(
+                            (response: DeleteResourceResponse) => {
+                                // display notification and mark resource as 'deleted'
+                                this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+                                this.deletedResource = true;
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        );
+                        break;
+
+                    case 'erase':
+                        // erase the resource and refresh the view
+                        this._dspApiConnection.v2.res.eraseResource(payload).subscribe(
+                            (response: DeleteResourceResponse) => {
+                                // display notification and mark resource as 'erased'
+                                this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+                                this.deletedResource = true;
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        );
+                        break;
+                }
+
+            }
+        });
+    }
+
     /**
     * display message to confirm the copy of the citation link (ARK URL)
     */
     openSnackBar() {
-        const message = 'Copied to clipboard!';
-        const action = 'Citation Link';
-        this._snackBar.open(message, action, {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-        });
+        const message = 'ARK URL copied to clipboard!';
+        this._notification.openSnackBar(message);
     }
 
     /**
@@ -251,8 +342,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             this.resource.resProps
                 .filter(propInfoValueArray =>
                     propInfoValueArray.propDef.id === valueToAdd.property) // filter to the correct property
-                .forEach(propInfoValue =>
-                    propInfoValue.values.push(valueToAdd)); // push new value to array
+                .forEach(propInfoValue => {
+                    propInfoValue.values.push(valueToAdd); // push new value to array
+                });
+
             if (valueToAdd instanceof ReadTextValueAsXml) {
                 this._updateStandoffLinkValue();
             }
@@ -302,6 +395,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                     filteredpropInfoValueArray.values.forEach((val, index) => { // loop through each value of the current property
                         if (val.id === valueToDelete.id) { // find the value that was deleted using the id
                             filteredpropInfoValueArray.values.splice(index, 1); // remove the value from the values array
+
                             if (val instanceof ReadTextValueAsXml) {
                                 this._updateStandoffLinkValue();
                             }
@@ -312,6 +406,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         } else {
             console.error('No properties exist for this resource');
         }
+    }
+
+    toggleAllProps(status: boolean) {
+        this.showAllProps = !status;
+        localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
     }
 
     /**
@@ -371,5 +470,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             }
         );
 
+    }
+
+    private _getLastModificationDate(resId: string) {
+        this._dspApiConnection.v2.res.getResource(resId).subscribe(
+            (res: ReadResource) => this.lastModificationDate = res.lastModificationDate
+        );
     }
 }

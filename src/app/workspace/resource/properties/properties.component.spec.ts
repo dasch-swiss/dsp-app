@@ -189,6 +189,26 @@ describe('PropertiesComponent', () => {
         voeService = TestBed.inject(ValueOperationEventService);
     }));
 
+    // mock localStorage
+    beforeEach(() => {
+        let store = {};
+
+        spyOn(localStorage, 'getItem').and.callFake(
+            (key: string): string => store[key] || null
+        );
+        spyOn(localStorage, 'removeItem').and.callFake(
+            (key: string): void => {
+                delete store[key];
+            }
+        );
+        spyOn(localStorage, 'setItem').and.callFake(
+            (key: string, value: string): string => (store[key] = <any>value)
+        );
+        spyOn(localStorage, 'clear').and.callFake(() => {
+            store = {};
+        });
+    });
+
     beforeEach(() => {
         const adminSpy = TestBed.inject(DspApiConnectionToken);
 
@@ -254,14 +274,14 @@ describe('PropertiesComponent', () => {
             const resLabelDebugElement = propertyToolbarComponentDe.query(By.css('button.toggle-props'));
             const resLabelNativeElement = resLabelDebugElement.nativeElement;
             // the button contains an icon "unfold_more" and the text "Increase properties"
-            expect(resLabelNativeElement.textContent.trim()).toBe('unfold_moreShow all properties');
+            expect(resLabelNativeElement.textContent.trim()).toBe('unfold_more');
 
             resLabelNativeElement.click();
 
             testHostFixture.detectChanges();
 
             // the button contains an icon "unfold_less" and the text "Decrease properties"
-            expect(resLabelNativeElement.textContent.trim()).toBe('unfold_lessHide empty properties');
+            expect(resLabelNativeElement.textContent.trim()).toBe('unfold_less');
 
         });
     });

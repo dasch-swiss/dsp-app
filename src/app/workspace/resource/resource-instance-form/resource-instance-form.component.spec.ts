@@ -12,7 +12,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
     ApiResponseData,
@@ -42,6 +41,7 @@ import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
+import { ResourceComponent } from '../resource.component';
 import { ResourceInstanceFormComponent } from './resource-instance-form.component';
 import { SwitchPropertiesComponent } from './select-properties/switch-properties/switch-properties.component';
 
@@ -275,7 +275,9 @@ describe('ResourceInstanceFormComponent', () => {
                 MatSelectModule,
                 MatSnackBarModule,
                 ReactiveFormsModule,
-                RouterTestingModule,
+                RouterTestingModule.withRoutes([
+                    { path: 'resource', component: ResourceComponent }
+                ]),
                 TranslateModule.forRoot()
             ],
             providers: [
