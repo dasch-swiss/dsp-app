@@ -5,16 +5,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import {
-    ApiResponseData,
     ApiResponseError,
     Dataset,
-    KnoraApiConnection,
-    ProjectResponse,
-    ProjectsMetadata,
+    KnoraApiConnection, ProjectsMetadata,
     ReadProject,
     SingleProject
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, NotificationService, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { CacheService } from '../../main/cache/cache.service';
@@ -72,8 +69,7 @@ export class BoardComponent implements OnInit {
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
         private _titleService: Title,
-        private _snackBar: MatSnackBar,
-        private _notification: NotificationService,
+        private _snackBar: MatSnackBar
     ) {
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
@@ -161,11 +157,10 @@ export class BoardComponent implements OnInit {
                 this.getProjectForDataset();
             },
             (error: ApiResponseError) => {
-                if (error.status === 404) {
-                    // the DSP-API returns a 404 with generic message if metadata is not defined
-                    // for the selected project. Below we update the error message.
-                    this._notification.openSnackBar('Metadata is not defined for the selected project');
-                } else {
+                // in case of a 404: the metadata are not defined
+                // it will be displayed by one sentence in the
+                // content container
+                if (error.status !== 404) {
                     // use default error behavior
                     this._errorHandler.showMessage(error);
                 }

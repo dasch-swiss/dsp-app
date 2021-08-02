@@ -180,7 +180,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                 this.project = response.body.project;
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         );
 

@@ -1,35 +1,23 @@
 <!-- In case if results present -->
-<div class="content" *ngIf="searchParams && !loading && (numberOfAllResults > 0)">
+<div class="content" *ngIf="searchParams">
+
     <as-split direction="horizontal">
         <as-split-area [size]="40">
-            <dsp-list-view [search]="searchParams"
-                [displayViewSwitch]="false"
-                [withMultipleSelection]="true"
+            <dsp-list-view [search]="searchParams" [displayViewSwitch]="false" [withMultipleSelection]="true"
                 (multipleResourcesSelected)="openMultipleResources($event)"
                 (singleResourceSelected)="openResource($event)">
             </dsp-list-view>
         </as-split-area>
-        <as-split-area [size]="60">
+        <as-split-area [size]="60" *ngIf="resourceIri">
+
             <!-- single resource view -->
             <app-resource [resourceIri]="resourceIri" *ngIf="!multipleSelection"></app-resource>
 
             <!-- multiple resources view / comparison viewer -->
-            <dsp-multiple-resources-view *ngIf="multipleSelection"
-                [noOfResources]="multipleResources.count"
+            <dsp-multiple-resources-view *ngIf="multipleSelection" [noOfResources]="multipleResources.count"
                 [resourceIds]="multipleResources.resIds">
             </dsp-multiple-resources-view>
         </as-split-area>
     </as-split>
-</div>
 
-<!-- In case of 0 result -->
-<div class="no-results" *ngIf="!loading && numberOfAllResults === 0">
-    <p>Your search <span *ngIf="searchMode === 'fulltext'">- <strong> {{searchQuery}}</strong> -</span> did not match any documents.</p>
-    <p>Suggestions:</p>
-    <ul>
-        <li>Make sure that all words are spelled correctly.</li>
-        <li>Try different keywords.</li>
-        <li>Try more general keywords.</li>
-        <li>Try fewer keywords.</li>
-    </ul>
 </div>

@@ -1,8 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ApiResponseError, CountQueryResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, FilteredResouces, NotificationService, SearchParams } from '@dasch-swiss/dsp-ui';
+import { FilteredResouces, SearchParams } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-results',
@@ -28,12 +27,7 @@ export class ResultsComponent {
     searchQuery: string;
     searchMode: 'fulltext' | 'gravsearch';
 
-    // progress status
-    loading = true;
-
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService,
         private _route: ActivatedRoute,
         private _titleService: Title
     ) {
@@ -41,8 +35,6 @@ export class ResultsComponent {
         this._route.paramMap.subscribe((params: Params) => {
             this.searchQuery = decodeURIComponent(params.get('q'));
             this.searchMode = (decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch');
-
-            this.checkResourceCount();
 
             this.searchParams = {
                 query: this.searchQuery,
@@ -59,39 +51,6 @@ export class ResultsComponent {
 
         // set the page title
         this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
-    }
-
-    // get the number of search results for given query
-    checkResourceCount() {
-
-        this.loading = true;
-
-        if (this.searchMode === 'fulltext') {
-            // perform count query
-            this._dspApiConnection.v2.search.doFulltextSearchCountQuery(this.searchQuery).subscribe(
-                (response: CountQueryResponse) => {
-                    this.numberOfAllResults = response.numberOfResults;
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._notification.openSnackBar(error);
-                    this.loading = false;
-                }
-            );
-        } else if (this.searchMode === 'gravsearch') {
-            // search mode: gravsearch
-            // perform count query
-            this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.searchQuery).subscribe(
-                (response: CountQueryResponse) => {
-                    this.numberOfAllResults = response.numberOfResults;
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._notification.openSnackBar(error);
-                    this.loading = false;
-                }
-            );
-        }
     }
 
     openResource(id: string) {

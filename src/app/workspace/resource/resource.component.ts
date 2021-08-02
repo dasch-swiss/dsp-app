@@ -11,9 +11,7 @@ import {
 import {
     ApiResponseError,
     Constants,
-    CountQueryResponse,
-    DeleteResourceResponse,
-    IHasPropertyWithPropertyDefinition,
+    CountQueryResponse, IHasPropertyWithPropertyDefinition,
     KnoraApiConnection,
     ReadAudioFileValue,
     ReadDocumentFileValue, ReadResource,
@@ -29,6 +27,7 @@ import {
     ValueOperationEventService
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { IncomingService } from './incoming.service';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
@@ -83,6 +82,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _errorHandler: ErrorHandlerService,
         private _incomingService: IncomingService,
         private _notification: NotificationService,
         private _route: ActivatedRoute,
@@ -128,6 +128,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnChanges() {
+        this.loading = true;
         // reset all resources
         this.resource = undefined;
         this.incomingResource = undefined;
@@ -223,7 +224,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                             }
                         },
                         (error: ApiResponseError) => {
-                            this._notification.openSnackBar(error);
+                            this._errorHandler.showMessage(error);
                         }
                     );
                 } else {
@@ -243,9 +244,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 if (error.status === 404) {
                     // resource not found: maybe it's deleted or the iri is wrong
                     // display message that it couldn't be found
-
+                    this.resource = undefined;
                 } else {
-                    this._notification.openSnackBar(error);
+                    this._errorHandler.showMessage(error);
                 }
 
             }
@@ -268,7 +269,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 }
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -421,8 +422,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 }
             },
-            (error: any) => {
-                this._notification.openSnackBar(error);
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
             }
         );
 
@@ -478,10 +479,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 // triggers ngOnChanges of StillImageComponent
                 this.collectRepresentationsAndAnnotations(resource);
 
-
             },
-            (error: any) => {
-                this._notification.openSnackBar(error);
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
             }
         );
     }
@@ -500,8 +500,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 // append elements incomingResources to this.resource.incomingLinks
                 Array.prototype.push.apply(this.resource.res.incomingReferences, incomingResources.resources);
             },
-            (error: any) => {
-                this._notification.openSnackBar(error);
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
             }
         );
     }

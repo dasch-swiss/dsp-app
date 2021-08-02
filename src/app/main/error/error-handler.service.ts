@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ApiResponseError } from '@dasch-swiss/dsp-js';
-import { NotificationService } from '@dasch-swiss/dsp-ui';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, NotificationService, SessionService } from '@dasch-swiss/dsp-ui';
 import { DialogComponent } from '../dialog/dialog.component';
 
 @Injectable({
@@ -10,8 +10,10 @@ import { DialogComponent } from '../dialog/dialog.component';
 export class ErrorHandlerService {
 
     constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _notification: NotificationService,
-        private _dialog: MatDialog
+        private _dialog: MatDialog,
+        private _session: SessionService,
     ) { }
 
     showMessage(error: ApiResponseError) {
@@ -32,9 +34,25 @@ export class ErrorHandlerService {
                 disableClose: true
             };
 
-            const dialogRef = this._dialog.open(
+            this._dialog.open(
                 DialogComponent,
                 dialogConfig
+            );
+
+        } else if (error.status === 401 && typeof(error.error) !== 'string') {
+            // logout if error status is a 401 error and comes from a DSP-JS request
+            this._dspApiConnection.v2.auth.logout().subscribe(
+                (logoutResponse: ApiResponseData<LogoutResponse>) => {
+
+                    // destroy (dsp-ui) session
+                    this._session.destroySession();
+
+                    // reload the page
+                    window.location.reload();
+                },
+                (logoutError: ApiResponseError) => {
+                    this._notification.openSnackBar(logoutError);
+                }
             );
 
         } else {

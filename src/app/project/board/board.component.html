@@ -50,6 +50,10 @@
                 </span>
             </div>
         </div>
+
+        <section class="no-metadata" *ngIf="!metadataLoading && !selectedDataset">
+            No metadata defined for the selected project.
+        </section>
     </div>
 
     <div class="project-info-container flex-panel" *ngIf="!metadataLoading && selectedDataset">
@@ -219,4 +223,5 @@
         </div>
 
     </div>
+
 </div>

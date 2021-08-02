@@ -167,14 +167,6 @@ describe('PropertiesComponent', () => {
                 ValueOperationEventService,
                 AppInitService,
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig
-                },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
-                },
-                {
                     provide: DspApiConnectionToken,
                     useValue: adminSpyObj
                 },
