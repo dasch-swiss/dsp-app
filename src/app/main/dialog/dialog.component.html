@@ -281,21 +281,24 @@
     <div *ngSwitchCase="'updateCardinality'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position"
+            [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
     <div *ngSwitchCase="'createProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position"
+            [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
     <div *ngSwitchCase="'editProperty'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position" [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
+        <app-property-form [propertyInfo]="data.propInfo" [resClassIri]="data.parentIri" [guiOrder]="data.position"
+            [canSetFullCardinality]="data.canBeUpdated" (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
@@ -324,20 +327,40 @@
         </app-resource-instance-form>
     </div>
 
-    <div *ngSwitchCase="'deleteResource'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource instance'"></app-dialog-header>
-        <mat-dialog-content>
-            Do you want to delete this resource?
-            <textarea
-                matinput
-                class="deletion-comment"
-                type="text"
-                (keyup)="onKey($event)"
-                [placeholder]="'Comment why resource is being deleted'"
-            ></textarea>
+    <div *ngSwitchCase="'editResource'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Edit resource\'s label'">
+        </app-dialog-header>
+        <mat-dialog-content class="form-content">
+            <mat-form-field class="large-field">
+                <input matInput placeholder="Label" [value]="data.title" (keyup)="onKey($event)">
+            </mat-form-field>
         </mat-dialog-content>
         <mat-dialog-actions>
-            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="{confirmed: false, comment: comment}">
+            <button mat-button mat-dialog-close class="cancel-button center"
+                [mat-dialog-close]="{confirmed: false, comment: comment}">
+                Cancel
+            </button>
+            <span class="fill-remaining-space"></span>
+            <button mat-button mat-raised-button [color]="'primary'" class="confirm-button center"
+                [mat-dialog-close]="{confirmed: true, comment: comment}" [disabled]="!comment">
+                Save
+            </button>
+        </mat-dialog-actions>
+    </div>
+
+    <div *ngSwitchCase="'deleteResource'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Delete resource instance'"></app-dialog-header>
+        <mat-dialog-content class="form-content">
+            <mat-form-field class="large-field">
+                <mat-label>Comment why resource is being deleted</mat-label>
+                <textarea matInput class="deletion-comment" type="text" (keyup)="onKey($event)"
+                    [placeholder]="'Ex. Resource was created by mistake...'"></textarea>
+            </mat-form-field>
+            Do you want to delete this resource?
+        </mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="cancel-button center"
+                [mat-dialog-close]="{confirmed: false, comment: comment}">
                 No, keep it
             </button>
             <span class="fill-remaining-space"></span>
@@ -350,9 +373,10 @@
 
     <div *ngSwitchCase="'eraseResource'">
         <app-dialog-header [title]="data.title" [subtitle]="'Delete resource'"></app-dialog-header>
-        Do you want to erase this resource forever?<br>WARNING: This action cannot be undone, so use it with care.
+        Do you want to erase this resource forever?<br><br>WARNING: This action cannot be undone, so use it with care.
         <mat-dialog-actions>
-            <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="{confirmed: false, comment: comment}">
+            <button mat-button mat-dialog-close class="cancel-button center"
+                [mat-dialog-close]="{confirmed: false, comment: comment}">
                 No, keep it
             </button>
             <span class="fill-remaining-space"></span>

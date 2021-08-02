@@ -20,6 +20,8 @@ import {
     ReadUser,
     ReadValue,
     ResourcePropertyDefinition,
+    UpdateResourceMetadata,
+    UpdateResourceMetadataResponse,
     UserResponse
 } from '@dasch-swiss/dsp-js';
 import {
@@ -226,7 +228,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         // --> TODO: pop up resource preview on hover
     }
 
-    openDialog(type: 'delete' | 'erase') {
+    openDialog(type: 'delete' | 'erase' | 'edit') {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',
@@ -245,39 +247,60 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
             if (answer.confirmed === true) {
 
-                const payload = new DeleteResource();
-                payload.id = this.resource.res.id;
-                payload.type = this.resource.res.type;
-                payload.deleteComment = answer.comment ? answer.comment : undefined;
-                payload.lastModificationDate = this.lastModificationDate;
-                switch (type) {
-                    case 'delete':
-                        // delete the resource and refresh the view
-                        this._dspApiConnection.v2.res.deleteResource(payload).subscribe(
-                            (response: DeleteResourceResponse) => {
-                                // display notification and mark resource as 'deleted'
-                                this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
-                                this.deletedResource = true;
-                            },
-                            (error: ApiResponseError) => {
-                                this._errorHandler.showMessage(error);
-                            }
-                        );
-                        break;
+                if (type !== 'edit') {
 
-                    case 'erase':
-                        // erase the resource and refresh the view
-                        this._dspApiConnection.v2.res.eraseResource(payload).subscribe(
-                            (response: DeleteResourceResponse) => {
-                                // display notification and mark resource as 'erased'
-                                this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
-                                this.deletedResource = true;
+                    const payload = new DeleteResource();
+                    payload.id = this.resource.res.id;
+                    payload.type = this.resource.res.type;
+                    payload.deleteComment = answer.comment ? answer.comment : undefined;
+                    payload.lastModificationDate = this.lastModificationDate;
+                    switch (type) {
+                        case 'delete':
+                            // delete the resource and refresh the view
+                            this._dspApiConnection.v2.res.deleteResource(payload).subscribe(
+                                (response: DeleteResourceResponse) => {
+                                    // display notification and mark resource as 'deleted'
+                                    this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+                                    this.deletedResource = true;
+                                },
+                                (error: ApiResponseError) => {
+                                    this._errorHandler.showMessage(error);
+                                }
+                            );
+                            break;
+
+                        case 'erase':
+                            // erase the resource and refresh the view
+                            this._dspApiConnection.v2.res.eraseResource(payload).subscribe(
+                                (response: DeleteResourceResponse) => {
+                                    // display notification and mark resource as 'erased'
+                                    this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+                                    this.deletedResource = true;
+                                },
+                                (error: ApiResponseError) => {
+                                    this._errorHandler.showMessage(error);
+                                }
+                            );
+                            break;
+                    }
+                } else {
+
+                    // update resource's label if it has changed
+                    if (this.resource.res.label !== answer.comment) {
+                        const payload = new UpdateResourceMetadata();
+                        payload.id = this.resource.res.id;
+                        payload.type = this.resource.res.type;
+                        payload.lastModificationDate = this.lastModificationDate;
+                        payload.label = answer.comment;
+                        this._dspApiConnection.v2.res.updateResourceMetadata(payload).subscribe(
+                            (response: UpdateResourceMetadataResponse) => {
+                                this.resource.res.label = payload.label;
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
                             }
                         );
-                        break;
+                    }
                 }
 
             }

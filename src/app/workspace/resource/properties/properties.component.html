@@ -5,6 +5,7 @@
     <h3 class="label mat-title">
         {{resource.res.label}} <span *ngIf="deletedResource">(deleted)</span>
     </h3>
+
     <span class="fill-remaining-space"></span>
 
     <!-- tools: share, add to favorites, edit, delete etc. -->
@@ -55,6 +56,10 @@
             <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="res-more-menu">
+            <button mat-menu-item matTooltip="Edit the label of this resource" matTooltipPosition="above" (click)="openDialog('edit')">
+                <mat-icon>edit</mat-icon>
+                Edit label
+            </button>
             <button mat-menu-item matTooltip="Move resource to trash bin." matTooltipPosition="above" (click)="openDialog('delete')">
                 <mat-icon>delete</mat-icon>
                 Delete resource
