@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.1.0...v5.2.0) (2021-08-02)
+
+
+### Enhancements
+
+* **resource:** add comparison view (DSP-1796) ([#490](https://www.github.com/dasch-swiss/dsp-app/issues/490)) ([731ea04](https://www.github.com/dasch-swiss/dsp-app/commit/731ea04a8f20eae809f8d8d184af5c19e40ecabf))
+* **resource:** update resource's label (DSP-1801) ([#492](https://www.github.com/dasch-swiss/dsp-app/issues/492)) ([e2c9867](https://www.github.com/dasch-swiss/dsp-app/commit/e2c98678c31712054fafe6c9193b8ca5865792a4))
+* improve error handler and fix search results issue (DSP-1826 / DSP-1831) ([#493](https://www.github.com/dasch-swiss/dsp-app/issues/493)) ([fa2f4b0](https://github.com/dasch-swiss/dsp-app/commit/70a263c0cb324d82a82070de5fb7c3dedfa2f4b0))
+
+
 ## [5.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.0.0...v5.1.0) (2021-07-26)
 
 
