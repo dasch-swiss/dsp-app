@@ -10,13 +10,18 @@
         </as-split-area>
         <as-split-area [size]="60" *ngIf="resourceIri">
 
-            <!-- single resource view -->
-            <app-resource [resourceIri]="resourceIri" *ngIf="!multipleSelection"></app-resource>
+            <div [ngSwitch]="viewMode">
+                <!-- single resource view -->
+                <app-resource *ngSwitchCase="'single'" [resourceIri]="resourceIri"></app-resource>
 
-            <!-- multiple resources view / comparison viewer -->
-            <dsp-multiple-resources-view *ngIf="multipleSelection" [noOfResources]="multipleResources.count"
-                [resourceIds]="multipleResources.resIds">
-            </dsp-multiple-resources-view>
+                <!-- intermediate view -->
+                <app-intermediate *ngSwitchCase="'intermediate'" [resources]="multipleResources" (action)="viewMode=$event"></app-intermediate>
+
+                <!-- multiple resources view / comparison viewer -->
+                <dsp-multiple-resources-view *ngSwitchCase="'compare'" [noOfResources]="multipleResources.count"
+                    [resourceIds]="multipleResources.resIds">
+                </dsp-multiple-resources-view>
+            </div>
         </as-split-area>
     </as-split>
 
