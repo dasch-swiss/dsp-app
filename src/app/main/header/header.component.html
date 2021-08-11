@@ -19,23 +19,10 @@
             [expert]="true"
             (search)="doSearch($event)">
         </dsp-search-panel>
-         <!-- to keep? > advanced and expert search (in desktop and tablet version) > already implemented in dsp-search-panel > we can delete the following commented code -->
-         <!-- <span class="other-search-link">
-            <button mat-button color="primary" class="advanced-search-link" routerLink="/search/advanced">
-                <span>Advanced search</span>
-            </button>
-            <button mat-button color="primary" class="expert-search-link" routerLink="/search/expert">
-                <span>Expert search</span>
-            </button>
-        </span> -->
+
     </span>
 
     <span class="fill-remaining-space desktop-only"></span>
-
-    <!-- button to display search bar (in phone version) -->
-    <!-- <button mat-icon-button class="search-link searchbar-phone-screen" (click)="showSearchBar()">
-        <mat-icon>search</mat-icon>
-    </button> -->
 
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
@@ -54,14 +41,3 @@
     </span>
 
 </mat-toolbar>
-
-<div *ngIf="showMessage">
-    <dsp-message [message]="successMessage" [short]="true" [duration]="2500"></dsp-message>
-</div>
-
-<!-- search-panel (in phone version) -->
-<!-- div to reactivate when dsp-app will be used as a research platform again: -->
-<!-- <div class="search-panel-phone" *ngIf="show">
-    <dsp-fulltext-search class="dsp-fulltext-search" (search)="doSearch($event)" [projectfilter]="true">
-    </dsp-fulltext-search>
-</div> -->

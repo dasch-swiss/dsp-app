@@ -3,7 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
-import { DspMessageData, SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
+import { NotificationService, SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
@@ -23,22 +23,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     appVersion: string = 'v' + appVersion;
 
-    successMessage: DspMessageData = {
-        status: 200,
-        statusText: 'Login successful'
-    };
-
-    showMessage = false;
-
     componentCommsSubscription: Subscription;
 
     constructor(
-        private _session: SessionService,
+        private _componentCommsService: ComponentCommunicationEventService,
+        private _dialog: MatDialog,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
-        private _dialog: MatDialog,
+        private _notification: NotificationService,
         private _router: Router,
-        private _componentCommsService: ComponentCommunicationEventService) {
+        private _session: SessionService
+    ) {
 
         // create tool icons to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
@@ -60,7 +55,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.componentCommsSubscription = this._componentCommsService.on(
-            Events.loginSuccess, () => this.showMessage = true);
+            Events.loginSuccess, () => {
+                this._notification.openSnackBar('Login successful');
+            });
     }
 
     ngOnDestroy() {

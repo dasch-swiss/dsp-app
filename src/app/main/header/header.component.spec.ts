@@ -1,10 +1,11 @@
 import { HttpClientModule } from '@angular/common/http';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import {
@@ -13,16 +14,14 @@ import {
     DspApiConfigToken,
     DspApiConnectionToken,
     DspCoreModule,
-    DspSearchModule,
-    MessageComponent
+    DspSearchModule
 } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
 import { TestConfig } from 'test.config';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
-import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
@@ -102,14 +101,13 @@ describe('HeaderComponent', () => {
         expect(searchPanel).toBeDefined();
     });
 
-    it('should display the login success message when the loginSuccess event is emitted', () => {
+    it('should subscribe to component communication when the loginSuccess event is emitted', () => {
         componentCommsService.emit(new EmitEvent(Events.loginSuccess));
         fixture.detectChanges();
-        const message = fixture.debugElement.query(By.directive(MessageComponent));
-        expect(message).toBeTruthy();
+        expect(component.componentCommsSubscription.closed).toBe(false);
     });
 
-    it('should unsubscribe from from changes on destruction', () => {
+    it('should unsubscribe from changes on destruction', () => {
 
         expect(component.componentCommsSubscription.closed).toBe(false);
 
