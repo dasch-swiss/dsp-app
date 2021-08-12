@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
-import { FilteredResouces, SearchParams } from '@dasch-swiss/dsp-ui';
+import { FilteredResources, SearchParams } from '@dasch-swiss/dsp-ui';
 
 @Component({
     selector: 'app-results',
@@ -17,15 +17,16 @@ export class ResultsComponent {
     resourceIri: string;
 
     // display single resource or intermediate page in case of multiple selection
-    multipleResources: FilteredResouces;
     viewMode: 'single' | 'intermediate' | 'compare' = 'single';
 
-    // number of all results
-    numberOfAllResults: number;
+    // which resources are selected?
+    selectedResources: FilteredResources;
 
     // search params
     searchQuery: string;
     searchMode: 'fulltext' | 'gravsearch';
+
+    loading = true;
 
     constructor(
         private _route: ActivatedRoute,
@@ -53,23 +54,17 @@ export class ResultsComponent {
         this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
     }
 
-    openResource(id: string) {
-        this.viewMode = 'single';
-        this.multipleResources = undefined;
-        this.resourceIri = id;
-    }
+    openSelectedResources(res: FilteredResources) {
 
-    // this funtion is called when 'withMultipleSelection' is true and
-    // multiple resources are selected for comparision
-    openMultipleResources(resources: FilteredResouces) {
+        this.selectedResources = res;
 
-        if (this.viewMode !== 'compare') {
-
-            this.viewMode = ((resources && resources.count > 0) ? 'intermediate' : 'single');
-
-            this.multipleResources = (this.viewMode !== 'single' ? resources : undefined);
+        if (!res || res.count <= 1) {
+            this.viewMode = 'single';
+        } else {
+            if (this.viewMode !== 'compare') {
+                this.viewMode = ((res && res.count > 0) ? 'intermediate' : 'single');
+            }
         }
-
 
     }
 

@@ -4,22 +4,20 @@
     <as-split direction="horizontal">
         <as-split-area [size]="40">
             <dsp-list-view [search]="searchParams" [displayViewSwitch]="false" [withMultipleSelection]="true"
-                (multipleResourcesSelected)="openMultipleResources($event)"
-                (singleResourceSelected)="openResource($event)">
+            (selectedResources)="openSelectedResources($event)">
             </dsp-list-view>
         </as-split-area>
-        <as-split-area [size]="60" *ngIf="resourceIri">
-
+        <as-split-area [size]="60" *ngIf="selectedResources?.count > 0">
             <div [ngSwitch]="viewMode">
                 <!-- single resource view -->
-                <app-resource *ngSwitchCase="'single'" [resourceIri]="resourceIri"></app-resource>
+                <app-resource *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id"></app-resource>
 
                 <!-- intermediate view -->
-                <app-intermediate *ngSwitchCase="'intermediate'" [resources]="multipleResources" (action)="viewMode=$event"></app-intermediate>
+                <app-intermediate *ngSwitchCase="'intermediate'" [resources]="selectedResources" (action)="viewMode=$event"></app-intermediate>
 
                 <!-- multiple resources view / comparison viewer -->
-                <dsp-multiple-resources-view *ngSwitchCase="'compare'" [noOfResources]="multipleResources.count"
-                    [resourceIds]="multipleResources.resIds">
+                <dsp-multiple-resources-view *ngSwitchCase="'compare'" [noOfResources]="selectedResources.count"
+                    [resources]="selectedResources.resInfo">
                 </dsp-multiple-resources-view>
             </div>
         </as-split-area>

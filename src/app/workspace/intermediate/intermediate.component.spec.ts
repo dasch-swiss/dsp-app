@@ -1,10 +1,13 @@
 import { Component, DebugElement, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
-import { FilteredResouces } from '@dasch-swiss/dsp-ui';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, FilteredResources } from '@dasch-swiss/dsp-ui';
+import { TestConfig } from 'test.config';
 import { IntermediateComponent } from './intermediate.component';
 
 /**
@@ -17,12 +20,13 @@ class OneSelectedResourcesComponent {
 
     @ViewChild('intermediateView') intermediateComponent: IntermediateComponent;
 
-    resources: FilteredResouces = {
+    resources: FilteredResources = {
         'count': 1,
         'resListIndex': [1],
-        'resIds': [
-            'http://rdfh.ch/0803/83616f8d8501'
-        ],
+        'resInfo': [{
+            'id': 'http://rdfh.ch/0803/83616f8d8501',
+            'label': '65r'
+        }],
         'selectionType': 'multiple'
     };
 
@@ -40,13 +44,22 @@ class ThreeSelectedResourcesComponent {
 
     @ViewChild('intermediateView') intermediateComponent: IntermediateComponent;
 
-    resources: FilteredResouces = {
+    resources: FilteredResources = {
         'count': 3,
         'resListIndex': [3, 2, 1],
-        'resIds': [
-            'http://rdfh.ch/0803/83616f8d8501',
-            'http://rdfh.ch/0803/71e0b9958a01',
-            'http://rdfh.ch/0803/683d5cd26f01'
+        'resInfo': [
+            {
+                'id': 'http://rdfh.ch/0803/83616f8d8501',
+                'label': '65r'
+            },
+            {
+                'id': 'http://rdfh.ch/0803/71e0b9958a01',
+                'label': '76r'
+            },
+            {
+                'id': 'http://rdfh.ch/0803/683d5cd26f01',
+                'label': '17v'
+            },
         ],
         'selectionType': 'multiple'
     };
@@ -71,12 +84,24 @@ describe('IntermediateComponent', () => {
                 ThreeSelectedResourcesComponent
             ],
             imports: [
+                DspActionModule,
                 MatButtonModule,
+                MatDialogModule,
                 MatIconModule,
                 MatTooltipModule
+            ],
+            providers: [
+                AppInitService,
+                {
+                    provide: DspApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                }
             ]
-        })
-            .compileComponents();
+        }).compileComponents();
     });
 
     beforeEach(() => {

@@ -9,8 +9,7 @@ import {
     Output
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { KnoraApiConnection, StoredProject } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { StoredProject } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
 const resolvedPromise = Promise.resolve(null);

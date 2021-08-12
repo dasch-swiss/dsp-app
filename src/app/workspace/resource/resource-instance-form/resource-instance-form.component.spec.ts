@@ -35,13 +35,19 @@ import {
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
-import { DspActionModule, DspApiConnectionToken, IntValueComponent, Session, SessionService, ValueService } from '@dasch-swiss/dsp-ui';
+import {
+    DspActionModule,
+    DspApiConnectionToken,
+    IntValueComponent,
+    Session,
+    SessionService,
+    ValueService
+} from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
-import { ResourceComponent } from '../resource.component';
 import { ResourceInstanceFormComponent } from './resource-instance-form.component';
 import { SwitchPropertiesComponent } from './select-properties/switch-properties/switch-properties.component';
 
@@ -252,7 +258,7 @@ describe('ResourceInstanceFormComponent', () => {
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
-        const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
+        // const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -275,9 +281,7 @@ describe('ResourceInstanceFormComponent', () => {
                 MatSelectModule,
                 MatSnackBarModule,
                 ReactiveFormsModule,
-                RouterTestingModule.withRoutes([
-                    { path: 'resource', component: ResourceComponent }
-                ]),
+                RouterTestingModule,
                 TranslateModule.forRoot()
             ],
             providers: [
@@ -340,11 +344,6 @@ describe('ResourceInstanceFormComponent', () => {
                 return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
             }
         );
-
-        // const routerSpy = TestBed.inject(Router);
-
-        // (routerSpy as jasmine.SpyObj<Router>).navigate.and.stub();
-        // (routerSpy as jasmine.SpyObj<Router>).navigateByUrl.and.stub();
 
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;

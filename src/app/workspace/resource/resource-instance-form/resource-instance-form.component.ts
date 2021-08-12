@@ -2,31 +2,25 @@ import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild }
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-    ApiResponseData,
     ApiResponseError,
     Constants,
     CreateFileValue,
     CreateResource,
     CreateValue,
     KnoraApiConnection,
-    OntologiesMetadata,
-    ProjectsResponse,
-    ReadOntology,
+    OntologiesMetadata, ReadOntology,
     ReadResource,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
     ResourcePropertyDefinition,
-    StoredProject,
-    UserResponse
+    StoredProject
 } from '@dasch-swiss/dsp-js';
 import {
-    DspApiConnectionToken,
-    Session,
-    SessionService
+    DspApiConnectionToken
 } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
-import { CacheService } from 'src/app/main/cache/cache.service';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ProjectService } from '../project.service';
 import { SelectOntologyComponent } from './select-ontology/select-ontology.component';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
 import { SelectResourceClassComponent } from './select-resource-class/select-resource-class.component';
@@ -57,9 +51,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     // form validation status
     formValid = false;
 
-    session: Session;
-    username: string;
-
     showNextStepForm: boolean;
 
     usersProjects: StoredProject[];
@@ -86,15 +77,11 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _router: Router,
-        private _session: SessionService
-    ) {
-        this.session = this._session.getSession();
-        this.username = this.session.user.name;
-    }
+        private _project: ProjectService,
+        private _router: Router
+    ) { }
 
 
     ngOnInit(): void {
@@ -104,7 +91,16 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         this.propertiesParentForm = this._fb.group({});
 
         // initialize projects to be used for the project selection in the creation form
-        this.initializeProjects();
+        this._project.initializeProjects().subscribe(
+            (proj: StoredProject[]) => {
+                this.usersProjects = proj;
+
+                // notifies the user that he/she is not part of any project
+                if (proj.length === 0) {
+                    this.errorMessage = 'You are not a part of any active projects or something went wrong';
+                }
+            }
+        );
 
         // boolean to show only the first step of the form (= selectResourceForm)
         this.showNextStepForm = true;
@@ -185,7 +181,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     this.resource = res;
 
                     const goto = '/resource/' + encodeURIComponent(this.resource.id);
-                    this._router.navigateByUrl(goto, { skipLocationChange: false });
+                    this._router.navigate([]).then(result => window.open(goto, '_blank'));
 
                     this.closeDialog.emit();
                 },
@@ -197,48 +193,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         } else {
             this.propertiesParentForm.markAllAsTouched();
         }
-    }
-
-    /**
-     * get the user's project(s)
-     */
-    initializeProjects(): void {
-        this.usersProjects = [];
-
-        if (this.username && this.session.user.sysAdmin === false) {
-            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-
-                    for (const project of response.body.user.projects) {
-                        if (project.status) {
-                            this.usersProjects.push(project);
-                        }
-                    }
-
-                    // notifies the user that he/she is not part of any project
-                    if (this.usersProjects.length === 0) {
-                        this.errorMessage = 'You are not a part of any active projects.';
-                    }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-        } else if (this.session.user.sysAdmin === true) {
-            this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
-                (response: ApiResponseData<ProjectsResponse>) => {
-                    for (const project of response.body.projects) {
-                        if (project.status && project.id !== Constants.SystemProjectIRI && project.id !== Constants.DefaultSharedOntologyIRI) {
-                            this.usersProjects.push(project);
-                        }
-                    }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-        }
-
     }
 
     /**

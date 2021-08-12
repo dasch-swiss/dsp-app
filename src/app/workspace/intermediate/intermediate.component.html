@@ -9,26 +9,15 @@
         <div class="action">
             <span class="fill-remaining-space"></span>
             <span>
-                <!-- link button to create a link resource (linkObj); TODO: add function to create link object -->
-                <!-- at the moment the button is disabled because of the missing functionality; it needs a "span-tag-hack" to display the tooltip -->
-                <span matTooltip="Create a link object from this selection | Currently not implemented"
-                [matTooltipPosition]="'above'">
-                    <button mat-mini-fab color="primary"
-                    class="link"
-                    matTooltip="Create a link object from this selection"
-                    [matTooltipPosition]="'above'"
-                    [disabled]="true"
-                    (click)="action.emit('link')">
+                <!-- link button to create a link resource (linkObj) -->
+                <button mat-mini-fab color="primary" class="link" matTooltip="Create a link object from this selection"
+                    [matTooltipPosition]="'above'" [disabled]="resources.count < 2" (click)="openDialog('link', resources)">
                     <mat-icon>link</mat-icon>
                 </button>
-            </span>
+                <!-- TODO: add more functionality for multiple resources: edit (only if same resource type), add to favorites, delete etc. -->
                 <!-- compare button to compare more than two resources -->
-                <button mat-mini-fab color="primary"
-                    class="compare"
-                    matTooltip="Compare the selected resources"
-                    [matTooltipPosition]="'above'"
-                    [disabled]="resources.count < 2"
-                    (click)="action.emit('compare')">
+                <button mat-mini-fab color="primary" class="compare" matTooltip="Compare the selected resources"
+                    [matTooltipPosition]="'above'" [disabled]="resources.count < 2" (click)="action.emit('compare')">
                     <mat-icon>compare_arrows</mat-icon>
                 </button>
             </span>
