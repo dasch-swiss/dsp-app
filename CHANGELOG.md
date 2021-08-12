@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.2.1...v5.3.0) (2021-08-12)
+
+
+### Maintenance
+
+* **header:** clean up code and use notification service after login ([#498](https://www.github.com/dasch-swiss/dsp-app/issues/498)) ([fb6c368](https://www.github.com/dasch-swiss/dsp-app/commit/fb6c36890f78ea7612f86c2a2978d9c6908b890d))
+* **ontology:** update create ontology tooltip for unique name (DSP-1139) ([#500](https://www.github.com/dasch-swiss/dsp-app/issues/500)) ([946d00f](https://www.github.com/dasch-swiss/dsp-app/commit/946d00f494e7f03651084909f5c37c80b394669f))
+
+
+### Enhancements
+
+* **resource:** create link / collection resource (DSP-1835) ([#501](https://www.github.com/dasch-swiss/dsp-app/issues/501)) ([8060756](https://www.github.com/dasch-swiss/dsp-app/commit/8060756d4b13abdcd26f822f4caec25702c88466))
+* **workspace:** add intermediate view (DSP-1834) ([#494](https://www.github.com/dasch-swiss/dsp-app/issues/494)) ([d0e475a](https://www.github.com/dasch-swiss/dsp-app/commit/d0e475adfb55e5538164b16d169e0b9a4e6be702))
+
 ### [5.2.1](https://www.github.com/dasch-swiss/dsp-app/compare/v5.2.0...v5.2.1) (2021-08-03)
 
 
