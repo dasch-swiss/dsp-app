@@ -571,8 +571,8 @@ $gc-small: $form-width - $gc-large - 4;
 // progress-indicator without default color
 
 .dsp-progress-indicator {
-  .line > div {
-    background-color: $primary_700 !important;
+  g {
+    stroke: $primary_700 !important;
   }
 }
 
