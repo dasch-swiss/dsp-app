@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import {
     ApiResponseData,
     ApiResponseError,
     CardinalityUtil,
-    Constants,
+    Constants, CountQueryResponse,
     DeleteResource,
     DeleteResourceResponse,
     DeleteValue,
@@ -41,6 +40,8 @@ import { ConfirmationWithComment, DialogComponent } from 'src/app/main/dialog/di
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
+import { IncomingService } from '../incoming.service';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-properties',
@@ -110,6 +111,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     project: ReadProject;
     user: ReadUser;
 
+    incomingLinkResources: ReadResource[] = [];
+    pageEvent: PageEvent;
+    numberOffAllIncomingLinkRes: number;
+    loading = false;
+
     showAllProps = false;   // show or hide empty properties
 
     constructor(
@@ -119,10 +125,17 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         private _notification: NotificationService,
         private _userService: UserService,
         private _valueOperationEventService: ValueOperationEventService,
-        private _valueService: ValueService
+        private _valueService: ValueService,
+        private _incomingService: IncomingService
     ) { }
 
     ngOnInit(): void {
+        // reset the page event
+        this.pageEvent = new PageEvent();
+        this.pageEvent.pageIndex = 0;
+
+        this._getIncomingLinks();
+
         if (this.resource.res) {
             // get user permissions
             const allPermissions = PermissionUtil.allUserPermissions(
@@ -213,6 +226,15 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     previewProject(project: ReadProject) {
         // --> TODO: pop up project preview on hover
+    }
+
+    /**
+     * goes to the next page of the incoming link pagination
+     * @param page
+     */
+    goToPage(page: PageEvent) {
+        this.pageEvent = page;
+        this._getIncomingLinks();
     }
 
     /**
@@ -434,6 +456,33 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     toggleAllProps(status: boolean) {
         this.showAllProps = !status;
         localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
+    }
+
+    /**
+     * gets the number of incoming links and gets the incoming links.
+     * @private
+     */
+    private _getIncomingLinks() {
+        this.loading = true;
+
+        if (this.pageEvent.pageIndex === 0) {
+            this._incomingService.getIncomingLinks(this.resource.res.id, this.pageEvent.pageIndex, true).subscribe(
+                (response: CountQueryResponse) => {
+                    this.numberOffAllIncomingLinkRes = response.numberOfResults;
+                }
+            );
+        }
+
+        this._incomingService.getIncomingLinks(this.resource.res.id, this.pageEvent.pageIndex).subscribe(
+            (response: ReadResourceSequence) => {
+                if (response.resources.length > 0) {
+                    this.incomingLinkResources = response.resources;
+                }
+                this.loading = false;
+            }, (error: ApiResponseError) => {
+                this.loading = false;
+            }
+        );
     }
 
     /**

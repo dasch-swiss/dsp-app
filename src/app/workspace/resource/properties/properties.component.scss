@@ -166,6 +166,15 @@
   color: rgba(0, 0, 0, 0.54);
 }
 
+:host::ng-deep .mat-paginator-container {
+  justify-content: start;
+  padding: 0;
+}
+
+:host::ng-deep .mat-paginator-range-label {
+  margin: 0;
+}
+
 @media screen and (max-width: 768px) {
   .properties,
   .incoming {

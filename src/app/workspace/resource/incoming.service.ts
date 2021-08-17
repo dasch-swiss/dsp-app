@@ -176,9 +176,10 @@ FILTER NOT EXISTS {
      *
      * @param {string} resourceIri the Iri of the resource whose incoming links should be returned.
      * @param {number} offset the offset to be used for paging. 0 is the default and is used to get the first page of results.
+     * @param {boolean} countQuery if set to true, the request returns only the CountQueryResponse; default value is `false`
      * @returns {Observable<any>}
      */
-    getIncomingLinks(resourceIri: string, offset: number): Observable<ReadResourceSequence | ApiResponseError> {
+    getIncomingLinks(resourceIri: string, offset: number, countQuery: boolean = false): Observable<ReadResourceSequence | CountQueryResponse | ApiResponseError> {
         const sparqlQueryStr = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
@@ -211,7 +212,7 @@ FILTER NOT EXISTS {
 } OFFSET ${offset}
 `;
 
-        return this._dspApiConnection.v2.search.doExtendedSearch(sparqlQueryStr);
+        return countQuery ? this._dspApiConnection.v2.search.doExtendedSearchCountQuery(sparqlQueryStr) : this._dspApiConnection.v2.search.doExtendedSearch(sparqlQueryStr);
     }
 }
 

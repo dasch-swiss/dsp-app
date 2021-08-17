@@ -146,6 +146,36 @@
                 </div>
             </div>
         </div>
+
+        <div *ngIf="incomingLinkResources.length > 0">
+            <div class="property border-top">
+                <div class="property-label">
+                    <!-- label of the incoming links -->
+                    <h3 class="label mat-subheading-1">
+                        has incoming link
+                    </h3>
+                </div>
+                <div class="property-value">
+                    <div *ngIf="loading">
+                        ...Loading
+                    </div>
+                    <div *ngIf="!loading">
+                        <!-- the value(s) of the incoming links -->
+                        <div *ngFor="let inRes of incomingLinkResources">
+                            <a [routerLink]="['/resource', inRes.id]" target="_blank">{{inRes.label}}</a>
+                        </div>
+                        <mat-paginator
+                                [length]=numberOffAllIncomingLinkRes
+                                [pageSize]="25"
+                                [hidePageSize]="true"
+                                [pageIndex]="pageEvent.pageIndex"
+                                (page)="goToPage($event)">
+                        </mat-paginator>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <ng-template #noProperties>The resource {{resource?.res.resourceClassLabel}} has no defined
         properties.</ng-template>
