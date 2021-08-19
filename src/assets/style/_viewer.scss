@@ -1,0 +1,213 @@
+@import "./config";
+@import "./mixins";
+@import "./responsive";
+
+// css for parent value components
+
+.read-mode-view {
+  font: 400 15px/24px sans-serif;
+  .rm-value, .rm-comment {
+    display: block;
+    margin: 0px;
+  }
+}
+
+.child-value-component,
+.value-component-comment {
+  display: block;
+}
+
+.parent-component-wrapper .value-component-comment {
+  margin-top: -2em;
+}
+
+.parent-value-component .child-value-component .mat-form-field-wrapper .mat-form-field-infix {
+  border-top: 0em solid transparent;
+}
+
+
+// css for child components of a parent value component
+
+.child-input-component {
+  display: inline-block;
+  vertical-align: bottom;
+  width: 49%;
+  &:nth-child(2) {
+    padding-left: 2%;
+  }
+}
+
+.child-input-component.full-width {
+  width: 100%;
+}
+
+// custom error message
+
+.custom-error-message {
+  font-size: 12px;
+  margin-top: -1em;
+  padding-bottom: 1em;
+}
+
+// viewer operations
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: auto auto;
+}
+
+.value-component,
+.crud-buttons {
+  vertical-align: top;
+}
+
+.value-component {
+  grid-row-start: 1;
+  grid-row-end: auto;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  position: relative;
+
+  .action-bubble {
+    position: absolute;
+    right: 0;
+    top: -20px;
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+    padding: 0 1px;
+    background-color: #e4e4e4;
+    z-index: 2;
+    box-shadow: #949494 1px 4px 5px 0px;
+
+    .button-container {
+
+      button.mat-button-disabled {
+
+        .mat-icon {
+          color: #aaaaaa;
+        }
+
+      }
+
+      button {
+        cursor: pointer;
+        border: none;
+        padding: 2px;
+        outline: none;
+        background-color: transparent;
+        color: #000000;
+        margin: 0 2px;
+        border-radius: 10px;
+        transition: background-color ease-out 0.5s;
+        min-width: inherit;
+        line-height: normal;
+
+        .material-icons {
+          font-size: 18px;
+        }
+
+        .mat-icon {
+          width: 18px;
+          height: 18px;
+          vertical-align: middle;
+        }
+      }
+
+      button.info {
+        cursor: default;
+      }
+
+      button:hover {
+        background-color: #c7c7c7;
+      }
+    }
+  }
+}
+
+.value-component.highlighted {
+  background-color: #f5f5f5;
+}
+
+.crud-buttons {
+  grid-row-start: 1;
+  grid-row-end: auto;
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+.mat-error {
+  grid-row-start: 1;
+  grid-row-end: auto;
+  grid-column-start: 3;
+  grid-column-end: end;
+}
+
+button.save,
+button.cancel {
+  cursor: pointer;
+  border: none;
+  padding: 0em;
+  margin-left: 1em;
+  outline: none;
+  background-color: transparent;
+  color: #000000;
+}
+
+button.save:disabled {
+  color: #adadad;
+  cursor: default;
+}
+
+button.save .material-icons,
+button.cancel .material-icons {
+  font-size: 18px;
+}
+
+button.save .mat-icon,
+button.cancel .mat-icon {
+  font-size: 18px;
+}
+
+.deletion-dialog .title {
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+}
+
+.deletion-dialog .action-buttons {
+  float: right;
+
+  .cancel {
+    padding: 0 16px;
+  }
+}
+
+.deletion-dialog-message {
+  font-size: 16px;
+  background-color: #ededf5;
+  border: 1px solid #d8d8df;
+  border-radius: 5px;
+  padding: 20px 10px 20px 10px;
+  text-align: center;
+}
+
+.deletion-dialog-message .deletion-comment {
+  min-width: 80%;
+}
+
+
+.ck-content code {
+  font-family: monospace !important;
+}
+
+.ck-content pre {
+  background-color: inherit !important;
+}
+
+code, pre {
+  font-family: monospace !important;
+  background-color: hsla(0,0%,78%,.3);
+  padding: .15em;
+  border-radius: 2px;
+}

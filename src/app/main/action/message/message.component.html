@@ -1,0 +1,61 @@
+<mat-card *ngIf="(size !== 'short')" class="fix-width app-message" [ngClass]="'app-' + message?.type">
+
+    <mat-card-subtitle class="message-subtitle">
+        <span class="left">{{message?.type | uppercase }} {{message?.status}} | {{message?.statusMsg}}</span>
+    </mat-card-subtitle>
+
+    <mat-card-title class="message-title" [innerHtml]="message?.statusText"></mat-card-title>
+
+    <mat-card-content class="message-content">
+        <mat-list *ngIf="message?.route">
+            <mat-list-item>
+                <a [href]="message?.route" target="_blank">
+                    &rarr; {{message?.route}}
+                </a>
+            </mat-list-item>
+        </mat-list>
+
+        <mat-list *ngIf="apiError">
+            <mat-list-item>
+                <p mat-line>{{apiError.error.toString()}}</p>
+            </mat-list-item>
+        </mat-list>
+
+        <mat-list *ngIf="showLinks">
+            <p>{{links.title}}</p>
+            <mat-list-item *ngFor="let item of links.list" class="link" (click)="goToLocation(item.route)">
+                <mat-icon mat-list-icon>{{item.icon}}</mat-icon>
+                <p mat-line>{{item.label}}</p>
+            </mat-list-item>
+        </mat-list>
+
+    </mat-card-content>
+
+    <mat-card-footer *ngIf="(size === 'long')" class="message-footnote">
+        <!-- Specific message from @Input -->
+        <p *ngIf="message.footnote">{{message.footnote}}</p>
+
+        <!-- Else: Default message -->
+        <p *ngIf="!message.footnote && !showLinks">
+            Please come back in a few minutes and try to <a class="link bolder" (click)="reload()">reload the page</a>.
+        </p>
+
+        <!-- Action: Contact DaSCH/DSP support -->
+        <a mat-button class="action" href="https://docs.dasch.swiss/community/faq" target="_blank">
+            <mat-icon>mail_outline</mat-icon> Contact the support team
+        </a>
+    </mat-card-footer>
+
+</mat-card>
+
+<mat-card *ngIf="(size === 'short') && !disable" class="fix-width app-short-message" [ngClass]="'app-' + message?.type"
+          (click)="closeMessage()">
+
+    <div class="app-panel">
+        <span class="app-short-message-text">
+            {{message?.statusText}}
+        </span>
+        <span class="fill-remaining-space"></span>
+    </div>
+
+</mat-card>

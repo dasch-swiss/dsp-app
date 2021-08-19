@@ -1,0 +1,79 @@
+<form [formGroup]="form">
+
+    <!-- default input element -->
+    <mat-form-field *ngIf="!textarea" class="string-literal short-text">
+
+        <!-- select: button to select language -->
+        <button
+            mat-button
+            type="button"
+            matPrefix
+            class="select-lang"
+            [matMenuTriggerFor]="selectLanguage"
+            #btnToSelectLanguage="matMenuTrigger"
+            (click)="form.controls['text'].disable()"
+            (menuClosed)="menuClosed()">
+                <span class="label">{{language}}</span>
+                <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
+        </button>
+
+        <!-- select: menu with list of languages -->
+        <mat-menu #selectLanguage="matMenu" class="lang-menu">
+            <button
+                mat-menu-item
+                type="button"
+                class="lang-button"
+                *ngFor="let lang of languages"
+                (click)="setLanguage(lang);switchFocus()">
+                    <span [class.existing-value]="getValueFromStringLiteral(lang)">{{lang}}</span>
+            </button>
+            <!-- TODO / QUESTION: should we support a show all button, to display values for all languages?
+                <mat-divider></mat-divider>
+                <button mat-menu-item type="button" (click)="toggleAll()">
+                    <span>Show values for all languages</span>
+                </button>
+            -->
+        </mat-menu>
+
+        <!-- input field-->
+        <input
+            matInput
+            [placeholder]="placeholder"
+            [formControlName]="'text'"
+            class="inputValue"
+            #textInput
+            [readonly]="readonly"
+            (keyup.enter)="enter.emit(true)"
+        >
+    </mat-form-field>
+
+    <!-- if input element type is textarea -->
+    <div *ngIf="textarea" class="string-literal long-text">
+        <!-- button toggle group: buttons to select language -->
+        <mat-button-toggle-group
+            matPrefix
+            #group="matButtonToggleGroup"
+            vertical
+            class="string-literal-select-lang">
+            <mat-button-toggle
+                *ngFor="let lang of languages"
+                (click)="setLanguage(lang);switchFocus()"
+                [checked]="lang === language"
+                class="lang-toggle-button">
+                <span [class.existing-value]="getValueFromStringLiteral(lang)">{{lang}}</span>
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+        <mat-form-field class="string-literal-textarea">
+            <!-- textarea -->
+            <textarea
+                matInput
+                [placeholder]="placeholder"
+                [formControlName]="'text'"
+                class="textAreaValue"
+                #textInput
+                [readonly]="readonly">
+            </textarea>
+        </mat-form-field>
+    </div>
+
+</form>

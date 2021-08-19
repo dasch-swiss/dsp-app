@@ -1,0 +1,179 @@
+// --------------------------------------------------------------
+// configuration TODO: we should implement this from the app!
+// --------------------------------------------------------------
+
+// color definitions
+$bright: rgba(249, 249, 249, 1);
+$dark: rgba(41, 41, 41, 1);
+
+$mute: rgba(128, 128, 128, 0.8);
+
+$accent: rgba(255, 196, 0, 1);
+$primary: rgba(0, 105, 92, 1);
+$warn: rgb(244, 67, 54);
+
+// --------------------------------------------------------------
+
+//
+// two lines with three bouncing squares each
+//
+
+.app-progress-indicator.default {
+  height: 56px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px 36px;
+  top: 60px;
+  width: 96px;
+
+  &.page-center {
+    left: 50%;
+    position: absolute;
+    top: 39%;
+    transform: translate(-50%, -50%);
+  }
+
+  p,
+  h1,
+  h2,
+  h3 {
+    color: #555555;
+    text-align: center;
+  }
+
+  .line {
+    margin: 0 auto;
+    text-align: center;
+    width: 70px;
+
+    > div {
+      animation: bounce-keyframes 1.4s infinite ease-in-out both;
+      background-color: $primary;
+      border-radius: 6px;
+      display: inline-block;
+      height: 18px;
+      width: 18px;
+    }
+
+    .bounce1 {
+      animation-delay: -.32s;
+    }
+
+    .bounce2 {
+      animation-delay: -.16s;
+    }
+  }
+
+  @keyframes bounce-keyframes {
+
+    0%, 80%, 100% {
+      transform: scale(0);
+    }
+
+    40% {
+      transform: scale(1);
+    }
+  }
+}
+
+//
+// submit data has a different progress indicator
+//
+.app-progress-indicator.submit {
+  height: 32px;
+  width: 32px;
+
+  .on-submit {
+    animation: spinner-keyframes .7s linear infinite;
+    height: 32px;
+    width: 32px;
+
+    .spinner {
+      border: 2px solid $primary;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      border-right-color: transparent;
+      height: 28px;
+      width: 28px;
+    }
+  }
+
+  .before-submit {
+    color: $mute;
+  }
+
+  .after-submit {
+    color: $primary;
+  }
+
+  .submit-error {
+    color: $warn;
+  }
+
+  @keyframes spinner-keyframes {
+    0%   { transform: rotate(0deg);   transform: rotate(0deg); }
+    100% { transform: rotate(360deg); transform: rotate(360deg); }
+  }
+
+}
+
+//
+// loader element
+//
+.loading-progress-indicator {
+  text-align: center;
+  width: 100%;
+
+  .text {
+    color: $primary;
+    font-size: 12pt;
+  }
+
+  .dot {
+    animation: dot-keyframes 1.4s infinite ease-in-out;
+    background-color: $primary;
+    border-radius: 2px;
+    display: inline-block;
+    height: 6px;
+    margin: 3px 6px 2px;
+    width: 6px;
+
+    &:nth-child(2) {
+      animation-delay: .16s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: .32s;
+    }
+
+    &:nth-child(4) {
+      animation-delay: .48s;
+    }
+
+    &:nth-child(5) {
+      animation-delay: .64s;
+    }
+
+    &:nth-child(6) {
+      animation-delay: .8s;
+    }
+  }
+}
+
+@keyframes dot-keyframes {
+  0% {
+    opacity: .4;
+    transform: scale(1, 1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2, 1.2);
+  }
+
+  100% {
+    opacity: .4;
+    transform: scale(1, 1);
+  }
+}
+

@@ -1,0 +1,13 @@
+<div class="deletion-dialog-message">
+    <p class="val-label">Confirming this action will delete the following value from {{value.propertyLabel}}:</p>
+    <p class="val-value">Value: {{value.strval}}</p>
+    <p class="val-comment">Value Comment: {{value.valueHasComment ? value.valueHasComment : 'No comment'}}</p>
+    <p class="val-creation-date">Value Creation Date: {{value.valueCreationDate}}</p>
+    <textarea
+        matinput
+        class="deletion-comment"
+        type="text"
+        (keyup)="onKey($event)"
+        [placeholder]="'Comment why value is being deleted'"
+    ></textarea>
+</div>

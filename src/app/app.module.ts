@@ -98,6 +98,22 @@ import { ResultsComponent } from './workspace/results/results.component';
 import { AudioComponent } from './workspace/resource/representation/audio/audio.component';
 import { IntermediateComponent } from './workspace/intermediate/intermediate.component';
 import { ResourceLinkFormComponent } from './workspace/resource/resource-link-form/resource-link-form.component';
+import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationMessageComponent } from './main/action/confirmation-dialog/confirmation-message/confirmation-message.component';
+import { LoginFormComponent } from './main/action/login-form/login-form.component';
+import { MessageComponent } from './main/action/message/message.component';
+import { ProgressIndicatorComponent } from './main/action/progress-indicator/progress-indicator.component';
+import { StringLiteralInputComponent } from './main/action/string-literal-input/string-literal-input.component';
+import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
+import { SelectedResourcesComponent } from './main/action/selected-resources/selected-resources.component';
+import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
+import { ExistingNameDirective } from './main/directive/existing-name/existing-name.directive';
+import { GndDirective } from './main/directive/gnd/gnd.directive';
+import { FormattedBooleanPipe } from './main/pipes/formatting/formatted-boolean.pipe';
+import { KnoraDatePipe } from './main/pipes/formatting/knoradate.pipe';
+import { LinkifyPipe } from './main/pipes/string-transformation/linkify.pipe';
+import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/stringify-string-literal.pipe';
+import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -182,6 +198,22 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         AudioComponent,
         IntermediateComponent,
         ResourceLinkFormComponent,
+        ConfirmationDialogComponent,
+        ConfirmationMessageComponent,
+        LoginFormComponent,
+        MessageComponent,
+        ProgressIndicatorComponent,
+        StringLiteralInputComponent,
+        SortButtonComponent,
+        SelectedResourcesComponent,
+        AdminImageDirective,
+        ExistingNameDirective,
+        GndDirective,
+        FormattedBooleanPipe,
+        KnoraDatePipe,
+        LinkifyPipe,
+        StringifyStringLiteralPipe,
+        TruncatePipe,
     ],
     imports: [
         AppRoutingModule,

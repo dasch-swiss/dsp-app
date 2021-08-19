@@ -1,0 +1,51 @@
+.mat-form-field {
+  width: 100% !important;
+}
+
+.existing-value {
+  font-weight: bold;
+}
+
+// string literal textarea: overwrite material styling !important
+.string-literal {
+  &.short-text {
+    .mat-button.select-lang {
+      min-width: 36px !important;
+      padding: 0 8px !important;
+      border-radius: 4px 0 0 0 !important;
+    }
+  }
+
+  &.long-text {
+    display: flex;
+
+    // select language
+    .mat-button-toggle {
+      height: 36px;
+      width: 56px;
+
+      .mat-button-toggle-button {
+        width: 50px !important;
+      }
+    }
+
+    .mat-button-toggle-vertical {
+      height: calc(4 * 36px + 2px);
+      border-radius: 4px 0 0 4px !important;
+      border-right: 0px;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 0px;
+      }
+    }
+
+    .string-literal-textarea {
+      display: flex !important;
+
+      textarea {
+        min-height: calc(4 * 36px) !important;
+      }
+    }
+  }
+}

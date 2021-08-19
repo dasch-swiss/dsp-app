@@ -1,0 +1,20 @@
+<div class="selected-resources">
+
+    <h4>Number of resources selected: <span class="res-value">{{ resCount }}</span></h4>
+
+    <h4>Ids of the Selected resources are:</h4>
+    <mat-list>
+        <mat-list-item *ngFor="let id of resIds">
+          <mat-icon mat-list-icon>description</mat-icon>
+          <div mat-line class="res-value">{{ id }}</div>
+        </mat-list-item>
+    </mat-list>
+
+    <div class="action-buttons">
+        <button id="compare" mat-raised-button color="primary" class="res-action" (click)="compareResources()"> Compare </button>
+        <button id="edit" mat-raised-button color="primary" class="res-action" disabled> Edit </button>
+        <button id="delete" mat-raised-button color="primary" class="res-action" disabled> Delete </button>
+        <button id="star" mat-raised-button color="primary" class="res-action" disabled> Starred </button>
+        <button id="cancel" mat-raised-button class="res-action" (click)="cancelSelection()"> Cancel </button>
+    </div>
+</div>

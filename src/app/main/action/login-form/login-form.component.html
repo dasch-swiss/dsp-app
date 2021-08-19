@@ -1,0 +1,67 @@
+<div class="login-container" *ngIf="!session">
+
+    <h2 class="login-form-title mat-title">{{formLabel.title}}</h2>
+
+    <!-- This is the login form -->
+    <form [formGroup]="form" class="login-form">
+
+        <!-- Username -->
+        <mat-form-field class="full-width login-field">
+            <mat-icon *ngIf="icons" matPrefix>person</mat-icon>
+
+            <input
+                matInput
+                [placeholder]="formLabel.name"
+                formControlName="username"
+                #username
+            >
+
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field class="full-width login-field">
+
+            <mat-icon *ngIf="icons" matPrefix>lock</mat-icon>
+
+            <input
+                matInput
+                type="password"
+                [placeholder]="formLabel.pw"
+                formControlName="password">
+
+        </mat-form-field>
+
+        <br>
+
+        <!-- Button: Login -->
+        <button
+            mat-raised-button
+            (click)="login()"
+            type="submit"
+            [disabled]="!form.valid"
+            class="full-width submit-button"
+            [class.mat-primary]="!isError"
+            [class.mat-warn]="isError">
+                <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="login-progress"></dsp-progress-indicator>
+                <mat-icon *ngIf="isError && !loading">close</mat-icon>
+                {{isError ? formLabel.retry : formLabel.submit}}
+        </button>
+
+        <br><br>
+
+        <!-- Error message as an answer from knora api request -->
+        <p class="login-error" *ngIf="loginFailed">{{formLabel.error.failed}}</p>
+    </form>
+</div>
+
+<!-- a user is already logged in; show who it is and a logout button -->
+<div class="logout-container" *ngIf="session">
+    <p>A user is already logged in:</p>
+    <p>Username: <strong>{{session.user.name}}</strong></p>
+    <br>
+    <p>Please log out if it's not you.</p>
+    <button mat-raised-button (click)="logout()" class="full-width mat-warn logout-button">
+        <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="login-progress"></dsp-progress-indicator>
+        {{formLabel.logout}}
+    </button>
+</div>

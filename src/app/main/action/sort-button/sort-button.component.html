@@ -1,0 +1,13 @@
+<span class="sort-button" [class]="position">
+    <button mat-icon-button [matMenuTriggerFor]="sortSelection">
+        <mat-icon>{{icon}}</mat-icon>
+    </button>
+    <mat-menu #sortSelection="matMenu" [xPosition]="menuXPos">
+        <button mat-menu-item
+                *ngFor="let item of sortProps"
+                (click)="sortBy(item.key)"
+                [class.active]="activeKey === item.key">
+            {{item.label}}
+        </button>
+    </mat-menu>
+</span>
