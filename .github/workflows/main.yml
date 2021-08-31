@@ -26,6 +26,8 @@ jobs:
         run: ./find-ignored-tests.sh
       - name: Run unit tests
         run: npm run test-ci
+        env:
+          TZ: Europe/Zurich
       - name: Run e2e tests
         run: |
           npm run webdriver-update

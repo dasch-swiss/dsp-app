@@ -1,0 +1,41 @@
+<div [formGroup]="form">
+
+    <div class="era-radio">
+        <mat-radio-group class="era" [formControlName]="'era'" aria-label="Select an option" (change)="_handleInput()">
+            <mat-radio-button value="BCE">Before Common Era</mat-radio-button>
+            <mat-radio-button value="CE">Common Era</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <mat-form-field>
+        <mat-label>Year</mat-label>
+        <input class="year" matInput placeholder="Year" type="number" [formControlName]="'year'" min="1"
+               (input)="_handleInput()">
+        <div class="date-form-error">
+            <mat-error *ngIf="yearControl.hasError('required')">
+                <span class="custom-error-message">A year is <strong>required</strong>.</span>
+            </mat-error>
+            <mat-error *ngIf="yearControl.hasError('min')">
+                <span class="custom-error-message">A valid year is greater than 0.</span>
+            </mat-error>
+        </div>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Month</mat-label>
+        <mat-select class="month" [formControlName]="'month'" (selectionChange)="_handleInput()">
+            <mat-option [value]="null">no selection</mat-option>
+            <mat-option *ngFor="let month of months" [value]="month">
+                {{month}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Day</mat-label>
+        <mat-select class="day" [formControlName]="'day'" (selectionChange)="_handleInput()">
+            <mat-option [value]="null">no selection</mat-option>
+            <mat-option *ngFor="let day of days" [value]="day">
+                {{day}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>

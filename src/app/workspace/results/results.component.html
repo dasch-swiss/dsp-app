@@ -16,9 +16,9 @@
                 <app-intermediate *ngSwitchCase="'intermediate'" [resources]="selectedResources" (action)="viewMode=$event"></app-intermediate>
 
                 <!-- multiple resources view / comparison viewer -->
-                <dsp-multiple-resources-view *ngSwitchCase="'compare'" [noOfResources]="selectedResources.count"
+                <app-comparison *ngSwitchCase="'compare'" [noOfResources]="selectedResources.count"
                     [resources]="selectedResources.resInfo">
-                </dsp-multiple-resources-view>
+                </app-comparison>
             </div>
         </as-split-area>
     </as-split>

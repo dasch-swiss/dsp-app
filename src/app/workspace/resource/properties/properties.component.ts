@@ -8,9 +8,11 @@ import {
     DeleteResource,
     DeleteResourceResponse,
     DeleteValue,
+    IHasPropertyWithPropertyDefinition,
     KnoraApiConnection,
     PermissionUtil,
     ProjectResponse,
+    PropertyDefinition,
     ReadLinkValue,
     ReadProject,
     ReadResource,
@@ -29,7 +31,6 @@ import {
     DspApiConnectionToken,
     Events,
     NotificationService,
-    PropertyInfoValues,
     UpdatedEventValues,
     UserService,
     ValueOperationEventService,
@@ -42,6 +43,13 @@ import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 import { IncomingService } from '../incoming.service';
 import { PageEvent } from '@angular/material/paginator';
+
+// object of property information from ontology class, properties and property values
+export interface PropertyInfoValues {
+    guiDef: IHasPropertyWithPropertyDefinition;
+    propDef: PropertyDefinition;
+    values: ReadValue[];
+}
 
 @Component({
     selector: 'app-properties',

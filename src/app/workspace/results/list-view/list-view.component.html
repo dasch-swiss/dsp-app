@@ -1,0 +1,70 @@
+<!-- header / toolbar to select view and pagination -->
+<div class="list-view-header">
+    <span *ngIf="displayViewSwitch" class="switch-list">
+        <span class="switch-list-label">Display as&nbsp;</span>
+        <button mat-button (click)="toggleView('list')" [class.active]="view === 'list'">
+            <mat-icon>view_list</mat-icon> List
+        </button>
+        <button mat-button (click)="toggleView('grid')" [class.active]="view === 'grid'">
+            <mat-icon>view_module</mat-icon> Grid
+        </button>
+        <!-- TODO: add button to show as table, if possible (filter by same resource class) -->
+    </span>
+    <span class="fill-remaining-space"></span>
+    <span class="page-navigation" *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources.length)">
+        <mat-paginator [length]="numberOfAllResults" [pageSize]="25" [hidePageSize]="true"
+            [pageIndex]="pageEvent.pageIndex" [disabled]="loading" (page)="goToPage($event)">
+        </mat-paginator>
+    </span>
+</div>
+
+<!-- container with search results -->
+<div class="list-view-container">
+    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
+
+    <!-- When multiple resources are selected for comparision -->
+    <div class="list-view" *ngIf="!loading && (numberOfAllResults > 0 && resources)">
+        <div [ngSwitch]="view">
+            <app-resource-list
+                *ngSwitchCase="'list'"
+                [withMultipleSelection]="true"
+                [resources]="resources"
+                [selectedResourceIdx]="selectedResourceIdx"
+                (resourcesSelected)="emitSelectedResources($event)">
+            </app-resource-list>
+            <app-resource-grid
+                *ngSwitchCase="'grid'"
+                [withMultipleSelection]="true"
+                [resources]="resources"
+                [selectedResourceIdx]="selectedResourceIdx"
+                (resourcesSelected)="emitSelectedResources($event)">
+            </app-resource-grid>
+            <!-- TODO: implement table view -->
+            <!-- <kui-table-view *ngSwitchCase="'table'" [resources]="resources"></kui-table-view> -->
+        </div>
+    </div>
+
+    <!-- In case of 0 result -->
+    <div class="list-view no-results" *ngIf="!loading && (numberOfAllResults >= 0 && !resources?.resources.length)">
+        <p>Your search <span *ngIf="search.mode === 'fulltext'">- <strong> {{search.query}}</strong> -</span> did not match any documents.</p>
+        <p>Suggestions:</p>
+        <ul>
+            <li *ngIf="numberOfAllResults > 0">Make sure that you are logged in and you have all the needed permissions.</li>
+            <li>Make sure that all words are spelled correctly.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>
+            <li>Try fewer keywords.</li>
+        </ul>
+    </div>
+
+</div>
+
+<!-- footer with pagination -->
+<div class="list-view-footer" *ngIf="numberOfAllResults > 25 && resources?.resources.length === 25 && !loading">
+    <span class="fill-remaining-space"></span>
+    <span class="page-navigation">
+        <mat-paginator [length]="numberOfAllResults" [pageSize]="25" [hidePageSize]="true"
+            [pageIndex]="pageEvent.pageIndex" [disabled]="loading" (page)="goToPage($event)">
+        </mat-paginator>
+    </span>
+</div>

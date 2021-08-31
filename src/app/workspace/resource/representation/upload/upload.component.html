@@ -1,6 +1,6 @@
 <div class="form-container">
     <form [formGroup]="form">
-        <div dspDragDrop *ngIf="isLoading || !file" (click)="fileInput.click()" (fileDropped)="addFile($event)"
+        <div appDragDrop *ngIf="isLoading || !file" (click)="fileInput.click()" (fileDropped)="addFile($event)"
             class="dd-container">
             <input hidden type="file" (change)="addFile($event)" #fileInput />
             <mat-icon *ngIf="!isLoading" class="upload-icon">

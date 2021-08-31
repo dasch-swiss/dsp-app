@@ -1,0 +1,49 @@
+@import "../../../../../assets/style/viewer";
+
+.resource-list {
+  .mat-list-item {
+    height: auto;
+    min-height: 40px;
+    padding: 8px 0;
+
+    &.border-bottom {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-line {
+      white-space: normal !important;
+    }
+  }
+}
+
+.res-checkbox {
+  margin: 0 15px;
+}
+
+.res-prop-value {
+  text-align: justify;
+}
+
+.res-class-label,
+.res-prop-label {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.res-class-label,
+.res-class-value {
+  margin: 4px 0;
+}
+
+.res-class-label {
+  font-size: 14px !important;
+}
+
+.res-class-value {
+  font-weight: bold !important;
+  font-size: 16px !important;
+  line-height: 1.5;
+}
+
+.res-prop-label {
+  font-style: italic;
+}

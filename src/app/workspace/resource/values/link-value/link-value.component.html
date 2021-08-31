@@ -1,0 +1,39 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <span class="rm-value" (click)="refResClicked()" (mouseover)="refResHovered()">
+        <a class="link">{{valueFormControl.value?.label}}</a>
+    </span>
+  <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
+</span>
+<ng-template #showForm>
+  <span [formGroup]="form">
+    <mat-form-field class="child-value-component" floatLabel="never">
+          <input matInput [formControlName]="'value'" class="value" type="text" placeholder="Link value" aria-label="resource" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource">
+            <mat-option *ngFor="let res of resources" [value]="res">
+                {{res?.label}}
+            </mat-option>
+          </mat-autocomplete>
+        <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
+                 <span class="custom-error-message">New value must be different than the current value.</span>
+            </mat-error>
+        <mat-error *ngIf="valueRequiredValidator && valueFormControl.hasError('invalidType')">
+                 <span class="custom-error-message">New value must be a valid resource type.</span>
+        </mat-error>
+        <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+            <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="large-field value-component-comment">
+        <textarea matInput
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="1"
+                  cdkAutosizeMaxRows="6"
+                  [formControlName]="'comment'"
+                  class="comment"
+                  placeholder="Comment"
+                  type="text"
+                  spellcheck="false">
+        </textarea>
+      </mat-form-field>
+  </span>
+</ng-template>

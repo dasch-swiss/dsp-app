@@ -6,7 +6,6 @@ import { Subscription } from 'rxjs';
 @Directive()
 export abstract class BaseValueDirective {
 
-
     /**
      * value to be displayed, if any.
      */
@@ -16,6 +15,21 @@ export abstract class BaseValueDirective {
      * sets the mode of the component.
      */
     @Input() mode: 'read' | 'update' | 'create' | 'search';
+
+    /**
+     * parent FormGroup that contains all child FormGroups
+     */
+    @Input() parentForm?: FormGroup;
+
+    /**
+     * name of the FormGroup, used to add to the parentForm because the name needs to be unique
+     */
+    @Input() formName = 'Untitled FormGroup';
+
+    /**
+     * controls if the value should be required.
+     */
+    @Input() valueRequiredValidator = true;
 
     shouldShowComment = false;
 
@@ -67,7 +81,7 @@ export abstract class BaseValueDirective {
     => ValidatorFn = (initValue: any, initComment: string, commentFormControl: FormControl): ValidatorFn => (control: AbstractControl): { [key: string]: any } | null => {
 
         const invalid = this.standardValueComparisonFunc(initValue, control.value)
-                && (initComment === commentFormControl.value || (initComment === null && commentFormControl.value === ''));
+                    && (initComment === commentFormControl.value || (initComment === null && commentFormControl.value === ''));
 
         return invalid ? { valueNotChanged: { value: control.value } } : null;
     };
@@ -107,8 +121,11 @@ export abstract class BaseValueDirective {
                 this.valueFormControl.setValidators([Validators.required, this.standardValidatorFunc(initialValue, initialComment, this.commentFormControl)].concat(this.customValidators));
             } else {
                 // console.log('reset read/create validators');
-                this.valueFormControl.setValidators([Validators.required].concat(this.customValidators));
-
+                if (this.valueRequiredValidator) {
+                    this.valueFormControl.setValidators([Validators.required].concat(this.customValidators));
+                } else {
+                    this.valueFormControl.setValidators(this.customValidators);
+                }
             }
 
             this.valueFormControl.updateValueAndValidity();
@@ -139,6 +156,31 @@ export abstract class BaseValueDirective {
     }
 
     /**
+     * add the value components FormGroup to a parent FormGroup if one is defined
+     */
+    addToParentFormGroup(name: string, form: FormGroup) {
+        if (this.parentForm) {
+            this.parentForm.addControl(name, form);
+        }
+    }
+
+    /**
+     * remove the value components FormGroup from a parent FormGroup if one is defined
+     */
+    removeFromParentFormGroup(name: string) {
+        if (this.parentForm) {
+            this.parentForm.removeControl(name);
+        }
+    }
+
+    /**
+     * checks if the value is empty.
+     */
+    isEmptyVal(): boolean {
+        return this.valueFormControl.value === null || this.valueFormControl.value === '';
+    }
+
+    /**
      * returns the initially given value set via displayValue.
      * Returns null if no value was given.
      */
@@ -151,10 +193,9 @@ export abstract class BaseValueDirective {
     abstract getNewValue(): CreateValue | false;
 
     /**
-     * returns a value that is to be updated.
-     * Returns false if invalid.
-     */
+      * returns a value that is to be updated.
+      * Returns false if invalid.
+      */
     abstract getUpdatedValue(): UpdateValue | false;
-
 
 }

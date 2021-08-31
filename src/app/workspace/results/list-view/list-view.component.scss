@@ -1,0 +1,45 @@
+@import "../../../../assets/style/config";
+
+.list-view-header,
+.list-view-footer {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0 16px;
+  height: 58px;
+  width: 100%;
+  z-index: 1;
+  background: $bright;
+
+  mat-paginator {
+    background: none;
+  }
+}
+
+.list-view-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  position: sticky !important;
+  top: 0;
+
+  .switch-view-label {
+    margin-right: 16px;
+  }
+}
+
+button.active {
+  background-color: $black-12-opacity;
+}
+
+.no-results {
+  margin: 64px;
+}
+
+.link:hover {
+  background-color: $black-12-opacity;
+}
+
+::ng-deep .selected-resource {
+  background-color: $black-20-opacity;
+}

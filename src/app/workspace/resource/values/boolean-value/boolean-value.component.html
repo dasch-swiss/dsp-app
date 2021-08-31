@@ -1,0 +1,27 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <span class="rm-value">{{valueFormControl.value | formattedBoolean:preferredDisplayType}}</span>
+    <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
+</span>
+<ng-template #showForm>
+    <span [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-checkbox [formControlName]="'value'" class="value boolValue child-value-component">
+            {{valueFormControl.value | formattedBoolean:preferredDisplayType}}
+        </mat-checkbox>
+        <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') && valueFormControl.dirty">
+                <span class="custom-error-message">New value must be different than the current value.</span>
+        </mat-error>
+        <mat-form-field class="large-field value-component-comment">
+            <textarea
+                    matInput
+                    cdkTextareaAutosize
+                    cdkAutosizeMinRows="1"
+                    cdkAutosizeMaxRows="6"
+                    [formControlName]="'comment'"
+                    class="comment"
+                    placeholder="Comment"
+                    type="text"
+                    spellcheck="false">
+            </textarea>
+        </mat-form-field>
+    </span>
+</ng-template>

@@ -1,0 +1,57 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+
+    <!-- Date period -->
+    <span *ngIf="valueFormControl.value?.end; else date">
+        <span class="rm-value date-start">
+            <span *ngIf="labels">Period Start: </span>
+            {{valueFormControl.value?.start | knoraDate:ontologyDateFormat:displayOptions}}
+        </span>
+        <span class="rm-value date-end">
+            <span *ngIf="labels">Period End: </span>
+            {{valueFormControl.value?.end | knoraDate:ontologyDateFormat:displayOptions}}
+        </span>
+    </span>
+
+    <!-- Only one date -->
+    <ng-template #date>
+        <span class="rm-value">
+            <span *ngIf="labels">Date: </span>
+            {{valueFormControl.value | knoraDate:ontologyDateFormat:displayOptions}}
+        </span>
+    </ng-template>
+
+    <!-- Comment -->
+    <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
+</span>
+
+<!-- Edit mode -->
+<ng-template #showForm>
+    <span [formGroup]="form">
+
+        <mat-form-field class="large-field child-value-component" floatLabel="never">
+
+            <app-date-input-text #dateInput [formControlName]="'value'" [valueRequiredValidator]="valueRequiredValidator" class="value"></app-date-input-text>
+
+            <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
+                <span class="custom-error-message">New value must be different than the current value.</span>
+            </mat-error>
+            <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+                <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Comment field -->
+        <mat-form-field class="large-field value-component-comment">
+            <textarea matInput
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="1"
+                      cdkAutosizeMaxRows="6"
+                      [formControlName]="'comment'"
+                      class="comment"
+                      placeholder="Comment"
+                      type="text"
+                      spellcheck="false">
+          </textarea>
+        </mat-form-field>
+    </span>
+</ng-template>

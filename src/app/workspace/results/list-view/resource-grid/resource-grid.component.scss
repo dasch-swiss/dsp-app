@@ -1,0 +1,79 @@
+@import "../../../../../assets/style/viewer";
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: auto;
+  grid-auto-rows: 1fr;
+  gap: 8px 8px;
+  justify-items: stretch;
+  align-items: stretch;
+  align-content: space-evenly;
+  padding: 8px 0;
+}
+
+.grid-card {
+  height: calc(100% - 32px);
+}
+
+.res-class-header-text {
+  width: 90%;
+  float: left;
+}
+
+.res-class-header-actions {
+  width: 10%;
+  float: right;
+}
+
+.res-class-label,
+.res-prop-label {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.res-class-label {
+  font-size: 14px !important;
+}
+
+.res-class-value {
+  font-weight: bold !important;
+  font-size: 16px !important;
+  line-height: 1.5;
+}
+
+.res-class-label,
+.res-class-value {
+  margin: 4px 0 !important; // to overwrite it with .mat-card-title margin
+}
+
+.res-prop-label {
+  font-style: italic;
+}
+
+// responsive for tablet device
+@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) {
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    grid-auto-rows: 1fr;
+    gap: 4px 4px;
+    justify-items: stretch;
+    align-items: stretch;
+    align-content: space-evenly;
+  }
+}
+
+// responsive for phone device
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    grid-auto-rows: 1fr;
+    gap: 4px 4px;
+    justify-items: stretch;
+    align-items: stretch;
+    align-content: space-evenly;
+  }
+}

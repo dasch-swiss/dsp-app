@@ -114,6 +114,39 @@ import { KnoraDatePipe } from './main/pipes/formatting/knoradate.pipe';
 import { LinkifyPipe } from './main/pipes/string-transformation/linkify.pipe';
 import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
+import { DragDropDirective } from './workspace/resource/directives/drag-drop.directive';
+import { TextValueHtmlLinkDirective } from './workspace/resource/directives/text-value-html-link.directive';
+import { BooleanValueComponent } from './workspace/resource/values/boolean-value/boolean-value.component';
+import { ColorValueComponent } from './workspace/resource/values/color-value/color-value.component';
+import { ColorPickerComponent } from './workspace/resource/values/color-value/color-picker/color-picker.component';
+import { JDNDatepickerDirective } from './workspace/resource/values/jdn-datepicker-directive/jdndatepicker.directive';
+import { DateValueComponent } from './workspace/resource/values/date-value/date-value.component';
+import { CalendarHeaderComponent } from './workspace/resource/values/date-value/calendar-header/calendar-header.component';
+import { DateInputComponent } from './workspace/resource/values/date-value/date-input/date-input.component';
+import { DateInputTextComponent } from './workspace/resource/values/date-value/date-input-text/date-input-text.component';
+import { DateEditComponent } from './workspace/resource/values/date-value/date-input-text/date-edit/date-edit.component';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { DecimalValueComponent } from './workspace/resource/values/decimal-value/decimal-value.component';
+import { GeonameValueComponent } from './workspace/resource/values/geoname-value/geoname-value.component';
+import { IntValueComponent } from './workspace/resource/values/int-value/int-value.component';
+import { IntervalValueComponent } from './workspace/resource/values/interval-value/interval-value.component';
+import { IntervalInputComponent } from './workspace/resource/values/interval-value/interval-input/interval-input.component';
+import { LinkValueComponent } from './workspace/resource/values/link-value/link-value.component';
+import { ListValueComponent } from './workspace/resource/values/list-value/list-value.component';
+import { SublistValueComponent } from './workspace/resource/values/list-value/subList-value/sublist-value.component';
+import { TextValueAsHtmlComponent } from './workspace/resource/values/text-value/text-value-as-html/text-value-as-html.component';
+import { TextValueAsStringComponent } from './workspace/resource/values/text-value/text-value-as-string/text-value-as-string.component';
+import { TextValueAsXMLComponent } from './workspace/resource/values/text-value/text-value-as-xml/text-value-as-xml.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { TimeValueComponent } from './workspace/resource/values/time-value/time-value.component';
+import { TimeInputComponent } from './workspace/resource/values/time-value/time-input/time-input.component';
+import { UriValueComponent } from './workspace/resource/values/uri-value/uri-value.component';
+import { AddValueComponent } from './workspace/resource/operations/add-value/add-value.component';
+import { DisplayEditComponent } from './workspace/resource/operations/display-edit/display-edit.component';
+import { ListViewComponent } from './workspace/results/list-view/list-view.component';
+import { ResourceGridComponent } from './workspace/results/list-view/resource-grid/resource-grid.component';
+import { ResourceListComponent } from './workspace/results/list-view/resource-list/resource-list.component';
+import { ComparisonComponent } from './workspace/comparison/comparison.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -214,13 +247,46 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         LinkifyPipe,
         StringifyStringLiteralPipe,
         TruncatePipe,
+        DragDropDirective,
+        TextValueHtmlLinkDirective,
+        BooleanValueComponent,
+        ColorValueComponent,
+        ColorPickerComponent,
+        JDNDatepickerDirective,
+        DateValueComponent,
+        CalendarHeaderComponent,
+        DateInputComponent,
+        DateInputTextComponent,
+        DateEditComponent,
+        DecimalValueComponent,
+        GeonameValueComponent,
+        IntValueComponent,
+        IntervalValueComponent,
+        IntervalInputComponent,
+        LinkValueComponent,
+        ListValueComponent,
+        SublistValueComponent,
+        TextValueAsHtmlComponent,
+        TextValueAsStringComponent,
+        TextValueAsXMLComponent,
+        TimeValueComponent,
+        TimeInputComponent,
+        UriValueComponent,
+        AddValueComponent,
+        DisplayEditComponent,
+        ListViewComponent,
+        ResourceGridComponent,
+        ResourceListComponent,
+        ComparisonComponent,
     ],
     imports: [
         AppRoutingModule,
         AngularSplitModule.forRoot(),
         BrowserAnimationsModule,
         BrowserModule,
+        CKEditorModule,
         ClipboardModule,
+        ColorPickerModule,
         CommonModule,
         DspActionModule,
         DspCoreModule,

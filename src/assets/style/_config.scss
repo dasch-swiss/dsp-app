@@ -23,3 +23,16 @@ $header-height: 72px;
 $sub-header-height: 64px;
 $panel-height: 40px;
 $tab-bar-margin: 36px;
+
+// color variables
+$bright: rgba(249, 249, 249, 1);
+$grey: rgba(184, 184, 184, 1);
+$dark: rgba(41, 41, 41, 1);
+$black: rgb(11, 11, 11);
+$black-12-opacity: rgba($black, 0.12);
+$black-14-opacity: rgba($black, 0.14);
+$black-20-opacity: rgba($black, 0.2);
+$black-60-opacity: rgba($black, 0.6);
+
+// general border color
+$border-color: rgb(235, 235, 235);
