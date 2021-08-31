@@ -75,11 +75,14 @@
                     {{tag}}
                     <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
-                <input [placeholder]=" 'appLabels.form.project.general.keywords' | translate "
+                <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} *"
                     [formControl]="form.controls['keywords']" [matChipInputFor]="chipList"
                     [matChipInputSeparatorKeyCodes]="separatorKeyCodes" [matChipInputAddOnBlur]="addOnBlur"
                     (matChipInputTokenEnd)="addKeyword($event)" />
             </mat-chip-list>
+            <mat-hint *ngIf="formErrors.keywords">
+                {{ formErrors.keywords }}
+            </mat-hint>
         </mat-form-field>
 
         <!-- upload logo -->
