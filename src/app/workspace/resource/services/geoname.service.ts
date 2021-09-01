@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay } from 'rxjs/operators';
-import { AppInitService } from 'src/app/main/services/app-init.service';
+import { AppInitService } from 'src/app/app-init.service';
 
 export interface GIS {
     longitude: number;

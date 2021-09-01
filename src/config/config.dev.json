@@ -3,8 +3,11 @@
     "apiHost": "0.0.0.0",
     "apiPort": 3333,
     "apiPath": "",
+    "iiifProtocol": "http",
+    "iiifHost": "0.0.0.0",
+    "iiifPort": 1024,
+    "iiifPath": "",
+    "geonameToken": "knora",
     "jsonWebToken": "",
-    "logErrors": true,
-    "iiifUrl": "http://localhost:1024",
-    "geonameToken": "knora"
+    "logErrors": true
 }

@@ -8,7 +8,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import {
-    AppInitService,
     DspActionModule,
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -23,6 +22,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AppInitService } from './app-init.service';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';

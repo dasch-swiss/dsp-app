@@ -1,6 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AppInitService } from 'src/app/main/services/app-init.service';
+import { AppInitService } from 'src/app/app-init.service';
 import { DisplayPlace, GeonameService } from './geoname.service';
 
 const geonamesGetResponse = {

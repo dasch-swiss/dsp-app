@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppInitService, SessionService } from '@dasch-swiss/dsp-ui';
+import { SessionService } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
+import { AppInitService } from 'src/app/app-init.service';
 
 export interface UploadedFile {
     fileType: string;
@@ -19,7 +20,7 @@ export interface UploadedFileResponse {
 })
 export class UploadFileService {
 
-    iiifHost: string = (this._init.config['iiifUrl'].substr(-1) === '/') ? this._init.config['iiifUrl'] : this._init.config['iiifUrl'] + '/';
+    iiifUrl: string = (this._init.config['iiifUrl'].substr(-1) === '/') ? this._init.config['iiifUrl'] : this._init.config['iiifUrl'] + '/';
 
     constructor(
         private readonly _init: AppInitService,
@@ -32,7 +33,8 @@ export class UploadFileService {
      * @param (file)
      */
     upload(file: FormData): Observable<UploadedFileResponse> {
-        const baseUrl = `${this.iiifHost}upload`;
+
+        const uploadUrl = `${this.iiifUrl}upload`;
 
         // checks if user is logged in
         const jwt = this._session.getSession()?.user.jwt;
@@ -40,6 +42,6 @@ export class UploadFileService {
 
         // --> TODO in order to track the progress change below to true and 'events'
         const options = { params, reportProgress: false, observe: 'body' as 'body' };
-        return this._http.post<UploadedFileResponse>(baseUrl, file, options);
+        return this._http.post<UploadedFileResponse>(uploadUrl, file, options);
     }
 }

@@ -3,8 +3,11 @@
     "apiHost": "api.dasch.swiss",
     "apiPort": 443,
     "apiPath": "",
+    "iiifProtocol": "https",
+    "iiifHost": "iiif.dasch.swiss",
+    "iiifPort": 443,
+    "iiifPath": "",
+    "geonameToken": "knora",
     "jsonWebToken": "",
-    "logErrors": false,
-    "iiifUrl": "https://iiif.dasch.swiss",
-    "geonameToken": "knora"
+    "logErrors": false
 }

@@ -1,6 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AppInitService, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { AppInitService } from 'src/app/app-init.service';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
 
 describe('UploadFileService', () => {
@@ -15,7 +16,7 @@ describe('UploadFileService', () => {
 
         const appInitSpy = {
             config: {
-                iiifUrl: 'https://sipi.dasch.swiss/'
+                'iiifUrl': 'https://iiif.dasch.swiss'
             }
         };
 
@@ -82,7 +83,7 @@ describe('UploadFileService', () => {
             }
         );
 
-        const httpRequest = httpTestingController.expectOne('https://sipi.dasch.swiss/upload?token=myToken');
+        const httpRequest = httpTestingController.expectOne('https://iiif.dasch.swiss/upload?token=myToken');
 
         expect(httpRequest.request.method).toEqual('POST');
 
