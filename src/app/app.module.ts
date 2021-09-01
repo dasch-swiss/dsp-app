@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -147,6 +148,24 @@ import { ListViewComponent } from './workspace/results/list-view/list-view.compo
 import { ResourceGridComponent } from './workspace/results/list-view/resource-grid/resource-grid.component';
 import { ResourceListComponent } from './workspace/results/list-view/resource-list/resource-list.component';
 import { ComparisonComponent } from './workspace/comparison/comparison.component';
+import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
+import { FulltextSearchComponent } from './workspace/search/fulltext-search/fulltext-search.component';
+import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
+import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
+import { SearchBooleanValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-boolean-value/search-boolean-value.component';
+import { SearchDateValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-date-value/search-date-value.component';
+import { SearchDecimalValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-decimal-value/search-decimal-value.component';
+import { SearchIntValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-int-value/search-int-value.component';
+import { SearchLinkValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-link-value/search-link-value.component';
+import { SearchListValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-list-value/search-list-value.component';
+import { SearchDisplayListComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-list-value/search-display-list/search-display-list.component';
+import { SearchTextValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-text-value/search-text-value.component';
+import { SearchUriValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-uri-value/search-uri-value.component';
+import { SpecifyPropertyValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/specify-property-value.component';
+import { ResourceAndPropertySelectionComponent } from './workspace/search/advanced-search/resource-and-property-selection/resource-and-property-selection.component';
+import { SearchSelectPropertyComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/search-select-property.component';
+import { SearchSelectResourceClassComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-resource-class/search-select-resource-class.component';
+import { SearchSelectOntologyComponent } from './workspace/search/advanced-search/search-select-ontology/search-select-ontology.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -278,6 +297,24 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ResourceGridComponent,
         ResourceListComponent,
         ComparisonComponent,
+        SearchPanelComponent,
+        FulltextSearchComponent,
+        ExpertSearchComponent,
+        AdvancedSearchComponent,
+        SearchBooleanValueComponent,
+        SearchDateValueComponent,
+        SearchDecimalValueComponent,
+        SearchIntValueComponent,
+        SearchLinkValueComponent,
+        SearchListValueComponent,
+        SearchDisplayListComponent,
+        SearchTextValueComponent,
+        SearchUriValueComponent,
+        SpecifyPropertyValueComponent,
+        ResourceAndPropertySelectionComponent,
+        SearchSelectPropertyComponent,
+        SearchSelectResourceClassComponent,
+        SearchSelectOntologyComponent,
     ],
     imports: [
         AppRoutingModule,

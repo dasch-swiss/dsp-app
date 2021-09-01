@@ -1,0 +1,12 @@
+<span *ngIf="properties.length > 0" [formGroup]="form" >
+    <mat-form-field class="search-property-field medium-field">
+        <mat-select placeholder="Select Properties" [formControlName]="'property'" class="select-property">
+            <mat-option *ngFor="let prop of properties" [value]="prop">{{ prop.label }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <app-specify-property-value #specifyPropertyValue [formGroup]="form" *ngIf="propertySelected !== undefined"
+                                [property]="propertySelected" [topLevel]="topLevel"></app-specify-property-value>
+
+    <mat-checkbox *ngIf="propertySelected !== undefined && sortCriterion()" [formControlName]="'isSortCriterion'" matTooltip="Sort criterion"></mat-checkbox>
+</span>

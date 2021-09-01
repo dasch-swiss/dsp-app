@@ -1,0 +1,35 @@
+.expert-search-container {
+  //   min-height: 100%;
+
+  .expert-search-form {
+    min-width: 150px;
+    width: 100%;
+    margin: auto;
+
+    .textarea-field {
+      width: calc(100% - 24px);
+      display: block;
+      margin-bottom: 24px;
+      background: #fff;
+      padding: 12px;
+    }
+
+    .form-panel {
+      width: 100%;
+    }
+  }
+}
+
+.mat-input-element {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.form-content {
+  margin: 24px auto;
+  width: 472px;
+
+  // TODO: css class to move in the main stylesheet in assets/style
+  .large-field {
+    min-width: 472px;
+  }
+}

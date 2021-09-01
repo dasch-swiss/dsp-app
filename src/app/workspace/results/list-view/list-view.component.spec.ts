@@ -7,7 +7,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CountQueryResponse, IFulltextSearchParams, MockResource, ReadResourceSequence, SearchEndpointV2 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { AdvancedSearchParams, AdvancedSearchParamsService } from '../../../search/services/advanced-search-params.service';
+import { AdvancedSearchParams, AdvancedSearchParamsService } from '../../search/services/advanced-search-params.service';
 import { ListViewComponent, SearchParams } from './list-view.component';
 
 /**

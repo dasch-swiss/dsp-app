@@ -1,0 +1,10 @@
+<span *ngIf="resourceClassDefinitions.length > 0" [formGroup]="form" >
+    <mat-form-field class="large-field">
+        <mat-select placeholder="Select a Resource Class (optional)" [formControlName]="'resourceClass'" class="select-resource-class">
+            <mat-option [value]="null">no selection</mat-option>
+            <!-- undo selection of a resource class -->
+            <mat-option *ngFor="let resourceClass of resourceClassDefinitions" [value]="resourceClass.id">{{ resourceClass.label }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</span>

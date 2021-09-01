@@ -1,0 +1,28 @@
+<div class="expert-search-container">
+    <form [formGroup]="expertSearchForm" class="expert-search-form kui-form-content">
+        <mat-form-field class="textarea-field large-field">
+            <textarea matInput [formControlName]="'gravsearchquery'" cdkTextareaAutosize cdkAutosizeMinRows="12"
+                cdkAutosizeMaxRows="24" class="textarea-field-content" placeholder="Write your Gravsearch query">
+            </textarea>
+            <mat-error *ngIf="expertSearchForm.controls.gravsearchquery.hasError('forbiddenName')">
+                The <strong>OFFSET</strong> should not be provided in the query as it will be added automatically during
+                the submission of the form.
+            </mat-error>
+            <mat-error *ngIf="expertSearchForm.controls.gravsearchquery.hasError('required')">
+                A Gravsearch query is <strong>required</strong>.
+            </mat-error>
+        </mat-form-field>
+
+        <div class="kui-form-action">
+            <button class="reset" mat-button type="button" (click)="resetForm()">
+                Reset
+            </button>
+            <span class="fill-remaining-space"></span>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!expertSearchForm.valid"
+                (click)="submitQuery()">
+                Search
+            </button>
+        </div>
+
+    </form>
+</div>

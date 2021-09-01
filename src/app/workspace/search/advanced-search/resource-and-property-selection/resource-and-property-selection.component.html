@@ -1,0 +1,33 @@
+<div [formGroup]="form">
+
+    <div class="select-resource-class">
+        <app-search-select-resource-class *ngIf="resourceClasses?.length > 0"
+                                   #resourceClass
+                                   [formGroup]="form"
+                                   [resourceClassDefinitions]="resourceClasses"
+                                   (resourceClassSelected)="getPropertiesForResourceClass($event)">
+        </app-search-select-resource-class>
+    </div>
+
+    <div class="select-property" *ngIf="properties !== undefined">
+        <div *ngFor="let prop of activeProperties; let i = index">
+
+            <app-search-select-property #property [activeResourceClass]="activeResourceClass" [formGroup]="form" [index]="i"
+                                 [properties]="properties" [topLevel]="topLevel"></app-search-select-property>
+
+        </div>
+    </div>
+
+    <div class="select-property buttons">
+        <button mat-mini-fab class="property-button add-property-button" color="primary" type="button"
+                (click)="addProperty()" [disabled]="activeProperties.length >= 4">
+            <mat-icon aria-label="add a property">add</mat-icon>
+        </button>
+
+        <button mat-mini-fab class="property-button remove-property-button" color="primary" type="button"
+                (click)="removeProperty()" [disabled]="activeProperties.length == 0">
+            <mat-icon aria-label="remove property">remove</mat-icon>
+        </button>
+    </div>
+
+</div>

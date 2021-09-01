@@ -1,0 +1,11 @@
+<span [formGroup]="form">
+    <mat-form-field class="large-field">
+        <input matInput placeholder="resource" aria-label="resource" [matAutocomplete]="auto"
+               [formControlName]="'resource'">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource">
+            <mat-option *ngFor="let res of resources" [value]="res" class="resource">
+                {{res?.label}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+</span>

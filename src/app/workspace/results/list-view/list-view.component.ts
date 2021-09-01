@@ -3,7 +3,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { ApiResponseError, CountQueryResponse, IFulltextSearchParams, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { NotificationService } from 'src/app/main/services/notification.service';
-import { AdvancedSearchParamsService } from '../../../search/services/advanced-search-params.service';
+import { AdvancedSearchParamsService } from '../../search/services/advanced-search-params.service';
 
 /**
  * query: search query. It can be gravserch query or fulltext string query.

@@ -1,0 +1,9 @@
+// TODO: we can't override the overlay pane style here. But there should be a solution?
+// at the moment, we have to add the following style to the main app style file
+.cdk-overlay-pane {
+  .mat-datepicker-content {
+    .mat-calendar {
+      height: auto !important;
+    }
+  }
+}
