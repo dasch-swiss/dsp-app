@@ -1,4 +1,6 @@
 name: CI
+env:
+  NV: 12.x  # node version
 
 on:
   push:
@@ -6,34 +8,81 @@ on:
     types: [published]
 
 jobs:
-  build-test:
-    name: Build and Test
+
+  find-ignored-tests:
+    name: Find ignored tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Run the script
+        run: ./find-ignored-tests.sh
+
+  unit-tests:
+    name: Run unit tests
+    needs: [find-ignored-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Set up Node.js ${{ env.NV }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NV }}
       - name: Install dependencies
         run: npm install
-      - name: Build app in prod mode
-        run: npm run build-prod
-      - name: Find ignored tests
-        run: ./find-ignored-tests.sh
-      - name: Run unit tests
+      - name: Run the tests
         run: npm run test-ci
         env:
           TZ: Europe/Zurich
-      - name: Run e2e tests
-        run: |
-          npm run webdriver-update
-          npm run test-e2e-protractor
-      - name: Run lint
+
+  e2e-tests:
+    name: Run e2e tests
+    needs: [find-ignored-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Set up Node.js ${{ env.NV }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NV }}
+      - name: Install dependencies
+        run: npm install
+      - name: Webdriver update
+        run: npm run webdriver-update
+      - name: Run the tests
+        run: npm run test-e2e-protractor
+
+  lint:
+    name: Run lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Set up Node.js ${{ env.NV }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NV }}
+      - name: Install dependencies
+        run: npm install
+      - name: Run the script
         run: npm run lint-ci
+
+  build:
+    name: Build the app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Set up Node.js ${{ env.NV }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NV }}
+      - name: Install dependencies
+        run: npm install
+      - name: Build in prod mode
+        run: npm run build-prod
 
   release-please:
     name: Prepare next release
@@ -41,7 +90,8 @@ jobs:
     # Automate releases with Conventional Commit Messages as Pull Requests are merged into "main" branch
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - name: Get release please action
+        uses: GoogleCloudPlatform/release-please-action@v2
         with:
           token: ${{ secrets.GH_TOKEN }}
           release-type: node
@@ -51,7 +101,12 @@ jobs:
   # publish only on release
   publish:
     name: Publish to Dockerhub
-    needs: build-test
+    needs: [
+      build,
+      lint,
+      e2e-tests,
+      unit-tests
+    ]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags')
     steps:
@@ -80,7 +135,8 @@ jobs:
     name: Docs Build Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout source
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
       - name: Set up Python 3.8
@@ -97,7 +153,7 @@ jobs:
           docker system df
           docker system prune --all --force --volumes
           df -h
-      - name: run docs build
+      - name: Run docs build
         run: make docs-build
       - name: Disk Free After
         run: |
@@ -107,13 +163,11 @@ jobs:
   # deploy documentation only on release
   deploy-docs:
     name: Deploy docs (on release only)
-    needs: [
-      docs-build-test
-    ]
+    needs: [docs-build-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags')
     steps:
-      - name: Checkout main
+      - name: Checkout source
         uses: actions/checkout@v2
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@1.16
