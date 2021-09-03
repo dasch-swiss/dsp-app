@@ -6,7 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, FilteredResources } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule, FilteredResources } from '@dasch-swiss/dsp-ui';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { TestConfig } from 'test.config';
 import { IntermediateComponent } from './intermediate.component';
 

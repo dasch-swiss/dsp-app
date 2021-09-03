@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectsResponse, StoredProject, UserResponse } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { SessionService } from 'src/app/main/services/session.service';
 
 @Injectable({
     providedIn: 'root'

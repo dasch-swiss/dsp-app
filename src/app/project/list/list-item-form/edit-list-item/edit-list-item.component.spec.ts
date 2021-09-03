@@ -3,10 +3,11 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiResponseData, CreateChildNodeRequest, ListNodeInfoResponse, ListsEndpointAdmin, UpdateChildNodeRequest } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspApiConnectionToken, ProgressIndicatorComponent } from '@dasch-swiss/dsp-ui';
+import { DspActionModule, ProgressIndicatorComponent } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { EditListItemComponent } from './edit-list-item.component';
 
 /**

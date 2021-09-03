@@ -1,7 +1,7 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppInitService } from 'src/app/app-init.service';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
 
 describe('UploadFileService', () => {

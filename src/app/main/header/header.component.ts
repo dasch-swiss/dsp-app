@@ -3,10 +3,12 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
-import { NotificationService, SearchParams, SessionService } from '@dasch-swiss/dsp-ui';
+import { SearchParams } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
+import { NotificationService } from '../services/notification.service';
+import { SessionService } from '../services/session.service';
 
 const { version: appVersion } = require('../../../../package.json');
 

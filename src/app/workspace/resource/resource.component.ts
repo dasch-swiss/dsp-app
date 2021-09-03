@@ -18,16 +18,12 @@ import {
     ReadResourceSequence,
     ReadStillImageFileValue, SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import {
-    DspApiConnectionToken,
-    NotificationService,
-    PropertyInfoValues,
-    Session,
-    SessionService,
-    ValueOperationEventService
-} from '@dasch-swiss/dsp-ui';
+import { PropertyInfoValues, ValueOperationEventService } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { NotificationService } from 'src/app/main/services/notification.service';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { IncomingService } from './incoming.service';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';

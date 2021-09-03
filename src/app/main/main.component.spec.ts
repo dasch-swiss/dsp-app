@@ -9,14 +9,16 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspApiConfigToken, DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { TestConfig } from 'test.config';
+import { DspApiConfigToken, DspApiConnectionToken } from './declarations/dsp-api-tokens';
 import { DialogComponent } from './dialog/dialog.component';
 import { ErrorComponent } from './error/error.component';
 import { FooterComponent } from './footer/footer.component';
 import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
+import { SessionService } from './services/session.service';
 
 describe('MainComponent', () => {
     let component: MainComponent;

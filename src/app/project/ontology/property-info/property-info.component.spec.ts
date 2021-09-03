@@ -22,9 +22,10 @@ import {
     ReadOntology,
     ResourcePropertyDefinitionWithAllLanguages
 } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { PropertyFormComponent } from '../property-form/property-form.component';

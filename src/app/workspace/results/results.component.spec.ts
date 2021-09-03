@@ -1,14 +1,9 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import {
-    AppInitService,
-    DspApiConfigToken,
-    DspApiConnectionToken,
-    DspCoreModule,
-    DspViewerModule
-} from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspCoreModule, DspViewerModule } from '@dasch-swiss/dsp-ui';
 import { AngularSplitModule } from 'angular-split';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { TestConfig } from 'test.config';
 import { ResourceComponent } from '../resource/resource.component';
 import { ResultsComponent } from './results.component';

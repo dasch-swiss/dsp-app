@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, NotificationService, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { DialogComponent } from '../dialog/dialog.component';
+import { NotificationService } from '../services/notification.service';
+import { SessionService } from '../services/session.service';
 
 @Injectable({
     providedIn: 'root'

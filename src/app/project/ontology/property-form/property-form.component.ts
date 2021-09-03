@@ -18,8 +18,9 @@ import {
     UpdateResourcePropertyGuiElement,
     UpdateResourcePropertyLabel
 } from '@dasch-swiss/dsp-js';
-import { AutocompleteItem, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { AutocompleteItem } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { OntologyService } from '../ontology.service';

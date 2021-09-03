@@ -15,9 +15,11 @@ import {
     UserResponse,
     UsersResponse
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, existingNamesValidator, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({

@@ -11,9 +11,10 @@ import {
     ReadProject,
     SingleProject
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 export interface DatasetRadioOption {

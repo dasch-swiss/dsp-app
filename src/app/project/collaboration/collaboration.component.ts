@@ -6,12 +6,12 @@ import {
     ApiResponseError,
     KnoraApiConnection,
     MembersResponse,
-    ProjectResponse,
     ReadProject,
     ReadUser
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
 

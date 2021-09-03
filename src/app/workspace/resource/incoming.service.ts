@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ApiResponseError, CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 
 @Injectable({
     providedIn: 'root'

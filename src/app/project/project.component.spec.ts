@@ -4,14 +4,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import {
-    AppInitService,
-    DspActionModule,
-    DspApiConfigToken,
-    DspApiConnectionToken,
-    DspCoreModule
-} from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
+import { DspApiConfigToken, DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { DialogComponent } from '../main/dialog/dialog.component';
 import { ErrorComponent } from '../main/error/error.component';
 import { ProjectComponent } from './project.component';

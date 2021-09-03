@@ -15,10 +15,8 @@ import {
     ResourcePropertyDefinition,
     StoredProject
 } from '@dasch-swiss/dsp-js';
-import {
-    DspApiConnectionToken
-} from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { ProjectService } from '../project.service';
 import { SelectOntologyComponent } from './select-ontology/select-ontology.component';

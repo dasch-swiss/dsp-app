@@ -7,10 +7,11 @@ import {
     ReadUser,
     UserResponse
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { SessionService } from 'src/app/main/services/session.service';
 import { MenuItem } from '../../main/declarations/menu-item';
 
 @Component({

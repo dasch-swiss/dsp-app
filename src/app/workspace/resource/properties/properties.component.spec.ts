@@ -8,11 +8,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
-    ApiResponseData,
     ApiResponseError,
     Constants,
     IHasPropertyWithPropertyDefinition,
-    KnoraApiConnection,
     MockProjects,
     MockResource,
     MockUsers,
@@ -27,8 +25,6 @@ import {
 import {
     AppInitService,
     DspActionModule,
-    DspApiConfigToken,
-    DspApiConnectionToken,
     EmitEvent,
     Events,
     PropertyInfoValues,
@@ -36,10 +32,10 @@ import {
     ValueOperationEventService
 } from '@dasch-swiss/dsp-ui';
 import { of, Subscription } from 'rxjs';
-import { TestConfig } from 'test.config';
 import { DspResource } from '../dsp-resource';
 import { PropertiesComponent } from './properties.component';
 import { IncomingService } from '../incoming.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 
 /**
  * test host component to simulate parent component.

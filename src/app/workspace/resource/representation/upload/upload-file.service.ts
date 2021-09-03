@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SessionService } from '@dasch-swiss/dsp-ui';
 import { Observable } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
+import { SessionService } from 'src/app/main/services/session.service';
 
 export interface UploadedFile {
     fileType: string;

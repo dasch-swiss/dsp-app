@@ -2,16 +2,15 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import {
-    ApiResponseData,
     ApiResponseError,
     KnoraApiConnection,
-    ProjectResponse,
     ReadGroup,
     ReadProject
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { AddGroupComponent } from './add-group/add-group.component';
 
 @Component({

@@ -1,20 +1,20 @@
 <div>
-    <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
+    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <div *ngIf="!loading" class="form-content list-info">
 
         <!-- list label -->
-        <dsp-string-literal-input [placeholder]="'List label *'" [value]="labels"
+        <app-string-literal-input [placeholder]="'List label *'" [value]="labels"
             (dataChanged)="handleData($event, 'labels')">
-        </dsp-string-literal-input>
+        </app-string-literal-input>
         <mat-hint class="invalid-form string-literal-error" *ngIf="labelInvalidMessage">{{ labelInvalidMessage }}</mat-hint>
 
         <br><br>
 
         <!-- list description / comment -->
-        <dsp-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
+        <app-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
             (dataChanged)="handleData($event, 'comments')" [language]="labels.length ? labels[0].language : 'en'">
-        </dsp-string-literal-input>
+        </app-string-literal-input>
 
         <div class="form-panel form-action">
             <span>

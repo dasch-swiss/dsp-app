@@ -14,14 +14,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, CanDoResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockList, MockOntology, OntologiesEndpointV2, OntologiesMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
-import {
-    DspActionModule, DspApiConnectionToken,
-    DspCoreModule
-} from '@dasch-swiss/dsp-ui';
+import { ApiResponseData, CanDoResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockOntology, OntologiesEndpointV2, OntologiesMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
+import { DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';

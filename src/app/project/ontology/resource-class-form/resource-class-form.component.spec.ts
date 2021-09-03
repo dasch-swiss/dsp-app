@@ -1,4 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -13,20 +14,25 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
-import {
-    AppInitService,
-    DspActionModule,
-    DspApiConfigToken,
-    DspApiConnectionToken
-} from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { PropertyFormComponent } from '../property-form/property-form.component';
 import { ResourceClassFormComponent } from './resource-class-form.component';
+
+/**
+ * test host component to simulate parent component.
+ */
+@Component({
+    template: '<app-resource-class-form></app-resource-class-form>'
+})
+class TestHostResourceClassFormComponent { }
 
 describe('ResourceClassFormComponent', () => {
     let component: ResourceClassFormComponent;
@@ -37,7 +43,7 @@ describe('ResourceClassFormComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                ResourceClassFormComponent,
+                TestHostResourceClassFormComponent,
                 PropertyFormComponent,
                 DialogComponent,
                 ErrorComponent

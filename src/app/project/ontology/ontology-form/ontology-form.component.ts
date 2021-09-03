@@ -9,8 +9,9 @@ import {
     ReadProject,
     UpdateOntologyMetadata
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, existingNamesValidator } from '@dasch-swiss/dsp-ui';
+import { existingNamesValidator } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { OntologyService } from '../ontology.service';
 

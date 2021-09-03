@@ -13,10 +13,11 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { PropertyInfoObject } from '../default-data/default-properties';
 import { PropertyFormComponent } from './property-form.component';
 

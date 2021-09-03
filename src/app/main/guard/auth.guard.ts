@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SessionService } from '@dasch-swiss/dsp-ui';
+import { SessionService } from '../services/session.service';
 
 @Injectable({
     providedIn: 'root'

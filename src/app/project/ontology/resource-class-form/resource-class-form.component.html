@@ -7,10 +7,10 @@
 
             <!-- label -->
             <div class="large-field string-literal-container">
-                <dsp-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
+                <app-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
                     (enter)="submitData()"
                     (dataChanged)="handleData($event, 'labels')">
-                </dsp-string-literal-input>
+                </app-string-literal-input>
                 <mat-hint class="string-literal-error" *ngIf="formErrors.label">
                     {{ formErrors.label }}
                 </mat-hint>
@@ -18,8 +18,8 @@
 
             <!-- description -->
             <div class="large-field string-literal-container more-space-top">
-                <dsp-string-literal-input [placeholder]="'Comment *'" [value]="resourceClassComments" [textarea]="true"
-                    (dataChanged)="handleData($event, 'comments')"></dsp-string-literal-input>
+                <app-string-literal-input [placeholder]="'Comment *'" [value]="resourceClassComments" [textarea]="true"
+                    (dataChanged)="handleData($event, 'comments')"></app-string-literal-input>
             </div>
         </div>
 
@@ -40,8 +40,8 @@
                 <button *ngIf="edit" mat-raised-button type="button" color="primary"
                     [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
                     (click)="submitData()">
-                    <dsp-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
-                    </dsp-progress-indicator>
+                    <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                    </app-progress-indicator>
                     <mat-icon *ngIf="error && !loading">close</mat-icon>
                     {{error ? 'Failed' : 'Update'}}
                 </button>

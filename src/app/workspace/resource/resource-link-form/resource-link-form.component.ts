@@ -11,7 +11,8 @@ import {
     ReadResource,
     StoredProject
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, FilteredResources } from '@dasch-swiss/dsp-ui';
+import { FilteredResources } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { ProjectService } from '../project.service';
 

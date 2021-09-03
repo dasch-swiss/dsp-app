@@ -24,17 +24,13 @@ import {
     UserResponse,
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
-import {
-    DspActionModule,
-    DspApiConnectionToken,
-    FilteredResources,
-    Session,
-    SessionService
-} from '@dasch-swiss/dsp-ui';
+import { DspActionModule, FilteredResources } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { ResourceLinkFormComponent } from './resource-link-form.component';
 
 const resolvedPromise = Promise.resolve(null);

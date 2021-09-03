@@ -2,10 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, Session, SessionService } from '@dasch-swiss/dsp-ui';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
+import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { MenuItem } from '../main/declarations/menu-item';
+import { Session, SessionService } from '../main/services/session.service';
 
 @Component({
     selector: 'app-project',

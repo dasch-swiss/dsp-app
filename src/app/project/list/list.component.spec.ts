@@ -16,19 +16,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseData, DeleteListResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockProjects, ProjectResponse, ProjectsEndpointAdmin, ReadProject } from '@dasch-swiss/dsp-js';
-import {
-    DspActionModule,
-    DspApiConnectionToken,
-    DspCoreModule,
-    Session,
-    SessionService
-} from '@dasch-swiss/dsp-ui';
+import { DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { StringifyStringLiteralPipe } from 'src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
+import { TruncatePipe } from 'src/app/main/pipes/string-transformation/truncate.pipe';
+import { Session, SessionService } from 'src/app/main/services/session.service';
 import { TestConfig } from 'test.config';
 import { ListComponent } from './list.component';
 
@@ -86,7 +84,9 @@ describe('ListComponent', () => {
                 MockListItemComponent,
                 MockListItemFormComponent,
                 DialogComponent,
-                DialogHeaderComponent
+                DialogHeaderComponent,
+                StringifyStringLiteralPipe,
+                TruncatePipe
             ],
             imports: [
                 BrowserAnimationsModule,

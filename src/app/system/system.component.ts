@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 
 import { AppGlobal } from '../app-global';
 import { MenuItem } from '../main/declarations/menu-item';
-import { SessionService } from '@dasch-swiss/dsp-ui';
+import { SessionService } from '../main/services/session.service';
 
 @Component({
     selector: 'app-system',

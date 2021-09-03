@@ -3,9 +3,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspApiConnectionToken, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
+import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { ErrorComponent } from '../main/error/error.component';
+import { SessionService } from '../main/services/session.service';
 import { SystemComponent } from './system.component';
 
 describe('SystemComponent', () => {

@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnInit, Output } from '@angular/core';
 import { ClassDefinition, KnoraApiConnection, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/dsp-ui';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { Link, Node } from '../../../../../node_modules/d3-force-3d';
 import { OntologyService } from '../ontology.service';
 

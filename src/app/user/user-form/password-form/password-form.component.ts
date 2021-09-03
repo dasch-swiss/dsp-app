@@ -8,9 +8,11 @@ import {
     ReadUser,
     UserResponse
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, DspMessageData, SessionService } from '@dasch-swiss/dsp-ui';
+import { DspMessageData } from '@dasch-swiss/dsp-ui';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { SessionService } from 'src/app/main/services/session.service';
 
 @Component({
     selector: 'app-password-form',

@@ -1,15 +1,15 @@
 <!-- add new node item -->
 <div class="new-list-item medium-field" *ngIf="newNode">
-    <dsp-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
+    <app-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
         (dataChanged)="handleData($event)" [language]="language" (enter)="createChildNode()">
-    </dsp-string-literal-input>
+    </app-string-literal-input>
     <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="!labels?.length" class="add-node-btn"
         (click)="createChildNode()">
         <mat-icon>
             add
         </mat-icon>
     </button>
-    <dsp-progress-indicator [status]="0" *ngIf="loading" class="progress-indicator"></dsp-progress-indicator>
+    <app-progress-indicator [status]="0" *ngIf="loading" class="progress-indicator"></app-progress-indicator>
 </div>
 
 <!-- node item -->
@@ -17,10 +17,10 @@
     *ngIf="!newNode"
     (mouseenter)="mouseEnter()"
     (mouseleave)="mouseLeave()">
-    <dsp-string-literal-input class="list-item-label"
-        [placeholder]="labels | dspStringifyStringLiteral:'all' | dspTruncate: 128" [value]="labels" [readonly]="true"
+    <app-string-literal-input class="list-item-label"
+        [placeholder]="labels | appStringifyStringLiteral:'all' | appTruncate: 128" [value]="labels" [readonly]="true"
         (dataChanged)="handleData($event)" [language]="language">
-    </dsp-string-literal-input>
+    </app-string-literal-input>
     <div class="action-bubble" *ngIf="showActionBubble" [@simpleFadeAnimation]="'in'">
         <div class="button-container">
             <button mat-button
