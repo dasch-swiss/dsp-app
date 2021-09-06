@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseData, DeleteListResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockProjects, ProjectResponse, ProjectsEndpointAdmin, ReadProject } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -91,7 +91,6 @@ describe('ListComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 DspActionModule,
-                DspCoreModule,
                 MatButtonModule,
                 MatDialogModule,
                 MatIconModule,

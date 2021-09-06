@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection, MockProjects } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
@@ -31,7 +31,6 @@ describe('OntologyFormComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 DspActionModule,
-                DspCoreModule,
                 HttpClientTestingModule,
                 MatFormFieldModule,
                 MatInputModule,

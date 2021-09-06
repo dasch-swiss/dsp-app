@@ -35,7 +35,7 @@
             </span>
         </div>
         <div class="app-menu-content">
-            <!-- <app-advanced-search *ngIf="showAdvanced" [limitToProject]="limitToProject" (search)="emitSearch($event)"></app-advanced-search> -->
+            <app-advanced-search *ngIf="showAdvanced" [limitToProject]="limitToProject" (search)="emitSearch($event)"></app-advanced-search>
             <app-expert-search *ngIf="!showAdvanced" (search)="emitSearch($event)"></app-expert-search>
         </div>
     </div>

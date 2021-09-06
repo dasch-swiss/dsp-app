@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ApiResponseData, CreateListRequest, ListInfoResponse, ListResponse, ListsEndpointAdmin, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -86,7 +86,6 @@ describe('ListInfoFormComponent', () => {
                 BrowserAnimationsModule,
                 HttpClientModule,
                 DspActionModule,
-                DspCoreModule,
                 MatIconModule,
                 MatInputModule,
                 ReactiveFormsModule,

@@ -11,7 +11,7 @@ import {
     ResourceClassDefinition,
     ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
@@ -71,7 +71,6 @@ describe('OntologyVisualizerComponent', () => {
             imports: [
                 HttpClientTestingModule,
                 DspActionModule,
-                DspCoreModule,
                 MatRadioModule,
                 MatSliderModule,
                 MatSlideToggleModule,

@@ -12,7 +12,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
@@ -47,7 +47,6 @@ describe('UserComponent', () => {
             ],
             imports: [
                 DspActionModule,
-                DspCoreModule,
                 MatButtonModule,
                 MatChipsModule,
                 MatDialogModule,

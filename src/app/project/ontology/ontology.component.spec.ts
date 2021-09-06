@@ -15,7 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ApiResponseData, CanDoResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockOntology, OntologiesEndpointV2, OntologiesMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspCoreModule } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
@@ -63,7 +63,6 @@ describe('OntologyComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 DspActionModule,
-                DspCoreModule,
                 HttpClientTestingModule,
                 MatCardModule,
                 MatDialogModule,
