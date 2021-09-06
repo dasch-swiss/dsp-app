@@ -117,23 +117,24 @@
                 <div class="property-value">
                     <!-- the value(s) of the property -->
                     <div *ngFor="let val of prop.values">
-                        <dsp-display-edit *ngIf="val"
+                        <app-display-edit *ngIf="val"
                             #displayEdit
                             [parentResource]="resource.res"
                             [displayValue]="val"
                             [propArray]="resource.resProps"
+                            [canDelete]="deleteValueIsAllowed(prop)"
                             (referredResourceClicked)="openResource($event)"
                             (referredResourceHovered)="previewResource($event)">
-                        </dsp-display-edit>
+                        </app-display-edit>
                     </div>
                     <!-- Add value form -->
                     <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id">
-                        <dsp-add-value #addValue
+                        <app-add-value #addValue
                             class="add-value"
                             [parentResource]="resource.res"
                             [resourcePropertyDefinition]="$any(resource.res.entityInfo.properties[prop.propDef.id])"
                             (operationCancelled)="hideAddValueForm()">
-                        </dsp-add-value>
+                        </app-add-value>
                     </div>
                     <!-- Add button -->
                     <div *ngIf="addValueIsAllowed(prop)">

@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
     ApiResponseError,
     Constants,
     CreateFileValue,
     CreateResource,
+    CreateTextValueAsString,
     CreateValue,
     KnoraApiConnection,
     OntologiesMetadata, ReadOntology,
@@ -18,6 +19,7 @@ import {
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { DefaultClass, DefaultResourceClasses } from 'src/app/project/ontology/default-data/default-resource-classes';
 import { ProjectService } from '../project.service';
 import { SelectOntologyComponent } from './select-ontology/select-ontology.component';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
@@ -51,6 +53,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     showNextStepForm: boolean;
 
+    // we have to know, when the user went back in the form because of some automatic processes
+    userWentBack = false;
+
     usersProjects: StoredProject[];
     selectedProject: string;
     ontologiesMetadata: OntologiesMetadata;
@@ -61,6 +66,10 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     resourceLabel: string;
     properties: ResourcePropertyDefinition[];
     ontologyInfo: ResourceClassAndPropertyDefinitions;
+
+    // get default resource class definitions to translate the subClassOf iri into human readable words
+    // list of default resource classes
+    defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
 
     // selected resource class has a file value property: display the corresponding upload form
     hasFileValue: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text';
@@ -119,7 +128,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         this.showNextStepForm = !this.showNextStepForm;
 
         // use response to go further with properties
-        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Define the properties of the resource' });
+        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Set the property values of the resource' });
     }
 
     /**
@@ -129,6 +138,17 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         ev.preventDefault();
         this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource' });
         this.showNextStepForm = true;
+        this.userWentBack = true;
+    }
+
+    /**
+     * reset the title if the user went back to the previous form and changes the selected values
+     * or if the user changes a selected value after s/he's already selected a res class
+     */
+    resetTitle() {
+        if (this.userWentBack || this.resourceLabel) {
+            this.updateParent.emit({ title: 'New resource', subtitle: 'Create new resource' });
+        }
     }
 
     submitData() {
@@ -137,7 +157,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
             const createResource = new CreateResource();
 
-            createResource.label = this.resourceLabel;
+            const resLabelVal = <CreateTextValueAsString>this.selectPropertiesComponent.createValueComponent.getNewValue();
+
+            createResource.label = resLabelVal.text;
 
             createResource.type = this.selectedResourceClass.id;
 
@@ -198,6 +220,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      * @param projectIri
      */
     selectOntologies(projectIri: string) {
+        this.resetTitle();
+
         if (projectIri) {
             // if this method is called with the same value as the current selectedProject, there is no need to do anything
             if (projectIri !== this.selectedProject) {
@@ -249,6 +273,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      * @param ontologyIri
      */
     selectResourceClasses(ontologyIri: string) {
+        this.resetTitle();
+
         // reset errorMessage, it will be reassigned in the else clause if needed
         this.errorMessage = undefined;
 
@@ -303,13 +329,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         }
     }
 
-    /**
-     * get the resource label typed in the form in select-resource-class
-     * @param label
-     */
-    getResourceLabel(label: string) {
-        this.resourceLabel = label;
-    }
 
     /**
      * get all the properties of the selected resource class
@@ -329,6 +348,10 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     this.ontologyInfo = onto;
 
                     this.selectedResourceClass = onto.classes[resourceClassIri];
+
+                    // set label from resource class
+                    const defaultClassLabel = this.defaultClasses.find(i => i.iri === this.selectedResourceClass.subClassOf[0]);
+                    this.resourceLabel = this.selectedResourceClass.label + (defaultClassLabel ? ' (' + defaultClassLabel.label + ')' : '');
 
                     // filter out all props that cannot be edited or are link props but also the hasFileValue props
                     this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
@@ -353,6 +376,15 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     // notifies the user that the selected resource does not have any properties defined yet.
                     if (!this.selectPropertiesComponent && this.properties.length === 0) {
                         this.errorMessage = 'No properties defined for the selected resource.';
+                    }
+
+                    if (this.resourceClasses.length > 1 && !this.userWentBack) {
+                        // automatically go to the next step when a resource class is selected
+                        // but not in case the user went back to previous form
+                        this.nextStep();
+                    } else {
+                        // or update the title because the user select another res class
+                        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource' });
                     }
                 },
                 (error: ApiResponseError) => {

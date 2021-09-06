@@ -31,6 +31,11 @@ export abstract class BaseValueDirective {
      */
     @Input() valueRequiredValidator = true;
 
+    /**
+     * disable the comment field
+     */
+    @Input() commentDisabled? = false;
+
     shouldShowComment = false;
 
     /**

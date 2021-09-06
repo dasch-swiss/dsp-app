@@ -15,90 +15,38 @@
     gap: 16px;
 
     .properties {
-        // grid-column: 1 / span 6;
-        margin-top: 16px;
+      grid-column: 1 / span 6;
 
-        .border-bottom {
-            width: 650px;
+      .property {
+        grid-row: 1 / 1;
+
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+
+        .property-label,
+        .property-value {
+          padding: 2px;
+          overflow-wrap: break-word;
         }
 
-        .property {
-            grid-row: 1 / 1;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-top: 16px;
+        .property-label {
+          grid-column: 1 / span 1;
 
-            .property-label,
-            .property-value {
-                padding: 2px;
-                overflow-wrap: break-word;
-            }
+          .label {
+            text-align: right;
+            margin-top: 16px;;
+          }
 
-            .property-label {
-                grid-column: 1 / span 1;
-
-                .label {
-                text-align: right;
-                display: block;
-                float: left;
-                width: 95%;
-                }
-
-                .label-info {
-                cursor: help;
-                }
-
-                .propIsRequired {
-                  color: red;
-                  display: block;
-                  float: right;
-                  width: 5%;
-                }
-            }
-
-            .property-value {
-                grid-column: 2 / span 3;
-
-                // .value {
-                //   width: 90%;
-                //   vertical-align: top;
-                // }
-
-                .buttons {
-                  // width: 9%;
-                  // vertical-align: middle;
-
-                  button {
-                    cursor: pointer;
-                    border: none;
-                    outline: none;
-                    background-color: transparent;
-                    color: #000000;
-
-                    .material-icons {
-                      font-size: 18px;
-                    }
-
-                    .mat-icon {
-                      width: 18px;
-                      height: 18px;
-                      vertical-align: middle;
-                    }
-                  }
-                }
-
-                // .value,
-                // .buttons {
-                //   display: inline-block;
-                // }
-            }
+          .label-info {
+            cursor: help;
+          }
         }
+
+        .property-value {
+          grid-column: 2 / span 3;
+          margin-bottom: 0; // overwrite global value in this case
+        }
+      }
     }
 }
-
-// TODO: maybe find a better way to do this
-// ::ng-deep .form-content .large-field {
-//   min-width: 0;
-// }
-

@@ -1,19 +1,38 @@
 <div class="properties-container">
     <div class="properties">
+        <!-- resource's label (defined in the base ontology) -->
+        <div class="property">
+            <div class="property-label">
+                <h3 class="label label-info mat-subheading-1"
+                    matTooltip="Each resource needs a (preferably unique) label. It will be a kind of resource identifier."
+                    matTooltipPosition="above">
+                    Resource label *
+                </h3>
+            </div>
+            <div class="property-value large-field">
+                <div class="value">
+                    <app-text-value-as-string #createVal
+                        [mode]="'create'"
+                        [commentDisabled]="true"
+                        [valueRequiredValidator]="true"
+                        [parentForm]="parentForm"
+                        [formName]="'label'">
+                    </app-text-value-as-string>
+                </div>
+            </div>
+        </div>
+
+        <!-- resource's properties (defined in the ontology) -->
         <div *ngFor="let prop of properties; let last = last;" [class.border-bottom]="!last">
             <div class="property" *ngIf="!prop.isLinkProperty || prop">
                 <div class="property-label">
-                    <span>
-                        <h3 class="label mat-subheading-1"
+                    <h3 class="label mat-subheading-1"
                         [class.label-info]="prop.comment"
                         [matTooltip]="prop.comment"
                         matTooltipPosition="above">
                         {{prop.label}}
+                        <span *ngIf="propertyValuesKeyValuePair[prop.id + '-cardinality'][0] === 1">*</span>
                     </h3>
-                    </span>
-                    <span *ngIf="propertyValuesKeyValuePair[prop.id + '-cardinality'][0] === 1" class="propIsRequired">
-                        *
-                    </span>
                 </div>
                 <div class="property-value large-field">
                     <div *ngFor="let val of propertyValuesKeyValuePair[prop.id]; let i=index">

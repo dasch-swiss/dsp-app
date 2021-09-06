@@ -1,10 +1,17 @@
 .stepTwo {
     margin: 24px 56px !important;
+    width: calc(100% - 144px);
+
+    .btn-field {
+      margin-top: 48px;
+      margin-bottom: 0;
+    }
 }
 
-.btn-field {
-    width: 600px !important;
-    margin-left: 48px;
+.form-action {
+    width: 100%;
+    margin-top: 24px;
+    // margin-left: 48px;
 }
 
 .errorIfNoElement {

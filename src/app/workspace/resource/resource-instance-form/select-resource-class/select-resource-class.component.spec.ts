@@ -1,17 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSelectHarness } from '@angular/material/select/testing';
-import { MatInputHarness } from '@angular/material/input/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MockOntology, ResourceClassDefinition } from '@dasch-swiss/dsp-js';
 import { SelectResourceClassComponent } from './select-resource-class.component';
-import { By } from '@angular/platform-browser';
 
 /**
  * test host component to simulate parent component.
@@ -22,8 +20,7 @@ import { By } from '@angular/platform-browser';
             #selectResource
             [formGroup]="form"
             [resourceClassDefinitions]="resourceClasses"
-            (resourceClassSelected)="selectResourceClass($event)"
-            (resourceLabel)="getResourceLabel($event)">
+            (resourceClassSelected)="selectResourceClass($event)">
         </app-select-resource-class>`
 })
 class TestHostComponent implements OnInit {
@@ -33,7 +30,6 @@ class TestHostComponent implements OnInit {
     form: FormGroup;
     resourceClasses: ResourceClassDefinition[];
     selectedResourceIri: string;
-    resLabel: string;
 
     constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
     }
@@ -54,9 +50,6 @@ class TestHostComponent implements OnInit {
         this.selectedResourceIri = resourceClassIri;
     }
 
-    getResourceLabel(label: string) {
-        this.resLabel = label;
-    }
 }
 
 describe('SelectResourceClassComponent', () => {
@@ -130,21 +123,6 @@ describe('SelectResourceClassComponent', () => {
 
     });
 
-    it('should fill in the label correctly', () => {
-
-        const labelInput = testHostFixture.debugElement.query(By.css('input.label'));
-
-        const el = labelInput.nativeElement;
-
-        expect(el.value).toEqual('');
-
-        el.value = 'resource label';
-
-        testHostFixture.detectChanges();
-
-        expect(el.value).toEqual('resource label');
-    });
-
     it('should emit the Iri of a selected resource class', async () => {
 
         expect(testHostComponent.selectedResourceIri).toBeUndefined();
@@ -161,18 +139,6 @@ describe('SelectResourceClassComponent', () => {
 
         expect(testHostComponent.selectedResourceIri).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2#BlueThing');
 
-    });
-
-    it('should emit the label of the resource class', async () => {
-
-        const inputElement = await loader.getHarness(MatInputHarness.with({ selector: 'input.label' }));
-
-        expect(await inputElement.getValue()).toEqual('');
-        expect(testHostComponent.resLabel).toBeUndefined();
-
-        await inputElement.setValue('resource label');
-
-        expect(testHostComponent.resLabel).toEqual('resource label');
     });
 
     it('should unsubscribe from from changes on destruction', () => {

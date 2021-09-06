@@ -28,7 +28,6 @@ import {
     EmitEvent,
     Events,
     PropertyInfoValues,
-    UserService,
     ValueOperationEventService
 } from '@dasch-swiss/dsp-ui';
 import { of, Subscription } from 'rxjs';
@@ -36,6 +35,7 @@ import { DspResource } from '../dsp-resource';
 import { PropertiesComponent } from './properties.component';
 import { IncomingService } from '../incoming.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { UserService } from '../services/user.service';
 
 /**
  * test host component to simulate parent component.
