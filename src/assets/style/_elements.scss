@@ -107,12 +107,12 @@ a,
   }
 
   // override dsp-ui search panel style
-  .dsp-search-panel .mobile-only .dsp-fulltext-search-button {
+  .app-search-panel .mobile-only .app-fulltext-search-button {
     height: $header-height;
     border-radius: 0;
     margin-top: 4px;
   }
-  .dsp-fulltext-search-mobile-panel .dsp-fulltext-search-button {
+  .app-fulltext-search-mobile-panel .app-fulltext-search-button {
     height: auto !important;
     border-radius: $border-radius !important;
     margin-top: 0 !important;

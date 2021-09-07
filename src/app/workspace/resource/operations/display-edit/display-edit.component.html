@@ -59,18 +59,20 @@
         </div>
     </div>
     <div class="crud-buttons" *ngIf="!readOnlyValue">
-        <button class="save"
-                title="save"
-                *ngIf="editModeActive"
-                [disabled]="!displayValueComponent.form.valid"
-                (click)="saveEditValue()">
-                <mat-icon>save</mat-icon>
+        <button mat-icon-button
+            *ngIf="editModeActive"
+            class="value-action save"
+            title="save"
+            [disabled]="!displayValueComponent.form.valid"
+            (click)="saveEditValue()">
+            <mat-icon>save</mat-icon>
         </button>
-        <button class="cancel"
-                title="cancel"
-                *ngIf="editModeActive"
-                (click)="cancelEditValue()">
-                <mat-icon>undo</mat-icon>
+        <button mat-icon-button
+            *ngIf="editModeActive"
+            class="value-action cancel"
+            title="cancel"
+            (click)="cancelEditValue()">
+            <mat-icon>undo</mat-icon>
         </button>
     </div>
 </div>

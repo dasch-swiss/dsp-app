@@ -1,6 +1,5 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { By } from '@angular/platform-browser';
 import { ProgressIndicatorComponent } from './progress-indicator.component';
@@ -38,8 +37,7 @@ describe('ProgressIndicatorComponent', () => {
                 ProgressIndicatorComponent,
                 TestHostComponent
             ]
-        })
-            .compileComponents();
+        }).compileComponents();
     }));
 
 
@@ -153,13 +151,15 @@ describe('ProgressIndicatorComponent', () => {
 
         const divProgressElement = progressEl.query(By.css('.app-progress-indicator'));
 
-        const lineEl = divProgressElement.query(By.css('.line'));
+        const svgEl = divProgressElement.nativeElement.getElementsByTagName('svg');
+        expect(svgEl).not.toBe(null);
 
-        const bounceEl = lineEl.query(By.css('div'));
+        // const gEl = divProgressElement.nativeElement.getElementsByTagName('g');
+        const gEl = progressEl.query(By.css('g'));
+        // const gEl = svgEl.getElementsByTagName('g');
 
-        // expect the default progress indicator
-        expect(bounceEl.styles.backgroundColor).toEqual('red');
-        expect(bounceEl.attributes.class).toEqual('bounce1');
+        // // expect the default progress indicator in red
+        expect(gEl.attributes.stroke).toEqual('red');
 
     });
 });

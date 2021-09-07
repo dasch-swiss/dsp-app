@@ -38,7 +38,7 @@ $grid-breakpoints: (
 // mobile device: bigger than phone
 @media (min-width: map-get($grid-breakpoints, phone)) {
   // override dsp-ui search panel style
-  .dsp-fulltext-search.desktop-only {
+  .app-fulltext-search.desktop-only {
     display: inline-flex !important;
   }
   .advanced-expert-buttons {

@@ -20,17 +20,19 @@
         </span>
     </div>
     <div class="crud-buttons">
-        <button class="save"
-                *ngIf="createModeActive"
-                (click)="saveAddValue()"
-                title="save"
-                [disabled]='!createValueComponent.form.valid'>
+        <button mat-icon-button
+            *ngIf="createModeActive"
+            class="value-action save"
+            title="save"
+            [disabled]='!createValueComponent.form.valid'
+            (click)="saveAddValue()">
             <mat-icon>save</mat-icon>
         </button>
-        <button class="cancel"
-                *ngIf="createModeActive"
-                (click)="cancelAddValue()"
-                title="cancel">
+        <button mat-icon-button
+            *ngIf="createModeActive"
+            class="value-action cancel"
+            title="cancel"
+            (click)="cancelAddValue()">
             <mat-icon>cancel</mat-icon>
         </button>
         <app-progress-indicator *ngIf="submittingValue" [status]="progressIndicatorStatus" [color]="progressIndicatorColor"></app-progress-indicator>

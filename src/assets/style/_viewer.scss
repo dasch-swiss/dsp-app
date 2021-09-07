@@ -68,61 +68,6 @@
   grid-column-start: 1;
   grid-column-end: 2;
   position: relative;
-
-  .action-bubble {
-    position: absolute;
-    right: 0;
-    top: -20px;
-    border: 1px solid #e4e4e4;
-    border-radius: 10px;
-    padding: 0 1px;
-    background-color: #e4e4e4;
-    z-index: 2;
-    box-shadow: #949494 1px 4px 5px 0px;
-
-    .button-container {
-
-      button.mat-button-disabled {
-
-        .mat-icon {
-          color: #aaaaaa;
-        }
-
-      }
-
-      button {
-        cursor: pointer;
-        border: none;
-        padding: 2px;
-        outline: none;
-        background-color: transparent;
-        color: #000000;
-        margin: 0 2px;
-        border-radius: 10px;
-        transition: background-color ease-out 0.5s;
-        min-width: inherit;
-        line-height: normal;
-
-        .material-icons {
-          font-size: 18px;
-        }
-
-        .mat-icon {
-          width: 18px;
-          height: 18px;
-          vertical-align: middle;
-        }
-      }
-
-      button.info {
-        cursor: default;
-      }
-
-      button:hover {
-        background-color: #c7c7c7;
-      }
-    }
-  }
 }
 
 .value-component.highlighted {
@@ -134,6 +79,14 @@
   grid-row-end: auto;
   grid-column-start: 2;
   grid-column-end: 3;
+  display: inline-flex;
+}
+
+.value-action {
+  .material-icons,
+  .mat-icon {
+    font-size: 18px;
+  }
 }
 
 .mat-error {
@@ -141,32 +94,6 @@
   grid-row-end: auto;
   grid-column-start: 3;
   grid-column-end: end;
-}
-
-button.save,
-button.cancel {
-  cursor: pointer;
-  border: none;
-  padding: 0em;
-  margin-left: 1em;
-  outline: none;
-  background-color: transparent;
-  color: #000000;
-}
-
-button.save:disabled {
-  color: #adadad;
-  cursor: default;
-}
-
-button.save .material-icons,
-button.cancel .material-icons {
-  font-size: 18px;
-}
-
-button.save .mat-icon,
-button.cancel .mat-icon {
-  font-size: 18px;
 }
 
 .deletion-dialog .title {
@@ -195,7 +122,6 @@ button.cancel .mat-icon {
 .deletion-dialog-message .deletion-comment {
   min-width: 80%;
 }
-
 
 .ck-content code {
   font-family: monospace !important;

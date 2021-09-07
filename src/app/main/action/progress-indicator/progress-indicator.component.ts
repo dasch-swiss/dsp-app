@@ -30,13 +30,15 @@ export class ProgressIndicatorComponent implements OnInit {
      */
     @Input() color = '#5849a7';
 
-    /**
-     * @ignore
-     */
+    @Input() size: 'small' | 'large' = 'small';
+
+    widthAndHeight: string;
+
     constructor() {
     }
 
     ngOnInit() {
+        this.widthAndHeight = (this.size === 'small' ? '48px' : '128px');
     }
 
 }

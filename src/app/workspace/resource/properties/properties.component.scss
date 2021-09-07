@@ -56,28 +56,6 @@
   border-bottom: 1px solid rgba(33, 33, 33, 0.1);
 }
 
-// smaller buttons: add value and value info
-.info,
-.create {
-  cursor: pointer;
-  border: none;
-  padding: 0em;
-  outline: none;
-  background-color: transparent;
-  color: #000000;
-}
-
-.info .material-icons,
-.create .material-icons {
-  font-size: 18px;
-}
-
-.info .mat-icon,
-.create .mat-icon {
-  width: 18px;
-  height: 18px;
-}
-
 // properties container with property item and property value items
 
 .properties-container {

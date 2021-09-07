@@ -138,7 +138,7 @@
                     </div>
                     <!-- Add button -->
                     <div *ngIf="addValueIsAllowed(prop)">
-                        <button class="create"
+                        <button mat-icon-button class="value-action create"
                             (click)="showAddValueForm(prop)"
                             title="Add a new value">
                             <mat-icon>add_box</mat-icon>
@@ -178,6 +178,7 @@
         </div>
 
     </div>
-    <ng-template #noProperties>The resource {{resource?.res.resourceClassLabel}} has no defined
-        properties.</ng-template>
+    <ng-template #noProperties>
+        The resource {{resource?.res.resourceClassLabel}} has no defined properties.
+    </ng-template>
 </div>
