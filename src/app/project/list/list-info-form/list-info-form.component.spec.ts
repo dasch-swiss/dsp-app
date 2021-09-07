@@ -5,13 +5,13 @@ import { Component, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ApiResponseData, CreateListRequest, ListInfoResponse, ListResponse, ListsEndpointAdmin, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -85,9 +85,10 @@ describe('ListInfoFormComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 HttpClientModule,
-                DspActionModule,
+                MatDialogModule,
                 MatIconModule,
                 MatInputModule,
+                MatSnackBarModule,
                 ReactiveFormsModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()

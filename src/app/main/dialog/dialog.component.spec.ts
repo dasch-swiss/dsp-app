@@ -15,7 +15,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { ListInfoFormComponent } from 'src/app/project/list/list-info-form/list-info-form.component';
 import { ListItemFormComponent } from 'src/app/project/list/list-item-form/list-item-form.component';
@@ -54,7 +53,6 @@ describe('DialogComponent', () => {
             ],
             imports: [
                 CommonModule,
-                DspActionModule,
                 MatAutocompleteModule,
                 MatButtonModule,
                 MatChipsModule,

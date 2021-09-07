@@ -24,7 +24,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import {
     AppInitService,
-    DspActionModule,
     EmitEvent,
     Events,
     PropertyInfoValues,
@@ -36,6 +35,7 @@ import { PropertiesComponent } from './properties.component';
 import { IncomingService } from '../incoming.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { UserService } from '../services/user.service';
+import { MatDialogModule } from '@angular/material/dialog';
 
 /**
  * test host component to simulate parent component.
@@ -151,7 +151,7 @@ describe('PropertiesComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 ClipboardModule,
-                DspActionModule,
+                MatDialogModule,
                 MatIconModule,
                 MatMenuModule,
                 MatSnackBarModule,

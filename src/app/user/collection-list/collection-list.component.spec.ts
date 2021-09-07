@@ -1,5 +1,6 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CollectionListComponent } from './collection-list.component';
 
 describe('CollectionListComponent', () => {
@@ -10,7 +11,8 @@ describe('CollectionListComponent', () => {
         TestBed.configureTestingModule({
             declarations: [CollectionListComponent],
             imports: [
-                DspActionModule
+                MatDialogModule,
+                MatSnackBarModule
             ]
         }).compileComponents();
     }));

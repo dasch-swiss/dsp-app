@@ -2,6 +2,7 @@ import { Component, DebugElement, EventEmitter, Inject, Input, OnInit, Output, V
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -24,13 +25,13 @@ import {
     UserResponse,
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
-import { DspActionModule, FilteredResources } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { Session, SessionService } from 'src/app/main/services/session.service';
+import { FilteredResources } from '../../results/list-view/list-view.component';
 import { ResourceLinkFormComponent } from './resource-link-form.component';
 
 const resolvedPromise = Promise.resolve(null);
@@ -129,8 +130,8 @@ describe('ResourceLinkFormComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 MatButtonModule,
+                MatDialogModule,
                 MatFormFieldModule,
                 MatIconModule,
                 MatInputModule,

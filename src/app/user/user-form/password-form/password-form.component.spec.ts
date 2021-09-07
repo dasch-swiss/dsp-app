@@ -1,12 +1,14 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
@@ -27,10 +29,11 @@ describe('PasswordFormComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
+                MatDialogModule,
                 MatIconModule,
                 MatInputModule,
                 MatFormFieldModule,
+                MatSnackBarModule,
                 ReactiveFormsModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()

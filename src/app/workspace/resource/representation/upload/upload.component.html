@@ -6,7 +6,7 @@
             <mat-icon *ngIf="!isLoading" class="upload-icon">
                 cloud_upload
             </mat-icon>
-            <dsp-progress-indicator *ngIf="isLoading"></dsp-progress-indicator>
+            <app-progress-indicator *ngIf="isLoading"></app-progress-indicator>
             <p class="title">Upload file<br>
                 <span class="mat-body-1">The following file types are supported:<br>
                     <span *ngFor="let item of allowedFileTypes; let last = last">{{ item | split: '/':1 }}

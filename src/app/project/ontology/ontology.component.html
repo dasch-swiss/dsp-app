@@ -1,6 +1,6 @@
 <div *ngIf="projectAdmin" class="desktop-only">
 
-    <dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
+    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <!-- toolbar: select ontology -->
     <div class="content large middle" *ngIf="!loading">
@@ -214,7 +214,7 @@
             <app-ontology-visualizer [ontology]="ontology" [ontoClasses]="ontoClasses"></app-ontology-visualizer>
         </div>
 
-        <dsp-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></dsp-progress-indicator>
+        <app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></app-progress-indicator>
     </div>
 
 </div>
@@ -224,6 +224,6 @@
 </div>
 
 <div class="mobile-only">
-    <dsp-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
-    </dsp-message>
+    <app-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
+    </app-message>
 </div>

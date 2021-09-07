@@ -11,12 +11,12 @@ import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSelectHarness } from '@angular/material/select/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseData, DeleteListResponse, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockProjects, ProjectResponse, ProjectsEndpointAdmin, ReadProject } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -90,11 +90,11 @@ describe('ListComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 MatButtonModule,
                 MatDialogModule,
                 MatIconModule,
                 MatSelectModule,
+                MatSnackBarModule,
                 MatToolbarModule,
                 MatTooltipModule,
                 ReactiveFormsModule,

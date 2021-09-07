@@ -1,15 +1,16 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppInitService } from 'src/app/app-init.service';
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
@@ -64,10 +65,11 @@ describe('HeaderComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 HttpClientModule,
-                DspActionModule,
+                MatDialogModule,
                 MatIconModule,
                 MatListModule,
                 MatMenuModule,
+                MatSnackBarModule,
                 MatToolbarModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()

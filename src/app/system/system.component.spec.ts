@@ -3,7 +3,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TestConfig } from 'test.config';
 import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { ErrorComponent } from '../main/error/error.component';
@@ -18,7 +17,6 @@ describe('SystemComponent', () => {
         TestBed.configureTestingModule({
             declarations: [SystemComponent, ErrorComponent],
             imports: [
-                DspActionModule,
                 MatIconModule,
                 MatTabsModule,
                 RouterTestingModule

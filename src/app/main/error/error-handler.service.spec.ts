@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { ErrorHandlerService } from './error-handler.service';
 
@@ -20,7 +19,6 @@ describe('ErrorHandlerService', () => {
         TestBed.configureTestingModule({
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 MatDialogModule,
                 MatSnackBarModule
             ],

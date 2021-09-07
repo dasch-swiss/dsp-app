@@ -1,8 +1,8 @@
-<dsp-progress-indicator *ngIf="loading && !user"></dsp-progress-indicator>
+<app-progress-indicator *ngIf="loading && !user"></app-progress-indicator>
 
 <!-- own user profile (logged-in user) -->
 <div *ngIf="!loading && user && loggedInUser" class="user-profile">
-    <img dspAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
+    <img appAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
     <div class="user-profile-headline">
         <!-- user names -->
         <h2 class="mat-title">{{user.givenName}}
@@ -41,7 +41,7 @@
 <!-- phone view -->
 <div *ngIf="!loading && user && loggedInUser" class="user-profile-mobile">
 
-    <img dspAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
+    <img appAdminImage [image]="user.email" [type]="'user'" class="user-profile-image">
 
     <div class="user-profile-headline">
         <!-- user names -->

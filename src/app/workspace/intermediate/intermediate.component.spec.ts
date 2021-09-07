@@ -3,12 +3,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, FilteredResources } from '@dasch-swiss/dsp-ui';
+import { AppInitService } from '@dasch-swiss/dsp-ui';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { TestConfig } from 'test.config';
+import { FilteredResources } from '../results/list-view/list-view.component';
 import { IntermediateComponent } from './intermediate.component';
 
 /**
@@ -82,13 +84,13 @@ describe('IntermediateComponent', () => {
             declarations: [
                 IntermediateComponent,
                 OneSelectedResourcesComponent,
-                ThreeSelectedResourcesComponent
+                ThreeSelectedResourcesComponent,
             ],
             imports: [
-                DspActionModule,
                 MatButtonModule,
                 MatDialogModule,
                 MatIconModule,
+                MatSnackBarModule,
                 MatTooltipModule
             ],
             providers: [

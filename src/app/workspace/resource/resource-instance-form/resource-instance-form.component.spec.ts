@@ -36,7 +36,7 @@ import {
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
-import { DspActionModule, IntValueComponent, TextValueAsStringComponent, ValueService } from '@dasch-swiss/dsp-ui';
+import { IntValueComponent, TextValueAsStringComponent, ValueService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -323,7 +323,6 @@ describe('ResourceInstanceFormComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 MatButtonModule,
                 MatDialogModule,
                 MatFormFieldModule,

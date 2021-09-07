@@ -11,7 +11,7 @@
 </form>
  -->
 
-<dsp-progress-indicator *ngIf="loading"></dsp-progress-indicator>
+<app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
 <div *ngIf="!loading" class="app-projects">
     <!-- <mat-divider></mat-divider> -->
@@ -28,7 +28,7 @@
     <button mat-raised-button [color]="'primary'" class="add-new" (click)="openDialog('createProject')">
             NEW project
     </button>
-    <dsp-progress-indicator *ngIf="loadSystem"></dsp-progress-indicator>
+    <app-progress-indicator *ngIf="loadSystem"></app-progress-indicator>
     <app-projects-list *ngIf="!loadSystem" [list]="active" [system]="system"></app-projects-list>
     <app-projects-list *ngIf="!loadSystem" [list]="inactive" [system]="system"></app-projects-list>
 </div>

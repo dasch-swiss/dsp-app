@@ -1,6 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { GroupsListComponent } from './groups-list.component';
 
 describe('GroupsListComponent', () => {
@@ -13,7 +12,6 @@ describe('GroupsListComponent', () => {
                 GroupsListComponent
             ],
             imports: [
-                DspActionModule,
                 RouterTestingModule
             ]
         })

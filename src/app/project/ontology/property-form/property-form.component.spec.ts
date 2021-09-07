@@ -5,15 +5,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
@@ -149,15 +150,16 @@ describe('PropertyFormComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 HttpClientTestingModule,
                 MatAutocompleteModule,
                 MatButtonModule,
+                MatDialogModule,
                 MatFormFieldModule,
                 MatIconModule,
                 MatInputModule,
                 MatOptionModule,
                 MatSelectModule,
+                MatSnackBarModule,
                 ReactiveFormsModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()

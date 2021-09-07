@@ -1,12 +1,14 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { waitForAsync, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
 import { AppComponent } from './app.component';
@@ -27,11 +29,12 @@ describe('AppComponent', () => {
             ],
             imports: [
                 HttpClientTestingModule,
+                MatDialogModule,
                 MatIconModule,
                 MatListModule,
                 MatMenuModule,
+                MatSnackBarModule,
                 MatToolbarModule,
-                DspActionModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()
             ],

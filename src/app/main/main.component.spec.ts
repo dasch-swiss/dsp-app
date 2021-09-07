@@ -1,5 +1,6 @@
 import { waitForAsync, ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +10,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken } from './declarations/dsp-api-tokens';
@@ -37,8 +38,8 @@ describe('MainComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 MatButtonModule,
+                MatDialogModule,
                 MatDividerModule,
                 MatFormFieldModule,
                 MatIconModule,

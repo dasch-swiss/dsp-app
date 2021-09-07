@@ -63,7 +63,7 @@
         </mat-tab-group>
     </div>
     <!-- progress indicator -->
-    <dsp-progress-indicator *ngIf="!resource && loading"></dsp-progress-indicator>
+    <app-progress-indicator *ngIf="!resource && loading"></app-progress-indicator>
 
     <!-- resource not found  -->
     <div *ngIf="!resource && !loading" class="no-results">

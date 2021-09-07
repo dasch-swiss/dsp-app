@@ -1,15 +1,25 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CanDoResponse, ClassDefinition, Constants, MockOntology, OntologiesEndpointV2, ReadOntology } from '@dasch-swiss/dsp-js';
-import { DspActionModule, SortingService } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { TruncatePipe } from 'src/app/main/pipes/string-transformation/truncate.pipe';
+import { SortingService } from 'src/app/main/services/sorting.service';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
 
 /**
@@ -79,13 +89,22 @@ describe('ResourceClassInfoComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 HostComponent,
-                ResourceClassInfoComponent
+                ResourceClassInfoComponent,
+                TruncatePipe
             ],
             imports: [
-                DspActionModule,
+                BrowserAnimationsModule,
+                MatAutocompleteModule,
+                MatButtonModule,
+                MatButtonToggleModule,
                 MatCardModule,
+                MatDialogModule,
+                MatFormFieldModule,
                 MatIconModule,
+                MatInputModule,
+                MatListModule,
                 MatMenuModule,
+                MatSnackBarModule,
                 MatTooltipModule
             ],
             providers: [

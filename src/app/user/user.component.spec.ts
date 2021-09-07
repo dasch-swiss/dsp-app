@@ -8,11 +8,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
@@ -46,7 +47,6 @@ describe('UserComponent', () => {
                 UserComponent
             ],
             imports: [
-                DspActionModule,
                 MatButtonModule,
                 MatChipsModule,
                 MatDialogModule,
@@ -55,6 +55,7 @@ describe('UserComponent', () => {
                 MatIconModule,
                 MatInputModule,
                 MatMenuModule,
+                MatSnackBarModule,
                 MatTabsModule,
                 ReactiveFormsModule,
                 RouterTestingModule,

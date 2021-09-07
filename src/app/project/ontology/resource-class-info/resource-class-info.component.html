@@ -4,7 +4,7 @@
         <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
         <!-- <mat-icon mat-card-avatar>{{resourceClass.icon}}</mat-icon> -->
         <mat-card-title [matTooltip]="resourceClass.comment" matTooltipPosition="above">
-            {{resourceClass.label | dspTruncate: 24}}
+            {{resourceClass.label | appTruncate: 24}}
         </mat-card-title>
         <mat-card-subtitle>
             <span matTooltip="subclass of" matTooltipPosition="above">

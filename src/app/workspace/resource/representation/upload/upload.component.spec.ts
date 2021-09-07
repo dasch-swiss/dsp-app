@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateStillImageFileValue } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { SplitPipe } from 'src/app/main/pipes/split.pipe';
 import { UploadFileService } from './upload-file.service';
@@ -54,7 +54,7 @@ describe('UploadComponent', () => {
                 SplitPipe
             ],
             imports: [
-                DspActionModule,
+                MatDialogModule,
                 MatInputModule,
                 MatSnackBarModule,
                 ReactiveFormsModule,

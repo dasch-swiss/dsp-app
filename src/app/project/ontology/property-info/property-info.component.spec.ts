@@ -22,7 +22,6 @@ import {
     ReadOntology,
     ResourcePropertyDefinitionWithAllLanguages
 } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -198,7 +197,6 @@ describe('PropertyInfoComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                DspActionModule,
                 MatButtonModule,
                 MatDialogModule,
                 MatIconModule,

@@ -10,7 +10,7 @@
             <span *ngIf="propCard; else displayAllLabels">{{propDef.label ? propDef.label : propDef.id}}</span>
             <!-- otherwise display label in all languages (if defined) -->
             <ng-template #displayAllLabels>{{!propDef.labels.length ? propDef?.label : propDef.labels |
-                dspStringifyStringLiteral:'all'}}</ng-template>
+                appStringifyStringLiteral:'all'}}</ng-template>
         </span>
         <!-- property is linked to a class or to a list: display connected class or list -->
         <span class="attribute additional-info" *ngIf="propAttribute" [matTooltip]="propAttributeComment"

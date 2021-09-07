@@ -14,12 +14,12 @@
         <div class="app-toolbar-row">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
-                <dsp-sort-button *ngIf="list.length > 1"
+                <app-sort-button *ngIf="list.length > 1"
                     [icon]="'sort_by_alpha'"
                     [sortProps]="sortProps"
                     [activeKey]="sortBy"
                     (sortKeyChange)="sortList($event)">
-                </dsp-sort-button>
+                </app-sort-button>
             </span>
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['project']}}</h2>
             <span class="fill-remaining-space"></span>

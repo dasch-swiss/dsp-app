@@ -3,7 +3,6 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken } from '../declarations/dsp-api-tokens';
@@ -40,7 +39,6 @@ describe('LoginComponent', () => {
                 TestLoginFormComponent
             ],
             imports: [
-                DspActionModule,
                 RouterTestingModule
             ],
             providers: [
