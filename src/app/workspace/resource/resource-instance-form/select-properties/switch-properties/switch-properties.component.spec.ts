@@ -3,7 +3,7 @@ import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateIntValue, CreateValue, MockOntology, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { IntValueComponent } from '@dasch-swiss/dsp-ui';
+import { IntValueComponent } from '../../../values/int-value/int-value.component';
 import { SwitchPropertiesComponent } from './switch-properties.component';
 
 
@@ -46,7 +46,7 @@ class TestSwitchPropertiesParentComponent implements OnInit {
  * mock value component to use in tests.
  */
 @Component({
-    selector: 'dsp-int-value'
+    selector: 'app-int-value'
 })
 class MockCreateIntValueComponent implements OnInit {
 
