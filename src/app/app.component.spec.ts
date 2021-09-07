@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService, DspActionModule, DspSearchModule } from '@dasch-swiss/dsp-ui';
+import { AppInitService, DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
 import { AppComponent } from './app.component';
@@ -32,7 +32,6 @@ describe('AppComponent', () => {
                 MatMenuModule,
                 MatToolbarModule,
                 DspActionModule,
-                DspSearchModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()
             ],

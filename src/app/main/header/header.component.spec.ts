@@ -9,7 +9,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspActionModule, DspSearchModule } from '@dasch-swiss/dsp-ui';
+import { DspActionModule } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppInitService } from 'src/app/app-init.service';
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
@@ -65,7 +65,6 @@ describe('HeaderComponent', () => {
                 BrowserAnimationsModule,
                 HttpClientModule,
                 DspActionModule,
-                DspSearchModule,
                 MatIconModule,
                 MatListModule,
                 MatMenuModule,
