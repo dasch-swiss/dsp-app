@@ -1,5 +1,44 @@
 # Changelog
 
+## [6.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.3.0...v6.0.0) (2021-09-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** update config file for better iiif support (DSP-1880) (#511)
+
+### Bug Fixes
+
+* **audio:** sanitize audio url (DSP-1819) ([#513](https://www.github.com/dasch-swiss/dsp-app/issues/513)) ([35871cd](https://www.github.com/dasch-swiss/dsp-app/commit/35871cdfd79e733d0692bf65e83141d1a09e0cbc))
+* **deps:** fix security vulnerability ([#514](https://www.github.com/dasch-swiss/dsp-app/issues/514)) ([d793fb8](https://www.github.com/dasch-swiss/dsp-app/commit/d793fb885a60c76691bc1daefe771807d0eb6746))
+
+
+### Enhancements
+
+* **config:** update config file for better iiif support (DSP-1880) ([#511](https://www.github.com/dasch-swiss/dsp-app/issues/511)) ([b799600](https://www.github.com/dasch-swiss/dsp-app/commit/b799600b7345e6adf07fa784810e3f57abc91ac7))
+* **resource:** display incoming links (DSP-1846) ([#507](https://www.github.com/dasch-swiss/dsp-app/issues/507)) ([9c3abce](https://www.github.com/dasch-swiss/dsp-app/commit/9c3abce7a01a509d041cbd569d603ab52c931dda))
+* **resource:** optimize resource instance form (DSP-1256) ([#518](https://www.github.com/dasch-swiss/dsp-app/issues/518)) ([5151677](https://www.github.com/dasch-swiss/dsp-app/commit/51516773a81d97960d6340889b5455094d771cc7))
+
+
+### Maintenance
+
+* **action:** migrate action module (DSP-1852) ([#509](https://www.github.com/dasch-swiss/dsp-app/issues/509)) ([725c45e](https://www.github.com/dasch-swiss/dsp-app/commit/725c45eef3e56de5f3cbe1be4117b83ffa29ea0f))
+* **core:** migrate core module from UI-lib (DSP-1853) ([#505](https://www.github.com/dasch-swiss/dsp-app/issues/505)) ([ea1cd55](https://www.github.com/dasch-swiss/dsp-app/commit/ea1cd55c1a0946915fd34278ff7fc10d3cc966d2))
+* **deps:** bump dsp-js to latest version (DSP-1883) ([#521](https://www.github.com/dasch-swiss/dsp-app/issues/521)) ([c956d4b](https://www.github.com/dasch-swiss/dsp-app/commit/c956d4bdb609c1cc95baa3ffcecc0d57c30c1668))
+* **deps:** bump dsp-ui to latest ([#502](https://www.github.com/dasch-swiss/dsp-app/issues/502)) ([5d79065](https://www.github.com/dasch-swiss/dsp-app/commit/5d790653243f8afd0fb8591658706d84e6294f9f))
+* fix style in resource, search-panel and progress-indicator (DSP-1887) ([#520](https://www.github.com/dasch-swiss/dsp-app/issues/520)) ([854aff2](https://www.github.com/dasch-swiss/dsp-app/commit/854aff2d47bc601019239d4b855bde3b20b01d06))
+* **gh-ci:** split workflow tasks ([#515](https://www.github.com/dasch-swiss/dsp-app/issues/515)) ([83d5874](https://www.github.com/dasch-swiss/dsp-app/commit/83d58748600daeb5eb98b1a53660981bb4a665d6))
+* **login:** add autocomplete to login form (DSP-1892) ([#527](https://www.github.com/dasch-swiss/dsp-app/issues/527)) ([dd6be15](https://www.github.com/dasch-swiss/dsp-app/commit/dd6be150786cdcc2204cf2841f49fb05c8d1e090))
+* **project:** handle mandatory keyword field (DSP-1829) ([#503](https://www.github.com/dasch-swiss/dsp-app/issues/503)) ([35f6e7b](https://www.github.com/dasch-swiss/dsp-app/commit/35f6e7b31c5c6bd25deb0751810cb5ac66809204))
+* remove CoreModule dependency (DSP-1884) ([#519](https://www.github.com/dasch-swiss/dsp-app/issues/519)) ([8549104](https://www.github.com/dasch-swiss/dsp-app/commit/8549104be4bfdbe9bdc4362a1a82db0f0c1619c7))
+* remove ViewerModule dependency (DSP-1890) ([#525](https://www.github.com/dasch-swiss/dsp-app/issues/525)) ([a99546e](https://www.github.com/dasch-swiss/dsp-app/commit/a99546ed52ecb5cdbbf2ebfae735a10738c04df4))
+* removes ActionModule dependency ([#523](https://www.github.com/dasch-swiss/dsp-app/issues/523)) ([bd60f00](https://www.github.com/dasch-swiss/dsp-app/commit/bd60f00a77baef4909f30cc869b31ab849665ee0))
+* removes SearchModule dependency ([#522](https://www.github.com/dasch-swiss/dsp-app/issues/522)) ([269be23](https://www.github.com/dasch-swiss/dsp-app/commit/269be23620e731c16db7c42f975f3667da0283e9))
+* **resource:** migrate viewer from UI-lib (DSP-1850) ([#504](https://www.github.com/dasch-swiss/dsp-app/issues/504)) ([b742a98](https://www.github.com/dasch-swiss/dsp-app/commit/b742a987e2293bdc18bcf14e1b1174ee1f5c8180))
+* **search:** migrate search module (DSP-1851) ([#510](https://www.github.com/dasch-swiss/dsp-app/issues/510)) ([fc7ea5c](https://www.github.com/dasch-swiss/dsp-app/commit/fc7ea5c5f1b6b225c20e41cbd3273aa8a1acc4d0))
+* update imports step 1 (DSP-1882) ([#516](https://www.github.com/dasch-swiss/dsp-app/issues/516)) ([e7a2c4f](https://www.github.com/dasch-swiss/dsp-app/commit/e7a2c4f750ed166b23753ea8e34c4f695fad83e2))
+* update remaining dsp-ui imports (DSP-1891) ([#526](https://www.github.com/dasch-swiss/dsp-app/issues/526)) ([43888a6](https://www.github.com/dasch-swiss/dsp-app/commit/43888a67497e3aa93b5031f00c2bc719221eca8c))
+
 ## [5.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.2.1...v5.3.0) (2021-08-12)
 
 
