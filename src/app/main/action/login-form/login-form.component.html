@@ -12,6 +12,7 @@
             <input
                 matInput
                 [placeholder]="formLabel.name"
+                autocomplete="username"
                 formControlName="username"
                 #username
             >
@@ -27,6 +28,7 @@
                 matInput
                 type="password"
                 [placeholder]="formLabel.pw"
+                autocomplete="current-password"
                 formControlName="password">
 
         </mat-form-field>
