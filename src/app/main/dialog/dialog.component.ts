@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FilteredResources } from '@dasch-swiss/dsp-ui';
 import { PropertyInfoObject } from 'src/app/project/ontology/default-data/default-properties';
+import { FilteredResources } from 'src/app/workspace/results/list-view/list-view.component';
 
 export interface DialogData {
     mode: string;       // switch mode

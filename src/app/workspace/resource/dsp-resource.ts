@@ -3,7 +3,7 @@ import {
     ReadValue,
     SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import { PropertyInfoValues } from '@dasch-swiss/dsp-ui';
+import { PropertyInfoValues } from './properties/properties.component';
 
 export class DspResource {
 

@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { ShortResInfo } from '@dasch-swiss/dsp-ui';
+import { ShortResInfo } from '../results/list-view/list-view.component';
 
 @Component({
     selector: 'app-comparison',

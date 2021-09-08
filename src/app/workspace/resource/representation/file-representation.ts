@@ -5,7 +5,7 @@ import {
     ReadMovingImageFileValue,
     ReadStillImageFileValue
 } from '@dasch-swiss/dsp-js';
-import { Region } from '@dasch-swiss/dsp-ui';
+import { Region } from './still-image/still-image.component';
 
 /**
  * represents a file value including its annotations.

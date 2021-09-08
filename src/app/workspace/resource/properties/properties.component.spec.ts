@@ -22,20 +22,15 @@ import {
     ResourcePropertyDefinition,
     SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import {
-    AppInitService,
-    EmitEvent,
-    Events,
-    PropertyInfoValues,
-    ValueOperationEventService
-} from '@dasch-swiss/dsp-ui';
 import { of, Subscription } from 'rxjs';
 import { DspResource } from '../dsp-resource';
-import { PropertiesComponent } from './properties.component';
+import { PropertiesComponent, PropertyInfoValues } from './properties.component';
 import { IncomingService } from '../incoming.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { UserService } from '../services/user.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AppInitService } from 'src/app/app-init.service';
+import { EmitEvent, Events, ValueOperationEventService } from '../services/value-operation-event.service';
 
 /**
  * test host component to simulate parent component.
@@ -103,7 +98,7 @@ class TestPropertyParentComponent implements OnInit, OnDestroy {
  * test host component to simulate child component, here display-edit.
  */
 @Component({
-    selector: 'dsp-display-edit',
+    selector: 'app-display-edit',
     template: ''
 })
 class TestDisplayValueComponent {
@@ -121,7 +116,7 @@ class TestDisplayValueComponent {
  * test host component to simulate child component, here add-value.
  */
 @Component({
-    selector: 'dsp-add-value',
+    selector: 'app-add-value',
     template: ''
 })
 class TestAddValueComponent {

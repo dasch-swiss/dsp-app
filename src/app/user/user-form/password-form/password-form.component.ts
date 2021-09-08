@@ -8,7 +8,7 @@ import {
     ReadUser,
     UserResponse
 } from '@dasch-swiss/dsp-js';
-import { DspMessageData } from '@dasch-swiss/dsp-ui';
+import { AppMessageData } from 'src/app/main/action/message/message.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
@@ -37,7 +37,7 @@ export class PasswordFormComponent implements OnInit {
     public readonly REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/i;
 
     // in case of updating data: was it succesful or does it failed
-    apiResponses: DspMessageData[] = [
+    apiResponses: AppMessageData[] = [
         {
             status: 200,
             statusText: 'You have successfully updated your password.'
@@ -53,7 +53,7 @@ export class PasswordFormComponent implements OnInit {
         }
     ];
 
-    showResponse: DspMessageData;
+    showResponse: AppMessageData;
 
     user: ReadUser;
 

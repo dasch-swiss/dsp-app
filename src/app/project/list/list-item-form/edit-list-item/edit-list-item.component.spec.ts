@@ -5,10 +5,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApiResponseData, CreateChildNodeRequest, ListNodeInfoResponse, ListsEndpointAdmin, UpdateChildNodeRequest } from '@dasch-swiss/dsp-js';
-import { ProgressIndicatorComponent } from '@dasch-swiss/dsp-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { ProgressIndicatorComponent } from 'src/app/main/action/progress-indicator/progress-indicator.component';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { EditListItemComponent } from './edit-list-item.component';
 

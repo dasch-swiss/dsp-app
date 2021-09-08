@@ -18,7 +18,6 @@ import {
     ReadResourceSequence,
     ReadStillImageFileValue, SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import { PropertyInfoValues, ValueOperationEventService } from '@dasch-swiss/dsp-ui';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
@@ -26,8 +25,10 @@ import { NotificationService } from 'src/app/main/services/notification.service'
 import { Session, SessionService } from 'src/app/main/services/session.service';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { IncomingService } from './incoming.service';
+import { PropertyInfoValues } from './properties/properties.component';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
 import { Region } from './representation/still-image/still-image.component';
+import { ValueOperationEventService } from './services/value-operation-event.service';
 
 @Component({
     selector: 'app-resource',
