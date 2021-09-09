@@ -16,6 +16,7 @@ const resolvedPromise = Promise.resolve(null);
 export class TextValueAsStringComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
 
     @Input() displayValue?: ReadTextValueAsString;
+    @Input() textArea?: false;
 
     valueFormControl: FormControl;
     commentFormControl: FormControl;

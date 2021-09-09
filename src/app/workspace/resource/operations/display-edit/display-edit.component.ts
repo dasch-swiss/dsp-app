@@ -108,6 +108,8 @@ export class DisplayEditComponent implements OnInit {
 
     showDateLabels = false;
 
+    textArea = false;
+
     dateFormat: string;
 
     user: ReadUser;
@@ -141,6 +143,10 @@ export class DisplayEditComponent implements OnInit {
         const resPropDef = this.parentResource.entityInfo.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
             (propDef: ResourcePropertyDefinition) => propDef.id === this.displayValue.property
         );
+
+        if(resPropDef[0].guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
+            this.textArea = true;
+        }
 
         if (resPropDef.length !== 1) {
             // this should never happen because we always have the property info for the given value
