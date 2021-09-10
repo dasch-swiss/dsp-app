@@ -305,9 +305,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
                 this.selectedOntology = ontologyIri;
 
-                this._dspApiConnection.v2.ontologyCache.getOntology(ontologyIri).subscribe(
-                    (onto: Map<string, ReadOntology>) => {
-                        this.resourceClasses = onto.get(ontologyIri).getClassDefinitionsByType(ResourceClassDefinition);
+                this._dspApiConnection.v2.onto.getOntology(ontologyIri).subscribe(
+                    (onto: ReadOntology) => {
+                        this.resourceClasses = onto.getClassDefinitionsByType(ResourceClassDefinition);
 
                         if (this.selectResourceClassComponent && this.resourceClasses.length === 1) {
                             // since the component already exists, the ngAfterInit method of the component will not be called so we must assign the value here manually

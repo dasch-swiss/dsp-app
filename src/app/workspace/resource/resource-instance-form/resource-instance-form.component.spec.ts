@@ -299,7 +299,7 @@ describe('ResourceInstanceFormComponent', () => {
                 usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername'])
             },
             v2: {
-                onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri']),
+                onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri', 'getOntology', 'getResourceClassDefinition']),
                 ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition']),
                 res: jasmine.createSpyObj('res', ['createResource'])
             }
@@ -452,16 +452,11 @@ describe('ResourceInstanceFormComponent', () => {
     it('should show the select resource class component', () => {
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-        (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getOntology.and.callFake(
+        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntology.and.callFake(
             () => {
 
                 const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
-
-                const ontoMap: Map<string, ReadOntology> = new Map();
-
-                ontoMap.set('http://0.0.0.0:3333/ontology/0001/anything/v2', anythingOnto);
-
-                return of(ontoMap);
+                return of(anythingOnto);
             }
         );
 
@@ -484,16 +479,11 @@ describe('ResourceInstanceFormComponent', () => {
 
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-        (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getOntology.and.callFake(
+        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntology.and.callFake(
             () => {
 
                 const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
-
-                const ontoMap: Map<string, ReadOntology> = new Map();
-
-                ontoMap.set('http://0.0.0.0:3333/ontology/0001/anything/v2', anythingOnto);
-
-                return of(ontoMap);
+                return of(anythingOnto);
             }
         );
 
