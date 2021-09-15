@@ -1,8 +1,29 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Constants, Point2D, ReadFileValue, ReadGeomValue, ReadResource, ReadStillImageFileValue, RegionGeometry } from '@dasch-swiss/dsp-js';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    SimpleChanges
+} from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import {
+    Constants, CreateColorValue, CreateGeomValue, CreateLinkValue,
+    CreateResource, CreateTextValueAsString, KnoraApiConnection,
+    Point2D, ReadFileValue,
+    ReadGeomValue,
+    ReadResource,
+    ReadStillImageFileValue,
+    RegionGeometry
+} from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DspCompoundPosition } from '../../dsp-resource';
 import { FileRepresentation } from '../file-representation';
-
 
 // this component needs the openseadragon library itself, as well as the openseadragon plugin openseadragon-svg-overlay
 // both libraries are installed via package.json, and loaded globally via the script tag in .angular-cli.json
@@ -83,6 +104,8 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
     @Input() images: FileRepresentation[];
     @Input() imageCaption?: string;
+    @Input() resourceIri: string;
+    @Input() project: string;
     @Input() activateRegion?: string; // highlight a region
 
     @Input() compoundNavigation?: DspCompoundPosition;
@@ -91,12 +114,15 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
     @Output() regionClicked = new EventEmitter<string>();
 
+    @Output() regionAdded = new EventEmitter<string>();
+
+    private _regionDrawMode: Boolean = false; // stores whether viewer is currently drawing a region
+    private _regionDragInfo; // stores the information of the first click for drawing a region
     private _viewer;
     private _regions: PolygonsForRegion = {};
 
-
     constructor(
-        private _elementRef: ElementRef
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection, private _elementRef: ElementRef, private _dialog: MatDialog, private _errorHandler: ErrorHandlerService
     ) {
         OpenSeadragon.setString('Tooltips.Home', '');
         OpenSeadragon.setString('Tooltips.ZoomIn', '');
@@ -173,6 +199,142 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             this._setupViewer();
         }
         this._renderRegions();
+    }
+
+    /**
+     * when the draw region button is clicked, this method is called from the html. It sets the draw mode to true and
+     * prevents navigation by mouse (so that the region can be accurately drawn).
+     */
+    drawButtonClicked(): void {
+        this._regionDrawMode = true;
+        this._viewer.setMouseNavEnabled(false);
+    }
+
+    /**
+     * opens the dialog to enter further properties for the region after it has been drawn and calls the function to upload the region after confirmation
+     * @param startPoint the start point of the drawing
+     * @param endPoint the end point of the drawing
+     * @param imageSize the image size for calculations
+     */
+    private _openRegionDialog(startPoint, endPoint, imageSize, overlay): void{
+        const dialogConfig: MatDialogConfig = {
+            width: '840px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: { mode: 'addRegion', title: 'Create a region', subtitle: 'Add further properties', id: this.resourceIri },
+            disableClose: true
+        };
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((data) => {
+            // remove the drawn rectangle as either the cancel button was clicked or the region will be displayed
+            this._viewer.removeOverlay(overlay);
+            if (data) { // data is null if the cancel button was clicked
+                this._uploadRegion(startPoint, endPoint, imageSize, data.color, data.comment, data.label);
+            }
+        });
+    }
+    /**
+     * uploads the region after being prepared by the dialog
+     * @param startPoint the start point of the drawing
+     * @param endPoint the end point of the drawing
+     * @param imageSize the image size for calculations
+     * @param color the value for the color entered in the form
+     * @param comment the value for the comment entered in the form
+     * @param label the value for the label entered in the form
+     */
+    private _uploadRegion(startPoint, endPoint, imageSize, color, comment, label){
+        const x1 = Math.max(Math.min(startPoint.x, imageSize.x), 0)/imageSize.x;
+        const x2 = Math.max(Math.min(endPoint.x, imageSize.x), 0)/imageSize.x;
+        const y1 = Math.max(Math.min(startPoint.y, imageSize.y), 0)/imageSize.y;
+        const y2 = Math.max(Math.min(endPoint.y, imageSize.y), 0)/imageSize.y;
+        const geomStr = '{"status":"active","lineColor":"' + color + '","lineWidth":2,"points":[{"x":' +  x1.toString() +
+            ',"y":' + y1.toString() + '},{"x":' + x2.toString() + ',"y":' + y2.toString()+ '}],"type":"rectangle"}';
+        const createResource = new CreateResource();
+        createResource.label = label;
+        createResource.type = Constants.KnoraApiV2 + Constants.HashDelimiter + 'Region';
+        createResource.attachedToProject = this.project;
+        const geomVal = new CreateGeomValue();
+        geomVal.type = Constants.GeomValue;
+        geomVal.geometryString = geomStr;
+        const colorVal = new CreateColorValue();
+        colorVal.type = Constants.ColorValue;
+        colorVal.color = color;
+        const linkVal = new CreateLinkValue();
+        linkVal.type = Constants.LinkValue;
+        linkVal.linkedResourceIri = this.resourceIri;
+        const commentVal = new CreateTextValueAsString();
+        commentVal.type = Constants.TextValue;
+        commentVal.text = comment;
+
+        createResource.properties = {
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasComment']: [commentVal],
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor'] : [colorVal],
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'isRegionOfValue'] : [linkVal],
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasGeometry'] : [geomVal]
+        };
+        this._dspApiConnection.v2.res.createResource(createResource).subscribe(
+            (res: ReadResource) => {
+                this.regionAdded.emit(res.id);
+            },
+            (error) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
+    /**
+     * set up function for the region drawer
+     */
+    private _addRegionDrawer(){
+        new OpenSeadragon.MouseTracker({
+            element: this._viewer.canvas,
+            pressHandler: (event) => {
+                if (!this._regionDrawMode){
+                    return;
+                }
+                const overlayElement = document.createElement('div');
+                overlayElement.style.background = 'rgba(255,0,0,0.3)';
+                const viewportPos = this._viewer.viewport.pointFromPixel(event.position);
+                this._viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
+                this._regionDragInfo = {
+                    overlayElement: overlayElement,
+                    startPos: viewportPos
+                };
+            },
+            dragHandler: (event) => {
+                if (!this._regionDragInfo){
+                    return;
+                }
+                const viewPortPos = this._viewer.viewport.pointFromPixel(event.position);
+                const diffX = viewPortPos.x - this._regionDragInfo.startPos.x;
+                const diffY = viewPortPos.y - this._regionDragInfo.startPos.y;
+                const location = new OpenSeadragon.Rect(
+                    Math.min(this._regionDragInfo.startPos.x, this._regionDragInfo.startPos.x + diffX),
+                    Math.min(this._regionDragInfo.startPos.y, this._regionDragInfo.startPos.y + diffY),
+                    Math.abs(diffX),
+                    Math.abs(diffY)
+                );
+                this._viewer.updateOverlay(this._regionDragInfo.overlayElement, location);
+                this._regionDragInfo.endPos = viewPortPos;
+            },
+            releaseHandler: () => {
+                if (this._regionDrawMode) {
+                    const imageSize =  this._viewer.world.getItemAt(0).getContentSize();
+                    const startPoint  = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.startPos);
+                    const endPoint = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.endPos);
+                    this._openRegionDialog(startPoint, endPoint, imageSize, this._regionDragInfo.overlayElement);
+                    this._regionDragInfo = null;
+                    this._regionDrawMode = false;
+                    this._viewer.setMouseNavEnabled(true);
+                }
+            }
+        });
     }
 
     /**
@@ -266,6 +428,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         this._viewer.addHandler('resize', (args) => {
             args.eventSource.svgOverlay().resize();
         });
+        this._addRegionDrawer();
     }
 
     /**

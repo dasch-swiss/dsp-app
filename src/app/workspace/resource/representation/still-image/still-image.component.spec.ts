@@ -1,11 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { By } from '@angular/platform-browser';
 import { Constants, ReadGeomValue, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
+import { AppInitService } from 'src/app/app-init.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { FileRepresentation } from '../file-representation';
-import { Region, StillImageComponent, StillImageRepresentation } from './still-image.component';
+import { Region, StillImageComponent } from './still-image.component';
 
 // --> TODO: get test data from dsp-js
 // --> TODO: get this from dsp-js: https://dasch.myjetbrains.com/youtrack/issue/DSP-506
@@ -182,11 +186,27 @@ describe('StillImageComponent', () => {
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
     beforeEach(waitForAsync(() => {
+
+        const adminSpyObj = {
+            v2: {
+                res: jasmine.createSpyObj('res', ['createResource'])
+            }
+        };
+
         TestBed.configureTestingModule({
             declarations: [StillImageComponent, TestHostComponent],
             imports: [
+                MatDialogModule,
                 MatIconModule,
+                MatSnackBarModule,
                 MatToolbarModule
+            ],
+            providers: [
+                AppInitService,
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: adminSpyObj
+                },
             ]
         })
             .compileComponents();

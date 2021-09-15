@@ -90,6 +90,7 @@ import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AudioComponent } from './workspace/resource/representation/audio/audio.component';
 import { IntermediateComponent } from './workspace/intermediate/intermediate.component';
+import { AddRegionFormComponent } from './workspace/resource/representation/add-region-form/add-region-form.component';
 import { ResourceLinkFormComponent } from './workspace/resource/resource-link-form/resource-link-form.component';
 import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationMessageComponent } from './main/action/confirmation-dialog/confirmation-message/confirmation-message.component';
@@ -242,6 +243,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         VisualizerComponent,
         AudioComponent,
         IntermediateComponent,
+        AddRegionFormComponent,
         ResourceLinkFormComponent,
         ConfirmationDialogComponent,
         ConfirmationMessageComponent,
