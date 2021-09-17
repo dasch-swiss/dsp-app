@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Directive, HostBinding, Inject, Input, OnChanges, PLATFORM_ID } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Directive({
     selector: 'a[href]'
@@ -9,14 +10,17 @@ export class ExternalLinksDirective implements OnChanges {
     @Input() href: string;
     @HostBinding('attr.rel') relAttr = '';
     @HostBinding('attr.target') targetAttr = '';
-    @HostBinding('attr.href') hrefAttr = '';
+    @HostBinding('attr.href') hrefAttr: SafeUrl;
     @HostBinding('class') class = 'external-link';
 
     // to check if we are running on the server, give a token value
-    constructor(@Inject(PLATFORM_ID) private platformId: string) { }
+    constructor(
+        @Inject(PLATFORM_ID) private platformId: string,
+        private _sanitizer: DomSanitizer
+    ) { }
 
     ngOnChanges() {
-        this.hrefAttr = this.href;
+        this.hrefAttr = this._sanitizer.bypassSecurityTrustUrl(this.href);
 
         if (this._isLinkExternal()) {
             // makes sure that the new browser tab does not run on the same process and prevent it from accessing window.opener
