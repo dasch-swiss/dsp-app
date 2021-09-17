@@ -1,13 +1,13 @@
 {
-    "apiProtocol": "https",
-    "apiHost": "api.dasch.swiss",
-    "apiPort": 443,
-    "apiPath": "",
-    "iiifProtocol": "https",
-    "iiifHost": "iiif.dasch.swiss",
-    "iiifPort": 443,
-    "iiifPath": "",
-    "geonameToken": "knora",
-    "jsonWebToken": "",
-    "logErrors": false
+  "apiProtocol": "http",
+  "apiHost": "0.0.0.0",
+  "apiPort": 3333,
+  "apiPath": "",
+  "iiifProtocol": "http",
+  "iiifHost": "0.0.0.0",
+  "iiifPort": 1024,
+  "iiifPath": "",
+  "geonameToken": "knora",
+  "jsonWebToken": "",
+  "logErrors": false
 }

@@ -38,22 +38,22 @@ $bright: #ccc;
  Overlay styling
  */
 
-::ng-deep .roi-svgoverlay {
+::ng-deep .region {
   filter: alpha(opacity=40);
   opacity: 0.4;
   fill: transparent;
   stroke: #00695c;
   stroke-width: 2px;
-  vector-effect: non-scaling-stroke;
 }
 
-::ng-deep .roi-svgoverlay:hover,
-.roi-svgoverlay:focus {
+::ng-deep .region:hover,
+.region:focus {
   filter: alpha(opacity=100);
   opacity: 1;
+  cursor: pointer;
 }
 
-::ng-deep .roi-svgoverlay.active {
+::ng-deep .region.active {
   filter: alpha(opacity=100);
   opacity: 1;
 }

@@ -27,7 +27,10 @@
                             "json2typescript",
                             "ngraph.graph",
                             "ngraph.forcelayout",
-                            "tinycolor2"
+                            "tinycolor2",
+                            "ng2-pdf-viewer",
+                            "pdfjs-dist",
+                            "openseadragon"
                         ],
                         "assets": [
                             "src/favicon.ico",
@@ -39,7 +42,6 @@
                         ],
                         "scripts": [
                             "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",
-                            "node_modules/svg-overlay/openseadragon-svg-overlay.js",
                             "node_modules/3d-force-graph/dist/3d-force-graph.min.js",
                             "node_modules/d3-force-3d/dist/d3-force-3d.js"
                         ]
@@ -131,8 +133,7 @@
                             "src/styles.scss"
                         ],
                         "scripts": [
-                            "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",
-                            "node_modules/svg-overlay/openseadragon-svg-overlay.js"
+                            "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
                         ],
                         "assets": [
                             "src/favicon.ico",
