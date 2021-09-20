@@ -1,5 +1,28 @@
 # Changelog
 
+## [6.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.0.0...v6.1.0) (2021-09-20)
+
+
+### Bug Fixes
+
+* **annotations:** empty annotations on upload of new region ([#536](https://www.github.com/dasch-swiss/dsp-app/issues/536)) ([075e6b1](https://www.github.com/dasch-swiss/dsp-app/commit/075e6b187a9a8886ce8ff56f0f0045210e0f2854))
+* **links:** trust the external links (DSP-1904) ([#537](https://www.github.com/dasch-swiss/dsp-app/issues/537)) ([303ac3d](https://www.github.com/dasch-swiss/dsp-app/commit/303ac3dd450c52fc7468b90844244274a549b7b0))
+* **resource-instance-form:** resource class name now updates correctly in the event that the name was changed and the page was not refreshed ([#531](https://www.github.com/dasch-swiss/dsp-app/issues/531)) ([5783d27](https://www.github.com/dasch-swiss/dsp-app/commit/5783d27b2e7641b8491f28d6f0245de4421bfc1f))
+* **resource:** increase width of space between entries of incoming links (DSP-1908) ([#538](https://www.github.com/dasch-swiss/dsp-app/issues/538)) ([79b4d29](https://www.github.com/dasch-swiss/dsp-app/commit/79b4d2978161ae21ec5256c43f7a305a42ab2fe7))
+* **still-image-viewer:** fix zoom buttons (DSP-1798) ([#533](https://www.github.com/dasch-swiss/dsp-app/issues/533)) ([b07ec63](https://www.github.com/dasch-swiss/dsp-app/commit/b07ec63f71ad96d92f0f7b562dd2804926fd9465))
+
+
+### Enhancements
+
+* **resource:** draw regions (DSP-1845) ([#524](https://www.github.com/dasch-swiss/dsp-app/issues/524)) ([f08706b](https://www.github.com/dasch-swiss/dsp-app/commit/f08706ba2e4e6c26022371c4345646884d19acca))
+* textarea is now provided is the gui-element is a textarea ([#529](https://www.github.com/dasch-swiss/dsp-app/issues/529)) ([e80a4d2](https://www.github.com/dasch-swiss/dsp-app/commit/e80a4d27fbb364a9d752153e3ce73a7290b8336a))
+
+
+### Maintenance
+
+* **modules:** clean up imports and npm packages ([#535](https://www.github.com/dasch-swiss/dsp-app/issues/535)) ([4310ff7](https://www.github.com/dasch-swiss/dsp-app/commit/4310ff727dace99a275bf43bf3ca8ea3a480849b))
+* openseadragon prod build fix (DSP-1779) ([#534](https://www.github.com/dasch-swiss/dsp-app/issues/534)) ([0a34eaa](https://www.github.com/dasch-swiss/dsp-app/commit/0a34eaac785a6d2d99a300483353ba59b65075f2))
+
 ## [6.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v5.3.0...v6.0.0) (2021-09-08)
 
 
