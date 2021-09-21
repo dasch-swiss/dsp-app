@@ -7,6 +7,7 @@ import {
     Inject,
     Input,
     OnChanges,
+    OnDestroy,
     OnInit,
     Output,
     TemplateRef,
@@ -23,7 +24,9 @@ import {
     ProjectsResponse,
     ReadProject
 } from '@dasch-swiss/dsp-js';
+import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { SortingService } from 'src/app/main/services/sorting.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
@@ -41,7 +44,7 @@ const resolvedPromise = Promise.resolve(null);
     templateUrl: './fulltext-search.component.html',
     styleUrls: ['./fulltext-search.component.scss']
 })
-export class FulltextSearchComponent implements OnInit, OnChanges {
+export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     /**
      *
@@ -105,6 +108,8 @@ export class FulltextSearchComponent implements OnInit, OnChanges {
 
     projectIri: string;
 
+    componentCommsSubscription: Subscription;
+
     // in case of an (api) error
     error: any;
 
@@ -128,10 +133,20 @@ export class FulltextSearchComponent implements OnInit, OnChanges {
         private _notification: NotificationService,
         private _sortingService: SortingService,
         private _overlay: Overlay,
-        private _viewContainerRef: ViewContainerRef
+        private _viewContainerRef: ViewContainerRef,
+        private _componentCommsService: ComponentCommunicationEventService,
     ) { }
 
     ngOnInit(): void {
+
+        // on page refresh, split the url into an array of strings and assign the `searchQuery` to the last element of this array of strings
+        // this persists the search term in the search input field
+        const urlArray = window.location.pathname.split('/');
+        const currentSearchTerm = urlArray[urlArray.length - 1];
+        if(urlArray[urlArray.length - 2] === 'fulltext') {
+            this.searchQuery = decodeURI(decodeURI(currentSearchTerm));
+        }
+
         // filterbyproject is set as deprecated. To avoid breaking changes we still support it
         if (this.filterbyproject) {
             this.limitToProject = this.filterbyproject;
@@ -152,6 +167,12 @@ export class FulltextSearchComponent implements OnInit, OnChanges {
         if (this.projectfilter) {
             this.getAllProjects();
         }
+
+        // in the event of a grav search (advanced or expert search), clear the input field
+        this.componentCommsSubscription = this._componentCommsService.on(
+            Events.gravSearchExecuted, () => {
+                this.searchQuery = null;
+            });
     }
 
     ngOnChanges() {
@@ -166,6 +187,13 @@ export class FulltextSearchComponent implements OnInit, OnChanges {
             }
 
         });
+    }
+
+    ngOnDestroy() {
+        // unsubscribe from the componentCommsSubscription when component is destroyed
+        if (this.componentCommsSubscription !== undefined) {
+            this.componentCommsSubscription.unsubscribe();
+        }
     }
 
     /**

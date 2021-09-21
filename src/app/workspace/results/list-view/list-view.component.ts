@@ -2,6 +2,7 @@ import { Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angu
 import { PageEvent } from '@angular/material/paginator';
 import { ApiResponseError, CountQueryResponse, IFulltextSearchParams, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { AdvancedSearchParamsService } from '../../search/services/advanced-search-params.service';
 
@@ -117,7 +118,8 @@ export class ListViewComponent implements OnChanges {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _advancedSearchParamsService: AdvancedSearchParamsService,
-        private _notification: NotificationService
+        private _notification: NotificationService,
+        private _componentCommsService: ComponentCommunicationEventService,
     ) { }
 
     ngOnChanges(): void {
@@ -207,6 +209,8 @@ export class ListViewComponent implements OnChanges {
             );
 
         } else if (this.search.mode === 'gravsearch') {
+            // emit 'gravSearchExecuted' event to the fulltext-search component in order to clear the input field
+            this._componentCommsService.emit(new EmitEvent(Events.gravSearchExecuted, true));
 
             // search mode: gravsearch
             if (this.pageEvent.pageIndex === 0) {

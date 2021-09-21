@@ -36,5 +36,6 @@ export class EmitEvent {
 
 // possible events that can be emitted.
 export enum Events {
-    loginSuccess
+    loginSuccess,
+    gravSearchExecuted
 }
