@@ -4,7 +4,6 @@ import { ApiResponseError, CountQueryResponse, IFulltextSearchParams, KnoraApiCo
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
-import { AdvancedSearchParamsService } from '../../search/services/advanced-search-params.service';
 
 /**
  * query: search query. It can be gravserch query or fulltext string query.
@@ -117,7 +116,6 @@ export class ListViewComponent implements OnChanges {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _advancedSearchParamsService: AdvancedSearchParamsService,
         private _notification: NotificationService,
         private _componentCommsService: ComponentCommunicationEventService,
     ) { }
@@ -231,10 +229,12 @@ export class ListViewComponent implements OnChanges {
                 );
             }
 
-            // perform advanced search
-            const gravsearch = this._advancedSearchParamsService.getSearchParams().generateGravsearch(this.pageEvent.pageIndex);
+            let gravsearch: string;
 
-            if (typeof gravsearch === 'string') {
+            if (this.search.query !== undefined) {
+                gravsearch = this.search.query;
+                gravsearch = gravsearch.substring(0, gravsearch.search('OFFSET'));
+                gravsearch = gravsearch + 'OFFSET ' + this.pageEvent.pageIndex;
                 this._dspApiConnection.v2.search.doExtendedSearch(gravsearch).subscribe(
                     (response: ReadResourceSequence) => {
                         // if the response does not contain any resources even the search count is greater than 0,

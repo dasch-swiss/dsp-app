@@ -7,7 +7,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CountQueryResponse, IFulltextSearchParams, MockResource, ReadResourceSequence, SearchEndpointV2 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { AdvancedSearchParams, AdvancedSearchParamsService } from '../../search/services/advanced-search-params.service';
 import { ListViewComponent, SearchParams } from './list-view.component';
 
 /**
@@ -80,7 +79,7 @@ class TestParentComponent implements OnInit {
         };
 
         this.gravsearch = {
-            query: 'fake query',
+            query: 'fake query OFFSET 0',
             mode: 'gravsearch'
         };
     }
@@ -96,8 +95,6 @@ describe('ListViewComponent', () => {
     let testHostComponent: TestParentComponent;
     let testHostFixture: ComponentFixture<TestParentComponent>;
 
-    let searchParamsServiceSpy: jasmine.SpyObj<AdvancedSearchParamsService>;
-
     beforeEach(waitForAsync(() => {
 
         const searchSpyObj = {
@@ -105,8 +102,6 @@ describe('ListViewComponent', () => {
                 search: jasmine.createSpyObj('search', ['doFulltextSearch', 'doFulltextSearchCountQuery', 'doExtendedSearch', 'doExtendedSearchCountQuery'])
             }
         };
-
-        const searchParamsSpyObj = jasmine.createSpyObj('SearchParamsService', ['getSearchParams']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -127,22 +122,12 @@ describe('ListViewComponent', () => {
                     provide: DspApiConnectionToken,
                     useValue: searchSpyObj
                 },
-                {
-                    provide: AdvancedSearchParamsService,
-                    useValue: searchParamsSpyObj
-                }
             ]
         })
             .compileComponents();
     }));
 
     beforeEach(() => {
-
-        searchParamsServiceSpy = TestBed.inject(AdvancedSearchParamsService) as jasmine.SpyObj<AdvancedSearchParamsService>;
-
-        const generateFakeQuery = (offset: number) => 'fake query OFFSET ' + offset;
-
-        searchParamsServiceSpy.getSearchParams.and.callFake((): AdvancedSearchParams => new AdvancedSearchParams(generateFakeQuery));
 
         const searchSpy = TestBed.inject(DspApiConnectionToken);
 
@@ -215,10 +200,7 @@ describe('ListViewComponent', () => {
         const searchSpy = TestBed.inject(DspApiConnectionToken);
 
         // do advanced search count query
-        expect(searchSpy.v2.search.doExtendedSearchCountQuery).toHaveBeenCalledWith('fake query');
-
-        // generate gravesearch query
-        expect(searchParamsServiceSpy.getSearchParams).toHaveBeenCalled();
+        expect(searchSpy.v2.search.doExtendedSearchCountQuery).toHaveBeenCalledWith('fake query OFFSET 0');
 
         // do advanced search
         expect(searchSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith('fake query OFFSET 0');
