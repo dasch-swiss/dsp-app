@@ -19,9 +19,13 @@ export class ErrorHandlerService {
     ) { }
 
     showMessage(error: ApiResponseError) {
+
         // in case of (internal) server error
-        if (error.status === 0 || (error.status > 499 && error.status < 600)) {
-            const status = (error.status === 0 ? 503 : error.status);
+        const apiServerError = (error.error && error.error['response'] && error.error['response'] === null);
+
+        if ((error.status > 499 && error.status < 600) || apiServerError) {
+
+            const status = (apiServerError ? 503 : error.status);
 
             // open error message in full size view
             const dialogConfig: MatDialogConfig = {

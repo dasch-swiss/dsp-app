@@ -17,14 +17,19 @@ export class NotificationService {
     // action: string = 'x', duration: number = 4200
     // and / or type: 'note' | 'warning' | 'error' | 'success'; which can be used for the panelClass
     openSnackBar(notification: string | ApiResponseError): void {
-        const duration = 5000;
+        let duration = 5000;
         let message: string;
         let panelClass: string;
 
         if (notification instanceof ApiResponseError) {
-            const status = (notification.status === 0 ? 503 : notification.status);
-            const defaultStatusMsg = this._statusMsg.default;
-            message = `${defaultStatusMsg[status].message} (${status}): ${defaultStatusMsg[status].description}`;
+            if (notification.error && !notification.error['message'].startsWith('ajax error')) {
+                // the Api response error contains a complex error message from dsp-js-lib
+                message = notification.error['message'];
+                duration = undefined;
+            } else {
+                const defaultStatusMsg = this._statusMsg.default;
+                message = `${defaultStatusMsg[notification.status].message} (${notification.status}): ${defaultStatusMsg[notification.status].description}`;
+            }
             panelClass = 'error';
         } else {
             message = notification;
