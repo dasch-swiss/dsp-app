@@ -9,8 +9,9 @@
             <!-- display label if cardinality exists (in case the component is used in resource class view) -->
             <span *ngIf="propCard; else displayAllLabels">{{propDef.label ? propDef.label : propDef.id}}</span>
             <!-- otherwise display label in all languages (if defined) -->
-            <ng-template #displayAllLabels>{{!propDef.labels.length ? propDef?.label : propDef.labels |
-                appStringifyStringLiteral:'all'}}</ng-template>
+            <ng-template #displayAllLabels>
+                {{!propDef.labels.length ? propDef?.label : propDef.labels | appStringifyStringLiteral:'all'}}
+            </ng-template>
         </span>
         <!-- property is linked to a class or to a list: display connected class or list -->
         <span class="attribute additional-info" *ngIf="propAttribute" [matTooltip]="propAttributeComment"
@@ -18,7 +19,11 @@
         </span>
     </div>
 
-    <div mat-line class="info additional-info">
+    <div mat-line class="info additional-info" [class.flex]="propCard">
+        <span [matTooltip]="'id: ' + propDef.id" matTooltipPosition="above">
+            {{propDef.id | split: '#':1}}
+        </span>
+        <span class="fill-remaining-space center">&nbsp;&middot;&nbsp;</span>
         <!-- in case of res class: display cardinality -->
         <span *ngIf="propCard">
             <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
@@ -40,7 +45,6 @@
             <ng-template #notUsed>
                 <span class="not-used">This property is not used in a class</span>
             </ng-template>
-
         </span>
     </div>
 

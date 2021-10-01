@@ -9,6 +9,10 @@
   color: $primary_700;
 }
 
+.flex {
+  display: flex !important;
+}
+
 .mat-line.title {
   line-height: 1.8;
   .mat-icon {

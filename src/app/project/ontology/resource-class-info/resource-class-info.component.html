@@ -7,6 +7,10 @@
             {{resourceClass.label | appTruncate: 24}}
         </mat-card-title>
         <mat-card-subtitle>
+            <span [matTooltip]="'id: ' + resourceClass.id" matTooltipPosition="above">
+                {{resourceClass.id | split: '#':1}}
+            </span>
+            <span>&nbsp;&middot;&nbsp;</span>
             <span matTooltip="subclass of" matTooltipPosition="above">
                 {{subClassOfLabel}}
             </span>
@@ -43,9 +47,9 @@
         <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
             *ngIf="propsToDisplay.length; else noProperties">
             <div cdkDrag [cdkDragDisabled]="!ontology.lastModificationDate"
-                *ngFor="let prop of propsToDisplay; let i = index">
+                *ngFor="let prop of propsToDisplay; let i = index; let odd = odd">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
-                <mat-list-item class="property">
+                <mat-list-item class="property" [class.odd]="odd">
                     <span cdkDragHandle mat-list-icon class="list-icon gui-order">
                         <span [class.hide-on-hover]="cardinalityUpdateEnabled && lastModificationDate">{{i + 1}})</span>
                         <span *ngIf="lastModificationDate && cardinalityUpdateEnabled"

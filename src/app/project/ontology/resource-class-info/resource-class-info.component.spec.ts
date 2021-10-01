@@ -18,6 +18,7 @@ import { CanDoResponse, ClassDefinition, Constants, MockOntology, OntologiesEndp
 import { of } from 'rxjs';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { SplitPipe } from 'src/app/main/pipes/split.pipe';
 import { TruncatePipe } from 'src/app/main/pipes/string-transformation/truncate.pipe';
 import { SortingService } from 'src/app/main/services/sorting.service';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
@@ -90,6 +91,7 @@ describe('ResourceClassInfoComponent', () => {
             declarations: [
                 HostComponent,
                 ResourceClassInfoComponent,
+                SplitPipe,
                 TruncatePipe
             ],
             imports: [
@@ -162,7 +164,7 @@ describe('ResourceClassInfoComponent', () => {
 
     });
 
-    it('expect title to be "Blue thing" and subclass of "Thing"', () => {
+    it('expect title to be "Blue thing", id name "BlueThing" and subclass of "Thing"', () => {
         expect(hostComponent.resourceClassInfoComponent).toBeTruthy();
         expect(hostComponent.resourceClassInfoComponent.resourceClass).toBeDefined();
 
@@ -174,7 +176,8 @@ describe('ResourceClassInfoComponent', () => {
 
         const subtitle: DebugElement = hostCompDe.query(By.css('mat-card-subtitle'));
 
-        expect(subtitle.nativeElement.innerText).toEqual('Thing');
+        expect(subtitle.nativeElement.innerText).toContain('BlueThing');
+        expect(subtitle.nativeElement.innerText).toContain('Thing');
     });
 
     it('expect delete res class button should be disabled', () => {

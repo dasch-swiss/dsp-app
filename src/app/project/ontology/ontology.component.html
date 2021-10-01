@@ -193,7 +193,7 @@
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
                     <!-- list of resource properties -->
                     <mat-list>
-                        <mat-list-item class="property" *ngFor="let prop of ontoProperties">
+                        <mat-list-item class="property" *ngFor="let prop of ontoProperties; let odd = odd" [class.odd]="odd">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
                                      objectType is not a linkValue (otherwise we have the property twice) -->
                             <app-property-info

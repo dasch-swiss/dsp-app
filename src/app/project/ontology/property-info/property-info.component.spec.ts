@@ -27,6 +27,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { SplitPipe } from 'src/app/main/pipes/split.pipe';
 import { PropertyFormComponent } from '../property-form/property-form.component';
 import { PropertyInfoComponent } from './property-info.component';
 
@@ -194,6 +195,7 @@ describe('PropertyInfoComponent', () => {
                 SimpleTextHostComponent,
                 PropertyFormComponent,
                 PropertyInfoComponent,
+                SplitPipe
             ],
             imports: [
                 BrowserAnimationsModule,

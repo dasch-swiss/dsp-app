@@ -30,6 +30,7 @@
   }
 
   .resource-class-properties {
+
     li.property-info {
       list-style-type: none;
       white-space: nowrap;
@@ -53,10 +54,14 @@
 }
 
 .property {
+  &.odd {
+    background-color: $primary_50;
+  }
+
   &:hover,
   &:active,
   &:focus {
-    background-color: $black-12-opacity;
+    background-color: $black-14-opacity;
 
     .gui-order {
       .display-on-hover {
@@ -68,6 +73,8 @@
       }
     }
   }
+
+
 
   .gui-order {
     .display-on-hover {

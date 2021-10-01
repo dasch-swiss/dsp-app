@@ -86,9 +86,11 @@ $width: 340px;
         .property {
           height: 56px !important;
           margin: 4px 0;
-
+          &.odd {
+            background-color: $primary_50;
+          }
           &:hover {
-            background-color: $black-12-opacity;
+            background-color: $black-14-opacity;
           }
         }
       }
