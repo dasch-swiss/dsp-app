@@ -296,9 +296,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
                 // if there is already a select-resource-class component (i.e. the user clicked the back button), reset the resource & label
                 if (this.selectResourceClassComponent) {
-                    this.selectResourceClassComponent.form.controls.resources.setValue(null);
-                    this.selectResourceClassComponent.form.controls.label.setValue(null);
-
                     // since the component already exists, we need to add the control back here as it is normally done in the OnInit of the component
                     this.selectResourceForm.addControl('resources', this.selectResourceClassComponent.form);
                 }
@@ -343,54 +340,57 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         if (resourceClassIri === null) {
             this.selectResourceClasses(this.selectedOntology);
         } else if (resourceClassIri) {
-            this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
-                (onto: ResourceClassAndPropertyDefinitions) => {
-                    this.ontologyInfo = onto;
+            this._dspApiConnection.v2.ontologyCache.reloadCachedItem(this.selectedOntology).subscribe(
+                (res: ReadOntology) => {
+                    this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
+                        (onto: ResourceClassAndPropertyDefinitions) => {
+                            this.ontologyInfo = onto;
 
-                    this.selectedResourceClass = onto.classes[resourceClassIri];
+                            this.selectedResourceClass = onto.classes[resourceClassIri];
 
-                    // set label from resource class
-                    const defaultClassLabel = this.defaultClasses.find(i => i.iri === this.selectedResourceClass.subClassOf[0]);
-                    this.resourceLabel = this.selectedResourceClass.label + (defaultClassLabel ? ' (' + defaultClassLabel.label + ')' : '');
+                            // set label from resource class
+                            const defaultClassLabel = this.defaultClasses.find(i => i.iri === this.selectedResourceClass.subClassOf[0]);
+                            this.resourceLabel = this.selectedResourceClass.label + (defaultClassLabel ? ' (' + defaultClassLabel.label + ')' : '');
 
-                    // filter out all props that cannot be edited or are link props but also the hasFileValue props
-                    this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
-                        prop =>
-                            !prop.isLinkProperty &&
-                            prop.isEditable &&
-                            prop.id !== Constants.HasStillImageFileValue &&
-                            prop.id !== Constants.HasDocumentFileValue &&
-                            prop.id !== Constants.HasAudioFileValue  // --> TODO for UPLOAD: expand with other representation file values
+                            // filter out all props that cannot be edited or are link props but also the hasFileValue props
+                            this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
+                                prop =>
+                                    !prop.isLinkProperty &&
+                                    prop.isEditable &&
+                                    prop.id !== Constants.HasStillImageFileValue &&
+                                    prop.id !== Constants.HasDocumentFileValue &&
+                                    prop.id !== Constants.HasAudioFileValue  // --> TODO for UPLOAD: expand with other representation file values
+                            );
+
+                            if (onto.properties[Constants.HasStillImageFileValue]) {
+                                this.hasFileValue = 'stillImage';
+                            } else if (onto.properties[Constants.HasDocumentFileValue]) {
+                                this.hasFileValue = 'document';
+                            } else if (onto.properties[Constants.HasAudioFileValue]) {
+                                this.hasFileValue = 'audio';
+                            } else {
+                                this.hasFileValue = undefined;
+                            }
+
+                            // notifies the user that the selected resource does not have any properties defined yet.
+                            if (!this.selectPropertiesComponent && this.properties.length === 0) {
+                                this.errorMessage = 'No properties defined for the selected resource.';
+                            }
+
+                            if (this.resourceClasses.length > 1 && !this.userWentBack) {
+                                // automatically go to the next step when a resource class is selected
+                                // but not in case the user went back to previous form
+                                this.nextStep();
+                            } else {
+                                // or update the title because the user select another res class
+                                this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource' });
+                            }
+                        },
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
+                        }
                     );
-
-                    if (onto.properties[Constants.HasStillImageFileValue]) {
-                        this.hasFileValue = 'stillImage';
-                    } else if (onto.properties[Constants.HasDocumentFileValue]) {
-                        this.hasFileValue = 'document';
-                    } else if (onto.properties[Constants.HasAudioFileValue]) {
-                        this.hasFileValue = 'audio';
-                    } else {
-                        this.hasFileValue = undefined;
-                    }
-
-                    // notifies the user that the selected resource does not have any properties defined yet.
-                    if (!this.selectPropertiesComponent && this.properties.length === 0) {
-                        this.errorMessage = 'No properties defined for the selected resource.';
-                    }
-
-                    if (this.resourceClasses.length > 1 && !this.userWentBack) {
-                        // automatically go to the next step when a resource class is selected
-                        // but not in case the user went back to previous form
-                        this.nextStep();
-                    } else {
-                        // or update the title because the user select another res class
-                        this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource' });
-                    }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
+                });
         } else {
             this.errorMessage = 'No resource class defined for the selected ontology.';
         }

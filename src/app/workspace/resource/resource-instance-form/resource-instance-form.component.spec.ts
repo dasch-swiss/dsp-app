@@ -300,7 +300,7 @@ describe('ResourceInstanceFormComponent', () => {
             },
             v2: {
                 onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri', 'getOntology', 'getResourceClassDefinition']),
-                ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition']),
+                ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition', 'reloadCachedItem']),
                 res: jasmine.createSpyObj('res', ['createResource'])
             }
         };
@@ -444,7 +444,9 @@ describe('ResourceInstanceFormComponent', () => {
 
         const selectOntoComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectOntologyComponent));
 
-        expect((selectOntoComp.componentInstance as MockSelectOntologyComponent).ontologiesMetadata.ontologies.length).toEqual(10);
+        console.log('ontos: ', (selectOntoComp.componentInstance as MockSelectOntologyComponent).ontologiesMetadata.ontologies);
+
+        expect((selectOntoComp.componentInstance as MockSelectOntologyComponent).ontologiesMetadata.ontologies.length).toEqual(11);
 
         expect(dspConnSpy.v2.onto.getOntologiesByProjectIri).toHaveBeenCalledTimes(1);
     });
