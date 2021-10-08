@@ -107,3 +107,8 @@ app-color-value {
   white-space: pre-line;
 }
 
+.mat-form-field.without-border {
+  .mat-form-field-underline {
+    display: none;
+}
+}

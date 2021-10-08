@@ -89,15 +89,20 @@
         <!-- list of properties -->
         <div *ngFor="let prop of resource.resProps; let last = last">
             <!-- show property; all in case of showAll === true or only the ones with prop.values -->
-            <div *ngIf="(showAllProps || ( prop.values && prop.values.length > 0 )) &&
-                        (!prop.propDef['isLinkProperty'] &&
-                        prop.propDef.objectType !== representationConstants.stillImage &&
-                        prop.propDef.objectType !== representationConstants.movingImage &&
-                        prop.propDef.objectType !== representationConstants.audio &&
-                        prop.propDef.objectType !== representationConstants.document &&
-                        prop.propDef.objectType !== representationConstants.text)"
-                [class.border-bottom]="prop.values && !last"
-                class="property">
+            <div *ngIf="(showAllProps || ( prop.values && prop.values.length > 0 )) && (
+                !prop.propDef['isLinkProperty'] &&
+                prop.propDef.objectType !== representationConstants.stillImage &&
+                prop.propDef.objectType !== representationConstants.movingImage &&
+                prop.propDef.objectType !== representationConstants.audio &&
+                prop.propDef.objectType !== representationConstants.document &&
+                prop.propDef.objectType !== representationConstants.text &&
+                !(isAnnotation && (
+                    prop.propDef.subjectType === representationConstants.region &&
+                    prop.propDef.objectType !== representationConstants.color
+                ))
+            )"
+            [class.border-bottom]="prop.values && !last"
+            class="property">
                 <div class="property-label">
                     <!-- label of the property -->
                     <h3 class="label mat-subheading-1"

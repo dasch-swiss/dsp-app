@@ -111,7 +111,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
     @Output() regionAdded = new EventEmitter<string>();
 
-    private _regionDrawMode: Boolean = false; // stores whether viewer is currently drawing a region
+    regionDrawMode: Boolean = false; // stores whether viewer is currently drawing a region
     private _regionDragInfo; // stores the information of the first click for drawing a region
     private _viewer: OpenSeadragon.Viewer;
     private _regions: PolygonsForRegion = {};
@@ -201,7 +201,8 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      * prevents navigation by mouse (so that the region can be accurately drawn).
      */
     drawButtonClicked(): void {
-        this._regionDrawMode = true;
+
+        this.regionDrawMode = true;
         this._viewer.setMouseNavEnabled(false);
     }
 
@@ -211,9 +212,9 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      * @param endPoint the end point of the drawing
      * @param imageSize the image size for calculations
      */
-    private _openRegionDialog(startPoint, endPoint, imageSize, overlay): void{
+    private _openRegionDialog(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, overlay: Element): void{
         const dialogConfig: MatDialogConfig = {
-            width: '840px',
+            width: '337px',
             maxHeight: '80vh',
             position: {
                 top: '112px'
@@ -243,7 +244,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      * @param comment the value for the comment entered in the form
      * @param label the value for the label entered in the form
      */
-    private _uploadRegion(startPoint, endPoint, imageSize, color, comment, label){
+    private _uploadRegion(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, color: string, comment: string, label: string){
         const x1 = Math.max(Math.min(startPoint.x, imageSize.x), 0)/imageSize.x;
         const x2 = Math.max(Math.min(endPoint.x, imageSize.x), 0)/imageSize.x;
         const y1 = Math.max(Math.min(startPoint.y, imageSize.y), 0)/imageSize.y;
@@ -290,7 +291,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         new OpenSeadragon.MouseTracker({
             element: this._viewer.canvas,
             pressHandler: (event) => {
-                if (!this._regionDrawMode){
+                if (!this.regionDrawMode){
                     return;
                 }
                 const overlayElement = document.createElement('div');
@@ -320,13 +321,13 @@ export class StillImageComponent implements OnChanges, OnDestroy {
                 this._regionDragInfo.endPos = viewPortPos;
             },
             releaseHandler: () => {
-                if (this._regionDrawMode) {
+                if (this.regionDrawMode) {
                     const imageSize =  this._viewer.world.getItemAt(0).getContentSize();
                     const startPoint  = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.startPos);
                     const endPoint = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.endPos);
                     this._openRegionDialog(startPoint, endPoint, imageSize, this._regionDragInfo.overlayElement);
                     this._regionDragInfo = null;
-                    this._regionDrawMode = false;
+                    this.regionDrawMode = false;
                     this._viewer.setMouseNavEnabled(true);
                 }
             }

@@ -1,5 +1,5 @@
 <!-- openseadragon (osd) viewer -->
-<div class="osd-container">
+<div class="osd-container" [class.drawing]="regionDrawMode">
     <div class="action horizontal top overlay">
         <!-- caption -->
         <span class="caption mat-caption">{{imageCaption}}</span>
@@ -20,7 +20,7 @@
             <button mat-icon-button id="DSP_OSD_FULL_PAGE" matTooltip="Open in fullscreen">
                 <mat-icon>fullscreen</mat-icon>
             </button>
-            <button (click)="drawButtonClicked()" mat-icon-button matTooltip="Draw Region">
+            <button mat-icon-button id="DSP_OSD_DRAW_REGION" matTooltip="Draw Region" (click)="drawButtonClicked()">
                 <mat-icon>edit</mat-icon>
             </button>
         </span>

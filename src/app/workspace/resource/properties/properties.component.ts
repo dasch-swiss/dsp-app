@@ -68,17 +68,23 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * input `displayProjectInfo` of properties component:
      * display project info or not; "This resource belongs to project XYZ"
      */
-    @Input() displayProjectInfo: false;
+    @Input() displayProjectInfo = false;
 
     /**
      * does the logged-in user has system or project admin permissions?
      */
-    @Input() adminPermissions: false;
+    @Input() adminPermissions = false;
 
     /**
      * is the logged-in user project member?
      */
-    @Input() editPermissions: false;
+    @Input() editPermissions = false;
+
+    /**
+     * in case properties belongs to an annotation (e.g. region in still images)
+     * in this case we don't have to display the isRegionOf property
+     */
+    @Input() isAnnotation = false;
 
     /**
      * output `referredProjectClicked` of resource view component:
