@@ -1,5 +1,26 @@
 # Changelog
 
+## [6.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.1.0...v6.2.0) (2021-10-08)
+
+
+### Bug Fixes
+
+* **error:** improve the current error handler in DSP-APP (DSP-1911) ([#540](https://www.github.com/dasch-swiss/dsp-app/issues/540)) ([0eb621b](https://www.github.com/dasch-swiss/dsp-app/commit/0eb621bbf9aa182d17b09df3ead46c34d357e0e5))
+* gravsearch results now appear after page refresh ([#542](https://www.github.com/dasch-swiss/dsp-app/issues/542)) ([a88dd79](https://www.github.com/dasch-swiss/dsp-app/commit/a88dd790e6bf35931e9443a6745a5d75f47ce502))
+* **resource-instance-form:** reloads cached resource to show changes made to the data model ([#547](https://www.github.com/dasch-swiss/dsp-app/issues/547)) ([37bb2a7](https://www.github.com/dasch-swiss/dsp-app/commit/37bb2a75cceeafffd8ee74f19af18648020e9704))
+
+
+### Enhancements
+
+* **ontology:** display id / name in property and class (DEV-37) ([#544](https://www.github.com/dasch-swiss/dsp-app/issues/544)) ([0a2bcfb](https://www.github.com/dasch-swiss/dsp-app/commit/0a2bcfbd5121bb9d49c18d3b45b0567ab7350e05))
+* **search:** add missing search resource component (DEV-95) ([#548](https://www.github.com/dasch-swiss/dsp-app/issues/548)) ([79abd10](https://www.github.com/dasch-swiss/dsp-app/commit/79abd10d46f5398f2bc0a9170ea852b82f75f158))
+
+
+### Maintenance
+
+* **fulltext-search:** persist fulltext search term in input field (DSP-1674) ([#539](https://www.github.com/dasch-swiss/dsp-app/issues/539)) ([67a52a3](https://www.github.com/dasch-swiss/dsp-app/commit/67a52a32ef8285e16b37f6cd069a72ded763deab))
+* **resource:** improve still image annotation form (DEV-53) ([#549](https://www.github.com/dasch-swiss/dsp-app/issues/549)) ([38bbe41](https://www.github.com/dasch-swiss/dsp-app/commit/38bbe4192add49171688df230eaa2df8f0aaa633))
+
 ## [6.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.0.0...v6.1.0) (2021-09-20)
 
 
