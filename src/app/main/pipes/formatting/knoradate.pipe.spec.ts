@@ -47,11 +47,11 @@ describe('KnoradatePipe', () => {
 
         dateWithDisplayOptions = pipe.transform(date, 'dd.MM.YYYY', 'calendar');
 
-        expect(dateWithDisplayOptions).toEqual('04.07.1776 GREGORIAN');
+        expect(dateWithDisplayOptions).toEqual('04.07.1776 Gregorian');
 
         dateWithDisplayOptions = pipe.transform(date, 'dd.MM.YYYY', 'all');
 
-        expect(dateWithDisplayOptions).toEqual('04.07.1776 AD GREGORIAN');
+        expect(dateWithDisplayOptions).toEqual('04.07.1776 Gregorian');
     });
 
     it ('should return a string with the desired display options for a date without era', () => {
@@ -63,11 +63,11 @@ describe('KnoradatePipe', () => {
 
         dateWithDisplayOptions = pipe.transform(date, 'dd.MM.YYYY', 'calendar');
 
-        expect(dateWithDisplayOptions).toEqual('04.07.1441 ISLAMIC');
+        expect(dateWithDisplayOptions).toEqual('04.07.1441 Islamic');
 
         dateWithDisplayOptions = pipe.transform(date, 'dd.MM.YYYY', 'all');
 
-        expect(dateWithDisplayOptions).toEqual('04.07.1441 ISLAMIC');
+        expect(dateWithDisplayOptions).toEqual('04.07.1441 Islamic');
     });
 
     it ('should return a string with only the month and the year', () => {

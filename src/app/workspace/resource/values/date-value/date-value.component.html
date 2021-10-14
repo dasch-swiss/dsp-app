@@ -3,11 +3,11 @@
     <!-- Date period -->
     <span *ngIf="valueFormControl.value?.end; else date">
         <span class="rm-value date-start">
-            <span *ngIf="labels">Period Start: </span>
+            <!-- <span *ngIf="labels">Period Start: </span> -->
             {{valueFormControl.value?.start | knoraDate:ontologyDateFormat:displayOptions}}
         </span>
         <span class="rm-value date-end">
-            <span *ngIf="labels">Period End: </span>
+            <span *ngIf="labels"> &mdash; </span>
             {{valueFormControl.value?.end | knoraDate:ontologyDateFormat:displayOptions}}
         </span>
     </span>
@@ -15,7 +15,7 @@
     <!-- Only one date -->
     <ng-template #date>
         <span class="rm-value">
-            <span *ngIf="labels">Date: </span>
+            <!-- <span *ngIf="labels">Date: </span> -->
             {{valueFormControl.value | knoraDate:ontologyDateFormat:displayOptions}}
         </span>
     </ng-template>

@@ -6,9 +6,9 @@ import { KnoraDate } from '@dasch-swiss/dsp-js';
 })
 export class KnoraDatePipe implements PipeTransform {
 
-    transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'all'): string {
+    transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
         if (!(date instanceof KnoraDate)) {
-            console.error('Non-KnoraDate provided. Expected a valid KnoraDate');
+            // console.error('Non-KnoraDate provided. Expected a valid KnoraDate');
             return '';
         }
 
@@ -34,11 +34,17 @@ export class KnoraDatePipe implements PipeTransform {
     addDisplayOptions(date: KnoraDate, value: string, options: string): string {
         switch (options) {
             case 'era':
-                return value  + (date.era !== 'noEra' ? ' ' + date.era : '');
+                // displays date with era; era only in case of BCE
+                return value + (date.era === 'noEra' ? '' : ((date.era === 'BCE' || date.era === 'AD') ? ' ' + date.era : ''));
             case 'calendar':
-                return value + ' ' + date.calendar;
+                // displays date without era but with calendar type
+                return value + ' ' + this._titleCase(date.calendar);
+            case 'calendarOnly':
+                // displays only the selected calendar type without any data
+                return this._titleCase(date.calendar);
             case 'all':
-                return value  + (date.era !== 'noEra' ? ' ' + date.era : '') + ' ' + date.calendar;
+                // displays date with era (only as BCE) and selected calendar type
+                return value + (date.era === 'noEra' ? '' : (date.era === 'BCE' ? ' ' + date.era : '')) + ' ' + this._titleCase(date.calendar);
         }
     }
 
@@ -77,6 +83,17 @@ export class KnoraDatePipe implements PipeTransform {
                     return `${date.year}`;
                 }
         }
+    }
+
+    /**
+     * returns a string in Title Case format
+     * It's needed to transform a calendar name e.g. 'GREGORIAN' into 'Gregorian'
+     *
+     * @param str
+     * @returns string
+     */
+    private _titleCase(str: string): string {
+        return str.split(' ').map(w => w[0].toUpperCase() + w.substr(1).toLowerCase()).join(' ');
     }
 
 }

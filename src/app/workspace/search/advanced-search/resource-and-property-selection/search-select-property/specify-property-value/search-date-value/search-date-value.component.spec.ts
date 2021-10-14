@@ -1,15 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { Component, forwardRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ControlValueAccessor, FormBuilder, FormGroup, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatInputHarness } from '@angular/material/input/testing';
+import { MatMenuModule } from '@angular/material/menu';
+import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CalendarDate, CalendarPeriod, GregorianCalendarDate } from 'jdnconvertiblecalendar';
-import { CalendarHeaderComponent } from 'src/app/workspace/resource/values/date-value/calendar-header/calendar-header.component';
-import { JDNDatepickerDirective } from 'src/app/workspace/resource/values/jdn-datepicker-directive/jdndatepicker.directive';
+import { KnoraDate } from '@dasch-swiss/dsp-js';
+import { Subject } from 'rxjs';
 import { ValueLiteral } from '../operator';
 import { SearchDateValueComponent } from './search-date-value.component';
 
@@ -22,66 +26,125 @@ import { SearchDateValueComponent } from './search-date-value.component';
 })
 class TestHostComponent implements OnInit {
 
-    @ViewChild('dateVal', { static: false }) dateValue: SearchDateValueComponent;
+    @ViewChild('dateVal', { static: false }) searchDateValComp: SearchDateValueComponent;
 
-    form;
+    form: FormGroup;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(private _fb: FormBuilder) {
     }
 
     ngOnInit() {
-        this.form = this._fb.group({});
+        this.form = this._fb.group({
+            dateValue: [new KnoraDate('JULIAN', 'CE', 2018, 5, 19)]
+        });
     }
+}
+
+@Component({
+    selector: 'app-date-picker',
+    template: '',
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi: true,
+            useExisting: forwardRef(() => TestDatePickerComponent),
+        },
+        { provide: MatFormFieldControl, useExisting: TestDatePickerComponent }
+    ]
+})
+
+class TestDatePickerComponent implements ControlValueAccessor, MatFormFieldControl<any> {
+
+    @Input() value;
+    @Input() disabled: boolean;
+    @Input() empty: boolean;
+    @Input() placeholder: string;
+    @Input() required: boolean;
+    @Input() shouldLabelFloat: boolean;
+    @Input() errorStateMatcher: ErrorStateMatcher;
+    @Input() valueRequiredValidator = true;
+
+    @Input() calendar: string;
+    stateChanges = new Subject<void>();
+
+    errorState = false;
+    focused = false;
+    id = 'testid';
+    ngControl: NgControl | null;
+    onChange = (_: any) => { };
+
+
+    writeValue(date: KnoraDate | null): void {
+        this.value = date;
+    }
+
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
+
+    registerOnTouched(fn: any): void {
+    }
+
+    onContainerClick(event: MouseEvent): void {
+    }
+
+    setDescribedByIds(ids: string[]): void {
+    }
+
+    _handleInput(): void {
+        this.onChange(this.value);
+    }
+
 }
 
 describe('SearchDateValueComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-
     let loader: HarnessLoader;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [
+                SearchDateValueComponent,
+                TestDatePickerComponent,
+                TestHostComponent
+            ],
             imports: [
                 BrowserAnimationsModule,
-                ReactiveFormsModule,
+                MatButtonModule,
+                MatFormFieldModule,
+                MatIconModule,
                 MatInputModule,
-                MatDatepickerModule,
-                MatNativeDateModule
-            ],
-            declarations: [
-                CalendarHeaderComponent,
-                JDNDatepickerDirective,
-                SearchDateValueComponent,
-                TestHostComponent
+                MatMenuModule,
+                ReactiveFormsModule,
             ]
         })
             .compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         loader = TestbedHarnessEnvironment.loader(testHostFixture);
-
         testHostFixture.detectChanges();
+
+        expect(testHostComponent).toBeTruthy();
     });
 
     it('should create', () => {
-        expect(testHostComponent).toBeTruthy();
-        expect(testHostComponent.dateValue).toBeTruthy();
+        expect(testHostComponent.searchDateValComp).toBeTruthy();
     });
 
-    it('should get a date', () => {
+    it('should get a date', async () => {
 
-        const calDate = new CalendarDate(2018, 10, 30);
-        testHostComponent.dateValue.form.controls['dateValue'].setValue(new GregorianCalendarDate(new CalendarPeriod(calDate, calDate)));
+        // set date from date picker
+        testHostComponent.searchDateValComp.form.controls['dateValue'].setValue(new KnoraDate('JULIAN', 'CE', 2018, 5, 19));
 
-        const gregorianDate = new ValueLiteral('GREGORIAN:2018-10-30:2018-10-30', 'http://api.knora.org/ontology/knora-api/simple/v2#Date');
+        const julianDate = new ValueLiteral('JULIAN:2018-5-19:2018-5-19', 'http://api.knora.org/ontology/knora-api/simple/v2#Date');
 
-        const dateVal = testHostComponent.dateValue.getValue();
+        const dateVal = testHostComponent.searchDateValComp.getValue();
 
-        expect(dateVal).toEqual(gregorianDate);
+        expect(dateVal).toEqual(julianDate);
 
     });
 });

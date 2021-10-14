@@ -239,6 +239,7 @@ export class DisplayEditComponent implements OnInit {
                 mergeMap((res: WriteValueResponse) => this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid))
             ).subscribe(
                 (res2: ReadResource) => {
+
                     this._valueOperationEventService.emit(
                         new EmitEvent(Events.ValueUpdated, new UpdatedEventValues(
                             this.displayValue, res2.getValues(this.displayValue.property)[0])));

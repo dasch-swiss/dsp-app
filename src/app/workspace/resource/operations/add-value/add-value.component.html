@@ -14,7 +14,7 @@
             <app-geoname-value #createVal *ngSwitchCase="constants.GeonameValue" [mode]="mode"></app-geoname-value>
             <app-link-value #createVal *ngSwitchCase="constants.LinkValue" [mode]="mode"
                         [parentResource]="parentResource" [propIri]="resourcePropertyDefinition.id"></app-link-value>
-            <app-date-value #createVal *ngSwitchCase="constants.DateValue" [mode]="mode"></app-date-value>
+            <app-yet-another-date-value #createVal *ngSwitchCase="constants.DateValue" [mode]="mode"></app-yet-another-date-value>
             <app-list-value #createVal *ngSwitchCase="constants.ListValue" [mode]="mode"
                         [propertyDef]="resourcePropertyDefinition"></app-list-value>
         </span>

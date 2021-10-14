@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { JDNConvertibleCalendar } from 'jdnconvertiblecalendar';
 import { CalendarHeaderComponent } from 'src/app/workspace/resource/values/date-value/calendar-header/calendar-header.component';
 import { PropertyValue, Value, ValueLiteral } from '../operator';
@@ -23,7 +23,7 @@ export class SearchDateValueComponent implements OnInit, OnDestroy, PropertyValu
     form: FormGroup;
 
     // custom header for the datepicker
-    headerComponent = CalendarHeaderComponent;
+    // headerComponent = CalendarHeaderComponent;
 
     constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
     }
@@ -57,15 +57,12 @@ export class SearchDateValueComponent implements OnInit, OnDestroy, PropertyValu
 
     getValue(): Value {
 
-        const dateObj: JDNConvertibleCalendar = this.form.value.dateValue;
+        const dateObj: KnoraDate = this.form.value.dateValue;
 
         // get calendar format
-        const calendarFormat = dateObj.calendarName;
-        // get calendar period
-        const calendarPeriod = dateObj.toCalendarPeriod();
-        // get the date
-        // eslint-disable-next-line max-len
-        const dateString = `${calendarFormat.toUpperCase()}:${calendarPeriod.periodStart.year}-${calendarPeriod.periodStart.month}-${calendarPeriod.periodStart.day}:${calendarPeriod.periodEnd.year}-${calendarPeriod.periodEnd.month}-${calendarPeriod.periodEnd.day}`;
+        const calendarFormat = dateObj.calendar;
+        // set date object as string
+        const dateString = `${calendarFormat.toUpperCase()}:${dateObj.year}-${dateObj.month}-${dateObj.day}:${dateObj.year}-${dateObj.month}-${dateObj.day}`;
 
         return new ValueLiteral(String(dateString), Constants.KnoraApi + '/ontology/knora-api/simple/v2' + Constants.HashDelimiter + 'Date');
     }

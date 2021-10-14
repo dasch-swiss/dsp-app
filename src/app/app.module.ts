@@ -138,6 +138,9 @@ import { TextValueAsXMLComponent } from './workspace/resource/values/text-value/
 import { TimeInputComponent } from './workspace/resource/values/time-value/time-input/time-input.component';
 import { TimeValueComponent } from './workspace/resource/values/time-value/time-value.component';
 import { UriValueComponent } from './workspace/resource/values/uri-value/uri-value.component';
+import { DatePickerComponent } from './workspace/resource/values/yet-another-date-value/date-picker/date-picker.component';
+import { DateValueHandlerComponent } from './workspace/resource/values/yet-another-date-value/date-value-handler/date-value-handler.component';
+import { YetAnotherDateValueComponent } from './workspace/resource/values/yet-another-date-value/yet-another-date-value.component';
 import { ListViewComponent } from './workspace/results/list-view/list-view.component';
 import { ResourceGridComponent } from './workspace/results/list-view/resource-grid/resource-grid.component';
 import { ResourceListComponent } from './workspace/results/list-view/resource-list/resource-list.component';
@@ -152,6 +155,7 @@ import { SearchIntValueComponent } from './workspace/search/advanced-search/reso
 import { SearchLinkValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-link-value/search-link-value.component';
 import { SearchDisplayListComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-list-value/search-display-list/search-display-list.component';
 import { SearchListValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-list-value/search-list-value.component';
+import { SearchResourceComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-resource/search-resource.component';
 import { SearchTextValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-text-value/search-text-value.component';
 import { SearchUriValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-uri-value/search-uri-value.component';
 import { SpecifyPropertyValueComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/specify-property-value.component';
@@ -160,7 +164,6 @@ import { SearchSelectOntologyComponent } from './workspace/search/advanced-searc
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { FulltextSearchComponent } from './workspace/search/fulltext-search/fulltext-search.component';
 import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
-import { SearchResourceComponent } from './workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/search-resource/search-resource.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -197,7 +200,9 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         DateEditComponent,
         DateInputComponent,
         DateInputTextComponent,
+        DatePickerComponent,
         DateValueComponent,
+        DateValueHandlerComponent,
         DecimalValueComponent,
         DialogComponent,
         DialogHeaderComponent,
@@ -273,6 +278,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         SearchLinkValueComponent,
         SearchListValueComponent,
         SearchPanelComponent,
+        SearchResourceComponent,
         SearchSelectOntologyComponent,
         SearchSelectPropertyComponent,
         SearchSelectResourceClassComponent,
@@ -311,7 +317,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UsersComponent,
         UsersListComponent,
         VisualizerComponent,
-        SearchResourceComponent,
+        YetAnotherDateValueComponent,
     ],
     imports: [
         AngularSplitModule.forRoot(),

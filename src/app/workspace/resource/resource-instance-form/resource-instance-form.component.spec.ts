@@ -444,8 +444,6 @@ describe('ResourceInstanceFormComponent', () => {
 
         const selectOntoComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectOntologyComponent));
 
-        console.log('ontos: ', (selectOntoComp.componentInstance as MockSelectOntologyComponent).ontologiesMetadata.ontologies);
-
         expect((selectOntoComp.componentInstance as MockSelectOntologyComponent).ontologiesMetadata.ontologies.length).toEqual(11);
 
         expect(dspConnSpy.v2.onto.getOntologiesByProjectIri).toHaveBeenCalledTimes(1);
