@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
+import { DspDataDogConfig } from './main/declarations/dsp-dataDog-config';
 import { DspIiifConfig } from './main/declarations/dsp-iiif-config';
 
 @Injectable({
@@ -9,6 +10,7 @@ export class AppInitService {
 
     dspApiConfig: KnoraApiConfig;
     dspIiifConfig: DspIiifConfig;
+    dspDatadogConfig: DspDataDogConfig;
 
     config: object;
 
@@ -29,7 +31,7 @@ export class AppInitService {
 
 
                 // check for presence of apiProtocol and apiHost
-                if (typeof dspAppConfig.apiProtocol !== 'string' || typeof dspAppConfig.apiHost  !== 'string') {
+                if (typeof dspAppConfig.apiProtocol !== 'string' || typeof dspAppConfig.apiHost !== 'string') {
                     throw new Error('config misses required members: apiProtocol and/or apiHost');
                 }
 
@@ -60,6 +62,15 @@ export class AppInitService {
                     iiifPath
                 );
 
+                // init datadog configuration
+                this.dspDatadogConfig = new DspDataDogConfig(
+                    dspAppConfig.dataDogLogging,
+                    dspAppConfig.dataDogApplicationId,
+                    dspAppConfig.dataDogClientToken,
+                    dspAppConfig.dataDogSite,
+                    dspAppConfig.dataDogService,
+                );
+
                 // get all options from config
                 this.config = dspAppConfig;
 
@@ -75,6 +86,11 @@ export class AppInitService {
                 this.config['iiifPort'] = iiifPort;
                 this.config['iiifPath'] = iiifPath;
                 this.config['iiifUrl'] = this.dspIiifConfig.iiifUrl;
+                this.config['dataDogLogging'] = this.dspDatadogConfig.dataDogLogging;
+                this.config['dataDogApplicationId'] = this.dspDatadogConfig.dataDogApplicationId;
+                this.config['dataDogClientToken'] = this.dspDatadogConfig.dataDogClientToken;
+                this.config['dataDogSite'] = this.dspDatadogConfig.dataDogSite;
+                this.config['dataDogService'] = this.dspDatadogConfig.dataDogService;
 
                 resolve();
             }

@@ -18,7 +18,7 @@
     "test-local": "ng test",
     "test-e2e-protractor": "ng e2e --prod=true --protractor-config=./e2e/protractor-ci.conf.js --webdriver-update=false",
     "webdriver-update": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
-    "yalc-add-lib": "rm -rf .yalc/@dasch-swiss && yalc add @dasch-swiss/dsp-js && npm install"
+    "yalc-add-lib": "rm -rf .yalc/@dasch-swiss && yalc add @dasch-swiss/dsp-js && yalc add @dasch-swiss/dsp-ui && npm install"
   },
   "private": true,
   "dependencies": {
@@ -34,6 +34,7 @@
     "@angular/router": "^11.2.9",
     "@ckeditor/ckeditor5-angular": "^1.2.3",
     "@dasch-swiss/dsp-js": "^4.1.0",
+    "@datadog/browser-rum": "^3.6.3",
     "@ngx-translate/core": "^12.1.2",
     "@ngx-translate/http-loader": "5.0.0",
     "3d-force-graph": "^1.60.12",

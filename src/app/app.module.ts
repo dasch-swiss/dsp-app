@@ -26,7 +26,7 @@ import { SelectedResourcesComponent } from './main/action/selected-resources/sel
 import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
 import { StringLiteralInputComponent } from './main/action/string-literal-input/string-literal-input.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
-import { DspApiConfigToken, DspApiConnectionToken } from './main/declarations/dsp-api-tokens';
+import { DspApiConfigToken, DspApiConnectionToken, DspDataDogConfigToken } from './main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
@@ -346,6 +346,11 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         {
             provide: DspApiConfigToken,
             useFactory: (appInitService: AppInitService) => appInitService.dspApiConfig,
+            deps: [AppInitService]
+        },
+        {
+            provide: DspDataDogConfigToken,
+            useFactory: (appInitService: AppInitService) => appInitService.dspDatadogConfig,
             deps: [AppInitService]
         },
         {

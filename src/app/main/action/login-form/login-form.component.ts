@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { inject } from '@angular/core/testing';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, LogoutResponse } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '../../declarations/dsp-api-tokens';
+import { ApiResponseData, ApiResponseError, KnoraApiConfig, KnoraApiConnection, LoginResponse, LogoutResponse } from '@dasch-swiss/dsp-js';
+import { datadogRum, RumFetchResourceEventDomainContext } from '@datadog/browser-rum';
+import { DspApiConfigToken, DspApiConnectionToken, DspDataDogConfigToken } from '../../declarations/dsp-api-tokens';
+import { DspDataDogConfig } from '../../declarations/dsp-dataDog-config';
 import { NotificationService } from '../../services/notification.service';
 import { Session, SessionService } from '../../services/session.service';
 
@@ -101,6 +104,8 @@ export class LoginFormComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
+        @Inject(DspDataDogConfigToken) private _dspDataDogConfig: DspDataDogConfig,
         private _notification: NotificationService,
         private _sessionService: SessionService,
         private _fb: FormBuilder
@@ -151,6 +156,29 @@ export class LoginFormComponent implements OnInit {
                         this.session = this._sessionService.getSession();
                         this.loginSuccess.emit(true);
                         this.loading = false;
+                        if (this._dspDataDogConfig.dataDogLogging) {
+                            datadogRum.init({
+                                applicationId: this._dspDataDogConfig.dataDogApplicationId,
+                                clientToken: this._dspDataDogConfig.dataDogClientToken,
+                                site: this._dspDataDogConfig.dataDogSite,
+                                service: this._dspDataDogConfig.dataDogService,
+                                // specify a version number to identify the deployed version of your application in Datadog
+                                // version: '1.0.0',
+                                sampleRate: 100,
+                                trackInteractions: true,
+                                beforeSend: (event, context) => {
+                                    // collect a RUM resource's response headers
+                                    if (event.type === 'resource' && event.resource.type === 'xhr') {
+                                        event.context = { ...event.context, responseHeaders: (context as RumFetchResourceEventDomainContext).response.body };
+                                    }
+                                },
+                            });
+
+                            datadogRum.setUser({
+                                id: identifier,
+                                identifierType: identifierType
+                            });
+                        }
                     }
                 );
             },

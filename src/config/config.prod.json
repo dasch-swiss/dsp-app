@@ -9,5 +9,10 @@
   "iiifPath": "",
   "geonameToken": "knora",
   "jsonWebToken": "",
-  "logErrors": false
+  "logErrors": false,
+  "dataDogLogging": false,
+  "dataDogApplicationId": "",
+  "dataDogClientToken": "",
+  "dataDogSite": "",
+  "dataDogService": ""
 }
