@@ -45,7 +45,7 @@
         </mat-menu>
 
         <!-- more menu with: delete, erase resource -->
-        <button *ngIf="editPermissions" mat-icon-button class="more-menu" matTooltip="More" matTooltipPosition="above" [matMenuTriggerFor]="more" [disabled]="deletedResource">
+        <button *ngIf="editPermissions && project?.status" mat-icon-button class="more-menu" matTooltip="More" matTooltipPosition="above" [matMenuTriggerFor]="more" [disabled]="deletedResource">
             <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="res-more-menu">
@@ -57,8 +57,8 @@
                 <mat-icon>delete</mat-icon>
                 Delete resource
             </button>
-            <button mat-menu-item matTooltip="Erase resource forever. This cannot be undone." matTooltipPosition="above"
-                [disabled]="!adminPermissions" (click)="openDialog('erase')">
+            <button *ngIf="adminPermissions" mat-menu-item matTooltip="Erase resource forever. This cannot be undone." matTooltipPosition="above"
+                (click)="openDialog('erase')">
                 <mat-icon>delete_forever</mat-icon>
                 Erase resource
             </button>
@@ -121,12 +121,13 @@
                             [displayValue]="val"
                             [propArray]="resource.resProps"
                             [canDelete]="deleteValueIsAllowed(prop)"
+                            [projectStatus]="project?.status"
                             (referredResourceClicked)="openResource($event)"
                             (referredResourceHovered)="previewResource($event)">
                         </app-display-edit>
                     </div>
                     <!-- Add value form -->
-                    <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id">
+                    <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id && project?.status">
                         <app-add-value #addValue
                             class="add-value"
                             [parentResource]="resource.res"
@@ -135,7 +136,7 @@
                         </app-add-value>
                     </div>
                     <!-- Add button -->
-                    <div *ngIf="addValueIsAllowed(prop)">
+                    <div *ngIf="addValueIsAllowed(prop) && project?.status">
                         <button mat-icon-button class="value-action create"
                             (click)="showAddValueForm(prop)"
                             title="Add a new value">

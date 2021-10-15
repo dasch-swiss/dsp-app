@@ -21,7 +21,7 @@
         [placeholder]="labels | appStringifyStringLiteral:'all' | appTruncate: 128" [value]="labels" [readonly]="true"
         (dataChanged)="handleData($event)" [language]="language">
     </app-string-literal-input>
-    <div class="action-bubble" *ngIf="showActionBubble" [@simpleFadeAnimation]="'in'">
+    <div class="action-bubble" *ngIf="showActionBubble && projectStatus" [@simpleFadeAnimation]="'in'">
         <div class="button-container">
             <button mat-button
                     *ngIf="position > 0"

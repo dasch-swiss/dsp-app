@@ -26,6 +26,8 @@ export class ListItemComponent implements OnInit {
 
     @Input() projectCode: string;
 
+    @Input() projectStatus: boolean;
+
     @Input() projectIri: string;
 
     @Input() childNode: boolean;

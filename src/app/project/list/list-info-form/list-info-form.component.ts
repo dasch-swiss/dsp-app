@@ -36,8 +36,6 @@ export class ListInfoFormComponent implements OnInit {
 
     loading: boolean;
 
-    project: ReadProject;
-
     list: ListNodeInfo;
 
     labels: StringLiteral[];

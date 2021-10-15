@@ -48,7 +48,9 @@ export class ResourceListComponent implements OnInit {
 
     ngOnInit() {
         // select the first item in the list
-        this.selectResource({ checked: true, resIndex: 0, resId: this.resources.resources[0].id, resLabel: this.resources.resources[0].label, isCheckbox: false });
+        if (this.resources.resources.length) {
+            this.selectResource({ checked: true, resIndex: 0, resId: this.resources.resources[0].id, resLabel: this.resources.resources[0].label, isCheckbox: false });
+        }
     }
 
     selectResource(status: CheckboxUpdate) {

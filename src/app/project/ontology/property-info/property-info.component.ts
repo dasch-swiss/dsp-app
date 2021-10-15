@@ -87,6 +87,8 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     @Input() projectCode: string;
 
+    @Input() projectStatus: boolean;
+
     @Input() lastModificationDate?: string;
 
     // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter

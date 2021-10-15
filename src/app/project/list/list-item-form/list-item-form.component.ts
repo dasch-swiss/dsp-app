@@ -62,6 +62,11 @@ export class ListItemFormComponent implements OnInit {
     @Input() projectCode?: string;
 
     /**
+     * project status
+     */
+    @Input() projectStatus?: boolean;
+
+    /**
      * project id
      */
     @Input() projectIri?: string;

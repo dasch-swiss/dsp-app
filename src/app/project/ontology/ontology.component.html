@@ -41,7 +41,7 @@
 
                 <span class="fill-remaining-space"></span>
 
-                <span class="app-toolbar-action" [class.select-form]="ontologies.length">
+                <span class="app-toolbar-action" [class.select-form]="ontologies.length" *ngIf="project.status">
                     <button mat-raised-button color="primary" class="create-data-model-btn"
                         (click)="openOntologyForm('createOntology')">
                         {{ontologies.length ? 'New data model' : 'Create your first data model'}}
@@ -98,11 +98,11 @@
 
                 <!-- edit options -->
                 <!-- TODO: move edit and delete function to config menu and add "Create new data model" to this place -->
-                <span class="ontology-actions">
+                <span class="ontology-actions project-actions" *ngIf="project.status">
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
                         [matTooltip]="(ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                        <button mat-button [disabled]="!ontology.lastModificationDate" [disabled]="!ontology.lastModificationDate"
+                        <button mat-button [disabled]="!ontology.lastModificationDate"
                             (click)="$event.stopPropagation(); openOntologyForm('editOntology', ontology.id)">
                             <mat-icon>edit</mat-icon>
                             Edit
@@ -182,6 +182,7 @@
                     <app-resource-class-info *ngFor="let resClass of ontoClasses"
                         [resourceClass]="resClass"
                         [projectCode]="projectCode"
+                        [projectStatus]="project.status"
                         [ontoProperties]="ontoProperties"
                         [expanded]="expandClasses"
                         [(lastModificationDate)]="lastModificationDate"
@@ -199,20 +200,20 @@
                             <app-property-info
                                 [propDef]="ontology?.properties[prop.id]"
                                 [projectCode]="projectCode"
+                                [projectStatus]="project.status"
                                 [(lastModificationDate)]="lastModificationDate"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
                                 (deleteResourceProperty)="delete('Property', $event)">
                             </app-property-info>
                         </mat-list-item>
-                        <!-- <mat-list-item *ngFor="let prop of ontoProperties">{{prop.label}}</mat-list-item> -->
                     </mat-list>
                 </div>
             </mat-sidenav-content>
         </mat-sidenav-container>
 
-        <div *ngIf="view === 'graph'" class="ontology-viewer">
+        <!-- <div *ngIf="view === 'graph'" class="ontology-viewer">
             <app-ontology-visualizer [ontology]="ontology" [ontoClasses]="ontoClasses"></app-ontology-visualizer>
-        </div>
+        </div> -->
 
         <app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></app-progress-indicator>
     </div>

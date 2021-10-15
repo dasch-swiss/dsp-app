@@ -77,6 +77,8 @@ export class DisplayEditComponent implements OnInit {
 
     @Input() canDelete: boolean;
 
+    @Input() projectStatus: boolean;
+
     @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();

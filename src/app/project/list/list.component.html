@@ -45,7 +45,7 @@
 
             <span class="fill-remaining-space"></span>
 
-            <span class="app-toolbar-action" [class.select-form]="lists.length">
+            <span class="app-toolbar-action" [class.select-form]="lists.length" *ngIf="project.status">
                 <button mat-raised-button color="primary" class="create-list-btn"
                     (click)="openDialog('createList', 'List', project.id)">
                     {{lists.length ? 'New list' : 'Create your first list'}}
@@ -66,20 +66,26 @@
                 <p class="mat-body" [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="above">
                     {{list.comments | appStringifyStringLiteral | appTruncate:64}}</p>
                 <span class="fill-remaining-space"></span>
-                <button mat-button
-                    (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
-                    matTooltip="Edit info">
-                    <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-button class="delete"
-                    (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
-                    matTooltip="Delete list">
-                    <mat-icon>delete</mat-icon>
-                </button>
+
+                <span class="project-actions" *ngIf="project.status">
+                    <p class="mat-caption space-reducer">List configuration</p>
+                    <button mat-button
+                        (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
+                        matTooltip="Edit list info">
+                        <mat-icon>edit</mat-icon>
+                        Edit
+                    </button>
+                    <button mat-button class="delete"
+                        (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
+                        matTooltip="Delete list">
+                        <mat-icon>delete</mat-icon>
+                        Delete
+                    </button>
+                </span>
             </mat-toolbar-row>
         </mat-toolbar>
 
-        <app-list-item [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectCode]="projectCode">
+        <app-list-item [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectCode]="projectCode" [projectStatus]="project.status">
         </app-list-item>
 
     </div>

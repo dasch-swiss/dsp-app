@@ -48,7 +48,7 @@
         </span>
     </div>
 
-    <div class="action-bubble" *ngIf="lastModificationDate && showActionBubble" [@simpleFadeAnimation]="'in'">
+    <div class="action-bubble" *ngIf="lastModificationDate && showActionBubble && projectStatus" [@simpleFadeAnimation]="'in'">
         <!-- property action in case of resource class' view has different buttons and actions -->
         <div class="button-container" *ngIf="propCard">
             <!-- TODO: edit cardinality is disabled for the moment. Will be activated as soon as we use DSP-API 13.9.1 -->

@@ -254,7 +254,9 @@ class TestDateValueComponent {
 @Component({
     selector: 'lib-host-component',
     template: `
-      <app-display-edit *ngIf="readValue" #displayEditVal [parentResource]="readResource"
+      <app-display-edit *ngIf="readValue" #displayEditVal
+                        [parentResource]="readResource"
+                        [projectStatus]="true"
                         [displayValue]="readValue"
                         [propArray]="propArray"
                         [canDelete]="deleteIsAllowed"

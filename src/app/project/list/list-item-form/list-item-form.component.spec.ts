@@ -33,6 +33,7 @@ import { ListItemFormComponent, ListNodeOperation } from './list-item-form.compo
         (refreshParent)="updateView($event)"
         [projectIri]="projectIri"
         [projectCode]="projectCode"
+        [projectStatus]="true"
         [labels]="labels">
     </app-list-item-form>`
 })

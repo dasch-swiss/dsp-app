@@ -122,19 +122,3 @@ $width: 340px;
   top: 80px;
 }
 
-.mat-caption.space-reducer {
-  margin-top: 0;
-  margin-bottom: 6px;
-}
-.ontology-actions {
-  border-left: 1px solid $primary_200;
-  padding: 0 12px;
-  .mat-caption.space-reducer {
-    margin-top: -6px;
-    margin-bottom: 6px;
-  }
-}
-
-button.space-reducer {
-  margin: 0;
-}
