@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.2.0...v6.3.0) (2021-10-15)
+
+
+### Bug Fixes
+
+* disable edit/delete action in deactivated projects (DEV-52) ([#550](https://www.github.com/dasch-swiss/dsp-app/issues/550)) ([d7bec78](https://www.github.com/dasch-swiss/dsp-app/commit/d7bec78ed703b513fa5d24fd895d4781e51af3cb))
+* **properties:** do not submit res instance form by adding new value (DEV-150) ([#553](https://www.github.com/dasch-swiss/dsp-app/issues/553)) ([99a3022](https://www.github.com/dasch-swiss/dsp-app/commit/99a3022af5a72a3409415c8453e8ec8ee730386d))
+* **value:** fix broken time value component (DEV-147) ([#552](https://www.github.com/dasch-swiss/dsp-app/issues/552)) ([fb846f9](https://www.github.com/dasch-swiss/dsp-app/commit/fb846f9d82a208f633e8ddb219dfc38a5f351a3a))
+
+
+### Enhancements
+
+* datadog RUM implementation (DEV-50) ([#546](https://www.github.com/dasch-swiss/dsp-app/issues/546)) ([ec59ee5](https://www.github.com/dasch-swiss/dsp-app/commit/ec59ee5b8ac1bd7d95cefab09c91e1383c990a0a))
+* **resource:** new date picker (DEV-112) ([#532](https://www.github.com/dasch-swiss/dsp-app/issues/532)) ([04e4b32](https://www.github.com/dasch-swiss/dsp-app/commit/04e4b32be6b9e836eade4ee9b0666ead5582b47d))
+
 ## [6.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.1.0...v6.2.0) (2021-10-08)
 
 
