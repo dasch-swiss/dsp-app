@@ -356,7 +356,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * called from the template when the user clicks on the add button
      */
-    showAddValueForm(prop: PropertyInfoValues) {
+    showAddValueForm(prop: PropertyInfoValues, ev: Event) {
+        ev.preventDefault();
         this.propID = prop.propDef.id;
         this.addValueFormIsVisible = true;
     }

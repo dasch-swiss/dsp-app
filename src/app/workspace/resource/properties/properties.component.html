@@ -137,8 +137,8 @@
                     </div>
                     <!-- Add button -->
                     <div *ngIf="addValueIsAllowed(prop) && project?.status">
-                        <button mat-icon-button class="value-action create"
-                            (click)="showAddValueForm(prop)"
+                        <button mat-icon-button type="button" class="value-action create"
+                            (click)="showAddValueForm(prop, $event)"
                             title="Add a new value">
                             <mat-icon>add_box</mat-icon>
                         </button>

@@ -111,7 +111,9 @@ export class SelectPropertiesComponent implements OnInit {
     /**
      * called from the template when the user clicks on the add button
      */
-    addNewValueFormToProperty(prop: ResourcePropertyDefinition) {
+    addNewValueFormToProperty(prop: ResourcePropertyDefinition, ev: Event) {
+        ev.preventDefault();
+
         // get the length of the corresponding property values array
         const length = this.propertyValuesKeyValuePair[prop.id].length;
 
@@ -124,7 +126,8 @@ export class SelectPropertiesComponent implements OnInit {
         this.propertyValuesKeyValuePair[prop.id + '-filtered'].push(length);
     }
 
-    deleteValue(prop: ResourcePropertyDefinition, index: number) {
+    deleteValue(prop: ResourcePropertyDefinition, index: number, ev: Event) {
+        ev.preventDefault();
         // don't actually remove the item from the property values array, just set it to undefined.
         // this is because if we actually modify the indexes of the array, the template will re-evaluate
         // and recreate components for any elements after the deleted index, effectively erasing entered data if any was entered

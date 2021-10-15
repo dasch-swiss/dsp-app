@@ -50,9 +50,10 @@
                             <div class="buttons">
                                 <button mat-icon-button
                                     *ngIf="propertyValuesKeyValuePair[prop.id + '-filtered'].length !== 1"
+                                    type="button"
                                     class="value-action delete"
                                     title="Delete this value"
-                                    (click)="deleteValue(prop, i)">
+                                    (click)="deleteValue(prop, i, $event)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </div>
@@ -61,9 +62,10 @@
                     <!-- Add button -->
                     <div *ngIf="addValueIsAllowed(prop)">
                         <button mat-icon-button
+                            type="button"
                             class="value-action create"
                             title="Add a new value"
-                            (click)="addNewValueFormToProperty(prop)">
+                            (click)="addNewValueFormToProperty(prop, $event)">
                             <mat-icon>add_box</mat-icon>
                         </button>
                     </div>
