@@ -11,6 +11,7 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
+import { MatJDNConvertibleCalendarDateAdapterModule } from 'jdnconvertiblecalendardateadapter';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { environment } from '../environments/environment';
@@ -331,6 +332,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         FormsModule,
         HttpClientModule,
         MaterialModule,
+        MatJDNConvertibleCalendarDateAdapterModule,
         PdfViewerModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({
