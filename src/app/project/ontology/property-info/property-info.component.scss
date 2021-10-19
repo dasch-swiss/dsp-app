@@ -24,6 +24,10 @@
 .mat-line.info {
   font-size: small;
 
+  .mat-caption {
+    color: rgba($dark, .7);
+  }
+
   .mat-icon {
     width: 12px;
     height: 12px;

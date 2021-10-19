@@ -3,7 +3,7 @@
     <mat-card-header class="resource-class-header" cdkDragHandle>
         <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
         <!-- <mat-icon mat-card-avatar>{{resourceClass.icon}}</mat-icon> -->
-        <mat-card-title [matTooltip]="resourceClass.comment" matTooltipPosition="above">
+        <mat-card-title [matTooltip]="resourceClass.comment + ' (' + resourceClass.id.split('#')[1] + ')'" matTooltipPosition="above">
             {{resourceClass.label | appTruncate: 24}}
         </mat-card-title>
         <mat-card-subtitle>
@@ -47,9 +47,9 @@
         <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
             *ngIf="propsToDisplay.length; else noProperties">
             <div cdkDrag [cdkDragDisabled]="!ontology.lastModificationDate"
-                *ngFor="let prop of propsToDisplay; let i = index; let odd = odd">
+                *ngFor="let prop of propsToDisplay; let i = index;">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
-                <mat-list-item class="property" [class.odd]="odd">
+                <mat-list-item class="property">
                     <span cdkDragHandle mat-list-icon class="list-icon gui-order">
                         <span [class.hide-on-hover]="cardinalityUpdateEnabled && lastModificationDate">{{i + 1}})</span>
                         <span *ngIf="lastModificationDate && cardinalityUpdateEnabled"
@@ -60,7 +60,7 @@
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
                     <app-property-info class="property-info" [propDef]="ontology?.properties[prop.propertyIndex]"
-                        [propCard]="propsToDisplay[i]" [projectCode]="projectCode"
+                        [propCard]="propsToDisplay[i]" [projectCode]="projectCode" [projectStatus]="projectStatus" [resourceIri]="resourceClass.id"
                         [(lastModificationDate)]="lastModificationDate"
                         (removePropertyFromClass)="removeProperty($event)">
                     </app-property-info>

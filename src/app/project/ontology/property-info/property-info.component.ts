@@ -10,7 +10,9 @@ import {
     ReadOntology,
     ReadProject,
     ResourceClassDefinitionWithAllLanguages,
-    ResourcePropertyDefinitionWithAllLanguages
+    ResourcePropertyDefinitionWithAllLanguages,
+    UpdateOntology,
+    UpdateResourceClassCardinality
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -85,6 +87,8 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     @Input() propCard?: IHasProperty;
 
+    @Input() resourceIri?: string;
+
     @Input() projectCode: string;
 
     @Input() projectStatus: boolean;
@@ -126,7 +130,15 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService
-    ) { }
+    ) {
+
+        this._cache.get('currentOntology').subscribe(
+            (response: ReadOntology) => {
+                this.ontology = response;
+
+            }
+        );
+    }
 
     ngOnChanges(): void {
 
@@ -179,31 +191,26 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         if (this.propDef.isLinkProperty) {
             // this property is a link property to another resource class
             // get current ontology to get linked res class information
-            this._cache.get('currentOntology').subscribe(
-                (response: ReadOntology) => {
-                    this.ontology = response;
-                    // get the base ontology of object type
-                    const baseOnto = this.propDef.objectType.split('#')[0];
-                    if (baseOnto !== response.id) {
-                        // get class info from another ontology
-                        this._cache.get('currentProjectOntologies').subscribe(
-                            (ontologies: ReadOntology[]) => {
-                                const onto = ontologies.find(i => i.id === baseOnto);
-                                if (!onto && this.propDef.objectType === Constants.Region) {
-                                    this.propAttribute = 'Region';
-                                } else {
-                                    this.propAttribute = onto.classes[this.propDef.objectType].label;
-                                    this.propAttributeComment = onto.classes[this.propDef.objectType].comment;
-                                }
-                            }
-                        );
-                    } else {
-                        this.propAttribute = response.classes[this.propDef.objectType].label;
-                        this.propAttributeComment = response.classes[this.propDef.objectType].comment;
-                    }
 
-                }
-            );
+            // get the base ontology of object type
+            const baseOnto = this.propDef.objectType.split('#')[0];
+            if (baseOnto !== this.ontology.id) {
+                // get class info from another ontology
+                this._cache.get('currentProjectOntologies').subscribe(
+                    (ontologies: ReadOntology[]) => {
+                        const onto = ontologies.find(i => i.id === baseOnto);
+                        if (!onto && this.propDef.objectType === Constants.Region) {
+                            this.propAttribute = 'Region';
+                        } else {
+                            this.propAttribute = onto.classes[this.propDef.objectType].label;
+                            this.propAttributeComment = onto.classes[this.propDef.objectType].comment;
+                        }
+                    }
+                );
+            } else {
+                this.propAttribute = this.ontology.classes[this.propDef.objectType].label;
+                this.propAttributeComment = this.ontology.classes[this.propDef.objectType].comment;
+            }
         }
 
         if (this.propDef.objectType === Constants.ListValue) {
@@ -224,40 +231,71 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         // get all classes where the property is used
         if (!this.propCard) {
 
-            this._cache.get('currentOntology').subscribe(
-                (response: ReadOntology) => {
-                    this.ontology = response;
-                    const classes = response.getAllClassDefinitions();
-                    for (const c of classes) {
-                        if (c.propertiesList.find(i => i.propertyIndex === this.propDef.id)) {
-                            this.resClasses.push(c as ResourceClassDefinitionWithAllLanguages);
-                        }
-                        // const splittedSubClass = ontology.classes[c].subClassOf[0].split('#');
-
-                        // if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag') {
-                        //     this.ontoClasses.push(this.ontology.classes[c]);
-                        // }
-                    }
+            const classes = this.ontology.getAllClassDefinitions();
+            for (const c of classes) {
+                if (c.propertiesList.find(i => i.propertyIndex === this.propDef.id)) {
+                    this.resClasses.push(c as ResourceClassDefinitionWithAllLanguages);
                 }
-            );
+                // const splittedSubClass = ontology.classes[c].subClassOf[0].split('#');
 
+                // if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag') {
+                //     this.ontoClasses.push(this.ontology.classes[c]);
+                // }
+            }
+
+        }
+    }
+
+    /**
+     * determines whether property can be deleted
+     * resp. removed from res class if we have the cardinality info
+     */
+    canBeDeleted() {
+        if (!this.propCard) {
             // check if the property can be deleted
             this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe(
-                (response: CanDoResponse) => {
-                    this.propCanBeDeleted = response.canDo;
+                (canDoRes: CanDoResponse) => {
+                    this.propCanBeDeleted = canDoRes.canDo;
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                 }
             );
-        }
+        } else {
+            // check if the property can be removed from res class
+            if (this.lastModificationDate) {
+                const onto = new UpdateOntology<UpdateResourceClassCardinality>();
 
+                onto.lastModificationDate = this.lastModificationDate;
+
+                onto.id = this.ontology.id;
+
+                const delCard = new UpdateResourceClassCardinality();
+
+                delCard.id = this.resourceIri;
+
+                delCard.cardinalities = [];
+
+                delCard.cardinalities = [this.propCard];
+                onto.entity = delCard;
+
+                this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
+                    (canDoRes: CanDoResponse) => {
+                        this.propCanBeDeleted = canDoRes.canDo;
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                    }
+                );
+            }
+        }
     }
 
     /**
      * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
+        this.canBeDeleted();
         this.showActionBubble = true;
     }
 
