@@ -38,6 +38,13 @@ export class SearchSelectOntologyComponent implements OnInit, OnDestroy {
         // add form to the parent form group
         this.formGroup.addControl('ontologies', this.form);
 
+
+        // if only one ontology exists: select this ontology by default
+        if (this.ontologiesMetadata.ontologies.length === 1) {
+            this.form.controls.ontologies.setValue(this.ontologiesMetadata.ontologies[0].id);
+            // this.ontologySelected.emit(this.ontologiesMetadata.ontologies[0].id);
+        }
+
     }
 
     ngOnDestroy() {

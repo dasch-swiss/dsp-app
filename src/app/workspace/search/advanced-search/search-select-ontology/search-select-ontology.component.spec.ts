@@ -96,7 +96,7 @@ describe('SearchSelectOntologyComponent', () => {
         const initVal = await select.getValueText();
 
         // placeholder
-        expect(initVal).toEqual('Select an Ontology');
+        expect(initVal).toEqual('Select a data model');
 
         await select.open();
 

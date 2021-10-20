@@ -15,10 +15,11 @@ import {
     ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { MatSelectHarness } from '@angular/material/select/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ComparisonOperatorAndValue, Equals, ValueLiteral } from './specify-property-value/operator';
 import { SearchSelectPropertyComponent } from './search-select-property.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /**
  * test host component to simulate parent component.
@@ -89,10 +90,11 @@ describe('SearchSelectPropertyComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 BrowserAnimationsModule,
-                ReactiveFormsModule,
-                MatSelectModule,
+                MatCheckboxModule,
                 MatOptionModule,
-                MatCheckboxModule
+                MatSelectModule,
+                MatSlideToggleModule,
+                ReactiveFormsModule
             ],
             declarations: [
                 SearchSelectPropertyComponent,
@@ -171,15 +173,15 @@ describe('SearchSelectPropertyComponent', () => {
 
     });
 
-    it('should not show the sort checkbox when no property is selected', async () => {
+    it('should not show the sort slide-toggle when no property is selected', async () => {
 
-        const checkbox = await loader.getAllHarnesses(MatCheckboxHarness);
+        const slideToggle = await loader.getAllHarnesses(MatSlideToggleHarness);
 
-        expect(checkbox.length).toEqual(0);
+        expect(slideToggle.length).toEqual(0);
 
     });
 
-    it('should show the sort checkbox when a property with cardinality 1 is selected for the top level resource', async () => {
+    it('should show the sort slide-toggle when a property with cardinality 1 is selected for the top level resource', async () => {
 
         const select = await loader.getHarness(MatSelectHarness);
         await select.open();
@@ -200,13 +202,13 @@ describe('SearchSelectPropertyComponent', () => {
 
         testHostFixture.detectChanges();
 
-        const checkbox = await loader.getAllHarnesses(MatCheckboxHarness);
+        const slideToggle = await loader.getAllHarnesses(MatSlideToggleHarness);
 
-        expect(checkbox.length).toEqual(1);
+        expect(slideToggle.length).toEqual(1);
 
     });
 
-    it('should not show the sort checkbox when a property with cardinality 1 is selected for a linked resource', async () => {
+    it('should not show the sort slide-toggle when a property with cardinality 1 is selected for a linked resource', async () => {
 
         testHostComponent.topLevel = false;
 
@@ -229,9 +231,9 @@ describe('SearchSelectPropertyComponent', () => {
 
         testHostFixture.detectChanges();
 
-        const checkbox = await loader.getAllHarnesses(MatCheckboxHarness);
+        const slideToggle = await loader.getAllHarnesses(MatSlideToggleHarness);
 
-        expect(checkbox.length).toEqual(0);
+        expect(slideToggle.length).toEqual(0);
 
     });
 

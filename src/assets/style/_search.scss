@@ -68,7 +68,7 @@ $project-filter-width-small-device: 120px;
 }
 
 // form elements
-$full-input-width: 320;
+$full-input-width: 320px;
 $gc-large: decimal-floor($full-input-width / 1.618, 0) - 2;
 $gc-small: $full-input-width - $gc-large - 4;
 
@@ -93,19 +93,25 @@ $gc-small: $full-input-width - $gc-large - 4;
 }
 
 .small-field {
-  width: $gc-small + px;
+  width: $gc-small;
 }
 
 .medium-field {
-  width: $gc-large + px;
+  width: $gc-large;
 }
 
 .large-field {
-  min-width: $full-input-width + px;
+  min-width: $full-input-width;
 }
 
 .input-icon {
   color: $black-60-opacity;
+}
+
+app-search-date-value {
+  .date-picker-container {
+    display: inline-flex;
+  }
 }
 
 // responsive style: desktop

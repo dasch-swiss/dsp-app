@@ -122,6 +122,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     representationConstants = RepresentationConstants;
 
+    booleanValueTypeIri = Constants.BooleanValue;
+
     hasIncomingLinkIri = Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasIncomingLinkValue';
 
     project: ReadProject;

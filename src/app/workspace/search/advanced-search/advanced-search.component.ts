@@ -10,7 +10,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ApiResponseError, Constants, KnoraApiConnection, OntologiesMetadata } from '@dasch-swiss/dsp-js';
+import { ApiResponseError, Constants, KnoraApiConnection, OntologiesMetadata, OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { NotificationService } from 'src/app/main/services/notification.service';
@@ -100,6 +100,9 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
                     response.ontologies = response.ontologies.filter(onto => onto.attachedToProject !== Constants.SystemProjectIRI);
 
                     this.ontologiesMetadata = response;
+
+                    this.preSelectFirstOntology(this.ontologiesMetadata.ontologies);
+
                 },
                 (error: ApiResponseError) => {
                     this._notification.openSnackBar(error);
@@ -112,16 +115,26 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
                     response.ontologies = response.ontologies.filter(onto => onto.attachedToProject !== Constants.SystemProjectIRI);
 
                     this.ontologiesMetadata = response;
+
+                    this.preSelectFirstOntology(this.ontologiesMetadata.ontologies);
+
                 },
                 (error: ApiResponseError) => {
                     this._notification.openSnackBar(error);
                     this.errorMessage = error;
                 });
         }
+
     }
 
     setActiveOntology(ontologyIri: string) {
         this.activeOntology = ontologyIri;
+    }
+
+    preSelectFirstOntology(ontologies: OntologyMetadata[]) {
+        if (ontologies.length === 1) {
+            this.activeOntology = ontologies[0].id;
+        }
     }
 
     submit() {

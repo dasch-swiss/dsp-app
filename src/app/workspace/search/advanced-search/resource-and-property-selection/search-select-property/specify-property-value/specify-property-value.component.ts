@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Constants, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -95,7 +95,9 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
             this.formGroup.addControl('comparisonOperator', this.form);
         });
 
+        this.form.controls.comparisonOperator.setValue(this.comparisonOperators[0]);
     }
+
 
     ngOnDestroy() {
         this._closeComparisonOperatorChangesSubscription();
@@ -120,6 +122,9 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                 break;
 
             case Constants.BooleanValue:
+                this.comparisonOperators = [new Equals()];
+                break;
+
             case Constants.UriValue:
                 this.comparisonOperators = [new Equals(), new NotEquals(), new Exists()];
                 break;
@@ -152,7 +157,7 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                 break;
 
             default:
-                console.log('ERROR: Unsupported value type ' + this._property.objectType);
+                console.error('Advanced search: Unsupported value type ' + this._property.objectType);
 
         }
 

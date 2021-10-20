@@ -323,8 +323,8 @@ describe('SpecifyPropertyValueComponent', () => {
         const select = await loader.getHarness(MatSelectHarness);
         const initVal = await select.getValueText();
 
-        // placeholder
-        expect(initVal).toEqual('Comparison Operator');
+        // placeholder in case of only one operator:
+        expect(initVal).toEqual('is equal to');
 
         await select.open();
 
@@ -334,9 +334,9 @@ describe('SpecifyPropertyValueComponent', () => {
 
     });
 
-    it('should set the form to valid when an comparison operator has been chosen', async () => {
+    it('should set the form to valid when a comparison operator has been chosen', async () => {
 
-        expect(testHostComponent.specifyProperty.form.valid).toBe(false);
+        expect(testHostComponent.specifyProperty.form.valid).toBe(true);
 
         const select = await loader.getHarness(MatSelectHarness);
 

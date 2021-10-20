@@ -114,7 +114,7 @@ describe('BooleanValueComponent', () => {
 
             expect(testHostComponent.booleanValueComponent.mode).toEqual('read');
 
-            expect(valueReadModeNativeElement.innerText).toEqual('true');
+            expect(valueReadModeNativeElement.innerText).toEqual('check_box');
         });
 
         it('should make an existing value editable', () => {
@@ -127,7 +127,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
 
             checkboxEl = valueBooleanDebugElement.query(By.css('input[type="checkbox"]')).nativeElement;
-            checkboxLabel = valueBooleanDebugElement.query(By.css('span[class="mat-checkbox-label"]')).nativeElement;
 
             expect(testHostComponent.booleanValueComponent.mode).toEqual('update');
 
@@ -136,8 +135,6 @@ describe('BooleanValueComponent', () => {
             expect(testHostComponent.booleanValueComponent.form.valid).toBeFalsy();
 
             expect(checkboxEl.checked).toBe(true);
-
-            expect(checkboxLabel.innerText).toEqual('true');
 
             checkboxEl.click();
 
@@ -155,7 +152,6 @@ describe('BooleanValueComponent', () => {
 
             expect(checkboxEl.disabled).toBe(false);
 
-            expect(checkboxLabel.innerText).toEqual('false');
         });
 
         it('should validate an existing value with an added comment', () => {
@@ -168,7 +164,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
 
             checkboxEl = valueBooleanDebugElement.query(By.css('input[type="checkbox"]')).nativeElement;
-            checkboxLabel = valueBooleanDebugElement.query(By.css('span[class="mat-checkbox-label"]')).nativeElement;
 
             commentBooleanDebugElement = valueComponentDe.query(By.css('textarea.comment'));
             commentBooleanNativeElement = commentBooleanDebugElement.nativeElement;
@@ -180,8 +175,6 @@ describe('BooleanValueComponent', () => {
             expect(testHostComponent.booleanValueComponent.form.valid).toBeFalsy();
 
             expect(checkboxEl.checked).toBe(true);
-
-            expect(checkboxLabel.innerText).toEqual('true');
 
             commentBooleanNativeElement.value = 'this is a comment';
 
@@ -208,7 +201,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
 
             checkboxEl = valueBooleanDebugElement.query(By.css('input[type="checkbox"]')).nativeElement;
-            checkboxLabel = valueBooleanDebugElement.query(By.css('span[class="mat-checkbox-label"]')).nativeElement;
 
             expect(testHostComponent.booleanValueComponent.mode).toEqual('update');
 
@@ -218,15 +210,11 @@ describe('BooleanValueComponent', () => {
 
             expect(checkboxEl.checked).toBe(true);
 
-            expect(checkboxLabel.innerText).toEqual('true');
-
             checkboxEl.click();
 
             testHostFixture.detectChanges();
 
             expect(checkboxEl.checked).toBe(false);
-
-            expect(checkboxLabel.innerText).toEqual('false');
 
             testHostComponent.booleanValueComponent.resetFormControl();
 
@@ -236,7 +224,6 @@ describe('BooleanValueComponent', () => {
 
             expect(checkboxEl.checked).toBe(true);
 
-            expect(checkboxLabel.innerText).toEqual('true');
         });
 
         it('should set a new display value', () => {
@@ -250,7 +237,7 @@ describe('BooleanValueComponent', () => {
 
             testHostFixture.detectChanges();
 
-            expect(valueReadModeNativeElement.innerText).toEqual('false');
+            expect(valueReadModeNativeElement.innerText).toEqual('check_box_outline_blank');
 
             expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
         });
@@ -273,7 +260,6 @@ describe('BooleanValueComponent', () => {
         let valueBooleanDebugElement: DebugElement;
         let valueBooleanNativeElement;
         let checkboxEl;
-        let checkboxLabel;
         let commentBooleanDebugElement: DebugElement;
         let commentBooleanNativeElement;
 
@@ -292,7 +278,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanDebugElement = valueComponentDe.query(By.css('mat-checkbox'));
             valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
             checkboxEl = valueBooleanDebugElement.query(By.css('input[type="checkbox"]')).nativeElement;
-            checkboxLabel = valueBooleanDebugElement.query(By.css('span[class="mat-checkbox-label"]')).nativeElement;
 
             commentBooleanDebugElement = valueComponentDe.query(By.css('textarea.comment'));
             commentBooleanNativeElement = commentBooleanDebugElement.nativeElement;
@@ -301,7 +286,6 @@ describe('BooleanValueComponent', () => {
             expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
             expect(checkboxEl.disabled).toBe(false);
             expect(checkboxEl.checked).toBe(false);
-            expect(checkboxLabel.innerText).toEqual('false');
             expect(commentBooleanNativeElement.value).toEqual('');
         });
 

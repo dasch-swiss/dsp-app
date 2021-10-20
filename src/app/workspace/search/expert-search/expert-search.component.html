@@ -1,5 +1,5 @@
 <div class="expert-search-container">
-    <form [formGroup]="expertSearchForm" class="expert-search-form kui-form-content">
+    <form [formGroup]="expertSearchForm" class="expert-search-form app-form-content">
         <mat-form-field class="textarea-field large-field">
             <textarea matInput [formControlName]="'gravsearchquery'" cdkTextareaAutosize cdkAutosizeMinRows="12"
                 cdkAutosizeMaxRows="24" class="textarea-field-content" placeholder="Write your Gravsearch query">
@@ -13,7 +13,7 @@
             </mat-error>
         </mat-form-field>
 
-        <div class="kui-form-action">
+        <div class="app-form-action">
             <button class="reset" mat-button type="button" (click)="resetForm()">
                 Reset
             </button>

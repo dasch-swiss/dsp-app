@@ -16,6 +16,8 @@ export class BooleanValueComponent extends BaseValueDirective implements OnInit,
 
     @Input() displayValue?: ReadBooleanValue;
 
+    @Input() moreSpace?: boolean;
+
     valueFormControl: FormControl;
     commentFormControl: FormControl;
 

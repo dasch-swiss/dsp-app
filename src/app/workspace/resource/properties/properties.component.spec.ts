@@ -402,7 +402,11 @@ describe('PropertiesComponent', () => {
             // so the amount of add buttons on the page should increase by 1
             // standoff links value and has incoming link value are system props and cannot be added: -2
             addButtons = propertyViewComponentDe.queryAll(By.css('button.create'));
-            expect(addButtons.length).toEqual(18);
+            expect(addButtons.length).toEqual(17);
+
+            // in case of boolean value, we do not display the add button, but the boolean value itself
+            const booleanValue = propertyViewComponentDe.queryAll(By.css('.boolean-value'));
+            expect(booleanValue.length).toEqual(1);
 
         });
 
