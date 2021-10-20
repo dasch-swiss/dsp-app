@@ -1,5 +1,17 @@
 # Changelog
 
+### [6.4.1](https://www.github.com/dasch-swiss/dsp-app/compare/v6.4.0...v6.4.1) (2021-10-20)
+
+
+### Bug Fixes
+
+* **value:** fix boolean value issue ([#557](https://www.github.com/dasch-swiss/dsp-app/issues/557)) ([4d35cd2](https://www.github.com/dasch-swiss/dsp-app/commit/4d35cd26152313f79399ff280cc59619d0d2372e))
+
+
+### Maintenance
+
+* **deps:** bump mkdocs from 1.1.2 to 1.2.3 in /docs ([#556](https://www.github.com/dasch-swiss/dsp-app/issues/556)) ([5f8213c](https://www.github.com/dasch-swiss/dsp-app/commit/5f8213c3fccf4988fbf10ce1e011b6bdc261cb72))
+
 ## [6.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.3.0...v6.4.0) (2021-10-20)
 
 
