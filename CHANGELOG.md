@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.3.0...v6.4.0) (2021-10-20)
+
+
+### Enhancements
+
+* **ontology:** delete property from resource class (DSP-1854 / DEV-28) ([#499](https://www.github.com/dasch-swiss/dsp-app/issues/499)) ([436c270](https://www.github.com/dasch-swiss/dsp-app/commit/436c2704717d66fbb817589dda4c12ac50f6fece))
+* **value:** refactor boolean value (DEV-98) ([#554](https://www.github.com/dasch-swiss/dsp-app/issues/554)) ([7affa5e](https://www.github.com/dasch-swiss/dsp-app/commit/7affa5e7c94b35929d795e29380fb31b9906c520))
+
 ## [6.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.2.0...v6.3.0) (2021-10-15)
 
 
