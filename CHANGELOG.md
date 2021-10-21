@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.4.1...v6.5.0) (2021-10-21)
+
+
+### Enhancements
+
+* **ontology:** bring back the name input field (DEV-157) ([#559](https://www.github.com/dasch-swiss/dsp-app/issues/559)) ([51e539d](https://www.github.com/dasch-swiss/dsp-app/commit/51e539d88553a635bb4663dc8d185d79699ec03d))
+
 ### [6.4.1](https://www.github.com/dasch-swiss/dsp-app/compare/v6.4.0...v6.4.1) (2021-10-20)
 
 
