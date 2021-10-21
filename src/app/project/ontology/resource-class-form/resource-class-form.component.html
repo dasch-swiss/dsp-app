@@ -5,11 +5,26 @@
     <div class="resource-class-data">
         <div class="center more-space-top">
 
+            <!-- name -->
+            <mat-form-field class="large-field ontology-form-field">
+                <span matPrefix class="ontology-prefix-icon">
+                    <mat-icon>fingerprint</mat-icon>&nbsp;
+                </span>
+                <mat-label>Property name *</mat-label>
+                <input matInput formControlName="name" >
+                <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name">
+                    {{formErrors.name}}
+                </mat-hint>
+            </mat-form-field>
+
             <!-- label -->
-            <div class="large-field string-literal-container">
-                <app-string-literal-input [placeholder]="'Label *'" [value]="resourceClassLabels"
+            <div class="large-field string-literal-container more-space-top">
+                <app-string-literal-input
+                    [placeholder]="'Label *'"
+                    [value]="resourceClassLabels"
                     (enter)="submitData()"
-                    (dataChanged)="handleData($event, 'labels')">
+                    (touched)="resourceClassLabelsTouched = $event"
+                    (dataChanged)="handleData($event, 'label')">
                 </app-string-literal-input>
                 <mat-hint class="string-literal-error" *ngIf="formErrors.label">
                     {{ formErrors.label }}
@@ -18,8 +33,16 @@
 
             <!-- description -->
             <div class="large-field string-literal-container more-space-top">
-                <app-string-literal-input [placeholder]="'Comment *'" [value]="resourceClassComments" [textarea]="true"
-                    (dataChanged)="handleData($event, 'comments')"></app-string-literal-input>
+                <app-string-literal-input
+                    [placeholder]="'Comment *'"
+                    [value]="resourceClassComments"
+                    [textarea]="true"
+                    (touched)="resourceClassCommentsTouched = $event"
+                    (dataChanged)="handleData($event, 'comment')">
+                </app-string-literal-input>
+                <mat-hint class="string-literal-error" *ngIf="formErrors.comment">
+                    {{ formErrors.comment }}
+                </mat-hint>
             </div>
         </div>
 

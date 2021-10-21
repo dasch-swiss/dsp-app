@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Cardinality } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 
 /**
  * helper methods for the ontology editor
@@ -44,6 +44,17 @@ export class OntologyService {
         const pos = array.length - 2;
 
         return array[pos].toLowerCase();
+    }
+
+    /**
+     * get the name from the iri
+     * @param iri
+     * @returns name from iri
+     */
+    getNameFromIri(iri: string): string {
+        const array = iri.split(Constants.HashDelimiter);
+
+        return array[1];
     }
 
     /**

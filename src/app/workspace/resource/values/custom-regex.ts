@@ -24,4 +24,7 @@ export class CustomRegex {
     public static readonly SHORTNAME_REGEX = /^[a-zA-Z]+\S*$/;
 
     public static readonly ONTOLOGYNAME_REGEX = /^(?![vV][0-9]|[0-9]|[\u00C0-\u017F]).[a-zA-Z0-9]+\S*$/;
+
+    // regex to check ontology name: shouldn't start with a number or with 'v' followed by a number, spaces or special characters are not allowed
+    public static readonly ID_NAME_REGEX = /^(?![vV]+[0-9])+^([a-zA-Z])[a-zA-Z0-9_.-]*$/;
 }

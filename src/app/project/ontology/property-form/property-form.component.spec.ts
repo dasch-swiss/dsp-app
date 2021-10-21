@@ -243,17 +243,17 @@ describe('PropertyFormComponent', () => {
 
     });
 
-    it('should update labels when the value changes', () => {
+    it('should update labels when the value changes; error message should disapear', () => {
 
         const hostCompDe = simpleTextHostFixture.debugElement;
         const submitButton: DebugElement = hostCompDe.query(By.css('button.submit'));
         expect(submitButton.nativeElement.innerText).toContain('Update');
 
-        simpleTextHostComponent.propertyFormComponent.handleData([], 'labels');
+        simpleTextHostComponent.propertyFormComponent.handleData([{ language: 'de', value: 'New Label' }], 'label');
         simpleTextHostFixture.detectChanges();
 
-        const formInvalidMessageDe: DebugElement = hostCompDe.query(By.css('mat-hint'));
-        expect(formInvalidMessageDe.nativeElement.innerText).toEqual(' Label is required ');
+        const formInvalidMessageDe: DebugElement = hostCompDe.query(By.css('string-literal-error'));
+        expect(formInvalidMessageDe).toBeFalsy();
 
     });
 

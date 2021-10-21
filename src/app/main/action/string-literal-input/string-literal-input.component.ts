@@ -144,7 +144,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
 
         const form = this.form;
         const control = form.get('text');
-        this.touched.emit(control && control.dirty);
+        this.touched.emit(control.dirty || control.touched);
 
         this.updateStringLiterals(this.language, this.form.controls.text.value);
 

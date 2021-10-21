@@ -13,6 +13,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { existingNamesValidator } from 'src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 import { OntologyService } from '../ontology.service';
 
 export interface NewOntology {
@@ -51,9 +52,6 @@ export class OntologyFormComponent implements OnInit {
     ontologyComment: string;
 
     lastModificationDate: string;
-
-    // regex to check ontology name: shouldn't start with a number or with 'v' followed by a number, spaces or special characters are not allowed
-    nameRegex = /^(?![vV]+[0-9])+^([a-zA-Z])[a-zA-Z0-9_.-]*$/;
 
     // ontology name must not contain one of the following words
     forbiddenNames: string[] = [
@@ -183,7 +181,7 @@ export class OntologyFormComponent implements OnInit {
                 Validators.minLength(this.nameMinLength),
                 Validators.maxLength(this.nameMaxLength),
                 existingNamesValidator(this.existingNames),
-                Validators.pattern(this.nameRegex)
+                Validators.pattern(CustomRegex.ID_NAME_REGEX)
             ]),
             label: new FormControl({
                 value: this.ontologyLabel, disabled: false

@@ -20,7 +20,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { existingNamesValidator } from 'src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { OntologyService } from '../ontology.service';
@@ -65,11 +67,17 @@ export class PropertyFormComponent implements OnInit {
     propertyForm: FormGroup;
 
     formErrors = {
+        'name': '',
         'label': '',
         'guiAttr': ''
     };
 
     validationMessages = {
+        'name': {
+            'required': 'Name is required.',
+            'existingName': 'This name is already taken. Please choose another one.',
+            'pattern': 'Name shouldn\'t start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.'
+        },
         'label': {
             'required': 'Label is required.',
         },
@@ -101,8 +109,14 @@ export class PropertyFormComponent implements OnInit {
     error = false;
 
     labels: StringLiteral[] = [];
+    labelsTouched: boolean;
     comments: StringLiteral[] = [];
     guiAttributes: string[] = [];
+
+    // list of existing property names
+    existingNames: [RegExp] = [
+        new RegExp('anEmptyRegularExpressionWasntPossible')
+    ];
 
     dspConstants = Constants;
 
@@ -111,7 +125,7 @@ export class PropertyFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _ontologyService: OntologyService
+        private _os: OntologyService
     ) { }
 
     ngOnInit() {
@@ -127,6 +141,16 @@ export class PropertyFormComponent implements OnInit {
                 // a) in case of link value:
                 // set list of resource classes from response; needed for linkValue
                 this.resourceClasses = response.getAllClassDefinitions();
+
+                // set list of all existing property names to avoid same name twice
+                Object.entries(this.ontology.properties).forEach(
+                    ([key]) => {
+                        const name = this._os.getNameFromIri(key);
+                        this.existingNames.push(
+                            new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
+                        );
+                    }
+                );
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -168,7 +192,7 @@ export class PropertyFormComponent implements OnInit {
 
             // slice array
             // this slice value will be kept
-            // because there was the idea to shorten the array of restrcited elements
+            // because there was the idea to shorten the array of restricted elements
             // in case e.g. richtext can't be changed to simple text, then we shouldn't list the simple text item
             const slice = 0;
 
@@ -181,6 +205,14 @@ export class PropertyFormComponent implements OnInit {
         }
 
         this.propertyForm = this._fb.group({
+            'name': new FormControl({
+                value: (this.propertyInfo.propDef ? this._os.getNameFromIri(this.propertyInfo.propDef.id) : ''),
+                disabled: this.propertyInfo.propDef
+            }, [
+                Validators.required,
+                existingNamesValidator(this.existingNames),
+                Validators.pattern(CustomRegex.ID_NAME_REGEX)
+            ]),
             'propType': new FormControl({
                 value: this.propertyInfo.propType,
                 disabled: disablePropType || this.resClassIri
@@ -217,11 +249,9 @@ export class PropertyFormComponent implements OnInit {
             return;
         }
 
-        const form = this.propertyForm;
-
         Object.keys(this.formErrors).map(field => {
             this.formErrors[field] = '';
-            const control = form.get(field);
+            const control = this.propertyForm.get(field);
             if (control && control.dirty && !control.valid) {
                 const messages = this.validationMessages[field];
                 Object.keys(control.errors).map(key => {
@@ -232,14 +262,20 @@ export class PropertyFormComponent implements OnInit {
         });
     }
 
-    handleData(data: StringLiteral[], type: string) {
+    handleData(data: StringLiteral[], type: 'label' | 'comment') {
 
         switch (type) {
-            case 'labels':
+            case 'label':
                 this.labels = data;
+                const messages = this.validationMessages[type];
+                this.formErrors[type] = '';
+
+                if (this.labelsTouched && !this.labels.length) {
+                    this.formErrors[type] = messages['required'];
+                }
                 break;
 
-            case 'comments':
+            case 'comment':
                 this.comments = data;
                 break;
         }
@@ -420,7 +456,7 @@ export class PropertyFormComponent implements OnInit {
             // create mode: new property incl. gui type and attribute
             // submit property
             // set resource property name / id: randomized string
-            const uniquePropName: string = this._ontologyService.setUniqueName(this.ontology.id);
+            // const uniquePropName: string = this._os.setUniqueName(this.ontology.id);
 
             const onto = new UpdateOntology<CreateResourceProperty>();
 
@@ -429,7 +465,7 @@ export class PropertyFormComponent implements OnInit {
 
             // prepare payload for property
             const newResProp = new CreateResourceProperty();
-            newResProp.name = uniquePropName;
+            newResProp.name = this.propertyForm.controls['name'].value;
             newResProp.label = this.labels;
             newResProp.comment = (this.comments.length ? this.comments : this.labels);
             const guiAttr = this.propertyForm.controls['guiAttr'].value;
@@ -488,7 +524,7 @@ export class PropertyFormComponent implements OnInit {
 
         const propCard: IHasProperty = {
             propertyIndex: prop.id,
-            cardinality: this._ontologyService.translateCardinality(this.propertyForm.value.multiple, this.propertyForm.value.required),
+            cardinality: this._os.translateCardinality(this.propertyForm.value.multiple, this.propertyForm.value.required),
             guiOrder: this.guiOrder  // add new property to the end of current list of properties
         };
 

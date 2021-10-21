@@ -4,15 +4,17 @@
 <form [formGroup]="propertyForm" class="form-content">
 
     <p *ngIf="resClassIri && propertyInfo.propDef" class="note warning mat-caption center">
-        This property already exists. If you want to modify it, go to the "properties" view.
+        You're adding an already existing property to this class.
+        The property can't modified here. If you want to modify it,
+        go to the "properties" view.
         <!-- Be careful when editing it, it could have an effect in other resource classes if it is used there. -->
     </p>
 
     <div class="center">
 
         <!-- property type -->
-        <mat-form-field *ngIf="propertyInfo.propType" class="large-field property-type">
-            <span matPrefix class="property-type-icon">
+        <mat-form-field *ngIf="propertyInfo.propType" class="large-field ontology-form-field">
+            <span matPrefix class="ontology-prefix-icon">
                 <mat-icon>{{propertyForm.controls['propType'].value.icon}}</mat-icon>&nbsp;
             </span>
             <mat-label>Property type</mat-label>
@@ -31,20 +33,40 @@
             </mat-select>
         </mat-form-field>
 
+        <!-- name -->
+        <mat-form-field class="large-field ontology-form-field">
+            <span matPrefix class="ontology-prefix-icon">
+                <mat-icon>fingerprint</mat-icon>&nbsp;
+            </span>
+            <mat-label>Property name *</mat-label>
+            <input matInput formControlName="name" >
+            <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name">
+                {{formErrors.name}}
+            </mat-hint>
+        </mat-form-field>
+
         <!-- label -->
         <div class="large-field string-literal-container">
-            <app-string-literal-input [placeholder]="'Property label *'" [value]="labels" [disabled]="(resClassIri && propertyInfo.propDef)"
-                (dataChanged)="handleData($event, 'labels')">
+            <app-string-literal-input
+                [placeholder]="'Property label *'"
+                [value]="labels"
+                [disabled]="(resClassIri && propertyInfo.propDef)"
+                (touched)="labelsTouched = $event"
+                (dataChanged)="handleData($event, 'label')">
             </app-string-literal-input>
-            <mat-hint class="string-literal-error" *ngIf="!labels.length">
-                Label is required
+            <mat-hint class="string-literal-error" *ngIf="formErrors.label">
+                {{ formErrors.label }}
             </mat-hint>
         </div>
 
         <!-- comment/description -->
         <div class="large-field string-literal-container">
-            <app-string-literal-input [textarea]="true" [placeholder]="'Comment'" [value]="comments" [disabled]="(resClassIri && propertyInfo.propDef)"
-                (dataChanged)="handleData($event, 'comments')">
+            <app-string-literal-input
+                [placeholder]="'Comment'"
+                [value]="comments"
+                [disabled]="(resClassIri && propertyInfo.propDef)"
+                [textarea]="true"
+                (dataChanged)="handleData($event, 'comment')">
             </app-string-literal-input>
         </div>
 

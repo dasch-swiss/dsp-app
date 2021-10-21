@@ -15,7 +15,9 @@ import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-litera
 import { AppGlobal } from 'src/app/app-global';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { existingNamesValidator } from 'src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 import { OntologyService } from '../ontology.service';
 
 // nested form components; solution from:
@@ -87,19 +89,29 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
 
     // label and comment are stringLiterals
     resourceClassLabels: StringLiteralV2[] = [];
+    resourceClassLabelsTouched: boolean;
     resourceClassComments: StringLiteralV2[] = [];
+    resourceClassCommentsTouched: boolean;
 
-    // resource class name should be unique
-    existingResourceClassNames: [RegExp];
+    // list of existing class names
+    existingNames: [RegExp] = [
+        new RegExp('anEmptyRegularExpressionWasntPossible')
+    ];
 
     // form errors on the following fields:
     formErrors = {
+        'name': '',
         'label': '',
         'comment': ''
     };
 
     // in case of form error: show message
     validationMessages = {
+        'name': {
+            'required': 'Name is required.',
+            'existingName': 'This name is already taken. Please choose another one.',
+            'pattern': 'Name shouldn\'t start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.'
+        },
         'label': {
             'required': 'Label is required.'
         },
@@ -120,15 +132,10 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         private _cdr: ChangeDetectorRef,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _ontologyService: OntologyService
+        private _os: OntologyService
     ) { }
 
     ngOnInit() {
-
-        // init existing names
-        this.existingResourceClassNames = [
-            new RegExp('anEmptyRegularExpressionWasntPossible')
-        ];
 
         // set file representation or default resource class as title
         this.resourceClassTitle = this.name;
@@ -142,15 +149,14 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
                 // get all ontology resource classes:
                 // can be used to select resource class as gui attribute in link property,
                 // but also to avoid same name which should be unique
-                const classKeys: string[] = Object.keys(response.classes);
-                for (const c of classKeys) {
-                    this.existingResourceClassNames.push(
-                        new RegExp('(?:^|W)' + c.split('#')[1] + '(?:$|W)')
-                    );
-                }
-
-                // const propKeys: string[] = Object.keys(response.properties);
-
+                Object.entries(this.ontology.classes).forEach(
+                    ([key]) => {
+                        const name = this._os.getNameFromIri(key);
+                        this.existingNames.push(
+                            new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
+                        );
+                    }
+                );
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -185,6 +191,14 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         }
 
         this.resourceClassForm = this._fb.group({
+            name: new FormControl({
+                value: (this.edit ? this._os.getNameFromIri(this.iri) : ''),
+                disabled: this.edit
+            }, [
+                Validators.required,
+                existingNamesValidator(this.existingNames),
+                Validators.pattern(CustomRegex.ID_NAME_REGEX)
+            ]),
             label: new FormControl({
                 value: this.resourceClassLabels, disabled: false
             }, [
@@ -214,7 +228,6 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
                 Object.keys(control.errors).map(key => {
                     this.formErrors[field] += messages[key] + ' ';
                 });
-
             }
         });
 
@@ -225,17 +238,36 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
      * @param  {StringLiteral[]} data
      * @param  {string} type
      */
-    handleData(data: StringLiteral[], type: string) {
+    handleData(data: StringLiteral[], type: 'label' | 'comment') {
 
         switch (type) {
-            case 'labels':
+            case 'label':
                 this.resourceClassLabels = data;
+                this.handleError(this.resourceClassLabelsTouched, type);
                 break;
 
-            case 'comments':
+            case 'comment':
                 this.resourceClassComments = data;
+                this.handleError(this.resourceClassCommentsTouched, type);
                 break;
         }
+    }
+
+    /**
+     * error handle for string literals input
+     * @param touched
+     * @param type
+     */
+    handleError(touched: boolean, type: 'label' | 'comment') {
+
+        const checkValue = (type === 'label' ? this.resourceClassLabels : this.resourceClassComments);
+        const messages = this.validationMessages[type];
+
+        this.formErrors[type] = '';
+        if (touched && !checkValue.length) {
+            this.formErrors[type] = messages['required'];
+        }
+
     }
 
     //
@@ -296,10 +328,6 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
             // create mode
             // submit resource class data to knora and create resource class incl. cardinality
 
-            // set resource class name / id: randomized string
-            const uniqueClassName: string = this._ontologyService.setUniqueName(this.ontology.id);
-            // or const uniqueClassName: string = this._resourceClassFormService.setUniqueName(this.ontology.id, this.resourceClassLabels[0].value, 'class');
-
             const onto = new UpdateOntology<CreateResourceClass>();
 
             onto.id = this.ontology.id;
@@ -307,7 +335,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
 
             const newResClass = new CreateResourceClass();
 
-            newResClass.name = uniqueClassName;
+            newResClass.name = this.resourceClassForm.controls['name'].value;
             newResClass.label = this.resourceClassLabels;
             newResClass.comment = this.resourceClassComments;
             newResClass.subClassOf = [this.iri];
