@@ -3,7 +3,7 @@ name: Testing bug
 about: Create a bug report detected during user tests
 title: ''
 labels: bug, user-testing
-assignees: kilchenmann, flavens
+assignees: kilchenmann
 
 ---
 
