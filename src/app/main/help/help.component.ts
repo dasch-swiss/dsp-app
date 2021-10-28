@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection, VersionResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '../error/error-handler.service';
 import { GridItem } from '../grid/grid.component';
@@ -17,10 +17,8 @@ export class HelpComponent implements OnInit {
     loading = true;
 
     appVersion: string = appVersion;
-
-    sipiVersion = 'v3.0.0-rc.5';
-
     apiStatus: HealthResponse;
+    dspVersion: VersionResponse;
 
     docs: GridItem[] = [
         {
@@ -62,7 +60,7 @@ export class HelpComponent implements OnInit {
         {
             title: 'Sipi ',
             text: 'High-performance, IIIF compatible media storage server.',
-            url: 'https://github.com/dasch-swiss/Sipi/releases/tag/',
+            url: 'https://github.com/dasch-swiss/sipi/releases/tag/',
             urlText: 'Release notes'
         }
     ];
@@ -95,20 +93,21 @@ export class HelpComponent implements OnInit {
 
     ngOnInit() {
 
-        // set dsp-app version
-        this.tools[0].title += ' v' + this.appVersion;
-        this.tools[0].url += this.appVersion;
+        this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(
+            (response: ApiResponseData<VersionResponse>) => {
+                this.dspVersion = response.body;
 
-        // set dsp-sipi version
-        this.tools[2].title += this.sipiVersion;
-        this.tools[2].url += this.sipiVersion;
+                // set dsp-app version
+                this.tools[0].title += ' v' + this.appVersion;
+                this.tools[0].url += this.appVersion;
 
-        this._dspApiConnection.system.healthEndpoint.getHealthStatus().subscribe(
-            (response: ApiResponseData<HealthResponse>) => {
-                this.apiStatus = response.body;
-                const apiVersion = this.apiStatus.webapiVersion;
-                this.tools[1].title += apiVersion;
-                this.tools[1].url += apiVersion;
+                // set dsp-api version
+                this.tools[1].title += this.dspVersion.webapi;
+                this.tools[1].url += this.dspVersion.webapi;
+
+                // set dsp-sipi version
+                this.tools[2].title += this.dspVersion.sipi;
+                this.tools[2].url += this.dspVersion.sipi;
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
