@@ -1,5 +1,26 @@
 # Changelog
 
+## [7.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.5.0...v7.0.0) (2021-10-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* **error logging:** rollbar implementation (DEV-20) (#543)
+
+### Bug Fixes
+
+* **ontology:** use correct label (DEV-168) ([#564](https://www.github.com/dasch-swiss/dsp-app/issues/564)) ([70cc7d8](https://www.github.com/dasch-swiss/dsp-app/commit/70cc7d8b1f0a870791edc52974d4c2be13b54ec8))
+
+
+### Maintenance
+
+* **gh:** update issue templates ([#562](https://www.github.com/dasch-swiss/dsp-app/issues/562)) ([6d510c7](https://www.github.com/dasch-swiss/dsp-app/commit/6d510c7cc511d1d8e11d04bc70d9395846927ba7))
+
+
+### Enhancements
+
+* **error logging:** rollbar implementation (DEV-20) ([#543](https://www.github.com/dasch-swiss/dsp-app/issues/543)) ([d0a9e3f](https://www.github.com/dasch-swiss/dsp-app/commit/d0a9e3f98c83e7834febd1c4e4a06f09e44e5e91))
+
 ## [6.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.4.1...v6.5.0) (2021-10-21)
 
 
