@@ -1,16 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     ApiResponseData,
-    AuthenticationEndpointV2,
-    CredentialsResponse,
-    KnoraApiConfig,
-    KnoraApiConnection,
-    LoginResponse,
+    AuthenticationEndpointV2, LoginResponse,
     LogoutResponse,
     MockUsers,
     UsersEndpointAdmin
@@ -20,7 +16,7 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken, DspInstrumentationToken } from '../../declarations/dsp-api-tokens';
-import { DspDataDogConfig } from '../../declarations/dsp-instrumentation-config';
+import { DspDataDogConfig, DspInstrumentationConfig } from '../../declarations/dsp-instrumentation-config';
 import { Session, SessionService } from '../../services/session.service';
 import { LoginFormComponent } from './login-form.component';
 
@@ -63,6 +59,21 @@ describe('LoginFormComponent', () => {
 
         const dspDatadogSpy = new DspDataDogConfig(false, '', '', '', '');
 
+        const instrumentationConfig: DspInstrumentationConfig = {
+            environment: 'dev',
+            dataDog: {
+                enabled: false,
+                applicationId: 'app_id',
+                clientToken: 'client_token',
+                site: 'site',
+                service: 'dsp-app'
+            },
+            rollbar: {
+                enabled: false,
+                accessToken: 'rollbar_token'
+            }
+        };
+
         const authEndpointSpyObj = {
             admin: {
                 usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUser'])
@@ -77,6 +88,12 @@ describe('LoginFormComponent', () => {
                 LoginFormComponent,
                 TestHostComponent
             ],
+            imports: [
+                ReactiveFormsModule,
+                MatInputModule,
+                MatSnackBarModule,
+                BrowserAnimationsModule
+            ],
             providers: [
                 AppInitService,
                 SessionService,
@@ -90,14 +107,8 @@ describe('LoginFormComponent', () => {
                 },
                 {
                     provide: DspInstrumentationToken,
-                    useValue: dspDatadogSpy
+                    useValue: instrumentationConfig
                 },
-            ],
-            imports: [
-                ReactiveFormsModule,
-                MatInputModule,
-                MatSnackBarModule,
-                BrowserAnimationsModule
             ]
         })
             .compileComponents();
