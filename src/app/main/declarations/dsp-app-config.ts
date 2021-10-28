@@ -1,0 +1,5 @@
+export class DspAppConfig {
+    constructor(
+        public geonameToken: string
+    ) { }
+}

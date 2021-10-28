@@ -1,14 +1,15 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
+import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
@@ -22,6 +23,9 @@ describe('PermissionComponent', () => {
     let fixture: ComponentFixture<PermissionComponent>;
 
     beforeEach(waitForAsync(() => {
+
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+
         TestBed.configureTestingModule({
             declarations: [
                 PermissionComponent,
@@ -61,11 +65,33 @@ describe('PermissionComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
                 }
             ]
         })
             .compileComponents();
     }));
+
+    beforeEach(() => {
+
+        // mock cache service
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ProjectResponse = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(response.project as ReadProject);
+            }
+        );
+    });
 
     // mock localStorage
     beforeEach(() => {

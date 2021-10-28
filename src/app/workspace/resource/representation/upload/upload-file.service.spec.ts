@@ -15,8 +15,8 @@ describe('UploadFileService', () => {
     beforeEach(() => {
 
         const appInitSpy = {
-            config: {
-                'iiifUrl': 'https://iiif.dasch.swiss'
+            dspIiifConfig: {
+                iiifUrl: 'https://iiif.dasch.swiss'
             }
         };
 

@@ -210,9 +210,10 @@ describe('GeonameService', () => {
     let httpTestingController: HttpTestingController;
 
     const appInitSpy = {
-        config: {
+        dspAppConfig: {
             geonameToken: 'token'
         }
+
     };
 
     beforeEach(() => {

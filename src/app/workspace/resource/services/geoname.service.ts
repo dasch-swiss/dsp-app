@@ -45,7 +45,7 @@ export class GeonameService {
      */
     resolveGeonameID(id: string): Observable<DisplayPlace> {
 
-        return this._http.get<object>('https://ws.geonames.net/getJSON?geonameId=' + id + '&username=' + this._appInitService.config['geonameToken'] + '&style=short').pipe(
+        return this._http.get<object>('https://ws.geonames.net/getJSON?geonameId=' + id + '&username=' + this._appInitService.dspAppConfig.geonameToken + '&style=short').pipe(
             map(
                 (geo: { name: string; countryName: string; adminName1?: string; wikipediaURL?: string; lat: number; lng: number }) => { // assertions for TS compiler
 
@@ -83,8 +83,8 @@ export class GeonameService {
     searchPlace(searchString: string): Observable<SearchPlace[]> {
 
         return this._http.get<object>('https://ws.geonames.net/searchJSON?userName=' +
-                this._appInitService.config['geonameToken'] +
-                '&lang=en&style=full&maxRows=12&name_startsWith=' + encodeURIComponent(searchString)).pipe(
+            this._appInitService.dspAppConfig.geonameToken +
+            '&lang=en&style=full&maxRows=12&name_startsWith=' + encodeURIComponent(searchString)).pipe(
             map(
                 (places: {
                     geonames: { geonameId: string; name: string; countryName: string; adminName1?: string; fclName: string }[]; // assertions for TS compiler
@@ -117,7 +117,7 @@ export class GeonameService {
                 }
             ),
             catchError(error =>
-                // an error occurred
+            // an error occurred
                 throwError(error)
             )
         );

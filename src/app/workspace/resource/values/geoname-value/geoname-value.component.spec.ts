@@ -13,6 +13,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
+import { AppInitService } from 'src/app/app-init.service';
 
 
 
@@ -85,7 +86,8 @@ describe('GeonameValueComponent', () => {
             ],
             providers: [{
                 provide: GeonameService,
-                useValue: mockGeonameService
+                useValue: mockGeonameService,
+                AppInitService
             }]
         })
             .compileComponents();

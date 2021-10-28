@@ -12,10 +12,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
+import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
@@ -30,6 +31,9 @@ describe('CollaborationComponent', () => {
     let fixture: ComponentFixture<CollaborationComponent>;
 
     beforeEach(waitForAsync(() => {
+
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+
         TestBed.configureTestingModule({
             declarations: [
                 CollaborationComponent,
@@ -77,10 +81,32 @@ describe('CollaborationComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
                 }
             ]
         }).compileComponents();
     }));
+
+    beforeEach(() => {
+
+        // mock cache service
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ProjectResponse = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(response.project as ReadProject);
+            }
+        );
+    });
 
     // mock localStorage
     beforeEach(() => {

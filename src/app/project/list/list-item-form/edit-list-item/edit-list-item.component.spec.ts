@@ -1,14 +1,25 @@
 import { Component, DebugElement, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ApiResponseData, CreateChildNodeRequest, ListNodeInfoResponse, ListsEndpointAdmin, UpdateChildNodeRequest } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    CreateChildNodeRequest,
+    ListNodeInfoResponse,
+    ListsEndpointAdmin,
+    MockProjects,
+    ProjectResponse,
+    ReadProject,
+    UpdateChildNodeRequest
+} from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { AppInitService } from 'src/app/app-init.service';
 import { ProgressIndicatorComponent } from 'src/app/main/action/progress-indicator/progress-indicator.component';
+import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { EditListItemComponent } from './edit-list-item.component';
 
@@ -28,7 +39,7 @@ class TestHostUpdateChildNodeComponent {
 
     projectIri = 'http://rdfh.ch/projects/0001';
 
-    constructor() {}
+    constructor() { }
 }
 
 /**
@@ -53,7 +64,7 @@ class TestHostInsertChildNodeComponent {
 
     projectIri = 'http://rdfh.ch/projects/0001';
 
-    constructor() {}
+    constructor() { }
 }
 
 describe('EditListItemComponent', () => {
@@ -70,6 +81,8 @@ describe('EditListItemComponent', () => {
             }
         };
 
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+
         TestBed.configureTestingModule({
             declarations: [
                 EditListItemComponent,
@@ -84,14 +97,37 @@ describe('EditListItemComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
+                AppInitService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: listsEndpointSpyObj
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
                 }
             ]
         })
             .compileComponents();
     }));
+
+    beforeEach(() => {
+
+        // mock cache service
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ProjectResponse = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(response.project as ReadProject);
+            }
+        );
+    });
 
     describe('update list child node', () => {
         beforeEach(() => {

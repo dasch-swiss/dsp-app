@@ -2,7 +2,7 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,7 +14,6 @@ import { AngularSplitModule } from 'angular-split';
 import { MatJDNConvertibleCalendarDateAdapterModule } from 'jdnconvertiblecalendardateadapter';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { environment } from '../environments/environment';
 import { AppInitService } from './app-init.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,7 +26,7 @@ import { SelectedResourcesComponent } from './main/action/selected-resources/sel
 import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
 import { StringLiteralInputComponent } from './main/action/string-literal-input/string-literal-input.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
-import { DspApiConfigToken, DspApiConnectionToken, DspDataDogConfigToken } from './main/declarations/dsp-api-tokens';
+import { DspApiConfigToken, DspApiConnectionToken, DspAppConfigToken, DspInstrumentationToken } from './main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
@@ -80,6 +79,7 @@ import { AddGroupComponent } from './project/permission/add-group/add-group.comp
 import { PermissionComponent } from './project/permission/permission.component';
 import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
+import { RollbarErrorHandler } from './rollbar';
 import { GroupsListComponent } from './system/groups/groups-list/groups-list.component';
 import { GroupsComponent } from './system/groups/groups.component';
 import { ProjectsListComponent } from './system/projects/projects-list/projects-list.component';
@@ -344,28 +344,33 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         })
     ],
     providers: [
-        {
-            provide: APP_INITIALIZER,
-            useFactory: (appInitService: AppInitService) =>
-                (): Promise<void> => appInitService.Init('config', environment),
-            deps: [AppInitService],
-            multi: true
-        },
+        AppInitService,
         {
             provide: DspApiConfigToken,
             useFactory: (appInitService: AppInitService) => appInitService.dspApiConfig,
             deps: [AppInitService]
         },
         {
-            provide: DspDataDogConfigToken,
-            useFactory: (appInitService: AppInitService) => appInitService.dspDatadogConfig,
-            deps: [AppInitService]
-        },
-        {
             provide: DspApiConnectionToken,
             useFactory: (appInitService: AppInitService) => new KnoraApiConnection(appInitService.dspApiConfig),
             deps: [AppInitService]
+        },
+        {
+            provide: DspAppConfigToken,
+            useFactory: (appInitService: AppInitService) => appInitService.dspAppConfig,
+            deps: [AppInitService]
+        },
+        {
+            provide: DspInstrumentationToken,
+            useFactory: (appInitService: AppInitService) => appInitService.dspInstrumentationConfig,
+            deps: [AppInitService]
+        },
+        {
+            provide: ErrorHandler,
+            useClass: RollbarErrorHandler,
+            deps: [AppInitService]
         }
+
     ],
     bootstrap: [AppComponent]
 })

@@ -20,7 +20,8 @@ export interface UploadedFileResponse {
 })
 export class UploadFileService {
 
-    iiifUrl: string = (this._init.config['iiifUrl'].substr(-1) === '/') ? this._init.config['iiifUrl'] : this._init.config['iiifUrl'] + '/';
+    // fIXME: DEV-162
+    iiifUrl: string = (this._init.dspIiifConfig.iiifUrl.substr(-1) === '/') ? this._init.dspIiifConfig.iiifUrl : this._init.dspIiifConfig.iiifUrl + '/';
 
     constructor(
         private readonly _init: AppInitService,

@@ -1,4 +1,4 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -7,13 +7,14 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
+import { CacheService } from '../../main/cache/cache.service';
 import { AttributionTabViewComponent } from './attribution-tab-view/attribution-tab-view.component';
 import { BoardComponent } from './board.component';
 import { ContactsTabViewComponent } from './contacts-tab-view/contacts-tab-view.component';
@@ -26,6 +27,9 @@ describe('BoardComponent', () => {
     let fixture: ComponentFixture<BoardComponent>;
 
     beforeEach(waitForAsync(() => {
+
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+
         TestBed.configureTestingModule({
             declarations: [
                 BoardComponent,
@@ -69,10 +73,32 @@ describe('BoardComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
                 }
             ]
         }).compileComponents();
     }));
+
+    beforeEach(() => {
+
+        // mock cache service
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ProjectResponse = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(response.project as ReadProject);
+            }
+        );
+    });
 
     // mock localStorage
     beforeEach(() => {
