@@ -2,8 +2,10 @@ import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Inject, I
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
     ApiResponseError,
+    ClassDefinition,
     CreateResourceClass,
     KnoraApiConnection,
+    PropertyDefinition,
     ReadOntology,
     ResourceClassDefinitionWithAllLanguages,
     StringLiteral,
@@ -146,17 +148,25 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
 
                 this.lastModificationDate = this.ontology.lastModificationDate;
 
-                // get all ontology resource classes:
-                // can be used to select resource class as gui attribute in link property,
-                // but also to avoid same name which should be unique
-                Object.entries(this.ontology.classes).forEach(
-                    ([key]) => {
-                        const name = this._os.getNameFromIri(key);
-                        this.existingNames.push(
-                            new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-                        );
-                    }
-                );
+                const resourceClasses = response.getAllClassDefinitions();
+                const resourceProperties = response.getAllPropertyDefinitions();
+
+                // set list of all existing resource class names to avoid same name twice
+                resourceClasses.forEach((resClass: ClassDefinition) => {
+                    const name = this._os.getNameFromIri(resClass.id);
+                    this.existingNames.push(
+                        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
+                    );
+                });
+
+                // add all resource properties to the same list
+                resourceProperties.forEach((resProp: PropertyDefinition) => {
+                    const name = this._os.getNameFromIri(resProp.id);
+                    this.existingNames.push(
+                        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
+                    );
+                });
+
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);

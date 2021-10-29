@@ -8,6 +8,7 @@ import {
     IHasProperty,
     KnoraApiConnection,
     ListNodeInfo,
+    PropertyDefinition,
     ReadOntology,
     ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages,
@@ -141,23 +142,32 @@ export class PropertyFormComponent implements OnInit {
                 // a) in case of link value:
                 // set list of resource classes from response; needed for linkValue
                 this.resourceClasses = response.getAllClassDefinitions();
+                const resourceProperties = response.getAllPropertyDefinitions();
 
-                // set list of all existing property names to avoid same name twice
-                Object.entries(this.ontology.properties).forEach(
-                    ([key]) => {
-                        const name = this._os.getNameFromIri(key);
-                        this.existingNames.push(
-                            new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-                        );
-                    }
-                );
+                // set list of all existing resource property names to avoid same name twice
+                resourceProperties.forEach((resProp: PropertyDefinition) => {
+                    const name = this._os.getNameFromIri(resProp.id);
+                    this.existingNames.push(
+                        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
+                    );
+                });
+
+                // add all resource classes to the same list
+                this.resourceClasses.forEach((resClass: ClassDefinition) => {
+                    const name = this._os.getNameFromIri(resClass.id);
+                    this.existingNames.push(
+                        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
+                    );
+                });
+
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
             }
         );
 
-        // b) in case of list value:
+        // b) in case of list value:s
+
         // set list of lists; needed for listValue
         this._cache.get('currentOntologyLists').subscribe(
             (response: ListNodeInfo[]) => {

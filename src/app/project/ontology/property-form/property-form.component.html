@@ -72,34 +72,40 @@
 
         <!-- depending on type: display gui attribute -->
         <div *ngIf="showGuiAttr" [ngSwitch]="propertyInfo.propType.objectType">
-            <mat-form-field class="large-field property-type" *ngSwitchCase="dspConstants.ListValue">
-                <span matPrefix class="property-type-icon">
+            <mat-form-field class="large-field property-type ontology-form-field" *ngSwitchCase="dspConstants.ListValue">
+                <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
                 </span>
-                <mat-label>Select list</mat-label>
+                <mat-label>Select list *</mat-label>
                 <mat-select formControlName="guiAttr">
                     <mat-option *ngFor="let item of lists" [value]="item.id">
                         {{item.labels[0].value}}
                     </mat-option>
                 </mat-select>
+                <mat-hint *ngIf="formErrors.guiAttr">
+                    {{formErrors.guiAttr}}
+                </mat-hint>
             </mat-form-field>
 
-            <mat-form-field class="large-field property-type" *ngSwitchCase="dspConstants.LinkValue">
-                <span matPrefix class="property-type-icon">
+            <mat-form-field class="large-field property-type ontology-form-field" *ngSwitchCase="dspConstants.LinkValue">
+                <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
                 </span>
-                <mat-label>Select resource class</mat-label>
+                <mat-label>Select resource class *</mat-label>
                 <mat-select formControlName="guiAttr">
                     <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
                         {{item.label}}
                     </mat-option>
                 </mat-select>
+                <mat-hint *ngIf="formErrors.guiAttr">
+                    {{formErrors.guiAttr}}
+                </mat-hint>
             </mat-form-field>
 
             <!-- the gui-attribute for integer and decimal are not yet supported in the app -->
-            <mat-form-field class="large-field property-type"
+            <mat-form-field class="large-field property-type ontology-form-field"
                 *ngSwitchCase="propertyInfo.propType.objectType === dspConstants.IntValue || propertyInfo.propType.objectType === dspConstants.DecimalValue">
-                <span matPrefix class="property-type-icon">
+                <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
                 </span>
                 <mat-label>Define range</mat-label>
