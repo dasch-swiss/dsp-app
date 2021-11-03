@@ -11,10 +11,29 @@ import { APP_CONFIG } from './main/declarations/dsp-api-tokens';
 })
 export class AppInitService {
 
-    public dspApiConfig: KnoraApiConfig | null;
-    public dspIiifConfig: DspIiifConfig | null;
-    public dspAppConfig: DspAppConfig | null;
-    public dspInstrumentationConfig: DspInstrumentationConfig | null;
+    private _dspApiConfig: KnoraApiConfig;
+
+    get dspApiConfig(): KnoraApiConfig {
+        return this._dspApiConfig;
+    }
+
+    private _dspIiifConfig: DspIiifConfig;
+
+    get dspIiifConfig(): DspIiifConfig {
+        return this._dspIiifConfig;
+    }
+
+    private _dspAppConfig: DspAppConfig;
+
+    get dspAppConfig(): DspAppConfig {
+        return this._dspAppConfig;
+    }
+
+    private _dspInstrumentationConfig: DspInstrumentationConfig;
+
+    get dspInstrumentationConfig(): DspInstrumentationConfig {
+        return this._dspInstrumentationConfig;
+    }
 
     constructor(
         @Inject(APP_CONFIG) private _config: IConfig
@@ -30,8 +49,7 @@ export class AppInitService {
         const jsonWebToken = (typeof this._config.jsonWebToken === 'string' ? this._config.jsonWebToken : '');
         const logErrors = (typeof this._config.logErrors === 'boolean' ? this._config.logErrors : false);
 
-        // init dsp-api configuration
-        this.dspApiConfig = new KnoraApiConfig(
+        this._dspApiConfig = new KnoraApiConfig(
             this._config.apiProtocol,
             this._config.apiHost,
             apiPort,
@@ -44,7 +62,7 @@ export class AppInitService {
         const iiifPath = (typeof this._config.iiifPath === 'string' ? this._config.iiifPath : '');
 
         // init iiif configuration
-        this.dspIiifConfig = new DspIiifConfig(
+        this._dspIiifConfig = new DspIiifConfig(
             this._config.iiifProtocol,
             this._config.iiifHost,
             iiifPort,
@@ -52,12 +70,12 @@ export class AppInitService {
         );
 
         // init dsp app extended configuration
-        this.dspAppConfig = new DspAppConfig(
+        this._dspAppConfig = new DspAppConfig(
             this._config.geonameToken
         );
 
         // init instrumentation configuration
-        this.dspInstrumentationConfig = new DspInstrumentationConfig(
+        this._dspInstrumentationConfig = new DspInstrumentationConfig(
             this._config.instrumentation.environment,
             new DspDataDogConfig(
                 this._config.instrumentation.dataDog.enabled,

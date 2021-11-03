@@ -20,9 +20,6 @@ export interface UploadedFileResponse {
 })
 export class UploadFileService {
 
-    // fIXME: DEV-162
-    iiifUrl: string = (this._init.dspIiifConfig.iiifUrl.substr(-1) === '/') ? this._init.dspIiifConfig.iiifUrl : this._init.dspIiifConfig.iiifUrl + '/';
-
     constructor(
         private readonly _init: AppInitService,
         private readonly _http: HttpClient,
@@ -35,7 +32,7 @@ export class UploadFileService {
      */
     upload(file: FormData): Observable<UploadedFileResponse> {
 
-        const uploadUrl = `${this.iiifUrl}upload`;
+        const uploadUrl = `${this._init.dspIiifConfig.iiifUrl}/upload`;
 
         // checks if user is logged in
         const jwt = this._session.getSession()?.user.jwt;
