@@ -101,13 +101,12 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     @Input() resourceIri: string;
     @Input() project: string;
     @Input() activateRegion?: string; // highlight a region
-
     @Input() compoundNavigation?: DspCompoundPosition;
+    @Input() currentTab: string;
 
     @Output() goToPage = new EventEmitter<number>();
 
     @Output() regionClicked = new EventEmitter<string>();
-
 
     @Output() regionAdded = new EventEmitter<string>();
 
@@ -150,12 +149,14 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         }
         if (changes['images']) {
             this._openImages();
-            this._renderRegions();
             this._unhighlightAllRegions();
             // tODO: check if this is necessary or could be handled below
             //  (remove the 'else' before the 'if', so changes['activateRegion'] is always checked for)
             if (this.activateRegion !== undefined) {
                 this._highlightRegion(this.activateRegion);
+            }
+            if (this.currentTab === 'annotations') {
+                this.renderRegions();
             }
         } else if (changes['activateRegion']) {
             this._unhighlightAllRegions();
@@ -193,7 +194,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         if (!this._viewer) {
             this._setupViewer();
         }
-        this._renderRegions();
+        this.renderRegions();
     }
 
     /**
@@ -204,6 +205,96 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
         this.regionDrawMode = true;
         this._viewer.setMouseNavEnabled(false);
+    }
+
+    /**
+     * adds a ROI-overlay to the viewer for every region of every image in this.images
+     */
+    renderRegions(): void {
+        /**
+         * sorts rectangular regions by surface, so all rectangular regions are clickable.
+         * Non-rectangular regions are ignored.
+         *
+         * @param geom1 first region.
+         * @param geom2 second region.
+         */
+        const sortRectangularRegion = (geom1: GeometryForRegion, geom2: GeometryForRegion) => {
+
+            if (geom1.geometry.type === 'rectangle' && geom2.geometry.type === 'rectangle') {
+
+                const surf1 = StillImageComponent.surfaceOfRectangularRegion(geom1.geometry);
+                const surf2 = StillImageComponent.surfaceOfRectangularRegion(geom2.geometry);
+
+                // if reg1 is smaller than reg2, return 1
+                // reg1 then comes after reg2 and thus is rendered later
+                if (surf1 < surf2) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+
+            } else {
+                return 0;
+            }
+
+        };
+
+        this.removeOverlays();
+
+        let imageXOffset = 0; // see documentation in this.openImages() for the usage of imageXOffset
+
+        for (const image of this.images) {
+
+            const stillImage = image.fileValue as ReadStillImageFileValue;
+            const aspectRatio = (stillImage.dimY / stillImage.dimX);
+
+            // collect all geometries belonging to this page
+            const geometries: GeometryForRegion[] = [];
+            image.annotations.map((reg) => {
+
+                this._regions[reg.regionResource.id] = [];
+                const geoms = reg.getGeometries();
+
+                geoms.map((geom) => {
+                    const geomForReg = new GeometryForRegion(geom.geometry, reg.regionResource);
+
+                    geometries.push(geomForReg);
+                });
+            });
+
+            // sort all geometries belonging to this page
+            geometries.sort(sortRectangularRegion);
+
+            // render all geometries for this page
+            for (const geom of geometries) {
+
+                const geometry = geom.geometry;
+                this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label);
+
+            }
+
+            imageXOffset++;
+        }
+
+    }
+
+    /**
+     * removes SVG overlays from the DOM.
+     */
+    removeOverlays() {
+        for (const reg in this._regions) {
+            if (this._regions.hasOwnProperty(reg)) {
+                for (const pol of this._regions[reg]) {
+                    if (pol instanceof HTMLDivElement) {
+                        pol.remove();
+                    }
+                }
+            }
+        }
+
+        this._regions = {};
+
+        this._viewer.clearOverlays();
     }
 
     /**
@@ -366,27 +457,6 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     }
 
     /**
-     * removes SVG overlays from the DOM.
-     */
-    private _removeOverlays() {
-
-        for (const reg in this._regions) {
-            if (this._regions.hasOwnProperty(reg)) {
-                for (const pol of this._regions[reg]) {
-                    if (pol instanceof HTMLDivElement) {
-                        pol.remove();
-                    }
-                }
-            }
-        }
-
-        this._regions = {};
-
-        // tODO: make this work by using osdviewer's addOverlay method
-        this._viewer.clearOverlays();
-    }
-
-    /**
      * initializes the OpenSeadragon _viewer
      */
     private _setupViewer(): void {
@@ -442,7 +512,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         // display only the defined range of this.images
         const tileSources: object[] = this._prepareTileSourcesFromFileValues(fileValues);
 
-        this._removeOverlays();
+        this.removeOverlays();
         this._viewer.open(tileSources);
 
     }
@@ -490,78 +560,6 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         }
 
         return tileSources;
-    }
-
-    /**
-     * adds a ROI-overlay to the viewer for every region of every image in this.images
-     */
-    private _renderRegions(): void {
-
-        /**
-         * sorts rectangular regions by surface, so all rectangular regions are clickable.
-         * Non-rectangular regions are ignored.
-         *
-         * @param geom1 first region.
-         * @param geom2 second region.
-         */
-        const sortRectangularRegion = (geom1: GeometryForRegion, geom2: GeometryForRegion) => {
-
-            if (geom1.geometry.type === 'rectangle' && geom2.geometry.type === 'rectangle') {
-
-                const surf1 = StillImageComponent.surfaceOfRectangularRegion(geom1.geometry);
-                const surf2 = StillImageComponent.surfaceOfRectangularRegion(geom2.geometry);
-
-                // if reg1 is smaller than reg2, return 1
-                // reg1 then comes after reg2 and thus is rendered later
-                if (surf1 < surf2) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-
-            } else {
-                return 0;
-            }
-
-        };
-
-        this._removeOverlays();
-
-        let imageXOffset = 0; // see documentation in this.openImages() for the usage of imageXOffset
-
-        for (const image of this.images) {
-
-            const stillImage = image.fileValue as ReadStillImageFileValue;
-            const aspectRatio = (stillImage.dimY / stillImage.dimX);
-
-            // collect all geometries belonging to this page
-            const geometries: GeometryForRegion[] = [];
-            image.annotations.map((reg) => {
-
-                this._regions[reg.regionResource.id] = [];
-                const geoms = reg.getGeometries();
-
-                geoms.map((geom) => {
-                    const geomForReg = new GeometryForRegion(geom.geometry, reg.regionResource);
-
-                    geometries.push(geomForReg);
-                });
-            });
-
-            // sort all geometries belonging to this page
-            geometries.sort(sortRectangularRegion);
-
-            // render all geometries for this page
-            for (const geom of geometries) {
-
-                const geometry = geom.geometry;
-                this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label);
-
-            }
-
-            imageXOffset++;
-        }
-
     }
 
     /**

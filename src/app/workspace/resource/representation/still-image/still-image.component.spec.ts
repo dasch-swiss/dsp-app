@@ -75,6 +75,7 @@ function makeRegion(geomString: string[], iri: string): ReadResource {
         <app-still-image [images]="stillImageFileRepresentations"
                          [imageCaption]="caption"
                          [activateRegion]="inputActivateRegion"
+                         [currentTab]="'annotations'"
                          (regionClicked)="regHovered($event)">
         </app-still-image>`
 })

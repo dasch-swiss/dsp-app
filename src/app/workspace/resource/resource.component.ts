@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
 import {
     ActivatedRoute,
@@ -27,7 +28,7 @@ import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { IncomingService } from './incoming.service';
 import { PropertyInfoValues } from './properties/properties.component';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
-import { Region } from './representation/still-image/still-image.component';
+import { Region, StillImageComponent } from './representation/still-image/still-image.component';
 import { ValueOperationEventService } from './services/value-operation-event.service';
 
 @Component({
@@ -37,6 +38,8 @@ import { ValueOperationEventService } from './services/value-operation-event.ser
     providers: [ValueOperationEventService] // provide service on the component level so that each implementation of this component has its own instance.
 })
 export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
+
+    @ViewChild('stillImage') stillImageComponent: StillImageComponent;
 
     @Input() resourceIri: string;
 
@@ -53,6 +56,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     selectedRegion: string;
 
     selectedTab = 0;
+
+    selectedTabLabel: string;
 
     // list of representations to be displayed
     // --> TODO: will be expanded with | MovingImageRepresentation[] | AudioRepresentation[] etc.
@@ -197,6 +202,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 const res = new DspResource(response);
 
                 this.resource = res;
+                this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
 
                 // get information about the logged-in user, if one is logged-in
                 if (this._session.getSession()) {
@@ -270,6 +276,17 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             }
         );
     }
+
+    tabChanged(e: MatTabChangeEvent) {
+        if (e.tab.textLabel === 'annotations') {
+            this.stillImageComponent.renderRegions();
+        } else {
+            this.stillImageComponent.removeOverlays();
+        }
+
+        this.selectedTabLabel = e.tab.textLabel;
+    }
+
     /**
      * gather resource property information
      */
