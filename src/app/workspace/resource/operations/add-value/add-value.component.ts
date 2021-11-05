@@ -50,7 +50,12 @@ export class AddValueComponent implements OnInit, AfterViewInit {
     // 0 will display a loading animation
     progressIndicatorStatus = 0;
 
-    progressIndicatorColor = 'blue';
+    // type of given displayValue
+    // or knora-api-js-lib class representing the value
+    valueTypeOrClass: string;
+
+    // gui element in case of textValue
+    textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -65,6 +70,11 @@ export class AddValueComponent implements OnInit, AfterViewInit {
         // we need to use the ValueTypeService in order to assign it the correct object type for the ngSwitch in the template
         if (this.resourcePropertyDefinition.objectType === 'http://api.knora.org/ontology/knora-api/v2#TextValue') {
             this.resourcePropertyDefinition.objectType = this._valueService.getTextValueClass(this.resourcePropertyDefinition);
+
+            if (this.resourcePropertyDefinition.objectType === 'ReadTextValueAsString') {
+                // handle the correct gui element depending on guiEle property
+                this.textValueGuiEle = this._valueService.getTextValueGuiEle(this.resourcePropertyDefinition.guiElement);
+            }
         }
 
     }

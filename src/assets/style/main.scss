@@ -2,8 +2,8 @@
 @import "theme";
 @import "layout";
 @import "elements";
-@import "viewer";
 @import "search";
+@import "viewer";
 @import "ontology";
 
 body {
@@ -179,4 +179,9 @@ app-color-value {
 
 button.space-reducer {
   margin: 0;
+}
+
+// ckEditor
+.ck-editor__editable_inline {
+  min-height: 256px;
 }

@@ -16,6 +16,7 @@ import * as Editor from 'ckeditor5-custom-build';
 import { Subscription } from 'rxjs';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
+import { ckEditor } from '../ck-editor';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -59,9 +60,6 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
         '<br>': '<br/>'
     };
 
-    // tODO: get this from config via AppInitService
-    readonly resourceBasePath = 'http://rdfh.ch/';
-
     constructor(@Inject(FormBuilder) private fb: FormBuilder) {
         super();
     }
@@ -86,46 +84,7 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
     ngOnInit() {
 
         this.editor = Editor;
-
-        this.editorConfig = {
-            entities: false,
-            link: {
-                addTargetToExternalLinks: false,
-                decorators: {
-                    isInternal: {
-                        // label: 'internal link to a Knora resource',
-                        mode: 'automatic', // automatic requires callback -> but the callback is async and the user could save the text before the check ...
-                        callback: url =>  /* console.log(url, url.startsWith( 'http://rdfh.ch/' ));*/
-                            !!url && url.startsWith(this.resourceBasePath)
-                        ,
-                        attributes: {
-                            class: Constants.SalsahLink
-                        }
-                    }
-                }
-            },
-            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList',
-                'numberedList', 'blockQuote', 'underline', 'strikethrough', 'subscript', 'superscript', 'horizontalline', 'insertTable', 'code', 'codeBlock', 'removeformat', 'redo', 'undo'],
-            heading: {
-                options: [
-                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                    { model: 'heading1', view: 'h1', title: 'Heading 1' },
-                    { model: 'heading2', view: 'h2', title: 'Heading 2' },
-                    { model: 'heading3', view: 'h3', title: 'Heading 3' },
-                    { model: 'heading4', view: 'h4', title: 'Heading 4' },
-                    { model: 'heading5', view: 'h5', title: 'Heading 5' },
-                    { model: 'heading6', view: 'h6', title: 'Heading 6' },
-                    { model: 'formatted', view: 'pre', title: 'Formatted' },
-                    { model: 'cite', view: 'cite', title: 'Cited' }
-
-                ]
-            },
-            codeBlock: {
-                languages: [
-                    { language: 'plaintext', label: 'Plain text', class: '' }
-                ]
-            }
-        };
+        this.editorConfig = ckEditor.config;
 
         // initialize form control elements
         this.valueFormControl = new FormControl(null);

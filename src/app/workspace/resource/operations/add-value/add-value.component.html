@@ -1,7 +1,7 @@
 <div class="grid-container">
     <div class="value-component">
         <span [ngSwitch]="resourcePropertyDefinition.objectType">
-            <app-text-value-as-string #createVal *ngSwitchCase="'ReadTextValueAsString'" [mode]="mode"></app-text-value-as-string>
+            <app-text-value-as-string #createVal *ngSwitchCase="'ReadTextValueAsString'" [mode]="mode" [guiElement]="textValueGuiEle"></app-text-value-as-string>
             <app-text-value-as-html #createVal *ngSwitchCase="'ReadTextValueAsHtml'" [mode]="mode"></app-text-value-as-html>
             <app-text-value-as-xml #createVal *ngSwitchCase="'ReadTextValueAsXml'" [mode]="mode"></app-text-value-as-xml>
             <app-int-value #createVal *ngSwitchCase="constants.IntValue" [mode]="mode"></app-int-value>
@@ -35,6 +35,6 @@
             (click)="cancelAddValue()">
             <mat-icon>cancel</mat-icon>
         </button>
-        <app-progress-indicator *ngIf="submittingValue" [status]="progressIndicatorStatus" [color]="progressIndicatorColor"></app-progress-indicator>
+        <app-progress-indicator *ngIf="submittingValue" [status]="progressIndicatorStatus"></app-progress-indicator>
     </div>
 </div>

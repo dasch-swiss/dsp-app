@@ -357,7 +357,7 @@ describe('DisplayEditComponent', () => {
 
         const userServiceSpy = jasmine.createSpyObj('UserService', ['getUser']);
 
-        const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getValueTypeOrClass', 'isReadOnly']);
+        const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getValueTypeOrClass', 'getTextValueGuiEle', 'isReadOnly']);
 
         TestBed.configureTestingModule({
             imports: [
@@ -438,6 +438,11 @@ describe('DisplayEditComponent', () => {
         // spy for getValueTypeOrClass
         (valueServiceSpy as jasmine.SpyObj<ValueService>).getValueTypeOrClass.and.callFake(
             (value: ReadValue) => valueService.getValueTypeOrClass(value)
+        );
+
+        // spy for getTextValueGuiEle
+        (valueServiceSpy as jasmine.SpyObj<ValueService>).getTextValueGuiEle.and.callFake(
+            (guiEle: string) => valueService.getTextValueGuiEle(guiEle)
         );
 
         // spy for isReadOnly

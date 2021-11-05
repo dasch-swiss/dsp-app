@@ -4,9 +4,19 @@
 </span>
 <ng-template #showForm>
     <span [formGroup]="form">
-        <mat-form-field class="large-field child-value-component" floatLabel="never">
-            <input *ngIf="!textArea" matInput [formControlName]="'value'" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher">
-            <textarea *ngIf="textArea" matInput [formControlName]="'value'" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher"></textarea>
+        <mat-form-field *ngIf="guiElement !== 'richText'; else showRichText" class="large-field child-value-component"
+            floatLabel="never">
+
+            <!-- default gui-element: simple text -->
+            <input *ngIf="guiElement === 'simpleText'" matInput [formControlName]="'value'" class="value"
+                placeholder="Text value" type="text" [errorStateMatcher]="matcher">
+
+            <!-- gui-element: text area -->
+            <textarea *ngIf="guiElement === 'textArea'" matInput [formControlName]="'value'" class="value"
+                placeholder="Text value" type="text" [errorStateMatcher]="matcher" [mat-autosize]="true"
+                [matAutosizeMaxRows]="12" [matAutosizeMinRows]="6"></textarea>
+            <!-- <textarea *ngSwitchCase="'richText'" matInput [formControlName]="'value'" MatTextareaAutosize [mat-autosize]="true" [matAutosizeMaxRows]="10" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher"></textarea> -->
+
             <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') &&
                 (valueFormControl.touched || valueFormControl.dirty)">
                 <span class="custom-error-message">New value must be different than the current value.</span>
@@ -15,19 +25,19 @@
                 A text value is <strong>required</strong>.
             </mat-error>
             <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
-                <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
+                <span class="custom-error-message">This value already exists for this property. Duplicate values are not
+                    allowed.</span>
             </mat-error>
         </mat-form-field>
+        <!-- gui-element: rich-text -->
+        <ng-template #showRichText>
+            <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor"></ckeditor>
+        </ng-template>
+
+        <!-- comment -->
         <mat-form-field *ngIf="!commentDisabled" class="large-field value-component-comment">
-            <textarea matInput
-                      cdkTextareaAutosize
-                      cdkAutosizeMinRows="1"
-                      cdkAutosizeMaxRows="6"
-                      [formControlName]="'comment'"
-                      class="comment"
-                      placeholder="Comment"
-                      type="text"
-                      spellcheck="false">
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"
+                [formControlName]="'comment'" class="comment" placeholder="Comment" type="text" spellcheck="false">
             </textarea>
         </mat-form-field>
     </span>

@@ -50,7 +50,7 @@ import { ValueService } from '../../services/value.service';
 
             // fade in when created.
             transition(':enter', [
-            // the styles start from this point when the element appears
+                // the styles start from this point when the element appears
                 style({ opacity: 0 }),
                 // and animate toward the "in" state above
                 animate(150)
@@ -58,7 +58,7 @@ import { ValueService } from '../../services/value.service';
 
             // fade out when destroyed.
             transition(':leave',
-            // fading out uses a different syntax, with the "style" being passed into animate()
+                // fading out uses a different syntax, with the "style" being passed into animate()
                 animate(150, style({ opacity: 0 })))
         ])
     ]
@@ -110,7 +110,8 @@ export class DisplayEditComponent implements OnInit {
 
     showDateLabels = false;
 
-    textArea = false;
+    // gui element in case of textValue
+    textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
 
     dateFormat: string;
 
@@ -146,8 +147,12 @@ export class DisplayEditComponent implements OnInit {
             (propDef: ResourcePropertyDefinition) => propDef.id === this.displayValue.property
         );
 
-        if(resPropDef[0].guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
-            this.textArea = true;
+        // we should also take the gui element into account in case of text value
+        // since simple text values and rich text values share the same object type 'TextValue',
+        // we need to use the ValueTypeService in order to assign it the correct object type for the ngSwitch in the template
+        if (this.valueTypeOrClass === 'ReadTextValueAsString') {
+            // handle the correct gui element depending on guiEle property
+            this.textValueGuiEle = this._valueService.getTextValueGuiEle(resPropDef[0].guiElement);
         }
 
         if (resPropDef.length !== 1) {
@@ -312,7 +317,7 @@ export class DisplayEditComponent implements OnInit {
 
         this._dspApiConnection.v2.values.deleteValue(updateRes as UpdateResource<DeleteValue>).pipe(
             mergeMap((res: DeleteValueResponse) => {
-            // emit a ValueDeleted event to the listeners in resource-view component to trigger an update of the UI
+                // emit a ValueDeleted event to the listeners in resource-view component to trigger an update of the UI
                 this._valueOperationEventService.emit(new EmitEvent(Events.ValueDeleted, new DeletedEventValue(deleteVal)));
                 return res.result;
             })).subscribe();
@@ -388,7 +393,7 @@ export class DisplayEditComponent implements OnInit {
             // find the corresponding standoff link value
             const referredResStandoffLinkVal: ReadValue[] = standoffLinkPropInfoVals[0].values.filter(
                 (standoffLinkVal: ReadValue) => standoffLinkVal instanceof ReadLinkValue
-                        && (standoffLinkVal as ReadLinkValue).linkedResourceIri === resIri
+                    && (standoffLinkVal as ReadLinkValue).linkedResourceIri === resIri
             );
 
             // if no corresponding standoff link value was found,

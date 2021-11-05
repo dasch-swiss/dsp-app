@@ -72,7 +72,22 @@ export class ValueService {
             default:
                 return this._readTextValueAsString;
         }
+    }
 
+    /**
+     * given a salsah gui element IRI, determines the short type of it
+     *
+     * @param guiEle the given salsah gui element iri.
+     */
+    getTextValueGuiEle(guiEle: string): 'simpleText' | 'textArea' | 'richText' {
+        switch (guiEle) {
+            case 'http://api.knora.org/ontology/salsah-gui/v2#Textarea':
+                return 'textArea';
+            case 'http://api.knora.org/ontology/salsah-gui/v2#Richtext':
+                return 'richText';
+            default:
+                return 'simpleText';
+        }
     }
 
     /**

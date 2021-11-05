@@ -1,9 +1,13 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
-import { CreateTextValueAsString, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
+import { Constants, CreateTextValueAsString, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
+
+import * as Editor from 'ckeditor5-custom-build';
+import { ckEditor } from '../ck-editor';
+
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -18,6 +22,8 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     @Input() displayValue?: ReadTextValueAsString;
     @Input() textArea?: boolean = false;
 
+    @Input() guiElement: 'simpleText' | 'textArea' | 'richText' = 'simpleText';
+
     valueFormControl: FormControl;
     commentFormControl: FormControl;
 
@@ -26,6 +32,11 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     valueChangesSubscription: Subscription;
     matcher = new ValueErrorStateMatcher();
     customValidators = [];
+
+    // https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/angular.html
+    editor: Editor;
+    editorConfig;
+
 
     constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
         super();
@@ -57,6 +68,11 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
             value: this.valueFormControl,
             comment: this.commentFormControl
         });
+
+        if (this.guiElement === 'richText') {
+            this.editor = Editor;
+            this.editorConfig = ckEditor.config;
+        }
 
         this.resetFormControl();
 

@@ -1,7 +1,3 @@
-@import "./config";
-@import "./mixins";
-@import "./responsive";
-
 // css for parent value components
 
 .read-mode-view {
@@ -14,7 +10,11 @@
 
 .child-value-component,
 .value-component-comment {
-  display: block;
+  display: block !important;
+
+  textarea.mat-input-element.cdk-textarea-autosize {
+    resize: vertical;
+  }
 }
 
 .parent-component-wrapper .value-component-comment {
