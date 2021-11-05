@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { AppInitService } from './app-init.service';
 import { IConfig } from './main/declarations/app-config';
-import { APP_CONFIG } from './main/declarations/dsp-api-tokens';
+import { APP_CONFIG, DspInstrumentationToken } from './main/declarations/dsp-api-tokens';
+import { DspDataDogConfig, DspInstrumentationConfig } from './main/declarations/dsp-instrumentation-config';
 
 describe('TestService', () => {
     let service: AppInitService;
@@ -34,10 +35,34 @@ describe('TestService', () => {
         }
     };
 
+    const dspDatadogSpy = new DspDataDogConfig(false, '', '', '', '');
+
+    const instrumentationConfig: DspInstrumentationConfig = {
+        environment: 'dev',
+        dataDog: {
+            enabled: false,
+            applicationId: 'app_id',
+            clientToken: 'client_token',
+            site: 'site',
+            service: 'dsp-app'
+        },
+        rollbar: {
+            enabled: false,
+            accessToken: 'rollbar_token'
+        }
+    };
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                { provide: APP_CONFIG, useValue: config }
+                {
+                    provide: APP_CONFIG,
+                    useValue: config
+                },
+                {
+                    provide: DspInstrumentationToken,
+                    useValue: instrumentationConfig
+                },
             ]
         });
         service = TestBed.inject(AppInitService);

@@ -4,6 +4,7 @@ import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, L
 import { datadogRum, RumFetchResourceEventDomainContext } from '@datadog/browser-rum';
 import { DspApiConnectionToken, DspInstrumentationToken } from '../../declarations/dsp-api-tokens';
 import { DspInstrumentationConfig } from '../../declarations/dsp-instrumentation-config';
+import { DatadogRumService } from '../../services/datadog-rum.service';
 import { NotificationService } from '../../services/notification.service';
 import { Session, SessionService } from '../../services/session.service';
 
@@ -105,7 +106,7 @@ export class LoginFormComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        @Inject(DspInstrumentationToken) private _dspInstrumentationConfig: DspInstrumentationConfig,
+        private _datadogRumService: DatadogRumService,
         private _notification: NotificationService,
         private _sessionService: SessionService,
         private _fb: FormBuilder
@@ -156,29 +157,7 @@ export class LoginFormComponent implements OnInit {
                         this.session = this._sessionService.getSession();
                         this.loginSuccess.emit(true);
                         this.loading = false;
-                        if (this._dspInstrumentationConfig.dataDog.enabled) {
-                            datadogRum.init({
-                                applicationId: this._dspInstrumentationConfig.dataDog.applicationId,
-                                clientToken: this._dspInstrumentationConfig.dataDog.clientToken,
-                                site: this._dspInstrumentationConfig.dataDog.site,
-                                service: this._dspInstrumentationConfig.dataDog.service,
-                                env: this._dspInstrumentationConfig.environment,
-                                version: appVersion,
-                                sampleRate: 100,
-                                trackInteractions: true,
-                                beforeSend: (event, context) => {
-                                    // collect a RUM resource's response headers
-                                    if (event.type === 'resource' && event.resource.type === 'xhr') {
-                                        event.context = { ...event.context, responseHeaders: (context as RumFetchResourceEventDomainContext).response.body };
-                                    }
-                                },
-                            });
-
-                            datadogRum.setUser({
-                                id: identifier,
-                                identifierType: identifierType
-                            });
-                        }
+                        this._datadogRumService.setActiveUser(identifier, identifierType);
                     }
                 );
             },
@@ -215,6 +194,7 @@ export class LoginFormComponent implements OnInit {
             (response: ApiResponseData<LogoutResponse>) => {
                 this.logoutSuccess.emit(true);
                 this._sessionService.destroySession();
+                this._datadogRumService.removeActiveUser();
                 this.loading = false;
                 this.buildLoginForm();
                 this.session = undefined;

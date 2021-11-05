@@ -19,7 +19,6 @@ export class AppComponent implements OnInit {
 
         // set the page title
         this._titleService.setTitle('DaSCH Service Platform');
-
     }
 
     ngOnInit() {

@@ -17,6 +17,7 @@ import { AppInitService } from 'src/app/app-init.service';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken, DspInstrumentationToken } from '../../declarations/dsp-api-tokens';
 import { DspDataDogConfig, DspInstrumentationConfig } from '../../declarations/dsp-instrumentation-config';
+import { DatadogRumService } from '../../services/datadog-rum.service';
 import { Session, SessionService } from '../../services/session.service';
 import { LoginFormComponent } from './login-form.component';
 
@@ -57,23 +58,6 @@ describe('LoginFormComponent', () => {
 
     beforeEach(waitForAsync(() => {
 
-        const dspDatadogSpy = new DspDataDogConfig(false, '', '', '', '');
-
-        const instrumentationConfig: DspInstrumentationConfig = {
-            environment: 'dev',
-            dataDog: {
-                enabled: false,
-                applicationId: 'app_id',
-                clientToken: 'client_token',
-                site: 'site',
-                service: 'dsp-app'
-            },
-            rollbar: {
-                enabled: false,
-                accessToken: 'rollbar_token'
-            }
-        };
-
         const authEndpointSpyObj = {
             admin: {
                 usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUser'])
@@ -82,6 +66,8 @@ describe('LoginFormComponent', () => {
                 auth: jasmine.createSpyObj('auth', ['login', 'logout'])
             }
         };
+
+        const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', ['initializeRum', 'setActiveUser', 'removeActiveUser']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -106,9 +92,9 @@ describe('LoginFormComponent', () => {
                     useValue: authEndpointSpyObj
                 },
                 {
-                    provide: DspInstrumentationToken,
-                    useValue: instrumentationConfig
-                },
+                    provide: DatadogRumService,
+                    useValue: datadogRumServiceSpy
+                }
             ]
         })
             .compileComponents();

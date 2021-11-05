@@ -36,7 +36,7 @@ export class AppInitService {
     }
 
     constructor(
-        @Inject(APP_CONFIG) private _config: IConfig
+        @Inject(APP_CONFIG) private _config: IConfig,
     ) {
         // check for presence of apiProtocol and apiHost
         if (typeof this._config.apiProtocol !== 'string' || typeof this._config.apiHost !== 'string') {

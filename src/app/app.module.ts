@@ -48,6 +48,7 @@ import { LinkifyPipe } from './main/pipes/string-transformation/linkify.pipe';
 import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
+import { DatadogRumService } from './main/services/datadog-rum.service';
 import { MaterialModule } from './material-module';
 import { AddressTemplateComponent } from './project/board/address-template/address-template.component';
 import { AttributionTabViewComponent } from './project/board/attribution-tab-view/attribution-tab-view.component';
@@ -345,6 +346,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     ],
     providers: [
         AppInitService,
+        DatadogRumService,
         {
             provide: DspApiConfigToken,
             useFactory: (appInitService: AppInitService) => appInitService.dspApiConfig,

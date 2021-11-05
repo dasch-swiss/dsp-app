@@ -12,7 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
 import { AppInitService } from './app-init.service';
 import { AppComponent } from './app.component';
-import { DspApiConfigToken, DspApiConnectionToken } from './main/declarations/dsp-api-tokens';
+import { DspApiConfigToken, DspApiConnectionToken, DspInstrumentationToken } from './main/declarations/dsp-api-tokens';
+import { DspDataDogConfig, DspInstrumentationConfig } from './main/declarations/dsp-instrumentation-config';
 import { HeaderComponent } from './main/header/header.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';
@@ -20,6 +21,7 @@ import { UserMenuComponent } from './user/user-menu/user-menu.component';
 describe('AppComponent', () => {
 
     beforeEach(waitForAsync(() => {
+
         TestBed.configureTestingModule({
             declarations: [
                 AppComponent,
