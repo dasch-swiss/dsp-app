@@ -1,5 +1,23 @@
 # Changelog
 
+### [7.0.1](https://www.github.com/dasch-swiss/dsp-app/compare/v7.0.0...v7.0.1) (2021-11-05)
+
+
+### Bug Fixes
+
+* **error:** resolve error handler in case of server error (DEV-205) ([#576](https://www.github.com/dasch-swiss/dsp-app/issues/576)) ([ff9d097](https://www.github.com/dasch-swiss/dsp-app/commit/ff9d0971bf2f613591ddd446a006e64a5ca96203))
+* **ontology:** class and property name has to be unique (DEV-183) ([#569](https://www.github.com/dasch-swiss/dsp-app/issues/569)) ([059dd2a](https://www.github.com/dasch-swiss/dsp-app/commit/059dd2a48a8346b0f8835223c5d9fb86e05cefed))
+* **value:** display ckEditor in case of rich-text property (DEV-182) ([#571](https://www.github.com/dasch-swiss/dsp-app/issues/571)) ([6bfe254](https://www.github.com/dasch-swiss/dsp-app/commit/6bfe25403d42fe76b3239fda088b7029c78c1912))
+
+
+### Maintenance
+
+* annotations will now only be drawn when the user is on the annotations tab ([#574](https://www.github.com/dasch-swiss/dsp-app/issues/574)) ([bddc2f1](https://www.github.com/dasch-swiss/dsp-app/commit/bddc2f1bddfa51182a8855cf395ae922edc494c8))
+* **deps:** use release of ckeditor custom build (DEV-189) ([#570](https://www.github.com/dasch-swiss/dsp-app/issues/570)) ([fb55fd7](https://www.github.com/dasch-swiss/dsp-app/commit/fb55fd730506b3275ff70a536edb6f86d66a5df6))
+* **main:** use version route (DEV-124) ([#565](https://www.github.com/dasch-swiss/dsp-app/issues/565)) ([16f26ce](https://www.github.com/dasch-swiss/dsp-app/commit/16f26ce37f5118715faae60bb8481cf1b82eac8d))
+* move datadog rum methods to service (DEV-190) ([#572](https://www.github.com/dasch-swiss/dsp-app/issues/572)) ([77191cb](https://www.github.com/dasch-swiss/dsp-app/commit/77191cb7ad21ace706eb0335bb4b1eba72325c8a))
+* refactors upload-file service to use the string generated in the iiif-config file and changes the public class members in app-init service to private with getters. ([#573](https://www.github.com/dasch-swiss/dsp-app/issues/573)) ([c39ca5b](https://www.github.com/dasch-swiss/dsp-app/commit/c39ca5bcee02eca52ea17f660cc83670fec0d86a))
+
 ## [7.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v6.5.0...v7.0.0) (2021-10-28)
 
 
