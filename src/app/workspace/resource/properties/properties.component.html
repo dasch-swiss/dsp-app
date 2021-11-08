@@ -122,6 +122,7 @@
                             [propArray]="resource.resProps"
                             [canDelete]="deleteValueIsAllowed(prop)"
                             [projectStatus]="project?.status"
+                            [valueUuidToHighlight]="valueUuidToHighlight"
                             (referredResourceClicked)="openResource($event)"
                             (referredResourceHovered)="previewResource($event)">
                         </app-display-edit>

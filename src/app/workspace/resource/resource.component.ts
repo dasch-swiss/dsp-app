@@ -43,6 +43,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input() resourceIri: string;
 
+    // used to store the uuid of the value that is parsed from the url params
+    valueUuid: string;
+
     // this will be the main resource
     resource: DspResource;
 
@@ -95,6 +98,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
         this._route.params.subscribe(params => {
             this.resourceIri = params['id'];
+            this.valueUuid = params['val'];
             this.getResource(this.resourceIri);
         });
 
@@ -200,7 +204,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         this._dspApiConnection.v2.res.getResource(iri).subscribe(
             (response: ReadResource) => {
                 const res = new DspResource(response);
-
                 this.resource = res;
                 this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
 

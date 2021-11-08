@@ -70,8 +70,12 @@
   position: relative;
 }
 
-.value-component.highlighted {
+.value-component.hover {
   background-color: #f5f5f5;
+}
+
+.value-component.highlight {
+  background-color: #f4f400;
 }
 
 .crud-buttons {

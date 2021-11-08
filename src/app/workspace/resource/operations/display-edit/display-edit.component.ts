@@ -79,6 +79,8 @@ export class DisplayEditComponent implements OnInit {
 
     @Input() projectStatus: boolean;
 
+    @Input() valueUuidToHighlight: string;
+
     @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
@@ -104,7 +106,7 @@ export class DisplayEditComponent implements OnInit {
     showActionBubble = false;
 
     // string used as class name to add add to value-component element on hover
-    backgroundColor = '';
+    valueHovered: boolean;
 
     dateDisplayOptions: 'era' | 'calendar' | 'all';
 
@@ -218,7 +220,7 @@ export class DisplayEditComponent implements OnInit {
      */
     activateEditMode() {
         this.editModeActive = true;
-        this.backgroundColor = '';
+        this.valueHovered = false;
         this.mode = 'update';
 
         // hide comment toggle button while in edit mode
@@ -358,12 +360,12 @@ export class DisplayEditComponent implements OnInit {
     }
 
     /**
-     * show CRUD buttons and add 'highlighted' class to the element only if editModeActive is false
+     * show CRUD buttons and add 'hover' class to the element only if editModeActive is false
      */
     mouseEnter() {
         this.showActionBubble = true;
         if (!this.editModeActive) {
-            this.backgroundColor = 'highlighted';
+            this.valueHovered = true;
         }
     }
 
@@ -372,7 +374,19 @@ export class DisplayEditComponent implements OnInit {
      */
     mouseLeave() {
         this.showActionBubble = false;
-        this.backgroundColor = '';
+        this.valueHovered = false;
+    }
+
+    /**
+     * given a uuid of a value, highlights the corresponding value
+     * @param uuid uuid of the value
+     * @returns true if the provided uuid matches the uuid of the displayValue and edit mode is not active, false otherwise
+     */
+    shouldHighlightValue(uuid: string): boolean {
+        if (uuid !== undefined && uuid === this.displayValue.uuid && !this.editModeActive) {
+            return true;
+        }
+        return false;
     }
 
     /**

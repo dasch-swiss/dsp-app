@@ -167,6 +167,11 @@ const routes: Routes = [
         runGuardsAndResolvers: 'always'
     },
     {
+        path: 'resource/:id/:val',
+        component: ResourceComponent,
+        runGuardsAndResolvers: 'always'
+    },
+    {
         path: 'cookie-policy',
         component: CookiePolicyComponent
     },

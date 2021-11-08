@@ -86,6 +86,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Input() isAnnotation = false;
 
+    @Input() valueUuidToHighlight: string;
+
     /**
      * output `referredProjectClicked` of resource view component:
      * can be used to go to project page

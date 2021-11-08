@@ -103,9 +103,13 @@ class TestPropertyParentComponent implements OnInit, OnDestroy {
 })
 class TestDisplayValueComponent {
 
-    @Input() parentResource: DspResource;
     @Input() displayValue: ReadValue;
+    @Input() propArray: PropertyInfoValues[];
+    @Input() parentResource: DspResource;
     @Input() configuration?: object;
+    @Input() canDelete: boolean;
+    @Input() projectStatus: boolean;
+    @Input() valueUuidToHighlight: string;
 
     @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
