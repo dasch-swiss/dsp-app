@@ -106,7 +106,7 @@ export class HelpComponent implements OnInit {
                 this.tools[1].url += this.dspVersion.webapi;
 
                 // set dsp-sipi version
-                this.tools[2].title += this.dspVersion.sipi;
+                this.tools[2].title += ' v' + this.dspVersion.sipi;
                 this.tools[2].url += this.dspVersion.sipi;
             },
             (error: ApiResponseError) => {
