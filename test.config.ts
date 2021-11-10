@@ -4,7 +4,6 @@ import { Session } from 'src/app/main/services/session.service';
 export class TestConfig {
 
     public static ApiConfig = new KnoraApiConfig('http', '0.0.0.0', 3333);
-    public static AppConfig = { name: 'DSP-APP', url: '0.0.0.0:4200' };
 
     public static ProjectCode = '0001';
 

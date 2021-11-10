@@ -24,9 +24,7 @@ import {
     MockResource,
     MockUsers,
     OntologiesEndpointV2,
-    OntologiesMetadata,
-    ReadOntology,
-    ReadResource,
+    OntologiesMetadata, ReadResource,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
     ResourcePropertyDefinition,
@@ -35,10 +33,10 @@ import {
     UserResponse,
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
-import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
@@ -309,6 +307,11 @@ describe('ResourceInstanceFormComponent', () => {
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
+        const appInitSpy = {
+            dspAppConfig: {
+                iriBase: 'http://rdfh.ch'
+            }
+        };
         // const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
 
         TestBed.configureTestingModule({
@@ -347,6 +350,10 @@ describe('ResourceInstanceFormComponent', () => {
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpy
+                },
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
                 },
                 // {
                 //     provide: Router,

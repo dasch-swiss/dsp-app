@@ -213,7 +213,6 @@ describe('GeonameService', () => {
         dspAppConfig: {
             geonameToken: 'token'
         }
-
     };
 
     beforeEach(() => {

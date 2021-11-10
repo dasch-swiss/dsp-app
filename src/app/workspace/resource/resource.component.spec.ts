@@ -13,6 +13,12 @@ describe('ResourceComponent', () => {
     let component: ResourceComponent;
     let fixture: ComponentFixture<ResourceComponent>;
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [ResourceComponent],
@@ -31,6 +37,10 @@ describe('ResourceComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
                 }
             ]
         }).compileComponents();

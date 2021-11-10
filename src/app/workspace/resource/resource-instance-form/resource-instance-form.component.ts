@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
     ApiResponseError,
@@ -20,7 +20,8 @@ import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DefaultClass, DefaultResourceClasses } from 'src/app/project/ontology/default-data/default-resource-classes';
-import { ProjectService } from '../project.service';
+import { ProjectService } from '../services/project.service';
+import { ResourceService } from '../services/resource.service';
 import { SelectOntologyComponent } from './select-ontology/select-ontology.component';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
 import { SelectResourceClassComponent } from './select-resource-class/select-resource-class.component';
@@ -87,6 +88,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
         private _project: ProjectService,
+        private _resourceService: ResourceService,
         private _router: Router
     ) { }
 
@@ -200,7 +202,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 (res: ReadResource) => {
                     this.resource = res;
 
-                    const goto = '/resource/' + encodeURIComponent(this.resource.id);
+                    const path = this._resourceService.getResourcePath(this.resource.id);
+
+                    const goto = '/resource' + path;
                     this._router.navigate([]).then(result => window.open(goto, '_blank'));
 
                     this.closeDialog.emit();

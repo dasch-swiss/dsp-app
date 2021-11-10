@@ -1,6 +1,7 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -23,14 +24,15 @@ import {
     SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { of, Subscription } from 'rxjs';
-import { DspResource } from '../dsp-resource';
-import { PropertiesComponent, PropertyInfoValues } from './properties.component';
-import { IncomingService } from '../incoming.service';
-import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { UserService } from '../services/user.service';
-import { MatDialogModule } from '@angular/material/dialog';
 import { AppInitService } from 'src/app/app-init.service';
+import { DspApiConnectionToken, DspAppConfigToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DspAppConfig } from 'src/app/main/declarations/dsp-app-config';
+import { TestConfig } from 'test.config';
+import { DspResource } from '../dsp-resource';
+import { IncomingService } from '../services/incoming.service';
+import { UserService } from '../services/user.service';
 import { EmitEvent, Events, ValueOperationEventService } from '../services/value-operation-event.service';
+import { PropertiesComponent, PropertyInfoValues } from './properties.component';
 
 /**
  * test host component to simulate parent component.
@@ -147,6 +149,12 @@ describe('PropertiesComponent', () => {
 
         const incomingServiceSpy = jasmine.createSpyObj('IncomingService', ['getIncomingLinks']);
 
+        const appInitSpy = {
+            dspAppConfig: {
+                iriBase: 'http://rdfh.ch'
+            }
+        };
+
         TestBed.configureTestingModule({
             imports: [
                 ClipboardModule,
@@ -178,6 +186,10 @@ describe('PropertiesComponent', () => {
                     provide: IncomingService,
                     useValue: incomingServiceSpy
                 },
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                }
             ]
         })
             .compileComponents();

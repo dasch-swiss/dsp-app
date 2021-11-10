@@ -7,6 +7,7 @@ export interface IConfig {
     iiifHost: string;
     iiifPort: number;
     iiifPath: string;
+    iriBase: string;
     jsonWebToken: string;
     geonameToken: string;
     logErrors: boolean;

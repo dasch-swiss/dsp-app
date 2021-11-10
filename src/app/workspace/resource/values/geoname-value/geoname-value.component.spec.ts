@@ -84,11 +84,13 @@ describe('GeonameValueComponent', () => {
                 MatIconModule,
                 MatAutocompleteModule
             ],
-            providers: [{
-                provide: GeonameService,
-                useValue: mockGeonameService,
-                AppInitService
-            }]
+            providers: [
+                AppInitService,
+                {
+                    provide: GeonameService,
+                    useValue: mockGeonameService,
+                }
+            ]
         })
             .compileComponents();
     }));

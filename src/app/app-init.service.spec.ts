@@ -19,6 +19,7 @@ describe('TestService', () => {
         jsonWebToken: 'mytoken',
         logErrors: true,
         geonameToken: 'geoname_token',
+        iriBase: 'http://rdfh.ch',
         instrumentation: {
             environment: 'dev',
             dataDog: {
@@ -84,6 +85,7 @@ describe('TestService', () => {
         expect(service.dspApiConfig.jsonWebToken).toEqual('mytoken');
         expect(service.dspApiConfig.logErrors).toEqual(true);
         expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
+        expect(service.dspAppConfig.iriBase).toEqual('http://rdfh.ch');
         expect(service.dspInstrumentationConfig.environment).toEqual('dev');
         expect(service.dspInstrumentationConfig.dataDog.enabled).toEqual(true);
         expect(service.dspInstrumentationConfig.dataDog.applicationId).toEqual('app_id');

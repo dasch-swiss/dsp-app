@@ -71,7 +71,8 @@ export class AppInitService {
 
         // init dsp app extended configuration
         this._dspAppConfig = new DspAppConfig(
-            this._config.geonameToken
+            this._config.geonameToken,
+            this._config.iriBase
         );
 
         // init instrumentation configuration

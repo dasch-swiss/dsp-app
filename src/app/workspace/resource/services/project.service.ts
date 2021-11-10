@@ -1,5 +1,13 @@
 import { Inject, Injectable } from '@angular/core';
-import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectsResponse, StoredProject, UserResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ApiResponseError,
+    Constants,
+    KnoraApiConnection,
+    ProjectsResponse,
+    StoredProject,
+    UserResponse
+} from '@dasch-swiss/dsp-js';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';

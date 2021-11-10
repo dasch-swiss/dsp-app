@@ -10,6 +10,7 @@
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": false,
+  "iriBase": "http://rdfh.ch",
   "instrumentation": {
     "environment": "prod",
     "dataDog": {

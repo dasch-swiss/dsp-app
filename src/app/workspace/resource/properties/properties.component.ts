@@ -32,8 +32,9 @@ import { ConfirmationWithComment, DialogComponent } from 'src/app/main/dialog/di
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { DspResource } from '../dsp-resource';
-import { IncomingService } from '../incoming.service';
 import { RepresentationConstants } from '../representation/file-representation';
+import { IncomingService } from '../services/incoming.service';
+import { ResourceService } from '../services/resource.service';
 import { UserService } from '../services/user.service';
 import {
     AddedEventValue,
@@ -142,11 +143,12 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
+        private _incomingService: IncomingService,
         private _notification: NotificationService,
+        private _resourceService: ResourceService,
         private _userService: UserService,
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService,
-        private _incomingService: IncomingService
     ) { }
 
     ngOnInit(): void {
@@ -262,8 +264,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * @param linkValue
      */
     openResource(linkValue: ReadLinkValue | string) {
-        const id = ((typeof linkValue == 'string') ? linkValue : linkValue.linkedResourceIri);
-        window.open('/resource/' + encodeURIComponent(id), '_blank');
+        const iri = ((typeof linkValue == 'string') ? linkValue : linkValue.linkedResourceIri);
+        const path = this._resourceService.getResourcePath(iri);
+        window.open('/resource' + path, '_blank');
     }
 
     previewResource(linkValue: ReadLinkValue) {

@@ -14,7 +14,8 @@ import {
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { FilteredResources } from '../../results/list-view/list-view.component';
-import { ProjectService } from '../project.service';
+import { ProjectService } from '../services/project.service';
+import { ResourceService } from '../services/resource.service';
 
 @Component({
     selector: 'app-resource-link-form',
@@ -54,6 +55,7 @@ export class ResourceLinkFormComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
         private _project: ProjectService,
+        private _resourceService: ResourceService,
         private _router: Router
     ) { }
 
@@ -148,8 +150,8 @@ export class ResourceLinkFormComponent implements OnInit {
 
         this._dspApiConnection.v2.res.createResource(linkObj).subscribe(
             (res: ReadResource) => {
-                // --> TODO: do something with the successful response
-                const goto = '/resource/' + encodeURIComponent(res.id);
+                const path = this._resourceService.getResourcePath(res.id);
+                const goto = '/resource' + path;
                 this._router.navigate([]).then(result => window.open(goto, '_blank'));
                 this.closeDialog.emit();
                 this.loading = false;

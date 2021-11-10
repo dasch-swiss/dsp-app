@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { waitForAsync, TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -12,8 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from 'test.config';
 import { AppInitService } from './app-init.service';
 import { AppComponent } from './app.component';
-import { DspApiConfigToken, DspApiConnectionToken, DspInstrumentationToken } from './main/declarations/dsp-api-tokens';
-import { DspDataDogConfig, DspInstrumentationConfig } from './main/declarations/dsp-instrumentation-config';
+import { DspApiConfigToken, DspApiConnectionToken } from './main/declarations/dsp-api-tokens';
 import { HeaderComponent } from './main/header/header.component';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { UserMenuComponent } from './user/user-menu/user-menu.component';

@@ -25,10 +25,11 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
-import { IncomingService } from './incoming.service';
 import { PropertyInfoValues } from './properties/properties.component';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
 import { Region, StillImageComponent } from './representation/still-image/still-image.component';
+import { IncomingService } from './services/incoming.service';
+import { ResourceService } from './services/resource.service';
 import { ValueOperationEventService } from './services/value-operation-event.service';
 
 @Component({
@@ -43,6 +44,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input() resourceIri: string;
 
+    projectCode: string;
+
+    resourceUuid: string;
     // used to store the uuid of the value that is parsed from the url params
     valueUuid: string;
 
@@ -90,15 +94,18 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         private _errorHandler: ErrorHandlerService,
         private _incomingService: IncomingService,
         private _notification: NotificationService,
+        private _resourceService: ResourceService,
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
-        private _titleService: Title
+        private _titleService: Title,
     ) {
 
         this._route.params.subscribe(params => {
-            this.resourceIri = params['id'];
-            this.valueUuid = params['val'];
+            this.projectCode = params['project'];
+            this.resourceUuid = params['resource'];
+            this.valueUuid = params['value'];
+            this.resourceIri = this._resourceService.getResourceIri(this.projectCode, this.resourceUuid);
             this.getResource(this.resourceIri);
         });
 
