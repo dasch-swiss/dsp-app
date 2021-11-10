@@ -13,10 +13,11 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     Constants, CreateColorValue, CreateGeomValue, CreateLinkValue,
     CreateResource, CreateTextValueAsString, KnoraApiConnection,
-    Point2D, ReadFileValue,
+    Point2D, ReadColorValue, ReadFileValue,
     ReadGeomValue,
     ReadResource,
     ReadStillImageFileValue,
+    ReadValue,
     RegionGeometry
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -269,6 +270,14 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             for (const geom of geometries) {
 
                 const geometry = geom.geometry;
+
+                const colorValues: ReadColorValue[] = geom.region.properties[Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor'] as ReadColorValue[];
+
+                // if the geometry has a color property, use that value as the color for the line
+                if(colorValues && colorValues.length){
+                    geometry.lineColor = colorValues[0].color;
+                }
+
                 this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label);
 
             }
