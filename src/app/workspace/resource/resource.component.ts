@@ -554,4 +554,10 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         this.getIncomingRegions(this.incomingResource ? this.incomingResource : this.resource, 0);
         this.openRegion(iri);
     }
+
+    updateRegionColor(){
+        if (this.stillImageComponent !== undefined) {
+            this.stillImageComponent.updateRegions();
+        }
+    }
 }
