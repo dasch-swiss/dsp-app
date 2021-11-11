@@ -6,6 +6,10 @@
     display: block;
     margin: 0px;
   }
+
+  .rm-value.text-value {
+    white-space: pre-wrap;
+  }
 }
 
 .child-value-component,

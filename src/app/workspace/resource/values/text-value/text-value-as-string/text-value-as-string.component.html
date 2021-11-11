@@ -1,5 +1,5 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
-    <span class="rm-value" [innerHtml]="valueFormControl.value | appLinkify"></span>
+    <span class="rm-value text-value" [innerHtml]="valueFormControl.value | appLinkify" style="white-space: pre-wrap;"></span>
     <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
 </span>
 <ng-template #showForm>

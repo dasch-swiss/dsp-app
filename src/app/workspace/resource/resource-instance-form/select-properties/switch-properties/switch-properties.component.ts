@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
+import { ValueService } from '../../../services/value.service';
 
 @Component({
     selector: 'app-switch-properties',
@@ -23,19 +24,23 @@ export class SwitchPropertiesComponent implements OnInit {
     @Input() isRequiredProp: boolean;
 
     mode = 'create';
-    textArea = false;
+
+    // gui element in case of textValue
+    textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
+
     constants = Constants;
 
-    constructor() { }
+    constructor(
+        private _valueService: ValueService
+    ) { }
 
     ngOnInit(): void {
 
         // the input isRequiredProp provided by KeyValuePair is stored as a number
         // a conversion from a number to a boolean is required by the input valueRequiredValidator
         this.isRequiredProp = !!+this.isRequiredProp;
-        if(this.property.guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
-            this.textArea = true;
-        }
+
+        this.textValueGuiEle = this._valueService.getTextValueGuiEle(this.property.guiElement);
     }
 
     saveNewValue() {
