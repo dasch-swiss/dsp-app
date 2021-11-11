@@ -1,5 +1,23 @@
 # Changelog
 
+## [8.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v7.0.1...v8.0.0) (2021-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **resource:** new resource route (DEV-196) (#581)
+
+### Maintenance
+
+* small code improvements ([#579](https://www.github.com/dasch-swiss/dsp-app/issues/579)) ([d19e353](https://www.github.com/dasch-swiss/dsp-app/commit/d19e353bd070b07d069ef5d1347c64592d029be6))
+
+
+### Enhancements
+
+* **resource:** add additional routing for an ark url of a value (DEV-196) ([#575](https://www.github.com/dasch-swiss/dsp-app/issues/575)) ([c1b0b94](https://www.github.com/dasch-swiss/dsp-app/commit/c1b0b94972760c3552c1ebcef8f2a8bffd7431b5))
+* **resource:** new resource route (DEV-196) ([#581](https://www.github.com/dasch-swiss/dsp-app/issues/581)) ([3fbd94c](https://www.github.com/dasch-swiss/dsp-app/commit/3fbd94cdfd62e78ee7b6e7a718663e12d222f897))
+* **still-image:** uses the color of the color property for the line color if a color property for the region exists ([#580](https://www.github.com/dasch-swiss/dsp-app/issues/580)) ([7680353](https://www.github.com/dasch-swiss/dsp-app/commit/768035399438c3857c2b08ec547483850700bd45))
+
 ### [7.0.1](https://www.github.com/dasch-swiss/dsp-app/compare/v7.0.0...v7.0.1) (2021-11-05)
 
 
