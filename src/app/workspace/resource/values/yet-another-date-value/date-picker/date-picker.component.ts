@@ -402,9 +402,9 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
                 const islamicDay = new Intl.DateTimeFormat('en-TN-u-ca-islamic', { day: 'numeric' }).format(today);
                 const islamicMonth = new Intl.DateTimeFormat('en-TN-u-ca-islamic', { month: 'numeric' }).format(today);
                 const islamicYear = new Intl.DateTimeFormat('en-TN-u-ca-islamic', { year: 'numeric' }).format(today);
-                day = parseInt(islamicDay, 0);
-                month = parseInt(islamicMonth, 0);
-                year = parseInt(islamicYear.substr(0, 4), 0);
+                day = parseInt(islamicDay, 10);
+                month = parseInt(islamicMonth, 10);
+                year = parseInt(islamicYear.substr(0, 4), 10);
                 this.era = 'noEra';
                 break;
 
@@ -413,7 +413,7 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
                 // found solution and formula here:
                 // https://sciencing.com/convert-julian-date-calender-date-6017669.html
                 const julianDate = new Date();
-                const difference = parseInt((julianDate.getFullYear() + '').substr(0, 2), 0) * 0.75 - 1.25;
+                const difference = parseInt((julianDate.getFullYear() + '').substr(0, 2), 10) * 0.75 - 1.25;
                 julianDate.setDate(julianDate.getDate() - Math.floor(difference));
                 day = julianDate.getDate();
                 month = julianDate.getMonth() + 1;

@@ -1,4 +1,4 @@
-@import "~@angular/material/theming";
+@use '~@angular/material' as mat;
 @import "../../../../assets/style/config";
 @import "../../../../assets/style/mixins";
 
@@ -6,8 +6,8 @@
   min-height: 60px;
   height: auto;
   position: relative;
-  @include mat-elevation-transition;
-  @include mat-elevation(2);
+  @include mat.elevation-transition;
+  @include mat.elevation(2);
   padding: 12px;
   margin: 6px;
   background-color: #fff;
@@ -42,7 +42,7 @@
   }
 
   &:active {
-    @include mat-elevation(8);
+    @include mat.elevation(8);
   }
 }
 
@@ -94,7 +94,7 @@
   }
 
   &.link {
-    border-top: 1px solid $black-12-opacity;
+    border-top: 1px solid rgba(black, 0.12);
   }
 
 }

@@ -25,7 +25,7 @@ module.exports = {
     "plugins": [
         "eslint-plugin-import",
         "eslint-plugin-jsdoc",
-        "@angular-eslint/eslint-plugin",
+        "@angular-eslint",
         "@typescript-eslint"
     ],
     "rules": {

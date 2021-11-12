@@ -10,10 +10,6 @@ This app is a simple user interface for the Data and Service Center for the Huma
 
 DSP-APP implements [DSP-JS-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-js) to connect with [DSP-API](https://docs-api.dasch.swiss/03-apis/). DSP (DaSCH Service Platform) is a software framework for storing, sharing, and working with primary resources and data in the humanities.
 
-Additionaly it's built with [DSP-UI-LIB](https://www.npmjs.com/package/@dasch-swiss/dsp-ui) &mdash; reusable DSP specific Angular modules.
-
-Please check our [DSP Release Compatibility Matrix](https://docs.google.com/spreadsheets/d/e/2PACX-1vQe-0nFKqYHwHT3cNI2M_ZCycKOgDZBxtaabxEQDDkNKJf6funMVrJBJPgMFEJdiBdCesahUhURN6MS/pubhtml) to use this app with the correct and required versions of the dependent packages.
-
 DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
 ## Documentation

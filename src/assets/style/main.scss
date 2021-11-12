@@ -1,10 +1,10 @@
-@import "font";
-@import "theme";
-@import "layout";
-@import "elements";
-@import "search";
-@import "viewer";
-@import "ontology";
+@import "./font";
+@import "./theme";
+@import "./layout";
+@import "./elements";
+@import "./search";
+@import "./viewer";
+@import "./ontology";
 
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;

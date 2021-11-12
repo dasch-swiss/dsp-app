@@ -37,8 +37,13 @@
                         ],
                         "assets": [
                             "src/favicon.ico",
-                            "src/assets",
-                            "src/config"
+                            "src/config",
+                            {
+                              "glob": "**/*",
+                              "input": "src/assets/",
+                              "ignore": ["**/*.scss"],
+                              "output": "/assets/"
+                            }
                         ],
                         "styles": [
                             "src/styles.scss"
@@ -140,8 +145,13 @@
                         ],
                         "assets": [
                             "src/favicon.ico",
-                            "src/assets",
-                            "src/config"
+                            "src/config",
+                            {
+                              "glob": "**/*",
+                              "input": "src/assets/",
+                              "ignore": ["**/*.scss"],
+                              "output": "/assets/"
+                            }
                         ]
                     }
                 },

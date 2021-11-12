@@ -1,4 +1,3 @@
-@import "~@angular/material/theming";
 @import "../../../assets/style/config";
 
 $width: 340px;
@@ -109,7 +108,7 @@ $width: 340px;
 }
 
 .active {
-  background-color: $black-12-opacity;
+  background-color: rgba(black, 0.12);
 }
 
 .note {

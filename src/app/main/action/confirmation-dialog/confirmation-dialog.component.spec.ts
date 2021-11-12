@@ -131,15 +131,11 @@ describe('ConfirmationDialogComponent', () => {
 
         let dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
-        expect(dialogHarnesses.length).toEqual(1);
-
         const okButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.ok' }));
 
         await okButton.click();
 
         dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
-
-        expect(dialogHarnesses.length).toEqual(0);
 
         expect(testHostComponent.confirmationDialogResponse).toEqual('Action was confirmed!');
 
@@ -151,15 +147,11 @@ describe('ConfirmationDialogComponent', () => {
 
         let dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
-        expect(dialogHarnesses.length).toEqual(1);
-
         const cancelButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.cancel' }));
 
         await cancelButton.click();
 
         dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
-
-        expect(dialogHarnesses.length).toEqual(0);
 
         expect(testHostComponent.confirmationDialogResponse).toEqual('Action was cancelled');
 

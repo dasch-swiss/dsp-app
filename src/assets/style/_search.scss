@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "./config";
 @import "./mixins";
 @import "./responsive";
@@ -69,7 +71,7 @@ $project-filter-width-small-device: 120px;
 
 // form elements
 $full-input-width: 320px;
-$gc-large: decimal-floor($full-input-width / 1.618, 0) - 2;
+$gc-large: decimal-floor(math.div($full-input-width, 1.618), 0) - 2;
 $gc-small: $full-input-width - $gc-large - 4;
 
 .app-form-content {
