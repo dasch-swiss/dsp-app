@@ -354,7 +354,7 @@ export class ResourceClassInfoComponent implements OnInit {
                     subtitle: 'Customize property and cardinality',
                     mode: mode,
                     parentIri: card.resClass.id,
-                    position: this.propsToDisplay.length,
+                    position: this.propsToDisplay.length + 1,
                     canBeUpdated: this.classCanReplaceCardinality
                 }
             };
