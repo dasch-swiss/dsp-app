@@ -250,7 +250,7 @@ export class OntologyFormComponent implements OnInit {
             // create mode
 
             const ontologyData = new CreateOntology();
-            ontologyData.label = this.project.shortname + ': ' + (this.ontologyLabel ? this.ontologyLabel : this.ontologyForm.controls['name'].value);
+            ontologyData.label = this.project.shortname + ': ' + this.ontologyForm.controls['label'].value;
             ontologyData.name = this.ontologyForm.controls['name'].value;
             ontologyData.comment = this.ontologyForm.controls['comment'].value;
             ontologyData.attachedToProject = this.project.id;
