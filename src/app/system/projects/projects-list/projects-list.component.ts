@@ -14,6 +14,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
 import { SortingService } from 'src/app/main/services/sorting.service';
 
@@ -84,7 +85,8 @@ export class ProjectsListComponent implements OnInit {
         private _dialog: MatDialog,
         private _router: Router,
         private _session: SessionService,
-        private _sortingService: SortingService
+        private _sortingService: SortingService,
+        private _componentCommsService: ComponentCommunicationEventService
     ) { }
 
     ngOnInit() {
@@ -165,6 +167,10 @@ export class ProjectsListComponent implements OnInit {
             } else {
                 // update the view
                 this.refreshParent.emit();
+
+                if (mode === 'createProject') {
+                    this._componentCommsService.emit(new EmitEvent(Events.projectCreated, true));
+                }
             }
         });
     }

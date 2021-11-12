@@ -108,7 +108,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     projectIri: string;
 
-    componentCommsSubscription: Subscription;
+    componentCommsSubscriptions: Subscription[]= [];
 
     // in case of an (api) error
     error: any;
@@ -169,10 +169,17 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // in the event of a grav search (advanced or expert search), clear the input field
-        this.componentCommsSubscription = this._componentCommsService.on(
+        this.componentCommsSubscriptions.push(this._componentCommsService.on(
             Events.gravSearchExecuted, () => {
                 this.searchQuery = null;
-            });
+            })
+        );
+
+        this.componentCommsSubscriptions.push(this._componentCommsService.on(
+            Events.projectCreated, () => {
+                this.getAllProjects();
+            }
+        ));
     }
 
     ngOnChanges() {
@@ -190,9 +197,9 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnDestroy() {
-        // unsubscribe from the componentCommsSubscription when component is destroyed
-        if (this.componentCommsSubscription !== undefined) {
-            this.componentCommsSubscription.unsubscribe();
+        // unsubscribe from all subscriptions incomponentCommsSubscriptions when component is destroyed
+        if (this.componentCommsSubscriptions !== undefined) {
+            this.componentCommsSubscriptions.forEach(sub => sub.unsubscribe());
         }
     }
 
