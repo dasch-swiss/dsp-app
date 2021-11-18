@@ -1,5 +1,26 @@
 # Changelog
 
+## [8.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.0.0...v8.1.0) (2021-11-18)
+
+
+### Bug Fixes
+
+* **fulltext-search:** updates the projects list when a new project is created (DEV-212) ([#586](https://www.github.com/dasch-swiss/dsp-app/issues/586)) ([43fcbfa](https://www.github.com/dasch-swiss/dsp-app/commit/43fcbfa55efdfd85746d00eec5e1793d0c0c20f7))
+* **ontology:** resolve gui order issue (DEV-222) ([#590](https://www.github.com/dasch-swiss/dsp-app/issues/590)) ([4ddbf7c](https://www.github.com/dasch-swiss/dsp-app/commit/4ddbf7c2fe84260ba58017aabec069dd9e6f7943))
+* **ontology:** send modified label (DEV-221) ([#589](https://www.github.com/dasch-swiss/dsp-app/issues/589)) ([9d7ffea](https://www.github.com/dasch-swiss/dsp-app/commit/9d7ffea6c50ea1d26d6ff77112c0cc507175159f))
+* **text-value:** resource-instance-form and display-edit components now correctly display a paragraph text with line breaks (DEV-211) ([#584](https://www.github.com/dasch-swiss/dsp-app/issues/584)) ([be9d6f4](https://www.github.com/dasch-swiss/dsp-app/commit/be9d6f4ea76cfc90852237ff916bac8b4a7e99d3))
+
+
+### Maintenance
+
+* **deps:** update angular to v12 ([#588](https://www.github.com/dasch-swiss/dsp-app/issues/588)) ([37e65a8](https://www.github.com/dasch-swiss/dsp-app/commit/37e65a8d087223c7bc7e3302eaf828061f69ef45))
+
+
+### Enhancements
+
+* **properties:** ckEditor Internal Links (DEV-118) ([#591](https://www.github.com/dasch-swiss/dsp-app/issues/591)) ([cac988b](https://www.github.com/dasch-swiss/dsp-app/commit/cac988b2ddfe87e8ce7d3b64956cdc153302c483))
+* update UI on region color change (DEV-215) ([#583](https://www.github.com/dasch-swiss/dsp-app/issues/583)) ([b497d0e](https://www.github.com/dasch-swiss/dsp-app/commit/b497d0ead475d520ff3d02e620128cac4947694b))
+
 ## [8.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v7.0.1...v8.0.0) (2021-11-10)
 
 
