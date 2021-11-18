@@ -1,4 +1,4 @@
-import { Component, OnInit, Pipe, PipeTransform, ViewChild } from '@angular/core';
+import { Component, Directive, EventEmitter, OnInit, Output, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +16,17 @@ class MockPipe implements PipeTransform {
         // do stuff here, if you want
         return value;
     }
+}
+
+@Directive({
+    selector: '[appHtmlLink]'
+})
+export class TestTextValueHtmlLinkDirective {
+
+    @Output() internalLinkClicked = new EventEmitter<string>();
+
+    @Output() internalLinkHovered = new EventEmitter<string>();
+
 }
 
 /**

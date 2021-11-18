@@ -27,9 +27,14 @@
         </button>
         <mat-menu #share="matMenu" class="res-share-menu">
             <button mat-menu-item matTooltip="Copy ARK url" matTooltipPosition="above"
-                [cdkCopyToClipboard]="resource.res.versionArkUrl" (click)="openSnackBar()">
+                [cdkCopyToClipboard]="resource.res.versionArkUrl" (click)="openSnackBar('ARK URL copied to clipboard!')">
                 <mat-icon>content_copy</mat-icon>
                 Copy ARK url to clipboard
+            </button>
+            <button mat-menu-item matTooltip="Copy internal link" matTooltipPosition="above"
+                [cdkCopyToClipboard]="resource.res.id" (click)="openSnackBar('Internal link copied to clipboard!')">
+                <mat-icon>content_copy</mat-icon>
+                Copy internal link to clipboard
             </button>
             <button mat-menu-item matTooltip="Open in new tab" matTooltipPosition="above"
                 (click)="openResource(resource.res.id)">

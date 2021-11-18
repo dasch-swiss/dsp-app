@@ -1,4 +1,9 @@
-<div [innerHTML]="htmlFromKnora | appLinkify" class="value"></div>
+<div [innerHTML]="htmlFromKnora | appLinkify"
+    class="value"
+    appHtmlLink
+    (internalLinkClicked)="internalLinkClicked.emit($event)"
+    (internalLinkHovered)="internalLinkHovered.emit($event)">
+</div>
 <div *ngIf="comment">
   <label>{{commentLabel}}: </label><span class="comment">{{comment}}</span>
 </div>

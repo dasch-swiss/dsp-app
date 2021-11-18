@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject, Input, ElementRef, EventEmitter, Output } from '@angular/core';
 import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -12,6 +12,10 @@ import { BaseValueDirective } from 'src/app/main/directive/base-value.directive'
 export class TextValueAsHtmlComponent extends BaseValueDirective implements OnInit {
 
     @Input() displayValue?: ReadTextValueAsHtml;
+
+    @Output() internalLinkClicked: EventEmitter<string> = new EventEmitter<string>();
+
+    @Output() internalLinkHovered: EventEmitter<string> = new EventEmitter<string>();
 
     valueFormControl: FormControl;
     commentFormControl: FormControl;

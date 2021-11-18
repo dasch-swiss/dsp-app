@@ -358,8 +358,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     /**
     * display message to confirm the copy of the citation link (ARK URL)
     */
-    openSnackBar() {
-        const message = 'ARK URL copied to clipboard!';
+    openSnackBar(message: string) {
         this._notification.openSnackBar(message);
     }
 
