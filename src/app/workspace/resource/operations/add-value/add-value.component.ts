@@ -68,7 +68,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
 
         // since simple text values and rich text values share the same object type 'TextValue',
         // we need to use the ValueTypeService in order to assign it the correct object type for the ngSwitch in the template
-        if (this.resourcePropertyDefinition.objectType === 'http://api.knora.org/ontology/knora-api/v2#TextValue') {
+        if (this.resourcePropertyDefinition.objectType === Constants.TextValue || this.resourcePropertyDefinition.objectType === 'ReadTextValueAsString') {
             this.resourcePropertyDefinition.objectType = this._valueService.getTextValueClass(this.resourcePropertyDefinition);
 
             if (this.resourcePropertyDefinition.objectType === 'ReadTextValueAsString') {

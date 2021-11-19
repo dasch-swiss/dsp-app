@@ -39,7 +39,7 @@
     "@ngx-translate/http-loader": "5.0.0",
     "3d-force-graph": "^1.60.12",
     "angular-split": "^4.0.0",
-    "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#main",
+    "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.0.0",
     "core-js": "^3.19.1",
     "d3": "^5.15.1",
     "d3-force-3d": "^2.1.0",
