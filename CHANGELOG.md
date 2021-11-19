@@ -1,5 +1,13 @@
 # Changelog
 
+### [8.1.1](https://www.github.com/dasch-swiss/dsp-app/compare/v8.1.0...v8.1.1) (2021-11-19)
+
+
+### Bug Fixes
+
+* **results:** display xml a better way (DEV-96) ([#593](https://www.github.com/dasch-swiss/dsp-app/issues/593)) ([d968f2f](https://www.github.com/dasch-swiss/dsp-app/commit/d968f2faca57f579efdbcb014797ad411b1b0067))
+* **value:** bug fix in text-value-as-string (DEV-242) ([#595](https://www.github.com/dasch-swiss/dsp-app/issues/595)) ([0fb95ee](https://www.github.com/dasch-swiss/dsp-app/commit/0fb95ee82bd634ebd904af70330a919b449275d5))
+
 ## [8.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.0.0...v8.1.0) (2021-11-18)
 
 
