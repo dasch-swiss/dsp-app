@@ -83,10 +83,9 @@ export class ProjectsComponent implements OnInit {
         // clean up list of projects
         this.active = [];
         this.inactive = [];
-
         if (this.username) {
             // logged-in user view: get all projects, where the user is member of
-            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
 
                     for (const project of response.body.user.projects) {
@@ -154,17 +153,8 @@ export class ProjectsComponent implements OnInit {
      * refresh list of projects after updating one
      */
     refresh(): void {
-        // referesh the component
+        // refresh the component
         this.loading = true;
-        // update the cache
-        // this._cache.del('members_of_' + this.projectCode);
         this.initList();
-
-        // refresh child component: add user
-        /*
-        if (this.addUser) {
-            this.addUser.buildForm();
-        }
-        */
     }
 }

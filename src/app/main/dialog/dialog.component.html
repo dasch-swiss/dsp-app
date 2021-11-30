@@ -102,9 +102,9 @@
         <app-project-form [projectCode]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
-    <!-- Delete project -->
-    <div *ngSwitchCase="'deleteProject'">
-        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.delete' | translate">
+    <!-- Deactivate project -->
+    <div *ngSwitchCase="'deactivateProject'">
+        <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.deactivate' | translate">
         </app-dialog-header>
         Do you want to deactivate this project?
         <mat-dialog-actions>

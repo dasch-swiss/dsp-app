@@ -1,16 +1,3 @@
-<!--
-<form [formGroup]="findProject" class="form" *ngIf="!loading">
-    <mat-form-field class="large">
-        <input matInput [placeholder]="Find project…" [formControl]="">
-    </mat-form-field>
-    <mat-autocomplete #user="matAutocomplete" (optionSelected)="selectProject()">
-            <mat-option *ngFor="let project of filteredProjects | async" [value]="project?.name">
-                {{ project?.label }}
-            </mat-option>
-        </mat-autocomplete>
-</form>
- -->
-
 <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
 <div *ngIf="!loading" class="app-projects">
@@ -22,14 +9,3 @@
     <app-projects-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-projects-list>
 </div>
 
-<!--
-<div *ngIf="system">
-
-    <button mat-raised-button [color]="'primary'" class="add-new" (click)="openDialog('createProject')">
-            NEW project
-    </button>
-    <app-progress-indicator *ngIf="loadSystem"></app-progress-indicator>
-    <app-projects-list *ngIf="!loadSystem" [list]="active" [system]="system"></app-projects-list>
-    <app-projects-list *ngIf="!loadSystem" [list]="inactive" [system]="system"></app-projects-list>
-</div>
- -->

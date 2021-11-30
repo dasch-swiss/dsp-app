@@ -156,8 +156,8 @@ export class ProjectsListComponent implements OnInit {
             if (response === true) {
                 // get the mode
                 switch (mode) {
-                    case 'deleteProject':
-                        this.deleteProject(id);
+                    case 'deactivateProject':
+                        this.deactivateProject(id);
                         break;
 
                     case 'activateProject':
@@ -180,7 +180,8 @@ export class ProjectsListComponent implements OnInit {
         localStorage.setItem('sortProjectsBy', key);
     }
 
-    deleteProject(id: string) {
+    deactivateProject(id: string) {
+        // the deleteProject() method in js-lib sets the project's status to false, it is not actually deleted
         this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();

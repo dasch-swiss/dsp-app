@@ -121,9 +121,9 @@
                     "edit": "Update project",
                     "profile": "Research project",
                     "editSuccess": "You have successfully updated this project.",
-                    "delete": "Deactivate project",
-                    "deleteHint": "You're sure to delete this project?",
-                    "deleteButton": "Deactivate project now",
+                    "deactivate": "Deactivate project",
+                    "deactivateHint": "You're sure to deactivate this project?",
+                    "deactivateButton": "Deactivate project now",
                     "activate": "Do you want to reactivate?",
                     "activateButton": "Reactivate project now",
                     "formWizard": {

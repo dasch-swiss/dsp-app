@@ -97,8 +97,8 @@
                     "new": "Projekt erstellen",
                     "edit": "Projekt aktualisieren",
                     "editSuccess": "Das Projekt wurde erfolgreich aktualisiert",
-                    "delete": "Projekt deaktivieren",
-                    "deleteHint": "Möchtest du das Projekt wirklich deaktivieren?",
+                    "deactivate": "Projekt deaktivieren",
+                    "deactivateHint": "Möchtest du das Projekt wirklich deaktivieren?",
                     "formWizard": {
                         "step_1": "Projektdaten",
                         "step_2": "Mitlgieder hinzufügen",

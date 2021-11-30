@@ -79,7 +79,7 @@
                     - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject
                     -->
                     <button mat-menu-item *ngIf="status"
-                        (click)="openDialog('deleteProject', project.shortname, project.id)">
+                        (click)="openDialog('deactivateProject', project.shortname, project.id)">
                         Deactivate project
                     </button>
                     <button mat-menu-item *ngIf="!status"
