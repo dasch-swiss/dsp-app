@@ -73,15 +73,17 @@ export class EditListItemComponent implements OnInit {
     ngOnInit(): void {
         this.loading = true;
 
-        // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
-            (response: ReadProject) => {
-                this.projectIri = response.id;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+        // get the project iri from cache if the project code was provided
+        if (this.projectCode) {
+            this._cache.get(this.projectCode).subscribe(
+                (response: ReadProject) => {
+                    this.projectIri = response.id;
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
+        }
 
         // if updating a node, get the existing node info
         if (this.mode === 'update') {
@@ -157,7 +159,7 @@ export class EditListItemComponent implements OnInit {
         childNodeUpdateData.projectIri = this.projectIri;
         childNodeUpdateData.listIri = this.iri;
         childNodeUpdateData.labels = this.labels;
-        childNodeUpdateData.comments = this.comments.length > 0 ? this.comments : [];
+        childNodeUpdateData.comments = this.comments.length > 0 ? this.comments : undefined;
 
         this._dspApiConnection.admin.listsEndpoint.updateChildNode(childNodeUpdateData).subscribe(
             (response: ApiResponseData<ChildNodeInfoResponse>) => {
@@ -181,7 +183,7 @@ export class EditListItemComponent implements OnInit {
         createChildNodeRequest.name = this.projectCode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
         createChildNodeRequest.parentNodeIri = this.parentIri;
         createChildNodeRequest.labels = this.labels;
-        createChildNodeRequest.comments = this.comments.length > 0 ? this.comments : [];
+        createChildNodeRequest.comments = this.comments.length > 0 ? this.comments : undefined;
         createChildNodeRequest.projectIri = this.projectIri;
         createChildNodeRequest.position = this.position;
 

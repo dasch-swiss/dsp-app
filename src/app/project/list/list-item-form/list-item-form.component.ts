@@ -157,7 +157,7 @@ export class ListItemFormComponent implements OnInit {
             childNode.labels[i].value = l.value;
             i++;
         }
-        childNode.comments = []; // --> TODO comments are not yet implemented in the template
+        // childNode.comments = []; // --> TODO comments are not yet implemented in the template
 
         // init data to emit to parent
         const listNodeOperation: ListNodeOperation = new ListNodeOperation();
