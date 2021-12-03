@@ -1,5 +1,13 @@
 # Changelog
 
+### [8.1.2](https://www.github.com/dasch-swiss/dsp-app/compare/v8.1.1...v8.1.2) (2021-12-01)
+
+
+### Maintenance
+
+* **lists:** adds changes required for lists to work due to the change in js-lib ([#599](https://www.github.com/dasch-swiss/dsp-app/issues/599)) ([ca83584](https://www.github.com/dasch-swiss/dsp-app/commit/ca8358451624c8b8af4a3a58051b3f60140378eb))
+* **projects:** don't use the cache when refreshing the projects list. Also renames some labels and methods to clarify that these things are for deactivating a project as opposed to deleting a project. ([#597](https://www.github.com/dasch-swiss/dsp-app/issues/597)) ([faebe3e](https://www.github.com/dasch-swiss/dsp-app/commit/faebe3e20953d6c2afc12cff9bf94a670db50ced))
+
 ### [8.1.1](https://www.github.com/dasch-swiss/dsp-app/compare/v8.1.0...v8.1.1) (2021-11-19)
 
 
