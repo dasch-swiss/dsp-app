@@ -31,7 +31,7 @@ RUN npm run build-prod
 
 ### STAGE 2: Setup ###
 
-FROM dhlabbasel/nginx-server:v1.0.1
+FROM dhlabbasel/nginx-server:v1.1.1
 
 LABEL maintainer="ivan.subotic@unibas.ch"
 
