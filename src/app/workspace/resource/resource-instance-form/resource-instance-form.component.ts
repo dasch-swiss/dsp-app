@@ -73,7 +73,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
 
     // selected resource class has a file value property: display the corresponding upload form
-    hasFileValue: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text';
+    hasFileValue: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
 
     fileValue: CreateFileValue;
 
@@ -193,6 +193,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     case 'audio':
                         this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
                         break;
+                    case 'archive':
+                        this.propertiesObj[Constants.HasArchiveFileValue] = [this.fileValue];
                 }
             }
 
@@ -363,7 +365,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                                     prop.isEditable &&
                                     prop.id !== Constants.HasStillImageFileValue &&
                                     prop.id !== Constants.HasDocumentFileValue &&
-                                    prop.id !== Constants.HasAudioFileValue  // --> TODO for UPLOAD: expand with other representation file values
+                                    prop.id !== Constants.HasAudioFileValue &&
+                                    prop.id !== Constants.HasArchiveFileValue  // --> TODO for UPLOAD: expand with other representation file values
                             );
 
                             if (onto.properties[Constants.HasStillImageFileValue]) {
@@ -372,12 +375,14 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                                 this.hasFileValue = 'document';
                             } else if (onto.properties[Constants.HasAudioFileValue]) {
                                 this.hasFileValue = 'audio';
+                            } else if (onto.properties[Constants.HasArchiveFileValue]) {
+                                this.hasFileValue = 'archive';
                             } else {
                                 this.hasFileValue = undefined;
                             }
 
                             // notifies the user that the selected resource does not have any properties defined yet.
-                            if (!this.selectPropertiesComponent && this.properties.length === 0) {
+                            if (!this.selectPropertiesComponent && this.properties.length === 0 && !this.hasFileValue) {
                                 this.errorMessage = 'No properties defined for the selected resource.';
                             }
 

@@ -1,0 +1,12 @@
+<div *ngIf="src && src.fileValue.fileUrl">
+    <button class="download" mat-button (click)="downloadArchive(src.fileValue.fileUrl)">
+        <mat-icon>
+            file_download
+        </mat-icon>
+        Click to download
+    </button>
+</div>
+<div *ngIf="!src || !src.fileValue.fileUrl">
+    No valid file url found for this resource.
+</div>
+

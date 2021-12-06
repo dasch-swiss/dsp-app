@@ -46,7 +46,7 @@ class TestHostComponent implements OnInit {
 }
 
 
-describe('SelectResourceClassComponent', () => {
+describe('SearchSelectResourceClassComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
@@ -173,7 +173,7 @@ describe('SelectResourceClassComponent', () => {
 
         testHostFixture.detectChanges();
 
-        expect(testHostComponent.selectResourceClass.resourceClassDefinitions.length).toEqual(12);
+        expect(testHostComponent.selectResourceClass.resourceClassDefinitions.length).toEqual(13);
 
         const select = await loader.getHarness(MatSelectHarness);
         const initVal = await select.getValueText();
@@ -185,7 +185,7 @@ describe('SelectResourceClassComponent', () => {
 
         const options = await select.getOptions();
 
-        expect(options.length).toEqual(13);
+        expect(options.length).toEqual(14);
 
         expect(testHostComponent.selectResourceClass.selectedResourceClassIri).toBe(false);
 

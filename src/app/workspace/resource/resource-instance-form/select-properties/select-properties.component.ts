@@ -135,7 +135,7 @@ export class SelectPropertiesComponent implements OnInit {
 
         // update the filtered version of the corresponding property values array.
         // used in the template to calculate if the delete button should be shown.
-        // e.i don't show the delete button if there is only one value
+        // i.e. don't show the delete button if there is only one value
         this.propertyValuesKeyValuePair[prop.id + '-filtered'] = this._filterValueArray(this.propertyValuesKeyValuePair[prop.id]);
     }
 

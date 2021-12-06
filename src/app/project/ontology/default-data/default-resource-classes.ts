@@ -140,6 +140,15 @@ export class DefaultResourceClasses {
                 'drafts',
                 'library_books'
             ]
+        },
+        {
+            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'ArchiveRepresentation',
+            label: 'Archive (zip, x-tar, gzip)',
+            icons: [
+                'archive',
+                'folder',
+                'folder_open'
+            ]
         }
     ];
 }
