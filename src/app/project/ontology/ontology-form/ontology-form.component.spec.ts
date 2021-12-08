@@ -174,7 +174,7 @@ describe('OntologyFormComponent', () => {
         nameInput.setValue('biblio');
 
         const compiled = ontologyFormFixture.debugElement;
-        expect(ontologyFormComponent.ontologyLabel).toEqual('Biblio');
+        expect(ontologyFormComponent.ontologyForm.controls.label.value).toEqual('Biblio');
         expect(form.valid).toBeTruthy();
 
 

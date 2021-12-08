@@ -12,9 +12,9 @@
         </mat-form-field>
 
         <mat-form-field class="large-field ontology-label">
-            <input matInput [formControl]="ontologyForm.controls['label']" [placeholder]="iri ? 'Label *' : 'Label'"
-                [value]="ontologyLabel">
             <span *ngIf="!iri" matPrefix>{{project.shortname}}:&nbsp;</span>
+            <input matInput [formControl]="ontologyForm.controls['label']" placeholder="Label *"
+                [value]="ontologyLabel">
             <mat-hint *ngIf="formErrors.label">
                 {{ formErrors.label }}
             </mat-hint>

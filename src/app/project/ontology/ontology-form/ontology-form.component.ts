@@ -194,16 +194,18 @@ export class OntologyFormComponent implements OnInit {
         });
 
         this.ontologyForm.valueChanges.subscribe(data => this.onValueChanged(data));
+
+        if (!this.iri) {
+            this.ontologyForm.get('name').valueChanges.subscribe(val => {
+                this.ontologyForm.controls.label.setValue(this.capitalizeFirstLetter(val));
+            });
+        }
     }
 
     onValueChanged(data?: any) {
 
         if (!this.ontologyForm) {
             return;
-        }
-
-        if (!this.iri) {
-            this.ontologyLabel = this.capitalizeFirstLetter(data.name);
         }
 
         Object.keys(this.formErrors).map(field => {
