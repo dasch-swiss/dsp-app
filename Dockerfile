@@ -31,9 +31,9 @@ RUN npm run build-prod
 
 ### STAGE 2: Setup ###
 
-FROM dhlabbasel/nginx-server:v1.1.1
+FROM daschswiss/nginx-server:v1.1.1
 
-LABEL maintainer="ivan.subotic@unibas.ch"
+LABEL maintainer="400790+subotic@users.noreply.github.com"
 
 RUN rm -rf /public/*
 
