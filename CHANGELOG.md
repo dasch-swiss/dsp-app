@@ -1,5 +1,25 @@
 # Changelog
 
+### [8.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.1.2...v8.2.0) (2021-12-08)
+
+### Bug Fixes
+
+* **ontology:** bug fix in ontology form (DEV-280) ([#603](https://www.github.com/dasch-swiss/dsp-app/issues/603)) ([4c1bc24](https://www.github.com/dasch-swiss/dsp-app/commit/4c1bc248d5020ea62b57dbac5a83294481275442))
+* **resource:** create resource iri from route only in certain cases (DEV-306) ([#605](https://www.github.com/dasch-swiss/dsp-app/issues/605)) ([a38abd0](https://www.github.com/dasch-swiss/dsp-app/commit/a38abd01f24ef98518042d6d8136f21ad0bc5368))
+* **value:** fix linkify pipe (DEV-270) ([#602](https://www.github.com/dasch-swiss/dsp-app/issues/602)) ([f2c8d7a](https://www.github.com/dasch-swiss/dsp-app/commit/f2c8d7a57811c8eb7b1989a534d6e27f2955f984))
+
+
+### Enhancements
+
+* **representation:** add support for uploading and viewing archive files (DEV-18) ([#600](https://www.github.com/dasch-swiss/dsp-app/issues/600)) ([9bb63d7](https://www.github.com/dasch-swiss/dsp-app/commit/9bb63d71234fc49f2afcb959603b8bcd4deb4429))
+
+
+### Maintenance
+
+* **deps:** update outdated angular packages ([#604](https://www.github.com/dasch-swiss/dsp-app/issues/604)) ([80b3f93](https://www.github.com/dasch-swiss/dsp-app/commit/80b3f934c5c04e8c4ba284e6a173d265e3fd9e0d))
+* **angular:** fix budget in prod mode ([#606](https://www.github.com/dasch-swiss/dsp-app/issues/606)) ([5072948](https://www.github.com/dasch-swiss/dsp-app/commit/507294887a7dd8868cbecfd20ad0509fb80bd674))
+
+
 ### [8.1.2](https://www.github.com/dasch-swiss/dsp-app/compare/v8.1.1...v8.1.2) (2021-12-01)
 
 
