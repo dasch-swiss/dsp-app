@@ -50,16 +50,7 @@ import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { DatadogRumService } from './main/services/datadog-rum.service';
 import { MaterialModule } from './material-module';
-import { AddressTemplateComponent } from './project/board/address-template/address-template.component';
-import { AttributionTabViewComponent } from './project/board/attribution-tab-view/attribution-tab-view.component';
 import { BoardComponent } from './project/board/board.component';
-import { ContactsTabViewComponent } from './project/board/contacts-tab-view/contacts-tab-view.component';
-import { DatasetTabViewComponent } from './project/board/dataset-tab-view/dataset-tab-view.component';
-import { OrganisationTemplateComponent } from './project/board/organisation-template/organisation-template.component';
-import { PersonTemplateComponent } from './project/board/person-template/person-template.component';
-import { ProjectTabViewComponent } from './project/board/project-tab-view/project-tab-view.component';
-import { TermsTabViewComponent } from './project/board/terms-tab-view/terms-tab-view.component';
-import { UrlTemplateComponent } from './project/board/url-template/url-template.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
@@ -178,13 +169,11 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         AccountComponent,
         AddGroupComponent,
         AddRegionFormComponent,
-        AddressTemplateComponent,
         AddUserComponent,
         AddValueComponent,
         AdminImageDirective,
         AdvancedSearchComponent,
         AppComponent,
-        AttributionTabViewComponent,
         AudioComponent,
         BoardComponent,
         BooleanValueComponent,
@@ -196,10 +185,8 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ComparisonComponent,
         ConfirmationDialogComponent,
         ConfirmationMessageComponent,
-        ContactsTabViewComponent,
         CookiePolicyComponent,
         DashboardComponent,
-        DatasetTabViewComponent,
         DateEditComponent,
         DateInputComponent,
         DateInputTextComponent,
@@ -250,17 +237,14 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         OntologyComponent,
         OntologyFormComponent,
         OntologyVisualizerComponent,
-        OrganisationTemplateComponent,
         PasswordFormComponent,
         PermissionComponent,
-        PersonTemplateComponent,
         ProfileComponent,
         ProgressIndicatorComponent,
         ProjectComponent,
         ProjectFormComponent,
         ProjectsComponent,
         ProjectsListComponent,
-        ProjectTabViewComponent,
         PropertiesComponent,
         PropertyFormComponent,
         PropertyInfoComponent,
@@ -303,7 +287,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         SublistValueComponent,
         SwitchPropertiesComponent,
         SystemComponent,
-        TermsTabViewComponent,
         TextValueAsHtmlComponent,
         TextValueAsStringComponent,
         TextValueAsXMLComponent,
@@ -313,7 +296,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         TruncatePipe,
         UploadComponent,
         UriValueComponent,
-        UrlTemplateComponent,
         UserComponent,
         UserFormComponent,
         UserMenuComponent,

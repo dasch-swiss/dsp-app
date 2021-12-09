@@ -15,12 +15,7 @@ import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorComponent } from 'src/app/main/error/error.component';
 import { TestConfig } from 'test.config';
 import { CacheService } from '../../main/cache/cache.service';
-import { AttributionTabViewComponent } from './attribution-tab-view/attribution-tab-view.component';
 import { BoardComponent } from './board.component';
-import { ContactsTabViewComponent } from './contacts-tab-view/contacts-tab-view.component';
-import { DatasetTabViewComponent } from './dataset-tab-view/dataset-tab-view.component';
-import { ProjectTabViewComponent } from './project-tab-view/project-tab-view.component';
-import { TermsTabViewComponent } from './terms-tab-view/terms-tab-view.component';
 
 describe('BoardComponent', () => {
     let component: BoardComponent;
@@ -34,12 +29,7 @@ describe('BoardComponent', () => {
             declarations: [
                 BoardComponent,
                 DialogComponent,
-                ErrorComponent,
-                AttributionTabViewComponent,
-                ContactsTabViewComponent,
-                DatasetTabViewComponent,
-                ProjectTabViewComponent,
-                TermsTabViewComponent
+                ErrorComponent
             ],
             imports: [
                 BrowserAnimationsModule,

@@ -192,7 +192,8 @@ describe('StillImageComponent', () => {
         const iiifUrlEle = iiifUrlDebugElement.nativeElement;
 
         expect(iiifUrlEle.innerText).toEqual('https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg');
-
+        expect(iiifUrlEle.getAttribute('target')).toEqual('_blank');
+        expect(iiifUrlEle.getAttribute('href')).toEqual('https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg');
     });
 
     it('should have 1 test region loaded (rectangle)', () => {
