@@ -16,11 +16,6 @@ $bright: #ccc;
     height: 300px;
   }
 
-  // .content {
-  //   // min-height: $full-height;
-  //   height: 100%;
-  //   width: 100%;
-
   .osd-container {
     color: $bright;
     background-color: $dark;
@@ -33,9 +28,20 @@ $bright: #ccc;
     &.fullscreen {
       max-width: 100vw;
     }
-  }
 
-  // }
+    .captions-container {
+      .top, .bottom {
+        text-align: left;
+        .iiif {
+          padding: 0px 0px 0px 16px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 50%;
+        }
+      }
+    }
+  }
 }
 
 /*

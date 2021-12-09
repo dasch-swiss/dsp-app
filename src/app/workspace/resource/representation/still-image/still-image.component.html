@@ -1,8 +1,16 @@
 <!-- openseadragon (osd) viewer -->
 <div class="osd-container" [class.drawing]="regionDrawMode">
     <div class="action horizontal top overlay">
+        <div class="captions-container">
+            <div class="top">
+                <span class="caption mat-caption">{{imageCaption}}</span>
+            </div>
+            <div class="bottom">
+                <a href="{{iiifUrl}}" target="_blank" class="iiif mat-caption">{{iiifUrl}}</a>
+            </div>
+        </div>
         <!-- caption -->
-        <span class="caption mat-caption">{{imageCaption}}</span>
+
         <span class="fill-remaining-space"></span>
         <!-- image action tools e.g. zoom, rotate and flip -->
         <span>

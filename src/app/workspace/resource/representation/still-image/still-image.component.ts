@@ -99,6 +99,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
     @Input() images: FileRepresentation[];
     @Input() imageCaption?: string;
+    @Input() iiifUrl?: string;
     @Input() resourceIri: string;
     @Input() project: string;
     @Input() activateRegion?: string; // highlight a region
@@ -110,7 +111,6 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     @Output() regionClicked = new EventEmitter<string>();
 
     @Output() regionAdded = new EventEmitter<string>();
-
     regionDrawMode: Boolean = false; // stores whether viewer is currently drawing a region
     private _regionDragInfo; // stores the information of the first click for drawing a region
     private _viewer: OpenSeadragon.Viewer;
@@ -543,7 +543,6 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             const sipiBasePath = image.iiifBaseUrl + '/' + image.filename;
             const width = image.dimX;
             const height = image.dimY;
-
             // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
             tileSources.push({
                 // construct IIIF tileSource configuration according to

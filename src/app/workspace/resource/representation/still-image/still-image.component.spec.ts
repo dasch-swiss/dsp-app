@@ -74,6 +74,7 @@ function makeRegion(geomString: string[], iri: string): ReadResource {
     template: `
         <app-still-image [images]="stillImageFileRepresentations"
                          [imageCaption]="caption"
+                         [iiifUrl]="iiifUrl"
                          [activateRegion]="inputActivateRegion"
                          [currentTab]="'annotations'"
                          (regionClicked)="regHovered($event)">
@@ -85,6 +86,7 @@ class TestHostComponent implements OnInit {
 
     stillImageFileRepresentations: FileRepresentation[] = [];
     caption = 'test image';
+    iiifUrl = 'https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg';
     inputActivateRegion: string;
 
     activeRegion: string;
@@ -174,10 +176,22 @@ describe('StillImageComponent', () => {
         const hostCompDe = testHostFixture.debugElement;
         const stillImageComponentDe = hostCompDe.query(By.directive(StillImageComponent));
 
-        const captionDebugElement = stillImageComponentDe.query(By.css('.mat-caption'));
+        const captionDebugElement = stillImageComponentDe.query(By.css('.caption'));
         const captionEle = captionDebugElement.nativeElement;
 
         expect(captionEle.innerText).toEqual('test image');
+
+    });
+
+    it('should display the iiifUrl of the image', () => {
+
+        const hostCompDe = testHostFixture.debugElement;
+        const stillImageComponentDe = hostCompDe.query(By.directive(StillImageComponent));
+
+        const iiifUrlDebugElement = stillImageComponentDe.query(By.css('.iiif'));
+        const iiifUrlEle = iiifUrlDebugElement.nativeElement;
+
+        expect(iiifUrlEle.innerText).toEqual('https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg');
 
     });
 

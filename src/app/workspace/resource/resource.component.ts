@@ -67,6 +67,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     selectedTabLabel: string;
 
+    iiifUrl: string;
+
     // list of representations to be displayed
     // --> TODO: will be expanded with | MovingImageRepresentation[] | AudioRepresentation[] etc.
     representationsToDisplay: FileRepresentation[] = [];
@@ -215,6 +217,12 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             (response: ReadResource) => {
                 const res = new DspResource(response);
                 this.resource = res;
+
+                // if there is no incomingResource and the resource has a still image property, assign the iiiUrl to be passed as an input to the still-image component
+                if (!this.incomingResource && this.resource.res.properties[Constants.HasStillImageFileValue]){
+                    this.iiifUrl = (this.resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
+                }
+
                 this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
 
                 // get information about the logged-in user, if one is logged-in
@@ -275,6 +283,12 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 const res = new DspResource(response);
 
                 this.incomingResource = res;
+
+                // if the resource is a still image, assign the iiiUrl to be passed as an input to the still-image component
+                if (this.incomingResource.res.properties[Constants.HasStillImageFileValue]){
+                    this.iiifUrl = (this.incomingResource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
+                }
+
                 res.resProps = this.initProps(response);
                 res.systemProps = this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
@@ -363,7 +377,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         // --> TODO: should be a general object for all kind of representations
         const representations: FileRepresentation[] = [];
 
-        // --> TODO: use a switch here to go throught the different representation types
+        // --> TODO: use a switch here to go through the different representation types
         if (resource.res.properties[Constants.HasStillImageFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // resource has StillImageFileValues that are directly attached to it (properties)
@@ -476,8 +490,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         // request incoming regions --> TODO: add case to get incoming sequences in case of video and audio
         if (resource.res.properties[Constants.HasStillImageFileValue] ||
             resource.res.properties[Constants.HasDocumentFileValue] ||
-            resource.res.properties[Constants.HasAudioFileValue] ||
-            resource.res.properties[Constants.HasArchiveFileValue]) {
+            resource.res.properties[Constants.HasAudioFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // the resource is a StillImageRepresentation, check if there are regions pointing to it
 
