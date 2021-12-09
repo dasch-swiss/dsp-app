@@ -343,6 +343,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                         this._dspApiConnection.v2.res.updateResourceMetadata(payload).subscribe(
                             (response: UpdateResourceMetadataResponse) => {
                                 this.resource.res.label = payload.label;
+                                this.lastModificationDate = response.lastModificationDate;
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);

@@ -73,18 +73,18 @@
 
 <!-- additional line with project and user information -->
 <div class="infobar mat-caption" *ngIf="project && user">
-    <p *ngIf="displayProjectInfo">This resource belongs to the project
+    <span *ngIf="displayProjectInfo">This resource belongs to the project
         <span class="project link" (click)="openProject(project)" (mouseover)="previewProject(project)">
             <strong>{{project?.shortname}}</strong>
             <mat-icon inline>open_in_new</mat-icon>
         </span>
-    </p>
-    <span class="fill-remaining-space"></span>
-    <p *ngIf="user || resource.res.creationDate">
+    </span>
+    <span class="fill-remaining-space desktop-only"></span>
+    <span *ngIf="user || resource.res.creationDate">
         Created
         <span *ngIf="user">by {{(user.username ? user.username : user.givenName + ' ' + user.familyName)}}</span>
         <span *ngIf="resource.res.creationDate"> on {{resource.res.creationDate | date}}</span>
-    </p>
+    </span>
 </div>
 
 <!-- list of properties -->
