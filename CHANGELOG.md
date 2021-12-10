@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.2.0...v8.3.0) (2021-12-09)
+
+
+### Bug Fixes
+
+* **resource:** update lastModificationDate after editing label (DEV-315) ([#616](https://www.github.com/dasch-swiss/dsp-app/issues/616)) ([3b9d93b](https://www.github.com/dasch-swiss/dsp-app/commit/3b9d93be2596e407f825ccf4b1a3b19bdcb4cedd))
+
+
+### Enhancements
+
+* **still-image:** display iiif url under the image caption (DEV-243) ([#613](https://www.github.com/dasch-swiss/dsp-app/issues/613)) ([109978f](https://www.github.com/dasch-swiss/dsp-app/commit/109978f779536bd10013d66169bdb57f20af3e04))
+
+
+### Maintenance
+
+* **metadata:** remove "old" implementation of the project metadata (DEV-282) ([#615](https://www.github.com/dasch-swiss/dsp-app/issues/615)) ([29acf3a](https://www.github.com/dasch-swiss/dsp-app/commit/29acf3a34aa1a17df0d35fa4f46bbb55baeef92f))
+
 ### [8.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.1.2...v8.2.0) (2021-12-08)
 
 ### Bug Fixes
