@@ -22,10 +22,7 @@
 
         <ng-container *ngIf="!isLoading && file">
             <div *ngIf="thumbnailUrl" class="thumbnail">
-                <img src="{{ thumbnailUrl }}" alt="thumbnail" />
-                <button mat-button class="delete-file" title="delete file" (click)="deleteAttachment()">
-                    <mat-icon>close</mat-icon>
-                </button>
+                <img [src]="thumbnailUrl" alt="thumbnail" />
             </div>
 
             <div class="files-list">
