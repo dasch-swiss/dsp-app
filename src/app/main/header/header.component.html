@@ -27,17 +27,19 @@
     <!-- action tools: info menu, select language, login button, user menu -->
     <span class="action">
 
+        <!-- create new; at the moment only "create new resource" -->
         <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
             <mat-icon>add_circle_outline</mat-icon>
         </button>
 
+        <!-- navigation: help -->
         <button mat-button [routerLink]="'/help'" class="main-toolbar-button help">Help</button>
 
+        <!-- language selector; not ativated at the moment -->
         <app-select-language></app-select-language>
 
-        <button mat-raised-button color="primary" *ngIf="!session" class="login-button"
-            (click)="goToLogin()">LOGIN</button>
-        <app-user-menu *ngIf="session"></app-user-menu>
+        <!-- user menu or login form -->
+        <app-user-menu [session]="session"></app-user-menu>
     </span>
 
 </mat-toolbar>

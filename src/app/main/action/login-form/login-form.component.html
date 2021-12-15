@@ -1,6 +1,6 @@
 <div class="login-container" *ngIf="!session">
 
-    <h2 class="login-form-title mat-title">{{formLabel.title}}</h2>
+    <!-- <h2 class="login-form-title mat-title">{{formLabel.title}}</h2> -->
 
     <!-- This is the login form -->
     <form [formGroup]="form" class="login-form">
@@ -10,12 +10,11 @@
             <mat-icon *ngIf="icons" matPrefix>person</mat-icon>
 
             <input
+                #username
                 matInput
                 [placeholder]="formLabel.name"
                 autocomplete="username"
-                formControlName="username"
-                #username
-            >
+                formControlName="username">
 
         </mat-form-field>
 
@@ -40,8 +39,8 @@
             mat-raised-button
             (click)="login()"
             type="submit"
-            [disabled]="!form.valid"
             class="full-width submit-button"
+            [disabled]="!form.valid"
             [class.mat-primary]="!isError"
             [class.mat-warn]="isError">
                 <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="login-progress"></app-progress-indicator>

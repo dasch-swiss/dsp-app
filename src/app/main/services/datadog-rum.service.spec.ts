@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DatadogRumService } from './datadog-rum.service';
+import { SessionService } from './session.service';
 
 describe('DatadogRumService', () => {
     let service: DatadogRumService;
@@ -9,7 +10,11 @@ describe('DatadogRumService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                { provide: DatadogRumService, useValue: mockdatadogRumService }
+                SessionService,
+                {
+                    provide: DatadogRumService,
+                    useValue: mockdatadogRumService
+                }
             ]
         });
         service = TestBed.inject(DatadogRumService);

@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,6 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppInitService } from 'src/app/app-init.service';
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
-import { UserMenuComponent } from 'src/app/user/user-menu/user-menu.component';
 import { TestConfig } from 'test.config';
 import { DspApiConfigToken, DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
@@ -45,6 +44,17 @@ class TestSearchPanelComponent {
     @Input() expert?: boolean = false;
 }
 
+/**
+ * test component to simulate user menu component.
+ */
+@Component({
+    selector: 'app-user-menu',
+    template: ''
+})
+class TestUserMenuComponent {
+    @Input() session?: boolean = true;
+}
+
 describe('HeaderComponent', () => {
     let testHostComponent: TestHostHeaderComponent;
     let testHostFixture: ComponentFixture<TestHostHeaderComponent>;
@@ -59,8 +69,8 @@ describe('HeaderComponent', () => {
                 HeaderComponent,
                 TestHostHeaderComponent,
                 TestSearchPanelComponent,
-                SelectLanguageComponent,
-                UserMenuComponent
+                TestUserMenuComponent,
+                SelectLanguageComponent
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -115,14 +125,6 @@ describe('HeaderComponent', () => {
 
         const helpBtnLabel = helpBtn.nativeElement.innerHTML;
         expect(helpBtnLabel).toEqual('Help');
-    });
-
-    it('should display the login button', () => {
-        const loginBtn = testHostFixture.debugElement.query(By.css('button.login-button'));
-        expect(loginBtn).toBeTruthy();
-
-        const loginBtnLabel = loginBtn.nativeElement.innerHTML;
-        expect(loginBtnLabel).toEqual('LOGIN');
     });
 
     it('should display search panel', () => {

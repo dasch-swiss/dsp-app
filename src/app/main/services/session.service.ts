@@ -4,8 +4,7 @@ import {
     ApiResponseError,
     Constants,
     CredentialsResponse,
-    KnoraApiConnection,
-    UserResponse
+    KnoraApiConnection, UserResponse
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -49,8 +48,7 @@ export class SessionService {
      * default value (24h): 86400000
      *
      */
-    readonly MAX_SESSION_TIME: number = 86400000; // 1d = 24 * 60 * 60 * 1000
-
+    readonly MAX_SESSION_TIME: number = 3600; // 1d = 24 * 60 * 60 * 1000
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection
@@ -69,14 +67,14 @@ export class SessionService {
      *
      * @param jwt Json Web Token
      * @param identifier  email address or username
-     * @param identifierType 'email' or 'username'
+     * @param type 'email' or 'username'
      */
-    setSession(jwt: string, identifier: string, identifierType: 'email' | 'username'): Observable<void> {
+    setSession(jwt: string, identifier: string, type: 'email' | 'username'): Observable<void> {
 
         this._dspApiConnection.v2.jsonWebToken = (jwt ? jwt : '');
 
         // get user information
-        return this._dspApiConnection.admin.usersEndpoint.getUser(identifierType, identifier).pipe(
+        return this._dspApiConnection.admin.usersEndpoint.getUser(type, identifier).pipe(
             map((response: ApiResponseData<UserResponse> | ApiResponseError) => {
                 this._storeSessionInLocalStorage(response, jwt);
                 // return type is void
@@ -132,6 +130,7 @@ export class SessionService {
         localStorage.removeItem('session');
     }
 
+
     /**
      * returns a timestamp represented in seconds
      *
@@ -166,7 +165,7 @@ export class SessionService {
             }
 
             // store session information in browser's localstorage
-            // tODO: jwt will be removed, when we have a better cookie solution (DSP-261)
+            // todo: jwt will be removed, when we have a better cookie solution (DSP-261)
             // --> no it can't be removed because the token is needed in sipi upload:
             // https://docs.dasch.swiss/DSP-API/03-apis/api-v2/editing-values/#upload-files-to-sipi
             session = {
@@ -184,7 +183,7 @@ export class SessionService {
             localStorage.setItem('session', JSON.stringify(session));
         } else {
             localStorage.removeItem('session');
-            console.error(response);
+            // console.error(response);
         }
     }
 

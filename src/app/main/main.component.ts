@@ -77,10 +77,6 @@ export class MainComponent implements OnInit {
         // check if a session is active
         if (this._session.getSession()) {
             this._router.navigate(['dashboard']);
-        } else {
-            // if session does not exist, redirect to login page
-            // --> NOTE: this is a temporary solution for DSP-ADMIN-APP
-            // this._router.navigate(['login']);
         }
     }
 

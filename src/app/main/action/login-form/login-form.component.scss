@@ -1,4 +1,4 @@
-$warn: #ef5350;
+@import "../../../../assets/style/theme";
 
 $width: 280px;
 
@@ -22,8 +22,7 @@ $width: 280px;
 
 .login-container,
 .logout-container {
-  margin-left: auto;
-  margin-right: auto;
+  margin: 16px auto;
   position: relative;
   width: $width;
 }

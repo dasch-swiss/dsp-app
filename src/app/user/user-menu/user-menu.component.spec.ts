@@ -1,17 +1,18 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorComponent } from 'src/app/main/error/error.component';
+import { DatadogRumService } from 'src/app/main/services/datadog-rum.service';
+import { SessionService } from 'src/app/main/services/session.service';
 import { TestConfig } from 'test.config';
 import { UserMenuComponent } from './user-menu.component';
 
@@ -19,12 +20,12 @@ describe('UserMenuComponent', () => {
     let component: UserMenuComponent;
     let fixture: ComponentFixture<UserMenuComponent>;
 
+    const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', ['setActiveUser', 'removeActiveUser']);
+
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                UserMenuComponent,
-                DialogComponent,
-                ErrorComponent
+                UserMenuComponent
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -38,6 +39,7 @@ describe('UserMenuComponent', () => {
             ],
             providers: [
                 AppInitService,
+                SessionService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
@@ -45,10 +47,17 @@ describe('UserMenuComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: DatadogRumService,
+                    useValue: datadogRumServiceSpy
                 }
             ]
         }).compileComponents();
     }));
+
+
+
 
     // mock localStorage
     beforeEach(() => {
@@ -84,6 +93,14 @@ describe('UserMenuComponent', () => {
         );
         expect(component).toBeTruthy();
     });
+
+    // it('should display the login button', () => {
+    //     const loginBtn = fixture.debugElement.query(By.css('button.login-button'));
+    //     expect(loginBtn).toBeTruthy();
+
+    //     const loginBtnLabel = loginBtn.nativeElement.innerHTML;
+    //     expect(loginBtnLabel).toEqual('LOGIN');
+    // });
 
     // todo: should display the different menu sections (system displayed only for system admin)
 });

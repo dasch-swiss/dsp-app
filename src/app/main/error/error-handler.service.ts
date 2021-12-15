@@ -47,7 +47,7 @@ export class ErrorHandlerService {
                 dialogConfig
             );
 
-            throw new Error('dsp-api not responding');
+            throw new Error(`ERROR ${status}: Server side error — dsp-api not responding`);
 
         } else if (error.status === 401 && typeof(error.error) !== 'string') {
             // logout if error status is a 401 error and comes from a DSP-JS request

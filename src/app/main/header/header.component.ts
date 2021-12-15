@@ -44,9 +44,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         );
 
         // logged-in user? show user menu or login button
-
         this._router.events.forEach((event) => {
-            // console.log('EVENT', event);
             if (event instanceof NavigationStart) {
                 this._session.isSessionValid().subscribe((response) => {
                     this.session = response;
@@ -67,18 +65,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (this.componentCommsSubscription !== undefined) {
             this.componentCommsSubscription.unsubscribe();
         }
-    }
-
-    /**
-     * navigate to the login page
-     */
-    goToLogin() {
-        // console.log(decodeURI(this._router.url));
-        this._router.navigate(['login'], {
-            queryParams: {
-                returnUrl: decodeURI(this._router.url)
-            }
-        });
     }
 
     /**
@@ -150,7 +136,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe(() => {
 
-            // do something
 
         });
     }

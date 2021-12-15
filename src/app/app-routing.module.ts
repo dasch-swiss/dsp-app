@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from './main/guard/auth.guard';
+import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { ErrorComponent } from './main/error/error.component';
 import { HelpComponent } from './main/help/help.component';
-import { LoginComponent } from './main/login/login.component';
+import { LoginFormComponent } from './main/action/login-form/login-form.component';
 import { MainComponent } from './main/main.component';
-import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 
 // project
 import { BoardComponent } from './project/board/board.component';
@@ -40,7 +40,7 @@ const routes: Routes = [
     },
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginFormComponent
     },
     {
         path: 'dashboard',

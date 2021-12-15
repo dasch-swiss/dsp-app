@@ -7,15 +7,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
-import { TestConfig } from 'test.config';
-import { AppInitService } from './app-init.service';
 import { AppComponent } from './app.component';
-import { DspApiConfigToken, DspApiConnectionToken } from './main/declarations/dsp-api-tokens';
-import { HeaderComponent } from './main/header/header.component';
-import { SelectLanguageComponent } from './main/select-language/select-language.component';
-import { UserMenuComponent } from './user/user-menu/user-menu.component';
 
 describe('AppComponent', () => {
 
@@ -23,10 +16,7 @@ describe('AppComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [
-                AppComponent,
-                HeaderComponent,
-                SelectLanguageComponent,
-                UserMenuComponent
+                AppComponent
             ],
             imports: [
                 HttpClientTestingModule,
@@ -38,17 +28,6 @@ describe('AppComponent', () => {
                 MatToolbarModule,
                 RouterTestingModule,
                 TranslateModule.forRoot()
-            ],
-            providers: [
-                AppInitService,
-                {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig
-                },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
-                }
             ]
         }).compileComponents();
     }));

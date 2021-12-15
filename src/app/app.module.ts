@@ -39,7 +39,6 @@ import { FooterComponent } from './main/footer/footer.component';
 import { GridComponent } from './main/grid/grid.component';
 import { HeaderComponent } from './main/header/header.component';
 import { HelpComponent } from './main/help/help.component';
-import { LoginComponent } from './main/login/login.component';
 import { MainComponent } from './main/main.component';
 import { FormattedBooleanPipe } from './main/pipes/formatting/formatted-boolean.pipe';
 import { KnoraDatePipe } from './main/pipes/formatting/knoradate.pipe';
@@ -96,6 +95,7 @@ import { AddValueComponent } from './workspace/resource/operations/add-value/add
 import { DisplayEditComponent } from './workspace/resource/operations/display-edit/display-edit.component';
 import { PropertiesComponent } from './workspace/resource/properties/properties.component';
 import { AddRegionFormComponent } from './workspace/resource/representation/add-region-form/add-region-form.component';
+import { ArchiveComponent } from './workspace/resource/representation/archive/archive.component';
 import { AudioComponent } from './workspace/resource/representation/audio/audio.component';
 import { DocumentComponent } from './workspace/resource/representation/document/document.component';
 import { StillImageComponent } from './workspace/resource/representation/still-image/still-image.component';
@@ -157,7 +157,6 @@ import { SearchSelectOntologyComponent } from './workspace/search/advanced-searc
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { FulltextSearchComponent } from './workspace/search/fulltext-search/fulltext-search.component';
 import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
-import { ArchiveComponent } from './workspace/resource/representation/archive/archive.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -174,6 +173,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         AdminImageDirective,
         AdvancedSearchComponent,
         AppComponent,
+        ArchiveComponent,
         AudioComponent,
         BoardComponent,
         BooleanValueComponent,
@@ -229,7 +229,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ListItemFormComponent,
         ListValueComponent,
         ListViewComponent,
-        LoginComponent,
         LoginFormComponent,
         MainComponent,
         MembershipComponent,
@@ -303,7 +302,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UsersListComponent,
         VisualizerComponent,
         YetAnotherDateValueComponent,
-        ArchiveComponent,
     ],
     imports: [
         AngularSplitModule.forRoot(),
