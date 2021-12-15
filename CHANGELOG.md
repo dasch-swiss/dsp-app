@@ -1,5 +1,19 @@
 # Changelog
 
+### [8.3.1](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.0...v8.3.1) (2021-12-15)
+
+
+### Bug Fixes
+
+* **upload:** fix thumbnail preview (DEV-268) ([#619](https://www.github.com/dasch-swiss/dsp-app/issues/619)) ([7cb8505](https://www.github.com/dasch-swiss/dsp-app/commit/7cb8505dd6886c22996bf6d2121e5eedae51f980))
+
+
+### Maintenance
+
+* **authentication:** new login / logout structure (DEV-325) ([#622](https://www.github.com/dasch-swiss/dsp-app/issues/622)) ([e8bec98](https://www.github.com/dasch-swiss/dsp-app/commit/e8bec983f1681a0d107106682114ac01b32a7301))
+* **fonts:** delete fonts and icons (DEV-327) ([#623](https://www.github.com/dasch-swiss/dsp-app/issues/623)) ([08e088b](https://www.github.com/dasch-swiss/dsp-app/commit/08e088b77a99904e3b5fae08f0a28bf64274246b))
+* **google fonts:** switch to using fonts hosted by google ([#620](https://www.github.com/dasch-swiss/dsp-app/issues/620)) ([daa4167](https://www.github.com/dasch-swiss/dsp-app/commit/daa41672e9019f6dd19db2a10c20cdadb803898f))
+
 ## [8.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.2.0...v8.3.0) (2021-12-09)
 
 
