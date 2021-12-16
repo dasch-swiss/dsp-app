@@ -20,7 +20,7 @@ describe('AuthenticationService', () => {
 
     const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['destroy']);
 
-    const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', ['removeActiveUser']);
+    const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', ['', 'removeActiveUser']);
 
 
     beforeEach(() => {

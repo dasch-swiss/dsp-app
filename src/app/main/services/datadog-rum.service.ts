@@ -34,9 +34,11 @@ export class DatadogRumService {
             });
 
             // if session is valid: setActiveUser
-            this._session.isSessionValid().subscribe((response) => {
-                const session: Session = this._session.getSession();
-                this.setActiveUser(session.user.name, 'username');
+            this._session.isSessionValid().subscribe((response: boolean) => {
+                if (response) {
+                    const session: Session = this._session.getSession();
+                    this.setActiveUser(session.user.name, 'username');
+                }
             });
 
         }
