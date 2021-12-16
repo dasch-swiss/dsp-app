@@ -1,5 +1,12 @@
 # Changelog
 
+### [8.3.2](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.1...v8.3.2) (2021-12-16)
+
+
+### Bug Fixes
+
+* **authentication:** set active datadog rum user (DEV-325) ([#624](https://www.github.com/dasch-swiss/dsp-app/issues/624)) ([69308e0](https://www.github.com/dasch-swiss/dsp-app/commit/69308e08010cceba80c40fe5a568b417f5326bb3))
+
 ### [8.3.1](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.0...v8.3.1) (2021-12-15)
 
 
