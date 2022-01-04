@@ -6,16 +6,18 @@ $panelSize: 40px;
 
 $osd-height: 460px;
 
-// colors
-$dark: #000;
-$bright: #ccc;
-
 :host {
+  border: 1px solid $black;
 
   .pdf-container {
     color: $bright;
-    background-color: $dark;
     height: 100%;
+    background-color: $black;
+
+    pdf-viewer {
+      position: inherit;
+      height: calc(100% - 4px);
+    }
   }
 
   .pdf-searchbox {
