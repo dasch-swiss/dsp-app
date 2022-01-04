@@ -1,5 +1,12 @@
 # Changelog
 
+### [8.3.3](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.2...v8.3.3) (2022-01-04)
+
+
+### Bug Fixes
+
+* **resource:** bug fix in pdf viewer (DEV-338) ([#626](https://www.github.com/dasch-swiss/dsp-app/issues/626)) ([4b5d5d5](https://www.github.com/dasch-swiss/dsp-app/commit/4b5d5d5992cb5c3f9bd75a358f16f2aca2efefb3))
+
 ### [8.3.2](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.1...v8.3.2) (2021-12-16)
 
 
