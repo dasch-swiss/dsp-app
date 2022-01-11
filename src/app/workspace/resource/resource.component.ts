@@ -490,7 +490,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         // request incoming regions --> TODO: add case to get incoming sequences in case of video and audio
         if (resource.res.properties[Constants.HasStillImageFileValue] ||
             resource.res.properties[Constants.HasDocumentFileValue] ||
-            resource.res.properties[Constants.HasAudioFileValue]) {
+            resource.res.properties[Constants.HasAudioFileValue] ||
+            resource.res.properties[Constants.HasArchiveFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // the resource is a StillImageRepresentation, check if there are regions pointing to it
 
