@@ -1,17 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import {
     ApiResponseError,
-    Dataset,
-    KnoraApiConnection, ProjectsMetadata,
-    ReadProject,
-    SingleProject
+    ReadProject
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
@@ -48,7 +43,6 @@ export class BoardComponent implements OnInit {
     color = 'primary';
 
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
