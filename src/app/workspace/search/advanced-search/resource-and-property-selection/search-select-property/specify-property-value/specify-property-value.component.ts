@@ -1,6 +1,7 @@
-import { AfterViewChecked, AfterViewInit, Component, Inject, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
-import { Constants, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Component, Inject, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Constants, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Subscription } from 'rxjs';
 import {
     ComparisonOperator, ComparisonOperatorAndValue,
     Equals,
@@ -13,7 +14,6 @@ import {
     Match,
     NotEquals, PropertyValue, Value
 } from './operator';
-import { Subscription } from 'rxjs';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -118,7 +118,11 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
         switch (this.propertyValueType) {
 
             case Constants.TextValue:
-                this.comparisonOperators = [new Like(), new Match(), new Equals(), new NotEquals(), new Exists()];
+                if (this._property.guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Richtext') {
+                    this.comparisonOperators = [new Like(), new Match(), new Exists()];
+                } else {
+                    this.comparisonOperators = [new Like(), new Match(), new Equals(), new NotEquals(), new Exists()];
+                }
                 break;
 
             case Constants.BooleanValue:
