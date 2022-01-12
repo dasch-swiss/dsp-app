@@ -28,7 +28,7 @@ export class DatadogRumService {
                 beforeSend: (event, context) => {
                     // collect a RUM resource's response headers
                     if (event.type === 'resource' && event.resource.type === 'xhr') {
-                        event.context = { ...event.context, responseHeaders: (context as RumFetchResourceEventDomainContext).response.body };
+                        event.context = { ...event.context, responseHeaders: (context as RumFetchResourceEventDomainContext).response?.body };
                     }
                 },
             });

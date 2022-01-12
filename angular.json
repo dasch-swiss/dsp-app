@@ -49,9 +49,7 @@
                             "src/styles.scss"
                         ],
                         "scripts": [
-                            "node_modules/openseadragon/build/openseadragon/openseadragon.min.js",
-                            "node_modules/3d-force-graph/dist/3d-force-graph.min.js",
-                            "node_modules/d3-force-3d/dist/d3-force-3d.js"
+                            "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
                         ]
                     },
                     "configurations": {

@@ -59,8 +59,6 @@ import { ListItemFormComponent } from './project/list/list-item-form/list-item-f
 import { ListItemComponent } from './project/list/list-item/list-item.component';
 import { ListComponent } from './project/list/list.component';
 import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
-import { OntologyVisualizerComponent } from './project/ontology/ontology-visualizer/ontology-visualizer.component';
-import { VisualizerComponent } from './project/ontology/ontology-visualizer/visualizer/visualizer.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { PropertyFormComponent } from './project/ontology/property-form/property-form.component';
 import { PropertyInfoComponent } from './project/ontology/property-info/property-info.component';
@@ -235,7 +233,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         MessageComponent,
         OntologyComponent,
         OntologyFormComponent,
-        OntologyVisualizerComponent,
         PasswordFormComponent,
         PermissionComponent,
         ProfileComponent,
@@ -300,7 +297,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UserMenuComponent,
         UsersComponent,
         UsersListComponent,
-        VisualizerComponent,
         YetAnotherDateValueComponent,
     ],
     imports: [

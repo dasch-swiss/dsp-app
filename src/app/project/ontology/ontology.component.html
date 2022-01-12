@@ -211,10 +211,6 @@
             </mat-sidenav-content>
         </mat-sidenav-container>
 
-        <!-- <div *ngIf="view === 'graph'" class="ontology-viewer">
-            <app-ontology-visualizer [ontology]="ontology" [ontoClasses]="ontoClasses"></app-ontology-visualizer>
-        </div> -->
-
         <app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></app-progress-indicator>
     </div>
 
