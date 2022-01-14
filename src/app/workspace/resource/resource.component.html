@@ -34,7 +34,7 @@
         </div>
 
         <!-- tabs -->
-        <mat-tab-group animationDuration="0ms" [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
+        <mat-tab-group *ngIf="!resource.res.isDeleted; else deletedResource" animationDuration="0ms" [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
             <!-- first tab for the main resource e.g. book -->
             <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
                 <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
@@ -44,7 +44,7 @@
 
             <!-- incoming resource -->
             <mat-tab *ngIf="incomingResource"
-                [label]="incomingResource.res.entityInfo.classes[incomingResource.res.type].label">
+                [label]="incomingResource.res.entityInfo?.classes[incomingResource.res.type].label">
                 <app-properties *ngIf="incomingResource.res" [resource]="incomingResource" [displayProjectInfo]="false"
                 [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid">
                 </app-properties>
@@ -69,6 +69,11 @@
 
             </mat-tab>
         </mat-tab-group>
+        <ng-template #deletedResource>
+            <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
+                [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid">
+            </app-properties>
+        </ng-template>
     </div>
     <!-- progress indicator -->
     <app-progress-indicator *ngIf="!resource && loading"></app-progress-indicator>

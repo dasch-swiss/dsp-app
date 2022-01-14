@@ -218,55 +218,60 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 const res = new DspResource(response);
                 this.resource = res;
 
-                // if there is no incomingResource and the resource has a still image property, assign the iiiUrl to be passed as an input to the still-image component
-                if (!this.incomingResource && this.resource.res.properties[Constants.HasStillImageFileValue]){
-                    this.iiifUrl = (this.resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
-                }
+                if (response.isDeleted) {
+                    // deleted resource; no further infos needed
 
-                this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
-
-                // get information about the logged-in user, if one is logged-in
-                if (this._session.getSession()) {
-                    this.session = this._session.getSession();
-                    // is the logged-in user project member?
-                    // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
-                    this.editPermissions = true;
-                    // is the logged-in user system admin or project admin?
-                    this.adminPermissions = this.session.user.sysAdmin ? this.session.user.sysAdmin : this.session.user.projectAdmin.some(e => e === res.res.attachedToProject);
-                }
-
-                this.collectRepresentationsAndAnnotations(this.resource);
-
-                if (!this.representationsToDisplay.length && !this.compoundPosition) {
-                    // the resource could be a compound object
-                    this._incomingService.getStillImageRepresentationsForCompoundResource(this.resource.res.id, 0, true).subscribe(
-                        (countQuery: CountQueryResponse) => {
-
-                            if (countQuery.numberOfResults > 0) {
-                                this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
-                                this.compoundNavigation(1);
-                            }
-                        },
-                        (error: ApiResponseError) => {
-                            this._errorHandler.showMessage(error);
-                        }
-                    );
                 } else {
-                    this.requestIncomingResources(this.resource);
+                    // if there is no incomingResource and the resource has a still image property, assign the iiiUrl to be passed as an input to the still-image component
+                    if (!this.incomingResource && this.resource.res.properties[Constants.HasStillImageFileValue]){
+                        this.iiifUrl = (this.resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
+                    }
+
+                    this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
+
+                    // get information about the logged-in user, if one is logged-in
+                    if (this._session.getSession()) {
+                        this.session = this._session.getSession();
+                        // is the logged-in user project member?
+                        // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
+                        this.editPermissions = true;
+                        // is the logged-in user system admin or project admin?
+                        this.adminPermissions = this.session.user.sysAdmin ? this.session.user.sysAdmin : this.session.user.projectAdmin.some(e => e === res.res.attachedToProject);
+                    }
+
+                    this.collectRepresentationsAndAnnotations(this.resource);
+
+                    if (!this.representationsToDisplay.length && !this.compoundPosition) {
+                        // the resource could be a compound object
+                        this._incomingService.getStillImageRepresentationsForCompoundResource(this.resource.res.id, 0, true).subscribe(
+                            (countQuery: CountQueryResponse) => {
+
+                                if (countQuery.numberOfResults > 0) {
+                                    this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
+                                    this.compoundNavigation(1);
+                                }
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                            }
+                        );
+                    } else {
+                        this.requestIncomingResources(this.resource);
+                    }
+
+                    // gather resource property information
+                    res.resProps = this.initProps(response);
+
+                    // gather system property information
+                    res.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
                 }
-
-                // gather resource property information
-                res.resProps = this.initProps(response);
-
-                // gather system property information
-                res.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
                 this.loading = false;
             },
             (error: ApiResponseError) => {
                 this.loading = false;
                 if (error.status === 404) {
-                    // resource not found: maybe it's deleted or the iri is wrong
+                    // resource not found
                     // display message that it couldn't be found
                     this.resource = undefined;
                 } else {

@@ -423,7 +423,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             }
         } else {
             // --> TODO: better error handler!
-            console.error('No properties exist for this resource');
+            console.warn('No properties exist for this resource');
         }
     }
 
@@ -452,7 +452,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                 this.regionColorChanged.emit();
             }
         } else {
-            console.error('No properties exist for this resource');
+            console.warn('No properties exist for this resource');
         }
     }
 
@@ -491,7 +491,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                 }
                 );
         } else {
-            console.error('No properties exist for this resource');
+            console.warn('No properties exist for this resource');
         }
     }
 

@@ -173,7 +173,7 @@ describe('SearchSelectResourceClassComponent', () => {
 
         testHostFixture.detectChanges();
 
-        expect(testHostComponent.selectResourceClass.resourceClassDefinitions.length).toEqual(13);
+        expect(testHostComponent.selectResourceClass.resourceClassDefinitions.length).toEqual(14);
 
         const select = await loader.getHarness(MatSelectHarness);
         const initVal = await select.getValueText();
@@ -185,7 +185,7 @@ describe('SearchSelectResourceClassComponent', () => {
 
         const options = await select.getOptions();
 
-        expect(options.length).toEqual(14);
+        expect(options.length).toEqual(15);
 
         expect(testHostComponent.selectResourceClass.selectedResourceClassIri).toBe(false);
 

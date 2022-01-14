@@ -146,6 +146,15 @@
   }
 }
 
+.no-properties,
+.deleted-resource {
+  margin-top: 16px;
+
+  .comment {
+    margin: 16px;
+  }
+}
+
 .label {
   color: rgba(0, 0, 0, 0.54);
 }
