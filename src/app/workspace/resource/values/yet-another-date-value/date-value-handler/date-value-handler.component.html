@@ -7,7 +7,7 @@
 
         <button mat-button class="toggle-period-control" [disabled]="!startDate.value"
             [matTooltip]="(isPeriodControl.value ? 'Delete end date' : 'Add end date')" matTooltipPosition="above"
-            (click)="togglePeriodControl()">
+            (click)="togglePeriodControl($event)">
             <mat-icon *ngIf="!isPeriodControl.value">keyboard_tab</mat-icon>
             <mat-icon *ngIf="isPeriodControl.value">remove</mat-icon>
         </button>
