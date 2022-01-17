@@ -1,5 +1,25 @@
 # Changelog
 
+## [8.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.3...v8.4.0) (2022-01-17)
+
+
+### Bug Fixes
+
+* **advanced search:** update comparison operators in case of rich text (DEV-326) ([#633](https://www.github.com/dasch-swiss/dsp-app/issues/633)) ([cd01d87](https://www.github.com/dasch-swiss/dsp-app/commit/cd01d875217116a20c198e73f41c4a1a6bf114ec))
+* **archive representation:** a resource with an archive representation now loads correctly again ([#630](https://www.github.com/dasch-swiss/dsp-app/issues/630)) ([299ecf9](https://www.github.com/dasch-swiss/dsp-app/commit/299ecf97c684f5ce74f7a477ef507b33c8624cac))
+* **date-value:** do not submit in case of period button (DEV-373) ([#635](https://www.github.com/dasch-swiss/dsp-app/issues/635)) ([d7ac1b6](https://www.github.com/dasch-swiss/dsp-app/commit/d7ac1b6c261b2a0cebb4a86174f7692559e6e5f1))
+
+
+### Maintenance
+
+* clean up after bump dsp-js ([#628](https://www.github.com/dasch-swiss/dsp-app/issues/628)) ([374fc78](https://www.github.com/dasch-swiss/dsp-app/commit/374fc789507d9f3896356a5e70fe78b174809410))
+* **ontology:** clean up unused code (DEV-304) ([#629](https://www.github.com/dasch-swiss/dsp-app/issues/629)) ([3d029a1](https://www.github.com/dasch-swiss/dsp-app/commit/3d029a1e57179c6b0797a26767443c51ffdec6cb))
+
+
+### Enhancements
+
+* **resource:** display deleted resource (DEV-299) ([#632](https://www.github.com/dasch-swiss/dsp-app/issues/632)) ([2c5fd80](https://www.github.com/dasch-swiss/dsp-app/commit/2c5fd8064f79d5da202b1274813acbebe16020ea))
+
 ### [8.3.3](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.2...v8.3.3) (2022-01-04)
 
 
