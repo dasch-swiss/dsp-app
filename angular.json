@@ -18,6 +18,7 @@
             },
             "architect": {
                 "build": {
+                    "defaultConfiguration": "development",
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
                         "aot": true,
@@ -53,6 +54,16 @@
                         ]
                     },
                     "configurations": {
+                        "development": {
+                            "optimization": false,
+                            "sourceMap": false,
+                            "namedChunks": true,
+                            "aot": true,
+                            "extractLicenses": false,
+                            "vendorChunk": true,
+                            "buildOptimizer": false,
+                            "budgets": []
+                        },
                         "production": {
                             "fileReplacements": [
                                 {
@@ -89,22 +100,12 @@
                             ],
                             "optimization": false,
                             "sourceMap": true,
-                            "namedChunks": false,
+                            "namedChunks": true,
                             "aot": true,
                             "extractLicenses": false,
                             "vendorChunk": false,
                             "buildOptimizer": false,
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "8mb",
-                                    "maximumError": "8mb"
-                                },
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ]
+                            "budgets": []
                         }
                     }
                 },
@@ -114,6 +115,9 @@
                         "browserTarget": "dsp-app:build"
                     },
                     "configurations": {
+                        "development": {
+                          "browserTarget": "dsp-app:build:development"
+                        },
                         "production": {
                             "browserTarget": "dsp-app:build:production"
                         },
