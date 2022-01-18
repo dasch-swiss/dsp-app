@@ -139,7 +139,7 @@ export class DefaultProperties {
             group: 'Number',
             elements: [
                 {
-                    icon: 'money',
+                    icon: '60fps',
                     label: 'Integer',
                     description: 'Integer value',
                     subPropOf: Constants.HasValue,
@@ -155,6 +155,15 @@ export class DefaultProperties {
                     objectType: Constants.DecimalValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
                     group: 'Number'
+                },
+                {
+                    icon: 'filter_3',
+                    label: 'Page number',
+                    description: 'The page number is needed for page classes in case of part of properties',
+                    subPropOf: Constants.KnoraApiV2 + Constants.HashDelimiter + 'seqnum',
+                    objectType: Constants.IntValue,
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
+                    group: 'Number'
                 }
             ]
         },
@@ -163,12 +172,21 @@ export class DefaultProperties {
             elements: [
                 {
                     icon: 'link',
-                    label: 'Resource class',
+                    label: 'Link to class',
                     description: 'Refers to a resource class',
                     subPropOf: Constants.HasLinkTo,
                     objectType: Constants.LinkValue,
                     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
                     group: 'Link / Relation'
+                },
+                {
+                    icon: 'extension',
+                    label: 'Part of class',
+                    description: 'Is part of a resource class',
+                    subPropOf: Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf',
+                    objectType: Constants.LinkValue,
+                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
+                    group: 'Relation'
                 },
                 {
                     icon: 'language',

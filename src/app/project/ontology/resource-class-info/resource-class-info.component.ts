@@ -181,8 +181,7 @@ export class ResourceClassInfoComponent implements OnInit {
 
             const propToDisplay = ontoProps.find(obj =>
                 obj.id === hasProp.propertyIndex &&
-                ((!obj.isLinkValueProperty) || (obj.subjectType && !obj.subjectType.includes('Standoff')))
-
+                ((obj.subjectType && !obj.subjectType.includes('Standoff')) && obj.objectType !== Constants.LinkValue || !obj.isLinkValueProperty)
             );
 
             if (propToDisplay) {
@@ -199,7 +198,7 @@ export class ResourceClassInfoComponent implements OnInit {
             // find corresponding default property to have more prop info
             if (availableProp.guiElement) {
                 for (const group of this.defaultProperties) {
-                    if (availableProp.subPropertyOf[0] !== Constants.HasLinkTo) {
+                    if (availableProp.subPropertyOf[0] !== Constants.HasLinkTo && availableProp.subPropertyOf[0] !== Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf') {
                         propType = group.elements.find(i =>
                             i.guiEle === availableProp.guiElement && i.objectType === availableProp.objectType
                         );

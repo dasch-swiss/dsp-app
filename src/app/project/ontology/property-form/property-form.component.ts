@@ -485,9 +485,9 @@ export class PropertyFormComponent implements OnInit {
             newResProp.guiElement = this.propertyInfo.propType.guiEle;
             newResProp.subPropertyOf = [this.propertyInfo.propType.subPropOf];
 
-            if (this.propertyInfo.propType.subPropOf === Constants.HasLinkTo) {
+            if (this.propertyInfo.propType.subPropOf === Constants.HasLinkTo || this.propertyInfo.propType.subPropOf === Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf') {
                 newResProp.objectType = guiAttr;
-                // newResProp.subjectType = classIri;
+                newResProp.subjectType = this.resClassIri;
             } else {
                 newResProp.objectType = this.propertyInfo.propType.objectType;
             }
