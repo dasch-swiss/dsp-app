@@ -18,6 +18,7 @@ import {
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { existingNamesValidator } from 'src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { NotificationService } from 'src/app/main/services/notification.service';
 import { SessionService } from 'src/app/main/services/session.service';
 import { CacheService } from '../../main/cache/cache.service';
 
@@ -141,6 +142,7 @@ export class ProjectFormComponent implements OnInit {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
+        private _notification: NotificationService,
         private _fb: FormBuilder,
         private _router: Router,
         private _session: SessionService
@@ -256,10 +258,14 @@ export class ProjectFormComponent implements OnInit {
             'keywords': new FormControl({
                 // must be empty (even in edit mode), because of the mat-chip-list
                 value: [], disabled: disabled
-            }, [
-                Validators.required
-            ])
+            })
         });
+
+        if (!this.projectCode) {
+            // if projectCode does not exist, we are in create mode;
+            // in this case, the keywords are required in the API request
+            this.form.controls['keywords'].setValidators(Validators.required);
+        }
 
         this.form.valueChanges
             .subscribe(data => this.onValueChanged(data));
@@ -339,21 +345,10 @@ export class ProjectFormComponent implements OnInit {
             this.keywords = [];
         }
         this.form.controls['keywords'].setValue(this.keywords);
-        // this.form.controls['keywords'].disabled = !this.project.status;
-
-        // b) update description field / multi language preparation
-        // fIXME: this is a quick (hardcoded) hack:
-        // --> TODO create multi language input fields
-        // this.form.controls['description'].setValue([{
-        //     'language': 'en',
-        //     'value': this.form.controls['description'].value
-        // }]);
-
 
         if (this.projectCode) {
             const projectData: UpdateProjectRequest = new UpdateProjectRequest();
             projectData.description = [new StringLiteral()];
-            // projectData.description = this.description;
             projectData.keywords = this.form.value.keywords;
             projectData.longname = this.form.value.longname;
             projectData.status = true;
@@ -370,16 +365,15 @@ export class ProjectFormComponent implements OnInit {
             this._dspApiConnection.admin.projectsEndpoint.updateProject(this.project.id, projectData).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
 
-                    // this.originProject = response.body.project;
+                    this.success = true;
                     this.project = response.body.project;
-                    this.buildForm(this.project);
 
                     // update cache
-                    this._cache.set(this.projectCode, response);
+                    this._cache.set(this.projectCode, this.project);
 
-                    this.success = true;
+                    this._notification.openSnackBar('You have successfully updated the project information.');
 
-                    this.loading = false;
+                    this.closeDialog.emit(this.project);
 
                 },
                 (error: ApiResponseError) => {

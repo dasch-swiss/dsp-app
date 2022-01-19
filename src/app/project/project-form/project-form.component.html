@@ -1,10 +1,5 @@
 <div class="no-shadow">
 
-    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
-
-    <!-- success message after updating -->
-    <app-message *ngIf="success" [message]="successMessage" [short]="true"></app-message>
-
     <!-- content -->
     <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
         (ngSubmit)="submitData()">
@@ -75,10 +70,12 @@
                     {{tag}}
                     <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
-                <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} *"
-                    [formControl]="form.controls['keywords']" [matChipInputFor]="chipList"
-                    [matChipInputSeparatorKeyCodes]="separatorKeyCodes" [matChipInputAddOnBlur]="addOnBlur"
-                    (matChipInputTokenEnd)="addKeyword($event)" />
+                <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} {{projectCode ? '' : '*'}}"
+                    [formControl]="form.controls['keywords']"
+                    [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+                    [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="addKeyword($event)">
             </mat-chip-list>
             <mat-hint *ngIf="formErrors.keywords">
                 {{ formErrors.keywords }}
@@ -105,9 +102,12 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <!-- TODO: description is required! Disable submit button, if description is empty -->
                 <button mat-raised-button type="submit" color="primary"
                     [disabled]="!form.valid || !this.description.length || (projectCode && !project.status)">
+
+                    <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                    </app-progress-indicator>
+                    <mat-icon *ngIf="success && !loading">close</mat-icon>
                     <span *ngIf="projectCode">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectCode">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>
