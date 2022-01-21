@@ -1,5 +1,23 @@
 # Changelog
 
+## [8.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.4.0...v8.5.0) (2022-01-19)
+
+
+### Bug Fixes
+
+* **project:** better project form validation (DEV-336) ([#641](https://www.github.com/dasch-swiss/dsp-app/issues/641)) ([a7563a3](https://www.github.com/dasch-swiss/dsp-app/commit/a7563a3d1cc629c7144c3fe35d1d3812a72f9c06))
+
+
+### Maintenance
+
+* **angular:** optimize ng s in dev mode ([#640](https://www.github.com/dasch-swiss/dsp-app/issues/640)) ([9812b9c](https://www.github.com/dasch-swiss/dsp-app/commit/9812b9ca71d95744bb90335eff6f4bf9a3351280))
+* **deps:** fix security vulnerability ([#638](https://www.github.com/dasch-swiss/dsp-app/issues/638)) ([f19434e](https://www.github.com/dasch-swiss/dsp-app/commit/f19434e74570aa62b6fa9ee73436f47d88a27182))
+
+
+### Enhancements
+
+* **ontology:** support partOf value to create book res class (DEV-180) ([#634](https://www.github.com/dasch-swiss/dsp-app/issues/634)) ([3051a67](https://www.github.com/dasch-swiss/dsp-app/commit/3051a6737b97c84af6b194bf4303d680455f64c6))
+
 ## [8.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.3.3...v8.4.0) (2022-01-17)
 
 
