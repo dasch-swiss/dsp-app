@@ -5,8 +5,8 @@
 
     <p *ngIf="resClassIri && propertyInfo.propDef" class="note warning mat-caption center">
         You're adding an already existing property to this class.
-        The property can't modified here. If you want to modify it,
-        go to the "properties" view.
+        The property can't be modified here.<br>
+        If you want to modify the label, the comment or the type, please go to the "properties" view.
         <!-- Be careful when editing it, it could have an effect in other resource classes if it is used there. -->
     </p>
 
@@ -31,6 +31,9 @@
                     </mat-option>
                 </mat-optgroup>
             </mat-select>
+            <mat-hint *ngIf="unsupportedPropertyType" class="ontology-warning-with-prefix">
+                {{propertyForm.controls['propType'].value.description}}
+            </mat-hint>
         </mat-form-field>
 
         <!-- name -->

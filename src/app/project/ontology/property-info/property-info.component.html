@@ -65,10 +65,13 @@
         </div>
         <!-- property action in case of properties' list view -->
         <div class="button-container" *ngIf="!propCard">
-            <button mat-button [disabled]="!propDef.isEditable" class="edit" title="edit" [matTooltip]="'Edit property'" matTooltipPosition="above"
-                (click)="editResourceProperty.emit({propDef: propDef, propType: propType})">
-                <mat-icon>edit</mat-icon>
-            </button>
+            <span matTooltipPosition="above"
+                [matTooltip]="propDef.isEditable ? 'Edit property' : 'The property can\'t be edited; No further information available'">
+                <button mat-button [disabled]="!propDef.isEditable" class="edit"
+                    (click)="editResourceProperty.emit({propDef: propDef, propType: propType})">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </span>
             <span matTooltipPosition="above"
                 [matTooltip]="((resClasses.length > 0 || !propCanBeDeleted) ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')">
                 <button mat-button [disabled]="resClasses.length > 0" class="delete"

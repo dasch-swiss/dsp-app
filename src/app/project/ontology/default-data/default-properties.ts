@@ -33,6 +33,18 @@ export interface DefaultProperty {
 }
 
 export class DefaultProperties {
+
+    public static unsupported: DefaultProperty = {
+        icon: 'warning_amber',
+        label: 'Unsupported property type',
+        description: 'This property type is not supported in the ontology editor',
+        subPropOf: undefined,
+        objectType: undefined,
+        guiEle: undefined,
+        group: 'Warning'
+    };
+
+
     public static data: PropertyCategory[] = [
         {
             group: 'Text',
@@ -43,7 +55,7 @@ export class DefaultProperties {
                     description: 'Short text such as title or name',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',   // better element would be: 'Input',
+                    guiEle: Constants.GuiSimpleText,   // better element would be: 'Input',
                     group: 'Text'       // redundant information, but otherwise we don't get the main group name after selecting type
                 },
                 {
@@ -52,7 +64,7 @@ export class DefaultProperties {
                     description: 'Long text such as description; could have line breaks',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Textarea',
+                    guiEle: Constants.GuiTextarea,
                     group: 'Text'
                 },
                 {
@@ -61,7 +73,7 @@ export class DefaultProperties {
                     description: 'A rich text editor with formatting options',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TextValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Richtext',
+                    guiEle: Constants.GuiRichText,
                     group: 'Text'
                 }
             ]
@@ -75,7 +87,7 @@ export class DefaultProperties {
                     description: 'Dropdown menu with values from predefined list',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ListValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'List',     // better element would be: 'Pulldown' or 'Select'
+                    guiEle: Constants.GuiPulldown,     // better element would be: 'Pulldown' or 'Select'
                     group: 'List'
                 }
             ]
@@ -89,7 +101,7 @@ export class DefaultProperties {
                     description: 'Yes or no, 1 or 0, true or false',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.BooleanValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Checkbox',    // should be 'Toggle' but it's not supported in DSP-Tangoh,
+                    guiEle: Constants.GuiCheckbox,    // should be 'Toggle' but it's not supported in DSP-Tangoh,
                     group: 'Boolean'
                 }
             ]
@@ -103,25 +115,16 @@ export class DefaultProperties {
                     description: 'A date field with day, month and year',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DateValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
+                    guiEle: Constants.GuiDatePicker,
                     group: 'Date / Time'
                 },
-                // {
-                //     icon: 'date_range',
-                //     label: 'Period',
-                //     description: 'A period of time between two dates',
-                //     subPropOf: Constants.HasValue,
-                //     objectType: Constants.DateValue,
-                //     guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Date',
-                //     group: 'Date / Time'
-                // },
                 {
                     icon: 'access_time',
                     label: 'Timestamp',
                     description: 'A single timestamp on a timeline',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'TimeStamp',
+                    guiEle: Constants.GuiTimeStamp,
                     group: 'Date / Time'
                 },
                 {
@@ -130,7 +133,7 @@ export class DefaultProperties {
                     description: 'A time sequence with start and end point on a timeline',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.IntervalValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Interval',
+                    guiEle: Constants.GuiInterval,
                     group: 'Date / Time'
                 }
             ]
@@ -144,7 +147,7 @@ export class DefaultProperties {
                     description: 'Integer value',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.IntValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
+                    guiEle: Constants.GuiSpinbox,  // 'Number',
                     group: 'Number'
                 },
                 {
@@ -153,16 +156,16 @@ export class DefaultProperties {
                     description: 'Decimal value',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.DecimalValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
+                    guiEle: Constants.GuiSpinbox,  // 'Number',
                     group: 'Number'
                 },
                 {
                     icon: 'filter_3',
                     label: 'Page number',
                     description: 'The page number is needed for page classes in case of part of properties',
-                    subPropOf: Constants.KnoraApiV2 + Constants.HashDelimiter + 'seqnum',
+                    subPropOf: Constants.SeqNum,
                     objectType: Constants.IntValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Spinbox',  // 'Number',
+                    guiEle: Constants.GuiSpinbox,  // 'Number',
                     group: 'Number'
                 }
             ]
@@ -176,17 +179,17 @@ export class DefaultProperties {
                     description: 'Refers to a resource class',
                     subPropOf: Constants.HasLinkTo,
                     objectType: Constants.LinkValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
+                    guiEle: Constants.GuiSearchbox,    // 'Autocomplete',
                     group: 'Link / Relation'
                 },
                 {
                     icon: 'extension',
                     label: 'Part of class',
                     description: 'Is part of a resource class',
-                    subPropOf: Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf',
+                    subPropOf: Constants.IsPartOf,
                     objectType: Constants.LinkValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Searchbox',    // 'Autocomplete',
-                    group: 'Relation'
+                    guiEle: Constants.GuiSearchbox,    // 'Autocomplete',
+                    group: 'Link / Relation'
                 },
                 {
                     icon: 'language',
@@ -194,8 +197,8 @@ export class DefaultProperties {
                     description: 'Link to an external website',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.UriValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText',
-                    group: 'Link'
+                    guiEle: Constants.GuiSimpleText,
+                    group: 'Link / Relation'
                 }
             ]
         },
@@ -208,7 +211,7 @@ export class DefaultProperties {
                     description: 'Geographical location',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.GeonameValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Geonames',
+                    guiEle: Constants.GuiGeonames,
                     group: 'Location'
                 }
             ]
@@ -222,7 +225,7 @@ export class DefaultProperties {
                     description: 'A simple color value',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.ColorValue,
-                    guiEle: Constants.SalsahGui + Constants.HashDelimiter + 'Colorpicker',
+                    guiEle: Constants.GuiColorPicker,
                     group: 'Shape'
                 }
             ]

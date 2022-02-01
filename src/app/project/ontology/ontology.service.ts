@@ -1,5 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import {
+    Cardinality,
+    Constants, ReadOntology,
+    ResourcePropertyDefinitionWithAllLanguages
+} from '@dasch-swiss/dsp-js';
+import { Observable, of } from 'rxjs';
+import { CacheService } from 'src/app/main/cache/cache.service';
+import {
+    DefaultProperties,
+    DefaultProperty,
+    PropertyCategory
+} from './default-data/default-properties';
 
 /**
  * helper methods for the ontology editor
@@ -9,7 +20,12 @@ import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 })
 export class OntologyService {
 
-    constructor() { }
+    // list of default property types
+    defaultProperties: PropertyCategory[] = DefaultProperties.data;
+
+    constructor(
+        private _cache: CacheService
+    ) { }
 
     /**
      * create a unique name (id) for resource classes or properties;
@@ -78,5 +94,93 @@ export class OntologyService {
             // cardinality 0-1 (optional)
             return Cardinality._0_1;
         }
+    }
+
+    getSuperProperty(property: ResourcePropertyDefinitionWithAllLanguages): string {
+        // get ontology from property info
+        const ontoIri = property.id.split(Constants.HashDelimiter)[0];
+
+        let superPropIri: string;
+
+        // get iri from sub properties
+        if (property.subPropertyOf.length) {
+            for (const subProp of property.subPropertyOf) {
+                const baseOntoIri = subProp.split(Constants.HashDelimiter)[0];
+                // compare with knora base ontology
+                if (baseOntoIri !== Constants.KnoraApiV2) {
+                    // the property is not a subproperty of knora base ontology
+                    // get property iri from another ontology
+                    this._cache.get('currentProjectOntologies').subscribe(
+                        (ontologies: ReadOntology[]) => {
+                            const onto = ontologies.find(i => i.id === baseOntoIri);
+                            superPropIri = onto.properties[subProp].subPropertyOf[0];
+                        }
+                    );
+                }
+
+                if (superPropIri) {
+                    break;
+                }
+            }
+        }
+
+        return (superPropIri ? superPropIri : undefined);
+    }
+
+    /**
+     * get default property information for a certain ontology property
+     */
+    getDefaultPropType(property: ResourcePropertyDefinitionWithAllLanguages): Observable<DefaultProperty> {
+        let propType: DefaultProperty;
+
+        if (!property.guiElement) {
+            // we don't know what element to use, so it's unsupported property
+            return of (DefaultProperties.unsupported);
+        }
+
+        for (const group of this.defaultProperties) {
+            if (property.subPropertyOf.length) {
+                for (const subProp of property.subPropertyOf) {
+                    // if subProp is of type "link to" or "part of" we have to check the subproperty;
+                    // otherwise we get the necessary property info from the objectType
+                    if (subProp === Constants.HasLinkTo || subProp === Constants.IsPartOf) {
+                        propType = (group.elements.find(i =>
+                            i.guiEle === property.guiElement && i.subPropOf === subProp
+                        ));
+                    } else {
+
+                        // if the property is type of number or list, the gui element is not relevant
+                        // because the app supports only one gui element (at the moment): the spinbox resp. the list pulldown
+                        if (property.objectType === Constants.DecimalValue || property.objectType === Constants.ListValue) {
+                            propType = (group.elements.find(i =>
+                                i.objectType === property.objectType
+                            ));
+                        } else if (property.objectType === Constants.IntValue && subProp === Constants.SeqNum) {
+                            propType = (group.elements.find(i =>
+                                i.objectType === property.objectType && i.subPropOf === Constants.SeqNum
+                            ));
+                        } else {
+                            propType = (group.elements.find(i =>
+                                i.guiEle === property.guiElement && i.objectType === property.objectType
+                            ));
+                        }
+
+                    }
+                }
+                if (propType) {
+                    break;
+                }
+            }
+        }
+
+        if (!propType) {
+            // property type could not be found in the list of default properties
+            // maybe it's not supported e.g. if propDef.objectType === Constants.GeomValue || propDef.subPropertyOf[0] === Constants.HasRepresentation
+            return of (DefaultProperties.unsupported);
+        }
+
+        // return of(propType);
+        return of (propType);
+
     }
 }

@@ -83,8 +83,7 @@
 
         <mat-menu #addPropertyMenu="matMenu" xPosition="after">
             <button mat-menu-item [matMenuTriggerFor]="newFromPropType">Create new from type</button>
-            <button mat-menu-item [matMenuTriggerFor]="addExistingProp" [disabled]="!ontoProperties.length">Add existing
-                property</button>
+            <button mat-menu-item [matMenuTriggerFor]="addExistingProp" [disabled]="!ontoProperties.length">Add existing property</button>
         </mat-menu>
         <mat-menu #newFromPropType="matMenu">
             <ng-container *ngFor="let type of defaultProperties">

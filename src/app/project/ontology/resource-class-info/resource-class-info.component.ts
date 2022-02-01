@@ -23,6 +23,7 @@ import { NotificationService } from 'src/app/main/services/notification.service'
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { DefaultClass, DefaultResourceClasses } from '../default-data/default-resource-classes';
 import { CardinalityInfo } from '../ontology.component';
+import { OntologyService } from '../ontology.service';
 
 @Component({
     selector: 'app-resource-class-info',
@@ -85,7 +86,8 @@ export class ResourceClassInfoComponent implements OnInit {
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
-        private _notification: NotificationService
+        private _notification: NotificationService,
+        private _ontoService: OntologyService
     ) { }
 
     ngOnInit(): void {
@@ -194,25 +196,21 @@ export class ResourceClassInfoComponent implements OnInit {
         });
 
         this.ontoProperties.forEach((availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
-            let propType: DefaultProperty;
-            // find corresponding default property to have more prop info
-            if (availableProp.guiElement) {
-                for (const group of this.defaultProperties) {
-                    if (availableProp.subPropertyOf[0] !== Constants.HasLinkTo && availableProp.subPropertyOf[0] !== Constants.KnoraApiV2 + Constants.HashDelimiter + 'isPartOf') {
-                        propType = group.elements.find(i =>
-                            i.guiEle === availableProp.guiElement && i.objectType === availableProp.objectType
-                        );
-                    } else {
-                        propType = group.elements.find(i =>
-                            i.guiEle === availableProp.guiElement && i.subPropOf === availableProp.subPropertyOf[0]
-                        );
-                    }
-
-                    if (propType) {
-                        break;
-                    }
+            const superProp = this._ontoService.getSuperProperty(availableProp);
+            if (superProp) {
+                if (availableProp.subPropertyOf.indexOf(superProp) === -1) {
+                    availableProp.subPropertyOf.push(superProp);
                 }
             }
+
+            let propType: DefaultProperty;
+            // find corresponding default property to have more prop info
+            this._ontoService.getDefaultPropType(availableProp).subscribe(
+                (prop: DefaultProperty) => {
+                    propType = prop;
+                }
+            );
+
             this.existingProperties.push(
                 {
                     propType: propType,
@@ -258,17 +256,12 @@ export class ResourceClassInfoComponent implements OnInit {
     }
 
     addExistingProperty(propDef: ResourcePropertyDefinitionWithAllLanguages) {
-        let propType: DefaultProperty;
-        for (const group of this.defaultProperties) {
-            propType = group.elements.find(i =>
-                i.guiEle === propDef.guiElement &&
-                (i.objectType === propDef.objectType || i.subPropOf === propDef.subPropertyOf[0])
-            );
 
-            if (propType) {
-                break;
-            }
-        }
+        // find prop type from list of existing properties
+        const pos = this.existingProperties.findIndex(item => item.propDef.id === propDef.id);
+
+        const propType = this.existingProperties[pos].propType;
+
         const cardinality: CardinalityInfo = {
             resClass: this.resourceClass,
             property: {

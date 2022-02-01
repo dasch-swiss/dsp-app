@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
 import {
     ApiResponseError,
     CanDoResponse,
@@ -24,6 +24,7 @@ import {
     PropertyInfoObject
 } from '../default-data/default-properties';
 import { DefaultClass } from '../default-data/default-resource-classes';
+import { OntologyService } from '../ontology.service';
 
 // property data structure
 export class Property {
@@ -124,12 +125,16 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     // list of resource classes where the property is used
     resClasses: ResourceClassDefinitionWithAllLanguages[] = [];
 
+    // disable edit property button in case the property type is not supported in DSP-APP
+    disableEditProperty = false;
+
     showActionBubble = false;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: ErrorHandlerService,
+        private _ontoService: OntologyService
     ) {
 
         this._cache.get('currentOntology').subscribe(
@@ -165,24 +170,23 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
             }
         }
 
-        // find gui ele from list of default property-types to set type value
-        if (this.propDef.guiElement) {
-            for (const group of this.defaultProperties) {
-                if (this.propDef.subPropertyOf[0] !== Constants.HasLinkTo) {
-                    this.propType = group.elements.find(i =>
-                        i.guiEle === this.propDef.guiElement && i.objectType === this.propDef.objectType
-                    );
-                } else {
-                    this.propType = group.elements.find(i =>
-                        i.guiEle === this.propDef.guiElement && i.subPropOf === this.propDef.subPropertyOf[0]
-                    );
-                }
-
-                if (this.propType) {
-                    break;
-                }
+        // get info about subproperties, if they are not a subproperty of knora base ontology
+        // in this case add it to the list of subproperty iris
+        const superProp = this._ontoService.getSuperProperty(this.propDef);
+        if (superProp) {
+            if (this.propDef.subPropertyOf.indexOf(superProp) === -1) {
+                this.propDef.subPropertyOf.push(superProp);
             }
         }
+
+        // get the default property type for this property
+        // if (this.propDef.guiElement) {
+        this._ontoService.getDefaultPropType(this.propDef).subscribe(
+            (prop: DefaultProperty) => {
+                this.propType = prop;
+            }
+        );
+        // }
 
     }
 
