@@ -4,7 +4,13 @@
             <mat-icon matPrefix svgIcon="dasch_icon_black" class="small"></mat-icon>
             <h1 class="mat-headline desktop-only">DaSCH Service Platform</h1>
             <h1 class="mat-headline phone-tablet-only">DSP</h1>
-            <p class="mat-caption right app-version">{{appVersion}}</p>
+            <p class="mat-caption right app-version">
+                <span *ngIf="dsp.production">{{dsp.release}}</span>
+                <span *ngIf="!dsp.production" class="development badge">
+                    <span class="environment">{{dsp.environment}}</span>
+                    <span class="release {{dsp.color}}">{{dsp.release}}</span>
+                </span>
+            </p>
         </button>
     </span>
 
@@ -43,3 +49,8 @@
     </span>
 
 </mat-toolbar>
+<mat-progress-bar *ngIf="!dsp.production"
+    [color]="dsp.color"
+    mode="determinate"
+    value="100">
+</mat-progress-bar>

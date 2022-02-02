@@ -63,6 +63,12 @@ describe('HeaderComponent', () => {
 
     let componentCommsService: ComponentCommunicationEventService;
 
+    const appInitSpy = {
+        dspConfig: {
+            release: '2022.01.01'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
@@ -93,6 +99,10 @@ describe('HeaderComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
                 },
                 ComponentCommunicationEventService
             ]

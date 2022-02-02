@@ -1,4 +1,5 @@
 export interface IConfig {
+    dspRelease: string;
     apiProtocol: 'http' | 'https';
     apiHost: string;
     apiPort: number;

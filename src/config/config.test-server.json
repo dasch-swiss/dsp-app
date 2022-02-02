@@ -1,4 +1,5 @@
 {
+  "dspRelease": "2022.01.01",
   "apiProtocol": "https",
   "apiHost": "api.test.dasch.swiss",
   "apiPort": 443,
@@ -12,7 +13,7 @@
   "logErrors": true,
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
-    "environment": "test",
+    "environment": "test-server",
     "dataDog": {
       "enabled": false,
       "applicationId": "",

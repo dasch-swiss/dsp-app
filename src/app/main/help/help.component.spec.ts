@@ -19,6 +19,12 @@ describe('HelpComponent', () => {
     let component: HelpComponent;
     let fixture: ComponentFixture<HelpComponent>;
 
+    const appInitSpy = {
+        dspConfig: {
+            release: '2022.01.01'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
@@ -45,6 +51,10 @@ describe('HelpComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                },
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
                 }
             ]
         })

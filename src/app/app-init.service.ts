@@ -1,15 +1,22 @@
 import { Inject, Injectable } from '@angular/core';
 import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
-import { DspInstrumentationConfig, DspRollbarConfig, DspDataDogConfig } from './main/declarations/dsp-instrumentation-config';
-import { DspIiifConfig } from './main/declarations/dsp-iiif-config';
-import { DspAppConfig } from './main/declarations/dsp-app-config';
 import { IConfig } from './main/declarations/app-config';
 import { APP_CONFIG } from './main/declarations/dsp-api-tokens';
+import { DspAppConfig } from './main/declarations/dsp-app-config';
+import { DspConfig } from './main/declarations/dsp-config';
+import { DspIiifConfig } from './main/declarations/dsp-iiif-config';
+import { DspDataDogConfig, DspInstrumentationConfig, DspRollbarConfig } from './main/declarations/dsp-instrumentation-config';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AppInitService {
+
+    private _dspConfig: DspConfig;
+
+    get dspConfig(): DspConfig {
+        return this._dspConfig;
+    }
 
     private _dspApiConfig: KnoraApiConfig;
 
@@ -42,6 +49,24 @@ export class AppInitService {
         if (typeof this._config.apiProtocol !== 'string' || typeof this._config.apiHost !== 'string') {
             throw new Error('config misses required members: apiProtocol and/or apiHost');
         }
+
+        const prodMode = (this._config.instrumentation.environment === ('prod' || 'production'));
+
+        let color = 'primary';
+        if (!prodMode) {
+            if (this._config.instrumentation.environment.includes('staging') || this._config.instrumentation.environment.includes('dev')) {
+                color = 'accent';
+            } else if (this._config.instrumentation.environment.includes('test')){
+                color = 'warn';
+            }
+        }
+
+        this._dspConfig = new DspConfig(
+            this._config.dspRelease,
+            this._config.instrumentation.environment,
+            prodMode,
+            color
+        );
 
         // make input type safe
         const apiPort = (typeof this._config.apiPort === 'number' ? this._config.apiPort : null);

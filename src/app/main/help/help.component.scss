@@ -8,6 +8,10 @@ section {
   text-align: center;
   padding: 24px 0;
 
+  &.info {
+    min-height: auto;
+  }
+
   .content {
     img.logo {
       max-width: 400px;

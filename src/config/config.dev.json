@@ -1,4 +1,5 @@
 {
+  "dspRelease": "2022.02.01-rc",
   "apiProtocol": "http",
   "apiHost": "0.0.0.0",
   "apiPort": 3333,
@@ -12,7 +13,7 @@
   "logErrors": true,
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
-    "environment": "dev",
+    "environment": "local-dev",
     "dataDog": {
       "enabled": false,
       "applicationId": "",
