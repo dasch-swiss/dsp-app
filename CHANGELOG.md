@@ -1,5 +1,28 @@
 # Changelog
 
+## [9.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.5.0...v9.0.0) (2022-02-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* display dsp release number (DEV-420) (#644)
+
+### Bug Fixes
+
+* **ontology:** support subproperty in ontology editor (DEV-332) ([#643](https://www.github.com/dasch-swiss/dsp-app/issues/643)) ([c838043](https://www.github.com/dasch-swiss/dsp-app/commit/c838043b273739ed444d77b42bc9a919a94078a7))
+
+
+### Enhancements
+
+* display dsp release number (DEV-420) ([#644](https://www.github.com/dasch-swiss/dsp-app/issues/644)) ([b6c9f1c](https://www.github.com/dasch-swiss/dsp-app/commit/b6c9f1c12c62e2610811f96f890032ba6ce18080))
+
+
+### Maintenance
+
+* **deps:** bump log4js from 6.3.0 to 6.4.1 ([#648](https://www.github.com/dasch-swiss/dsp-app/issues/648)) ([dd2eebe](https://www.github.com/dasch-swiss/dsp-app/commit/dd2eebe3eb3c6aba1a456ebfaa1548097e90d667))
+* **deps:** bump nanoid from 3.1.30 to 3.2.0 ([#647](https://www.github.com/dasch-swiss/dsp-app/issues/647)) ([13c6f2a](https://www.github.com/dasch-swiss/dsp-app/commit/13c6f2a0898359bd68dac2cd24901454c754a7d8))
+* **deps:** update packages ([#650](https://www.github.com/dasch-swiss/dsp-app/issues/650)) ([cc60b0b](https://www.github.com/dasch-swiss/dsp-app/commit/cc60b0b374aa608b15605d07a5bf84e636112d58))
+
 ## [8.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.4.0...v8.5.0) (2022-01-19)
 
 
