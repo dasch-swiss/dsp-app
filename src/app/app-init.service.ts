@@ -50,20 +50,22 @@ export class AppInitService {
             throw new Error('config misses required members: apiProtocol and/or apiHost');
         }
 
-        const prodMode = (this._config.instrumentation.environment === ('prod' || 'production'));
+        const env = this._config.instrumentation.environment;
+
+        const prodMode = (env.includes('prod') || env.includes('production'));
 
         let color = 'primary';
         if (!prodMode) {
-            if (this._config.instrumentation.environment.includes('staging') || this._config.instrumentation.environment.includes('dev')) {
+            if (env.includes('staging') || env.includes('dev')) {
                 color = 'accent';
-            } else if (this._config.instrumentation.environment.includes('test')){
+            } else if (env.includes('test')){
                 color = 'warn';
             }
         }
 
         this._dspConfig = new DspConfig(
             this._config.dspRelease,
-            this._config.instrumentation.environment,
+            env,
             prodMode,
             color
         );

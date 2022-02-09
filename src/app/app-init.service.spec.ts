@@ -4,10 +4,10 @@ import { IConfig } from './main/declarations/app-config';
 import { APP_CONFIG, DspInstrumentationToken } from './main/declarations/dsp-api-tokens';
 import { DspDataDogConfig, DspInstrumentationConfig } from './main/declarations/dsp-instrumentation-config';
 
-describe('TestService', () => {
+describe('AppInitService (dev)', () => {
     let service: AppInitService;
 
-    const config: IConfig = {
+    const devConfig: IConfig = {
         dspRelease: '2022.01.01',
         apiProtocol: 'http',
         apiHost: '0.0.0.0',
@@ -36,7 +36,6 @@ describe('TestService', () => {
             }
         }
     };
-
     const dspDatadogSpy = new DspDataDogConfig(false, '', '', '', '');
 
     const instrumentationConfig: DspInstrumentationConfig = {
@@ -59,7 +58,7 @@ describe('TestService', () => {
             providers: [
                 {
                     provide: APP_CONFIG,
-                    useValue: config
+                    useValue: devConfig
                 },
                 {
                     provide: DspInstrumentationToken,
@@ -74,7 +73,7 @@ describe('TestService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should process the fully specified config', async () => {
+    it('should process the fully specified config (dev mode)', async () => {
         expect(service.dspConfig.release).toEqual('2022.01.01');
         expect(service.dspConfig.environment).toEqual('dev');
         expect(service.dspConfig.color).toEqual('accent');
@@ -229,4 +228,103 @@ describe('TestService', () => {
 
     });
 
+});
+
+
+describe('AppInitService (prod)', () => {
+    let service: AppInitService;
+
+    const prodConfig: IConfig = {
+        dspRelease: '2022.02.01',
+        apiProtocol: 'https',
+        apiHost: '0.0.0.0',
+        apiPort: undefined,
+        apiPath: '',
+        iiifProtocol: 'https',
+        iiifHost: '0.0.0.0',
+        iiifPort: undefined,
+        iiifPath: '',
+        jsonWebToken: 'mytoken',
+        logErrors: true,
+        geonameToken: 'geoname_token',
+        iriBase: 'https://rdfh.ch',
+        instrumentation: {
+            environment: 'production',
+            dataDog: {
+                enabled: true,
+                applicationId: 'app_id',
+                clientToken: 'client_token',
+                site: 'site',
+                service: 'dsp-app'
+            },
+            rollbar: {
+                enabled: true,
+                accessToken: 'rollbar_token'
+            }
+        }
+    };
+
+    // const dspDatadogSpy = new DspDataDogConfig(false, '', '', '', '');
+
+    const instrumentationConfig: DspInstrumentationConfig = {
+        environment: 'dev',
+        dataDog: {
+            enabled: false,
+            applicationId: 'app_id',
+            clientToken: 'client_token',
+            site: 'site',
+            service: 'dsp-app'
+        },
+        rollbar: {
+            enabled: false,
+            accessToken: 'rollbar_token'
+        }
+    };
+
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: APP_CONFIG,
+                    useValue: prodConfig
+                },
+                {
+                    provide: DspInstrumentationToken,
+                    useValue: instrumentationConfig
+                },
+            ]
+        });
+        service = TestBed.inject(AppInitService);
+    });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
+    it('should process the fully specified config (prod mode)', async () => {
+        expect(service.dspConfig.release).toEqual('2022.02.01');
+        expect(service.dspConfig.environment).toEqual('production');
+        expect(service.dspConfig.color).toEqual('primary');
+        expect(service.dspConfig.production).toEqual(true);
+        expect(service.dspApiConfig.apiProtocol).toEqual('https');
+        expect(service.dspApiConfig.apiHost).toEqual('0.0.0.0');
+        expect(service.dspApiConfig.apiPort).toEqual(null);
+        expect(service.dspApiConfig.apiPath).toEqual('');
+        expect(service.dspIiifConfig.iiifProtocol).toEqual('https');
+        expect(service.dspIiifConfig.iiifHost).toEqual('0.0.0.0');
+        expect(service.dspIiifConfig.iiifPort).toEqual(null);
+        expect(service.dspIiifConfig.iiifPath).toEqual('');
+        expect(service.dspApiConfig.jsonWebToken).toEqual('mytoken');
+        expect(service.dspApiConfig.logErrors).toEqual(true);
+        expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
+        expect(service.dspAppConfig.iriBase).toEqual('https://rdfh.ch');
+        expect(service.dspInstrumentationConfig.environment).toEqual('production');
+        expect(service.dspInstrumentationConfig.dataDog.enabled).toEqual(true);
+        expect(service.dspInstrumentationConfig.dataDog.applicationId).toEqual('app_id');
+        expect(service.dspInstrumentationConfig.dataDog.clientToken).toEqual('client_token');
+        expect(service.dspInstrumentationConfig.dataDog.site).toEqual('site');
+        expect(service.dspInstrumentationConfig.dataDog.service).toEqual('dsp-app');
+        expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(true);
+        expect(service.dspInstrumentationConfig.rollbar.accessToken).toEqual('rollbar_token');
+    });
 });
