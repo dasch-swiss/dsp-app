@@ -1,5 +1,12 @@
 # Changelog
 
+### [9.0.1](https://www.github.com/dasch-swiss/dsp-app/compare/v9.0.0...v9.0.1) (2022-02-09)
+
+
+### Bug Fixes
+
+* **main:** bug fix in configuration file in case of prod mode (DEV-491) ([#651](https://www.github.com/dasch-swiss/dsp-app/issues/651)) ([a6c9e87](https://www.github.com/dasch-swiss/dsp-app/commit/a6c9e87d74d47f00450f1cb64d6f533d7191496d))
+
 ## [9.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v8.5.0...v9.0.0) (2022-02-02)
 
 
