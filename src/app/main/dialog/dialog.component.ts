@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ReadResource } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from 'src/app/project/ontology/default-data/default-properties';
 import { FilteredResources } from 'src/app/workspace/results/list-view/list-view.component';
 
@@ -16,8 +17,10 @@ export interface DialogData {
     canBeUpdated?: boolean;
     position?: number;
     parentIri?: string;
+    parentResource?: ReadResource;
     projectCode?: string;
     selectedResources?: FilteredResources;
+    resourceClassDefinition?: string;
 }
 
 export interface ConfirmationWithComment {
