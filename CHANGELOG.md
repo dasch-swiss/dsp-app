@@ -1,5 +1,20 @@
 # Changelog
 
+## [9.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.0.1...v9.1.0) (2022-02-15)
+
+
+### Enhancements
+
+* **add-link-resource-button:** Add Link Resource Button (DEV-404) ([#645](https://www.github.com/dasch-swiss/dsp-app/issues/645)) ([f762c3c](https://www.github.com/dasch-swiss/dsp-app/commit/f762c3ce8c06bb09d644474d01cc8548197aa2d3))
+
+
+### Maintenance
+
+* **deps-dev:** bump karma from 6.3.13 to 6.3.14 ([#653](https://www.github.com/dasch-swiss/dsp-app/issues/653)) ([1794e47](https://www.github.com/dasch-swiss/dsp-app/commit/1794e47406114e054c5393effe940d0db4b43add))
+* **deps:** bump follow-redirects from 1.14.7 to 1.14.8 ([#656](https://www.github.com/dasch-swiss/dsp-app/issues/656)) ([8554764](https://www.github.com/dasch-swiss/dsp-app/commit/8554764b3562868c6fcee9462e89325e3fd5c2c6))
+* **google fonts:** switches back to self hosting google fonts ([#654](https://www.github.com/dasch-swiss/dsp-app/issues/654)) ([938721b](https://www.github.com/dasch-swiss/dsp-app/commit/938721b9ae9e28f08c7b0af7742c44a1ed843799))
+* **open-sea-dragon:** updates package to v3.0.0 ([#658](https://www.github.com/dasch-swiss/dsp-app/issues/658)) ([42bffa6](https://www.github.com/dasch-swiss/dsp-app/commit/42bffa6fa542babc06a1086324eae10931a9de78))
+
 ### [9.0.1](https://www.github.com/dasch-swiss/dsp-app/compare/v9.0.0...v9.0.1) (2022-02-09)
 
 
