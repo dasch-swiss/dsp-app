@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.1.0...v9.2.0) (2022-02-17)
+
+
+### Bug Fixes
+
+* **ontology-editor:** display sub-properties the correct way (DEV-530) ([#661](https://www.github.com/dasch-swiss/dsp-app/issues/661)) ([a2cf6e0](https://www.github.com/dasch-swiss/dsp-app/commit/a2cf6e074698553aab51667461345e04a3b7928b))
+
+
+### Enhancements
+
+* **resource:** display permissions (DEV-454) ([#660](https://www.github.com/dasch-swiss/dsp-app/issues/660)) ([13a3a49](https://www.github.com/dasch-swiss/dsp-app/commit/13a3a49574a5d2b73d8427606b724eec5eaabc8b))
+
 ## [9.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.0.1...v9.1.0) (2022-02-15)
 
 
