@@ -49,6 +49,10 @@
                 -->
         </mat-menu>
 
+        <!-- permission info: display full info in case of system or project admin; otherwise display only user's permissions -->
+        <app-permission-info *ngIf="adminPermissions" [hasPermissions]="resource.res.hasPermissions" [userHasPermission]="resource.res.userHasPermission"></app-permission-info>
+        <app-permission-info *ngIf="!adminPermissions" [userHasPermission]="resource.res.userHasPermission"></app-permission-info>
+
         <!-- more menu with: delete, erase resource -->
         <button *ngIf="editPermissions && project?.status" mat-icon-button class="more-menu" matTooltip="More"
             matTooltipPosition="above" [matMenuTriggerFor]="more" [disabled]="deletedResource">
@@ -60,7 +64,7 @@
                 <mat-icon>edit</mat-icon>
                 Edit label
             </button>
-            <button mat-menu-item matTooltip="Move resource to trash bin." matTooltipPosition="above"
+            <button *ngIf="deleteButtonIsVisible" mat-menu-item matTooltip="Move resource to trash bin." matTooltipPosition="above"
                 (click)="openDialog('delete')">
                 <mat-icon>delete</mat-icon>
                 Delete resource

@@ -118,8 +118,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     lastModificationDate: string;
 
+    resourcePermissions: any;
+
     deletedResource = false;
 
+    deleteButtonIsVisible: boolean;
     addButtonIsVisible: boolean; // used to toggle add value button
     addValueFormIsVisible: boolean; // used to toggle add value form field
     propID: string; // used in template to show only the add value form of the corresponding value
@@ -155,6 +158,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+
         // reset the page event
         this.pageEvent = new PageEvent();
         this.pageEvent.pageIndex = 0;
@@ -162,6 +166,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         this._getIncomingLinks();
 
         if (this.resource.res) {
+
             // get user permissions
             const allPermissions = PermissionUtil.allUserPermissions(
                 this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
@@ -172,6 +177,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
             // if user has modify permissions, set addButtonIsVisible to true so the user see's the add button
             this.addButtonIsVisible = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
+
+            // if user has delete permissions, set deleteButtonIsVisible to true so the user see's the delete button
+            this.deleteButtonIsVisible = allPermissions.indexOf(PermissionUtil.Permissions.D) !== -1;
         }
 
         // listen for the AddValue event to be emitted and call hideAddValueForm()

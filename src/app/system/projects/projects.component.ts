@@ -2,7 +2,6 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, ProjectsResponse, StoredProject, UserResponse } from '@dasch-swiss/dsp-js';
-import { AdminPermissions } from 'src/app/main/declarations/admin-permissions';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
@@ -46,8 +45,6 @@ export class ProjectsComponent implements OnInit {
      * get the information from localstorage
      */
     session: Session;
-
-    permissions: AdminPermissions;
 
     // list of active projects
     active: StoredProject[] = [];
