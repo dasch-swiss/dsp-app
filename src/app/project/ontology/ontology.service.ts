@@ -164,7 +164,9 @@ export class OntologyService {
                                 i.guiEle === property.guiElement && i.objectType === property.objectType
                             ));
                         }
-
+                    }
+                    if (propType) {
+                        break;
                     }
                 }
                 if (propType) {
