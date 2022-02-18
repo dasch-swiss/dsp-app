@@ -274,7 +274,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
                 const colorValues: ReadColorValue[] = geom.region.properties[Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor'] as ReadColorValue[];
 
                 // if the geometry has a color property, use that value as the color for the line
-                if(colorValues && colorValues.length){
+                if (colorValues && colorValues.length) {
                     geometry.lineColor = colorValues[0].color;
                 }
 
@@ -312,7 +312,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      * @param endPoint the end point of the drawing
      * @param imageSize the image size for calculations
      */
-    private _openRegionDialog(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, overlay: Element): void{
+    private _openRegionDialog(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, overlay: Element): void {
         const dialogConfig: MatDialogConfig = {
             width: '337px',
             maxHeight: '80vh',
@@ -344,13 +344,13 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      * @param comment the value for the comment entered in the form
      * @param label the value for the label entered in the form
      */
-    private _uploadRegion(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, color: string, comment: string, label: string){
-        const x1 = Math.max(Math.min(startPoint.x, imageSize.x), 0)/imageSize.x;
-        const x2 = Math.max(Math.min(endPoint.x, imageSize.x), 0)/imageSize.x;
-        const y1 = Math.max(Math.min(startPoint.y, imageSize.y), 0)/imageSize.y;
-        const y2 = Math.max(Math.min(endPoint.y, imageSize.y), 0)/imageSize.y;
-        const geomStr = '{"status":"active","lineColor":"' + color + '","lineWidth":2,"points":[{"x":' +  x1.toString() +
-            ',"y":' + y1.toString() + '},{"x":' + x2.toString() + ',"y":' + y2.toString()+ '}],"type":"rectangle"}';
+    private _uploadRegion(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, color: string, comment: string, label: string) {
+        const x1 = Math.max(Math.min(startPoint.x, imageSize.x), 0) / imageSize.x;
+        const x2 = Math.max(Math.min(endPoint.x, imageSize.x), 0) / imageSize.x;
+        const y1 = Math.max(Math.min(startPoint.y, imageSize.y), 0) / imageSize.y;
+        const y2 = Math.max(Math.min(endPoint.y, imageSize.y), 0) / imageSize.y;
+        const geomStr = '{"status":"active","lineColor":"' + color + '","lineWidth":2,"points":[{"x":' + x1.toString() +
+            ',"y":' + y1.toString() + '},{"x":' + x2.toString() + ',"y":' + y2.toString() + '}],"type":"rectangle"}';
         const createResource = new CreateResource();
         createResource.label = label;
         createResource.type = Constants.KnoraApiV2 + Constants.HashDelimiter + 'Region';
@@ -370,9 +370,9 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
         createResource.properties = {
             [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasComment']: [commentVal],
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor'] : [colorVal],
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'isRegionOfValue'] : [linkVal],
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasGeometry'] : [geomVal]
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor']: [colorVal],
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'isRegionOfValue']: [linkVal],
+            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasGeometry']: [geomVal]
         };
         this._dspApiConnection.v2.res.createResource(createResource).subscribe(
             (res: ReadResource) => {
@@ -387,11 +387,11 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     /**
      * set up function for the region drawer
      */
-    private _addRegionDrawer(){
+    private _addRegionDrawer() {
         new OpenSeadragon.MouseTracker({
             element: this._viewer.canvas,
             pressHandler: (event) => {
-                if (!this.regionDrawMode){
+                if (!this.regionDrawMode) {
                     return;
                 }
                 const overlayElement = document.createElement('div');
@@ -404,7 +404,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
                 };
             },
             dragHandler: (event) => {
-                if (!this._regionDragInfo){
+                if (!this._regionDragInfo) {
                     return;
                 }
                 const viewPortPos = this._viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position);
@@ -422,8 +422,8 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             },
             releaseHandler: () => {
                 if (this.regionDrawMode) {
-                    const imageSize =  this._viewer.world.getItemAt(0).getContentSize();
-                    const startPoint  = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.startPos);
+                    const imageSize = this._viewer.world.getItemAt(0).getContentSize();
+                    const startPoint = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.startPos);
                     const endPoint = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.endPos);
                     this._openRegionDialog(startPoint, endPoint, imageSize, this._regionDragInfo.overlayElement);
                     this._regionDragInfo = null;
@@ -545,15 +545,13 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             const height = image.dimY;
             // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
             tileSources.push({
-                // construct IIIF tileSource configuration according to
-                // http://iiif.io/api/image/2.1/#technical-properties
-                // see also http://iiif.io/api/image/2.0/#a-implementation-notes
+                // construct IIIF tileSource configuration according to https://iiif.io/api/image/3.0
                 tileSource: {
-                    '@context': 'http://iiif.io/api/image/2/context.json',
-                    '@id': sipiBasePath,
+                    '@context': 'http://iiif.io/api/image/3/context.json',
+                    'id': sipiBasePath,
                     height: height,
                     width: width,
-                    profile: ['http://iiif.io/api/image/2/level2.json'],
+                    profile: ['level2'],
                     protocol: 'http://iiif.io/api/image',
                     tiles: [{
                         scaleFactors: [1, 2, 4, 8, 16, 32],
