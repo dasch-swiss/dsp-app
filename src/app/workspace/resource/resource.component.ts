@@ -299,7 +299,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 this.collectRepresentationsAndAnnotations(this.incomingResource);
 
-                if (this.representationsToDisplay.length && this.compoundPosition) {
+                if (this.representationsToDisplay.length && this.representationsToDisplay[0].fileValue && this.compoundPosition) {
                     this.getIncomingRegions(this.incomingResource, 0);
                 }
             },
@@ -340,7 +340,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                         ];
 
                         this.representationsToDisplay = stillImageRepresentations;
-
                         // --> TODO: get regions here
 
                         break;
