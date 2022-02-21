@@ -38,6 +38,7 @@ export class RollbarErrorHandler implements ErrorHandler {
             {
                 accessToken: this._appInitService.dspInstrumentationConfig.rollbar.accessToken,
                 enabled: this._appInitService.dspInstrumentationConfig.rollbar.enabled,
+                environment: this._appInitService.dspInstrumentationConfig.environment,
                 captureUncaught: true,
                 captureUnhandledRejections: true,
                 nodeSourceMaps: false,
