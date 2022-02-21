@@ -1,5 +1,20 @@
 # Changelog
 
+### [9.2.1](https://www.github.com/dasch-swiss/dsp-app/compare/v9.2.0...v9.2.1) (2022-02-21)
+
+
+### Bug Fixes
+
+* **permission-info:** better permission string handling (DEV-537) ([#667](https://www.github.com/dasch-swiss/dsp-app/issues/667)) ([8be1efe](https://www.github.com/dasch-swiss/dsp-app/commit/8be1efe7427cac81309b895c3d56cd1bc0b047b1))
+* **resource:** resource viewer is broken if fileRepresentation has restricted view (DEV-455) ([#666](https://www.github.com/dasch-swiss/dsp-app/issues/666)) ([6a360ac](https://www.github.com/dasch-swiss/dsp-app/commit/6a360acd50cdceff5a75dceea116839a3648b1f0))
+* **still-image:** fix image displayed as black square (DEV-525) ([#668](https://www.github.com/dasch-swiss/dsp-app/issues/668)) ([33833f6](https://www.github.com/dasch-swiss/dsp-app/commit/33833f6d8efe06335a755547cfba2d505683799b))
+
+
+### Maintenance
+
+* **deps:** bump url-parse from 1.5.4 to 1.5.7 ([#664](https://www.github.com/dasch-swiss/dsp-app/issues/664)) ([54a348f](https://www.github.com/dasch-swiss/dsp-app/commit/54a348f4e86f64c86579d84ef79ca86a4bb8d3de))
+* **rollbar:** add environment to the config ([#669](https://www.github.com/dasch-swiss/dsp-app/issues/669)) ([8a587b9](https://www.github.com/dasch-swiss/dsp-app/commit/8a587b9b91a32727cd05db980a42b55d09e10722))
+
 ## [9.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.1.0...v9.2.0) (2022-02-17)
 
 
