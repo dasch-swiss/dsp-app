@@ -98,7 +98,8 @@ export class PermissionInfoComponent implements OnInit {
     constructor(
         private _sso: ScrollStrategyOptions
     ) {
-        this.scrollStrategy = this._sso.noop();
+        // close the info box on scrolling
+        this.scrollStrategy = this._sso.close();
     }
 
     ngOnInit(): void {
@@ -158,7 +159,7 @@ export class PermissionInfoComponent implements OnInit {
      */
     toggleMenu() {
         this.isOpen = !this.isOpen;
-        // console.log(this.infoButton)
+
         const pos: ConnectionPositionPair = new ConnectionPositionPair(
             this._originPos,
             this._overlayPos,

@@ -16,6 +16,7 @@
     [cdkConnectedOverlayPositions]="infoBoxPositions"
     [cdkConnectedOverlayOrigin]="infoButton"
     [cdkConnectedOverlayOpen]="isOpen"
+    (detach)="isOpen = false"
     (backdropClick)="isOpen = false">
     <div class="overlay-info-box">
         <table>
