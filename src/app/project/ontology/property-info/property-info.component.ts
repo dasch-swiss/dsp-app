@@ -283,14 +283,21 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                 delCard.cardinalities = [this.propCard];
                 onto.entity = delCard;
 
-                this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
-                    (canDoRes: CanDoResponse) => {
-                        this.propCanBeDeleted = canDoRes.canDo;
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
+                // property can only be removed from class if it's not inherited from another prop or class
+                if (this.propCard.isInherited) {
+                    this.propCanBeDeleted = false;
+                } else {
+                    this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
+                        (canDoRes: CanDoResponse) => {
+                            this.propCanBeDeleted = canDoRes.canDo;
+                        },
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
+                        }
+                    );
+                }
+
+
             }
         }
     }

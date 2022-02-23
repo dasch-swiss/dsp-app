@@ -56,7 +56,11 @@
                 <mat-icon>tune</mat-icon>
             </button>
             <span matTooltipPosition="above"
-                [matTooltip]="((!propCanBeDeleted) ? 'The property can\'t be removed because it is in use' : 'Remove property from resource class')">
+                [matTooltip]="((!propCanBeDeleted) ?
+                    (propCard.isInherited ?
+                        'The property can\'t be removed because it is inherited from another class' :
+                        'The property can\'t be removed because it is in use'
+                    ) : 'Remove property from resource class')">
                 <button mat-button [disabled]="!propCanBeDeleted" class="delete"
                     (click)="removePropertyFromClass.emit({iri: propDef.id, label: propDef.label})">
                     <mat-icon>backspace</mat-icon>
@@ -73,7 +77,7 @@
                 </button>
             </span>
             <span matTooltipPosition="above"
-                [matTooltip]="((resClasses.length > 0 || !propCanBeDeleted) ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')">
+                [matTooltip]="((resClasses.length > 0) ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')">
                 <button mat-button [disabled]="resClasses.length > 0" class="delete"
                     (click)="deleteResourceProperty.emit({iri: propDef.id, label: propDef.label})">
                     <mat-icon>delete</mat-icon>
