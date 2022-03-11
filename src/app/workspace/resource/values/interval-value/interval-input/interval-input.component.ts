@@ -6,7 +6,8 @@ import { AbstractControl, ControlValueAccessor, FormBuilder, FormControl, FormGr
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { CanUpdateErrorState, CanUpdateErrorStateCtor, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
+import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
+import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
 
 /**
  * represents an interval consisting.
@@ -39,6 +40,8 @@ export function startEndSameTypeValidator(otherInterval: FormControl): Validator
         return invalid ? { 'startEndSameTypeRequired': { value: control.value } } : null;
     };
 }
+
+type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
     constructor(public _defaultErrorStateMatcher: ErrorStateMatcher,

@@ -17,7 +17,8 @@ import {
     ValidatorFn,
     Validators
 } from '@angular/forms';
-import { CanUpdateErrorState, CanUpdateErrorStateCtor, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
+import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
+import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { CalendarDate, CalendarPeriod, GregorianCalendarDate } from 'jdnconvertiblecalendar';
 import { Subject } from 'rxjs';
@@ -34,6 +35,8 @@ export function dateTimeValidator(otherControl: FormControl): ValidatorFn {
         return invalid ? { 'validDateTimeRequired': { value: control.value } } : null;
     };
 }
+
+type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
     constructor(public _defaultErrorStateMatcher: ErrorStateMatcher,

@@ -18,10 +18,10 @@ import {
 } from '@angular/forms';
 import {
     CanUpdateErrorState,
-    CanUpdateErrorStateCtor,
     ErrorStateMatcher,
     mixinErrorState
 } from '@angular/material/core';
+import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
 import { JDNConvertibleCalendar } from 'jdnconvertiblecalendar';
@@ -47,6 +47,8 @@ export function periodStartEndValidator(isPeriod: FormControl, endDate: FormCont
         return null;
     };
 }
+
+type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
     constructor(public _defaultErrorStateMatcher: ErrorStateMatcher,

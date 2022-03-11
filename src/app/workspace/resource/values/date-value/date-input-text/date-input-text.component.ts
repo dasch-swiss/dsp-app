@@ -4,10 +4,10 @@
 import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 import {
     CanUpdateErrorState,
-    CanUpdateErrorStateCtor,
     ErrorStateMatcher,
     mixinErrorState
 } from '@angular/material/core';
+import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
 import {
     AbstractControl,
     ControlValueAccessor,
@@ -47,6 +47,8 @@ export function periodStartEndValidator(isPeriod: FormControl, endDate: FormCont
         return null;
     };
 }
+
+type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
     constructor(public _defaultErrorStateMatcher: ErrorStateMatcher,

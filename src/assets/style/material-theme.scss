@@ -1,5 +1,5 @@
 // Include non-theme styles for core.
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @include mat.core();
 
 // Define the color palettes for the theme.

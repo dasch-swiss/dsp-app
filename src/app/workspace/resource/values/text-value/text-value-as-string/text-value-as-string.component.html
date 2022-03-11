@@ -13,8 +13,8 @@
 
             <!-- gui-element: text area -->
             <textarea *ngIf="guiElement === 'textArea'" matInput [formControlName]="'value'" class="value"
-                placeholder="Text value" type="text" [errorStateMatcher]="matcher" [mat-autosize]="true"
-                [matAutosizeMaxRows]="12" [matAutosizeMinRows]="6"></textarea>
+                placeholder="Text value" type="text" [errorStateMatcher]="matcher"
+                matAutosizeMaxRows="12" matAutosizeMinRows="6"></textarea>
             <!-- <textarea *ngSwitchCase="'richText'" matInput [formControlName]="'value'" MatTextareaAutosize [mat-autosize]="true" [matAutosizeMaxRows]="10" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher"></textarea> -->
 
             <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') &&

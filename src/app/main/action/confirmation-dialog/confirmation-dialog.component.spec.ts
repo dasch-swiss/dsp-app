@@ -41,7 +41,7 @@ class ConfirmationDialogTestHostComponent implements OnInit {
                 buttonTextCancel: 'Cancel'
             }
         }).afterClosed().subscribe((payload: ConfirmationDialogValueDeletionPayload) => {
-            if (payload.confirmed) {
+            if (payload && payload.confirmed) {
                 this.confirmationDialogResponse = 'Action was confirmed!';
             } else {
                 this.confirmationDialogResponse = 'Action was cancelled';
@@ -129,6 +129,10 @@ describe('ConfirmationDialogComponent', () => {
 
         testHostComponent.openDialog();
 
+        testHostFixture.detectChanges();
+
+        await testHostFixture.whenStable();
+
         let dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
         const okButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.ok' }));
@@ -137,6 +141,7 @@ describe('ConfirmationDialogComponent', () => {
 
         dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
+        expect(dialogHarnesses).toBeDefined();
         expect(testHostComponent.confirmationDialogResponse).toEqual('Action was confirmed!');
 
     });
@@ -144,6 +149,10 @@ describe('ConfirmationDialogComponent', () => {
     it('should return a cancelled message when the cancel button is clicked', async () => {
 
         testHostComponent.openDialog();
+
+        testHostFixture.detectChanges();
+
+        await testHostFixture.whenStable();
 
         let dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
@@ -153,6 +162,7 @@ describe('ConfirmationDialogComponent', () => {
 
         dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
+        expect(dialogHarnesses).toBeDefined();
         expect(testHostComponent.confirmationDialogResponse).toEqual('Action was cancelled');
 
 
