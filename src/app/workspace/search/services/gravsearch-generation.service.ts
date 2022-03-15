@@ -205,7 +205,9 @@ ${statement}
                     restriction += `FILTER <${ComparisonOperatorConstants.MatchFunction}>(${object}, ${propWithVal.valueLiteral.value.toSparql()})`;
                 } else if (propWithVal.property.objectType === Constants.DateValue) {
                     // handle date property
-                    restriction = `FILTER(knora-api:toSimpleDate(${object}) ${propWithVal.valueLiteral.comparisonOperator.type} ${propWithVal.valueLiteral.value.toSparql()})`;
+                    // cleanse date value
+                    const dateValue = propWithVal.valueLiteral.value.toSparql().replace(/-undefined/g, '');
+                    restriction = `FILTER(knora-api:toSimpleDate(${object}) ${propWithVal.valueLiteral.comparisonOperator.type} ${dateValue})`;
                 } else if (propWithVal.property.objectType === Constants.ListValue) {
                     // handle list node
                     restriction = `${object} <${this.complexTypeToProp[propWithVal.property.objectType]}> ${propWithVal.valueLiteral.value.toSparql()}` + '\n';
