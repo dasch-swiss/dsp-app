@@ -210,7 +210,7 @@ ${statement}
                     restriction = `FILTER(knora-api:toSimpleDate(${object}) ${propWithVal.valueLiteral.comparisonOperator.type} ${dateValue})`;
                 } else if (propWithVal.property.objectType === Constants.ListValue) {
                     // handle list node
-                    restriction = `${object} <${this.complexTypeToProp[propWithVal.property.objectType]}> ${propWithVal.valueLiteral.value.toSparql()}` + '\n';
+                    restriction = `${object} <${this.complexTypeToProp[propWithVal.property.objectType]}> ${propWithVal.valueLiteral.value.toSparql()}` + ' .\n';
                     // check for comparison operator "not equals"
                     if (propWithVal.valueLiteral.comparisonOperator.getClassName() === 'NotEquals') {
                         restriction = `FILTER NOT EXISTS {

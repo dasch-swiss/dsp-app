@@ -417,7 +417,7 @@ CONSTRUCT {
 
 
 
-?propVal0 <http://api.knora.org/ontology/knora-api/v2#listValueAsListNode> <http://rdfh.ch/lists/0001/treeList>
+?propVal0 <http://api.knora.org/ontology/knora-api/v2#listValueAsListNode> <http://rdfh.ch/lists/0001/treeList> .
 
 
 
@@ -462,7 +462,7 @@ CONSTRUCT {
 
 
 FILTER NOT EXISTS {
-                                ?propVal0 <http://api.knora.org/ontology/knora-api/v2#listValueAsListNode> <http://rdfh.ch/lists/0001/treeList01>
+                                ?propVal0 <http://api.knora.org/ontology/knora-api/v2#listValueAsListNode> <http://rdfh.ch/lists/0001/treeList01> .
 
                             }
 
