@@ -81,11 +81,16 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
             (onto: Map<string, ReadOntology>) => {
 
                 const resClasses = onto.get(ontologyIri).getClassDefinitionsByType(ResourceClassDefinition);
-
                 if (this.resourceClassRestriction !== undefined) {
                     this.resourceClasses = resClasses.filter(
                         (resClassDef: ResourceClassDefinition) => resClassDef.id === this.resourceClassRestriction
                     );
+                    const subclasses = resClasses.filter(
+                        (resClassDef: ResourceClassDefinition) =>
+                            resClassDef.subClassOf.indexOf(this.resourceClassRestriction) > -1
+                    );
+
+                    this.resourceClasses = this.resourceClasses.concat(subclasses);
                 } else {
                     this.resourceClasses = resClasses;
                 }
