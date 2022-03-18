@@ -1,11 +1,19 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
+import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { ErrorComponent } from './error.component';
 
 describe('ErrorComponent', () => {
     let component: ErrorComponent;
     let fixture: ComponentFixture<ErrorComponent>;
+
+    const systemEndpointSpyObj = {
+        health: {
+            healthEndpoint: jasmine.createSpyObj('healthEndpoint', ['getHealthStatus'])
+        }
+    };
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -13,6 +21,16 @@ describe('ErrorComponent', () => {
             imports: [
                 MatIconModule,
                 RouterTestingModule
+            ],
+            providers: [
+                {
+                    provide: MatDialogRef,
+                    useValue: {}
+                },
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: systemEndpointSpyObj
+                },
             ]
         })
             .compileComponents();

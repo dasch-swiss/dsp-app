@@ -1,5 +1,5 @@
 {
-  "dspRelease": "2022.02.01-rc",
+  "dspRelease": "work.in.progress",
   "apiProtocol": "http",
   "apiHost": "0.0.0.0",
   "apiPort": 3333,

@@ -408,7 +408,7 @@
 
     <!-- general error message -->
     <div *ngSwitchCase="'error'">
-        <app-error [status]="data.id"></app-error>
+        <app-error [status]="data.id" [comment]="data.comment"></app-error>
     </div>
 
     <!-- Unknown method (or not yet defined) -->

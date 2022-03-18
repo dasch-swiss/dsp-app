@@ -40,7 +40,7 @@
             (click)="login()"
             type="submit"
             class="full-width submit-button"
-            [disabled]="!form.valid"
+            [disabled]="!form?.valid"
             [class.mat-primary]="!isError"
             [class.mat-warn]="isError">
                 <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="login-progress"></app-progress-indicator>

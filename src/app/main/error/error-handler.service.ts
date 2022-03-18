@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
 import { StatusMsg } from 'src/assets/http/statusMsg';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { DialogComponent } from '../dialog/dialog.component';
@@ -25,9 +25,33 @@ export class ErrorHandlerService {
         // in case of (internal) server error
         const apiServerError = (error.error && !error.error['response']);
 
+        const apiResponseMessage = (error.error['response'] ? error.error['response'].error : undefined);
+
         if ((error.status > 499 && error.status < 600) || apiServerError) {
 
-            const status = (apiServerError ? 503 : error.status);
+            let status = (apiServerError ? 503 : error.status);
+
+            // check if the api is healthy:
+            this._dspApiConnection.system.healthEndpoint.getHealthStatus().subscribe(
+                (response: ApiResponseData<HealthResponse>) => {
+                    if (response.body.status === 'unhealthy') {
+                        const healthError: ApiResponseError = {
+                            error: response.body.message,
+                            method: response.method,
+                            status: 500,
+                            url: error.url
+                        };
+                        status = 500;
+                        error = healthError;
+                        throw new Error(`ERROR ${status}: Server side error — dsp-api is not healthy`);
+                    } else {
+                        throw new Error(`ERROR ${status}: Server side error — dsp-api not responding`);
+                    }
+                },
+                (healthError: ApiResponseError) => {
+                    error = healthError;
+                }
+            );
 
             // open error message in full size view
             const dialogConfig: MatDialogConfig = {
@@ -38,7 +62,7 @@ export class ErrorHandlerService {
                 position: {
                     top: '0'
                 },
-                data: { mode: 'error', id: status },
+                data: { mode: 'error', id: status, comment: apiResponseMessage, fullSize: true },
                 disableClose: true
             };
 
@@ -47,7 +71,6 @@ export class ErrorHandlerService {
                 dialogConfig
             );
 
-            throw new Error(`ERROR ${status}: Server side error — dsp-api not responding`);
 
         } else if (error.status === 401 && typeof(error.error) !== 'string') {
             // logout if error status is a 401 error and comes from a DSP-JS request

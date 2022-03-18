@@ -1,14 +1,17 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
+import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 import { SearchParams } from 'src/app/workspace/results/list-view/list-view.component';
+import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { DspConfig } from '../declarations/dsp-config';
+import { ErrorHandlerService } from '../error/error-handler.service';
 import { NotificationService } from '../services/notification.service';
 import { SessionService } from '../services/session.service';
 
@@ -28,10 +31,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     componentCommsSubscription: Subscription;
 
     constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _appInitService: AppInitService,
         private _componentCommsService: ComponentCommunicationEventService,
         private _dialog: MatDialog,
         private _domSanitizer: DomSanitizer,
+        private _errorHandler: ErrorHandlerService,
         private _matIconRegistry: MatIconRegistry,
         private _notification: NotificationService,
         private _router: Router,
@@ -46,8 +51,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
         // logged-in user? show user menu or login button
         this._router.events.forEach((event) => {
+
             if (event instanceof NavigationStart) {
-                this._session.isSessionValid().subscribe((response) => {
+                this._session.isSessionValid().subscribe((response: boolean) => {
                     this.session = response;
                 });
             }

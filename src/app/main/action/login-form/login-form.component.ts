@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, LogoutResponse } from '@dasch-swiss/dsp-js';
-import { CacheService } from '../../cache/cache.service';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '../../declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '../../error/error-handler.service';
 import { AuthenticationService } from '../../services/authentication.service';

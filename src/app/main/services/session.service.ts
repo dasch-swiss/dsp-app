@@ -3,8 +3,7 @@ import {
     ApiResponseData,
     ApiResponseError,
     Constants,
-    CredentialsResponse,
-    KnoraApiConnection, UserResponse
+    CredentialsResponse, KnoraApiConnection, UserResponse
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -45,10 +44,10 @@ export class SessionService {
 
     /**
      * max session time in milliseconds
-     * default value (24h): 86400000
+     * default value (24h = 24 * 60 * 60 * 1000): 86400000
      *
      */
-    readonly MAX_SESSION_TIME: number = 3600; // 1d = 24 * 60 * 60 * 1000
+    readonly MAX_SESSION_TIME: number = 3600;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection
@@ -100,19 +99,18 @@ export class SessionService {
 
             // check if the session is still valid:
             if (session.id + this.MAX_SESSION_TIME <= tsNow) {
-                // the internal (dsp-ui) session has expired
+                // the internal session has expired
                 // check if the api credentials are still valid
 
                 return this._dspApiConnection.v2.auth.checkCredentials().pipe(
                     map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) => {
                         const idUpdated = this._updateSessionId(credentials, session, tsNow);
                         return idUpdated;
-                    }
-                    )
+                    })
                 );
 
             } else {
-                // the internal (dsp-ui) session is still valid
+                // the internal session is still valid
                 return of(true);
             }
         } else {
@@ -129,7 +127,6 @@ export class SessionService {
     destroySession() {
         localStorage.removeItem('session');
     }
-
 
     /**
      * returns a timestamp represented in seconds

@@ -196,3 +196,11 @@ button.space-reducer {
 .mat-menu-panel {
   min-height: 48px !important;
 }
+
+.full-size-dialog {
+  transition: unset !important;
+  .mat-dialog-container {
+    transition: none !important;
+    border-radius: 0 !important;
+  }
+}

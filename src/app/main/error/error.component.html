@@ -1,7 +1,6 @@
 <div class="error-page">
 
-    <!-- error 403: forbidden -->
-    <div class="container">
+    <div class="container" *ngIf="!refresh; else isLoading">
         <div class="image">
             <img class="error-image" [src]="'/assets/images/' + errorMessage?.image" />
         </div>
@@ -9,16 +8,20 @@
             <h2 class="mat-title">ERROR {{status}}</h2>
             <h1 class="mat-headline">{{errorMessage?.message}}</h1>
             <p [innerHTML]="errorMessage.description"></p>
+            <p *ngIf="comment"><strong>API response:</strong><br>&rarr; {{comment}}</p>
             <div [ngSwitch]="errorMessage?.action" class="action">
                 <button *ngSwitchCase="'goback'" mat-button routerLink="/">
                     <mat-icon>keyboard_backspace</mat-icon> Please go back to the start page.
                 </button>
                 <p *ngSwitchCase="'reload'">
-                    Please come back in a few minutes and try to <a (click)="reload()">reload the page</a>
+                    Please come back in a few minutes and try to <a (click)="reload()">reload the page</a>.
                 </p>
             </div>
 
         </div>
     </div>
+    <ng-template #isLoading>
+        <app-progress-indicator></app-progress-indicator>
+    </ng-template>
 
 </div>
