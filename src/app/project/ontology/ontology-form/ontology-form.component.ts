@@ -186,6 +186,7 @@ export class OntologyFormComponent implements OnInit {
             label: new FormControl({
                 value: this.ontologyLabel, disabled: false
             }, [
+                Validators.required,
                 Validators.minLength(this.nameMinLength)
             ]),
             comment: new FormControl({

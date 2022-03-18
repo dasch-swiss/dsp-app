@@ -3,7 +3,7 @@
     <div class="form-content">
         <mat-form-field class="large-field ontology-name">
             <input matInput class="ontology-name" autocomplete="off" [maxlength]="nameMaxLength" [formControl]="ontologyForm.controls['name']"
-                [placeholder]="'Set a unique name *'">
+                [placeholder]="'Set a unique name'">
             <mat-icon matSuffix [matTooltip]="ontologyNameInfo" matTooltipPosition="above" matTooltipClass="multi-line-tooltip">help</mat-icon>
             <mat-hint *ngIf="formErrors.name" class="medium-field">
                 {{ formErrors.name }}
@@ -13,7 +13,7 @@
 
         <mat-form-field class="large-field ontology-label">
             <span *ngIf="!iri" matPrefix>{{project.shortname}}:&nbsp;</span>
-            <input matInput [formControl]="ontologyForm.controls['label']" placeholder="Label *"
+            <input matInput [formControl]="ontologyForm.controls['label']" placeholder="Label"
                 [value]="ontologyLabel">
             <mat-hint *ngIf="formErrors.label">
                 {{ formErrors.label }}

@@ -1,44 +1,29 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <span class="rm-value">
+        <span *ngIf="valueFormControl.value?.end; else singleDate">
+            <span class="calendar mat-caption">{{valueFormControl.value?.start | knoraDate:ontologyDateFormat:'calendarOnly'}}</span><br>
+            <span>{{ valueFormControl.value?.start | knoraDate:ontologyDateFormat:'era' }}</span>
+            <span>&nbsp;&ndash;&nbsp;{{ valueFormControl.value?.end | knoraDate:ontologyDateFormat:'era' }}</span>
+        </span>
 
-    <!-- Date period -->
-    <span *ngIf="valueFormControl.value?.end; else date">
-        <span class="rm-value date-start">
-            <!-- <span *ngIf="labels">Period Start: </span> -->
-            {{valueFormControl.value?.start | knoraDate:ontologyDateFormat:displayOptions}}
-        </span>
-        <span class="rm-value date-end">
-            <span *ngIf="labels"> &mdash; </span>
-            {{valueFormControl.value?.end | knoraDate:ontologyDateFormat:displayOptions}}
-        </span>
+        <ng-template #singleDate>
+            <span class="calendar mat-caption">{{valueFormControl.value | knoraDate:ontologyDateFormat:'calendarOnly'}}</span><br>
+            <span>{{ valueFormControl.value | knoraDate:ontologyDateFormat:'era' }}</span>
+        </ng-template>
     </span>
-
-    <!-- Only one date -->
-    <ng-template #date>
-        <span class="rm-value">
-            <!-- <span *ngIf="labels">Date: </span> -->
-            {{valueFormControl.value | knoraDate:ontologyDateFormat:displayOptions}}
-        </span>
-    </ng-template>
-
     <!-- Comment -->
     <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
 </span>
-
-<!-- Edit mode -->
 <ng-template #showForm>
     <span [formGroup]="form">
+        <app-date-value-handler #dateInput [formControlName]="'value'" [valueRequiredValidator]="valueRequiredValidator" class="value"></app-date-value-handler>
 
-        <mat-form-field class="large-field child-value-component" floatLabel="never">
-
-            <app-date-input-text #dateInput [formControlName]="'value'" [valueRequiredValidator]="valueRequiredValidator" class="value"></app-date-input-text>
-
-            <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
-                <span class="custom-error-message">New value must be different than the current value.</span>
-            </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
-                <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
-            </mat-error>
-        </mat-form-field>
+        <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
+            <span class="custom-error-message">New value must be different than the current value.</span>
+        </mat-error>
+        <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+            <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
+        </mat-error>
 
         <!-- Comment field -->
         <mat-form-field class="large-field value-component-comment">

@@ -1,8 +1,6 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
-import { JDNConvertibleCalendar } from 'jdnconvertiblecalendar';
-import { CalendarHeaderComponent } from 'src/app/workspace/resource/values/date-value/calendar-header/calendar-header.component';
 import { PropertyValue, Value, ValueLiteral } from '../operator';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
@@ -21,9 +19,6 @@ export class SearchDateValueComponent implements OnInit, OnDestroy, PropertyValu
     type = Constants.DateValue;
 
     form: FormGroup;
-
-    // custom header for the datepicker
-    // headerComponent = CalendarHeaderComponent;
 
     constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
     }

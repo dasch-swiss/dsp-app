@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,9 +14,8 @@ import { Subject } from 'rxjs';
 import { KnoraDatePipe } from 'src/app/main/pipes/formatting/knoradate.pipe';
 import { DateValueComponent } from './date-value.component';
 
-
 @Component({
-    selector: 'app-date-input-text',
+    selector: 'app-date-value-handler',
     template: '',
     providers: [
         {
@@ -43,7 +42,7 @@ class TestDateInputComponent implements ControlValueAccessor, MatFormFieldContro
     focused = false;
     id = 'testid';
     ngControl: NgControl | null;
-    onChange = (_: any) => {};
+    onChange = (_: any) => { };
 
 
     writeValue(date: KnoraDate | KnoraPeriod | null): void {
@@ -63,7 +62,7 @@ class TestDateInputComponent implements ControlValueAccessor, MatFormFieldContro
     setDescribedByIds(ids: string[]): void {
     }
 
-    _handleInput(): void {
+    handleInput(): void {
         this.onChange(this.value);
     }
 
@@ -88,7 +87,7 @@ class TestHostDisplayValueComponent implements OnInit {
 
         MockResource.getTestThing().subscribe(res => {
             const inputVal: ReadDateValue =
-        res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasDate', ReadDateValue)[0];
+                res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasDate', ReadDateValue)[0];
 
             this.displayInputVal = inputVal;
 
@@ -103,7 +102,7 @@ class TestHostDisplayValueComponent implements OnInit {
  */
 @Component({
     template: `
-    <app-date-value #inputVal [mode]="mode"></app-date-value>`
+        <app-date-value #inputVal [mode]="mode"></app-date-value>`
 })
 class TestHostCreateValueComponent implements OnInit {
 
@@ -139,6 +138,8 @@ class TestHostCreateValueNoValueRequiredComponent implements OnInit {
 }
 
 describe('DateValueComponent', () => {
+    let component: DateValueComponent;
+    let fixture: ComponentFixture<DateValueComponent>;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -158,6 +159,7 @@ describe('DateValueComponent', () => {
         })
             .compileComponents();
     }));
+
 
     describe('display and edit a date value', () => {
         let testHostComponent: TestHostDisplayValueComponent;
@@ -193,7 +195,7 @@ describe('DateValueComponent', () => {
 
             expect(testHostComponent.inputValueComponent.mode).toEqual('read');
 
-            expect(valueReadModeNativeElement.innerText).toEqual('13.05.2018');
+            expect(valueReadModeNativeElement.innerText).toEqual('Gregorian\n13.05.2018');
 
         });
 
@@ -207,13 +209,13 @@ describe('DateValueComponent', () => {
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-            expect(testHostComponent.inputValueComponent.dateInputComponent.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
+            expect(testHostComponent.inputValueComponent.datePickerComponent.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
 
             // simulate user input
             const newKnoraDate = new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.dateInputComponent.value = newKnoraDate;
-            testHostComponent.inputValueComponent.dateInputComponent._handleInput();
+            testHostComponent.inputValueComponent.datePickerComponent.value = newKnoraDate;
+            testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
 
@@ -246,14 +248,14 @@ describe('DateValueComponent', () => {
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-            expect(testHostComponent.inputValueComponent.dateInputComponent.value)
+            expect(testHostComponent.inputValueComponent.datePickerComponent.value)
                 .toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
 
             // simulate user input (equivalent date)
             const newKnoraDate = new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13);
 
-            testHostComponent.inputValueComponent.dateInputComponent.value = newKnoraDate;
-            testHostComponent.inputValueComponent.dateInputComponent._handleInput();
+            testHostComponent.inputValueComponent.datePickerComponent.value = newKnoraDate;
+            testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
 
@@ -304,8 +306,8 @@ describe('DateValueComponent', () => {
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-            testHostComponent.inputValueComponent.dateInputComponent.value = null;
-            testHostComponent.inputValueComponent.dateInputComponent._handleInput();
+            testHostComponent.inputValueComponent.datePickerComponent.value = null;
+            testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
 
@@ -330,20 +332,20 @@ describe('DateValueComponent', () => {
             // simulate user input
             const newKnoraDate = new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.dateInputComponent.value = newKnoraDate;
-            testHostComponent.inputValueComponent.dateInputComponent._handleInput();
+            testHostComponent.inputValueComponent.datePickerComponent.value = newKnoraDate;
+            testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
 
-            expect(testHostComponent.inputValueComponent.dateInputComponent.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
+            expect(testHostComponent.inputValueComponent.datePickerComponent.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
 
             testHostComponent.inputValueComponent.resetFormControl();
 
             expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
 
-            expect(testHostComponent.inputValueComponent.dateInputComponent.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
+            expect(testHostComponent.inputValueComponent.datePickerComponent.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
@@ -353,7 +355,7 @@ describe('DateValueComponent', () => {
 
             MockResource.getTestThing().subscribe(res => {
                 const newDate: ReadDateValue =
-          res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasDate', ReadDateValue)[0];
+                    res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasDate', ReadDateValue)[0];
 
                 newDate.id = 'updatedId';
 
@@ -365,7 +367,7 @@ describe('DateValueComponent', () => {
 
                 expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
 
-                expect(valueReadModeNativeElement.innerText).toEqual('13.05.2019');
+                expect(valueReadModeNativeElement.innerText).toEqual('Gregorian\n13.05.2019');
 
                 expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -562,13 +564,13 @@ describe('DateValueComponent', () => {
 
         it('should create a value', () => {
 
-            expect(testHostComponent.inputValueComponent.dateInputComponent.value).toEqual(null);
+            expect(testHostComponent.inputValueComponent.datePickerComponent.value).toEqual(null);
 
             // simulate user input
             const newKnoraDate = new KnoraDate('JULIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.dateInputComponent.value = newKnoraDate;
-            testHostComponent.inputValueComponent.dateInputComponent._handleInput();
+            testHostComponent.inputValueComponent.datePickerComponent.value = newKnoraDate;
+            testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
 
@@ -596,8 +598,8 @@ describe('DateValueComponent', () => {
             // simulate user input
             const newKnoraDate = new KnoraDate('JULIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.dateInputComponent.value = newKnoraDate;
-            testHostComponent.inputValueComponent.dateInputComponent._handleInput();
+            testHostComponent.inputValueComponent.datePickerComponent.value = newKnoraDate;
+            testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
 
@@ -614,7 +616,7 @@ describe('DateValueComponent', () => {
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-            expect(testHostComponent.inputValueComponent.dateInputComponent.value).toEqual(null);
+            expect(testHostComponent.inputValueComponent.datePickerComponent.value).toEqual(null);
 
             const comment = await commentTextarea.getValue();
 
@@ -648,5 +650,4 @@ describe('DateValueComponent', () => {
         });
 
     });
-
 });

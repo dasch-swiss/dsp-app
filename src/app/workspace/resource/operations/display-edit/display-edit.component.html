@@ -21,7 +21,7 @@
             <app-link-value class="parent-value-component" #displayVal *ngSwitchCase="constants.LinkValue" [mode]="mode" [displayValue]="$any(displayValue)"
                         [parentResource]="parentResource" [propIri]="displayValue.property" (referredResourceClicked)="referredResourceClicked.emit($event)" (referredResourceHovered)="referredResourceHovered.emit($event)"></app-link-value>
             <!-- <app-date-value class="parent-value-component" #displayVal *ngSwitchCase="constants.DateValue" [mode]="mode" [displayValue]="$any(displayValue)" [displayOptions]="dateDisplayOptions" [labels]="showDateLabels" [ontologyDateFormat]="dateFormat"></app-date-value> -->
-            <app-yet-another-date-value class="parent-value-component" #displayVal *ngSwitchCase="constants.DateValue" [mode]="mode" [displayValue]="$any(displayValue)" [ontologyDateFormat]="dateFormat"></app-yet-another-date-value>
+            <app-date-value class="parent-value-component" #displayVal *ngSwitchCase="constants.DateValue" [mode]="mode" [displayValue]="$any(displayValue)" [ontologyDateFormat]="dateFormat"></app-date-value>
             <app-list-value class="parent-value-component" #displayVal *ngSwitchCase="constants.ListValue" [mode]="mode" [displayValue]="$any(displayValue)"
                         [propertyDef]="$any(parentResource.entityInfo.properties[displayValue.property])"></app-list-value>
             <span *ngSwitchDefault>{{displayValue.strval}}</span>

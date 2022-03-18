@@ -6,7 +6,7 @@
 
         <!-- short and long name -->
         <mat-form-field class="small-field">
-            <input matInput placeholder="{{'appLabels.form.project.general.shortcode' | translate}} * "
+            <input matInput placeholder="{{'appLabels.form.project.general.shortcode' | translate}}"
                 [maxlength]="shortcodeMaxLength" [formControl]="form.controls['shortcode']">
             <mat-hint *ngIf="formErrors.shortcode">
                 {{ formErrors.shortcode }}
@@ -16,7 +16,7 @@
         <!-- short name -->
         <mat-form-field class="medium-field">
             <input matInput [maxlength]="shortnameMaxLength"
-                placeholder="{{'appLabels.form.project.general.shortname' | translate}} * "
+                placeholder="{{'appLabels.form.project.general.shortname' | translate}}"
                 [formControl]="form.controls['shortname']">
             <mat-hint *ngIf="formErrors.shortname">
                 {{ formErrors.shortname }}
@@ -25,7 +25,7 @@
 
         <!-- long name -->
         <mat-form-field class="large-field">
-            <input matInput placeholder="{{'appLabels.form.project.general.longname' | translate}} *"
+            <input matInput placeholder="{{'appLabels.form.project.general.longname' | translate}}"
                 [formControl]="form.controls['longname']">
             <mat-hint *ngIf="formErrors.longname">
                 {{ formErrors.longname }}

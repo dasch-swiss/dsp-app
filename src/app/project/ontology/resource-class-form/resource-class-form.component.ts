@@ -103,8 +103,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     // form errors on the following fields:
     formErrors = {
         'name': '',
-        'label': '',
-        'comment': ''
+        'label': ''
     };
 
     // in case of form error: show message
@@ -116,9 +115,6 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         },
         'label': {
             'required': 'Label is required.'
-        },
-        'comment': {
-            'required': 'Comment is required.'
         }
     };
 
@@ -216,9 +212,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
             ]),
             comment: new FormControl({
                 value: this.resourceClassComments, disabled: false
-            }, [
-                Validators.required
-            ])
+            })
         });
 
         this.resourceClassForm.valueChanges.subscribe(data => this.onValueChanged(data));
@@ -253,6 +247,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         switch (type) {
             case 'label':
                 this.resourceClassLabels = data;
+                this.resourceClassForm.controls['label'].setValue(data);
                 this.handleError(this.resourceClassLabelsTouched, type);
                 break;
 
@@ -307,7 +302,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
 
             const updateComment = new UpdateResourceClassComment();
             updateComment.id = this.iri;
-            updateComment.comments = this.resourceClassComments;
+            updateComment.comments = (this.resourceClassComments.length ? this.resourceClassComments : this.resourceClassLabels);
             onto4Comment.entity = updateComment;
 
             this._dspApiConnection.v2.onto.updateResourceClass(onto4Label).subscribe(
@@ -351,6 +346,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
             newResClass.subClassOf = [this.iri];
 
             onto.entity = newResClass;
+
             this._dspApiConnection.v2.onto.createResourceClass(onto).subscribe(
                 (classResponse: ResourceClassDefinitionWithAllLanguages) => {
                     // need lmd from classResponse

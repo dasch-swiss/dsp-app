@@ -424,6 +424,7 @@ export class PropertyFormComponent implements OnInit {
 
                         this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
                             (classCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                                console.log(classCommentResponse);
                                 this.lastModificationDate = classCommentResponse.lastModificationDate;
 
                                 if (!this.unsupportedPropertyType) {
@@ -491,7 +492,7 @@ export class PropertyFormComponent implements OnInit {
             const newResProp = new CreateResourceProperty();
             newResProp.name = this.propertyForm.controls['name'].value;
             newResProp.label = this.labels;
-            newResProp.comment = (this.comments.length ? this.comments : this.labels);
+            newResProp.comment = this.comments;
             const guiAttr = this.propertyForm.controls['guiAttr'].value;
             if (guiAttr) {
                 newResProp.guiAttributes = this.setGuiAttribute(guiAttr);

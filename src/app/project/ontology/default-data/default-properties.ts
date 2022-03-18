@@ -121,7 +121,7 @@ export class DefaultProperties {
                 {
                     icon: 'access_time',
                     label: 'Timestamp',
-                    description: 'A single timestamp on a timeline',
+                    description: 'A single timestamp (date and time) on a timeline',
                     subPropOf: Constants.HasValue,
                     objectType: Constants.TimeValue,
                     guiEle: Constants.GuiTimeStamp,

@@ -10,7 +10,7 @@
                 <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>fingerprint</mat-icon>&nbsp;
                 </span>
-                <mat-label>Class name *</mat-label>
+                <mat-label>Class name</mat-label>
                 <input matInput formControlName="name" >
                 <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name">
                     {{formErrors.name}}
@@ -34,15 +34,12 @@
             <!-- description -->
             <div class="large-field string-literal-container more-space-top">
                 <app-string-literal-input
-                    [placeholder]="'Comment *'"
+                    [placeholder]="'Comment'"
                     [value]="resourceClassComments"
                     [textarea]="true"
                     (touched)="resourceClassCommentsTouched = $event"
                     (dataChanged)="handleData($event, 'comment')">
                 </app-string-literal-input>
-                <mat-hint class="string-literal-error" *ngIf="formErrors.comment">
-                    {{ formErrors.comment }}
-                </mat-hint>
             </div>
         </div>
 
@@ -56,12 +53,12 @@
             <span class="fill-remaining-space"></span>
             <span>
                 <button *ngIf="!edit" mat-raised-button type="button" color="primary"
-                    [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
+                    [disabled]="!resourceClassLabels.length || (resourceClassForm.enabled && !resourceClassForm.valid)"
                     (click)="submitData()">
                     Submit
                 </button>
                 <button *ngIf="edit" mat-raised-button type="button" color="primary"
-                    [disabled]="!resourceClassLabels.length || !resourceClassComments.length"
+                    [disabled]="!resourceClassLabels.length || (resourceClassForm.enabled && !resourceClassForm.valid)"
                     (click)="submitData()">
                     <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                     </app-progress-indicator>

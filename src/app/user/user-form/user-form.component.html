@@ -12,7 +12,7 @@
         <!-- username -->
         <mat-form-field [class.large-field]="!username" [class.small-field]="username">
             <input matInput type="text" [formControl]="form.controls['username']"
-                placeholder="{{ 'appLabels.form.user.general.username' | translate }} *" autocomplete="username">
+                placeholder="{{ 'appLabels.form.user.general.username' | translate }}" autocomplete="username">
             <mat-hint *ngIf="formErrors.username">
                 {{ formErrors.username }}
             </mat-hint>
@@ -21,7 +21,7 @@
         <!-- email -->
         <mat-form-field [class.large-field]="!username" [class.medium-field]="username">
             <input matInput type="email" [formControl]="form.controls['email']"
-                placeholder="{{ 'appLabels.form.user.general.email' | translate }} *" autocomplete="email">
+                placeholder="{{ 'appLabels.form.user.general.email' | translate }}" autocomplete="email">
             <mat-hint *ngIf="formErrors.email">
                 {{ formErrors.email }}
             </mat-hint>
@@ -31,7 +31,7 @@
         <!-- given name -->
         <mat-form-field class="small-field">
             <input matInput [formControl]="form.controls['givenName']"
-                placeholder="{{ 'appLabels.form.user.general.givenName' | translate }} *" autocomplete="givenname">
+                placeholder="{{ 'appLabels.form.user.general.givenName' | translate }}" autocomplete="givenname">
             <mat-hint *ngIf="formErrors.givenName">
                 {{ formErrors.givenName }}
             </mat-hint>
@@ -40,7 +40,7 @@
         <!-- family name -->
         <mat-form-field class="medium-field">
             <input matInput [formControl]="form.controls['familyName']"
-                placeholder="{{ 'appLabels.form.user.general.familyName' | translate }} *" autocomplete="name">
+                placeholder="{{ 'appLabels.form.user.general.familyName' | translate }}" autocomplete="name">
             <mat-hint *ngIf="formErrors.familyName">
                 {{ formErrors.familyName }}
             </mat-hint>

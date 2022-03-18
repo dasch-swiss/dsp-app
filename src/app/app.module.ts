@@ -45,6 +45,7 @@ import { KnoraDatePipe } from './main/pipes/formatting/knoradate.pipe';
 import { SplitPipe } from './main/pipes/split.pipe';
 import { LinkifyPipe } from './main/pipes/string-transformation/linkify.pipe';
 import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/stringify-string-literal.pipe';
+import { TitleFromCamelCasePipe } from './main/pipes/string-transformation/title-from-camel-case.pipe';
 import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { DatadogRumService } from './main/services/datadog-rum.service';
@@ -111,10 +112,8 @@ import { ResourceComponent } from './workspace/resource/resource.component';
 import { BooleanValueComponent } from './workspace/resource/values/boolean-value/boolean-value.component';
 import { ColorPickerComponent } from './workspace/resource/values/color-value/color-picker/color-picker.component';
 import { ColorValueComponent } from './workspace/resource/values/color-value/color-value.component';
-import { CalendarHeaderComponent } from './workspace/resource/values/date-value/calendar-header/calendar-header.component';
-import { DateEditComponent } from './workspace/resource/values/date-value/date-input-text/date-edit/date-edit.component';
-import { DateInputTextComponent } from './workspace/resource/values/date-value/date-input-text/date-input-text.component';
-import { DateInputComponent } from './workspace/resource/values/date-value/date-input/date-input.component';
+import { DatePickerComponent } from './workspace/resource/values/date-value/date-picker/date-picker.component';
+import { DateValueHandlerComponent } from './workspace/resource/values/date-value/date-value-handler/date-value-handler.component';
 import { DateValueComponent } from './workspace/resource/values/date-value/date-value.component';
 import { DecimalValueComponent } from './workspace/resource/values/decimal-value/decimal-value.component';
 import { GeonameValueComponent } from './workspace/resource/values/geoname-value/geoname-value.component';
@@ -131,9 +130,6 @@ import { TextValueAsXMLComponent } from './workspace/resource/values/text-value/
 import { TimeInputComponent } from './workspace/resource/values/time-value/time-input/time-input.component';
 import { TimeValueComponent } from './workspace/resource/values/time-value/time-value.component';
 import { UriValueComponent } from './workspace/resource/values/uri-value/uri-value.component';
-import { DatePickerComponent } from './workspace/resource/values/yet-another-date-value/date-picker/date-picker.component';
-import { DateValueHandlerComponent } from './workspace/resource/values/yet-another-date-value/date-value-handler/date-value-handler.component';
-import { YetAnotherDateValueComponent } from './workspace/resource/values/yet-another-date-value/yet-another-date-value.component';
 import { ListViewComponent } from './workspace/results/list-view/list-view.component';
 import { ResourceGridComponent } from './workspace/results/list-view/resource-grid/resource-grid.component';
 import { ResourceListComponent } from './workspace/results/list-view/resource-list/resource-list.component';
@@ -157,7 +153,6 @@ import { SearchSelectOntologyComponent } from './workspace/search/advanced-searc
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { FulltextSearchComponent } from './workspace/search/fulltext-search/fulltext-search.component';
 import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
-import { TitleFromCamelCasePipe } from './main/pipes/string-transformation/title-from-camel-case.pipe';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -178,7 +173,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         AudioComponent,
         BoardComponent,
         BooleanValueComponent,
-        CalendarHeaderComponent,
         CollaborationComponent,
         CollectionListComponent,
         ColorPickerComponent,
@@ -189,9 +183,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         CookiePolicyComponent,
         CreateLinkResourceComponent,
         DashboardComponent,
-        DateEditComponent,
-        DateInputComponent,
-        DateInputTextComponent,
         DatePickerComponent,
         DateValueComponent,
         DateValueHandlerComponent,
@@ -294,6 +285,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         TextValueHtmlLinkDirective,
         TimeInputComponent,
         TimeValueComponent,
+        TitleFromCamelCasePipe,
         TruncatePipe,
         UploadComponent,
         UriValueComponent,
@@ -302,8 +294,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UserMenuComponent,
         UsersComponent,
         UsersListComponent,
-        YetAnotherDateValueComponent,
-        TitleFromCamelCasePipe
     ],
     imports: [
         AngularSplitModule.forRoot(),

@@ -1,16 +1,10 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import {
-    CreateDateValue,
-    KnoraDate,
-    KnoraPeriod,
-    ReadDateValue,
-    UpdateDateValue
-} from '@dasch-swiss/dsp-js';
+import { CreateDateValue, KnoraDate, KnoraPeriod, ReadDateValue, UpdateDateValue } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { ValueErrorStateMatcher } from '../value-error-state-matcher';
-import { DateInputComponent } from './date-input/date-input.component';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
+import { ValueErrorStateMatcher } from '../value-error-state-matcher';
+import { DatePickerComponent } from './date-picker/date-picker.component';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -22,25 +16,21 @@ const resolvedPromise = Promise.resolve(null);
 })
 export class DateValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
 
-    @ViewChild('dateInput') dateInputComponent: DateInputComponent;
+    @ViewChild('dateInput') datePickerComponent: DatePickerComponent;
 
     @Input() displayValue?: ReadDateValue;
 
-    @Input() displayOptions?: 'era' | 'calendar' | 'all';
-
-    @Input() labels = false;
+    // @Input() displayOptions?: 'era' | 'calendar' | 'all';
 
     @Input() ontologyDateFormat = 'dd.MM.YYYY';
 
+    // @Input() showHexCode = false;
+
     valueFormControl: FormControl;
     commentFormControl: FormControl;
-
     form: FormGroup;
-
     valueChangesSubscription: Subscription;
-
     customValidators = [];
-
     matcher = new ValueErrorStateMatcher();
 
     constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
@@ -54,7 +44,7 @@ export class DateValueComponent extends BaseValueDirective implements OnInit, On
      * @param date2 date for comparison with date1
      */
     sameDate(date1: KnoraDate, date2: KnoraDate): boolean {
-        return (date1.calendar === date2.calendar && date1.year === date2.year && date1.month === date2.month && date1.day === date2.day);
+        return (date1.calendar === date2.calendar && date1.year === date2.year && date1.month === date2.month && date1.day === date2.day && date1.era === date2.era);
     }
 
     standardValueComparisonFunc(initValue: KnoraDate | KnoraPeriod, curValue: KnoraDate | KnoraPeriod | null): boolean {
@@ -79,9 +69,9 @@ export class DateValueComponent extends BaseValueDirective implements OnInit, On
     }
 
     ngOnInit() {
+
         // initialize form control elements
         this.valueFormControl = new FormControl(null);
-
         this.commentFormControl = new FormControl(null);
 
         // subscribe to any change on the comment and recheck validity
@@ -102,7 +92,6 @@ export class DateValueComponent extends BaseValueDirective implements OnInit, On
             // add form to the parent form group
             this.addToParentFormGroup(this.formName, this.form);
         });
-
     }
 
     ngOnChanges(changes: SimpleChanges): void {
