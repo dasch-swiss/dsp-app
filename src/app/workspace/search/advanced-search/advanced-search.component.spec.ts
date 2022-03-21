@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
@@ -92,6 +93,7 @@ describe('AdvancedSearchComponent', () => {
             imports: [
                 ReactiveFormsModule,
                 BrowserAnimationsModule,
+                MatDialogModule,
                 MatIconModule,
                 MatSnackBarModule
             ],

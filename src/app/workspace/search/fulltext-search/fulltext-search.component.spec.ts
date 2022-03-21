@@ -1,7 +1,8 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -72,16 +73,17 @@ describe('FulltextSearchComponent', () => {
                 TestHostFulltextSearchComponent
             ],
             imports: [
-                OverlayModule,
-                FormsModule,
                 BrowserAnimationsModule,
-                MatMenuModule,
-                MatInputModule,
-                MatTooltipModule,
-                MatIconModule,
+                FormsModule,
+                MatDialogModule,
                 MatDividerModule,
+                MatIconModule,
+                MatInputModule,
                 MatListModule,
-                MatSnackBarModule
+                MatMenuModule,
+                MatSnackBarModule,
+                MatTooltipModule,
+                OverlayModule,
             ],
             providers: [
                 {

@@ -3,7 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
@@ -11,7 +11,6 @@ import { ComponentCommunicationEventService, Events } from 'src/app/main/service
 import { SearchParams } from 'src/app/workspace/results/list-view/list-view.component';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { DspConfig } from '../declarations/dsp-config';
-import { ErrorHandlerService } from '../error/error-handler.service';
 import { NotificationService } from '../services/notification.service';
 import { SessionService } from '../services/session.service';
 
@@ -36,7 +35,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         private _componentCommsService: ComponentCommunicationEventService,
         private _dialog: MatDialog,
         private _domSanitizer: DomSanitizer,
-        private _errorHandler: ErrorHandlerService,
         private _matIconRegistry: MatIconRegistry,
         private _notification: NotificationService,
         private _router: Router,

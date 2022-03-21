@@ -68,11 +68,6 @@ describe('ErrorHandlerService', () => {
         httpTestingController.verify();
     });
 
-    afterEach(async () => {
-        // angular won't call this for us so we need to do it ourselves to avoid leaks.
-        overlayContainer.ngOnDestroy();
-    });
-
     it('should be created', () => {
         expect(service).toBeTruthy();
     });

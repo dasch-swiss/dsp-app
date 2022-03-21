@@ -13,6 +13,7 @@ import {
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
@@ -44,7 +45,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     constructor(
         @Inject(FormBuilder) private _fb: FormBuilder,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService
+        private _errorHandler: ErrorHandlerService
     ) {
         super();
     }
@@ -76,7 +77,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
                         (response2: ListNodeV2) => {
                             this.listRootNode.children.push(response2);
                         }, (error: ApiResponseError) => {
-                            this._notification.openSnackBar(error);
+                            this._errorHandler.showMessage(error);
                         });
                 }
             } else {

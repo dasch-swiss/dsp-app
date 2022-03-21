@@ -9,7 +9,7 @@ import {
     ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { NotificationService } from 'src/app/main/services/notification.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { IRI, PropertyValue, Value } from '../operator';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
@@ -39,8 +39,8 @@ export class SearchListValueComponent implements OnInit, OnDestroy, PropertyValu
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService,
-        @Inject(FormBuilder) private _fb: FormBuilder
+        @Inject(FormBuilder) private _fb: FormBuilder,
+        private _errorHandler: ErrorHandlerService
     ) {
     }
 
@@ -62,7 +62,7 @@ export class SearchListValueComponent implements OnInit, OnDestroy, PropertyValu
                 this.listRootNode = response;
             },
             (error: ApiResponseError) => {
-                this._notification.openSnackBar(error);
+                this._errorHandler.showMessage(error);
             }
         );
 

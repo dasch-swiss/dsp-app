@@ -134,7 +134,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 // hide loading indicator
 
                 // present error to user
-                this._notification.openSnackBar(event.error);
+                this._errorHandler.showMessage(event.error);
 
             }
 

@@ -13,11 +13,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ApiResponseError, Constants, KnoraApiConnection, OntologiesMetadata, OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { NotificationService } from 'src/app/main/services/notification.service';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import { GravsearchGenerationService } from '../services/gravsearch-generation.service';
-import { PropertyWithValue } from './resource-and-property-selection/search-select-property/specify-property-value/operator';
 import { ResourceAndPropertySelectionComponent } from './resource-and-property-selection/resource-and-property-selection.component';
+import { PropertyWithValue } from './resource-and-property-selection/search-select-property/specify-property-value/operator';
 
 @Component({
     selector: 'app-advanced-search',
@@ -58,11 +58,11 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
     errorMessage: ApiResponseError;
 
     constructor(
-        @Inject(FormBuilder) private _fb: FormBuilder,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService,
-        private _gravsearchGenerationService: GravsearchGenerationService) {
-    }
+        @Inject(FormBuilder) private _fb: FormBuilder,
+        private _errorHandler: ErrorHandlerService,
+        private _gravsearchGenerationService: GravsearchGenerationService
+    ) { }
 
     ngOnInit() {
 
@@ -105,7 +105,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
 
                 },
                 (error: ApiResponseError) => {
-                    this._notification.openSnackBar(error);
+                    this._errorHandler.showMessage(error);
                     this.errorMessage = error;
                 });
         } else {
@@ -120,7 +120,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
 
                 },
                 (error: ApiResponseError) => {
-                    this._notification.openSnackBar(error);
+                    this._errorHandler.showMessage(error);
                     this.errorMessage = error;
                 });
         }

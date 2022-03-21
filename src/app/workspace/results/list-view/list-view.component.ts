@@ -2,6 +2,7 @@ import { Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angu
 import { PageEvent } from '@angular/material/paginator';
 import { ApiResponseError, CountQueryResponse, IFulltextSearchParams, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 
@@ -116,8 +117,9 @@ export class ListViewComponent implements OnChanges {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _notification: NotificationService,
         private _componentCommsService: ComponentCommunicationEventService,
+        private _errorHandler: ErrorHandlerService,
+        private _notification: NotificationService
     ) { }
 
     ngOnChanges(): void {
@@ -148,9 +150,7 @@ export class ListViewComponent implements OnChanges {
         } else if (res.count > 0) {
             this.selectedResourceIdx = res.resListIndex;
             this.selectedResources.emit(res);
-            this.resourceSelected.emit(res.resInfo[0].id);
         }
-
 
     }
 
@@ -158,7 +158,6 @@ export class ListViewComponent implements OnChanges {
         this.pageEvent = page;
         this._doSearch();
     }
-
 
     /**
      * do the search and send the resources to the child components
@@ -183,7 +182,7 @@ export class ListViewComponent implements OnChanges {
                         }
                     },
                     (countError: ApiResponseError) => {
-                        this._notification.openSnackBar(countError);
+                        this._errorHandler.showMessage(countError);
                     }
                 );
             }
@@ -200,7 +199,7 @@ export class ListViewComponent implements OnChanges {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    this._notification.openSnackBar(error);
+                    this._errorHandler.showMessage(error);
                     this.resources = undefined;
                     this.loading = false;
                 }
@@ -224,7 +223,7 @@ export class ListViewComponent implements OnChanges {
                         }
                     },
                     (countError: ApiResponseError) => {
-                        this._notification.openSnackBar(countError);
+                        this._errorHandler.showMessage(countError);
                     }
                 );
             }
@@ -246,13 +245,13 @@ export class ListViewComponent implements OnChanges {
                         this.loading = false;
                     },
                     (error: ApiResponseError) => {
-                        this._notification.openSnackBar(error);
+                        this._errorHandler.showMessage(error);
                         this.resources = undefined;
                         this.loading = false;
                     }
                 );
             } else {
-                console.error('The gravsearch query is not set correctly');
+                this._notification.openSnackBar('The gravsearch query is not set correctly');
                 this.resources = undefined;
                 this.loading = false;
             }

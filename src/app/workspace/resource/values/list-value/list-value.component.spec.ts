@@ -1,6 +1,7 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -86,11 +87,12 @@ describe('ListValueComponent', () => {
                 TestHostCreateValueComponent
             ],
             imports: [
-                ReactiveFormsModule,
+                BrowserAnimationsModule,
+                MatDialogModule,
                 MatInputModule,
                 MatMenuModule,
                 MatSnackBarModule,
-                BrowserAnimationsModule
+                ReactiveFormsModule,
             ],
             providers: [
                 {

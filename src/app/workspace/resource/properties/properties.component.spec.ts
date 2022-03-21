@@ -7,6 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
     ApiResponseError,
@@ -25,9 +26,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of, Subscription } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
-import { DspApiConnectionToken, DspAppConfigToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { DspAppConfig } from 'src/app/main/declarations/dsp-app-config';
-import { TestConfig } from 'test.config';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DspResource } from '../dsp-resource';
 import { IncomingService } from '../services/incoming.service';
 import { UserService } from '../services/user.service';
@@ -157,6 +156,7 @@ describe('PropertiesComponent', () => {
 
         TestBed.configureTestingModule({
             imports: [
+                BrowserAnimationsModule,
                 ClipboardModule,
                 MatDialogModule,
                 MatIconModule,

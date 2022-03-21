@@ -1,9 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CountQueryResponse, IFulltextSearchParams, MockResource, ReadResourceSequence, SearchEndpointV2 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -112,7 +114,9 @@ describe('ListViewComponent', () => {
                 TestResourceListComponent
             ],
             imports: [
+                BrowserAnimationsModule,
                 MatButtonModule,
+                MatDialogModule,
                 MatIconModule,
                 MatPaginatorModule,
                 MatSnackBarModule

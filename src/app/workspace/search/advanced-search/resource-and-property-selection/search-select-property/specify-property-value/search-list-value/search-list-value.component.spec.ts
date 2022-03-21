@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -80,10 +81,11 @@ describe('SearchListValueComponent', () => {
         TestBed.configureTestingModule({
             imports: [
                 BrowserAnimationsModule,
-                ReactiveFormsModule,
+                MatDialogModule,
                 MatInputModule,
                 MatMenuModule,
-                MatSnackBarModule
+                MatSnackBarModule,
+                ReactiveFormsModule
             ],
             declarations: [
                 SearchListValueComponent,
