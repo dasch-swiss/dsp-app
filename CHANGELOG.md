@@ -1,5 +1,34 @@
 # Changelog
 
+## [9.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.2.1...v9.3.0) (2022-03-21)
+
+
+### Bug Fixes
+
+* **error:** display 500 server error when the api is not healthy (DEV-475) ([#673](https://www.github.com/dasch-swiss/dsp-app/issues/673)) ([b374a3b](https://www.github.com/dasch-swiss/dsp-app/commit/b374a3be3cb75c55f83e5141763cf66012a43b39))
+* **gravsearch:** cleanse gravsearch date query ([#681](https://www.github.com/dasch-swiss/dsp-app/issues/681)) ([a0f34ce](https://www.github.com/dasch-swiss/dsp-app/commit/a0f34ce12ae0098a3b24e8e78e9d01ec98511a06))
+* **gravsearch:** fix list value restriction (DEV-486) ([#682](https://www.github.com/dasch-swiss/dsp-app/issues/682)) ([1eccfc0](https://www.github.com/dasch-swiss/dsp-app/commit/1eccfc09af6db875564f500f8f8d4c0f3cd96c43))
+* **permission-info:** close permission info on scrolling (DEV-552) ([#671](https://www.github.com/dasch-swiss/dsp-app/issues/671)) ([8ac1d25](https://www.github.com/dasch-swiss/dsp-app/commit/8ac1d2555d4e5d742375c45d0823f981b99dbaff))
+* **value:** do not use linkify in text value as html (DEV-563) ([#683](https://www.github.com/dasch-swiss/dsp-app/issues/683)) ([3b159b5](https://www.github.com/dasch-swiss/dsp-app/commit/3b159b5ff9189c002502b24db589f9ad51e506d7))
+
+
+### Enhancements
+
+* **advanced-search:** support subclasses in cross-resource query ([#685](https://www.github.com/dasch-swiss/dsp-app/issues/685)) ([fde5d99](https://www.github.com/dasch-swiss/dsp-app/commit/fde5d995eb02ef9b1bf56f386cb64c51785619d6))
+* **archive-value:** Download archive files with original filename (DEV-295) ([#677](https://www.github.com/dasch-swiss/dsp-app/issues/677)) ([a87dfae](https://www.github.com/dasch-swiss/dsp-app/commit/a87dfae3b0f427ed58442221c724e3daab83820d))
+* **ontology:** adjust tooltip text when property is inherited (DEV-323) ([#674](https://www.github.com/dasch-swiss/dsp-app/issues/674)) ([d3a1e49](https://www.github.com/dasch-swiss/dsp-app/commit/d3a1e494e928d593f1d22df982456a04069e7325))
+
+
+### Maintenance
+
+* **deps-dev:** bump karma from 6.3.14 to 6.3.16 ([#678](https://www.github.com/dasch-swiss/dsp-app/issues/678)) ([df0ef65](https://www.github.com/dasch-swiss/dsp-app/commit/df0ef65adae88784d127dc02eac93c1d4a6ca756))
+* **deps:** bump angular to version 13 (DEV-631) ([#679](https://www.github.com/dasch-swiss/dsp-app/issues/679)) ([a7d2098](https://www.github.com/dasch-swiss/dsp-app/commit/a7d2098b2577cebff8974a12168f87bc8c14a315))
+* **deps:** bump js-lib to latest (DEV-669) ([#687](https://www.github.com/dasch-swiss/dsp-app/issues/687)) ([b4836b8](https://www.github.com/dasch-swiss/dsp-app/commit/b4836b856db2e0b4bd99d1c913e966820f226310))
+* **deps:** bump url-parse from 1.5.7 to 1.5.10 ([#676](https://www.github.com/dasch-swiss/dsp-app/issues/676)) ([150e8ae](https://www.github.com/dasch-swiss/dsp-app/commit/150e8aeead118a196d5209f32d7d0ce27df8ca85))
+* **dockerfile:** add dependabot config to keep base image up-to-date (INFRA-13) ([#670](https://www.github.com/dasch-swiss/dsp-app/issues/670)) ([485a57e](https://www.github.com/dasch-swiss/dsp-app/commit/485a57eda564a92bbdf5927e3752e18d86a59ee0))
+* **error:** use error handler everywhere (DEV-475) ([#688](https://www.github.com/dasch-swiss/dsp-app/issues/688)) ([eabfa64](https://www.github.com/dasch-swiss/dsp-app/commit/eabfa64dae4a7d7280ff176561ee86ac0adf914b))
+* **value:** remove old date value components (DEV-633) ([#684](https://www.github.com/dasch-swiss/dsp-app/issues/684)) ([76233ea](https://www.github.com/dasch-swiss/dsp-app/commit/76233ea58367001fde548b8a97417dc9a7b4e23e))
+
 ### [9.2.1](https://www.github.com/dasch-swiss/dsp-app/compare/v9.2.0...v9.2.1) (2022-02-21)
 
 
