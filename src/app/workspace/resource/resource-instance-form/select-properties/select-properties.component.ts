@@ -28,9 +28,11 @@ export class SelectPropertiesComponent implements OnInit {
 
     @Input() ontologyInfo: ResourceClassAndPropertyDefinitions;
 
-    @Input() resourceClass: ResourceClassDefinition;
+    @Input() selectedResourceClass: ResourceClassDefinition;
 
     @Input() parentForm: FormGroup;
+
+    @Input() currentOntoIri: string;
 
     parentResource = new ReadResource();
 
@@ -79,7 +81,7 @@ export class SelectPropertiesComponent implements OnInit {
         return CardinalityUtil.createValueForPropertyAllowed(
             prop.id,
             this.propertyValuesKeyValuePair[prop.id].length,
-            this.ontologyInfo.classes[this.resourceClass.id]
+            this.ontologyInfo.classes[this.selectedResourceClass.id]
         );
     }
 
@@ -91,8 +93,8 @@ export class SelectPropertiesComponent implements OnInit {
      * @param propId property id
      */
     isPropRequired(propId: string): boolean {
-        if (this.resourceClass !== undefined && propId) {
-            this.resourceClass.propertiesList.filter(
+        if (this.selectedResourceClass !== undefined && propId) {
+            this.selectedResourceClass.propertiesList.filter(
                 (card: IHasProperty) => {
                     if (card.propertyIndex === propId) {
                         // cardinality 1 or 1-N

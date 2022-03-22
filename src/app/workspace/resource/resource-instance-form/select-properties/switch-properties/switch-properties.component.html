@@ -10,7 +10,7 @@
     <app-time-value #createVal *ngSwitchCase="constants.TimeValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"></app-time-value>
     <app-geoname-value #createVal *ngSwitchCase="constants.GeonameValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"></app-geoname-value>
     <app-link-value #createVal *ngSwitchCase="constants.LinkValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"
-                [parentResource]="parentResource" [propIri]="property.id"></app-link-value>
+                [parentResource]="parentResource" [propIri]="property.id" [currentOntoIri]="currentOntoIri"></app-link-value>
     <app-date-value #createVal *ngSwitchCase="constants.DateValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"></app-date-value>
     <app-list-value #createVal *ngSwitchCase="constants.ListValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"
                 [propertyDef]="property"></app-list-value>

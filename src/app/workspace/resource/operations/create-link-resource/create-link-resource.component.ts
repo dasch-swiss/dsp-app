@@ -27,6 +27,7 @@ export class CreateLinkResourceComponent implements OnInit {
     @Input() parentResource: ReadResource;
     @Input() propDef: string;
     @Input() resourceClassDef: string;
+    @Input() currentOntoIri: string;
 
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
@@ -55,7 +56,6 @@ export class CreateLinkResourceComponent implements OnInit {
             (onto: ResourceClassAndPropertyDefinitions) => {
                 this.ontologyInfo = onto;
                 this.resourceClass = onto.classes[this.resourceClassDef];
-                // this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition);
                 this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(
                     prop =>
                         !prop.isLinkProperty &&

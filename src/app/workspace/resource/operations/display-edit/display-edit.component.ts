@@ -119,6 +119,8 @@ export class DisplayEditComponent implements OnInit {
 
     user: ReadUser;
 
+    ontoIri: string;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _valueOperationEventService: ValueOperationEventService,
@@ -128,7 +130,7 @@ export class DisplayEditComponent implements OnInit {
     }
 
     ngOnInit() {
-
+        this.ontoIri = this.parentResource.type.split('#')[0];
         this.mode = 'read';
         this.dateDisplayOptions = 'all';
         this.showDateLabels = true;

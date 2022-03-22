@@ -424,7 +424,6 @@ export class PropertyFormComponent implements OnInit {
 
                         this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
                             (classCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                                console.log(classCommentResponse);
                                 this.lastModificationDate = classCommentResponse.lastModificationDate;
 
                                 if (!this.unsupportedPropertyType) {

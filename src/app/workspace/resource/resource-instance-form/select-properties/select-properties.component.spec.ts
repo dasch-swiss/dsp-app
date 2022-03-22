@@ -21,9 +21,10 @@ import { SwitchPropertiesComponent } from './switch-properties/switch-properties
     <app-select-properties
     #selectProps
     [ontologyInfo]="ontoInfo"
-    [resourceClass]="selectedResourceClass"
+    [selectedResourceClass]="selectedResourceClass"
     [properties]="properties"
-    [parentForm]="propertiesParentForm">
+    [parentForm]="propertiesParentForm"
+    [currentOntoIri]="currentOntoIri">
     </app-select-properties>`
 })
 class TestSelectPropertiesParentComponent implements OnInit {
@@ -38,6 +39,8 @@ class TestSelectPropertiesParentComponent implements OnInit {
 
     propertiesParentForm: FormGroup;
 
+    currentOntoIri: string;
+
     constructor(private _fb: FormBuilder) { }
 
     ngOnInit() {
@@ -48,6 +51,8 @@ class TestSelectPropertiesParentComponent implements OnInit {
         this.selectedResourceClass = this.ontoInfo.classes['http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'];
 
         this.properties = this.ontoInfo.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(prop => prop.isEditable && !prop.isLinkProperty);
+
+        this.currentOntoIri = 'http://0.0.0.0:3333/ontology/0001/anything/v2';
     }
 
 }

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { ValueService } from '../../../services/value.service';
 
@@ -23,6 +23,8 @@ export class SwitchPropertiesComponent implements OnInit {
 
     @Input() isRequiredProp: boolean;
 
+    @Input() currentOntoIri?: string;
+
     mode = 'create';
 
     // gui element in case of textValue
@@ -35,7 +37,6 @@ export class SwitchPropertiesComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-
         // the input isRequiredProp provided by KeyValuePair is stored as a number
         // a conversion from a number to a boolean is required by the input valueRequiredValidator
         this.isRequiredProp = !!+this.isRequiredProp;

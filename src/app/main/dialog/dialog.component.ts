@@ -22,6 +22,7 @@ export interface DialogData {
     selectedResources?: FilteredResources;
     resourceClassDefinition?: string;
     fullSize?: boolean;
+    ontoIri?: string;
 }
 
 export interface ConfirmationWithComment {

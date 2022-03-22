@@ -9,6 +9,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start-with-test-server": "ng serve --configuration test-server",
+    "start-with-ls-test-server": "ng serve --configuration ls-test-server",
     "lint-ci": "eslint --color -c .eslintrc.js --ext .ts ./src/app",
     "lint-local": "eslint --color --fix -c .eslintrc.js --ext .ts ./src/app",
     "e2e": "ng e2e",

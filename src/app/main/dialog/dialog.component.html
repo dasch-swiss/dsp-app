@@ -402,7 +402,7 @@
     <div *ngSwitchCase="'createLinkResource'">
         <app-dialog-header [title]="data.title" [subtitle]="'Create a new linked resource'"></app-dialog-header>
         <mat-dialog-content>
-            <app-create-link-resource [parentResource]="data.parentResource" [propDef]="data.id" [resourceClassDef]="data.resourceClassDefinition" (closeDialog)="dialogRef.close($event)"></app-create-link-resource>
+            <app-create-link-resource [parentResource]="data.parentResource" [propDef]="data.id" [resourceClassDef]="data.resourceClassDefinition" [currentOntoIri]="data.ontoIri" (closeDialog)="dialogRef.close($event)"></app-create-link-resource>
         </mat-dialog-content>
     </div>
 

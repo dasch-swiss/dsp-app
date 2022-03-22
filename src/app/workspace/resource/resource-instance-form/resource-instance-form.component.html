@@ -69,9 +69,10 @@
     <!-- create property values -->
     <app-select-properties #selectProps
         [ontologyInfo]="ontologyInfo"
-        [resourceClass]="selectedResourceClass"
+        [selectedResourceClass]="selectedResourceClass"
         [properties]="properties"
         [parentForm]="propertiesParentForm"
+        [currentOntoIri]="selectedOntology"
         class="select-properties">
     </app-select-properties>
 
