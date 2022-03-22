@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         private _session: SessionService
     ) {
 
-        // create tool icons to use them in mat-icons
+        // create own logo icon to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
             'dasch_icon_black',
             this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/dasch-icon-black.svg')

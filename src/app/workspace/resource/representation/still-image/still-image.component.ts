@@ -10,23 +10,31 @@ import {
     SimpleChanges
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
-    Constants, CreateColorValue, CreateGeomValue, CreateLinkValue,
-    CreateResource, CreateTextValueAsString, KnoraApiConnection,
-    Point2D, ReadColorValue, ReadFileValue,
+    Constants,
+    CreateColorValue,
+    CreateGeomValue,
+    CreateLinkValue,
+    CreateResource,
+    CreateTextValueAsString,
+    KnoraApiConnection,
+    Point2D,
+    ReadColorValue,
+    ReadFileValue,
     ReadGeomValue,
     ReadResource,
     ReadStillImageFileValue,
-    ReadValue,
     RegionGeometry
 } from '@dasch-swiss/dsp-js';
+import * as OpenSeadragon from 'openseadragon';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { NotificationService } from 'src/app/main/services/notification.service';
 import { DspCompoundPosition } from '../../dsp-resource';
 import { FileRepresentation } from '../file-representation';
-import * as OpenSeadragon from 'openseadragon';
-import { NotificationService } from 'src/app/main/services/notification.service';
 
 
 /**
@@ -119,15 +127,23 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _elementRef: ElementRef,
         private _dialog: MatDialog,
+        private _domSanitizer: DomSanitizer,
+        private _elementRef: ElementRef,
         private _errorHandler: ErrorHandlerService,
+        private _matIconRegistry: MatIconRegistry,
         private _notification: NotificationService
     ) {
         OpenSeadragon.setString('Tooltips.Home', '');
         OpenSeadragon.setString('Tooltips.ZoomIn', '');
         OpenSeadragon.setString('Tooltips.ZoomOut', '');
         OpenSeadragon.setString('Tooltips.FullPage', '');
+
+        // own draw region icon; because it does not exist in the material icons
+        this._matIconRegistry.addSvgIcon(
+            'draw_region_icon',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/draw-region-icon.svg')
+        );
     }
     /**
      * calculates the surface of a rectangular region.
