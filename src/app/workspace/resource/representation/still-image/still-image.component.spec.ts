@@ -188,7 +188,7 @@ describe('StillImageComponent', () => {
         const hostCompDe = testHostFixture.debugElement;
         const stillImageComponentDe = hostCompDe.query(By.directive(StillImageComponent));
 
-        const iiifUrlDebugElement = stillImageComponentDe.query(By.css('.iiif'));
+        const iiifUrlDebugElement = stillImageComponentDe.query(By.css('.iiif-url a'));
         const iiifUrlEle = iiifUrlDebugElement.nativeElement;
 
         expect(iiifUrlEle.innerText).toEqual('https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg');

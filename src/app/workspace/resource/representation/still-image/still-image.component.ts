@@ -26,6 +26,7 @@ import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { DspCompoundPosition } from '../../dsp-resource';
 import { FileRepresentation } from '../file-representation';
 import * as OpenSeadragon from 'openseadragon';
+import { NotificationService } from 'src/app/main/services/notification.service';
 
 
 /**
@@ -117,7 +118,11 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     private _regions: PolygonsForRegion = {};
 
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection, private _elementRef: ElementRef, private _dialog: MatDialog, private _errorHandler: ErrorHandlerService
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _elementRef: ElementRef,
+        private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
+        private _notification: NotificationService
     ) {
         OpenSeadragon.setString('Tooltips.Home', '');
         OpenSeadragon.setString('Tooltips.ZoomIn', '');
@@ -304,6 +309,13 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         this._regions = {};
 
         this._viewer.clearOverlays();
+    }
+
+    /**
+    * display message to confirm the copy of the citation link (ARK URL)
+    */
+    openSnackBar(message: string) {
+        this._notification.openSnackBar(message);
     }
 
     /**

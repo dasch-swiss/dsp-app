@@ -32,12 +32,25 @@ $bright: #ccc;
     .captions-container {
       .top, .bottom {
         text-align: left;
-        .iiif {
-          padding: 0px 0px 0px 16px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 50%;
+        .iiif-url, .copy-button {
+          display: inline-block;
+        }
+        .iiif-url {
+          a {
+            padding: 0px 0px 0px 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 50%;
+          }
+        }
+        .copy-button button {
+          background: none;
+          border: none;
+          color: white;
+          mat-icon {
+            font-size: 16px;
+          }
         }
       }
     }
