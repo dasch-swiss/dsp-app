@@ -59,7 +59,7 @@ export class HelpComponent implements OnInit {
         {
             title: 'DSP-API ',
             text: 'Framework to store, share, and work with primary resources in the humanities.',
-            url: 'https://github.com/dasch-swiss/dsp-api/releases/tag/',
+            url: 'https://github.com/dasch-swiss/dsp-api/releases/tag/v',
             urlText: 'Release notes'
         },
         {
@@ -111,7 +111,7 @@ export class HelpComponent implements OnInit {
                 this.apiVersion = response.body;
 
                 // set dsp-app version
-                this.tools[0].title += ' v' + this.appVersion;
+                this.tools[0].title += this.appVersion;
                 this.tools[0].url += this.appVersion;
 
                 // set dsp-api version
@@ -119,7 +119,7 @@ export class HelpComponent implements OnInit {
                 this.tools[1].url += this.apiVersion.webapi;
 
                 // set dsp-sipi version
-                this.tools[2].title += ' v' + this.apiVersion.sipi;
+                this.tools[2].title += this.apiVersion.sipi;
                 this.tools[2].url += this.apiVersion.sipi;
             },
             (error: ApiResponseError) => {
