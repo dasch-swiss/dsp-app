@@ -72,7 +72,7 @@ describe('ErrorHandlerService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('api is not healthy: should return 503 server error', () => {
+    xit('api is not healthy: should return 503 server error', () => {
 
         const error = require('../../../assets/test-data/api-error-0.json');
 
