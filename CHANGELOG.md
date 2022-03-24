@@ -1,5 +1,25 @@
 # Changelog
 
+## [9.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.3.0...v9.4.0) (2022-03-23)
+
+
+### Bug Fixes
+
+* **help:** refactor version number and fix dead link (DEV-678) ([#693](https://www.github.com/dasch-swiss/dsp-app/issues/693)) ([e255ac9](https://www.github.com/dasch-swiss/dsp-app/commit/e255ac93eb2e47e784f12fa21d858030f08d4355))
+
+
+### Enhancements
+
+* **resource-instance:** add subclass creation support (DEV-553) ([#686](https://www.github.com/dasch-swiss/dsp-app/issues/686)) ([d0a260d](https://www.github.com/dasch-swiss/dsp-app/commit/d0a260dabd086996b0fd24f9ed7f20be88224ad1))
+* **still-image:** IIIF URL copy button (DEV-524) ([#690](https://www.github.com/dasch-swiss/dsp-app/issues/690)) ([b0d72a6](https://www.github.com/dasch-swiss/dsp-app/commit/b0d72a646efb53d00a1616beb90d5ac452284ffa))
+* **still-image:** new draw region icon (DEV-569) ([#689](https://www.github.com/dasch-swiss/dsp-app/issues/689)) ([bee5caf](https://www.github.com/dasch-swiss/dsp-app/commit/bee5cafffabd94d9c2ee777eed806b5fa910ade6))
+
+
+### Maintenance
+
+* clean up code, tests and packages ([#694](https://www.github.com/dasch-swiss/dsp-app/issues/694)) ([1ad0879](https://www.github.com/dasch-swiss/dsp-app/commit/1ad08792a1607b9898396b6d493c6559f2c8ee10))
+* **deps:** bump node-forge from 1.2.1 to 1.3.0 ([#692](https://www.github.com/dasch-swiss/dsp-app/issues/692)) ([cf58030](https://www.github.com/dasch-swiss/dsp-app/commit/cf5803018af9716c0ebc8d83d8fc76eb186a4c08))
+
 ## [9.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.2.1...v9.3.0) (2022-03-21)
 
 
