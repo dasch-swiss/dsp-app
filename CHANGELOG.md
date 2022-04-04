@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.4.0...v9.5.0) (2022-04-04)
+
+
+### Bug Fixes
+
+* **mkdocs:** update version of mkdocs ([#696](https://www.github.com/dasch-swiss/dsp-app/issues/696)) ([e154fa3](https://www.github.com/dasch-swiss/dsp-app/commit/e154fa33d6e83cd8e6be1eb8e031e759f0e8daf4))
+
+
+### Enhancements
+
+* **replace-file:** Replace Uploaded Files (DEV-684) ([#695](https://www.github.com/dasch-swiss/dsp-app/issues/695)) ([df9de8c](https://www.github.com/dasch-swiss/dsp-app/commit/df9de8c5781e11fb2d8dfbcbcd011cbc7bbd4bc5))
+
 ## [9.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.3.0...v9.4.0) (2022-03-23)
 
 
