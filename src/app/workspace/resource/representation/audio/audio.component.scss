@@ -1,3 +1,18 @@
-audio {
+.controls {
   width: 100%;
+
+  .audio-player,
+  .upload-button {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .audio-player {
+    width: 80%;
+
+    audio {
+      width: 100%;
+    }
+  }
 }
+

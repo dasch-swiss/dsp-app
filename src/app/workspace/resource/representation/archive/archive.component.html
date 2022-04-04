@@ -5,6 +5,9 @@
         </mat-icon>
         Click to download
     </button>
+    <button mat-button matTooltip="Replace archive file" (click)="openReplaceFileDialog()">
+        <mat-icon>cloud_upload</mat-icon>
+    </button>
 </div>
 <div *ngIf="!src || !src.fileValue.fileUrl">
     No valid file url found for this resource.

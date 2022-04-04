@@ -48,3 +48,6 @@ docs/bin
 .DS_Store
 Thumbs.db
 *.code-workspace
+
+# Generated docs
+/site

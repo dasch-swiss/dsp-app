@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DeleteValue, ReadValue } from '@dasch-swiss/dsp-js';
+import { DeleteValue, ReadFileValue, ReadValue } from '@dasch-swiss/dsp-js';
 import { Subject, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
@@ -46,7 +46,8 @@ export class EmitEvent {
 export enum Events {
     ValueAdded,
     ValueDeleted,
-    ValueUpdated
+    ValueUpdated,
+    FileValueUpdated
 }
 
 export abstract class EventValue { }
@@ -65,6 +66,12 @@ export class UpdatedEventValues extends EventValue {
 
 export class DeletedEventValue extends EventValue {
     constructor(public deletedValue: DeleteValue) {
+        super();
+    }
+}
+
+export class UpdatedFileEventValue extends EventValue {
+    constructor(public updatedFileValue: ReadValue) {
         super();
     }
 }

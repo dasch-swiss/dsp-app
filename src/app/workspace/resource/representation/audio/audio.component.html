@@ -1,4 +1,13 @@
-<audio controls preload="auto">
-    <source [src]="audio" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>
+<div class="controls">
+    <div class="audio-player">
+        <audio id="audio" controls preload="auto">
+            <source [src]="audio" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <div class="upload-button">
+        <button mat-button matTooltip="Replace audio file" (click)="openReplaceFileDialog()">
+            <mat-icon>cloud_upload</mat-icon>
+        </button>
+    </div>
+</div>

@@ -1,6 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { Constants, UpdateFileValue, UpdateResource, UpdateValue, WriteValueResponse, ReadResource, ApiResponseError, KnoraApiConnection, ReadArchiveFileValue } from '@dasch-swiss/dsp-js';
+import { mergeMap } from 'rxjs/operators';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { FileRepresentation } from '../file-representation';
 
 @Component({
@@ -11,27 +17,21 @@ import { FileRepresentation } from '../file-representation';
 export class ArchiveComponent implements OnInit {
 
     @Input() src: FileRepresentation;
+    @Input() parentResource: ReadResource;
+
     originalFilename: string;
     temp: string;
 
     constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private readonly _http: HttpClient,
-        private _errorHandler: ErrorHandlerService
+        private _dialog: MatDialog,
+        private _errorHandler: ErrorHandlerService,
+        private _valueOperationEventService: ValueOperationEventService
     ) { }
 
     ngOnInit(): void {
-        const requestOptions = {
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            withCredentials: true
-        };
-
-        const pathToJson = this.src.fileValue.fileUrl.substring(0, this.src.fileValue.fileUrl.lastIndexOf('/')) + '/knora.json';
-
-        this._http.get(pathToJson, requestOptions).subscribe(
-            res => {
-                this.originalFilename = res['originalFilename'];
-            }
-        );
+        this._getOriginalFilename();
     }
 
     // https://stackoverflow.com/questions/66986983/angular-10-download-file-from-firebase-link-without-opening-into-new-tab
@@ -59,5 +59,69 @@ export class ArchiveComponent implements OnInit {
         document.body.appendChild(e);
         e.click();
         document.body.removeChild(e);
+    }
+
+    openReplaceFileDialog(){
+        const propId = this.parentResource.properties[Constants.HasArchiveFileValue][0].id;
+
+        const dialogConfig: MatDialogConfig = {
+            width: '800px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: { mode: 'replaceFile', title: 'Archive (zip, x-tar, gzip)', subtitle: 'Update the archive file of this resource' , representation: 'archive', id: propId },
+            disableClose: true
+        };
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe((data) => {
+            this._replaceFile(data);
+        });
+    }
+
+    private _getOriginalFilename() {
+        const requestOptions = {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+            withCredentials: true
+        };
+
+        const pathToJson = this.src.fileValue.fileUrl.substring(0, this.src.fileValue.fileUrl.lastIndexOf('/')) + '/knora.json';
+
+        this._http.get(pathToJson, requestOptions).subscribe(
+            res => {
+                this.originalFilename = res['originalFilename'];
+            }
+        );
+    }
+
+    private _replaceFile(file: UpdateFileValue) {
+        const updateRes = new UpdateResource();
+        updateRes.id = this.parentResource.id;
+        updateRes.type = this.parentResource.type;
+        updateRes.property = Constants.HasArchiveFileValue;
+        updateRes.value = file;
+
+        this._dspApiConnection.v2.values.updateValue(updateRes as UpdateResource<UpdateValue>).pipe(
+            mergeMap((res: WriteValueResponse) => this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid))
+        ).subscribe(
+            (res2: ReadResource) => {
+                this.src.fileValue.fileUrl = (res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue).fileUrl;
+                this.src.fileValue.filename = (res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue).filename;
+                this.src.fileValue.strval = (res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue).strval;
+
+                this._getOriginalFilename();
+
+                this._valueOperationEventService.emit(
+                    new EmitEvent(Events.FileValueUpdated, new UpdatedFileEventValue(
+                        res2.properties[Constants.HasArchiveFileValue][0])));
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 }

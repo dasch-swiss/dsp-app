@@ -27,6 +27,9 @@
             <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoomFactor = zoomFactor + 0.2">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
+            <button mat-icon-button id="DSP_PDF_REPLACE_FILE" class="replace-file" matTooltip="Replace PDF file" (click)="openReplaceFileDialog()">
+                <mat-icon>cloud_upload</mat-icon>
+            </button>
             <a [href]="src.fileValue.fileUrl" download mat-icon-button id="DSP_PDF_DOWNLOAD" matTooltip="Open pdf in new tab">
                 <mat-icon>launch</mat-icon>
             </a>

@@ -23,6 +23,7 @@ export interface DialogData {
     resourceClassDefinition?: string;
     fullSize?: boolean;
     ontoIri?: string;
+    representation?: string; // respresentation type (stillImage, audio, etc.)
 }
 
 export interface ConfirmationWithComment {
