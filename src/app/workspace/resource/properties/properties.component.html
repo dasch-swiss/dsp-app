@@ -152,7 +152,7 @@
                         <div *ngIf="!loading">
                             <!-- the value(s) of the incoming links -->
                             <a class="link link-value" *ngFor="let inRes of incomingLinkResources"
-                                (click)="openResource(inRes.id)">{{inRes.label}}</a>
+                                (click)="openResource(inRes.id)">{{inRes.resourceClassLabel}}: <strong>{{inRes.label}}</strong></a>
                             <mat-paginator *ngIf="numberOffAllIncomingLinkRes > 25" [length]=numberOffAllIncomingLinkRes
                                 [pageSize]="25" [hidePageSize]="true" [pageIndex]="pageEvent.pageIndex"
                                 (page)="goToPage($event)">
