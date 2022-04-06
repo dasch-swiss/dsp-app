@@ -1,6 +1,6 @@
 <div class="property-info" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
 
-    <div mat-line class="title">
+    <div mat-line class="title" [class.with-line-break]="!propCard">
         <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label + ' (' + propDef.id.split('#')[1] + ')'"
             matTooltipPosition="above">
             <mat-icon class="type">{{propType?.icon}}</mat-icon>
@@ -19,7 +19,7 @@
         </span>
     </div>
 
-    <div mat-line class="info additional-info" [class.flex]="propCard">
+    <div mat-line class="info additional-info" [class.flex]="propCard" [class.with-line-break]="!propCard">
         <span [matTooltip]="'id: ' + propDef.id" matTooltipPosition="above" class="mat-caption">
             {{propDef.id | split: '#':1}}
         </span>
@@ -32,7 +32,7 @@
             required
         </span>
         <!-- in case of ontology property: display corresponding resource classes -->
-        <span *ngIf="!propCard">
+        <span *ngIf="!propCard" class="white-space">
             <span *ngIf="resClasses.length; else notUsed">
                 Property is used in:
                 <!-- <span>{{ resClasses.join(", ") }}</span> -->

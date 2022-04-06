@@ -83,8 +83,10 @@ $width: 340px;
         margin: 16px 10%;
 
         .property {
-          height: 56px !important;
+          height: auto;
+          min-height: 56px !important;
           margin: 4px 0;
+          padding: 16px 0;
           &.odd {
             background-color: $primary_50;
           }
