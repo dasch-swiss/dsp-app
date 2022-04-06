@@ -45,7 +45,7 @@
     "jdnconvertiblecalendardateadapter": "^0.0.17",
     "json2typescript": "^1.4.1",
     "jsonld": "^5.2.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "ng2-pdf-viewer": "^7.0.2",
     "ngx-color-picker": "^11.0.0",
     "openseadragon": "3.0.0",
