@@ -35,7 +35,6 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     editor: Editor;
     editorConfig;
 
-
     constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
         super();
     }

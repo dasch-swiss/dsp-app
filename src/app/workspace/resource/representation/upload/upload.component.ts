@@ -6,11 +6,13 @@ import {
     CreateAudioFileValue,
     CreateDocumentFileValue,
     CreateFileValue,
+    CreateMovingImageFileValue,
     CreateStillImageFileValue,
     UpdateArchiveFileValue,
     UpdateAudioFileValue,
     UpdateDocumentFileValue,
     UpdateFileValue,
+    UpdateMovingImageFileValue,
     UpdateStillImageFileValue
 } from '@dasch-swiss/dsp-js';
 import { NotificationService } from 'src/app/main/services/notification.service';
@@ -46,6 +48,7 @@ export class UploadComponent implements OnInit {
     supportedImageTypes = ['image/jpeg', 'image/jp2', 'image/tiff', 'image/tiff-fx', 'image/png'];
     supportedDocumentTypes = ['application/pdf'];
     supportedAudioTypes = ['audio/mpeg'];
+    supportedVideoTypes = ['video/mp4'];
     supportedArchiveTypes = ['application/zip', 'application/x-tar', 'application/gzip'];
 
     constructor(
@@ -99,10 +102,7 @@ export class UploadComponent implements OnInit {
                                 break;
 
                             case 'document':
-                                // the preview thumbnail is deactivated for the moment;
-                                // --> TODO: it will be activated as soon as we implement a pdf viewer
-                                // this.thumbnailUrl = res.uploadedFiles[0].temporaryUrl;
-                                this.thumbnailUrl = undefined;
+                                this.thumbnailUrl = res.uploadedFiles[0].temporaryUrl;
                                 break;
 
                             default:
@@ -224,6 +224,10 @@ export class UploadComponent implements OnInit {
                 fileValue = new CreateAudioFileValue();
                 break;
 
+            case 'movingImage':
+                fileValue = new CreateMovingImageFileValue();
+                break;
+
             case 'archive':
                 fileValue = new CreateArchiveFileValue();
                 break;
@@ -268,6 +272,10 @@ export class UploadComponent implements OnInit {
                 fileValue = new UpdateAudioFileValue();
                 break;
 
+            case 'movingImage':
+                fileValue = new UpdateMovingImageFileValue();
+                break;
+
             case 'archive':
                 fileValue = new UpdateArchiveFileValue();
                 break;
@@ -309,6 +317,10 @@ export class UploadComponent implements OnInit {
 
             case 'audio':
                 this.allowedFileTypes = this.supportedAudioTypes;
+                break;
+
+            case 'movingImage':
+                this.allowedFileTypes = this.supportedVideoTypes;
                 break;
 
             case 'archive':

@@ -79,6 +79,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     valueOperationEventSubscription: Subscription;
 
+    loading = false;
+    // in case of any error
+    error = false;
     errorMessage: any;
 
     propertiesObj = {};
@@ -155,6 +158,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     submitData() {
 
+        this.loading = true;
+
         if (this.propertiesParentForm.valid) {
 
             const createResource = new CreateResource();
@@ -193,6 +198,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     case 'audio':
                         this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
                         break;
+                    case 'movingImage':
+                        this.propertiesObj[Constants.HasMovingImageFileValue] = [this.fileValue];
+                        break;
                     case 'archive':
                         this.propertiesObj[Constants.HasArchiveFileValue] = [this.fileValue];
                 }
@@ -212,6 +220,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     this.closeDialog.emit();
                 },
                 (error: ApiResponseError) => {
+                    this.error = true;
+                    this.loading = false;
                     this._errorHandler.showMessage(error);
                 }
             );
@@ -366,7 +376,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                                     prop.id !== Constants.HasStillImageFileValue &&
                                     prop.id !== Constants.HasDocumentFileValue &&
                                     prop.id !== Constants.HasAudioFileValue &&
-                                    prop.id !== Constants.HasArchiveFileValue  // --> TODO for UPLOAD: expand with other representation file values
+                                    prop.id !== Constants.HasMovingImageFileValue &&
+                                    prop.id !== Constants.HasArchiveFileValue
+                                    // --> TODO for UPLOAD: expand with other representation file values
                             );
 
                             if (onto.properties[Constants.HasStillImageFileValue]) {
@@ -375,6 +387,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                                 this.hasFileValue = 'document';
                             } else if (onto.properties[Constants.HasAudioFileValue]) {
                                 this.hasFileValue = 'audio';
+                            } else if (onto.properties[Constants.HasMovingImageFileValue]) {
+                                this.hasFileValue = 'movingImage';
                             } else if (onto.properties[Constants.HasArchiveFileValue]) {
                                 this.hasFileValue = 'archive';
                             } else {
