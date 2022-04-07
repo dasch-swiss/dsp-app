@@ -67,6 +67,8 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     resourceClasses: ResourceClassDefinition[];
     properties: ResourcePropertyDefinition[];
 
+    loadingResults = false;
+
     constructor(
         private _dialog: MatDialog,
         @Inject(FormBuilder) private _fb: FormBuilder,
@@ -95,10 +97,12 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     searchByLabel(searchTerm: string) {
         // at least 3 characters are required
         if (typeof searchTerm === 'string' && searchTerm.length >= 3) {
+            this.loadingResults = true;
             this._dspApiConnection.v2.search.doSearchByLabel(
                 searchTerm, 0, { limitToResourceClass: this.restrictToResourceClass }).subscribe(
                 (response: ReadResourceSequence) => {
                     this.resources = response.resources;
+                    this.loadingResults = false;
                 });
         } else {
             this.resources = [];

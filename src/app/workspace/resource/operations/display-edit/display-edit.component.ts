@@ -93,6 +93,8 @@ export class DisplayEditComponent implements OnInit {
 
     editModeActive = false;
 
+    submittingValue = false;
+
     shouldShowCommentToggle: boolean;
 
     // type of given displayValue
@@ -236,8 +238,13 @@ export class DisplayEditComponent implements OnInit {
      * save a new version of an existing property value.
      */
     saveEditValue() {
+        // hide the CRUD buttons
         this.editModeActive = false;
         this.showActionBubble = false;
+
+        // show the progress indicator
+        this.submittingValue = true;
+
         const updatedVal = this.displayValueComponent.getUpdatedValue();
 
         if (updatedVal instanceof UpdateValue) {
@@ -263,10 +270,17 @@ export class DisplayEditComponent implements OnInit {
 
                     // check if comment toggle button should be shown
                     this.checkCommentToggleVisibility();
+
+                    // hide the progress indicator
+                    this.submittingValue = false;
                 },
                 (error: ApiResponseError) => {
                     // error handling
                     this.editModeActive = true;
+
+                    // hide the progress indicator
+                    this.submittingValue = false;
+
                     switch (error.status) {
                         case 400:
                             this.displayValueComponent.valueFormControl.setErrors({ duplicateValue: true });
@@ -281,6 +295,9 @@ export class DisplayEditComponent implements OnInit {
 
         } else {
             console.error('invalid value');
+
+            // hide the progress indicator
+            this.submittingValue = false;
         }
     }
 
