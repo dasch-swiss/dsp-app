@@ -57,13 +57,15 @@ export class AddValueComponent implements OnInit, AfterViewInit {
     // gui element in case of textValue
     textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
 
+    ontoIri: string;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService) { }
 
     ngOnInit() {
-
+        this.ontoIri = this.parentResource.type.split('#')[0];
         this.mode = 'create';
 
         // since simple text values and rich text values share the same object type 'TextValue',

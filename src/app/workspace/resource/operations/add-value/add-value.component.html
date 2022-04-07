@@ -13,7 +13,7 @@
             <app-time-value #createVal *ngSwitchCase="constants.TimeValue" [mode]="mode"></app-time-value>
             <app-geoname-value #createVal *ngSwitchCase="constants.GeonameValue" [mode]="mode"></app-geoname-value>
             <app-link-value #createVal *ngSwitchCase="constants.LinkValue" [mode]="mode"
-                        [parentResource]="parentResource" [propIri]="resourcePropertyDefinition.id"></app-link-value>
+                        [parentResource]="parentResource" [propIri]="resourcePropertyDefinition.id" [currentOntoIri]="ontoIri"></app-link-value>
             <app-date-value #createVal *ngSwitchCase="constants.DateValue" [mode]="mode"></app-date-value>
             <app-list-value #createVal *ngSwitchCase="constants.ListValue" [mode]="mode"
                         [propertyDef]="resourcePropertyDefinition"></app-list-value>
