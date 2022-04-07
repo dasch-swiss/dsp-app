@@ -14,7 +14,7 @@
     "lint-local": "eslint --color --fix -c .eslintrc.js --ext .ts ./src/app",
     "e2e": "ng e2e",
     "build": "ng build",
-    "build-prod": "ng build --configuration production",
+    "build-prod": "ng build --configuration=production",
     "test-ci": "ng test --watch=false --browsers=ChromeHeadless",
     "test-local": "ng test",
     "test-e2e-protractor": "ng e2e --configuration production --protractor-config=./e2e/protractor-ci.conf.js --webdriver-update=false",

@@ -73,9 +73,9 @@ export class HelpComponent implements OnInit {
     support: GridItem[] = [
         {
             title: 'Need more help?',
-            text: 'Have you had some issues by using our software? Let us know and get in contact with developers and users:',
-            url: 'https://discuss.dasch.swiss',
-            urlText: 'DaSCH Forum'
+            text: 'Have you had some issues by using our software? Let us know and get in contact with the developers:',
+            url: 'mailto:support@dasch.swiss?subject=DSP-APP request | ',
+            urlText: 'Contact us'
         },
         {
             title: 'DaSCH Infrastructure',
@@ -100,6 +100,8 @@ export class HelpComponent implements OnInit {
     ngOnInit() {
 
         this.dsp = this._appInitService.dspConfig;
+
+        this.support[0].url += this.dsp.environment + ': ' + this.dsp.release;
 
         // quick solution; todo: has to be done in a better way
         // to go directly to the page e.g. https://dasch.atlassian.net/wiki/spaces/changelog/pages/25067546/Releasenews+2022.01.02

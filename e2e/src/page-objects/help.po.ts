@@ -31,11 +31,11 @@ export class HelpPage {
         return sipiEl.element(by.css('.action .mat-button'));
     }
 
-    getDaschForumButton() {
+    getDaschContactButton() {
         const appGridEl = element.all(by.css('#app-grid-tools .app-grid-item'));
-        const daschForumEl = appGridEl.get(3);
+        const daschContactEl = appGridEl.get(3);
 
-        return daschForumEl.element(by.css('.action .mat-button'));
+        return daschContactEl.element(by.css('.action .mat-button'));
     }
 
     getDaschSwissButton() {

@@ -1,8 +1,9 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -21,7 +22,8 @@ describe('HelpComponent', () => {
 
     const appInitSpy = {
         dspConfig: {
-            release: '2022.01.01'
+            environment: 'unit test server',
+            release: '2022.02.02'
         }
     };
 
@@ -71,5 +73,19 @@ describe('HelpComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // all the buttons have been tested in e2e tests => see e2e/src/help.e2e-spec.ts
+    it('should have a mailto href incl. subject', () => {
+        // get the support section and find the contact-us button
+        const hostCompDe = fixture.debugElement;
+        const section = hostCompDe.query(By.css('.support'));
+
+        const grid = section.query(By.directive(GridComponent));
+        const button = grid.query(By.css('.mailto'));
+        const href = button.nativeElement.href;
+
+        expect(href).toEqual('mailto:support@dasch.swiss?subject=DSP-APP%20request%20|%20unit%20test%20server:%202022.02.02');
+
+    });
+
+    // all other buttons have been tested in e2e tests => see e2e/src/help.e2e-spec.ts
+
 });

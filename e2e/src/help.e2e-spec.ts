@@ -1,5 +1,5 @@
-import { HelpPage } from './page-objects/help.po';
 import { browser } from 'protractor';
+import { HelpPage } from './page-objects/help.po';
 
 const { version: appVersion, name: appName } = require('../../package.json');
 
@@ -120,14 +120,14 @@ describe('help page', () => {
         });
     });
 
-    it('should route to the dasch forum', async () => {
+    it('should have a mailto link to support@dasch.swiss', async () => {
         await browser.waitForAngularEnabled(false);
         page.navigateTo();
         await browser.waitForAngularEnabled(true);
 
         browser.getWindowHandle().then(function (parentGUID) {
             // click the link that opens in a new window
-            page.getDaschForumButton().click();
+            page.getDaschContactButton().click();
             browser.sleep(5000);
             // get the all the session ids of the opened tabs
             browser.getAllWindowHandles().then(function (allGUID) {
@@ -143,6 +143,7 @@ describe('help page', () => {
                     }
                 }
                 // perform here any actions needed on the new tab
+                // --> TODO: why is still working? The address doesn't exist anymore. It was replaced by "mailto:support@dasch.swiss?subject=...."
                 expect(browser.driver.getCurrentUrl()).toMatch('https://discuss.dasch.swiss/');
                 // todo: check if link is still alive or broken
 
@@ -178,7 +179,7 @@ describe('help page', () => {
                     }
                 }
                 // perform here any actions needed on the new tab
-                expect(browser.driver.getCurrentUrl()).toMatch('https://dasch.swiss/');
+                expect(browser.driver.getCurrentUrl()).toMatch('https://dasch.ch/');
 
                 // close the new tab
                 browser.close();
