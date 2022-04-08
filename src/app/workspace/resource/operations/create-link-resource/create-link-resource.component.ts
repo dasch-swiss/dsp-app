@@ -14,6 +14,7 @@ import {
     ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DialogEvent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { SelectPropertiesComponent } from '../../resource-instance-form/select-properties/select-properties.component';
 
@@ -29,7 +30,7 @@ export class CreateLinkResourceComponent implements OnInit {
     @Input() resourceClassDef: string;
     @Input() currentOntoIri: string;
 
-    @Output() closeDialog: EventEmitter<ReadResource> = new EventEmitter<ReadResource>();
+    @Output() closeDialog: EventEmitter<ReadResource | DialogEvent> = new EventEmitter<ReadResource | DialogEvent>();
 
     @ViewChild('selectProps') selectPropertiesComponent: SelectPropertiesComponent;
 
@@ -138,6 +139,11 @@ export class CreateLinkResourceComponent implements OnInit {
         } else {
             this.propertiesForm.markAllAsTouched();
         }
+    }
+
+    onCancel() {
+        // emit DialogCanceled event
+        this.closeDialog.emit(DialogEvent.DialogCanceled);
     }
 
     setFileValue(file: CreateFileValue) {

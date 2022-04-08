@@ -27,7 +27,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { DialogComponent, DialogEvent } from 'src/app/main/dialog/dialog.component';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 
 export function resourceValidator(control: AbstractControl) {
@@ -264,14 +264,25 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((event: any) => {
-            const newResource = event as ReadResource;
+        dialogRef.afterClosed().subscribe((event: ReadResource | DialogEvent) => {
+            // save button clicked
+            if (event instanceof ReadResource ) {
+                const newResource = event as ReadResource;
 
-            // set value of value form control to the newly created resource
-            this.form.controls.value.setValue(newResource);
+                // set value of value form control to the newly created resource
+                this.form.controls.value.setValue(newResource);
 
-            // hide the autocomplete results
-            this.autocomplete.closePanel();
+                // hide the autocomplete results
+                this.autocomplete.closePanel();
+            }
+
+            // cancel button clicked
+            if (event === DialogEvent.DialogCanceled){
+                this.resetFormControl();
+
+                // hide the autocomplete results
+                this.autocomplete.closePanel();
+            }
         });
     }
 }

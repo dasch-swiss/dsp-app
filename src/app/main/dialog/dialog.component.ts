@@ -31,6 +31,10 @@ export interface ConfirmationWithComment {
     comment?: string;
 }
 
+export enum DialogEvent {
+    DialogCanceled
+}
+
 @Component({
     selector: 'app-material-dialog',
     templateUrl: './dialog.component.html',
