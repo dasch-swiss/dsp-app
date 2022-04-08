@@ -29,7 +29,7 @@ export class CreateLinkResourceComponent implements OnInit {
     @Input() resourceClassDef: string;
     @Input() currentOntoIri: string;
 
-    @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
+    @Output() closeDialog: EventEmitter<ReadResource> = new EventEmitter<ReadResource>();
 
     @ViewChild('selectProps') selectPropertiesComponent: SelectPropertiesComponent;
 
@@ -129,7 +129,7 @@ export class CreateLinkResourceComponent implements OnInit {
 
             this._dspApiConnection.v2.res.createResource(createResource).subscribe(
                 (res: ReadResource) => {
-                    this.closeDialog.emit();
+                    this.closeDialog.emit(res);
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);

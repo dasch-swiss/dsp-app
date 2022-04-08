@@ -7,9 +7,11 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges
+    SimpleChanges,
+    ViewChild
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     CreateLinkValue,
@@ -49,8 +51,9 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     @Input() currentOntoIri: string;
 
     @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter();
-
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter();
+
+    @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
     resources: ReadResource[] = [];
     restrictToResourceClass: string;
@@ -259,6 +262,16 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
             disableClose: true
         };
 
-        this._dialog.open(DialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe((event: any) => {
+            const newResource = event as ReadResource;
+
+            // set value of value form control to the newly created resource
+            this.form.controls.value.setValue(newResource);
+
+            // hide the autocomplete results
+            this.autocomplete.closePanel();
+        });
     }
 }
