@@ -270,11 +270,11 @@ describe('ResourceLinkFormComponent', () => {
             createVal.push(linkVal);
         });
 
-        props[Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasLinkToValue'] = createVal;
+        props[Constants.HasLinkToValue] = createVal;
 
         const expectedCreateResource = new CreateResource();
         expectedCreateResource.label = 'My Label';
-        expectedCreateResource.type = Constants.KnoraApiV2 + Constants.HashDelimiter + 'LinkObj';
+        expectedCreateResource.type = Constants.LinkObj;
         expectedCreateResource.properties = props;
 
         // --> TODO create a Router spy to mock the navigation

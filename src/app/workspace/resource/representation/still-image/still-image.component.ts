@@ -303,7 +303,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
 
                 const geometry = geom.geometry;
 
-                const colorValues: ReadColorValue[] = geom.region.properties[Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor'] as ReadColorValue[];
+                const colorValues: ReadColorValue[] = geom.region.properties[Constants.HasColor] as ReadColorValue[];
 
                 // if the geometry has a color property, use that value as the color for the line
                 if (colorValues && colorValues.length) {
@@ -435,7 +435,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             ',"y":' + y1.toString() + '},{"x":' + x2.toString() + ',"y":' + y2.toString() + '}],"type":"rectangle"}';
         const createResource = new CreateResource();
         createResource.label = label;
-        createResource.type = Constants.KnoraApiV2 + Constants.HashDelimiter + 'Region';
+        createResource.type = Constants.Region;
         createResource.attachedToProject = this.project;
         const geomVal = new CreateGeomValue();
         geomVal.type = Constants.GeomValue;
@@ -451,10 +451,10 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         commentVal.text = comment;
 
         createResource.properties = {
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasComment']: [commentVal],
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasColor']: [colorVal],
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'isRegionOfValue']: [linkVal],
-            [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasGeometry']: [geomVal]
+            [Constants.HasComment]: [commentVal],
+            [Constants.HasColor]: [colorVal],
+            [Constants.IsRegionOfValue]: [linkVal],
+            [Constants.HasGeometry]: [geomVal]
         };
         this._dspApiConnection.v2.res.createResource(createResource).subscribe(
             (res: ReadResource) => {

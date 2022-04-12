@@ -29,5 +29,5 @@ export class ComparisonOperatorConstants {
     static MatchComparisonOperator = 'contains';
     static MatchComparisonLabel = 'matches';
 
-    static MatchFunction = Constants.KnoraApiV2 + Constants.HashDelimiter + 'matchText';
+    static MatchFunction = Constants.MatchText;
 }

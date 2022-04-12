@@ -120,7 +120,7 @@ export class ResourceLinkFormComponent implements OnInit {
 
         linkObj.label = this.form.controls['label'].value;
 
-        linkObj.type = Constants.KnoraApiV2 + Constants.HashDelimiter + 'LinkObj';
+        linkObj.type = Constants.LinkObj;
 
         linkObj.attachedToProject = this.selectedProject;
 
@@ -139,12 +139,12 @@ export class ResourceLinkFormComponent implements OnInit {
             commentVal.type = Constants.TextValue;
             commentVal.text = comment;
             linkObj.properties = {
-                [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasLinkToValue']: hasLinkToValue,
-                [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasComment']: [commentVal],
+                [Constants.HasLinkToValue]: hasLinkToValue,
+                [Constants.HasComment]: [commentVal],
             };
         } else {
             linkObj.properties = {
-                [Constants.KnoraApiV2 + Constants.HashDelimiter + 'hasLinkToValue']: hasLinkToValue,
+                [Constants.HasLinkToValue]: hasLinkToValue,
             };
         }
 

@@ -53,7 +53,7 @@ export class DefaultResourceClasses {
             ]
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'StillImageRepresentation',
+            iri: Constants.StillImageRepresentation,
             label: 'Still Image',
             icons: [
                 'photo',
@@ -80,7 +80,7 @@ export class DefaultResourceClasses {
             ]
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'MovingImageRepresentation',
+            iri: Constants.MovingImageRepresentation,
             label: 'Moving Image',
             icons: [
                 'movie',
@@ -98,7 +98,7 @@ export class DefaultResourceClasses {
             ]
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'AudioRepresentation',
+            iri: Constants.AudioRepresentation,
             label: 'Audio',
             icons: [
                 'audiotrack',
@@ -117,7 +117,7 @@ export class DefaultResourceClasses {
             ]
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'TextRepresentation',
+            iri: Constants.TextRepresentation,
             label: 'Text',
             icons: [
                 'rtt',
@@ -127,7 +127,7 @@ export class DefaultResourceClasses {
             ]
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DocumentRepresentation',
+            iri: Constants.DocumentRepresentation,
             label: 'Document (PDF, etc.)',
             icons: [
                 'description',
@@ -142,7 +142,7 @@ export class DefaultResourceClasses {
             ]
         },
         {
-            iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'ArchiveRepresentation',
+            iri: Constants.ArchiveRepresentation,
             label: 'Archive (zip, x-tar, gzip)',
             icons: [
                 'archive',
@@ -156,7 +156,7 @@ export class DefaultResourceClasses {
 /* --> DSP-1559: disable RTI class;
     the following object can be added again to the default classes as soon as a RTI viewer is implemented
     {
-        iri: Constants.KnoraApiV2 + Constants.HashDelimiter + 'DDDRepresentation',
+        iri: Constants.DDDRepresentation,
         label: 'RTI Image',
         icons: [
             'view_in_ar',
