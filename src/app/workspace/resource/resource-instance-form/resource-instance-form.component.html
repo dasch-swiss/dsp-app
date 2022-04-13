@@ -47,8 +47,10 @@
         </span>
         <span class="fill-remaining-space"></span>
         <span>
+            <!-- check each 'selected' property in addition to the forms validity because the form is actually valid when fetching ontologies and resource classes  -->
             <button mat-raised-button type="button" color="primary"
-                [disabled]="!selectResourceForm.valid || this.errorMessage" (click)="nextStep()" class="form-next">
+                [disabled]="(!selectedProject || !selectedOntology || !selectedResourceClass || !selectResourceForm.valid) || this.errorMessage" (click)="nextStep()" class="form-next">
+                <app-progress-indicator *ngIf="loading" [status]="0" [color]="'primary'" class="next-progress"></app-progress-indicator>
                 Next
             </button>
         </span>

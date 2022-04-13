@@ -179,6 +179,10 @@ class MockSelectPropertiesComponent {
 
     @Input() parentForm: FormGroup;
 
+    @Input() currentOntoIri: string;
+
+    @Input() selectedResourceClass: ResourceClassDefinition;
+
     parentResource = new ReadResource();
 
     constructor(private _valueService: ValueService) { }
@@ -494,13 +498,19 @@ describe('ResourceInstanceFormComponent', () => {
             }
         );
 
+        const nextButton = await loader.getHarness(MatButtonHarness.with({ selector: '.form-next' }));
+
         const selectProjectComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectProjectComponent));
 
         (selectProjectComp.componentInstance as MockSelectProjectComponent).form.controls.projects.setValue('http://rdfh.ch/projects/0001');
 
+        testHostComponent.resourceInstanceFormComponent.selectedProject = 'http://rdfh.ch/projects/0001';
+
         testHostComponent.resourceInstanceFormComponent.ontologiesMetadata = MockOntology.mockOntologiesMetadata();
 
         testHostFixture.detectChanges();
+
+        expect(nextButton.isDisabled).toBeTruthy();
 
         const selectOntoComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectOntologyComponent));
 
@@ -508,7 +518,11 @@ describe('ResourceInstanceFormComponent', () => {
 
         (selectOntoComp.componentInstance as MockSelectOntologyComponent).ontologySelected.emit('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
+        testHostComponent.resourceInstanceFormComponent.selectedOntology = 'http://0.0.0.0:3333/ontology/0001/anything/v2';
+
         testHostFixture.detectChanges();
+
+        expect(nextButton.isDisabled).toBeTruthy();
 
         const selectResourceClassComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectResourceClassComponent));
 
@@ -523,8 +537,6 @@ describe('ResourceInstanceFormComponent', () => {
         testHostFixture.detectChanges();
 
         expect(testHostComponent.resourceInstanceFormComponent.selectResourceForm.valid).toBeTruthy();
-
-        const nextButton = await loader.getHarness(MatButtonHarness.with({ selector: '.form-next' }));
 
         await nextButton.click();
 

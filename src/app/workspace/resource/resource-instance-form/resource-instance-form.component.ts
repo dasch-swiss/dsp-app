@@ -262,6 +262,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 // assign the selected iri to selectedProject
                 this.selectedProject = projectIri;
 
+                this.loading = true;
+
                 this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).subscribe(
                     (response: OntologiesMetadata) => {
                         // filter out system ontologies
@@ -273,8 +275,11 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                         if (!this.selectOntologyComponent && response.ontologies.length === 0) {
                             this.errorMessage = 'No data models defined for the select project.';
                         }
+
+                        this.loading = false;
                     },
                     (error: ApiResponseError) => {
+                        this.loading = false;
                         this._errorHandler.showMessage(error);
                     }
                 );
@@ -318,6 +323,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
                 this.selectedOntology = ontologyIri;
 
+                this.loading = true;
+
                 this._dspApiConnection.v2.onto.getOntology(ontologyIri).subscribe(
                     (onto: ReadOntology) => {
                         this.resourceClasses = onto.getClassDefinitionsByType(ResourceClassDefinition);
@@ -331,8 +338,11 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                         if ((!this.selectResourceClassComponent || this.selectOntologyComponent.form.controls.ontologies.valueChanges) && this.resourceClasses.length === 0) {
                             this.errorMessage = 'No resources defined for the selected ontology.';
                         }
+
+                        this.loading = false;
                     },
                     (error: ApiResponseError) => {
+                        this.loading = false;
                         this._errorHandler.showMessage(error);
                     }
                 );
@@ -348,7 +358,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
      * @param resourceClassIri
      */
     selectProperties(resourceClassIri: string) {
-
         // reset errorMessage, it will be reassigned in the else clause if needed
         this.errorMessage = undefined;
 
@@ -356,6 +365,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         if (resourceClassIri === null) {
             this.selectResourceClasses(this.selectedOntology);
         } else if (resourceClassIri) {
+            this.loading = true;
             this._dspApiConnection.v2.ontologyCache.reloadCachedItem(this.selectedOntology).subscribe(
                 (res: ReadOntology) => {
                     this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
@@ -400,16 +410,11 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                                 this.errorMessage = 'No properties defined for the selected resource.';
                             }
 
-                            if (this.resourceClasses.length > 1 && !this.userWentBack) {
-                                // automatically go to the next step when a resource class is selected
-                                // but not in case the user went back to previous form
-                                this.nextStep();
-                            } else {
-                                // or update the title because the user select another res class
-                                this.updateParent.emit({ title: this.resourceLabel, subtitle: 'Create new resource' });
-                            }
+                            this.loading = false;
+
                         },
                         (error: ApiResponseError) => {
+                            this.loading = false;
                             this._errorHandler.showMessage(error);
                         }
                     );
