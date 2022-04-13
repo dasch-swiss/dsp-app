@@ -1,5 +1,32 @@
 # Changelog
 
+## [9.6.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.5.0...v9.6.0) (2022-04-13)
+
+
+### Bug Fixes
+
+* **create-link-value:** bring back functionality to create a new link resource instance when adding a new value to a linked resource class property ([#709](https://www.github.com/dasch-swiss/dsp-app/issues/709)) ([c6fe803](https://www.github.com/dasch-swiss/dsp-app/commit/c6fe8031f138cc9b87bd0938eb9db1c0848d3cc6))
+* **link-value:** re-validate form when cancel button is clicked ([#711](https://www.github.com/dasch-swiss/dsp-app/issues/711)) ([7768fb9](https://www.github.com/dasch-swiss/dsp-app/commit/7768fb9dc05847d8109e1073357d34e9bc356bb5))
+* **ontology:** display all classes in a property (DEV-564) ([#701](https://www.github.com/dasch-swiss/dsp-app/issues/701)) ([f90aedc](https://www.github.com/dasch-swiss/dsp-app/commit/f90aedcaf55ce9d0acc57272441a73b9dc32b99b))
+* package.json & package-lock.json to reduce vulnerabilities ([#704](https://www.github.com/dasch-swiss/dsp-app/issues/704)) ([5d4bb7c](https://www.github.com/dasch-swiss/dsp-app/commit/5d4bb7cce7f854eed20ae1f50bc6ba36d1154bf2))
+* **region:** highlight info of clicked region (DEV-724) ([#703](https://www.github.com/dasch-swiss/dsp-app/issues/703)) ([2d98369](https://www.github.com/dasch-swiss/dsp-app/commit/2d983696a754871f298e724a45a8ef412f7bd025))
+* **resource-instance-form:** disable "next" button when form is not valid (DEV-803) ([#713](https://www.github.com/dasch-swiss/dsp-app/issues/713)) ([124b953](https://www.github.com/dasch-swiss/dsp-app/commit/124b953e2160e0d017c2deeaf5489f6fdba881c8))
+
+
+### Enhancements
+
+* **link-value:** add progress indicator (DEV-605) ([#708](https://www.github.com/dasch-swiss/dsp-app/issues/708)) ([5efd981](https://www.github.com/dasch-swiss/dsp-app/commit/5efd9816c7623014ef5460b16e6016ef4c806208))
+* **link-value:** enter newly created value automatically ([#710](https://www.github.com/dasch-swiss/dsp-app/issues/710)) ([5ccd18d](https://www.github.com/dasch-swiss/dsp-app/commit/5ccd18d17e33d3b89f38365d5d9f4add7e25dede))
+* **resource:** upload video (DEV-204) ([#577](https://www.github.com/dasch-swiss/dsp-app/issues/577)) ([29201d4](https://www.github.com/dasch-swiss/dsp-app/commit/29201d40b224d4bbf72f0ffdb1874f6ee94c429a))
+
+
+### Maintenance
+
+* **gh-ci:** add style to the release notes ([#706](https://www.github.com/dasch-swiss/dsp-app/issues/706)) ([8e9e143](https://www.github.com/dasch-swiss/dsp-app/commit/8e9e143ca56a16d332a78f8bf4692a319264bc1a))
+* **help:** update support links (DEV-779) ([#700](https://www.github.com/dasch-swiss/dsp-app/issues/700)) ([d97113f](https://www.github.com/dasch-swiss/dsp-app/commit/d97113feecae60d61a2aa72893401bc6e263462e))
+* **resource:** display class label of incoming link (DEV-568) ([#702](https://www.github.com/dasch-swiss/dsp-app/issues/702)) ([aad1c5a](https://www.github.com/dasch-swiss/dsp-app/commit/aad1c5a0ba1859d1ccf82cb808b4fcf80792cc33))
+* use constants from js-lib directly (DEV-799) ([#712](https://www.github.com/dasch-swiss/dsp-app/issues/712)) ([374b5a8](https://www.github.com/dasch-swiss/dsp-app/commit/374b5a80cfadf85b6a818c72e46f6bc7ae3a8425))
+
 ## [9.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.4.0...v9.5.0) (2022-04-04)
 
 
