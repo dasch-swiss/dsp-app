@@ -63,8 +63,14 @@
                 </ng-template>
                 <div class="region-property" *ngFor="let annotation of annotationResources" [id]="annotation.res.id"
                     [class.active]="annotation.res.id === selectedRegion">
-                    <app-properties [resource]="annotation" [displayProjectInfo]="false" [isAnnotation]="true"
-                    [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid" (regionColorChanged)="updateRegionColor()">
+                    <app-properties
+                        [resource]="annotation"
+                        [displayProjectInfo]="false"
+                        [isAnnotation]="true"
+                        [adminPermissions]="adminPermissions"
+                        [editPermissions]="editPermissions"
+                        [valueUuidToHighlight]="valueUuid"
+                        (regionChanged)="updateRegion()">
                     </app-properties>
                 </div>
 

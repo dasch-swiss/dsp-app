@@ -1,13 +1,11 @@
 import {
     Component,
     ElementRef,
-    EventEmitter,
-    Inject,
+    EventEmitter, Inject,
     Input,
     OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
+    OnDestroy, Output,
+    Renderer2,
     SimpleChanges
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -17,7 +15,6 @@ import {
     ApiResponseError,
     Constants,
     CreateColorValue,
-    CreateFileValue,
     CreateGeomValue,
     CreateLinkValue,
     CreateResource,
@@ -104,7 +101,7 @@ export class GeometryForRegion {
  */
 interface PolygonsForRegion {
 
-    [key: string]: HTMLDivElement[];
+    [key: string]: HTMLElement[];
 
 }
 
@@ -143,6 +140,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         private _errorHandler: ErrorHandlerService,
         private _matIconRegistry: MatIconRegistry,
         private _notification: NotificationService,
+        private _renderer: Renderer2,
         private _valueOperationEventService: ValueOperationEventService
     ) {
         OpenSeadragon.setString('Tooltips.Home', '');
@@ -185,17 +183,15 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             this._unhighlightAllRegions();
             // tODO: check if this is necessary or could be handled below
             //  (remove the 'else' before the 'if', so changes['activateRegion'] is always checked for)
-            if (this.activateRegion !== undefined) {
-                this._highlightRegion(this.activateRegion);
-            }
-            if (this.currentTab === 'annotations') {
-                this.renderRegions();
-            }
-        } else if (changes['activateRegion']) {
+        }
+        if (this.activateRegion !== undefined) {
+            this._highlightRegion(this.activateRegion);
+        }
+        if (this.currentTab === 'annotations') {
+            this.renderRegions();
+        }
+        if (changes['activateRegion']) {
             this._unhighlightAllRegions();
-            if (this.activateRegion !== undefined) {
-                this._highlightRegion(this.activateRegion);
-            }
         }
     }
 
@@ -310,11 +306,13 @@ export class StillImageComponent implements OnChanges, OnDestroy {
                     geometry.lineColor = colorValues[0].color;
                 }
 
-                this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label);
+                const commentValue = (geom.region.properties[Constants.HasComment] ? geom.region.properties[Constants.HasComment][0].strval : '');
 
+                this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label, commentValue);
+
+                imageXOffset++;
             }
 
-            imageXOffset++;
         }
 
     }
@@ -326,7 +324,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         for (const reg in this._regions) {
             if (this._regions.hasOwnProperty(reg)) {
                 for (const pol of this._regions[reg]) {
-                    if (pol instanceof HTMLDivElement) {
+                    if (pol instanceof HTMLElement) {
                         pol.remove();
                     }
                 }
@@ -345,7 +343,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         this._notification.openSnackBar(message);
     }
 
-    openReplaceFileDialog(){
+    openReplaceFileDialog() {
         const propId = this.parentResource.properties[Constants.HasStillImageFileValue][0].id;
 
         const dialogConfig: MatDialogConfig = {
@@ -354,7 +352,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
             position: {
                 top: '112px'
             },
-            data: { mode: 'replaceFile', title: '2D Image (Still Image)', subtitle: 'Update image of the resource' , representation: 'stillImage', id: propId },
+            data: { mode: 'replaceFile', title: '2D Image (Still Image)', subtitle: 'Update image of the resource', representation: 'stillImage', id: propId },
             disableClose: true
         };
         const dialogRef = this._dialog.open(
@@ -476,7 +474,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
                 if (!this.regionDrawMode) {
                     return;
                 }
-                const overlayElement = document.createElement('div');
+                const overlayElement = this._renderer.createElement('div');
                 overlayElement.style.background = 'rgba(255,0,0,0.3)';
                 const viewportPos = this._viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position);
                 this._viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
@@ -523,7 +521,7 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      */
     private _highlightRegion(regionIri) {
 
-        const activeRegion: HTMLDivElement[] = this._regions[regionIri];
+        const activeRegion: HTMLElement[] = this._regions[regionIri];
 
         if (activeRegion !== undefined) {
             for (const pol of activeRegion) {
@@ -658,19 +656,14 @@ export class StillImageComponent implements OnChanges, OnDestroy {
      * @param xOffset -  the x-offset in Openseadragon viewport coordinates of the image on which the geometry should be placed
      * @param toolTip -  the tooltip which should be displayed on mousehover of the svg element
      */
-    private _createSVGOverlay(regionIri: string, geometry: RegionGeometry, aspectRatio: number, xOffset: number, toolTip: string): void {
+    private _createSVGOverlay(regionIri: string, geometry: RegionGeometry, aspectRatio: number, xOffset: number, regionLabel: string, regionComment: string): void {
         const lineColor = geometry.lineColor;
         const lineWidth = geometry.lineWidth;
 
-        const elt = document.createElement('div');
-        elt.id = 'region-overlay-' + Math.random() * 10000;
-        elt.className = 'region';
-        elt.title = toolTip;
-        elt.setAttribute('style', 'outline: solid ' + lineColor + ' ' + lineWidth + 'px;');
-
-        elt.addEventListener('click', (event: MouseEvent) => {
-            this.regionClicked.emit(regionIri);
-        }, false);
+        const regEle: HTMLElement = this._renderer.createElement('div');
+        regEle.id = 'region-overlay-' + Math.random() * 10000;
+        regEle.className = 'region';
+        regEle.setAttribute('style', 'outline: solid ' + lineColor + ' ' + lineWidth + 'px;');
 
         const diffX = geometry.points[1].x - geometry.points[0].x;
         const diffY = geometry.points[1].y - geometry.points[0].y;
@@ -684,11 +677,36 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         loc.y = loc.y * aspectRatio;
 
         this._viewer.addOverlay({
-            element: elt,
-            location: loc
+            element: regEle,
+            location: loc,
         });
 
-        this._regions[regionIri].push(elt);
+        // mouse tracker has to be activated on the open seadragon viewer
+        // solution from: https://github.com/openseadragon/openseadragon/issues/1419#issuecomment-371564878
+        const tracker = new OpenSeadragon.MouseTracker({
+            element: regEle,
+            clickHandler: function (event) { }
+        });
+
+        this._regions[regionIri].push(regEle);
+
+        const comEle: HTMLElement = this._renderer.createElement('div');
+        comEle.className = 'annotation-tooltip';
+        comEle.innerHTML = `<strong>${regionLabel}</strong><br>${regionComment}`;
+        regEle.append(comEle);
+
+        regEle.addEventListener('mousemove', (event: MouseEvent) => {
+            comEle.setAttribute('style', 'display: block; left: ' + event.clientX + 'px; top: ' + event.clientY + 'px');
+        });
+        regEle.addEventListener('mouseleave', (event: MouseEvent) => {
+            comEle.setAttribute('style', 'display: none');
+        });
+        regEle.addEventListener('click', (event: MouseEvent) => {
+            this.regionClicked.emit(regionIri);
+        });
+
     }
+
+
 
 }

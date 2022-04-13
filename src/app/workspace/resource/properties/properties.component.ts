@@ -114,7 +114,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      */
     @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
-    @Output() regionColorChanged: EventEmitter<ReadColorValue> = new EventEmitter<ReadColorValue>();
+    @Output() regionChanged: EventEmitter<ReadValue> = new EventEmitter<ReadValue>();
 
     lastModificationDate: string;
 
@@ -352,6 +352,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                             (response: UpdateResourceMetadataResponse) => {
                                 this.resource.res.label = payload.label;
                                 this.lastModificationDate = response.lastModificationDate;
+                                // if annotations tab is active; a label of a region has been changed --> update regions
+                                if (this.isAnnotation) {
+                                    this.regionChanged.emit();
+                                }
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
@@ -456,8 +460,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             if (updatedValue instanceof ReadTextValueAsXml) {
                 this._updateStandoffLinkValue();
             }
-            if (updatedValue instanceof ReadColorValue) {
-                this.regionColorChanged.emit();
+            // if annotations tab is active;
+            if (this.isAnnotation) {
+                this.regionChanged.emit();
             }
         } else {
             console.warn('No properties exist for this resource');

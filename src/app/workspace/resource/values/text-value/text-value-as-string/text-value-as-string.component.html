@@ -1,4 +1,5 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <!-- TODO in DEV-797: appLinkify pipe should only be used if property's gui-element is not richt-text; I had the same issue in regions -->
     <span class="rm-value text-value" [innerHtml]="valueFormControl.value | appLinkify" style="white-space: pre-wrap;"></span>
     <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
 </span>

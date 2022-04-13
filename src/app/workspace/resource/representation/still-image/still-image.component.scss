@@ -1,12 +1,9 @@
+@import "../../../../../assets/style/config";
 // sizes
 $max-width: 800px;
 $panelSize: 40px;
 
 $osd-height: 460px;
-
-// colors
-$dark: #000;
-$bright: #ccc;
 
 :host {
   // display: inline-flex;
@@ -55,6 +52,26 @@ $bright: #ccc;
       }
     }
   }
+}
+
+.annotation-tooltip {
+  display: none;
+  position: fixed;
+  background-color: $black-60-opacity;
+  color: $bright;
+  padding: 8px;
+  border-radius: $border-radius;
+  min-height: 24px;
+  max-height: 258px;
+  max-width: 256px;
+  box-sizing: border-box;
+  transition: 0.1s;
+  transform: translate(16px, 16px);
+  font-size: small;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1000;
 }
 
 /*

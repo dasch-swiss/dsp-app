@@ -5,9 +5,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -107,13 +105,12 @@ class TestHostComponent implements OnInit {
             this.readResource = res;
         });
 
-        this.stillImageFileRepresentations
-            = [
-                new FileRepresentation(stillImageFileValue,
-                    [
-                        new Region(makeRegion([rectangleGeom], 'first'))
-                    ])
-            ];
+        this.stillImageFileRepresentations = [
+            new FileRepresentation(stillImageFileValue,
+                [new Region(makeRegion([rectangleGeom], 'first'))]
+            )
+        ];
+
     }
 
     regHovered(regIri: string) {
