@@ -50,7 +50,7 @@
     "ngx-color-picker": "^11.0.0",
     "openseadragon": "3.0.0",
     "pdfjs-dist": "^2.12.313",
-    "rollbar": "^2.24.0",
+    "rollbar": "^2.25.0",
     "rxjs": "~6.5.5",
     "semver": "^6.3.0",
     "ts-md5": "^1.2.11",
