@@ -1,0 +1,10 @@
+<div class="timeline-wrapper" #timeline>
+    <div class="progress-wrapper" #progress>
+        <div class="progress-background"></div>
+        <div class="progress-buffer"></div>
+        <div class="progress-fill"></div>
+    </div>
+    <div class="thumb" [class.dragging]="dragging" #thumb cdkDragLockAxis="x" cdkDrag
+        (cdkDragStarted)="toggleDragging()" (cdkDragEnded)="toggleDragging()" (cdkDragMoved)="dragAction($event)"
+        cdkDragBoundary=".timeline-wrapper"> </div>
+</div>

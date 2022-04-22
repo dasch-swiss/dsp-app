@@ -204,3 +204,19 @@ button.space-reducer {
     border-radius: 0 !important;
   }
 }
+
+// moving image player: overwrite mat-slider
+.progress {
+  .mat-slider-track-background {
+    background-color: whitesmoke !important;
+  }
+
+  .mat-slider-wrapper {
+    top: 12px !important;
+  }
+
+  .mat-slider-thumb {
+    background-color: $accent !important;
+    border-color: $accent !important;
+  }
+}

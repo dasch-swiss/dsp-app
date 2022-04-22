@@ -16,7 +16,7 @@ export class NotificationService {
     // todo: maybe we can add more parameters like:
     // action: string = 'x', duration: number = 4200
     // and / or type: 'note' | 'warning' | 'error' | 'success'; which can be used for the panelClass
-    openSnackBar(notification: string | ApiResponseError): void {
+    openSnackBar(notification: string | ApiResponseError, type?: 'success' | 'error'): void {
         let duration = 5000;
         let message: string;
         let panelClass: string;
@@ -30,10 +30,10 @@ export class NotificationService {
                 const defaultStatusMsg = this._statusMsg.default;
                 message = `${defaultStatusMsg[notification.status].message} (${notification.status}): ${defaultStatusMsg[notification.status].description}`;
             }
-            panelClass = 'error';
+            panelClass = type ? type : 'error';
         } else {
             message = notification;
-            panelClass = 'success';
+            panelClass = type ? type : 'success';
         }
 
         this._snackBar.open(message, 'x', {

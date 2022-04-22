@@ -30,6 +30,7 @@ import { DspApiConfigToken, DspApiConnectionToken, DspAppConfigToken, DspInstrum
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
+import { DisableContextMenuDirective } from './main/directive/disable-context-menu.directive';
 import { ExistingNameDirective } from './main/directive/existing-name/existing-name.directive';
 import { ExternalLinksDirective } from './main/directive/external-links.directive';
 import { GndDirective } from './main/directive/gnd/gnd.directive';
@@ -47,6 +48,7 @@ import { LinkifyPipe } from './main/pipes/string-transformation/linkify.pipe';
 import { StringifyStringLiteralPipe } from './main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TitleFromCamelCasePipe } from './main/pipes/string-transformation/title-from-camel-case.pipe';
 import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
+import { TimePipe } from './main/pipes/time.pipe';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { DatadogRumService } from './main/services/datadog-rum.service';
 import { MaterialModule } from './material-module';
@@ -98,9 +100,13 @@ import { PropertiesComponent } from './workspace/resource/properties/properties.
 import { AddRegionFormComponent } from './workspace/resource/representation/add-region-form/add-region-form.component';
 import { ArchiveComponent } from './workspace/resource/representation/archive/archive.component';
 import { AudioComponent } from './workspace/resource/representation/audio/audio.component';
+import { AvTimelineComponent } from './workspace/resource/representation/av-timeline/av-timeline.component';
 import { DocumentComponent } from './workspace/resource/representation/document/document.component';
+import { ReplaceFileFormComponent } from './workspace/resource/representation/replace-file-form/replace-file-form.component';
 import { StillImageComponent } from './workspace/resource/representation/still-image/still-image.component';
 import { UploadComponent } from './workspace/resource/representation/upload/upload.component';
+import { VideoPreviewComponent } from './workspace/resource/representation/video/video-preview/video-preview.component';
+import { VideoComponent } from './workspace/resource/representation/video/video.component';
 import { ResourceInstanceFormComponent } from './workspace/resource/resource-instance-form/resource-instance-form.component';
 import { SelectOntologyComponent } from './workspace/resource/resource-instance-form/select-ontology/select-ontology.component';
 import { SelectProjectComponent } from './workspace/resource/resource-instance-form/select-project/select-project.component';
@@ -153,7 +159,6 @@ import { SearchSelectOntologyComponent } from './workspace/search/advanced-searc
 import { ExpertSearchComponent } from './workspace/search/expert-search/expert-search.component';
 import { FulltextSearchComponent } from './workspace/search/fulltext-search/fulltext-search.component';
 import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
-import { ReplaceFileFormComponent } from './workspace/resource/representation/replace-file-form/replace-file-form.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -172,6 +177,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         AppComponent,
         ArchiveComponent,
         AudioComponent,
+        AvTimelineComponent,
         BoardComponent,
         BooleanValueComponent,
         CollaborationComponent,
@@ -190,6 +196,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         DecimalValueComponent,
         DialogComponent,
         DialogHeaderComponent,
+        DisableContextMenuDirective,
         DisplayEditComponent,
         DocumentComponent,
         DragDropDirective,
@@ -241,6 +248,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         PropertiesComponent,
         PropertyFormComponent,
         PropertyInfoComponent,
+        ReplaceFileFormComponent,
         ResourceAndPropertySelectionComponent,
         ResourceClassFormComponent,
         ResourceClassInfoComponent,
@@ -285,6 +293,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         TextValueAsXMLComponent,
         TextValueHtmlLinkDirective,
         TimeInputComponent,
+        TimePipe,
         TimeValueComponent,
         TitleFromCamelCasePipe,
         TruncatePipe,
@@ -295,7 +304,8 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UserMenuComponent,
         UsersComponent,
         UsersListComponent,
-        ReplaceFileFormComponent,
+        VideoComponent,
+        VideoPreviewComponent
     ],
     imports: [
         AngularSplitModule.forRoot(),

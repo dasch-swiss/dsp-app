@@ -16,7 +16,7 @@ import {
     KnoraApiConnection,
     ReadArchiveFileValue,
     ReadAudioFileValue,
-    ReadDocumentFileValue, ReadResource,
+    ReadDocumentFileValue, ReadMovingImageFileValue, ReadResource,
     ReadResourceSequence,
     ReadStillImageFileValue, SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
@@ -454,6 +454,12 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             const audio = new FileRepresentation(fileValue);
             representations.push(audio);
 
+        } else if (resource.res.properties[Constants.HasMovingImageFileValue]) {
+
+            const fileValue: ReadMovingImageFileValue = resource.res.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue;
+            const video = new FileRepresentation(fileValue);
+            representations.push(video);
+
         } else if (resource.res.properties[Constants.HasArchiveFileValue]) {
 
             const fileValue: ReadArchiveFileValue = resource.res.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue;
@@ -516,6 +522,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         if (resource.res.properties[Constants.HasStillImageFileValue] ||
             resource.res.properties[Constants.HasDocumentFileValue] ||
             resource.res.properties[Constants.HasAudioFileValue] ||
+            resource.res.properties[Constants.HasMovingImageFileValue] ||
             resource.res.properties[Constants.HasArchiveFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // the resource is a StillImageRepresentation, check if there are regions pointing to it

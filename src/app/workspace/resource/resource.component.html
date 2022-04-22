@@ -19,10 +19,12 @@
                 (regionAdded)="updateRegions($event)">
             </app-still-image>
 
-            <app-document class="dsp-representation" *ngSwitchCase="representationConstants.document" [src]="representationsToDisplay[0]" [parentResource]="resource.res">
+            <app-document class="dsp-representation document" *ngSwitchCase="representationConstants.document" [src]="representationsToDisplay[0]" [parentResource]="resource.res">
             </app-document>
 
             <app-audio class="dsp-representation audio" *ngSwitchCase="representationConstants.audio" [src]="representationsToDisplay[0]" [parentResource]="resource.res"></app-audio>
+
+            <app-video class="dsp-representation video" *ngSwitchCase="representationConstants.movingImage" [src]="representationsToDisplay[0]" [parentResource]="resource.res"></app-video>
 
             <app-archive class="dsp-representation archive" *ngSwitchCase="representationConstants.archive" [src]="representationsToDisplay[0]" [parentResource]="resource.res"></app-archive>
 
