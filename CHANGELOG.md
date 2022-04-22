@@ -1,5 +1,23 @@
 # Changelog
 
+## [9.7.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.6.0...v9.7.0) (2022-04-22)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([#714](https://www.github.com/dasch-swiss/dsp-app/issues/714)) ([0e90296](https://www.github.com/dasch-swiss/dsp-app/commit/0e90296404880e9b774f4bd02582ebfaad5d0560))
+* **text-value-as-string:** links in text values (DEV-797) ([#718](https://www.github.com/dasch-swiss/dsp-app/issues/718)) ([af3cdc2](https://www.github.com/dasch-swiss/dsp-app/commit/af3cdc26015483b164c053b45edf31c7f6aedbf5))
+
+
+### Maintenance
+
+* **deps:** bump async from 2.6.3 to 2.6.4 ([#716](https://www.github.com/dasch-swiss/dsp-app/issues/716)) ([c77c208](https://www.github.com/dasch-swiss/dsp-app/commit/c77c2087a337005710b6ae97e024997b5290328f))
+
+
+### Enhancements
+
+* **representation:** implement video player incl. preview (DEV-701) ([#698](https://www.github.com/dasch-swiss/dsp-app/issues/698)) ([86fc2a7](https://www.github.com/dasch-swiss/dsp-app/commit/86fc2a7d58e9d3227e3e94b01f14f469d45829b3))
+
 ## [9.6.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.5.0...v9.6.0) (2022-04-13)
 
 
