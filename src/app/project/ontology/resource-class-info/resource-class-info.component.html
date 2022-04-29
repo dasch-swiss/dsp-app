@@ -7,7 +7,7 @@
             {{resourceClass.label | appTruncate: 24}}
         </mat-card-title>
         <mat-card-subtitle>
-            <span [matTooltip]="'id: ' + resourceClass.id" matTooltipPosition="above">
+            <span [matTooltip]="'id: ' + resourceClass.id" matTooltipPosition="above" matTooltipClass="wide-tooltip">
                 {{resourceClass.id | split: '#':1}}
             </span>
             <span>&nbsp;&middot;&nbsp;</span>

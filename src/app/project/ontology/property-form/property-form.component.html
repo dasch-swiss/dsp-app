@@ -79,7 +79,7 @@
                 <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
                 </span>
-                <mat-label>Select list *</mat-label>
+                <mat-label>Select list</mat-label>
                 <mat-select formControlName="guiAttr">
                     <mat-option *ngFor="let item of lists" [value]="item.id">
                         {{item.labels[0].value}}
@@ -94,7 +94,7 @@
                 <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
                 </span>
-                <mat-label>Select resource class *</mat-label>
+                <mat-label>Select resource class</mat-label>
                 <mat-select formControlName="guiAttr">
                     <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
                         {{item.label}}

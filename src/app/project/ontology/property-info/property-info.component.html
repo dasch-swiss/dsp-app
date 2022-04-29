@@ -20,7 +20,7 @@
     </div>
 
     <div mat-line class="info additional-info" [class.flex]="propCard" [class.with-line-break]="!propCard">
-        <span [matTooltip]="'id: ' + propDef.id" matTooltipPosition="above" class="mat-caption">
+        <span [matTooltip]="'id: ' + propDef.id" matTooltipPosition="above" matTooltipClass="wide-tooltip" class="mat-caption">
             {{propDef.id | split: '#':1}}
         </span>
         <span class="fill-remaining-space center">&nbsp;&middot;&nbsp;</span>

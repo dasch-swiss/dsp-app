@@ -337,30 +337,34 @@ export class PropertyFormComponent implements OnInit {
             // disable the input and set the validator as not required
             this.propertyForm.controls['guiAttr'].disable();
 
-            switch (type.guiEle) {
-                // prop type is a list
-                case Constants.GuiList:
-                case Constants.GuiRadio:
-                    this.showGuiAttr = true;
-                    // gui attribute value for lists looks as follow: hlist=<http://rdfh.ch/lists/00FF/73d0ec0302>
-                    // get index from guiAttr array where value starts with hlist=
-                    const i = this.guiAttributes.findIndex(element => element.includes('hlist'));
-                    // find content beteween pointy brackets to get list iri
-                    const re = /\<([^)]+)\>/;
-                    const listIri = this.guiAttributes[i].match(re)[1];
+            if (type.objectType) {
+                switch (type.objectType) {
+                    // prop type is a list
+                    case Constants.ListValue:
+                        this.showGuiAttr = true;
+                        // gui attribute value for lists looks as follows: hlist=<http://rdfh.ch/lists/00FF/73d0ec0302>
+                        // get index from guiAttr array where value starts with hlist=
+                        const i = this.guiAttributes.findIndex(element => element.includes('hlist'));
+                        // find content between pointy brackets to get list iri
+                        const re = /\<([^)]+)\>/;
+                        const listIri = this.guiAttributes[i].match(re)[1];
 
-                    this.propertyForm.controls['guiAttr'].setValue(listIri);
-                    break;
+                        this.propertyForm.controls['guiAttr'].setValue(listIri);
+                        break;
 
-                // prop type is resource pointer: link to or part of
-                case Constants.GuiSearchbox:
-                    this.showGuiAttr = true;
-                    this.propertyForm.controls['guiAttr'].setValue(this.propertyInfo.propDef.objectType);
-                    break;
+                    // prop type is resource pointer: link to or part of
+                    case Constants.LinkValue:
+                        this.showGuiAttr = true;
+                        this.propertyForm.controls['guiAttr'].setValue(this.propertyInfo.propDef.objectType);
+                        break;
 
-                default:
-                    this.showGuiAttr = false;
+                    default:
+                        this.showGuiAttr = false;
+                }
+            } else {
+                this.showGuiAttr = false;
             }
+
 
         } else {
             // depending on the selected property type,
