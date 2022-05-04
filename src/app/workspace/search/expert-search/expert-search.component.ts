@@ -6,8 +6,7 @@ import { SearchParams } from '../../results/list-view/list-view.component';
 import { AdvancedSearchParams, AdvancedSearchParamsService } from '../services/advanced-search-params.service';
 
 /**
- * @ignore
- * Validator checking that the query does not contain a certain term, here OFFSET
+ * validator checking that the query does not contain a certain term, here OFFSET
  *
  * @param {RegExp} termRe
  */
@@ -73,16 +72,14 @@ CONSTRUCT {
     }
 
     /**
-     * @ignore
-     * Reset the form to the initial state.
+     * reset the form to the initial state.
      */
     resetForm() {
         this.expertSearchForm.reset({ gravsearchquery: this.defaultGravsearchQuery });
     }
 
     /**
-     * @ignore
-     * Send the gravsearch query to the result view by emitting the gravsearch as an output.
+     * send the gravsearch query to the result view by emitting the gravsearch as an output.
      */
     submitQuery() {
         const gravsearch = this._generateGravsearch(0);
@@ -96,8 +93,7 @@ CONSTRUCT {
     }
 
     /**
-     * @ignore
-     * Generate the whole gravsearch query matching the query given by the form.
+     * generate the whole gravsearch query matching the query given by the form.
      */
     private _generateGravsearch(offset: number = 0): string {
         const query = this.expertSearchForm.controls['gravsearchquery'].value;

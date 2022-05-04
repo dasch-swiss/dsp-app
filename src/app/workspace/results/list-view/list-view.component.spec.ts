@@ -57,8 +57,8 @@ class TestProgressIndicatorComponent {
  */
 @Component({
     template: `
-      <app-list-view #listViewFulltext [search]="fulltext" (resourceSelected)="openResource($event)"></app-list-view>
-      <app-list-view #listViewGravsearch [search]="gravsearch" (resourceSelected)="openResource($event)"></app-list-view>`
+      <app-list-view #listViewFulltext [search]="fulltext" (selectedResources)="openResource($event)"></app-list-view>
+      <app-list-view #listViewGravsearch [search]="gravsearch" (selectedResources)="openResource($event)"></app-list-view>`
 })
 class TestParentComponent implements OnInit {
 

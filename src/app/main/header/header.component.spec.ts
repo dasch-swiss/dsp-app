@@ -38,7 +38,6 @@ class TestHostHeaderComponent {
 })
 class TestSearchPanelComponent {
     @Input() projectfilter?: boolean = false;
-    @Input() filterbyproject?: string;
     @Input() limitToProject?: string;
     @Input() advanced?: boolean = false;
     @Input() expert?: boolean = false;

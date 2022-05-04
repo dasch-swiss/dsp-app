@@ -457,15 +457,4 @@ export class UserFormComponent implements OnInit, OnChanges {
         }
     }
 
-    /**
-     * reset the form
-     */
-    resetForm(ev: Event, user?: ReadUser) {
-        ev.preventDefault();
-
-        user = user ? user : new ReadUser();
-
-        this.buildForm(user);
-    }
-
 }

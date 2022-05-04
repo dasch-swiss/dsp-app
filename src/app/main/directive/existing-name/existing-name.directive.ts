@@ -7,18 +7,11 @@ import { Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 })
 export class ExistingNameDirective implements Validators, OnChanges {
 
-    /**
-     * @ignore
-     */
     @Input() existingName: string;
 
-    /**
-     * @ignore
-     */
     private _valFn = Validators.nullValidator;
 
     /**
-     * @ignore
      * @param changes
      */
     ngOnChanges(changes: SimpleChanges): void {
@@ -33,7 +26,6 @@ export class ExistingNameDirective implements Validators, OnChanges {
     }
 
     /**
-     * @ignore
      * @param control
      */
     validate(control: AbstractControl): { [key: string]: any } {
@@ -91,8 +83,6 @@ export function existingNamesValidator(valArrayRegexp: [RegExp]): ValidatorFn {
 }
 
 /**
- * @ignore
- *
  * @param {RegExp} pattern
  * @param {string} regType
  * @returns ValidatorFn

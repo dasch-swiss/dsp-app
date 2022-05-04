@@ -68,8 +68,6 @@ export class SortButtonComponent implements OnInit {
     }
 
     /**
-     * @ignore
-     *
      * @param key a string to sort by
      */
     sortBy(key: string) {

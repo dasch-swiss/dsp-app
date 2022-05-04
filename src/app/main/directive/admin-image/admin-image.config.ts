@@ -1,7 +1,4 @@
 /* eslint-disable max-len */
-/**
- * @ignore
- */
 export class AdminImageConfig {
 
     /**

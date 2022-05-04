@@ -27,27 +27,20 @@ export class AdminImageDirective implements OnChanges {
 
 
     /**
-     * @ignore
+     * image source
      */
     source: string;
 
 
     /**
-     * @ignore
+     * in case of an error
      */
     onError: string = AdminImageConfig.defaultNotFound;
 
-
-    /**
-     * @ignore
-     */
     constructor(private _renderer: Renderer2,
         private _ele: ElementRef
     ) { }
 
-    /**
-     * @ignore
-     */
     ngOnChanges() {
 
         this.source = this.image;

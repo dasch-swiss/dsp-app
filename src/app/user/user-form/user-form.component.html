@@ -3,7 +3,7 @@
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <!-- success message after updating -->
-    <app-message *ngIf="success" [message]="successMessage" [short]="true"></app-message>
+    <app-message *ngIf="success" [message]="successMessage" [size]="'short'"></app-message>
 
     <!-- content -->
     <form *ngIf="!loading" [formGroup]="form" class="form-content user-data" (ngSubmit)="submitData()">

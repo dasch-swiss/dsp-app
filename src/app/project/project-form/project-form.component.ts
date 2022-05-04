@@ -528,21 +528,4 @@ export class ProjectFormComponent implements OnInit {
         );
     }
 
-    /**
-     * @deprecated Maybe we can reactivate later.
-     *
-     * Reset the form
-     */
-    resetForm(ev: Event, project?: ReadProject) {
-        ev.preventDefault();
-
-        project = (project ? project : new ReadProject());
-        this.description = project.description;
-
-        this.buildForm(project);
-
-        // --> TODO fix "set value" for keywords field
-        //        this.form.controls['keywords'].setValue(this.keywords);
-    }
-
 }

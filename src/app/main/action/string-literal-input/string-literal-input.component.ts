@@ -133,8 +133,6 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
      * emit data to parent on any change on the input field
      */
     onValueChanged() {
@@ -157,10 +155,8 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * Set the language after selecting;
-     * This updates the array of StringLiterals: adds item with the selected language if it doesn't exist
+     * set the language after selecting;
+     * this updates the array of StringLiterals: adds item with the selected language if it doesn't exist
      */
     setLanguage(lang: string) {
 
@@ -176,9 +172,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * Switch focus to input field after selecting a language
+     * switch focus to input field after selecting a language
      */
     switchFocus() {
         // close the menu
@@ -193,9 +187,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * Switch focus to input field after closing the menu by clicking anywhere outside of it
+     * switch focus to input field after closing the menu by clicking anywhere outside of it
      */
     menuClosed() {
         if (!this.disabled) {
@@ -205,9 +197,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * Set the value in the input field
+     * set the value in the input field
      */
     updateFormField(value: string) {
         if (!value) {
@@ -220,9 +210,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * Update the array of StringLiterals depending on value / empty value add or remove item from array.
+     * update the array of StringLiterals depending on value / empty value add or remove item from array.
      */
     updateStringLiterals(lang: string, value?: string) {
         const index = this.value.findIndex(i => i.language === lang);
@@ -249,9 +237,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * In case of strange array of StringLiterals, this method will reset to a API-conform array. This means an array without empty values.
+     * in case of strange array of StringLiterals, this method will reset to a API-conform array. This means an array without empty values.
      */
     resetValues() {
         const length: number = this.value.length;
@@ -277,9 +263,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     }
 
     /**
-     * @ignore
-     *
-     * Get the value from array of StringLiterals for the selected language
+     * get the value from array of StringLiterals for the selected language
      */
     getValueFromStringLiteral(lang: string): string {
         // get index for this language

@@ -87,8 +87,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
     }
 
     /**
-     * @ignore
-     * Gets all available ontologies for the search form.
+     * gets all available ontologies for the search form.
      * @returns void
      */
     initializeOntologies(): void {
@@ -167,8 +166,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
     }
 
     /**
-     * @ignore
-     * Validates form and returns its status (boolean).
+     * validates form and returns its status (boolean).
      */
     private _validateForm(): boolean {
 

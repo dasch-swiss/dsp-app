@@ -126,8 +126,7 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
     }
 
     /**
-     * @ignore
-     * Add a property to the search form.
+     * add a property to the search form.
      * @returns void
      */
     addProperty(): void {
@@ -135,8 +134,7 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
     }
 
     /**
-     * @ignore
-     * Remove the last property from the search form.
+     * remove the last property from the search form.
      * @returns void
      */
     removeProperty(): void {
@@ -144,8 +142,7 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
     }
 
     /**
-     * @ignore
-     * Resets the form (selected resource class and specified properties) preserving the active ontology.
+     * resets the form (selected resource class and specified properties) preserving the active ontology.
      */
     resetForm() {
         if (this.activeOntology !== undefined) {

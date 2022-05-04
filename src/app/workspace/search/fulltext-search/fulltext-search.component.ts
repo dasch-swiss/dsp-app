@@ -55,14 +55,6 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     @Input() projectfilter?: boolean = false;
 
     /**
-     * @deprecated Use `limitToProject` instead
-     *
-     * @param [filterbyproject] If the full-text search should be
-     * filtered by one project, you can define it with project iri.
-     */
-    @Input() filterbyproject?: string;
-
-    /**
      * filter ontologies in advanced search or query in fulltext search by specified project IRI
      *
      * @param limitToProject
@@ -146,11 +138,6 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         const currentSearchTerm = urlArray[urlArray.length - 1];
         if(urlArray[urlArray.length - 2] === 'fulltext') {
             this.searchQuery = decodeURI(decodeURI(currentSearchTerm));
-        }
-
-        // filterbyproject is set as deprecated. To avoid breaking changes we still support it
-        if (this.filterbyproject) {
-            this.limitToProject = this.filterbyproject;
         }
 
         // initialise prevSearch

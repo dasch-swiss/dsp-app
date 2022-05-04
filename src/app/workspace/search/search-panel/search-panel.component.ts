@@ -26,14 +26,6 @@ export class SearchPanelComponent implements OnInit {
     @Input() projectfilter?: boolean = false;
 
     /**
-     * @deprecated Use `limitToProject` instead
-     *
-     * @param [filterbyproject] If your full-text search should be filtered by one project, you can define it with project
-     * iri in the parameter filterbyproject.
-     */
-    @Input() filterbyproject?: string;
-
-    /**
      * filter ontologies in advanced search or query in fulltext search by specified project IRI
      *
      * @param limitToProject
@@ -76,10 +68,7 @@ export class SearchPanelComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        // filterbyproject is set as deprecated. To avoid breaking changes we still support the parameter
-        if (this.filterbyproject) {
-            this.limitToProject = this.filterbyproject;
-        }
+
     }
 
     openPanelWithBackdrop(type: string) {
