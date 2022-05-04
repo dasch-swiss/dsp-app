@@ -20,10 +20,21 @@ import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens'
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
+import { SortingService } from 'src/app/main/services/sorting.service';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { DefaultClass, DefaultResourceClasses } from '../default-data/default-resource-classes';
-import { CardinalityInfo } from '../ontology.component';
+import { CardinalityInfo, OntologyProperties } from '../ontology.component';
 import { OntologyService } from '../ontology.service';
+
+export interface PropToDisplay extends IHasProperty {
+    propDef?: PropertyDefinition;
+}
+
+export interface PropToAdd {
+    ontologyId: string;
+    ontologyLabel: string;
+    properties: PropertyInfoObject[];
+}
 
 @Component({
     selector: 'app-resource-class-info',
@@ -41,7 +52,7 @@ export class ResourceClassInfoComponent implements OnInit {
 
     @Input() projectStatus: boolean;
 
-    @Input() ontoProperties: ResourcePropertyDefinitionWithAllLanguages[] = [];
+    @Input() ontologies: ReadOntology[] = [];
 
     @Input() lastModificationDate?: string;
 
@@ -58,8 +69,10 @@ export class ResourceClassInfoComponent implements OnInit {
     // to update the cardinality we need the information about property (incl. propType) and resource class
     @Output() updateCardinality: EventEmitter<string> = new EventEmitter<string>();
 
-
     ontology: ReadOntology;
+
+    // list of all ontologies with their properties
+    ontoProperties: OntologyProperties[] = [];
 
     cardinalityUpdateEnabled: boolean;
 
@@ -68,7 +81,7 @@ export class ResourceClassInfoComponent implements OnInit {
     classCanReplaceCardinality: boolean;
 
     // list of properties that can be displayed (not all of the props should be displayed)
-    propsToDisplay: IHasProperty[] = [];
+    propsToDisplay: PropToDisplay[] = [];
 
     subClassOfLabel = '';
 
@@ -79,7 +92,10 @@ export class ResourceClassInfoComponent implements OnInit {
     defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
     // list of existing ontology properties, which are not in this resource class
-    existingProperties: PropertyInfoObject[];
+    existingProperties: PropToAdd[];
+
+    // load single property (in case of property cardinality action)
+    loadProperty = false;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -87,11 +103,28 @@ export class ResourceClassInfoComponent implements OnInit {
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
-        private _ontoService: OntologyService
+        private _ontoService: OntologyService,
+        private _sortingService: SortingService
     ) { }
 
     ngOnInit(): void {
+        // grab the onto properties information to display
+        this.ontoProperties = [];
+        // get all project ontologies
+        this._cache.get('currentProjectOntologies').subscribe(
+            (ontologies: ReadOntology[]) => {
+                this.ontologies = ontologies;
+                ontologies.forEach(onto => {
+                    const prepareList: OntologyProperties = {
+                        ontology: onto.id,
+                        properties: this.initOntoProperties(onto.getAllPropertyDefinitions())
+                    };
+                    this.ontoProperties.push(prepareList);
+                });
+            }
+        );
 
+        // get currently selected ontology
         this._cache.get('currentOntology').subscribe(
             (response: ReadOntology) => {
                 this.ontology = response;
@@ -163,6 +196,22 @@ export class ResourceClassInfoComponent implements OnInit {
 
     }
 
+    initOntoProperties(allOntoProperties: PropertyDefinition[]): PropertyDefinition[] {
+        // reset the ontology properties
+        const listOfProperties = [];
+
+        // display only the properties which are not a subjectType of Standoff
+        allOntoProperties.forEach(resProp => {
+            const standoff = (resProp.subjectType ? resProp.subjectType.includes('Standoff') : false);
+            if (resProp.objectType !== Constants.LinkValue && !standoff) {
+                listOfProperties.push(resProp);
+            }
+        });
+        // sort properties by label
+        // --> TODO: add sort functionallity to the gui
+        return this._sortingService.keySortByAlphabetical(listOfProperties, 'label');
+    }
+
     /**
      * prepares props to display
      * Not all props should be displayed; there are some system / API-specific
@@ -170,55 +219,75 @@ export class ResourceClassInfoComponent implements OnInit {
      *
      * @param props
      */
-    preparePropsToDisplay(classProps: IHasProperty[]) {
+    preparePropsToDisplay(classProps: PropToDisplay[]) {
 
-        const ontoProps = <ResourcePropertyDefinitionWithAllLanguages[]>this.ontology.getAllPropertyDefinitions();
-
-        // reset properties to display
-        this.propsToDisplay = [];
         // reset existing properties to select from
         this.existingProperties = [];
 
-        classProps.forEach((hasProp: IHasProperty) => {
+        classProps.forEach((hasProp: PropToDisplay) => {
 
-            const propToDisplay = ontoProps.find(obj =>
-                obj.id === hasProp.propertyIndex &&
-                ((obj.subjectType && !obj.subjectType.includes('Standoff')) && obj.objectType !== Constants.LinkValue || !obj.isLinkValueProperty)
-            );
+            const ontoIri = hasProp.propertyIndex.split(Constants.HashDelimiter)[0];
+            // ignore http://api.knora.org/ontology/knora-api/v2 and ignore  http://www.w3.org/2000/01/rdf-schema
+            if (ontoIri !== Constants.KnoraApiV2 && ontoIri !== Constants.Rdfs) {
+                // get property definition from list of project ontologies
+                const index = this.ontoProperties.findIndex((item: OntologyProperties) => item.ontology === ontoIri);
+                hasProp.propDef = this.ontoProperties[index].properties.find((obj: ResourcePropertyDefinitionWithAllLanguages) =>
+                    obj.id === hasProp.propertyIndex &&
+                    ((obj.subjectType && !obj.subjectType.includes('Standoff')) && obj.objectType !== Constants.LinkValue || !obj.isLinkValueProperty)
+                );
 
-            if (propToDisplay) {
-                // add to list of properties to display in res class
-                this.propsToDisplay.push(hasProp);
-                // and remove from list of existing properties which can be added
-                this.ontoProperties = this.ontoProperties.filter(prop => !(prop.id === propToDisplay.id));
+                // propDef was found, add hasProp to the properties list which has to be displayed in this resource class
+                if (hasProp.propDef) {
+                    if (this.propsToDisplay.indexOf(hasProp) === -1) {
+                        this.propsToDisplay.push(hasProp);
+                    }
+
+                    // and remove from list of existing properties to avoid double cardinality entries
+                    // because the prop displayed in the class cannot be added a second time,
+                    // so we have to hide it from the list of "Add existing property"
+                    const delProp = this.ontoProperties[index].properties.indexOf(hasProp.propDef, 0);
+                    if (delProp > -1) {
+                        this.ontoProperties[index].properties.splice(delProp, 1);
+                    }
+                }
             }
-
         });
 
-        this.ontoProperties.forEach((availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
-            const superProp = this._ontoService.getSuperProperty(availableProp);
-            if (superProp) {
-                if (availableProp.subPropertyOf.indexOf(superProp) === -1) {
-                    availableProp.subPropertyOf.push(superProp);
-                }
-            }
+        this.ontoProperties.forEach((op: OntologyProperties, i: number) => {
 
-            let propType: DefaultProperty;
-            // find corresponding default property to have more prop info
-            this._ontoService.getDefaultPropType(availableProp).subscribe(
-                (prop: DefaultProperty) => {
-                    propType = prop;
-                }
-            );
+            this.existingProperties.push({
+                ontologyId: op.ontology,
+                ontologyLabel: this.ontologies[i].label,
+                properties: []
+            });
 
-            this.existingProperties.push(
-                {
+            op.properties.forEach((availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
+
+                const superProp = this._ontoService.getSuperProperty(availableProp);
+                if (superProp) {
+                    if (availableProp.subPropertyOf.indexOf(superProp) === -1) {
+                        availableProp.subPropertyOf.push(superProp);
+                    }
+                }
+
+                let propType: DefaultProperty;
+                // find corresponding default property to have more prop info
+                this._ontoService.getDefaultPropType(availableProp).subscribe(
+                    (prop: DefaultProperty) => {
+                        propType = prop;
+                    }
+                );
+
+                const propToAdd: PropertyInfoObject = {
                     propType: propType,
                     propDef: availableProp
-                }
-            );
-        });
+                };
 
+                this.existingProperties[i].properties.push(propToAdd);
+
+            });
+
+        });
     }
 
     canBeDeleted() {
@@ -255,21 +324,14 @@ export class ResourceClassInfoComponent implements OnInit {
         this.updateCard(cardinality);
     }
 
-    addExistingProperty(propDef: ResourcePropertyDefinitionWithAllLanguages) {
-
-        // find prop type from list of existing properties
-        const pos = this.existingProperties.findIndex(item => item.propDef.id === propDef.id);
-
-        const propType = this.existingProperties[pos].propType;
-
+    addExistingProperty(prop: PropertyInfoObject) {
         const cardinality: CardinalityInfo = {
             resClass: this.resourceClass,
             property: {
-                propType: propType,
-                propDef: propDef,
+                propType: prop.propType,
+                propDef: prop.propDef,
             }
         };
-
         this.updateCard(cardinality);
     }
 
@@ -278,6 +340,8 @@ export class ResourceClassInfoComponent implements OnInit {
      * @param property
      */
     removeProperty(property: DefaultClass) {
+
+        this.loadProperty = true;
 
         const onto = new UpdateOntology<UpdateResourceClassCardinality>();
 
@@ -291,9 +355,7 @@ export class ResourceClassInfoComponent implements OnInit {
 
         delCard.cardinalities = [];
 
-        this.propsToDisplay = this.propsToDisplay.filter(prop => (prop.propertyIndex === property.iri));
-
-        delCard.cardinalities = this.propsToDisplay;
+        delCard.cardinalities = this.propsToDisplay.filter(prop => (prop.propertyIndex === property.iri));
         onto.entity = delCard;
 
         this._dspApiConnection.v2.onto.deleteCardinalityFromResourceClass(onto).subscribe(
@@ -306,6 +368,8 @@ export class ResourceClassInfoComponent implements OnInit {
                 this.updateCardinality.emit(this.ontology.id);
                 // display success message
                 this._notification.openSnackBar(`You have successfully removed "${property.label}" from "${this.resourceClass.label}".`);
+
+                this.loadProperty = false;
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(<ApiResponseError>error);
@@ -407,8 +471,6 @@ export class ResourceClassInfoComponent implements OnInit {
                     this.lastModificationDate = responseGuiOrder.lastModificationDate;
 
                     // successful request: update the view
-                    this.preparePropsToDisplay(this.propsToDisplay);
-
                     this.lastModificationDateChange.emit(this.lastModificationDate);
 
                     // display success message

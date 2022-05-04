@@ -179,29 +179,23 @@
             <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
                 <div class="ontology-editor-grid classes" *ngIf="view === 'classes'">
                     <!-- list of resource classes -->
-                    <app-resource-class-info *ngFor="let resClass of ontoClasses"
-                        [resourceClass]="resClass"
-                        [projectCode]="projectCode"
-                        [projectStatus]="project.status"
-                        [ontoProperties]="ontoProperties"
-                        [expanded]="expandClasses"
-                        [(lastModificationDate)]="lastModificationDate"
+                    <app-resource-class-info *ngFor="let resClass of ontoClasses" [resourceClass]="resClass"
+                        [projectCode]="projectCode" [projectStatus]="project.status" [ontologies]="ontologies"
+                        [expanded]="expandClasses" [(lastModificationDate)]="lastModificationDate"
                         (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
                         (deleteResourceClass)="delete('ResourceClass', $event)"
                         (updateCardinality)="initOntology($event)">
                     </app-resource-class-info>
                 </div>
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
-                    <!-- list of resource properties -->
-                    <mat-list>
-                        <mat-list-item class="property" *ngFor="let prop of ontoProperties; let odd = odd" [class.odd]="odd">
+                    <!-- list of properties of current ontology -->
+                    <mat-list class="without-padding">
+                        <mat-list-item class="property" *ngFor="let prop of ontoProperties.properties; let odd = odd"
+                            [class.odd]="odd">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
-                                     objectType is not a linkValue (otherwise we have the property twice) -->
-                            <app-property-info
-                                [propDef]="ontology?.properties[prop.id]"
-                                [projectCode]="projectCode"
-                                [projectStatus]="project.status"
-                                [(lastModificationDate)]="lastModificationDate"
+                                 if objectType is a linkValue hide it (otherwise we have the property twice) -->
+                            <app-property-info [propDef]="ontology?.properties[prop.id]" [projectCode]="projectCode"
+                                [projectStatus]="project.status" [(lastModificationDate)]="lastModificationDate"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
                                 (deleteResourceProperty)="delete('Property', $event)">
                             </app-property-info>

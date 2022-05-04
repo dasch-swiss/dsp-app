@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.property-info.standalone {
+  padding: 16px;
+}
+
 .additional-info {
   color: $primary_700;
 }
@@ -44,6 +48,7 @@
 
 .not-used {
   color: $warn;
+  font-size: 12px;
 }
 
 .type {

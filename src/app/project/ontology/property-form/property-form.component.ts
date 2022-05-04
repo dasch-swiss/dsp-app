@@ -330,7 +330,6 @@ export class PropertyFormComponent implements OnInit {
         // reset value of guiAttr
         this.propertyForm.controls['guiAttr'].setValue(undefined);
 
-
         // set gui attribute value depending on gui element and existing property (edit mode)
         if (this.propertyInfo.propDef) {
             // the gui attribute can't be changed (at the moment?);
@@ -562,7 +561,6 @@ export class PropertyFormComponent implements OnInit {
 
         this._dspApiConnection.v2.onto.addCardinalityToResourceClass(onto).subscribe(
             (res: ResourceClassDefinitionWithAllLanguages) => {
-
                 this.lastModificationDate = res.lastModificationDate;
                 // close the dialog box
                 this.loading = false;

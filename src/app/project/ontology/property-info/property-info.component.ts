@@ -55,6 +55,12 @@ export class Property {
     }
 }
 
+export interface ShortInfo {
+    id: string;
+    label: string;
+    comment: string;
+}
+
 @Component({
     selector: 'app-property-info',
     templateUrl: './property-info.component.html',
@@ -103,8 +109,8 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     @Output() deleteResourceProperty: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
     @Output() removePropertyFromClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
-    // submit res class iri ot open res class
-    @Output() clickedOnClass: EventEmitter<ResourceClassDefinitionWithAllLanguages> = new EventEmitter<ResourceClassDefinitionWithAllLanguages>();
+    // submit res class iri to open res class (not yet implemented)
+    @Output() clickedOnClass: EventEmitter<ShortInfo> = new EventEmitter<ShortInfo>();
 
     propInfo: Property = new Property();
 
@@ -123,7 +129,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
     // list of resource classes where the property is used
-    resClasses: ResourceClassDefinitionWithAllLanguages[] = [];
+    resClasses: ShortInfo[] = [];
 
     // disable edit property button in case the property type is not supported in DSP-APP
     disableEditProperty = false;
@@ -140,7 +146,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         this._cache.get('currentOntology').subscribe(
             (response: ReadOntology) => {
                 this.ontology = response;
-
             }
         );
     }
@@ -180,13 +185,11 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         }
 
         // get the default property type for this property
-        // if (this.propDef.guiElement) {
         this._ontoService.getDefaultPropType(this.propDef).subscribe(
             (prop: DefaultProperty) => {
                 this.propType = prop;
             }
         );
-        // }
 
     }
 
@@ -234,19 +237,25 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
         // get all classes where the property is used
         if (!this.propCard) {
-
-            const classes = this.ontology.getAllClassDefinitions();
-            for (const c of classes) {
-                if (c.propertiesList.find(i => i.propertyIndex === this.propDef.id)) {
-                    this.resClasses.push(c as ResourceClassDefinitionWithAllLanguages);
+            this.resClasses = [];
+            this._cache.get('currentProjectOntologies').subscribe(
+                (ontologies: ReadOntology[]) => {
+                    ontologies.forEach(onto => {
+                        const classes = onto.getAllClassDefinitions();
+                        classes.forEach(resClass => {
+                            if (resClass.propertiesList.find(prop => prop.propertyIndex === this.propDef.id)) {
+                                // build own resClass object with id, label and comment
+                                const propOfClass: ShortInfo = {
+                                    id: resClass.id,
+                                    label: resClass.label,
+                                    comment: onto.label + (resClass.comment ? ': ' + resClass.comment : '')
+                                };
+                                this.resClasses.push(propOfClass);
+                            }
+                        });
+                    });
                 }
-                // const splittedSubClass = ontology.classes[c].subClassOf[0].split('#');
-
-                // if (splittedSubClass[0] !== Constants.StandoffOntology && splittedSubClass[1] !== 'StandoffTag' && splittedSubClass[1] !== 'StandoffLinkTag') {
-                //     this.ontoClasses.push(this.ontology.classes[c]);
-                // }
-            }
-
+            );
         }
     }
 
@@ -290,10 +299,10 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                     this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
                         (canDoRes: CanDoResponse) => {
                             this.propCanBeDeleted = canDoRes.canDo;
-                        },
-                        (error: ApiResponseError) => {
-                            this._errorHandler.showMessage(error);
                         }
+                        // since this request runs on mouseover, it can always
+                        // ends in a EditConflictException because of a wrong lastModificationDate.
+                        // so, it doesn't make sense to handle the error here and to open the snackbar
                     );
                 }
 

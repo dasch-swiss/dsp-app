@@ -3,7 +3,7 @@
     <mat-card-header class="resource-class-header" cdkDragHandle>
         <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
         <!-- <mat-icon mat-card-avatar>{{resourceClass.icon}}</mat-icon> -->
-        <mat-card-title [matTooltip]="resourceClass.comment + ' (' + resourceClass.id.split('#')[1] + ')'" matTooltipPosition="above">
+        <mat-card-title [matTooltip]="(resourceClass.comment ? resourceClass.comment : '')" matTooltipPosition="above">
             {{resourceClass.label | appTruncate: 24}}
         </mat-card-title>
         <mat-card-subtitle>
@@ -43,13 +43,14 @@
         </mat-menu>
     </mat-card-header>
     <!-- resource class card content with list of properties -->
+
     <mat-card-content *ngIf="expanded">
         <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
             *ngIf="propsToDisplay.length; else noProperties">
-            <div cdkDrag [cdkDragDisabled]="!ontology.lastModificationDate"
+            <div cdkDrag [cdkDragDisabled]="!ontology.lastModificationDate || !cardinalityUpdateEnabled"
                 *ngFor="let prop of propsToDisplay; let i = index;">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
-                <mat-list-item class="property">
+                <mat-list-item class="property" [disabled]="loadProperty">
                     <span cdkDragHandle mat-list-icon class="list-icon gui-order">
                         <span [class.hide-on-hover]="cardinalityUpdateEnabled && lastModificationDate">{{i + 1}})</span>
                         <span *ngIf="lastModificationDate && cardinalityUpdateEnabled"
@@ -59,8 +60,12 @@
                     </span>
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
-                    <app-property-info class="property-info" [propDef]="ontology?.properties[prop.propertyIndex]"
-                        [propCard]="propsToDisplay[i]" [projectCode]="projectCode" [projectStatus]="projectStatus" [resourceIri]="resourceClass.id"
+                    <app-property-info class="property-info"
+                        [propDef]="propsToDisplay[i].propDef"
+                        [propCard]="propsToDisplay[i]"
+                        [projectCode]="projectCode"
+                        [projectStatus]="projectStatus"
+                        [resourceIri]="resourceClass.id"
                         [(lastModificationDate)]="lastModificationDate"
                         (removePropertyFromClass)="removeProperty($event)">
                     </app-property-info>
@@ -83,13 +88,12 @@
 
         <mat-menu #addPropertyMenu="matMenu" xPosition="after">
             <button mat-menu-item [matMenuTriggerFor]="newFromPropType">Create new from type</button>
-            <button mat-menu-item [matMenuTriggerFor]="addExistingProp" [disabled]="!ontoProperties.length">Add existing property</button>
+            <button mat-menu-item [matMenuTriggerFor]="addExistingProp">Add existing property</button>
         </mat-menu>
         <mat-menu #newFromPropType="matMenu">
             <ng-container *ngFor="let type of defaultProperties">
                 <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                 <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-                    <!-- <button *ngFor="let subItem of my_menu[mainItem]" mat-menu-item>{{ subItem }}</button> -->
                     <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele"
                         [matTooltip]="ele.description" matTooltipPosition="after"
                         (click)="addNewProperty(ele)">
@@ -99,11 +103,16 @@
             </ng-container>
         </mat-menu>
         <mat-menu #addExistingProp="matMenu" class="default-nested-sub-menu">
-            <button mat-menu-item *ngFor="let prop of existingProperties"
-                [matTooltip]="prop.propDef.comment" matTooltipPosition="after"
-                (click)="addExistingProperty(prop.propDef)">
-                <mat-icon>{{prop.propType?.icon}}</mat-icon> {{prop.propDef.label}}
-            </button>
+            <ng-container *ngFor="let onto of existingProperties">
+                <button mat-menu-item [disabled]="!onto.properties.length" [matMenuTriggerFor]="sub_menu">{{ onto.ontologyLabel }}</button>
+                <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
+                    <button mat-menu-item *ngFor="let prop of onto.properties" [matTooltip]="prop.propDef.comment" matTooltipPosition="after"
+                        (click)="addExistingProperty(prop)">
+                        <mat-icon>{{prop.propType?.icon}}</mat-icon> {{prop.propDef.label}}
+                    </button>
+                </mat-menu>
+            </ng-container>
+
         </mat-menu>
     </mat-card-content>
 </mat-card>
