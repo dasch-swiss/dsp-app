@@ -33,6 +33,23 @@ $width: 340px;
   .ontology-editor-header {
     z-index: 2;
     top: 121px;
+
+    .ontology-info {
+      width: calc(100% - 176px - 32px);
+
+      h3, p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      h3 {
+        margin-top: 6px;
+      }
+    }
     .mat-toolbar-row {
       padding-right: 0;
 
