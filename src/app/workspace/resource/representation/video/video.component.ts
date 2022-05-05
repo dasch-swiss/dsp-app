@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {
@@ -16,12 +16,7 @@ import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
-import {
-    EmitEvent,
-    Events,
-    UpdatedFileEventValue,
-    ValueOperationEventService
-} from '../../services/value-operation-event.service';
+import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { PointerValue } from '../av-timeline/av-timeline.component';
 import { FileRepresentation } from '../file-representation';
 
@@ -30,13 +25,15 @@ import { FileRepresentation } from '../file-representation';
     templateUrl: './video.component.html',
     styleUrls: ['./video.component.scss']
 })
-export class VideoComponent implements OnInit {
+export class VideoComponent implements OnInit, AfterViewInit {
 
     @Input() src: FileRepresentation;
 
     @Input() start?= 0;
 
     @Input() parentResource: ReadResource;
+
+    @Output() loaded = new EventEmitter<boolean>();
 
     @ViewChild('videoEle') videoEle: ElementRef;
 
@@ -114,6 +111,10 @@ export class VideoComponent implements OnInit {
     ngOnInit(): void {
         this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
         this.fileHasChanged = false;
+    }
+
+    ngAfterViewInit() {
+        this.loaded.emit(true);
     }
 
     /**

@@ -209,7 +209,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         this.compoundPosition.position = position;
         this.compoundPosition.page = page;
 
-        this.collectRepresentationsAndAnnotations(this.incomingResource);
+        this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
 
     }
 
@@ -254,7 +254,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                         this.adminPermissions = this.session.user.sysAdmin ? this.session.user.sysAdmin : this.session.user.projectAdmin.some(e => e === res.res.attachedToProject);
                     }
 
-                    this.collectRepresentationsAndAnnotations(this.resource);
+                    this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.resource);
 
                     if (!this.representationsToDisplay.length && !this.compoundPosition) {
                         // the resource could be a compound object
@@ -264,6 +264,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                                 if (countQuery.numberOfResults > 0) {
                                     this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
                                     this.compoundNavigation(1);
+                                } else {
+                                    // not a compound object
+                                    this.loading = false;
                                 }
                             },
                             (error: ApiResponseError) => {
@@ -280,7 +283,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                     // gather system property information
                     res.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
                 }
-                this.loading = false;
+                // this.loading = false;
             },
             (error: ApiResponseError) => {
                 this.loading = false;
@@ -311,7 +314,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 res.resProps = this.initProps(response);
                 res.systemProps = this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
-                this.collectRepresentationsAndAnnotations(this.incomingResource);
+                this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
+
+                this.loading = this.representationsToDisplay.length > 0;
 
                 if (this.representationsToDisplay.length && this.representationsToDisplay[0].fileValue && this.compoundPosition) {
                     this.getIncomingRegions(this.incomingResource, 0);
@@ -331,6 +336,10 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         this.selectedTabLabel = e.tab.textLabel;
+    }
+
+    representationLoaded(e: boolean) {
+        this.loading = !e;
     }
 
     /**
@@ -386,13 +395,13 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
      * @param resource The resource to get the images for.
      * @returns A collection of images for the given resource.
      */
-    protected collectRepresentationsAndAnnotations(resource: DspResource): any {
+    protected collectRepresentationsAndAnnotations(resource: DspResource): FileRepresentation[] {
 
         if (!resource) {
             return;
         }
 
-        // --> TODO: should be a general object for all kind of representations
+        // general object for all kind of representations
         const representations: FileRepresentation[] = [];
 
         // --> TODO: use a switch here to go through the different representation types
@@ -465,8 +474,10 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             const fileValue: ReadArchiveFileValue = resource.res.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue;
             const archive = new FileRepresentation(fileValue);
             representations.push(archive);
+
         }
-        this.representationsToDisplay = representations;
+
+        return representations;
 
     }
 
@@ -498,6 +509,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                     this.resource.incomingRepresentations = incomingImageRepresentations.resources;
                     this.getIncomingResource(this.resource.incomingRepresentations[this.compoundPosition.position].id);
 
+                } else {
+                    this.loading = false;
                 }
             },
             (error: ApiResponseError) => {
@@ -509,7 +522,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     /**
      * requests incoming resources for [[this.resource]].
-     * Incoming resources are: regions, StillImageRepresentations, and incoming links.
+     * Incoming resources are: regions, representations, and incoming links.
      */
     protected requestIncomingResources(resource: DspResource): void {
 
@@ -559,7 +572,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 // prepare regions to be displayed
                 // triggers ngOnChanges of StillImageComponent
-                this.collectRepresentationsAndAnnotations(resource);
+                this.representationsToDisplay = this.collectRepresentationsAndAnnotations(resource);
 
             },
             (error: ApiResponseError) => {

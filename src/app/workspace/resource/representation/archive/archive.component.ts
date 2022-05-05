@@ -1,7 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Constants, UpdateFileValue, UpdateResource, UpdateValue, WriteValueResponse, ReadResource, ApiResponseError, KnoraApiConnection, ReadArchiveFileValue } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseError,
+    Constants,
+    KnoraApiConnection,
+    ReadArchiveFileValue,
+    ReadResource,
+    UpdateFileValue,
+    UpdateResource,
+    UpdateValue,
+    WriteValueResponse
+} from '@dasch-swiss/dsp-js';
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
@@ -14,10 +24,13 @@ import { FileRepresentation } from '../file-representation';
     templateUrl: './archive.component.html',
     styleUrls: ['./archive.component.scss']
 })
-export class ArchiveComponent implements OnInit {
+export class ArchiveComponent implements OnInit, AfterViewInit {
 
     @Input() src: FileRepresentation;
+
     @Input() parentResource: ReadResource;
+
+    @Output() loaded = new EventEmitter<boolean>();
 
     originalFilename: string;
 
@@ -31,6 +44,10 @@ export class ArchiveComponent implements OnInit {
 
     ngOnInit(): void {
         this._getOriginalFilename();
+    }
+
+    ngAfterViewInit() {
+        this.loaded.emit(true);
     }
 
     // https://stackoverflow.com/questions/66986983/angular-10-download-file-from-firebase-link-without-opening-into-new-tab

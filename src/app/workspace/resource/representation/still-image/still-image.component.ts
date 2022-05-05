@@ -1,10 +1,13 @@
 import {
+    AfterViewInit,
     Component,
     ElementRef,
-    EventEmitter, Inject,
+    EventEmitter,
+    Inject,
     Input,
     OnChanges,
-    OnDestroy, Output,
+    OnDestroy,
+    Output,
     Renderer2,
     SimpleChanges
 } from '@angular/core';
@@ -110,7 +113,7 @@ interface PolygonsForRegion {
     templateUrl: './still-image.component.html',
     styleUrls: ['./still-image.component.scss']
 })
-export class StillImageComponent implements OnChanges, OnDestroy {
+export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     @Input() images: FileRepresentation[];
     @Input() imageCaption?: string;
@@ -127,7 +130,10 @@ export class StillImageComponent implements OnChanges, OnDestroy {
     @Output() regionClicked = new EventEmitter<string>();
 
     @Output() regionAdded = new EventEmitter<string>();
-    regionDrawMode: Boolean = false; // stores whether viewer is currently drawing a region
+
+    @Output() loaded = new EventEmitter<boolean>();
+
+    regionDrawMode = false; // stores whether viewer is currently drawing a region
     private _regionDragInfo; // stores the information of the first click for drawing a region
     private _viewer: OpenSeadragon.Viewer;
     private _regions: PolygonsForRegion = {};
@@ -193,6 +199,10 @@ export class StillImageComponent implements OnChanges, OnDestroy {
         if (changes['activateRegion']) {
             this._unhighlightAllRegions();
         }
+    }
+
+    ngAfterViewInit() {
+        this.loaded.emit(true);
     }
 
     ngOnDestroy() {

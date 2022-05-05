@@ -1,6 +1,16 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ApiResponseError, Constants, KnoraApiConnection, ReadDocumentFileValue, ReadResource, UpdateFileValue, UpdateResource, UpdateValue, WriteValueResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseError,
+    Constants,
+    KnoraApiConnection,
+    ReadDocumentFileValue,
+    ReadResource,
+    UpdateFileValue,
+    UpdateResource,
+    UpdateValue,
+    WriteValueResponse
+} from '@dasch-swiss/dsp-js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -14,10 +24,13 @@ import { FileRepresentation } from '../file-representation';
     templateUrl: './document.component.html',
     styleUrls: ['./document.component.scss']
 })
-export class DocumentComponent implements OnInit {
+export class DocumentComponent implements OnInit, AfterViewInit {
 
     @Input() src: FileRepresentation;
+
     @Input() parentResource: ReadResource;
+
+    @Output() loaded = new EventEmitter<boolean>();
 
     @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
 
@@ -34,6 +47,10 @@ export class DocumentComponent implements OnInit {
 
     ngOnInit(): void {
 
+    }
+
+    ngAfterViewInit() {
+        this.loaded.emit(true);
     }
 
     searchQueryChanged(newQuery: string) {

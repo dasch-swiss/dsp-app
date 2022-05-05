@@ -1,11 +1,11 @@
 <div class="content large middle">
-    <div class="resource-view" *ngIf="resource && !loading">
+    <div class="resource-view">
 
         <!-- dsp-resource-representation -->
         <div class="representation-container center" *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue"
             [ngSwitch]="representationsToDisplay[0].fileValue?.type">
             <!-- still image view -->
-            <app-still-image #stillImage class="dsp-representation" *ngSwitchCase="representationConstants.stillImage"
+            <app-still-image #stillImage class="dsp-representation stillimage" *ngSwitchCase="representationConstants.stillImage"
                 [images]="representationsToDisplay"
                 [imageCaption]="(incomingResource ? resource.res.label + ': ' + incomingResource.res.label : resource.res.label)"
                 [iiifUrl]="iiifUrl"
@@ -14,78 +14,103 @@
                 [project]="resource.res.attachedToProject"
                 [currentTab]="selectedTabLabel"
                 [parentResource]="resource.res"
+                (loaded)="representationLoaded($event)"
                 (goToPage)="compoundNavigation($event)"
                 (regionClicked)="openRegion($event)"
                 (regionAdded)="updateRegions($event)">
             </app-still-image>
 
-            <app-document class="dsp-representation document" *ngSwitchCase="representationConstants.document" [src]="representationsToDisplay[0]" [parentResource]="resource.res">
+            <app-document #document class="dsp-representation document" *ngSwitchCase="representationConstants.document"
+                [src]="representationsToDisplay[0]"
+                [parentResource]="resource.res"
+                (loaded)="representationLoaded($event)">
             </app-document>
 
-            <app-audio class="dsp-representation audio" *ngSwitchCase="representationConstants.audio" [src]="representationsToDisplay[0]" [parentResource]="resource.res"></app-audio>
+            <app-audio #audio class="dsp-representation audio" *ngSwitchCase="representationConstants.audio"
+                [src]="representationsToDisplay[0]"
+                [parentResource]="resource.res"
+                (loaded)="representationLoaded($event)">
+            </app-audio>
 
-            <app-video class="dsp-representation video" *ngSwitchCase="representationConstants.movingImage" [src]="representationsToDisplay[0]" [parentResource]="resource.res"></app-video>
+            <app-video #video class="dsp-representation video" *ngSwitchCase="representationConstants.movingImage"
+                [src]="representationsToDisplay[0]"
+                [parentResource]="resource.res"
+                (loaded)="representationLoaded($event)">
+            </app-video>
 
-            <app-archive class="dsp-representation archive" *ngSwitchCase="representationConstants.archive" [src]="representationsToDisplay[0]" [parentResource]="resource.res"></app-archive>
+            <app-archive #archive class="dsp-representation archive" *ngSwitchCase="representationConstants.archive"
+                [src]="representationsToDisplay[0]"
+                [parentResource]="resource.res"
+                (loaded)="representationLoaded($event)">
+            </app-archive>
 
             <span *ngSwitchDefault>
                 The file representation type "{{representationsToDisplay[0].fileValue.type}}" is not yet implemented
             </span>
 
             <!-- TODO: here we'll add more viewers and players dsp-moving-image, dsp-audio etc. -->
-
         </div>
+        <div class="data-container" *ngIf="!loading">
 
-        <!-- tabs -->
-        <mat-tab-group *ngIf="!resource.res.isDeleted; else deletedResource" animationDuration="0ms" [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
-            <!-- first tab for the main resource e.g. book -->
-            <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
-                <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
-                [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid">
-                </app-properties>
-            </mat-tab>
-
-            <!-- incoming resource -->
-            <mat-tab *ngIf="incomingResource"
-                [label]="incomingResource.res.entityInfo?.classes[incomingResource.res.type].label">
-                <app-properties *ngIf="incomingResource.res" [resource]="incomingResource" [displayProjectInfo]="false"
-                [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid">
-                </app-properties>
-            </mat-tab>
-
-            <!-- annotations -->
-            <mat-tab label="annotations"
-                *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
-                <ng-template matTabLabel class="annotations">
-                    <span [matBadge]="representationsToDisplay[0]?.annotations.length"
-                        [matBadgeHidden]="representationsToDisplay[0]?.annotations.length === 0" matBadgeColor="primary"
-                        matBadgeOverlap="false">
-                        Annotations
-                    </span>
-                </ng-template>
-                <div class="region-property" *ngFor="let annotation of annotationResources" [id]="annotation.res.id"
-                    [class.active]="annotation.res.id === selectedRegion">
-                    <app-properties
-                        [resource]="annotation"
-                        [displayProjectInfo]="false"
-                        [isAnnotation]="true"
+            <!-- tabs -->
+            <mat-tab-group *ngIf="!resource.res.isDeleted; else deletedResource" animationDuration="0ms" [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
+                <!-- first tab for the main resource e.g. book -->
+                <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
+                    <app-properties *ngIf="resource.res"
+                        [resource]="resource"
+                        [displayProjectInfo]="true"
                         [adminPermissions]="adminPermissions"
                         [editPermissions]="editPermissions"
-                        [valueUuidToHighlight]="valueUuid"
-                        (regionChanged)="updateRegion()">
+                        [valueUuidToHighlight]="valueUuid">
                     </app-properties>
-                </div>
+                </mat-tab>
 
-            </mat-tab>
-        </mat-tab-group>
-        <ng-template #deletedResource>
-            <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
-                [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid">
-            </app-properties>
-        </ng-template>
+                <!-- incoming resource -->
+                <mat-tab *ngIf="incomingResource"
+                    [label]="incomingResource.res.entityInfo?.classes[incomingResource.res.type].label">
+                    <app-properties *ngIf="incomingResource.res"
+                        [resource]="incomingResource"
+                        [displayProjectInfo]="false"
+                        [adminPermissions]="adminPermissions"
+                        [editPermissions]="editPermissions"
+                        [valueUuidToHighlight]="valueUuid">
+                    </app-properties>
+                </mat-tab>
+
+                <!-- annotations -->
+                <mat-tab label="annotations"
+                    *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
+                    <ng-template matTabLabel class="annotations">
+                        <span [matBadge]="representationsToDisplay[0]?.annotations.length"
+                            [matBadgeHidden]="representationsToDisplay[0]?.annotations.length === 0" matBadgeColor="primary"
+                            matBadgeOverlap="false">
+                            Annotations
+                        </span>
+                    </ng-template>
+                    <div class="region-property" *ngFor="let annotation of annotationResources" [id]="annotation.res.id"
+                        [class.active]="annotation.res.id === selectedRegion">
+                        <app-properties
+                            [resource]="annotation"
+                            [displayProjectInfo]="false"
+                            [isAnnotation]="true"
+                            [adminPermissions]="adminPermissions"
+                            [editPermissions]="editPermissions"
+                            [valueUuidToHighlight]="valueUuid"
+                            (regionChanged)="updateRegion()">
+                        </app-properties>
+                    </div>
+
+                </mat-tab>
+            </mat-tab-group>
+            <ng-template #deletedResource>
+                <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
+                    [adminPermissions]="adminPermissions" [editPermissions]="editPermissions" [valueUuidToHighlight]="valueUuid">
+                </app-properties>
+            </ng-template>
+        </div>
+        <!-- progress indicator -->
+        <app-progress-indicator *ngIf="loading"></app-progress-indicator>
     </div>
-    <!-- progress indicator -->
-    <app-progress-indicator *ngIf="!resource && loading"></app-progress-indicator>
 
     <!-- resource not found  -->
     <div *ngIf="!resource && !loading" class="no-results">

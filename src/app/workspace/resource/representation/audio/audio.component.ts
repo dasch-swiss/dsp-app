@@ -1,24 +1,37 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { UpdateFileValue, UpdateResource, Constants, UpdateValue, WriteValueResponse, ReadResource, ApiResponseError, KnoraApiConnection, ReadAudioFileValue } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseError,
+    Constants,
+    KnoraApiConnection,
+    ReadAudioFileValue,
+    ReadResource,
+    UpdateFileValue,
+    UpdateResource,
+    UpdateValue,
+    WriteValueResponse
+} from '@dasch-swiss/dsp-js';
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
-
 import { FileRepresentation } from '../file-representation';
+
 
 @Component({
     selector: 'app-audio',
     templateUrl: './audio.component.html',
     styleUrls: ['./audio.component.scss']
 })
-export class AudioComponent implements OnInit {
+export class AudioComponent implements OnInit, AfterViewInit {
 
     @Input() src: FileRepresentation;
+
     @Input() parentResource: ReadResource;
+
+    @Output() loaded = new EventEmitter<boolean>();
 
     audio: SafeUrl;
 
@@ -32,6 +45,10 @@ export class AudioComponent implements OnInit {
 
     ngOnInit(): void {
         this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+    }
+
+    ngAfterViewInit() {
+        this.loaded.emit(true);
     }
 
     openReplaceFileDialog(){
