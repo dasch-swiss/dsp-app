@@ -1,5 +1,12 @@
 # Changelog
 
+### [9.8.1](https://www.github.com/dasch-swiss/dsp-app/compare/v9.8.0...v9.8.1) (2022-05-09)
+
+
+### Bug Fixes
+
+* **representation:** disable progress indicator correctly (DEV-905) ([#730](https://www.github.com/dasch-swiss/dsp-app/issues/730)) ([92efbeb](https://www.github.com/dasch-swiss/dsp-app/commit/92efbeb94ebe542b031a23abc17b158366957796))
+
 ## [9.8.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.7.0...v9.8.0) (2022-05-05)
 
 
