@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
-import { StatusMsg } from 'src/assets/http/statusMsg';
+import { HttpStatusMsg } from 'src/assets/http/statusMsg';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { DialogComponent } from '../dialog/dialog.component';
 import { NotificationService } from '../services/notification.service';
@@ -17,7 +17,7 @@ export class ErrorHandlerService {
         private _notification: NotificationService,
         private _dialog: MatDialog,
         private _session: SessionService,
-        private _statusMsg: StatusMsg
+        private _statusMsg: HttpStatusMsg
     ) { }
 
     showMessage(error: ApiResponseError) {
@@ -77,7 +77,7 @@ export class ErrorHandlerService {
             this._dspApiConnection.v2.auth.logout().subscribe(
                 (logoutResponse: ApiResponseData<LogoutResponse>) => {
 
-                    // destroy (dsp-ui) session
+                    // destroy session
                     this._session.destroySession();
 
                     // reload the page

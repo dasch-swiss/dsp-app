@@ -9,7 +9,7 @@ import {
     UserResponse
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { SessionService } from 'src/app/main/services/session.service';
 import { CacheService } from '../../main/cache/cache.service';
 import { DialogComponent } from '../../main/dialog/dialog.component';

@@ -22,7 +22,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
 import { DspCompoundPosition, DspResource } from './dsp-resource';

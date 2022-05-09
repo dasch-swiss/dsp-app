@@ -30,7 +30,7 @@ import {
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ConfirmationWithComment, DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';

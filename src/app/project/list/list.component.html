@@ -1,4 +1,4 @@
-<div *ngIf="projectAdmin" class="content large middle">
+<div *ngIf="projectAdmin" class="content large middle desktop-only">
 
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
@@ -93,10 +93,9 @@
 </div>
 
 <div *ngIf="!projectAdmin" class="content large middle">
-    <app-error [status]="403"></app-error>
+    <app-status [status]="403"></app-status>
 </div>
 
 <div class="mobile-only">
-    <app-message [message]="{status: 415, statusText: 'This content is not supported on small devices.'}">
-    </app-message>
+    <app-status [status]="204"></app-status>
 </div>

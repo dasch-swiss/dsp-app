@@ -39,7 +39,7 @@ import * as OpenSeadragon from 'openseadragon';
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { DspCompoundPosition } from '../../dsp-resource';
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';

@@ -415,7 +415,7 @@
 
     <!-- general error message -->
     <div *ngSwitchCase="'error'">
-        <app-error [status]="data.id" [comment]="data.comment"></app-error>
+        <app-status [status]="data.id" [comment]="data.comment"></app-status>
     </div>
 
     <!-- Unknown method (or not yet defined) -->

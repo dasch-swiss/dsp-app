@@ -18,7 +18,7 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorComponent } from 'src/app/main/error/error.component';
+import { StatusComponent } from 'src/app/main/status/status.component';
 import { ListInfoFormComponent } from './list-info-form.component';
 
 /**
@@ -80,7 +80,7 @@ describe('ListInfoFormComponent', () => {
                 ListInfoFormComponent,
                 DialogComponent,
                 DialogHeaderComponent,
-                ErrorComponent
+                StatusComponent
             ],
             imports: [
                 BrowserAnimationsModule,

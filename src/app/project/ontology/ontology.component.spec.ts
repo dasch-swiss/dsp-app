@@ -31,7 +31,7 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorComponent } from 'src/app/main/error/error.component';
+import { StatusComponent } from 'src/app/main/status/status.component';
 import { TestConfig } from 'test.config';
 import { OntologyComponent } from './ontology.component';
 import { PropertyInfoComponent } from './property-info/property-info.component';
@@ -64,7 +64,7 @@ describe('OntologyComponent', () => {
             declarations: [
                 OntologyComponent,
                 DialogComponent,
-                ErrorComponent,
+                StatusComponent,
                 PropertyInfoComponent,
                 ResourceClassInfoComponent
             ],

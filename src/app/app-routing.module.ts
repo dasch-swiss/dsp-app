@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from './main/guard/auth.guard';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
-import { ErrorComponent } from './main/error/error.component';
+import { StatusComponent } from './main/status/status.component';
 import { HelpComponent } from './main/help/help.component';
 import { LoginFormComponent } from './main/action/login-form/login-form.component';
 import { MainComponent } from './main/main.component';
@@ -97,7 +97,7 @@ const routes: Routes = [
             },
             {
                 path: '**',
-                component: ErrorComponent,
+                component: StatusComponent,
                 data: { status: 404 }
             }
         ]
@@ -181,12 +181,12 @@ const routes: Routes = [
     },
     {
         path: 'teapot',
-        component: ErrorComponent,
+        component: StatusComponent,
         data: { status: 418 }
     },
     {
         path: '**',
-        component: ErrorComponent,
+        component: StatusComponent,
         data: { status: 404 }
     }
 ];

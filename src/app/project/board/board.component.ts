@@ -8,7 +8,7 @@ import {
     ReadProject
 } from '@dasch-swiss/dsp-js';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
 import { CacheService } from '../../main/cache/cache.service';
 

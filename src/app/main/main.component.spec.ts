@@ -15,7 +15,7 @@ import { TestConfig } from 'test.config';
 import { AppInitService } from '../app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from './declarations/dsp-api-tokens';
 import { DialogComponent } from './dialog/dialog.component';
-import { ErrorComponent } from './error/error.component';
+import { StatusComponent } from './status/status.component';
 import { FooterComponent } from './footer/footer.component';
 import { GridComponent } from './grid/grid.component';
 import { MainComponent } from './main.component';
@@ -34,7 +34,7 @@ describe('MainComponent', () => {
                 FooterComponent,
                 GridComponent,
                 DialogComponent,
-                ErrorComponent
+                StatusComponent
             ],
             imports: [
                 BrowserAnimationsModule,

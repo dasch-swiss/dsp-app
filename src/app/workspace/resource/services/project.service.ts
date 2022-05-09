@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { SessionService } from 'src/app/main/services/session.service';
 
 @Injectable({

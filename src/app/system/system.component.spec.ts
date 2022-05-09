@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TestConfig } from 'test.config';
 import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
-import { ErrorComponent } from '../main/error/error.component';
+import { StatusComponent } from '../main/status/status.component';
 import { SessionService } from '../main/services/session.service';
 import { SystemComponent } from './system.component';
 
@@ -15,7 +15,7 @@ describe('SystemComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [SystemComponent, ErrorComponent],
+            declarations: [SystemComponent, StatusComponent],
             imports: [
                 MatIconModule,
                 MatTabsModule,

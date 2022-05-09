@@ -16,7 +16,7 @@ import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorComponent } from 'src/app/main/error/error.component';
+import { StatusComponent } from 'src/app/main/status/status.component';
 import { SelectGroupComponent } from 'src/app/project/collaboration/select-group/select-group.component';
 import { TestConfig } from 'test.config';
 import { UsersListComponent } from './users-list.component';
@@ -34,7 +34,7 @@ describe('UsersListComponent', () => {
                 UsersListComponent,
                 SelectGroupComponent,
                 DialogComponent,
-                ErrorComponent
+                StatusComponent
             ],
             imports: [
                 BrowserAnimationsModule,

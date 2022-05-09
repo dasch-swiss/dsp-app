@@ -8,11 +8,12 @@ import {
     ReadUser,
     UserResponse
 } from '@dasch-swiss/dsp-js';
-import { AppMessageData } from 'src/app/main/action/message/message.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { NotificationService } from 'src/app/main/services/notification.service';
 import { SessionService } from 'src/app/main/services/session.service';
+import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 
 @Component({
     selector: 'app-password-form',
@@ -30,30 +31,9 @@ export class PasswordFormComponent implements OnInit {
     // in case of child component inside parent form
     @Output() sendToParent: EventEmitter<string> = new EventEmitter<string>();
 
-    // progress indicator
+    // progress indicator and error status
     loading: boolean;
-
-    // --> TODO replace regexPassword by CustomRegex.PASSWORD_REGEX from dsp-ui
-    public readonly REGEX_PASSWORD = /^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/i;
-
-    // in case of updating data: was it succesful or does it failed
-    apiResponses: AppMessageData[] = [
-        {
-            status: 200,
-            statusText: 'You have successfully updated your password.'
-        },
-        {
-            status: 200,
-            statusText: 'You have successfully updated user\'s password.'
-        },
-        {
-            status: 400,
-            statusText: 'This wasn\'t successfull. Something went wrong.'
-
-        }
-    ];
-
-    showResponse: AppMessageData;
+    error: boolean;
 
     user: ReadUser;
 
@@ -109,6 +89,7 @@ export class PasswordFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
+        private _notification: NotificationService,
         private _session: SessionService
     ) { }
 
@@ -131,7 +112,6 @@ export class PasswordFormComponent implements OnInit {
                 }
             }
             this.showPasswordForm = this.updateOwn;
-
 
             // set the cache
             this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
@@ -210,7 +190,7 @@ export class PasswordFormComponent implements OnInit {
                 [
                     Validators.required,
                     Validators.minLength(8),
-                    Validators.pattern(this.REGEX_PASSWORD) // --> TODO replace by CustomRegex.PASSWORD_REGEX from dsp-ui
+                    Validators.pattern(CustomRegex.PASSWORD_REGEX)
                 ]
             ),
             confirmPassword: new FormControl(
@@ -269,9 +249,6 @@ export class PasswordFormComponent implements OnInit {
     // confirm sys admin
     nextStep() {
 
-        // reset response message
-        this.showResponse = undefined;
-
         this.loading = true;
 
         // submit requester password with logged-in username
@@ -285,16 +262,13 @@ export class PasswordFormComponent implements OnInit {
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
-                this.showResponse = this.apiResponses[2];
                 this.loading = false;
+                this.error = true;
             }
         );
     }
 
     submitData() {
-
-        // reset response message
-        this.showResponse = undefined;
 
         this.loading = true;
 
@@ -302,41 +276,20 @@ export class PasswordFormComponent implements OnInit {
 
         this._dspApiConnection.admin.usersEndpoint.updateUserPassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
             (response: ApiResponseData<UserResponse>) => {
-                this.showResponse = (this.updateOwn ? this.apiResponses[0] : this.apiResponses[1]);
+
+                const successResponse = 'You have successfully updated ' +
+                                        (this.updateOwn ? 'your' : 'user\'s') + ' password.';
+                this._notification.openSnackBar(successResponse);
+                this.closeDialog.emit();
                 this.form.reset();
                 this.loading = false;
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
-                this.showResponse = this.apiResponses[2];
                 this.loading = false;
+                this.error = true;
             }
         );
-    }
-
-    closeMessage(status?: number) {
-
-        this.showResponse = undefined;
-
-        switch (status) {
-            case 200:
-                // success: close message (and dialog box)
-                this.closeDialog.emit();
-                break;
-
-            case 400:
-                // something went wrong: reset form
-                this.form.reset();
-                if (this.confirmForm) {
-                    this.confirmForm.reset();
-                }
-                break;
-
-            default:
-            // close message
-
-        }
-
     }
 
 }

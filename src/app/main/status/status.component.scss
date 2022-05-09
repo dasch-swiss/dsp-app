@@ -1,6 +1,6 @@
 @import "../../../assets/style/responsive";
 
-.error-page {
+.status-page {
   background: #fff;
   height: 100%;
   width: 100%;
@@ -12,16 +12,18 @@
     align-items: stretch;
     align-content: space-evenly;
     padding-top: 120px;
+    width: 480px;
+    margin: 0 auto;
 
     .image,
     .text {
       justify-self: stretch;
       align-self: stretch;
       box-sizing: border-box;
-      padding: 24px;
       max-height: 280px;
+      width: 360px;
 
-      &.error-message {
+      &.status-message {
         line-height: 1.5;
         margin: 0 auto;
       }
@@ -29,7 +31,7 @@
       img {
         display: block;
         margin: 0 auto;
-        max-width: 400px;
+        max-width: 360px;
       }
     }
   }
@@ -44,7 +46,7 @@
   .image {
     display: none;
   }
-  .error-page .container {
+  .status-page .container {
     padding-top: 30px;
   }
 }

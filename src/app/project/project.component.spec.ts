@@ -12,7 +12,7 @@ import { AppInitService } from '../app-init.service';
 import { CacheService } from '../main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { DialogComponent } from '../main/dialog/dialog.component';
-import { ErrorComponent } from '../main/error/error.component';
+import { StatusComponent } from '../main/status/status.component';
 import { ProjectComponent } from './project.component';
 
 describe('ProjectComponent', () => {
@@ -27,7 +27,7 @@ describe('ProjectComponent', () => {
             declarations: [
                 ProjectComponent,
                 DialogComponent,
-                ErrorComponent
+                StatusComponent
             ],
             imports: [
                 BrowserAnimationsModule,

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
 import { CacheService } from '../cache/cache.service';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
-import { ErrorHandlerService } from '../error/error-handler.service';
+import { ErrorHandlerService } from '../services/error-handler.service';
 import { DatadogRumService } from './datadog-rum.service';
 import { SessionService } from './session.service';
 

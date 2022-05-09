@@ -3,7 +3,7 @@ import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection, 
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { DspConfig } from '../declarations/dsp-config';
-import { ErrorHandlerService } from '../error/error-handler.service';
+import { ErrorHandlerService } from '../services/error-handler.service';
 import { GridItem } from '../grid/grid.component';
 
 declare let require: any;

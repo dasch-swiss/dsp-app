@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { Observable, of, Subject, throwError } from 'rxjs';
-import { ErrorHandlerService } from '../error/error-handler.service';
+import { ErrorHandlerService } from '../services/error-handler.service';
 
 interface CacheContent {
     expiry: number;

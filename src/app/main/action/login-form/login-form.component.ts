@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '../../declarations/dsp-api-tokens';
-import { ErrorHandlerService } from '../../error/error-handler.service';
+import { ErrorHandlerService } from '../../services/error-handler.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '../../services/component-communication-event.service';
 import { DatadogRumService } from '../../services/datadog-rum.service';

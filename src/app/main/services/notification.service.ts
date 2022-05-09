@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
-import { StatusMsg } from 'src/assets/http/statusMsg';
+import { HttpStatusMsg } from 'src/assets/http/statusMsg';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +10,7 @@ export class NotificationService {
 
     constructor(
         private _snackBar: MatSnackBar,
-        private _statusMsg: StatusMsg
+        private _statusMsg: HttpStatusMsg
     ) { }
 
     // todo: maybe we can add more parameters like:

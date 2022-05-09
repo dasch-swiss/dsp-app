@@ -26,7 +26,7 @@ import { ProjectFormComponent } from 'src/app/project/project-form/project-form.
 import { MembershipComponent } from 'src/app/user/membership/membership.component';
 import { PasswordFormComponent } from 'src/app/user/user-form/password-form/password-form.component';
 import { UserFormComponent } from 'src/app/user/user-form/user-form.component';
-import { ErrorComponent } from '../error/error.component';
+import { StatusComponent } from '../status/status.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
 import { DialogComponent } from './dialog.component';
 
@@ -39,7 +39,7 @@ describe('DialogComponent', () => {
             declarations: [
                 DialogComponent,
                 DialogHeaderComponent,
-                ErrorComponent,
+                StatusComponent,
                 UserFormComponent,
                 MembershipComponent,
                 PasswordFormComponent,

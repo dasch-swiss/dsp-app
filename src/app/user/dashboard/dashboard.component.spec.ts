@@ -11,7 +11,7 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
-import { ErrorComponent } from 'src/app/main/error/error.component';
+import { StatusComponent } from 'src/app/main/status/status.component';
 import { ProjectsListComponent } from 'src/app/system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from 'src/app/system/projects/projects.component';
 import { TestConfig } from 'test.config';
@@ -28,7 +28,7 @@ describe('DashboardComponent', () => {
                 ProjectsComponent,
                 ProjectsListComponent,
                 DialogComponent,
-                ErrorComponent
+                StatusComponent
             ],
             imports: [
                 BrowserAnimationsModule,

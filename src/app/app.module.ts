@@ -20,7 +20,6 @@ import { AppComponent } from './app.component';
 import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationMessageComponent } from './main/action/confirmation-dialog/confirmation-message/confirmation-message.component';
 import { LoginFormComponent } from './main/action/login-form/login-form.component';
-import { MessageComponent } from './main/action/message/message.component';
 import { ProgressIndicatorComponent } from './main/action/progress-indicator/progress-indicator.component';
 import { SelectedResourcesComponent } from './main/action/selected-resources/selected-resources.component';
 import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
@@ -35,7 +34,7 @@ import { ExistingNameDirective } from './main/directive/existing-name/existing-n
 import { ExternalLinksDirective } from './main/directive/external-links.directive';
 import { GndDirective } from './main/directive/gnd/gnd.directive';
 import { InvalidControlScrollDirective } from './main/directive/invalid-control-scroll.directive';
-import { ErrorComponent } from './main/error/error.component';
+
 import { FooterComponent } from './main/footer/footer.component';
 import { GridComponent } from './main/grid/grid.component';
 import { HeaderComponent } from './main/header/header.component';
@@ -51,6 +50,7 @@ import { TruncatePipe } from './main/pipes/string-transformation/truncate.pipe';
 import { TimePipe } from './main/pipes/time.pipe';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { DatadogRumService } from './main/services/datadog-rum.service';
+import { StatusComponent } from './main/status/status.component';
 import { MaterialModule } from './material-module';
 import { BoardComponent } from './project/board/board.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
@@ -201,7 +201,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         DocumentComponent,
         DragDropDirective,
         EditListItemComponent,
-        ErrorComponent,
         ExistingNameDirective,
         ExpertSearchComponent,
         ExternalLinksDirective,
@@ -233,7 +232,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         LoginFormComponent,
         MainComponent,
         MembershipComponent,
-        MessageComponent,
         OntologyComponent,
         OntologyFormComponent,
         PasswordFormComponent,
@@ -282,6 +280,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         SortButtonComponent,
         SpecifyPropertyValueComponent,
         SplitPipe,
+        StatusComponent,
         StillImageComponent,
         StringifyStringLiteralPipe,
         StringLiteralInputComponent,

@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ApiResponseData, ApiResponseError, Constants, KnoraApiConnection, ProjectsResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from './declarations/dsp-api-tokens';
-import { ErrorHandlerService } from './error/error-handler.service';
+import { ErrorHandlerService } from './services/error-handler.service';
 import { GridItem } from './grid/grid.component';
 import { SessionService } from './services/session.service';
 

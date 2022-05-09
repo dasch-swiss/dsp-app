@@ -19,7 +19,7 @@ import { TestConfig } from 'test.config';
 import { AppInitService } from '../app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { DialogComponent } from '../main/dialog/dialog.component';
-import { ErrorComponent } from '../main/error/error.component';
+import { StatusComponent } from '../main/status/status.component';
 import { ProjectsListComponent } from '../system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from '../system/projects/projects.component';
 import { AccountComponent } from './account/account.component';
@@ -40,7 +40,7 @@ describe('UserComponent', () => {
                 AccountComponent,
                 CollectionListComponent,
                 DialogComponent,
-                ErrorComponent,
+                StatusComponent,
                 PasswordFormComponent,
                 ProfileComponent,
                 ProjectsComponent,

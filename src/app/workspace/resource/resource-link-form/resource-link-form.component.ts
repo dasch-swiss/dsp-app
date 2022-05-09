@@ -12,7 +12,7 @@ import {
     StoredProject
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { ErrorHandlerService } from 'src/app/main/error/error-handler.service';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { FilteredResources } from '../../results/list-view/list-view.component';
 import { ProjectService } from '../services/project.service';
 import { ResourceService } from '../services/resource.service';
