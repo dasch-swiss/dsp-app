@@ -316,8 +316,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
 
-                this.loading = this.representationsToDisplay.length > 0;
-
                 if (this.representationsToDisplay.length && this.representationsToDisplay[0].fileValue && this.compoundPosition) {
                     this.getIncomingRegions(this.incomingResource, 0);
                 }
