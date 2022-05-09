@@ -1,5 +1,24 @@
 # Changelog
 
+## [9.8.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.7.0...v9.8.0) (2022-05-05)
+
+
+### Bug Fixes
+
+* **ontology-editor:** bring back the gui-attr for pulldown (DEV-856) ([#719](https://www.github.com/dasch-swiss/dsp-app/issues/719)) ([0c2a43d](https://www.github.com/dasch-swiss/dsp-app/commit/0c2a43d7b9420a7c9327d0975eef2b100fc97d8e))
+* **resource:** show progress indicator until whole resource is loaded (DEV-638) ([#725](https://www.github.com/dasch-swiss/dsp-app/issues/725)) ([946af20](https://www.github.com/dasch-swiss/dsp-app/commit/946af2059f38ca3decec616b81ee59509384cff2))
+
+
+### Maintenance
+
+* clean up jsDocs and delete deprecated methods (DEV-741) ([#722](https://www.github.com/dasch-swiss/dsp-app/issues/722)) ([8457119](https://www.github.com/dasch-swiss/dsp-app/commit/84571196dfe22af624b315aae9c47cbcaf335aeb))
+* **ontology:** crop loooong ontology labels (DEV-493) ([#723](https://www.github.com/dasch-swiss/dsp-app/issues/723)) ([1b7384f](https://www.github.com/dasch-swiss/dsp-app/commit/1b7384fb5ca2c47cd68ff058877c9427484d74e9))
+
+
+### Enhancements
+
+* **ontology:** add properties to a class from other ontologies (DEV-689 / DEV-880) ([#721](https://www.github.com/dasch-swiss/dsp-app/issues/721)) ([b90fc70](https://www.github.com/dasch-swiss/dsp-app/commit/b90fc70912b6d5e1f10a00f0b01ea61567128bd6))
+
 ## [9.7.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.6.0...v9.7.0) (2022-04-22)
 
 
