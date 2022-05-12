@@ -50,7 +50,6 @@ $project-filter-width-small-device: 120px;
     display: inline-flex;
     height: 48px;
     width: 100%;
-    margin-bottom: 12px;
 
     .app-menu-title h4 {
       margin: 12px 0;
@@ -131,6 +130,14 @@ app-search-date-value {
     }
   }
 
+  .advanced-expert-buttons {
+    width: $search-width;
+
+    &.with-project-filter {
+      margin-left: $project-filter-width;
+    }
+  }
+
   .app-search-menu {
     width: calc(#{$search-width} - 32px);
     &.with-project-filter {
@@ -143,7 +150,7 @@ app-search-date-value {
 }
 
 // responsive style: tablet
-@media (max-width: map-get($grid-breakpoints, desktop)) and (min-width: map-get($grid-breakpoints, phone)) {
+@media (max-width: map-get($grid-breakpoints, desktop)) and (min-width: map-get($grid-breakpoints, tablet)) {
 
   .app-fulltext-search {
     width: $search-width-small-device;
@@ -158,6 +165,14 @@ app-search-date-value {
     }
   }
 
+  .advanced-expert-buttons {
+    width: $search-width-small-device;
+
+    &.with-project-filter {
+      margin-left: $project-filter-width-small-device;
+    }
+  }
+
   .app-search-menu {
     width: calc(#{$search-width-small-device} - 32px);
     &.with-project-filter {
@@ -165,6 +180,22 @@ app-search-date-value {
     }
     &.with-advanced-search {
       width: 100vw;
+    }
+  }
+}
+
+
+// responsive style: phone
+@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, watch)) {
+  .app-search-menu {
+    width: calc(#{$search-width-small-device} - 32px);
+    &.with-project-filter {
+      width: calc(100vw - 32px);
+      margin: 0 16px;
+    }
+
+    .app-menu-action {
+      width: calc(100% - 32px);
     }
   }
 }

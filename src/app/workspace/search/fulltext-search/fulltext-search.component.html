@@ -35,7 +35,6 @@
 
 <!-- full-text search menu -->
 <ng-template #fulltextSearchMenu>
-
     <div class="app-search-menu" [class.with-project-filter]="projectfilter">
         <div class="app-menu-content">
             <mat-list class="app-previous-search-list">
@@ -103,8 +102,7 @@
             <input #fulltextSearchInputMobile class="app-fulltext-search-input" type="search" [(ngModel)]="searchQuery"
                 name="fulltext-search" minlength="3" autocomplete="off" [placeholder]="'Search'" (click)="setFocus()"
                 (keyup.esc)="resetSearch()" (keyup.enter)="doSearch()">
-            <button mat-button color="primary" class="app-fulltext-search-button"
-                (click)="doSearch()" type="submit">
+            <button mat-button color="primary" class="app-fulltext-search-button" (click)="doSearch()" type="submit">
                 Search
             </button>
         </div>

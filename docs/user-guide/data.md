@@ -35,14 +35,15 @@ Full text search performs queries including one or more terms or phrases, and re
 
 ![Filter your full text search by specific project](../assets/images/search-fulltext-filterByProject.png)*<https://admin.dasch.swiss> - Search 1: Full text search*
 
-When clicking on the search bar, the search history panel is displayed. The **10** last searches are registered. It is also possible to clear the search history list (*Clear list* button at the bottom of the panel).
+When clicking on the search bar, the search history panel is displayed. The **10** last searches are registered. It is also possible to clear the search history list (*Clear list* button at the bottom of the panel or the *x* at the end of each line).
 
 ![Search history panel](../assets/images/search-history.png)*Search history list is accessible for the full text search from any webpage.*
 
 Special syntax:
 
-- asterisk* can be used as a wildcard symbol
-- "quotation marks" searches for the whole pattern 
+- question mark? can be used as wildcard symbol for a single character.
+- asterisk* can be used as a wildcard symbol for zero, one or multiple characters.
+- "quotation marks" searches for the whole pattern.
 
 ---
 
@@ -54,6 +55,7 @@ The advanced search allows for the creation of complex queries using a graphical
 The widget's contents are then turned into a string representing a Gravsearch (SPARQL) query to be sent to DSP-API.
 
 A query consists of the following elements:
+
 - data model selection
 - selection of a resource class belonging to the selected data model (optional)
 - specification of properties, comparison operators, and values (optional).
@@ -106,13 +108,13 @@ This search finds "Jacob" as well as "Jakob".
 
 Used with a linking property, the `matches` operator lets the user search for a linked resource that matches the specified properties.
 In this example, the user writes a query looking for all letters that have an author that:
+
 1. was born after January 1st 1650
-2. whose family name is "Bernoulli"
+1. whose family name is "Bernoulli"
 
 This is different from the "is equal to" operator that lets the user specify a certain person (selected from a list).
 
 ![Advanced search panel with a search example](../assets/images/advanced-search-linked-resource.png)
-
 
 ---
 
@@ -166,7 +168,7 @@ Each column of the table corresponds to one metadata.
 Once you have found the desired sources, you can (re)view them and annotate the source itself, the media file, or single metadata values. If you select more than one source, you can compare them in a side-by-side view, link them, edit them all at once, or save them in a collection. A collection is similar to a playlist in a music app or shopping basket in an online store.
 
 ### Display a source
-&#9888; *WORK IN PROGRESS*
+<!-- &#9888; *WORK IN PROGRESS* -->
 
 The DSP-APP offers different source views for different media types. There's a viewer for still images, moving images, audio and document files. You can open them from the list of search results. Depending on the media type, DSP-APP offers different tools to work on the source.
 
@@ -187,17 +189,17 @@ Additionally, you can work on the source directly, e.g, transcribe a moving imag
 ---
 
 ### Select more than one source
-&#9888; *NOT YET IMPLEMENTED*
+<!-- &#9888; *NOT YET IMPLEMENTED* -->
 
 ![Three sources selected; what do you want to do with them?](../assets/images/source-selected-three.png)*Three sources are selected; what do you want to do with them?*
 
-By selecting more than one source, you will be able to edit them all at once, add them to a collection, share or connect them. 
+By selecting more than one source, you will be able to edit them all at once, add them to a collection, share or connect them.
 Or you could compare the sources (see [Compare the sources](/user-guide/data/#compare-the-sources)).
 
 ---
 
 ### Compare the sources
-&#9888; *NOT YET IMPLEMENTED*
+<!-- &#9888; *NOT YET IMPLEMENTED* -->
 
 You will be able to compare from two to six source objects at the same time side by side.
 
@@ -206,7 +208,7 @@ You will be able to compare from two to six source objects at the same time side
 ---
 
 ### Annotate and connect your data (sources and/or metadata)
-&#9888; *NOT YET IMPLEMENTED*
+<!-- &#9888; *NOT YET IMPLEMENTED* -->
 
 A main feature of the flexible data storage that DSP-APP uses is the possibility to annotate and link sources and their metadata. An annotation can be a small note about a date like "Not sure about the birthdate of this person. There's another date mentioned in the source XYZ". Inside the note, it will be possible to link to another source.
 
