@@ -71,6 +71,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     properties: ResourcePropertyDefinition[];
 
     loadingResults = false;
+    showNoResultsMessage = false;
 
     constructor(
         private _dialog: MatDialog,
@@ -98,6 +99,8 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
      * @param searchTerm label to be searched
      */
     searchByLabel(searchTerm: string) {
+        this.showNoResultsMessage = false;
+
         // at least 3 characters are required
         if (typeof searchTerm === 'string' && searchTerm.length >= 3) {
             this.loadingResults = true;
@@ -106,6 +109,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
                 (response: ReadResourceSequence) => {
                     this.resources = response.resources;
                     this.loadingResults = false;
+                    this.showNoResultsMessage = this.resources.length > 0 ? false : true;
                 });
         } else {
             this.resources = [];
