@@ -276,7 +276,6 @@ export class OntologyComponent implements OnInit {
     }
 
     initOntoClasses(allOntoClasses: ClassDefinition[]) {
-
         // reset the ontology classes
         this.ontoClasses = [];
 

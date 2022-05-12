@@ -5,6 +5,7 @@ import {
     ClassDefinition,
     Constants,
     CreateResourceProperty,
+    DeleteResourcePropertyComment,
     IHasProperty,
     KnoraApiConnection,
     ListNodeInfo,
@@ -417,60 +418,56 @@ export class PropertyFormComponent implements OnInit {
 
                 const updateComment = new UpdateResourcePropertyComment();
                 updateComment.id = this.propertyInfo.propDef.id;
-                updateComment.comments = (this.comments.length ? this.comments : this.labels);
+                updateComment.comments = this.comments;
                 onto4Comment.entity = updateComment;
 
                 this._dspApiConnection.v2.onto.updateResourceProperty(onto4Label).subscribe(
-                    (classLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                        this.lastModificationDate = classLabelResponse.lastModificationDate;
+                    (propertyLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                        this.lastModificationDate = propertyLabelResponse.lastModificationDate;
                         onto4Comment.lastModificationDate = this.lastModificationDate;
 
-                        this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
-                            (classCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                                this.lastModificationDate = classCommentResponse.lastModificationDate;
+                        if (updateComment.comments.length) { // if the comments array is not empty, send a request to update the comments
+                            this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
+                                (propertyCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                                    this.lastModificationDate = propertyCommentResponse.lastModificationDate;
 
-                                if (!this.unsupportedPropertyType) {
-                                    const onto4guiEle = new UpdateOntology<UpdateResourcePropertyGuiElement>();
-                                    onto4guiEle.id = this.ontology.id;
-                                    onto4guiEle.lastModificationDate = this.lastModificationDate;
-
-                                    const updateGuiEle = new UpdateResourcePropertyGuiElement();
-                                    updateGuiEle.id = this.propertyInfo.propDef.id;
-                                    updateGuiEle.guiElement = this.propertyForm.controls['propType'].value.guiEle;
-
-                                    const guiAttr = this.propertyForm.controls['guiAttr'].value;
-                                    if (guiAttr) {
-                                        updateGuiEle.guiAttributes = this.setGuiAttribute(guiAttr);
+                                    if (!this.unsupportedPropertyType) {
+                                        this.replaceGuiElement();
+                                    } else {
+                                        this.loading = false;
+                                        this.closeDialog.emit();
                                     }
 
-                                    onto4guiEle.entity = updateGuiEle;
-
-                                    this._dspApiConnection.v2.onto.replaceGuiElementOfProperty(onto4guiEle).subscribe(
-                                        (guiEleResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                                            this.lastModificationDate = guiEleResponse.lastModificationDate;
-                                            // close the dialog box
-                                            this.loading = false;
-                                            this.closeDialog.emit();
-                                        },
-                                        (error: ApiResponseError) => {
-                                            this.error = true;
-                                            this.loading = false;
-                                            this._errorHandler.showMessage(error);
-                                        }
-                                    );
-                                } else {
+                                },
+                                (error: ApiResponseError) => {
+                                    this.error = true;
                                     this.loading = false;
-                                    this.closeDialog.emit();
+                                    this._errorHandler.showMessage(error);
                                 }
+                            );
+                        } else { // if the comments array is empty, send a request to remove the comments
+                            const deleteResourcePropertyComment = new DeleteResourcePropertyComment();
+                            deleteResourcePropertyComment.id = this.propertyInfo.propDef.id;
+                            deleteResourcePropertyComment.lastModificationDate = this.lastModificationDate;
 
-                            },
-                            (error: ApiResponseError) => {
-                                this.error = true;
-                                this.loading = false;
-                                this._errorHandler.showMessage(error);
-                            }
-                        );
+                            this._dspApiConnection.v2.onto.deleteResourcePropertyComment(deleteResourcePropertyComment).subscribe(
+                                (deleteCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                                    this.lastModificationDate = deleteCommentResponse.lastModificationDate;
 
+                                    if (!this.unsupportedPropertyType) {
+                                        this.replaceGuiElement();
+                                    } else {
+                                        this.loading = false;
+                                        this.closeDialog.emit();
+                                    }
+                                },
+                                (error: ApiResponseError) => {
+                                    this.error = true;
+                                    this.loading = false;
+                                    this._errorHandler.showMessage(error);
+                                }
+                            );
+                        }
                     },
                     (error: ApiResponseError) => {
                         this.error = true;
@@ -533,6 +530,37 @@ export class PropertyFormComponent implements OnInit {
             );
 
         }
+    }
+
+    replaceGuiElement() {
+        const onto4guiEle = new UpdateOntology<UpdateResourcePropertyGuiElement>();
+        onto4guiEle.id = this.ontology.id;
+        onto4guiEle.lastModificationDate = this.lastModificationDate;
+
+        const updateGuiEle = new UpdateResourcePropertyGuiElement();
+        updateGuiEle.id = this.propertyInfo.propDef.id;
+        updateGuiEle.guiElement = this.propertyForm.controls['propType'].value.guiEle;
+
+        const guiAttr = this.propertyForm.controls['guiAttr'].value;
+        if (guiAttr) {
+            updateGuiEle.guiAttributes = this.setGuiAttribute(guiAttr);
+        }
+
+        onto4guiEle.entity = updateGuiEle;
+
+        this._dspApiConnection.v2.onto.replaceGuiElementOfProperty(onto4guiEle).subscribe(
+            (guiEleResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                this.lastModificationDate = guiEleResponse.lastModificationDate;
+                // close the dialog box
+                this.loading = false;
+                this.closeDialog.emit();
+            },
+            (error: ApiResponseError) => {
+                this.error = true;
+                this.loading = false;
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 
     setCardinality(prop: ResourcePropertyDefinitionWithAllLanguages) {
