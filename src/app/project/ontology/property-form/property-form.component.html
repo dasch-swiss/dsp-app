@@ -75,6 +75,7 @@
 
         <!-- depending on type: display gui attribute -->
         <div *ngIf="showGuiAttr" [ngSwitch]="propertyInfo.propType.objectType">
+            <!-- list property -->
             <mat-form-field class="large-field property-type ontology-form-field" *ngSwitchCase="dspConstants.ListValue">
                 <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
@@ -90,15 +91,18 @@
                 </mat-hint>
             </mat-form-field>
 
+            <!-- link property -->
             <mat-form-field class="large-field property-type ontology-form-field" *ngSwitchCase="dspConstants.LinkValue">
                 <span matPrefix class="ontology-prefix-icon">
                     <mat-icon>{{guiAttrIcon}}</mat-icon>&nbsp;
                 </span>
                 <mat-label>Select resource class</mat-label>
                 <mat-select formControlName="guiAttr">
-                    <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
-                        {{item.label}}
-                    </mat-option>
+                    <mat-optgroup *ngFor="let onto of ontologyClasses" [label]="onto.ontologyLabel">
+                        <mat-option *ngFor="let class of onto.classes" [value]="class.id">
+                            {{class.label}}
+                        </mat-option>
+                    </mat-optgroup>
                 </mat-select>
                 <mat-hint *ngIf="formErrors.guiAttr">
                     {{formErrors.guiAttr}}

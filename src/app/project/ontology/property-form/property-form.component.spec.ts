@@ -200,8 +200,7 @@ describe('PropertyFormComponent', () => {
 
     beforeEach(waitForAsync(() => {
 
-        const cacheServiceSpyOnto = jasmine.createSpyObj('CacheServiceOnto', ['get']);
-        const cacheServiceSpyLists = jasmine.createSpyObj('CacheServiceLists', ['get']);
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
         const ontologyEndpointSpyObj = {
             v2: {
@@ -239,11 +238,7 @@ describe('PropertyFormComponent', () => {
                 },
                 {
                     provide: CacheService,
-                    useValue: cacheServiceSpyOnto
-                },
-                {
-                    provide: CacheService,
-                    useValue: cacheServiceSpyLists
+                    useValue: cacheServiceSpy
                 }
             ]
         })
@@ -257,6 +252,18 @@ describe('PropertyFormComponent', () => {
         (cacheSpyOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentOntology').and.callFake (
             () => {
                 const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+                return of(response);
+            }
+        );
+
+        // mock cache service for currentProjectOntologies
+        const cacheSpyProjOnto = TestBed.inject(CacheService);
+        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentProjectOntologies').and.callFake (
+            () => {
+                const ontologies: ReadOntology[] = [];
+                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
+                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
+                const response: ReadOntology[] = ontologies;
                 return of(response);
             }
         );

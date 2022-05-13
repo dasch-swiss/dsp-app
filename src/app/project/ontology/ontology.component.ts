@@ -31,11 +31,6 @@ import { DefaultProperties, PropertyCategory, PropertyInfoObject } from './defau
 import { DefaultClass, DefaultResourceClasses } from './default-data/default-resource-classes';
 import { OntologyService } from './ontology.service';
 
-export interface OntologyInfo {
-    id: string;
-    label: string;
-}
-
 export interface CardinalityInfo {
     resClass: ClassDefinition;
     property: PropertyInfoObject;
