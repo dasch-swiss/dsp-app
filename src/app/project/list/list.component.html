@@ -1,4 +1,4 @@
-<div *ngIf="projectAdmin" class="content large middle desktop-only">
+<div *ngIf="projectAdmin && !disableContent" class="content large middle">
 
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
@@ -92,10 +92,8 @@
 
 </div>
 
-<div *ngIf="!projectAdmin" class="content large middle">
+<div *ngIf="!projectAdmin && !disableContent" class="content large middle">
     <app-status [status]="403"></app-status>
 </div>
 
-<div class="mobile-only">
-    <app-status [status]="204"></app-status>
-</div>
+<app-status *ngIf="disableContent" [status]="204"></app-status>

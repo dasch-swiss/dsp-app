@@ -12,9 +12,10 @@
         <br><br>
 
         <!-- list description / comment -->
-        <app-string-literal-input [textarea]="true" [placeholder]="'List description'" [value]="comments"
+        <app-string-literal-input [textarea]="true" [placeholder]="'List description *'" [value]="comments"
             (dataChanged)="handleData($event, 'comments')" [language]="labels.length ? labels[0].language : 'en'">
         </app-string-literal-input>
+        <mat-hint class="invalid-form string-literal-error" *ngIf="commentInvalidMessage">{{ commentInvalidMessage }}</mat-hint>
 
         <div class="form-panel form-action">
             <span>
@@ -24,7 +25,7 @@
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary" [disabled]="labels.length === 0"
+                <button mat-raised-button type="submit" color="primary" [disabled]="saveButtonDisabled"
                     (click)="submitData()" class="list-submit">
                     {{ mode === 'update' ? 'Update' : 'Create' | translate }}
                 </button>

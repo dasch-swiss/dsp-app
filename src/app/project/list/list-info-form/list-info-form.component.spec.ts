@@ -139,20 +139,21 @@ describe('ListInfoFormComponent', () => {
             expect(testHostUpdateListComponent.listInfoForm.comments).toEqual([{ 'value': 'Other Tree List comment', 'language': 'en' }]);
         });
 
-        it('should display "Update" as the submit button text and be disabled as long as no labels are provided', async () => {
+        it('should display "Update" as the submit button text and be disabled as long as no labels and comments are provided', async () => {
             const submitButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.list-submit' }));
 
             expect(await submitButton.getText()).toEqual('Update');
-
-            expect(await submitButton.isDisabled()).toBeFalsy();
+            expect(await submitButton.isDisabled()).toBeTruthy(); // because comment is missing in the test data
 
             testHostUpdateListComponent.listInfoForm.handleData([], 'labels');
-
             expect(await submitButton.isDisabled()).toBeTruthy();
 
             testHostUpdateListComponent.listInfoForm.handleData([{ 'value': 'My edited list label', 'language': 'en' }], 'labels');
-
+            testHostUpdateListComponent.listInfoForm.handleData([{ 'value': 'My edited list comment', 'language': 'en' }], 'comments');
             expect(await submitButton.isDisabled()).toBeFalsy();
+
+            testHostUpdateListComponent.listInfoForm.handleData([], 'comments');
+            expect(await submitButton.isDisabled()).toBeTruthy();
         });
 
         it('should update labels when the value changes', () => {
@@ -215,15 +216,13 @@ describe('ListInfoFormComponent', () => {
             const submitButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.list-submit' }));
 
             expect(await submitButton.getText()).toEqual('Create');
-
             expect(await submitButton.isDisabled()).toBeTruthy();
 
             testHostCreateListComponent.listInfoForm.handleData([{ 'value': 'My new list', 'language': 'en' }], 'labels');
-
+            testHostCreateListComponent.listInfoForm.handleData([{ 'value': 'My new list description', 'language': 'en' }], 'comments');
             expect(await submitButton.isDisabled()).toBeFalsy();
 
             testHostCreateListComponent.listInfoForm.handleData([], 'labels');
-
             expect(await submitButton.isDisabled()).toBeTruthy();
         });
 
