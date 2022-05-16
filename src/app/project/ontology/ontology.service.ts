@@ -133,11 +133,6 @@ export class OntologyService {
     getDefaultPropType(property: ResourcePropertyDefinitionWithAllLanguages): Observable<DefaultProperty> {
         let propType: DefaultProperty;
 
-        if (!property.guiElement) {
-            // we don't know what element to use, so it's unsupported property
-            return of (DefaultProperties.unsupported);
-        }
-
         for (const group of this.defaultProperties) {
             if (property.subPropertyOf.length) {
                 for (const subProp of property.subPropertyOf) {
@@ -148,20 +143,23 @@ export class OntologyService {
                             i.guiEle === property.guiElement && i.subPropOf === subProp
                         ));
                     } else {
-
-                        // if the property is type of number or list, the gui element is not relevant
-                        // because the app supports only one gui element (at the moment): the spinbox resp. the list pulldown
-                        if (property.objectType === Constants.DecimalValue || property.objectType === Constants.ListValue) {
-                            propType = (group.elements.find(i =>
-                                i.objectType === property.objectType
-                            ));
-                        } else if (property.objectType === Constants.IntValue && subProp === Constants.SeqNum) {
+                        if (property.objectType === Constants.IntValue && subProp === Constants.SeqNum) {
+                            // if the property is of type number, but sub property of SeqNum,
+                            // select the correct default prop params
                             propType = (group.elements.find(i =>
                                 i.objectType === property.objectType && i.subPropOf === Constants.SeqNum
                             ));
-                        } else {
+                        } else if (property.objectType === Constants.TextValue) {
+                            // if the property is of type text value, we have to check the gui element
+                            // to get the correct default prop params
                             propType = (group.elements.find(i =>
                                 i.guiEle === property.guiElement && i.objectType === property.objectType
+                            ));
+                        } else {
+                            // in all other cases the gui-element resp. the subProp is not relevant
+                            // because the object type is unique
+                            propType = (group.elements.find(i =>
+                                i.objectType === property.objectType
                             ));
                         }
                     }
@@ -177,7 +175,9 @@ export class OntologyService {
 
         if (!propType) {
             // property type could not be found in the list of default properties
-            // maybe it's not supported e.g. if propDef.objectType === Constants.GeomValue || propDef.subPropertyOf[0] === Constants.HasRepresentation
+            // maybe it's not supported or it's a subproperty of another prop.
+            // e.g. if propDef.objectType === Constants.GeomValue || propDef.subPropertyOf[0] === Constants.HasRepresentation
+            // --> TODO: check if it's a subproperty of another one in this ontology
             return of (DefaultProperties.unsupported);
         }
 
