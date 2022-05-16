@@ -103,6 +103,7 @@ export class ListViewComponent implements OnChanges {
         this.pageEvent = new PageEvent();
         this.pageEvent.pageIndex = 0;
         this.resources = undefined;
+        this.emitSelectedResources();
 
         this._doSearch();
     }
@@ -159,6 +160,7 @@ export class ListViewComponent implements OnChanges {
                     },
                     (countError: ApiResponseError) => {
                         this._errorHandler.showMessage(countError);
+                        this.loading = countError.status !== 504;
                     }
                 );
             }
@@ -200,6 +202,7 @@ export class ListViewComponent implements OnChanges {
                     },
                     (countError: ApiResponseError) => {
                         this._errorHandler.showMessage(countError);
+                        this.loading = countError.status !== 504;
                     }
                 );
             }

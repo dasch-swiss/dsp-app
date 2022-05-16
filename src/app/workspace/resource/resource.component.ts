@@ -12,13 +12,17 @@ import {
 import {
     ApiResponseError,
     Constants,
-    CountQueryResponse, IHasPropertyWithPropertyDefinition,
+    CountQueryResponse,
+    IHasPropertyWithPropertyDefinition,
     KnoraApiConnection,
     ReadArchiveFileValue,
     ReadAudioFileValue,
-    ReadDocumentFileValue, ReadMovingImageFileValue, ReadResource,
+    ReadDocumentFileValue,
+    ReadMovingImageFileValue,
+    ReadResource,
     ReadResourceSequence,
-    ReadStillImageFileValue, SystemPropertyDefinition
+    ReadStillImageFileValue,
+    SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -134,8 +138,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             }
 
             if (event instanceof NavigationError) {
-                // hide loading indicator
-
                 // present error to user
                 this._errorHandler.showMessage(event.error);
 
@@ -270,6 +272,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                                 }
                             },
                             (error: ApiResponseError) => {
+                                this.loading = false;
                                 this._errorHandler.showMessage(error);
                             }
                         );
@@ -294,7 +297,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 } else {
                     this._errorHandler.showMessage(error);
                 }
-
             }
         );
     }

@@ -22,18 +22,27 @@ export class NotificationService {
         let panelClass: string;
 
         if (notification instanceof ApiResponseError) {
+            panelClass = type ? type : 'error';
             if (notification.error && !notification.error['message'].startsWith('ajax error')) {
                 // the Api response error contains a complex error message from dsp-js-lib
                 message = notification.error['message'];
                 duration = undefined;
             } else {
                 const defaultStatusMsg = this._statusMsg.default;
-                message = `${defaultStatusMsg[notification.status].message} (${notification.status}): ${defaultStatusMsg[notification.status].description}`;
+                message = `${defaultStatusMsg[notification.status].message} (${notification.status}): `;
+
+                if (notification.status === 504) {
+                    message += `There was a timeout issue with one or several requests.
+                                The resource(s) or a part of it cannot be displayed correctly.
+                                Failed on ${notification.url}`;
+                    duration = undefined;
+                } else {
+                    message += `${defaultStatusMsg[notification.status].description}`;
+                }
             }
-            panelClass = type ? type : 'error';
         } else {
-            message = notification;
             panelClass = type ? type : 'success';
+            message = notification;
         }
 
         this._snackBar.open(message, 'x', {

@@ -27,7 +27,7 @@ export class ErrorHandlerService {
 
         const apiResponseMessage = (error.error['response'] ? error.error['response'].error : undefined);
 
-        if ((error.status > 499 && error.status < 600) || apiServerError) {
+        if (((error.status > 499 && error.status < 600) || apiServerError) && error.status !== 504) {
 
             let status = (apiServerError ? 503 : error.status);
 
