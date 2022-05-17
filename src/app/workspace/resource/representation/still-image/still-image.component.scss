@@ -1,12 +1,6 @@
 @import "../../../../../assets/style/config";
-// sizes
-$max-width: 800px;
-$panelSize: 40px;
-
-$osd-height: 460px;
 
 :host {
-  // display: inline-flex;
   width: 100%;
 
   @media (max-height: 636px) {
@@ -16,7 +10,7 @@ $osd-height: 460px;
   .osd-container {
     color: $bright;
     background-color: $dark;
-    height: 100%;
+    height: calc(100% - 64px);
 
     &.drawing {
       cursor: crosshair;
@@ -25,33 +19,59 @@ $osd-height: 460px;
     &.fullscreen {
       max-width: 100vw;
     }
+  }
 
-    .captions-container {
-      .top, .bottom {
-        text-align: left;
-        .iiif-url, .copy-button {
-          display: inline-block;
-        }
-        .iiif-url {
-          a {
-            padding: 0px 0px 0px 16px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 50%;
-          }
-        }
-        .copy-button button {
-          background: none;
-          border: none;
-          color: white;
-          mat-icon {
-            font-size: 16px;
-          }
-        }
-      }
+  .toolbar {
+    color: $primary_50;
+    background-color: $dark;
+    height: 64px;
+
+    .action {
+      height: 40px;
+      bottom: 0;
+      padding: 8px 0;
     }
   }
+
+  .navigation {
+    position: absolute;
+    z-index: 1;
+
+    // vertical navigation
+    // on the left resp. on the right hand side of osd viewer
+    &.vertical {
+      height: calc(100% - #{$panel-height});
+      width: $panel-height;
+      top: $panel-height;
+      &.previous {
+        left: 0;
+      }
+      &.next {
+        right: 0;
+      }
+      .mat-button.full-size {
+        height: 100% !important;
+        width: $panel-height !important;
+
+        padding: 0 !important;
+        min-width: $panel-height !important;
+      }
+    }
+
+    // horizontal navigation
+    // slider control container
+    &.horizontal {
+      width: 100%;
+
+      .mat-slider {
+        width: 100%;
+        height: 4px;
+        bottom: 20px;
+      }
+
+    }
+  }
+
 }
 
 .annotation-tooltip {

@@ -66,14 +66,12 @@
                     {{ muted ? "volume_mute" : "volume_up" }}
                 </mat-icon>
             </button>
-            <button mat-icon-button (click)="toggleCinemaMode()"
-                [matTooltip]="(cinemaMode ? 'Default view' : 'Cinema mode')" [matTooltipPosition]="matTooltipPos">
-                <mat-icon>{{
-                    cinemaMode ? "fullscreen_exit" : "fullscreen"
-                }}</mat-icon>
-            </button>
             <button mat-icon-button (click)="openReplaceFileDialog()" class="replace-file" matTooltip="Replace video file" [matTooltipPosition]="matTooltipPos">
                 <mat-icon>cloud_upload</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleCinemaMode()"
+                [matTooltip]="(cinemaMode ? 'Default view' : 'Cinema mode')" [matTooltipPosition]="matTooltipPos">
+                <mat-icon>{{cinemaMode ? "fullscreen_exit" : "fullscreen"}}</mat-icon>
             </button>
         </mat-toolbar-row>
     </mat-toolbar>

@@ -7,6 +7,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { By } from '@angular/platform-browser';
@@ -143,6 +144,7 @@ describe('StillImageComponent', () => {
                 HttpClientModule,
                 MatDialogModule,
                 MatIconModule,
+                MatMenuModule,
                 MatSnackBarModule,
                 MatToolbarModule,
             ],
@@ -199,31 +201,6 @@ describe('StillImageComponent', () => {
             done();
         });
 
-    });
-
-    it('should display the image caption', () => {
-
-        const hostCompDe = testHostFixture.debugElement;
-        const stillImageComponentDe = hostCompDe.query(By.directive(StillImageComponent));
-
-        const captionDebugElement = stillImageComponentDe.query(By.css('.caption'));
-        const captionEle = captionDebugElement.nativeElement;
-
-        expect(captionEle.innerText).toEqual('test image');
-
-    });
-
-    it('should display the iiifUrl of the image', () => {
-
-        const hostCompDe = testHostFixture.debugElement;
-        const stillImageComponentDe = hostCompDe.query(By.directive(StillImageComponent));
-
-        const iiifUrlDebugElement = stillImageComponentDe.query(By.css('.iiif-url a'));
-        const iiifUrlEle = iiifUrlDebugElement.nativeElement;
-
-        expect(iiifUrlEle.innerText).toEqual('https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg');
-        expect(iiifUrlEle.getAttribute('target')).toEqual('_blank');
-        expect(iiifUrlEle.getAttribute('href')).toEqual('https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg');
     });
 
     it('should have 1 test region loaded (rectangle)', () => {
