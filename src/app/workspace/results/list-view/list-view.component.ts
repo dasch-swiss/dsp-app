@@ -159,8 +159,8 @@ export class ListViewComponent implements OnChanges {
                         }
                     },
                     (countError: ApiResponseError) => {
-                        this._errorHandler.showMessage(countError);
                         this.loading = countError.status !== 504;
+                        this._errorHandler.showMessage(countError);
                     }
                 );
             }
@@ -177,9 +177,9 @@ export class ListViewComponent implements OnChanges {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.resources = undefined;
                     this.loading = false;
+                    this.resources = undefined;
+                    this._errorHandler.showMessage(error);
                 }
             );
 
@@ -201,8 +201,8 @@ export class ListViewComponent implements OnChanges {
                         }
                     },
                     (countError: ApiResponseError) => {
-                        this._errorHandler.showMessage(countError);
                         this.loading = countError.status !== 504;
+                        this._errorHandler.showMessage(countError);
                     }
                 );
             }
@@ -224,9 +224,9 @@ export class ListViewComponent implements OnChanges {
                         this.loading = false;
                     },
                     (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                        this.resources = undefined;
                         this.loading = false;
+                        this.resources = undefined;
+                        this._errorHandler.showMessage(error);
                     }
                 );
             } else {

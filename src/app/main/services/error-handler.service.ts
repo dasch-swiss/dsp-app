@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
 import { HttpStatusMsg } from 'src/assets/http/statusMsg';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
@@ -11,6 +11,8 @@ import { SessionService } from '../services/session.service';
     providedIn: 'root'
 })
 export class ErrorHandlerService {
+
+    dialogRef: MatDialogRef<any>;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -66,11 +68,12 @@ export class ErrorHandlerService {
                 disableClose: true
             };
 
-            this._dialog.open(
-                DialogComponent,
-                dialogConfig
-            );
-
+            if (!this.dialogRef) {
+                this.dialogRef = this._dialog.open(
+                    DialogComponent,
+                    dialogConfig
+                );
+            }
 
         } else if (error.status === 401 && typeof(error.error) !== 'string') {
             // logout if error status is a 401 error and comes from a DSP-JS request
@@ -90,8 +93,7 @@ export class ErrorHandlerService {
             );
 
         } else {
-            // in any other case
-            // open snack bar from dsp-ui notification service
+            // open snack bar in any other case
             this._notification.openSnackBar(error);
             // log error to Rollbar (done automatically by simply throwing a new Error)
             if (error instanceof ApiResponseError) {

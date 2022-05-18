@@ -1,5 +1,5 @@
 <div class="content large middle">
-    <div class="resource-view">
+    <div class="resource-view" *ngIf="resource">
 
         <!-- dsp-resource-representation -->
         <div class="representation-container center" *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue"
@@ -114,7 +114,7 @@
 
     <!-- resource not found  -->
     <div *ngIf="!resource && !loading" class="no-results">
-        <p>The resource <span *ngIf="resourceIri">- <strong> {{resourceIri}}</strong> -</span> could not
+        <p>The resource <span *ngIf="resourceIri">&mdash; <strong> {{resourceIri}}</strong> &mdash;</span> could not
             be found.</p>
         <p>Reasons:</p>
         <ul>

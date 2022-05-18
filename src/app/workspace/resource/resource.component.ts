@@ -289,14 +289,9 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 // this.loading = false;
             },
             (error: ApiResponseError) => {
+                this.resource = undefined;
                 this.loading = false;
-                if (error.status === 404) {
-                    // resource not found
-                    // display message that it couldn't be found
-                    this.resource = undefined;
-                } else {
-                    this._errorHandler.showMessage(error);
-                }
+                this._errorHandler.showMessage(error);
             }
         );
     }
