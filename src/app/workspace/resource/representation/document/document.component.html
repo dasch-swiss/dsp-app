@@ -10,6 +10,7 @@
                 class="pdf-searchbox"
                 placeholder="Search in pdf..."
                 [value]="pdfQuery"
+                [disabled]="failedToLoad"
                 (input)="searchQueryChanged($event.target.value)"
                 (keyup.enter)="searchQueryChanged(queryInp.value)"
             />
@@ -18,13 +19,13 @@
         <!-- image action tools e.g. zoom, rotate and flip -->
         <span>
             <!-- zoom buttons -->
-            <button mat-icon-button id="DSP_PDF_ZOOM_OUT" matTooltip="Zoom out" (click)="zoomFactor = zoomFactor - 0.2">
+            <button mat-icon-button id="DSP_PDF_ZOOM_OUT" matTooltip="Zoom out" (click)="zoomFactor = zoomFactor - 0.2" [disabled]="failedToLoad">
                 <mat-icon>remove_circle_outline</mat-icon>
             </button>
-            <button mat-icon-button id="DSP_PDF_HOME" matTooltip="Reset zoom" (click)="zoomFactor = 1.0">
+            <button mat-icon-button id="DSP_PDF_HOME" matTooltip="Reset zoom" (click)="zoomFactor = 1.0" [disabled]="failedToLoad">
                 <mat-icon>adjust</mat-icon>
             </button>
-            <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoomFactor = zoomFactor + 0.2">
+            <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoomFactor = zoomFactor + 0.2" [disabled]="failedToLoad">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
             <button mat-icon-button id="DSP_PDF_REPLACE_FILE" class="replace-file" matTooltip="Replace PDF file" (click)="openReplaceFileDialog()">
@@ -35,6 +36,8 @@
             </a>
         </span>
     </div>
+    <!-- in case of an error -->
+    <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'document'" *ngIf="failedToLoad"></app-status>
 
     <pdf-viewer [src]="src.fileValue.fileUrl" [original-size]="false" [autoresize]="true" [show-all]="true"
         [show-borders]="true" [zoom]="zoomFactor" [zoom-scale]="'page-width'">

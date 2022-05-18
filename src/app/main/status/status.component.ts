@@ -25,9 +25,9 @@ export class StatusComponent implements OnInit {
 
     @Input() comment?: string;
     @Input() url?: string;
+    @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video';
 
     refresh = false;
-
 
     // error message that will be shown in template
     message: StatusMsg;
@@ -92,6 +92,7 @@ export class StatusComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+
         // status is not defined in Input parameter
         if (!this.status) {
             // but status is defined in app.routing
@@ -100,11 +101,16 @@ export class StatusComponent implements OnInit {
             });
         }
 
-        // set the page title
-        this._titleService.setTitle('DSP | Error ' + this.status);
-
         // get error message by status
         this.message = this.getMsgByStatus(this.status);
+
+        if (this.representation) {
+            this.comment = `There was an error loading the ${this.representation} file representation. Try to open it directly by clicking on the file url below:`;
+            this.message.action = 'goto';
+        } else {
+            // set the page title only in case of main error
+            this._titleService.setTitle(`DSP | ${this.getTypeByStatus(this.status).toUpperCase()} ${this.status}`);
+        }
 
     }
 

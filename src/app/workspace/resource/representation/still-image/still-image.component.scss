@@ -1,10 +1,20 @@
+@import "../../../../../assets/style/responsive";
 @import "../../../../../assets/style/config";
 
 :host {
   width: 100%;
 
   @media (max-height: 636px) {
-    height: 300px;
+    height: 364px;
+  }
+
+  .mat-button-disabled {
+    color: $grey !important;
+  }
+
+  app-status {
+    margin-top: 16px;
+    display: inline-block;
   }
 
   .osd-container {
@@ -30,7 +40,13 @@
       height: 40px;
       bottom: 0;
       padding: 8px 0;
+
+      .active {
+        background: rgba(128,128,128,.39);
+        font-weight: bolder;
+      }
     }
+
   }
 
   .navigation {

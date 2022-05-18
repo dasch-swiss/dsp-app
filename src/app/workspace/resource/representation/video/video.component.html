@@ -1,5 +1,8 @@
 <div class="player" appDisableContextMenu [class.cinema]="cinemaMode">
+
     <div class="container">
+        <!-- in case of an error -->
+        <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="failedToLoad"></app-status>
 
         <video class="video" #videoEle *ngIf="!fileHasChanged; else loading"  [src]="video" type="video/mp4" preload="auto" [muted]="muted"
             (click)="togglePlay()" (timeupdate)="timeUpdate($event)" (loadedmetadata)="loadedMetadata()"
@@ -10,7 +13,7 @@
             <app-progress-indicator></app-progress-indicator>
         </ng-template>
 
-        <div class="preview-line">
+        <div class="preview-line" *ngIf="!failedToLoad">
             <!-- preview image -->
             <div class="preview" #preview>
                 <app-video-preview
@@ -29,22 +32,25 @@
         <mat-toolbar-row style="overflow: hidden;">
             <app-av-timeline #timeline [value]="currentTime" [min]="0" [max]="duration" [resized]="cinemaMode"
                 (move)="updatePreview($event)" (mouseenter)="displayPreview(true)" (dimension)="timelineDimension = $event"
-                (mouseleave)="displayPreview(false)" (changed)="updateTimeFromSlider($event)"></app-av-timeline>
+                (mouseleave)="displayPreview(false)" (changed)="updateTimeFromSlider($event)"
+                [disabled]="failedToLoad"></app-av-timeline>
         </mat-toolbar-row>
 
         <mat-toolbar-row class="action">
-            <button mat-icon-button (click)="goToStart()" [disabled]="currentTime === 0"
+            <button mat-icon-button (click)="goToStart()" [disabled]="currentTime === 0 || failedToLoad"
                 matTooltip="Stop and go to start" [matTooltipPosition]="matTooltipPos">
                 <mat-icon>skip_previous</mat-icon>
             </button>
             <button mat-icon-button (click)="togglePlay()" [matTooltip]="(reachedTheEnd ? 'Replay' : (play ? 'Pause' : 'Play'))"
-                [matTooltipPosition]="matTooltipPos">
+                [matTooltipPosition]="matTooltipPos"
+                [disabled]="failedToLoad">
                 <mat-icon>{{ reachedTheEnd ? "replay" : (play ? "pause" : "play_arrow") }}</mat-icon>
             </button>
             <span class="empty-space"></span>
             <span class="fill-remaining-space"></span>
             <button mat-icon-button (click)="updateTimeFromButton(-10)"
-                matTooltip="10 seconds backward" [matTooltipPosition]="matTooltipPos">
+                matTooltip="10 seconds backward" [matTooltipPosition]="matTooltipPos"
+                [disabled]="failedToLoad">
                 <mat-icon>replay_10</mat-icon>
             </button>
 
@@ -56,12 +62,14 @@
             </div>
 
             <button mat-icon-button (click)="updateTimeFromButton(10)"
-                matTooltip="10 seconds forward" [matTooltipPosition]="matTooltipPos">
+                matTooltip="10 seconds forward" [matTooltipPosition]="matTooltipPos"
+                [disabled]="failedToLoad">
                 <mat-icon>forward_10</mat-icon>
             </button>
             <span class="fill-remaining-space"></span>
             <button mat-icon-button (click)="muted = !muted" [matTooltip]="(muted ? 'Unmute' : 'Mute')"
-                [matTooltipPosition]="matTooltipPos">
+                [matTooltipPosition]="matTooltipPos"
+                [disabled]="failedToLoad">
                 <mat-icon>
                     {{ muted ? "volume_mute" : "volume_up" }}
                 </mat-icon>
@@ -69,7 +77,7 @@
             <button mat-icon-button (click)="openReplaceFileDialog()" class="replace-file" matTooltip="Replace video file" [matTooltipPosition]="matTooltipPos">
                 <mat-icon>cloud_upload</mat-icon>
             </button>
-            <button mat-icon-button (click)="toggleCinemaMode()"
+            <button mat-icon-button (click)="toggleCinemaMode()" [disabled]="failedToLoad"
                 [matTooltip]="(cinemaMode ? 'Default view' : 'Cinema mode')" [matTooltipPosition]="matTooltipPos">
                 <mat-icon>{{cinemaMode ? "fullscreen_exit" : "fullscreen"}}</mat-icon>
             </button>

@@ -286,7 +286,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                     // gather system property information
                     res.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
                 }
-                // this.loading = false;
             },
             (error: ApiResponseError) => {
                 this.resource = undefined;

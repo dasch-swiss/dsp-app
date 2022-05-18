@@ -4,6 +4,7 @@
 
 .player {
   background: black;
+  color: white;
   height: 522px;
 
   .container {
@@ -49,11 +50,15 @@
       margin-left: -24px;
     }
 
+    app-status {
+      margin-top: 16px;
+      display: inline-block;
+    }
+
   }
 
   .controls {
     background: rgba(0, 0, 0, 0.5);
-    color: white;
     position: relative;
 
     .mat-toolbar-row {

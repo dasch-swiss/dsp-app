@@ -18,6 +18,7 @@ import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 
 @Component({
     selector: 'app-archive',
@@ -34,16 +35,20 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
 
     originalFilename: string;
 
+    failedToLoad = false;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private readonly _http: HttpClient,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
+        private _rs: RepresentationService,
         private _valueOperationEventService: ValueOperationEventService
     ) { }
 
     ngOnInit(): void {
         this._getOriginalFilename();
+        this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
     }
 
     ngAfterViewInit() {

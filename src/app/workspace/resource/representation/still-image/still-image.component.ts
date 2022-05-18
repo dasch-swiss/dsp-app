@@ -44,6 +44,7 @@ import { NotificationService } from 'src/app/main/services/notification.service'
 import { DspCompoundPosition } from '../../dsp-resource';
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 
 
 /**
@@ -133,6 +134,9 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
     @Output() loaded = new EventEmitter<boolean>();
 
+    loading = true;
+    failedToLoad = false;
+
     regionDrawMode = false; // stores whether viewer is currently drawing a region
     private _regionDragInfo; // stores the information of the first click for drawing a region
     private _viewer: OpenSeadragon.Viewer;
@@ -147,6 +151,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         private _matIconRegistry: MatIconRegistry,
         private _notification: NotificationService,
         private _renderer: Renderer2,
+        private _rs: RepresentationService,
         private _valueOperationEventService: ValueOperationEventService
     ) {
         OpenSeadragon.setString('Tooltips.Home', '');
@@ -190,6 +195,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
             // tODO: check if this is necessary or could be handled below
             //  (remove the 'else' before the 'if', so changes['activateRegion'] is always checked for)
         }
+
         if (this.activateRegion !== undefined) {
             this._highlightRegion(this.activateRegion);
         }
@@ -241,9 +247,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
      * prevents navigation by mouse (so that the region can be accurately drawn).
      */
     drawButtonClicked(): void {
-
-        this.regionDrawMode = true;
-        this._viewer.setMouseNavEnabled(false);
+        this.regionDrawMode = !this.regionDrawMode;
+        this._viewer.setMouseNavEnabled(!this.regionDrawMode);
     }
 
     /**
@@ -318,7 +323,9 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
                 const commentValue = (geom.region.properties[Constants.HasComment] ? geom.region.properties[Constants.HasComment][0].strval : '');
 
-                this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label, commentValue);
+                if (!this.failedToLoad) {
+                    this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label, commentValue);
+                }
 
                 imageXOffset++;
             }
@@ -375,6 +382,11 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
                 this._replaceFile(data);
             }
         });
+    }
+
+    openPage(p: number) {
+        this.regionDrawMode = false;
+        this.goToPage.emit(p);
     }
 
     private _replaceFile(file: UpdateFileValue) {
@@ -576,8 +588,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
             // rotateRightButton: 'DSP_OSD_ROTATE_RIGHT',       // doesn't work yet
             showNavigator: true,
             navigatorPosition: 'ABSOLUTE' as const,
-            navigatorTop: '40px',
-            navigatorLeft: 'calc(100% - 160px)',
+            navigatorTop: 'calc(100% - 136px)',
+            navigatorLeft: 'calc(100% - 136px)',
             navigatorHeight: '120px',
             navigatorWidth: '120px',
             gestureSettingsMouse: {
@@ -606,16 +618,41 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         // the first image has its left side at x = 0, and all images are scaled to have a width of 1 in viewport coordinates.
         // see also: https://openseadragon.github.io/examples/viewport-coordinates/
 
+        // reset the status
+        this.failedToLoad = false;
+
         const fileValues: ReadFileValue[] = this.images.map(
-            (img) => (img.fileValue)
+            img => img.fileValue
         );
 
         // display only the defined range of this.images
         const tileSources: object[] = this._prepareTileSourcesFromFileValues(fileValues);
 
         this.removeOverlays();
-        this._viewer.open(tileSources);
 
+        this._viewer.addOnceHandler('open', (args) => {
+            // check if the current image exists
+            if (this.iiifUrl.includes(args.source['@id'])) {
+                this.failedToLoad = !this._rs.doesFileExist(args.source['@id'] + '/info.json');
+                if (this.failedToLoad) {
+                    // failed to laod
+                    // disable mouse navigation incl. zoom
+                    this._viewer.setMouseNavEnabled(false);
+                    // disable the navigator
+                    this._viewer.navigator.element.style.display = 'none';
+                    // disable the region draw mode
+                    this.regionDrawMode = false;
+                } else {
+                    // enable mouse navigation incl. zoom
+                    this._viewer.setMouseNavEnabled(true);
+                    // enable the navigator
+                    this._viewer.navigator.element.style.display = 'block';
+                }
+                this.loading = false;
+            }
+        });
+
+        this._viewer.open(tileSources);
     }
 
     /**
@@ -630,6 +667,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         let imageXOffset = 0;
         const imageYOffset = 0;
         const tileSources = [];
+
+        // let i = 0;
 
         for (const image of images) {
             const sipiBasePath = image.iiifBaseUrl + '/' + image.filename;
@@ -651,7 +690,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
                     }]
                 },
                 x: imageXOffset,
-                y: imageYOffset
+                y: imageYOffset,
+                preload: true
             });
 
             imageXOffset++;

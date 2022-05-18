@@ -18,6 +18,7 @@ import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 
 
 @Component({
@@ -33,6 +34,8 @@ export class AudioComponent implements OnInit, AfterViewInit {
 
     @Output() loaded = new EventEmitter<boolean>();
 
+    failedToLoad = false;
+
     audio: SafeUrl;
 
     constructor(
@@ -40,11 +43,13 @@ export class AudioComponent implements OnInit, AfterViewInit {
         private _sanitizer: DomSanitizer,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
+        private _rs: RepresentationService,
         private _valueOperationEventService: ValueOperationEventService
     ) { }
 
     ngOnInit(): void {
         this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+        this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
     }
 
     ngAfterViewInit() {

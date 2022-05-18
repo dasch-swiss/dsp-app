@@ -60,4 +60,15 @@
       border: 3px solid red;
     }
   }
+
+  &.disabled {
+    cursor: no-drop;
+    .progress-background,
+    .progress-fill,
+    .thumb {
+      background-color: grey !important;
+      cursor: no-drop;
+    }
+  }
+
 }

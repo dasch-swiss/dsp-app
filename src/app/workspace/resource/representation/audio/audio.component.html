@@ -1,6 +1,9 @@
 <div class="controls">
+    <!-- in case of an error -->
+    <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'audio'" *ngIf="failedToLoad"></app-status>
+
     <div class="audio-player">
-        <audio id="audio" controls preload="auto">
+        <audio id="audio" [controls]="!failedToLoad" preload="auto">
             <source [src]="audio" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>

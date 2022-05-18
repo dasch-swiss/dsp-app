@@ -45,7 +45,7 @@ export class DatadogRumService {
     }
 
     setActiveUser(identifier: any, identifierType: 'iri' | 'email' | 'username'): void {
-        if(datadogRum.getInternalContext().application_id) {
+        if (datadogRum.getInternalContext().application_id) {
             datadogRum.setUser({
                 id: identifier,
                 identifierType: identifierType
@@ -54,7 +54,7 @@ export class DatadogRumService {
     }
 
     removeActiveUser(): void {
-        if(datadogRum.getInternalContext().application_id) {
+        if (datadogRum.getInternalContext().application_id) {
             datadogRum.removeUser();
         }
     }

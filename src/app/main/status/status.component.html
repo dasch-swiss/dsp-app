@@ -1,5 +1,4 @@
-<div class="status-page">
-
+<div class="status-page" [class.representation-error]="representation">
     <div class="container" *ngIf="!refresh; else isLoading">
         <div class="image">
             <img class="error-image" [src]="'/assets/images/' + message?.image" />
@@ -20,13 +19,11 @@
                 <p *ngSwitchCase="'reload'">
                     Please come back in a few minutes and try to <a (click)="reload()">reload the page</a>.
                 </p>
-                <p *ngSwitchCase="'goto'" [innerHtml]="url | appLinkify"></p>
+                <p *ngSwitchCase="'goto'" class="goto" [innerHtml]="url | appLinkify"></p>
             </div>
-
         </div>
     </div>
     <ng-template #isLoading>
         <app-progress-indicator></app-progress-indicator>
     </ng-template>
-
 </div>

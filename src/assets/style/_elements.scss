@@ -355,6 +355,12 @@ a,
     }
   }
 
+  .representation-error {
+    .action a {
+      color: $warn !important;
+    }
+  }
+
   .pdfViewer {
     margin-top: $panel-height;
   }

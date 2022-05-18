@@ -135,7 +135,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         // this persists the search term in the search input field
         const urlArray = window.location.pathname.split('/');
         const currentSearchTerm = urlArray[urlArray.length - 1];
-        if(urlArray[urlArray.length - 2] === 'fulltext') {
+        if (urlArray[urlArray.length - 2] === 'fulltext') {
             this.searchQuery = decodeURI(decodeURI(currentSearchTerm));
         }
 
@@ -370,7 +370,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
             this.prevSearch = [];
         }
 
-        if(!this.displayPhonePanel) {
+        if (!this.displayPhonePanel) {
             this.searchPanelFocus = true;
             this.openPanelWithBackdrop();
         }

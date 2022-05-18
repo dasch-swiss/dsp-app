@@ -37,6 +37,9 @@ export class AvTimelineComponent implements OnChanges {
     // in case parent resized: Will be used in video player when switching between cinema and default view
     @Input() resized: boolean;
 
+    // disable in case of missing file
+    @Input() disabled: boolean;
+
     // send click position to parent
     @Output() changed = new EventEmitter<number>();
 
@@ -184,17 +187,18 @@ export class AvTimelineComponent implements OnChanges {
      * @param ev
      */
     private _onMouseup(ev: MouseEvent) {
+        if (!this.disabled) {
+            const pos: number = (ev.clientX - this.timelineDimension.left);
 
-        const pos: number = (ev.clientX - this.timelineDimension.left);
+            this.updatePosition(pos);
 
-        this.updatePosition(pos);
+            const percentage: number = (pos / this.timelineDimension.width);
 
-        const percentage: number = (pos / this.timelineDimension.width);
+            // calc time value to submit to parent
+            const time: number = (percentage * this.max);
 
-        // calc time value to submit to parent
-        const time: number = (percentage * this.max);
-
-        this.changed.emit(time);
+            this.changed.emit(time);
+        }
     }
 
     /**

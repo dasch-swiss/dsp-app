@@ -10,7 +10,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Constants, MockResource, ReadGeomValue, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
 import { AppInitService } from 'src/app/app-init.service';

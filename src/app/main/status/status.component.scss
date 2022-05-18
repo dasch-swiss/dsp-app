@@ -1,9 +1,11 @@
 @import "../../../assets/style/responsive";
+@import "../../../assets/style/config";
 
 .status-page {
   background: #fff;
   height: 100%;
   width: 100%;
+  z-index: 999;
 
   .container {
     display: grid;
@@ -11,8 +13,8 @@
     grid-template-rows: 1fr;
     align-items: stretch;
     align-content: space-evenly;
-    padding-top: 120px;
-    width: 480px;
+    padding-top: 16px;
+    max-width: 480px;
     margin: 0 auto;
 
     .image,
@@ -20,8 +22,8 @@
       justify-self: stretch;
       align-self: stretch;
       box-sizing: border-box;
-      max-height: 280px;
-      width: 360px;
+      min-height: 280px;
+      max-width: 360px;
 
       &.status-message {
         line-height: 1.5;
@@ -35,10 +37,24 @@
       }
     }
   }
+
+  &.representation-error {
+    background: none;
+
+    .image {
+      display: none !important;
+    }
+  }
 }
 
 .action {
-  margin-top: 72px;
+  width: 360px;
+
+  p {
+    width: 100%;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
 }
 
 // mobile device: phone

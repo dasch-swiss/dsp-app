@@ -31,7 +31,7 @@ export class ReplaceFileFormComponent implements OnInit {
     saveFile() {
         const updateVal = this.uploadComponent.getUpdatedValue(this.propId);
 
-        if(updateVal instanceof UpdateFileValue) {
+        if (updateVal instanceof UpdateFileValue) {
             updateVal.filename = this.fileValue.filename;
             updateVal.id = this.propId;
             this.closeDialog.emit(updateVal);
@@ -45,7 +45,7 @@ export class ReplaceFileFormComponent implements OnInit {
 
         this.warningMessages = [];
 
-        if(representationType === undefined){
+        if (representationType === undefined){
             this.warningMessages.push('File will be replaced.');
             this.warningMessages.push('Please note that you are about to replace the file');
         }

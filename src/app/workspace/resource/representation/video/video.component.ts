@@ -19,6 +19,7 @@ import { ErrorHandlerService } from 'src/app/main/services/error-handler.service
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { PointerValue } from '../av-timeline/av-timeline.component';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 
 @Component({
     selector: 'app-video',
@@ -44,6 +45,8 @@ export class VideoComponent implements OnInit, AfterViewInit {
     @ViewChild('preview') preview: ElementRef;
 
     loading = true;
+
+    failedToLoad = false;
 
     // video file url
     video: SafeUrl;
@@ -99,6 +102,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
         private _dialog: MatDialog,
         private _sanitizer: DomSanitizer,
         private _errorHandler: ErrorHandlerService,
+        private _rs: RepresentationService,
         private _valueOperationEventService: ValueOperationEventService
     ) { }
 
@@ -110,6 +114,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+        this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
         this.fileHasChanged = false;
     }
 
@@ -131,13 +136,14 @@ export class VideoComponent implements OnInit, AfterViewInit {
      * toggle play / pause
      */
     togglePlay() {
+        if (!this.failedToLoad) {
+            this.play = !this.play;
 
-        this.play = !this.play;
-
-        if (this.play) {
-            this.videoEle.nativeElement.play();
-        } else {
-            this.videoEle.nativeElement.pause();
+            if (this.play) {
+                this.videoEle.nativeElement.play();
+            } else {
+                this.videoEle.nativeElement.pause();
+            }
         }
 
     }
