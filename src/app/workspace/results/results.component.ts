@@ -3,6 +3,11 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FilteredResources, SearchParams } from './list-view/list-view.component';
 
+export interface SplitSize {
+    gutterNum: number;
+    sizes: Array<number>;
+};
+
 @Component({
     selector: 'app-results',
     templateUrl: './results.component.html',
@@ -27,6 +32,8 @@ export class ResultsComponent {
     searchMode: 'fulltext' | 'gravsearch';
 
     loading = true;
+
+    splitSizeChanged: SplitSize;
 
     constructor(
         private _route: ActivatedRoute,

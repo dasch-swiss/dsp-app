@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
 import {
@@ -29,6 +29,7 @@ import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens'
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
+import { SplitSize } from '../results/results.component';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { PropertyInfoValues } from './properties/properties.component';
 import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
@@ -48,6 +49,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     @ViewChild('stillImage') stillImageComponent: StillImageComponent;
 
     @Input() resourceIri: string;
+
+    @Input() splitSizeChanged: SplitSize;
 
     projectCode: string;
 
@@ -157,7 +160,12 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     }
 
-    ngOnChanges() {
+    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+        // do not reload the whole resource when the split size has changed
+        if (this.splitSizeChanged) {
+            return;
+        }
+
         this.loading = true;
         // reset all resources
         this.resource = undefined;

@@ -16,6 +16,7 @@ import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { SplitSize } from 'src/app/workspace/results/results.component';
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { PointerValue } from '../av-timeline/av-timeline.component';
 import { FileRepresentation } from '../file-representation';
@@ -33,6 +34,8 @@ export class VideoComponent implements OnInit, AfterViewInit {
     @Input() start?= 0;
 
     @Input() parentResource: ReadResource;
+
+    @Input() splitSizeChanged: SplitSize;
 
     @Output() loaded = new EventEmitter<boolean>();
 

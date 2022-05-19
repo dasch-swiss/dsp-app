@@ -1,7 +1,7 @@
 <!-- In case if results present -->
 <div class="content" *ngIf="searchParams">
 
-    <as-split direction="horizontal">
+    <as-split direction="horizontal" (dragEnd)="splitSizeChanged = $event">
         <as-split-area [size]="40">
             <app-list-view [search]="searchParams" [displayViewSwitch]="false" [withMultipleSelection]="true"
             (selectedResources)="openSelectedResources($event)">
@@ -10,14 +10,14 @@
         <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
             <div [ngSwitch]="viewMode">
                 <!-- single resource view -->
-                <app-resource *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id"></app-resource>
+                <app-resource *ngSwitchCase="'single'" [resourceIri]="selectedResources.resInfo[0].id" [splitSizeChanged]="splitSizeChanged"></app-resource>
 
                 <!-- intermediate view -->
                 <app-intermediate *ngSwitchCase="'intermediate'" [resources]="selectedResources" (action)="viewMode=$event"></app-intermediate>
 
                 <!-- multiple resources view / comparison viewer -->
                 <app-comparison *ngSwitchCase="'compare'" [noOfResources]="selectedResources.count"
-                    [resources]="selectedResources.resInfo">
+                    [resources]="selectedResources.resInfo" [splitSizeChanged]="splitSizeChanged">
                 </app-comparison>
             </div>
         </as-split-area>

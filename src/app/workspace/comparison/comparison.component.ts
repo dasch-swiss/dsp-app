@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ShortResInfo } from '../results/list-view/list-view.component';
+import { SplitSize } from '../results/results.component';
 
 @Component({
     selector: 'app-comparison',
@@ -22,6 +23,10 @@ export class ComparisonComponent implements OnChanges {
      * list of resources with id and label
      */
     @Input() resources?: ShortResInfo[];
+
+
+    // parent (or own) split size changed
+    @Input() splitSizeChanged: SplitSize;
 
     // if number of selected resources > 3, divide them into 2 rows
     topRow: string[] = [];

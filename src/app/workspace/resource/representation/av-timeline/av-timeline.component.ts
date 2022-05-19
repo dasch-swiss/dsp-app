@@ -10,6 +10,7 @@ import {
     SimpleChange,
     ViewChild
 } from '@angular/core';
+import { SplitSize } from 'src/app/workspace/results/results.component';
 
 export interface PointerValue {
     position: number;
@@ -39,6 +40,9 @@ export class AvTimelineComponent implements OnChanges {
 
     // disable in case of missing file
     @Input() disabled: boolean;
+
+    // split size changed
+    @Input() splitSizeChanged: SplitSize;
 
     // send click position to parent
     @Output() changed = new EventEmitter<number>();
@@ -86,6 +90,11 @@ export class AvTimelineComponent implements OnChanges {
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
         if (!this.timelineEle && !this.progressEle) {
             return;
+        }
+
+        if (changes.splitSizeChanged) {
+            // reset the timeline dimension
+            this.timelineDimension = this._getResizedTimelineDimensions();
         }
 
         if (!this.timelineDimension) {
@@ -206,6 +215,7 @@ export class AvTimelineComponent implements OnChanges {
      */
     private _onWindowResize(ev: Event) {
         this.timelineDimension = this._getResizedTimelineDimensions();
+        this.updatePositionFromTime(this.value);
         this.dimension.emit(this.timelineDimension);
     }
 

@@ -35,6 +35,7 @@
             <app-video #video class="dsp-representation video" *ngSwitchCase="representationConstants.movingImage"
                 [src]="representationsToDisplay[0]"
                 [parentResource]="resource.res"
+                [splitSizeChanged]="splitSizeChanged"
                 (loaded)="representationLoaded($event)">
             </app-video>
 

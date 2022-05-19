@@ -30,7 +30,7 @@
 
     <mat-toolbar class="controls">
         <mat-toolbar-row style="overflow: hidden;">
-            <app-av-timeline #timeline [value]="currentTime" [min]="0" [max]="duration" [resized]="cinemaMode"
+            <app-av-timeline #timeline [value]="currentTime" [min]="0" [max]="duration" [resized]="cinemaMode" [splitSizeChanged]="splitSizeChanged"
                 (move)="updatePreview($event)" (mouseenter)="displayPreview(true)" (dimension)="timelineDimension = $event"
                 (mouseleave)="displayPreview(false)" (changed)="updateTimeFromSlider($event)"
                 [disabled]="failedToLoad"></app-av-timeline>
