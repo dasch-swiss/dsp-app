@@ -24,6 +24,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { existingNamesValidator } from 'src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { SortingService } from 'src/app/main/services/sorting.service';
 import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
@@ -135,7 +136,8 @@ export class PropertyFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _os: OntologyService
+        private _os: OntologyService,
+        private _sortingService: SortingService
     ) { }
 
     ngOnInit() {
@@ -179,14 +181,16 @@ export class PropertyFormComponent implements OnInit {
                 // reset list of ontology classes
                 this.ontologyClasses = [];
                 response.forEach(onto => {
-                    const ontoClasses: ClassToSelect = {
-                        ontologyId: onto.id,
-                        ontologyLabel: onto.label,
-                        classes: onto.getAllClassDefinitions()
-                    };
-                    this.ontologyClasses.push(ontoClasses);
+                    const classDef = this._sortingService.keySortByAlphabetical(onto.getAllClassDefinitions(), 'label');
+                    if (classDef.length) {
+                        const ontoClasses: ClassToSelect = {
+                            ontologyId: onto.id,
+                            ontologyLabel: onto.label,
+                            classes: classDef
+                        };
+                        this.ontologyClasses.push(ontoClasses);
+                    }
                 });
-
             }
         );
 

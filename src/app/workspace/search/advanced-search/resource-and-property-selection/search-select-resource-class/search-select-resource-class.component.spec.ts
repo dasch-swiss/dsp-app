@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import { SearchSelectResourceClassComponent } from './search-select-resource-class.component';
+import { SortingService } from 'src/app/main/services/sorting.service';
 
 /**
  * test host component to simulate parent component.
@@ -29,7 +30,10 @@ class TestHostComponent implements OnInit {
 
     selectedResClassIri: string;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(
+        @Inject(FormBuilder) private _fb: FormBuilder,
+        private _sortingService: SortingService
+    ) {
     }
 
     ngOnInit() {
@@ -37,6 +41,7 @@ class TestHostComponent implements OnInit {
 
         // get resource class defs
         this.resourceClassDefs = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2').getClassDefinitionsByType(ResourceClassDefinition);
+        this.resourceClassDefs = this._sortingService.keySortByAlphabetical(this.resourceClassDefs, 'label');
 
     }
 
@@ -114,6 +119,10 @@ describe('SearchSelectResourceClassComponent', () => {
         const option2 = await options[1].getText();
 
         expect(option2).toEqual('Blue thing');
+
+        const option3 = await options[2].getText();
+
+        expect(option3).toEqual('Document');
 
     });
 

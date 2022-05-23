@@ -19,6 +19,7 @@ import {
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { SortingService } from 'src/app/main/services/sorting.service';
 import { DefaultClass, DefaultResourceClasses } from 'src/app/project/ontology/default-data/default-resource-classes';
 import { ProjectService } from '../services/project.service';
 import { ResourceService } from '../services/resource.service';
@@ -92,7 +93,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         private _fb: FormBuilder,
         private _project: ProjectService,
         private _resourceService: ResourceService,
-        private _router: Router
+        private _router: Router,
+        private _sortingService: SortingService
     ) { }
 
 
@@ -328,6 +330,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                 this._dspApiConnection.v2.onto.getOntology(ontologyIri).subscribe(
                     (onto: ReadOntology) => {
                         this.resourceClasses = onto.getClassDefinitionsByType(ResourceClassDefinition);
+
+                        // sort resource classes by label
+                        this.resourceClasses = this._sortingService.keySortByAlphabetical(this.resourceClasses, 'label');
 
                         if (this.selectResourceClassComponent && this.resourceClasses.length === 1) {
                             // since the component already exists, the ngAfterInit method of the component will not be called so we must assign the value here manually

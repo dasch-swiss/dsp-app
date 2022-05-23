@@ -1,17 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ResourceAndPropertySelectionComponent } from './resource-and-property-selection.component';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
-import { MockOntology, ReadOntology, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { of } from 'rxjs';
-import { MatIconModule } from '@angular/material/icon';
-import { By } from '@angular/platform-browser';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { By } from '@angular/platform-browser';
+import { MockOntology, ReadOntology, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
+import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ResourceAndPropertySelectionComponent } from './resource-and-property-selection.component';
+
 
 /**
  * test host component to simulate select resource class component.
@@ -100,7 +102,9 @@ describe('ResourceAndPropertySelectionComponent', () => {
         await TestBed.configureTestingModule({
             imports: [
                 ReactiveFormsModule,
-                MatIconModule
+                MatDialogModule,
+                MatIconModule,
+                MatSnackBarModule
             ],
             declarations: [
                 ResourceAndPropertySelectionComponent,

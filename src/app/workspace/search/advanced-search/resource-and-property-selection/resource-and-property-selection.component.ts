@@ -17,6 +17,8 @@ import {
     ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { SortingService } from 'src/app/main/services/sorting.service';
 import { SearchSelectPropertyComponent } from './search-select-property/search-select-property.component';
 import { SearchSelectResourceClassComponent } from './search-select-resource-class/search-select-resource-class.component';
 
@@ -53,9 +55,11 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
     properties: ResourcePropertyDefinition[];
 
     constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         @Inject(FormBuilder) private _fb: FormBuilder,
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection) {
-    }
+        private _errorHandler: ErrorHandlerService,
+        private _sortingService: SortingService
+    ) { }
 
     ngOnInit(): void {
 
@@ -94,11 +98,14 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
                 } else {
                     this.resourceClasses = resClasses;
                 }
+                // sort resource classes by label
+                this.resourceClasses = this._sortingService.keySortByAlphabetical(this.resourceClasses, 'label');
 
                 this.properties = onto.get(ontologyIri).getPropertyDefinitionsByType(ResourcePropertyDefinition);
+
             },
             error => {
-                console.error(error);
+                this._errorHandler.showMessage(error);
             }
         );
     }
