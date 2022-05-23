@@ -33,8 +33,12 @@
                 (click)="editResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
                 Edit resource class info
             </button>
-            <span
-                [matTooltip]="(classCanBeDeleted ? null : 'This class can\'t be deleted because it is in use')">
+            <span [matTooltip]="(classCanBeDeleted ? 'This class doesn\'t have any instances yet' : null)" matTooltipPosition="before">
+                <button mat-menu-item (click)="openResource(resourceClass.id)" [disabled]="classCanBeDeleted">
+                    Open resource instances
+                </button>
+            </span>
+            <span [matTooltip]="(classCanBeDeleted ? null : 'This class can\'t be deleted because it is in use')" matTooltipPosition="before">
                 <button mat-menu-item [disabled]="!classCanBeDeleted" class="res-class-delete"
                     (click)="deleteResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
                     Delete resource class
