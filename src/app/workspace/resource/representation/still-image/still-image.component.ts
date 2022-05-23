@@ -192,15 +192,15 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         if (changes['images']) {
             this._openImages();
             this._unhighlightAllRegions();
-            // tODO: check if this is necessary or could be handled below
+            // --> TODO: check if this is necessary or could be handled below
             //  (remove the 'else' before the 'if', so changes['activateRegion'] is always checked for)
         }
 
-        if (this.activateRegion !== undefined) {
-            this._highlightRegion(this.activateRegion);
-        }
         if (this.currentTab === 'annotations') {
             this.renderRegions();
+        }
+        if (this.activateRegion !== undefined) {
+            this._highlightRegion(this.activateRegion);
         }
         if (changes['activateRegion']) {
             this._unhighlightAllRegions();
@@ -642,6 +642,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
                     this._viewer.navigator.element.style.display = 'none';
                     // disable the region draw mode
                     this.regionDrawMode = false;
+                    // stop loading tiles
+                    this._viewer.removeAllHandlers('open');
                 } else {
                     // enable mouse navigation incl. zoom
                     this._viewer.setMouseNavEnabled(true);

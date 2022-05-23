@@ -14,6 +14,7 @@
                 [project]="resource.res.attachedToProject"
                 [currentTab]="selectedTabLabel"
                 [parentResource]="resource.res"
+                [activateRegion]="selectedRegion"
                 (loaded)="representationLoaded($event)"
                 (goToPage)="compoundNavigation($event)"
                 (regionClicked)="openRegion($event)"

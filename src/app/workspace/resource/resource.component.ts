@@ -18,10 +18,14 @@ import {
     ReadArchiveFileValue,
     ReadAudioFileValue,
     ReadDocumentFileValue,
+    ReadLinkValue,
     ReadMovingImageFileValue,
     ReadResource,
     ReadResourceSequence,
     ReadStillImageFileValue,
+    ResourceClassAndPropertyDefinitions,
+    ResourceClassDefinition,
+    ResourceClassDefinitionWithPropertyDefinition,
     SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
@@ -75,6 +79,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     selectedTabLabel: string;
 
     iiifUrl: string;
+
+    resourceIsAnnotation: 'region' | 'sequence';
 
     // list of representations to be displayed
     // --> TODO: will be expanded with | MovingImageRepresentation[] | AudioRepresentation[] etc.
@@ -243,56 +249,78 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 const res = new DspResource(response);
                 this.resource = res;
 
-                if (response.isDeleted) {
-                    // deleted resource; no further infos needed
+                // --> TODO: here we have to add also sequenceOf similar to regionOf (DEV-744)
+                if (this.resource.res.outgoingReferences.length && this.resource.res.entityInfo.classes[Constants.Region] && this.resource.res.id === this.resourceIri) {
+                    // the main resource (resourceIri) is a region;
+                    // display the corresponding still-image resource instance
+                    // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
+                    const annotationOfIri = (this.resource.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[])[0].linkedResourceIri;
+
+                    // get the parent resource to display
+                    this.getResource(annotationOfIri);
+
+                    // open annotation`s tab and highlight region
+                    this.selectedTabLabel = 'annotations';
+                    this.openRegion(iri);
+
+                    this.selectedRegion = iri;
+                    // define resource as annotation of type region
+                    this.resourceIsAnnotation = (this.resource.res.entityInfo.classes[Constants.Region] ? 'region' : 'sequence');
 
                 } else {
-                    // if there is no incomingResource and the resource has a still image property, assign the iiiUrl to be passed as an input to the still-image component
-                    if (!this.incomingResource && this.resource.res.properties[Constants.HasStillImageFileValue]) {
-                        this.iiifUrl = (this.resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
-                    }
 
-                    this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
+                    if (response.isDeleted) {
+                        // deleted resource; no further infos needed
+                        // --> TODO: as soon as we know how to display deleted/archived resources, we can handle it here.
 
-                    // get information about the logged-in user, if one is logged-in
-                    if (this._session.getSession()) {
-                        this.session = this._session.getSession();
-                        // is the logged-in user project member?
-                        // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
-                        this.editPermissions = true;
-                        // is the logged-in user system admin or project admin?
-                        this.adminPermissions = this.session.user.sysAdmin ? this.session.user.sysAdmin : this.session.user.projectAdmin.some(e => e === res.res.attachedToProject);
-                    }
-
-                    this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.resource);
-
-                    if (!this.representationsToDisplay.length && !this.compoundPosition) {
-                        // the resource could be a compound object
-                        this._incomingService.getStillImageRepresentationsForCompoundResource(this.resource.res.id, 0, true).subscribe(
-                            (countQuery: CountQueryResponse) => {
-
-                                if (countQuery.numberOfResults > 0) {
-                                    this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
-                                    this.compoundNavigation(1);
-                                } else {
-                                    // not a compound object
-                                    this.loading = false;
-                                }
-                            },
-                            (error: ApiResponseError) => {
-                                this.loading = false;
-                                this._errorHandler.showMessage(error);
-                            }
-                        );
                     } else {
-                        this.requestIncomingResources(this.resource);
+                        // if there is no incomingResource and the resource has a still image property, assign the iiiUrl to be passed as an input to the still-image component
+                        if (!this.incomingResource && this.resource.res.properties[Constants.HasStillImageFileValue]) {
+                            this.iiifUrl = (this.resource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
+                        }
+
+                        this.selectedTabLabel = this.resource.res.entityInfo?.classes[this.resource.res.type].label;
+
+                        // get information about the logged-in user, if one is logged-in
+                        if (this._session.getSession()) {
+                            this.session = this._session.getSession();
+                            // is the logged-in user project member?
+                            // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
+                            this.editPermissions = true;
+                            // is the logged-in user system admin or project admin?
+                            this.adminPermissions = this.session.user.sysAdmin ? this.session.user.sysAdmin : this.session.user.projectAdmin.some(e => e === res.res.attachedToProject);
+                        }
+
+                        this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.resource);
+
+                        if (!this.representationsToDisplay.length && !this.compoundPosition) {
+                            // the resource could be a compound object
+                            this._incomingService.getStillImageRepresentationsForCompoundResource(this.resource.res.id, 0, true).subscribe(
+                                (countQuery: CountQueryResponse) => {
+
+                                    if (countQuery.numberOfResults > 0) {
+                                        this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
+                                        this.compoundNavigation(1);
+                                    } else {
+                                        // not a compound object
+                                        this.loading = false;
+                                    }
+                                },
+                                (error: ApiResponseError) => {
+                                    this.loading = false;
+                                    this._errorHandler.showMessage(error);
+                                }
+                            );
+                        } else {
+                            this.requestIncomingResources(this.resource);
+                        }
+
+                        // gather resource property information
+                        res.resProps = this.initProps(response);
+
+                        // gather system property information
+                        res.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
                     }
-
-                    // gather resource property information
-                    res.resProps = this.initProps(response);
-
-                    // gather system property information
-                    res.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
                 }
             },
             (error: ApiResponseError) => {
@@ -444,7 +472,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 // developer feature: this keeps the annotations tab open, if you add "/annotations" to the end of the URL
                 // e.g. http://0.0.0.0:4200/resource/[project-shortcode]/[resource-iri]/annotations
-                if (this.valueUuid === 'annotations') {
+                if (this.valueUuid === 'annotations' || this.selectedRegion === this.resourceIri) {
                     this.selectedTab = (this.incomingResource ? 2 : 1);
                     this.selectedTabLabel = 'annotations';
                 }
