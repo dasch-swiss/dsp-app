@@ -1,5 +1,24 @@
 # Changelog
 
+## [10.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.0.0...v10.1.0) (2022-05-23)
+
+
+### Bug Fixes
+
+* **representation:** resolve timeline issue when resizing window (DEV-819) ([#741](https://www.github.com/dasch-swiss/dsp-app/issues/741)) ([da985fc](https://www.github.com/dasch-swiss/dsp-app/commit/da985fc6b9a3ff81ce34babaaf1c60afaeb5ff53))
+
+
+### Maintenance
+
+* **classes:** sort resource classes by label (DEV-952) ([#748](https://www.github.com/dasch-swiss/dsp-app/issues/748)) ([e060cce](https://www.github.com/dasch-swiss/dsp-app/commit/e060cce97e6931c69c625273863042ed5e1626a4))
+* **resource:** display incoming links the same way as prop values (DEV-567) ([#747](https://www.github.com/dasch-swiss/dsp-app/issues/747)) ([7d2f6f3](https://www.github.com/dasch-swiss/dsp-app/commit/7d2f6f3157308ebb2feb222d73899b2026bf3da4))
+
+
+### Enhancements
+
+* **resource:** open annotation (region) the correct way (DEV-785) ([#749](https://www.github.com/dasch-swiss/dsp-app/issues/749)) ([3983f9b](https://www.github.com/dasch-swiss/dsp-app/commit/3983f9b5cdef2ce3f262c1e3c77c7f957d26ada0))
+* **resource:** open resource instances from ontology class (DEV-950) ([#746](https://www.github.com/dasch-swiss/dsp-app/issues/746)) ([e937b5f](https://www.github.com/dasch-swiss/dsp-app/commit/e937b5f04377a175c50380706086269e229bae73))
+
 ## [10.0.0](https://www.github.com/dasch-swiss/dsp-app/compare/v9.8.1...v10.0.0) (2022-05-18)
 
 
