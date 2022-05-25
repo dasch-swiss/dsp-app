@@ -25,7 +25,7 @@ export class StatusComponent implements OnInit {
 
     @Input() comment?: string;
     @Input() url?: string;
-    @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video';
+    @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
 
     refresh = false;
 

@@ -46,6 +46,12 @@
                 (loaded)="representationLoaded($event)">
             </app-archive>
 
+            <app-text #text class="dsp-representation text" *ngSwitchCase="representationConstants.text"
+                [src]="representationsToDisplay[0]"
+                [parentResource]="resource.res"
+                (loaded)="representationLoaded($event)">
+            </app-text>
+
             <span *ngSwitchDefault>
                 The file representation type "{{representationsToDisplay[0].fileValue.type}}" is not yet implemented
             </span>

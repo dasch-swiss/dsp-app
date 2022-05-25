@@ -8,12 +8,14 @@ import {
     CreateFileValue,
     CreateMovingImageFileValue,
     CreateStillImageFileValue,
+    CreateTextFileValue,
     UpdateArchiveFileValue,
     UpdateAudioFileValue,
     UpdateDocumentFileValue,
     UpdateFileValue,
     UpdateMovingImageFileValue,
-    UpdateStillImageFileValue
+    UpdateStillImageFileValue,
+    UpdateTextFileValue
 } from '@dasch-swiss/dsp-js';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
@@ -50,6 +52,7 @@ export class UploadComponent implements OnInit {
     supportedAudioTypes = ['audio/mpeg'];
     supportedVideoTypes = ['video/mp4'];
     supportedArchiveTypes = ['application/zip', 'application/x-tar', 'application/gzip'];
+    supportedTextTypes = ['application/csv', 'application/xml', 'text/csv', 'text/plain', 'text/xml'];
 
     constructor(
         private _fb: FormBuilder,
@@ -209,7 +212,7 @@ export class UploadComponent implements OnInit {
 
         const filename = this.fileControl.value.internalFilename;
 
-        let fileValue: CreateStillImageFileValue | CreateDocumentFileValue | CreateAudioFileValue | CreateArchiveFileValue;
+        let fileValue: CreateStillImageFileValue | CreateDocumentFileValue | CreateAudioFileValue | CreateArchiveFileValue | CreateMovingImageFileValue | CreateTextFileValue;
 
         switch (this.representation) {
             case 'stillImage':
@@ -230,6 +233,10 @@ export class UploadComponent implements OnInit {
 
             case 'archive':
                 fileValue = new CreateArchiveFileValue();
+                break;
+
+            case 'text':
+                fileValue = new CreateTextFileValue();
                 break;
 
             default:
@@ -256,7 +263,7 @@ export class UploadComponent implements OnInit {
 
         const filename = this.fileControl.value.internalFilename;
 
-        let fileValue: UpdateStillImageFileValue | UpdateDocumentFileValue | UpdateAudioFileValue | UpdateArchiveFileValue;
+        let fileValue: UpdateStillImageFileValue | UpdateDocumentFileValue | UpdateAudioFileValue | UpdateArchiveFileValue | UpdateMovingImageFileValue | UpdateTextFileValue;
 
 
         switch (this.representation) {
@@ -278,6 +285,10 @@ export class UploadComponent implements OnInit {
 
             case 'archive':
                 fileValue = new UpdateArchiveFileValue();
+                break;
+
+            case 'text':
+                fileValue = new UpdateTextFileValue();
                 break;
 
             default:
@@ -325,6 +336,10 @@ export class UploadComponent implements OnInit {
 
             case 'archive':
                 this.allowedFileTypes = this.supportedArchiveTypes;
+                break;
+
+            case 'text':
+                this.allowedFileTypes = this.supportedTextTypes;
                 break;
 
             default:

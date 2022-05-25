@@ -160,6 +160,7 @@ import { ExpertSearchComponent } from './workspace/search/expert-search/expert-s
 import { FulltextSearchComponent } from './workspace/search/fulltext-search/fulltext-search.component';
 import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
 import { HintComponent } from './main/action/hint/hint.component';
+import { TextComponent } from './workspace/resource/representation/text/text.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -306,7 +307,8 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         UsersListComponent,
         VideoComponent,
         VideoPreviewComponent,
-        HintComponent
+        HintComponent,
+        TextComponent
     ],
     imports: [
         AngularSplitModule.forRoot(),

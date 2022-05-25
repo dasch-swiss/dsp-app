@@ -64,7 +64,9 @@ export class CreateLinkResourceComponent implements OnInit {
                         prop.id !== Constants.HasStillImageFileValue &&
                         prop.id !== Constants.HasDocumentFileValue &&
                         prop.id !== Constants.HasAudioFileValue &&
-                        prop.id !== Constants.HasArchiveFileValue
+                        prop.id !== Constants.HasArchiveFileValue &&
+                        prop.id !== Constants.HasMovingImageFileValue &&
+                        prop.id !== Constants.HasTextFileValue
                 );
 
                 if (onto.properties[Constants.HasStillImageFileValue]) {
@@ -75,6 +77,10 @@ export class CreateLinkResourceComponent implements OnInit {
                     this.hasFileValue = 'audio';
                 } else if (onto.properties[Constants.HasArchiveFileValue]) {
                     this.hasFileValue = 'archive';
+                } else if (onto.properties[Constants.HasMovingImageFileValue]) {
+                    this.hasFileValue = 'movingImage';
+                } else if (onto.properties[Constants.HasTextFileValue]) {
+                    this.hasFileValue = 'text';
                 } else {
                     this.hasFileValue = undefined;
                 }
