@@ -60,7 +60,8 @@ export class UserFormComponent implements OnInit, OnChanges {
     /**
      * status for the progress indicator and error
      */
-    loading = true;
+    loading = false;
+    loadingData = true;
     error: boolean;
 
     /**
@@ -177,7 +178,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        this.loading = true;
+        this.loadingData = true;
 
         // get information about the logged-in user
         this.session = this._session.getSession();
@@ -198,7 +199,7 @@ export class UserFormComponent implements OnInit, OnChanges {
             this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
-                    this.loading = !this.buildForm(this.user);
+                    this.loadingData = !this.buildForm(this.user);
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
@@ -238,7 +239,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                         newUser.username = this.name;
                     }
                     // build the form
-                    this.loading = !this.buildForm(newUser);
+                    this.loadingData = !this.buildForm(newUser);
                 });
         }
     }
@@ -324,8 +325,6 @@ export class UserFormComponent implements OnInit, OnChanges {
             // 'group': null
         });
 
-        // this.loading = false;
-
         this.userForm.valueChanges.subscribe(data => this.onValueChanged());
         return true;
     }
@@ -387,7 +386,6 @@ export class UserFormComponent implements OnInit, OnChanges {
 
                     this._cache.set(this.username, response);
 
-                    // this.loading = false;
                     this._notification.openSnackBar('You have successfully updated the user\'s profile data.');
                     this.closeDialog.emit();
                     this.loading = false;
