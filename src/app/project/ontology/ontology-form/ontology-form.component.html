@@ -22,8 +22,8 @@
 
         <mat-form-field class="large-field ontology-comment">
             <textarea matInput [formControl]="ontologyForm.controls['comment']"
-                [placeholder]="'Comment'" [value]="ontologyComment"
-                matTextareaAutosize matAutosizeMinRows="6" matAutosizeMaxRows="12">
+                placeholder="Comment" [value]="ontologyComment"
+                [cdkTextareaAutosize]="true" [cdkAutosizeMinRows]="6" [cdkAutosizeMaxRows]="12">
             </textarea>
         </mat-form-field>
 

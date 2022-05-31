@@ -14,15 +14,14 @@
         </mat-error>
         <mat-form-field class="large-field value-component-comment">
             <textarea
-                    matInput
-                    cdkTextareaAutosize
-                    cdkAutosizeMinRows="1"
-                    cdkAutosizeMaxRows="6"
-                    [formControlName]="'comment'"
-                    class="comment"
-                    placeholder="Comment"
-                    type="text"
-                    spellcheck="false">
+                matInput
+                class="comment"
+                placeholder="Comment"
+                spellcheck="false"
+                [cdkTextareaAutosize]="true"
+                [cdkAutosizeMinRows]="1"
+                [cdkAutosizeMaxRows]="6"
+                [formControlName]="'comment'">
             </textarea>
         </mat-form-field>
     </span>

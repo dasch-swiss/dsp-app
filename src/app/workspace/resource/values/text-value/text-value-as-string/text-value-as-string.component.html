@@ -9,14 +9,23 @@
             floatLabel="never">
 
             <!-- default gui-element: simple text -->
-            <input *ngIf="guiElement === 'simpleText'" matInput [formControlName]="'value'" class="value"
-                placeholder="Text value" type="text" [errorStateMatcher]="matcher">
+            <input *ngIf="guiElement === 'simpleText'" matInput
+                class="value"
+                placeholder="Text value"
+                type="text"
+                [formControlName]="'value'"
+                [errorStateMatcher]="matcher">
 
             <!-- gui-element: text area -->
-            <textarea *ngIf="guiElement === 'textArea'" matInput [formControlName]="'value'" class="value"
-                placeholder="Text value" type="text" [errorStateMatcher]="matcher"
-                matAutosizeMaxRows="12" matAutosizeMinRows="6"></textarea>
-            <!-- <textarea *ngSwitchCase="'richText'" matInput [formControlName]="'value'" MatTextareaAutosize [mat-autosize]="true" [matAutosizeMaxRows]="10" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher"></textarea> -->
+            <textarea *ngIf="guiElement === 'textArea'" matInput
+                class="value"
+                placeholder="Text value"
+                [formControlName]="'value'"
+                [errorStateMatcher]="matcher"
+                [cdkTextareaAutosize]="true"
+                [cdkAutosizeMinRows]="6"
+                [cdkAutosizeMaxRows]="12">
+            </textarea>
 
             <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') &&
                 (valueFormControl.touched || valueFormControl.dirty)">
@@ -37,8 +46,15 @@
 
         <!-- comment -->
         <mat-form-field *ngIf="!commentDisabled" class="large-field value-component-comment">
-            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"
-                [formControlName]="'comment'" class="comment" placeholder="Comment" type="text" spellcheck="false">
+            <textarea
+                matInput
+                class="comment"
+                placeholder="Comment"
+                spellcheck="false"
+                [cdkTextareaAutosize]="true"
+                [cdkAutosizeMinRows]="1"
+                [cdkAutosizeMaxRows]="6"
+                [formControlName]="'comment'">
             </textarea>
         </mat-form-field>
     </span>
