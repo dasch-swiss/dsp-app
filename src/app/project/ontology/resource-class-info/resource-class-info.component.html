@@ -18,7 +18,7 @@
         <span class="resource-class-header-action">
             <span class="resource-class-more" *ngIf="projectStatus"
                 [matTooltip]="(ontology.lastModificationDate ? 'more' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                <button mat-icon-button [matMenuTriggerFor]="resClassMenu" class="res-class-menu" [disabled]="!ontology.lastModificationDate">
+                <button mat-icon-button [matMenuTriggerFor]="resClassMenu" class="res-class-menu" [disabled]="!ontology.lastModificationDate" (click)="canBeDeleted()">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
             </span>
@@ -82,7 +82,9 @@
         </ng-template>
         <!-- button to assign new property to class -->
         <mat-list>
-            <mat-list-item *ngIf="lastModificationDate && projectStatus" class="property link" [matMenuTriggerFor]="addPropertyMenu">
+            <!-- here we have to know if the class has values or not;
+                this information is important to handle the cardinality (1 resp. 1-n); we get this information from the canReplaceCardinality method -->
+            <mat-list-item *ngIf="lastModificationDate && projectStatus" class="property link" [matMenuTriggerFor]="addPropertyMenu" (click)="canReplaceCardinality()">
                 <span mat-list-icon class="list-icon">
                     <mat-icon>add</mat-icon>
                 </span>
