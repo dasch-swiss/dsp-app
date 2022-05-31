@@ -160,7 +160,7 @@ describe('ListValueComponent', () => {
 
             expect(valuesSpy.v2.list.getList).toHaveBeenCalledTimes(1);
             expect(valuesSpy.v2.list.getList).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/treeList');
-            expect(testHostComponent.inputValueComponent.listRootNode.children.length).toEqual(1);
+            expect(testHostComponent.inputValueComponent.listRootNode.children.length).toEqual(0);
 
             const openListButtonDe = valueComponentDe.query(By.css('button'));
 

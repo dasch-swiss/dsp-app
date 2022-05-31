@@ -1,8 +1,17 @@
 <span *ngIf="mode !== 'read' && listRootNode !== undefined">
-    <button class="md-button" mat-stroked-button [matMenuTriggerFor]="mainMenu" type="button" placeholder="List value">
-        <span *ngIf="!selectedNode">Select list value</span>
-        <span *ngIf="selectedNode">{{selectedNode.label}}</span>
-    </button>
+
+    <!-- button to select a list node -->
+    <span [matTooltip]="(!selectedNode && !listRootNode.children.length) ? 'This list doesn\'t have any node values' : 'Select list value'" [matTooltipPosition]="'above'">
+        <button mat-stroked-button [matMenuTriggerFor]="mainMenu" type="button" placeholder="List value" [disabled]="!selectedNode && !listRootNode.children.length">
+
+            <!-- if no node is selected: display list label; if the list does not have any list nodes, the button should be disabled -->
+            <span *ngIf="!selectedNode">{{listRootNode.label}}</span>
+
+            <!-- if a node is selected: display node label -->
+            <span *ngIf="selectedNode">{{selectedNode.label}}</span>
+
+        </button>
+    </span>
 
     <mat-menu #mainMenu="matMenu" [overlapTrigger]="false">
         <span *ngFor="let child of listRootNode.children">
@@ -22,6 +31,7 @@
             </span>
         </span>
     </mat-menu>
+
     <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')  && valueFormControl.dirty">
         <span class="custom-error-message">New value must be different than the current value.</span>
     </mat-error>

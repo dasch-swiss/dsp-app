@@ -68,14 +68,12 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
         }
         if (this.valueFormControl !== undefined) {
             if (this.mode !== 'read') {
-                this.listRootNode = new ListNodeV2();
                 const rootNodeIris = this.propertyDef.guiAttributes;
                 for (const rootNodeIri of rootNodeIris) {
-                    // get rid of the "hlist"
                     const trimmedRootNodeIRI = rootNodeIri.substr(7, rootNodeIri.length - (1 + 7));
                     this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
-                        (response2: ListNodeV2) => {
-                            this.listRootNode.children.push(response2);
+                        (response: ListNodeV2) => {
+                            this.listRootNode = response;
                         }, (error: ApiResponseError) => {
                             this._errorHandler.showMessage(error);
                         });
@@ -126,10 +124,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
         }
 
         const newListValue = new CreateListValue();
-
-
         newListValue.listNode = this.valueFormControl.value;
-
 
         if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
             newListValue.valueHasComment = this.commentFormControl.value;
