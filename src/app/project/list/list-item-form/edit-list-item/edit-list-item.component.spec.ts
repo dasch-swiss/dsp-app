@@ -77,7 +77,7 @@ describe('EditListItemComponent', () => {
 
         const listsEndpointSpyObj = {
             admin: {
-                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListNodeInfo', 'updateChildNode', 'createChildNode'])
+                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListNodeInfo', 'updateChildNode', 'createChildNode', 'deleteChildComments'])
             }
         };
 
@@ -212,6 +212,40 @@ describe('EditListItemComponent', () => {
             testHostComponent.editListItem.updateChildNode();
             expect(dspConnSpy.admin.listsEndpoint.updateChildNode).toHaveBeenCalledTimes(1);
             expect(dspConnSpy.admin.listsEndpoint.updateChildNode).toHaveBeenCalledWith(updateChildNodeRequest);
+        });
+
+        it('should delete the child node comments', () => {
+            const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+            testHostComponent.editListItem.handleData([{ 'value': 'Tree list node 01', 'language': 'en' }, { 'value': 'Baumlistenknoten 01', 'language': 'de' }], 'labels');
+            testHostComponent.editListItem.handleData([], 'comments');
+
+            (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).updateChildNode.and.callFake(
+                () => {
+                    const response = new ListNodeInfoResponse();
+                    response.nodeinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList01';
+                    response.nodeinfo.labels = [{ 'value': 'Tree list node 01', 'language': 'en' }, { 'value': 'Baumlistenknoten 01', 'language': 'de' }];
+                    response.nodeinfo.comments = [];
+
+                    expect(testHostComponent.editListItem.labels).toEqual(response.nodeinfo.labels);
+                    expect(testHostComponent.editListItem.comments.length).toEqual(0);
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            const updateChildNodeRequest: UpdateChildNodeRequest = new UpdateChildNodeRequest();
+            updateChildNodeRequest.projectIri = testHostComponent.editListItem.projectIri;
+            updateChildNodeRequest.listIri = testHostComponent.editListItem.iri;
+            updateChildNodeRequest.labels = testHostComponent.editListItem.labels;
+            updateChildNodeRequest.comments = undefined;
+
+            testHostComponent.editListItem.updateChildNode();
+            expect(dspConnSpy.admin.listsEndpoint.updateChildNode).toHaveBeenCalledTimes(1);
+            expect(dspConnSpy.admin.listsEndpoint.updateChildNode).toHaveBeenCalledWith(updateChildNodeRequest);
+
+            expect(dspConnSpy.admin.listsEndpoint.deleteChildComments).toHaveBeenCalledTimes(1);
+            expect(dspConnSpy.admin.listsEndpoint.deleteChildComments).toHaveBeenCalledWith(updateChildNodeRequest.listIri);
         });
     });
 
