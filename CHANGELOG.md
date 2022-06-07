@@ -1,5 +1,25 @@
 # Changelog
 
+## [10.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.1.0...v10.2.0) (2022-06-02)
+
+
+### Bug Fixes
+
+* **ontology:** check if value exists without refreshing the page (DEV-923) ([#756](https://www.github.com/dasch-swiss/dsp-app/issues/756)) ([3c2409a](https://www.github.com/dasch-swiss/dsp-app/commit/3c2409a4e5cf985d00b6be91ccc2d9ce728b2581))
+* **user:** bring back password field and resolve loading issue (DEV-967) ([#753](https://www.github.com/dasch-swiss/dsp-app/issues/753)) ([694cb06](https://www.github.com/dasch-swiss/dsp-app/commit/694cb0626a5a5166656414a30f39dac9dfd6ee25))
+
+
+### Maintenance
+
+* **form:** replace matAutosize by cdkAutosize (DEV-968) ([#754](https://www.github.com/dasch-swiss/dsp-app/issues/754)) ([449493b](https://www.github.com/dasch-swiss/dsp-app/commit/449493bbdcad316e0c86390ee3ea46d593dd257f))
+
+
+### Enhancements
+
+* **list:** add support for deleting child node comments (DEV-965) ([#758](https://www.github.com/dasch-swiss/dsp-app/issues/758)) ([50c2d17](https://www.github.com/dasch-swiss/dsp-app/commit/50c2d17b5ec4c2546c1063a4488ec50b7dc6d36d))
+* **text-file:** add support for text file representations (DEV-920) ([#751](https://www.github.com/dasch-swiss/dsp-app/issues/751)) ([84975d7](https://www.github.com/dasch-swiss/dsp-app/commit/84975d7a2b7b6ae3b547da9d0780bc58f4979e50))
+* **value:** improve list value (DEV-951) ([#757](https://www.github.com/dasch-swiss/dsp-app/issues/757)) ([4d9b747](https://www.github.com/dasch-swiss/dsp-app/commit/4d9b74727f8b6eac8be9170b3cc2fcbef30685b0))
+
 ## [10.1.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.0.0...v10.1.0) (2022-05-23)
 
 
