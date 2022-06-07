@@ -323,7 +323,11 @@
     <div *ngSwitchCase="'createResource'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-instance-form (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
+        <app-resource-instance-form
+            [selectedResourceClassIri]="data.id"
+            [selectedProject]="data.project"
+            (closeDialog)="dialogRef.close()"
+            (updateParent)="replaceTitle($event)">
         </app-resource-instance-form>
     </div>
 

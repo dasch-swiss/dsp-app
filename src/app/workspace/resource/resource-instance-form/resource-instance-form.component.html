@@ -51,7 +51,7 @@
             <button mat-raised-button type="button" color="primary"
                 [disabled]="(!selectedProject || !selectedOntology || !selectedResourceClass || !selectResourceForm.valid) || this.errorMessage" (click)="nextStep()" class="form-next">
                 <app-progress-indicator *ngIf="loading" [status]="0" [color]="'primary'" class="next-progress"></app-progress-indicator>
-                Next
+                {{ 'appLabels.form.action.next' | translate }}
             </button>
         </span>
     </div>
@@ -70,6 +70,7 @@
 
     <!-- create property values -->
     <app-select-properties #selectProps
+        *ngIf="selectedResourceClass"
         [ontologyInfo]="ontologyInfo"
         [selectedResourceClass]="selectedResourceClass"
         [properties]="properties"
@@ -80,11 +81,9 @@
 
     <!-- action buttons: previous, cancel and save -->
     <div class="form-panel form-action" [class.fixed-at-bottom]="!showNextStepForm">
-        <span>
-            <button mat-button type="button" (click)="prevStep($event)">
-                &larr;&nbsp;{{ 'appLabels.form.action.back' | translate }}
-            </button>
-        </span>
+        <button *ngIf="!selectedResourceClassIri" mat-button type="button" (click)="prevStep($event)">
+            &larr;&nbsp;{{ 'appLabels.form.action.back' | translate }}
+        </button>
         <button mat-button type="button" (click)="closeDialog.emit()">
             {{ 'appLabels.form.action.cancel' | translate }}
         </button>

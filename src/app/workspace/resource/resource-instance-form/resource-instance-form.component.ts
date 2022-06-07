@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -9,7 +9,8 @@ import {
     CreateTextValueAsString,
     CreateValue,
     KnoraApiConnection,
-    OntologiesMetadata, ReadOntology,
+    OntologiesMetadata,
+    ReadOntology,
     ReadResource,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
@@ -33,6 +34,11 @@ import { SelectResourceClassComponent } from './select-resource-class/select-res
     styleUrls: ['./resource-instance-form.component.scss']
 })
 export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
+
+    // ontology's resource class iri
+    @Input() selectedResourceClassIri?: string;
+    // corresponding project (iri)
+    @Input() selectedProject?: string;
 
     // output to close dialog
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
@@ -59,7 +65,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
     userWentBack = false;
 
     usersProjects: StoredProject[];
-    selectedProject: string;
     ontologiesMetadata: OntologiesMetadata;
     selectedOntology: string;
     resourceClasses: ResourceClassDefinition[];
@@ -100,24 +105,39 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        // parent form is empty, it gets passed to the child components
-        this.selectResourceForm = this._fb.group({});
-        this.propertiesParentForm = this._fb.group({});
+        if (this.selectedResourceClassIri && this.selectedProject) {
+            // get ontology iri from res class iri
+            const splittedIri = this.selectedResourceClassIri.split('#');
+            this.selectedOntology = splittedIri[0];
+            this.selectProperties(this.selectedResourceClassIri);
 
-        // initialize projects to be used for the project selection in the creation form
-        this._project.initializeProjects().subscribe(
-            (proj: StoredProject[]) => {
-                this.usersProjects = proj;
+            this.showNextStepForm = false;
 
-                // notifies the user that he/she is not part of any project
-                if (proj.length === 0) {
-                    this.errorMessage = 'You are not a part of any active projects or something went wrong';
+            this.propertiesParentForm = this._fb.group({});
+
+        } else {
+
+            // parent form is empty, it gets passed to the child components
+            this.selectResourceForm = this._fb.group({});
+            this.propertiesParentForm = this._fb.group({});
+
+            // initialize projects to be used for the project selection in the creation form
+            this._project.initializeProjects().subscribe(
+                (proj: StoredProject[]) => {
+                    this.usersProjects = proj;
+
+                    // notifies the user that he/she is not part of any project
+                    if (proj.length === 0) {
+                        this.errorMessage = 'You are not a part of any active projects or something went wrong';
+                    }
                 }
-            }
-        );
+            );
 
-        // boolean to show only the first step of the form (= selectResourceForm)
-        this.showNextStepForm = true;
+            // boolean to show only the first step of the form (= selectResourceForm)
+            this.showNextStepForm = true;
+        }
+
+
 
     }
 
@@ -186,7 +206,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                         this.propertiesObj[iri] = [createVal];
                     }
                 }
-
             });
 
             if (this.fileValue) {
@@ -420,7 +439,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                             if (!this.selectPropertiesComponent && this.properties.length === 0 && !this.hasFileValue) {
                                 this.errorMessage = 'No properties defined for the selected resource.';
                             }
-
                             this.loading = false;
 
                         },

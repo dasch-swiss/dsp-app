@@ -7,7 +7,7 @@ import { FilteredResources } from 'src/app/workspace/results/list-view/list-view
 export interface DialogData {
     mode: string;       // switch mode
     id: string | number;         // main iri or status code
-    project?: string;   // project code
+    project?: string;   // project code (or iri)
     title?: string;
     subtitle?: string;
     comment?: string;

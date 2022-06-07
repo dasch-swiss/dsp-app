@@ -33,8 +33,13 @@
                 (click)="editResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
                 Edit resource class info
             </button>
+            <span [matTooltip]="'This opens the resource instance form'" matTooltipPosition="before">
+                <button mat-menu-item (click)="createResourceInstance(resourceClass.id, resourceClass.label + ' (' + subClassOfLabel + ')')">
+                    Create new resource instance
+                </button>
+            </span>
             <span [matTooltip]="(classCanBeDeleted ? 'This class doesn\'t have any instances yet' : null)" matTooltipPosition="before">
-                <button mat-menu-item (click)="openResource(resourceClass.id)" [disabled]="classCanBeDeleted">
+                <button mat-menu-item (click)="openResourceInstances(resourceClass.id)" [disabled]="classCanBeDeleted">
                     Open resource instances
                 </button>
             </span>
