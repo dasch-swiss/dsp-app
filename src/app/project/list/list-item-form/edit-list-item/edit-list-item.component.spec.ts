@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
     ApiResponseData,
     CreateChildNodeRequest,
+    DeleteChildNodeCommentsResponse,
     ListNodeInfoResponse,
     ListsEndpointAdmin,
     MockProjects,
@@ -229,6 +230,16 @@ describe('EditListItemComponent', () => {
 
                     expect(testHostComponent.editListItem.labels).toEqual(response.nodeinfo.labels);
                     expect(testHostComponent.editListItem.comments.length).toEqual(0);
+
+                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+                }
+            );
+
+            (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).deleteChildComments.and.callFake(
+                () => {
+                    const response = new DeleteChildNodeCommentsResponse();
+                    response.commentsDeleted = true;
+                    response.nodeIri = 'http://rdfh.ch/lists/0001/otherTreeList01';
 
                     return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
                 }
