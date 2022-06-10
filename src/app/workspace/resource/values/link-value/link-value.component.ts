@@ -68,6 +68,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     customValidators = [resourceValidator];
 
     resourceClasses: ResourceClassDefinition[];
+    subClasses: ResourceClassDefinition[] = [];
     properties: ResourcePropertyDefinition[];
 
     loadingResults = false;
@@ -143,15 +144,15 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
         this._dspApiConnection.v2.ontologyCache.getOntology(this.currentOntoIri).subscribe(
             (onto: Map<string, ReadOntology>) => {
                 const resClasses = onto.get(this.currentOntoIri).getClassDefinitionsByType(ResourceClassDefinition);
+
+                // add the superclass to the list of resource classes
                 this.resourceClasses = resClasses.filter(
                     (resClassDef: ResourceClassDefinition) => resClassDef.id === this.restrictToResourceClass
                 );
-                const subclasses = resClasses.filter(
-                    (resClassDef: ResourceClassDefinition) =>
-                        resClassDef.subClassOf.indexOf(this.restrictToResourceClass) > -1
-                );
 
-                this.resourceClasses = this.resourceClasses.concat(subclasses);
+                // recursively loop through all of the superclass's subclasses, including nested subclasses
+                // and add them to the list of resource classes
+                this.resourceClasses = this.resourceClasses.concat(this._getSubclasses(resClasses, this.restrictToResourceClass));
 
                 this.properties = onto.get(this.currentOntoIri).getPropertyDefinitionsByType(ResourcePropertyDefinition);
             },
@@ -288,5 +289,32 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
                 this.autocomplete.closePanel();
             }
         });
+    }
+
+    /**
+     * given a resource class Iri, return all subclasses
+     * @param resClasses List of all resource class definitions in the ontology
+     * @param resClassRestrictionIri The IRI of the resource class to filter the list of resource class defintions by
+     * @returns An array of all subclasses of type ResourceClassDefinition
+     */
+    private _getSubclasses(resClasses: ResourceClassDefinition[], resClassRestrictionIri: string): ResourceClassDefinition[] {
+
+        // filter list by the provided IRI to find all subclasses of the provided IRI
+        const subclasses = resClasses.filter(
+            (resClassDef: ResourceClassDefinition) =>
+                resClassDef.subClassOf.indexOf(resClassRestrictionIri) > -1
+        );
+
+        // add the filtered list to the list of all subclasses
+        this.subClasses = this.subClasses.concat(subclasses);
+
+        // if the provided IRI has subclasses, recursively call this function to find any subclasses of those subclasses
+        if (subclasses.length){
+            subclasses.forEach((sub) => {
+                this._getSubclasses(resClasses, sub.id);
+            });
+        }
+
+        return this.subClasses;
     }
 }
