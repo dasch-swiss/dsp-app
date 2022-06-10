@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
@@ -50,6 +51,19 @@ describe('ProjectComponent', () => {
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpy
+                },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        snapshot: {
+                            url: [
+                                { path: 'project' }
+                            ],
+                            params: [
+                                { shortcode: '0001' }
+                            ]
+                        }
+                    }
                 }
             ]
         }).compileComponents();

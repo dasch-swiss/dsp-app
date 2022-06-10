@@ -524,7 +524,6 @@ OFFSET 0`;
             }
         );
 
-
         const dialogConfig: MatDialogConfig = {
             width: '840px',
             maxHeight: '80vh',

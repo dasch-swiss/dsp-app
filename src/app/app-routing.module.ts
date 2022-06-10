@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { AuthGuard } from './main/guard/auth.guard';
-import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
-import { StatusComponent } from './main/status/status.component';
-import { HelpComponent } from './main/help/help.component';
+import { HintComponent } from './main/action/hint/hint.component';
 import { LoginFormComponent } from './main/action/login-form/login-form.component';
+import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
+import { AuthGuard } from './main/guard/auth.guard';
+import { HelpComponent } from './main/help/help.component';
 import { MainComponent } from './main/main.component';
-
+import { StatusComponent } from './main/status/status.component';
+import { OntologyClassInstanceComponent } from './project/beta/ontology-classes/ontology-class-instance/ontology-class-instance.component';
 // project
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
@@ -15,19 +15,16 @@ import { ListComponent } from './project/list/list.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { PermissionComponent } from './project/permission/permission.component';
 import { ProjectComponent } from './project/project.component';
-
+import { ProjectsComponent } from './system/projects/projects.component';
+// system
+import { SystemComponent } from './system/system.component';
+import { UsersComponent } from './system/users/users.component';
 // user
 import { DashboardComponent } from './user/dashboard/dashboard.component';
 import { UserComponent } from './user/user.component';
-
 // search results and resource viewer
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
-
-// system
-import { SystemComponent } from './system/system.component';
-import { ProjectsComponent } from './system/projects/projects.component';
-import { UsersComponent } from './system/users/users.component';
 
 const routes: Routes = [
     {
@@ -93,6 +90,75 @@ const routes: Routes = [
             {
                 path: 'lists/:id',
                 component: ListComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: '**',
+                component: StatusComponent,
+                data: { status: 404 }
+            }
+        ]
+    },
+    {
+        path: 'beta/project/:shortcode',
+        component: ProjectComponent,
+        children: [
+            {
+                path: '',
+                component: BoardComponent
+            },
+            {
+                path: 'info', // old path setup to avoid 404 when typing beta in front of project
+                redirectTo: ''
+            },
+            {
+                path: 'ontology',
+                component: HintComponent,
+                data: { topic: 'ontology' }
+            },
+            {
+                path: 'ontology/:onto',
+                component: OntologyComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'ontology/:onto/:class',
+                component: OntologyClassInstanceComponent,
+            },
+            {
+                path: 'ontology/:onto/:class/conf',
+                component: StatusComponent,
+                data: { status: 501, comment: 'Here you will be able to configure the resource class.' },
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'ontology/:onto/:class/:instance',
+                component: OntologyClassInstanceComponent,
+            },
+            {
+                path: 'list',
+                component: HintComponent,
+                data: { topic: 'list' }
+            },
+            {
+                path: 'list/:list',
+                component: ListComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'settings',
+                component: StatusComponent,
+                data: { status: 501, comment: 'Here you will be able to configure the project: e.g. setup collaboration and permissions.' },
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'settings/collaboration',
+                component: CollaborationComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: 'settings/permissions',
+                component: PermissionComponent,
                 canActivate: [AuthGuard]
             },
             {

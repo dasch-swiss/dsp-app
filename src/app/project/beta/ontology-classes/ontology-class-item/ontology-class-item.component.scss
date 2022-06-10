@@ -1,0 +1,33 @@
+@import "../../../../../assets/style/config";
+:host {
+  width: 100%;
+
+  &:hover {
+    .hover-only {
+        display: block;
+    }
+  }
+}
+
+.mat-line {
+  width: 100%;
+
+  &.label {
+    display: flex;
+    flex-direction: row;
+
+  }
+  &.instances {
+    color: $primary_500;
+  }
+}
+
+.overlay-buttons {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+}
+
+.hover-only {
+  display: none;
+}

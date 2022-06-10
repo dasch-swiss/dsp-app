@@ -14,13 +14,15 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CanDoResponse, ClassDefinition, Constants, MockOntology, OntologiesEndpointV2, OntologiesMetadata, OntologyMetadata, ReadOntology } from '@dasch-swiss/dsp-js';
+import { CanDoResponse, ClassDefinition, Constants, MockOntology, OntologiesEndpointV2, ReadOntology } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { SplitPipe } from 'src/app/main/pipes/split.pipe';
 import { TruncatePipe } from 'src/app/main/pipes/string-transformation/truncate.pipe';
 import { SortingService } from 'src/app/main/services/sorting.service';
+import { TestConfig } from 'test.config';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
 
 /**
@@ -110,6 +112,11 @@ describe('ResourceClassInfoComponent', () => {
                 MatTooltipModule
             ],
             providers: [
+                AppInitService,
+                {
+                    provide: DspApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
                 {
                     provide: DspApiConnectionToken,
                     useValue: ontologyEndpointSpyObj

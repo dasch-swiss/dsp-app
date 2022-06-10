@@ -1,12 +1,12 @@
 <!-- header / toolbar to select view and pagination -->
-<div class="list-view-header">
+<div class="list-view-header" [class.beta]="beta">
     <span *ngIf="displayViewSwitch" class="switch-list">
-        <span class="switch-list-label">Display as&nbsp;</span>
+        <!-- <span class="switch-list-label">Display as&nbsp;</span> -->
         <button mat-button (click)="toggleView('list')" [class.active]="view === 'list'">
-            <mat-icon>view_list</mat-icon> List
+            <mat-icon>view_list</mat-icon>
         </button>
         <button mat-button (click)="toggleView('grid')" [class.active]="view === 'grid'">
-            <mat-icon>view_module</mat-icon> Grid
+            <mat-icon>view_module</mat-icon>
         </button>
         <!-- TODO: add button to show as table, if possible (filter by same resource class) -->
     </span>

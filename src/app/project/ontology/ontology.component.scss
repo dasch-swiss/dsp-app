@@ -57,6 +57,18 @@ $width: 340px;
         width: 176px;
       }
     }
+
+    &.beta {
+      top: 0;
+      height: 80px;
+
+      .mat-toolbar-row,
+      .mat-toolbar-row span {
+        height: 100%;
+        padding-top: 8px;
+      }
+
+    }
   }
 }
 .ontology-viewer {

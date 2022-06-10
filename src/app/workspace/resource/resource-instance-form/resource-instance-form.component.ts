@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
     ApiResponseError,
     Constants,
@@ -33,10 +33,11 @@ import { SelectResourceClassComponent } from './select-resource-class/select-res
     templateUrl: './resource-instance-form.component.html',
     styleUrls: ['./resource-instance-form.component.scss']
 })
-export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
+export class ResourceInstanceFormComponent implements OnInit, OnChanges, OnDestroy {
 
     // ontology's resource class iri
     @Input() selectedResourceClassIri?: string;
+
     // corresponding project (iri)
     @Input() selectedProject?: string;
 
@@ -85,6 +86,9 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     valueOperationEventSubscription: Subscription;
 
+    // prepare content
+    preparing = false;
+    // loading in case of submit
     loading = false;
     // in case of any error
     error = false;
@@ -92,31 +96,34 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
 
     propertiesObj = {};
 
+    // feature toggle for new concept
+    beta = false;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
         private _project: ProjectService,
         private _resourceService: ResourceService,
+        private _route: ActivatedRoute,
         private _router: Router,
         private _sortingService: SortingService
-    ) { }
-
+    ) {
+        // get feature toggle information if url contains beta
+        if(this._route.parent) {
+            this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
+        }
+    }
 
     ngOnInit(): void {
-
         if (this.selectedResourceClassIri && this.selectedProject) {
             // get ontology iri from res class iri
             const splittedIri = this.selectedResourceClassIri.split('#');
             this.selectedOntology = splittedIri[0];
             this.selectProperties(this.selectedResourceClassIri);
-
             this.showNextStepForm = false;
-
             this.propertiesParentForm = this._fb.group({});
-
         } else {
-
             // parent form is empty, it gets passed to the child components
             this.selectResourceForm = this._fb.group({});
             this.propertiesParentForm = this._fb.group({});
@@ -132,13 +139,15 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                     }
                 }
             );
-
             // boolean to show only the first step of the form (= selectResourceForm)
             this.showNextStepForm = true;
         }
+    }
 
-
-
+    ngOnChanges(changes: SimpleChanges) {
+        if(changes.selectedResourceClassIri) {
+            this.ngOnInit();
+        }
     }
 
     ngOnDestroy() {
@@ -392,6 +401,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
         if (resourceClassIri === null) {
             this.selectResourceClasses(this.selectedOntology);
         } else if (resourceClassIri) {
+            this.preparing = true;
             this.loading = true;
             this._dspApiConnection.v2.ontologyCache.reloadCachedItem(this.selectedOntology).subscribe(
                 (res: ReadOntology) => {
@@ -439,10 +449,12 @@ export class ResourceInstanceFormComponent implements OnInit, OnDestroy {
                             if (!this.selectPropertiesComponent && this.properties.length === 0 && !this.hasFileValue) {
                                 this.errorMessage = 'No properties defined for the selected resource.';
                             }
+                            this.preparing = false;
                             this.loading = false;
 
                         },
                         (error: ApiResponseError) => {
+                            this.preparing = false;
                             this.loading = false;
                             this._errorHandler.showMessage(error);
                         }

@@ -5,6 +5,18 @@
   color: $warn;
 }
 
+.section-title {
+  .hover-only {
+    display: none;
+  }
+
+  &:hover {
+    .hover-only {
+      display: block;
+    }
+  }
+}
+
 // mobile device: tablet and smaller than a tablet
 @media (max-width: map-get($grid-breakpoints, tablet)) {
   a[id="ontologies"] {
@@ -20,4 +32,32 @@
   .navigation {
     display: none;
   }
+}
+
+.sidenav-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+
+  .mat-icon {
+    margin-right: 16px;
+  }
+}
+
+.sidenav-container {
+  .sidenav {
+
+    &.wide {
+      width: 240px;
+    }
+
+    &.narrow {
+      width: 36px;
+    }
+  }
+
+  // .mat-sidenav-content {
+  //   background: #fff;
+  // }
 }

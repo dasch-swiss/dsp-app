@@ -26,6 +26,7 @@
 //
 // content wrapper
 .content {
+
   &.small,
   &.medium,
   &.large {
@@ -48,51 +49,60 @@
 // --------------------------------------
 
 //
-// sidenav (not used anymore...? 2019-03-18)
-.sidenav-container {
-  .sidenav {
-    background-color: lighten($primary, 50%);
-    letter-spacing: 0.3px;
-    width: 36px;
+// sidenav in project view
+.project-view {
+  height: calc(100vh - #{$header-height});
 
-    &.wide {
-      width: 240px;
+  .project-nav {
+    width: 220px;
+
+    .mat-title,
+    .mat-subheading-2,
+    .mat-subheading-1 {
+      margin: 0;
     }
 
-    &.narrow {
-      width: 36px;
-    }
+    .mat-list-item {
+      height: 64px;
 
-    .mat-drawer-inner-container {
-      overflow-x: hidden;
-
-      .mat-list {
-        padding-top: 0;
+      &:hover {
+        background: rgba(0, 0, 0, .04);
       }
     }
 
-    .side-nav-footer {
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
-      bottom: 0;
-      height: 36px;
-      position: absolute;
-      width: 100%;
+    .mat-expansion-panel {
+      box-shadow: none !important;
 
-      .mat-button {
-        min-width: 30px;
-        padding: 0;
+      .mat-expansion-panel-header {
+        padding: 0 16px !important;
+        // display: block !important;
+      }
+
+      .sidenav-panel-header{
         width: 100%;
-
-        .mat-icon {
-          margin: 0 auto;
+        mat-panel-title {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 100%;
+          display: block;
         }
       }
+
+      // reset default value, if the panel is expanded
+      &.mat-expanded mat-panel-title {
+        overflow: unset;
+        white-space: inherit;
+        text-overflow: unset;
+        display: flex;
+      }
+
+      .mat-expansion-panel-body {
+        padding: 0 !important
+      }
     }
   }
 
-  .mat-sidenav-content {
-    background: #fff;
-  }
 }
 
 // --------------------------------------

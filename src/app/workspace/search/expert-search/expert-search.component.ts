@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
-import { DspApiConfigToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { OntologyService } from 'src/app/project/ontology/ontology.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import { AdvancedSearchParams, AdvancedSearchParamsService } from '../services/advanced-search-params.service';
 
@@ -34,7 +33,7 @@ export class ExpertSearchComponent implements OnInit {
     expertSearchForm: FormGroup;
     queryFormControl: FormControl;
 
-    iriBaseUrl = this._getIriBaseUrl();
+    iriBaseUrl = this._os.getIriBaseUrl();
 
     defaultGravsearchQuery =
     `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
@@ -51,7 +50,7 @@ CONSTRUCT {
 `;
 
     constructor(
-        @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
+        private _os: OntologyService,
         private _searchParamsService: AdvancedSearchParamsService,
         private _fb: FormBuilder
     ) { }
@@ -119,19 +118,6 @@ CONSTRUCT {
             this._searchParamsService.changeSearchParamsMsg(new AdvancedSearchParams(generateGravsearchWithCustomOffset));
         }
         return query + offsetTemplate;
-    }
-
-    /**
-     * get the IRI base url without configured api protocol.
-     * The protocol in this case is always http
-     * TODO: move to DSP-JS-Lib similar to `get ApiUrl`
-     */
-    private _getIriBaseUrl(): string {
-        return (
-            ('http://' + this._dspApiConfig.apiHost) +
-            (this._dspApiConfig.apiPort !== null ? ':' + this._dspApiConfig.apiPort : '') +
-            this._dspApiConfig.apiPath
-        );
     }
 
 }

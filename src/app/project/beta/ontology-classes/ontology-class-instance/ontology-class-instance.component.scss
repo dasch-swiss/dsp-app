@@ -1,0 +1,12 @@
+@import "../../../../../assets/style/config";
+
+.multiple-instances {
+  height: calc(100vh - #{$header-height});
+}
+
+
+.single-instance-form {
+  max-width: 720px;
+  display: block;
+  padding: 16px;
+}

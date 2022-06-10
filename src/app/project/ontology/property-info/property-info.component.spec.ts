@@ -23,11 +23,13 @@ import {
     ResourcePropertyDefinitionWithAllLanguages
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { SplitPipe } from 'src/app/main/pipes/split.pipe';
+import { TestConfig } from 'test.config';
 import { PropertyFormComponent } from '../property-form/property-form.component';
 import { PropertyInfoComponent } from './property-info.component';
 
@@ -207,6 +209,11 @@ describe('PropertyInfoComponent', () => {
                 MatTooltipModule
             ],
             providers: [
+                AppInitService,
+                {
+                    provide: DspApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
                 {
                     provide: DspApiConnectionToken,
                     useValue: ontologyEndpointSpyObj

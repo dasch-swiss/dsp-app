@@ -59,7 +59,13 @@
 </form>
 
 <!-- Step2: create property values and submit data -->
-<form *ngIf="propertiesParentForm && !showNextStepForm" [formGroup]="propertiesParentForm" class="resource-instance-form stepTwo form-content" (ngSubmit)="submitData()" appInvalidControlScroll>
+<app-progress-indicator *ngIf="preparing && beta"></app-progress-indicator>
+<form *ngIf="propertiesParentForm && !showNextStepForm && !preparing"
+    class="resource-instance-form stepTwo form-content"
+    [class.standalone]="beta"
+    [formGroup]="propertiesParentForm"
+    (ngSubmit)="submitData()"
+    appInvalidControlScroll>
 
     <!-- upload file -->
     <app-upload *ngIf="hasFileValue"
@@ -70,7 +76,7 @@
 
     <!-- create property values -->
     <app-select-properties #selectProps
-        *ngIf="selectedResourceClass"
+        *ngIf="selectedResourceClass || (beta && ontologyInfo)"
         [ontologyInfo]="ontologyInfo"
         [selectedResourceClass]="selectedResourceClass"
         [properties]="properties"
@@ -80,11 +86,13 @@
     </app-select-properties>
 
     <!-- action buttons: previous, cancel and save -->
-    <div class="form-panel form-action" [class.fixed-at-bottom]="!showNextStepForm">
+    <div class="form-panel form-action" [class.fixed-at-bottom]="!showNextStepForm && !preparing">
+
         <button *ngIf="!selectedResourceClassIri" mat-button type="button" (click)="prevStep($event)">
             &larr;&nbsp;{{ 'appLabels.form.action.back' | translate }}
         </button>
-        <button mat-button type="button" (click)="closeDialog.emit()">
+        <!-- TODO: do not display the cancel button in the new project workflow concept -->
+        <button *ngIf="!beta" mat-button type="button" (click)="closeDialog.emit()">
             {{ 'appLabels.form.action.cancel' | translate }}
         </button>
         <span class="fill-remaining-space"></span>

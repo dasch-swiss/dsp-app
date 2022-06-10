@@ -3,7 +3,7 @@
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <!-- toolbar: select ontology -->
-    <div class="content large middle" *ngIf="!loading">
+    <div class="content large middle" *ngIf="!loading && !beta">
         <div class="app-toolbar transparent more-space-bottom">
             <div class="app-toolbar-row toolbar-subtitle">
                 <h3 class="mat-body subtitle">Define your metadata</h3>
@@ -55,7 +55,7 @@
     <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
 
         <!-- TODO: add here the select ontology functionality -->
-        <mat-toolbar class="ontology-editor-header">
+        <mat-toolbar class="ontology-editor-header" [class.beta]="beta">
             <mat-toolbar-row>
                 <span class="ontology-info">
                     <h3 class="mat-title"

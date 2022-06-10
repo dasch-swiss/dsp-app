@@ -1,3 +1,5 @@
+@import "../../../../assets/style/config";
+
 .stepTwo {
     margin: 24px 56px !important;
     width: calc(100% - 144px);
@@ -6,6 +8,18 @@
       margin-top: 48px;
       margin-bottom: 0;
     }
+}
+
+.standalone {
+  margin: 0;
+  width: 100%;
+
+  .form-action {
+    &.fixed-at-bottom {
+      background-color: #fafafa;
+      bottom: 0;
+    }
+  }
 }
 
 .form-action {
@@ -24,3 +38,4 @@
 .errorIfNoElement {
   margin-bottom: 36px;
 }
+

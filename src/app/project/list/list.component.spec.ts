@@ -20,6 +20,7 @@ import { ApiResponseData, DeleteListResponse, ListNodeInfo, ListsEndpointAdmin, 
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
@@ -61,6 +62,12 @@ describe('ListComponent', () => {
     let testHostFixture: ComponentFixture<TestHostComponent>;
     let rootLoader: HarnessLoader;
     let overlayContainer: OverlayContainer;
+
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
 
     beforeEach(waitForAsync(() => {
 
@@ -111,9 +118,26 @@ describe('ListComponent', () => {
                                         return TestConfig.ProjectCode;
                                     }
                                 }
-                            })
+                            }),
+                            snapshot: {
+                                url: [
+                                    { path: 'project' }
+                                ]
+                            }
+                        },
+                        params: of(
+                            { list: 'mockList01' },
+                        ),
+                        snapshot: {
+                            params: [
+                                { id: 'http://rdfh.ch/lists/0001/mockList01' }
+                            ]
                         }
                     }
+                },
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
                 },
                 {
                     provide: DspApiConnectionToken,

@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
 import { CountQueryResponse, IFulltextSearchParams, MockResource, ReadResourceSequence, SearchEndpointV2 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -126,6 +127,18 @@ describe('ListViewComponent', () => {
                     provide: DspApiConnectionToken,
                     useValue: searchSpyObj
                 },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        parent: {
+                            snapshot: {
+                                url: [
+                                    { path: 'project' }
+                                ],
+                            }
+                        }
+                    }
+                }
             ]
         })
             .compileComponents();

@@ -15,6 +15,7 @@ import {
     StringLiteral
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from 'src/app/app-global';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
@@ -73,8 +74,12 @@ export class ListComponent implements OnInit {
     // disable content on small devices
     disableContent = false;
 
+    // feature toggle for new concept
+    beta = false;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private _ais: AppInitService,
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
@@ -96,6 +101,16 @@ export class ListComponent implements OnInit {
 
         // set the page title
         this._setPageTitle();
+
+        // get feature toggle information if url contains beta
+        this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
+        if (this.beta) {
+            // get list iri from list name
+            this._route.params.subscribe(params => {
+                const id = `${this._ais.dspAppConfig.iriBase}/lists/${this.projectCode}/${params['list']}`;
+                this.openList(id);
+            });
+        }
 
     }
 
@@ -196,8 +211,10 @@ export class ListComponent implements OnInit {
 
         this.list = this.lists.find(i => i.id === id);
 
-        const goto = 'project/' + this.projectCode + '/lists/' + encodeURIComponent(id);
-        this._router.navigateByUrl(goto, { skipLocationChange: false });
+        if (!this.beta) {
+            const goto = 'project/' + this.projectCode + '/lists/' + encodeURIComponent(id);
+            this._router.navigateByUrl(goto, { skipLocationChange: false });
+        }
 
         setTimeout(() => {
             this.loadList = false;

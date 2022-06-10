@@ -28,8 +28,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
 import { TestConfig } from 'test.config';
@@ -42,7 +43,7 @@ describe('OntologyComponent', () => {
     let fixture: ComponentFixture<OntologyComponent>;
 
     beforeEach(waitForAsync(() => {
-        const ontologyEndpointSpyObj = {
+        const apiSpyObj = {
             admin: {
                 listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject'])
             },
@@ -86,6 +87,15 @@ describe('OntologyComponent', () => {
                 RouterTestingModule
             ],
             providers: [
+                AppInitService,
+                {
+                    provide: DspApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: apiSpyObj
+                },
                 {
                     provide: ActivatedRoute,
                     useValue: {
@@ -96,13 +106,18 @@ describe('OntologyComponent', () => {
                                         return TestConfig.ProjectCode;
                                     }
                                 }
-                            })
-                        }
+                            }),
+                            snapshot: {
+                                params: { shortcode: '0001' },
+                                url: [
+                                    { path: 'project' }
+                                ]
+                            }
+                        },
+                        params: of({
+                            onto: 'anything'
+                        }),
                     }
-                },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: ontologyEndpointSpyObj
                 },
                 {
                     provide: CacheService,

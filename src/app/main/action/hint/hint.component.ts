@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-hint',
@@ -13,9 +14,18 @@ export class HintComponent implements OnInit {
 
     documentation: string;
 
-    constructor() { }
+    constructor(
+        private _route: ActivatedRoute
+    ) { }
 
     ngOnInit(): void {
+        if (!this.topic) {
+            // but status is defined in app.routing
+            this._route.data.subscribe(data => {
+                this.topic = data.topic;
+            });
+        }
+
         this.content = this._getHint(this.topic);
     }
 
@@ -42,6 +52,25 @@ export class HintComponent implements OnInit {
                         <code class="">Example: <i>"Lorem ipsum"</i> will find texts with exact content <i>Lorem ipsum</i></code>
                     </li>
                 </ul>`;
+                break;
+            case 'ontology':
+                this.documentation = 'https://docs.dasch.swiss/DSP-APP/user-guide/project/#data-model';
+                return `<p>Data Model</p>
+                <p>
+                    The definition of the data model (ontology) is the most important step.
+                    The data model is indispensable for structuring your data. Our platform
+                    provides a tool for an easy creation of one or more project data models.
+                    First, you have to know which data and sources you want to work with.
+                    The data model can be flexible and customizable.
+                </p>`;
+                break;
+            case 'list':
+                this.documentation = '';
+                return `<p>List Data</p>
+                <p>
+                Lists are very useful if you want to use controlled vocabulary to describe something.
+                Typical examples are keywords.
+                </p>`;
                 break;
 
             default:

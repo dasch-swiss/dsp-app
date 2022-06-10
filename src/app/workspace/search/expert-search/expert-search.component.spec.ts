@@ -4,10 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
-import { DspApiConfigToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { AppInitService } from 'src/app/app-init.service';
+import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { TestConfig } from 'test.config';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import { AdvancedSearchParams, AdvancedSearchParamsService } from '../services/advanced-search-params.service';
 import { ExpertSearchComponent } from './expert-search.component';
@@ -44,8 +47,6 @@ describe('ExpertSearchComponent', () => {
 
     beforeEach(waitForAsync(() => {
 
-        const dspConfSpy = new KnoraApiConfig('http', 'localhost', 3333, undefined, undefined, true);
-
         const spy = jasmine.createSpyObj('SearchParamsService', ['changeSearchParamsMsg']);
 
         TestBed.configureTestingModule({
@@ -59,12 +60,18 @@ describe('ExpertSearchComponent', () => {
                 MatDialogModule,
                 MatFormFieldModule,
                 MatInputModule,
+                MatSnackBarModule,
                 ReactiveFormsModule
             ],
             providers: [
+                AppInitService,
                 {
                     provide: DspApiConfigToken,
-                    useValue: dspConfSpy
+                    useValue: TestConfig.ApiConfig
+                },
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
                 },
                 {
                     provide: AdvancedSearchParamsService,
@@ -100,7 +107,7 @@ describe('ExpertSearchComponent', () => {
 
         expect(textareaEle.value).toBe(
             `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://localhost:3333/ontology/0803/incunabula/v2#>
+PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 
 CONSTRUCT {
     ?book knora-api:isMainResource true .
@@ -133,7 +140,7 @@ CONSTRUCT {
         // reset the textarea content
         expect(textareaEle.value).toBe(
             `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://localhost:3333/ontology/0803/incunabula/v2#>
+PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 
 CONSTRUCT {
     ?book knora-api:isMainResource true .
@@ -150,7 +157,7 @@ CONSTRUCT {
     it('should register the query in the params service', () => {
         const expectedGravsearch =
             `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://localhost:3333/ontology/0803/incunabula/v2#>
+PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 
 CONSTRUCT {
     ?book knora-api:isMainResource true .
@@ -178,7 +185,7 @@ CONSTRUCT {
     it('should emit the Gravsearch query', () => {
         const expectedGravsearch =
             `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://localhost:3333/ontology/0803/incunabula/v2#>
+PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 
 CONSTRUCT {
     ?book knora-api:isMainResource true .
@@ -214,7 +221,7 @@ CONSTRUCT {
 
         expect(textareaEle.value).toBe(
             `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://localhost:3333/ontology/0803/incunabula/v2#>
+PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 
 CONSTRUCT {
     ?book knora-api:isMainResource true .
@@ -229,7 +236,7 @@ CONSTRUCT {
 
         textareaEle.value =
             `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://localhost:3333/ontology/0803/incunabula/v2#>
+PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 
 CONSTRUCT {
     ?book knora-api:isMainResource true .

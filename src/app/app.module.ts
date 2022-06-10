@@ -161,6 +161,9 @@ import { FulltextSearchComponent } from './workspace/search/fulltext-search/full
 import { SearchPanelComponent } from './workspace/search/search-panel/search-panel.component';
 import { HintComponent } from './main/action/hint/hint.component';
 import { TextComponent } from './workspace/resource/representation/text/text.component';
+import { OntologyClassesComponent } from './project/beta/ontology-classes/ontology-classes.component';
+import { OntologyClassItemComponent } from './project/beta/ontology-classes/ontology-class-item/ontology-class-item.component';
+import { OntologyClassInstanceComponent } from './project/beta/ontology-classes/ontology-class-instance/ontology-class-instance.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -308,7 +311,10 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         VideoComponent,
         VideoPreviewComponent,
         HintComponent,
-        TextComponent
+        TextComponent,
+        OntologyClassesComponent,
+        OntologyClassItemComponent,
+        OntologyClassInstanceComponent
     ],
     imports: [
         AngularSplitModule.forRoot(),
