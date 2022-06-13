@@ -38,7 +38,7 @@ export class PermissionInfoComponent implements OnInit {
     isOpen = false;
 
     // default premission values based on DSP-API permissions concept:
-    // https://docs.dasch.swiss/DSP-API/02-knora-ontologies/knora-base/?h=unknown#permissions
+    // https://docs.dasch.swiss/latest/DSP-API/02-knora-ontologies/knora-base/?h=unknown#permissions
     defaultPermissions: PermissionObj[] = [
         {
             name: 'RV',
@@ -68,7 +68,7 @@ export class PermissionInfoComponent implements OnInit {
     ];
 
     // default user groups based on DSP-API users and groups concept:
-    // https://docs.dasch.swiss/DSP-API/02-knora-ontologies/knora-base/?h=unknown#users-and-groups
+    // https://docs.dasch.swiss/latest/DSP-API/02-knora-ontologies/knora-base/?h=unknown#users-and-groups
     defaultGroups: string[] = [
         'knora-admin:SystemAdmin',
         'knora-admin:ProjectAdmin',

@@ -30,21 +30,21 @@ export class HelpComponent implements OnInit {
             icon: 'assignment',
             title: 'Project administration',
             text: 'Read more about project administration and how to manage project members.',
-            url: 'https://docs.dasch.swiss/DSP-APP/user-guide/project',
+            url: 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/project',
             urlText: 'Open Documentation'
         },
         {
             icon: 'bubble_chart',
             title: 'Data model creation',
             text: 'Find everything about data modelling and how to setup the project database.',
-            url: 'https://docs.dasch.swiss/DSP-APP/user-guide/project/#data-model',
+            url: 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/project/#data-model',
             urlText: 'Open Documentation'
         },
         {
             icon: 'image_search',
             title: 'Research tools',
             text: 'Get more information about data handling, search methods and how to use the research tools.',
-            url: 'https://docs.dasch.swiss/DSP-APP/user-guide/',
+            url: 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/',
             urlText: 'Open Documentation'
         }
     ];

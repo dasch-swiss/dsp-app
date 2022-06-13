@@ -39,7 +39,7 @@ export class HintComponent implements OnInit {
     private _getHint(topic: string): string {
         switch(topic) {
             case 'search':
-                this.documentation = 'https://docs.dasch.swiss/DSP-APP/user-guide/data/#search-and-browse';
+                this.documentation = 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/data/#search-and-browse';
                 return `<p>Use special syntax:</p>
                 <ul>
                     <li>question mark<strong>?</strong> can be used as wildcard symbol for a single character.<br>
@@ -54,7 +54,7 @@ export class HintComponent implements OnInit {
                 </ul>`;
                 break;
             case 'ontology':
-                this.documentation = 'https://docs.dasch.swiss/DSP-APP/user-guide/project/#data-model';
+                this.documentation = 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/project/#data-model';
                 return `<p>Data Model</p>
                 <p>
                     The definition of the data model (ontology) is the most important step.
@@ -65,7 +65,7 @@ export class HintComponent implements OnInit {
                 </p>`;
                 break;
             case 'list':
-                this.documentation = '';
+                this.documentation = 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/project/#define-lists';
                 return `<p>List Data</p>
                 <p>
                 Lists are very useful if you want to use controlled vocabulary to describe something.
