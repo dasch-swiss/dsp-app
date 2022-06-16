@@ -14,6 +14,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/f
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
+    Constants,
     CreateLinkValue,
     KnoraApiConnection,
     ReadLinkValue,
@@ -142,8 +143,19 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
         );
 
         this._dspApiConnection.v2.ontologyCache.getOntology(this.currentOntoIri).subscribe(
-            (onto: Map<string, ReadOntology>) => {
-                const resClasses = onto.get(this.currentOntoIri).getClassDefinitionsByType(ResourceClassDefinition);
+            (ontoMap: Map<string, ReadOntology>) => {
+
+                // filter out knorabase ontology
+                const filteredOntoMap = new Map(
+                    Array.from(ontoMap).filter(([key, _]) => key !== Constants.KnoraApiV2)
+                );
+
+                let resClasses = [];
+
+                // loop through each ontology in the project and create an array of ResourceClassDefinitions
+                filteredOntoMap.forEach( onto => {
+                    resClasses = resClasses.concat(filteredOntoMap.get(onto.id).getClassDefinitionsByType(ResourceClassDefinition));
+                });
 
                 // add the superclass to the list of resource classes
                 this.resourceClasses = resClasses.filter(
@@ -154,7 +166,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
                 // and add them to the list of resource classes
                 this.resourceClasses = this.resourceClasses.concat(this._getSubclasses(resClasses, this.restrictToResourceClass));
 
-                this.properties = onto.get(this.currentOntoIri).getPropertyDefinitionsByType(ResourcePropertyDefinition);
+                this.properties = filteredOntoMap.get(this.currentOntoIri).getPropertyDefinitionsByType(ResourcePropertyDefinition);
             },
             error => {
                 console.error(error);
@@ -263,7 +275,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
             position: {
                 top: '112px'
             },
-            data: { mode: mode, title: resClass.label, id: iri, parentResource: this.parentResource, resourceClassDefinition: resClass.id, ontoIri: this.currentOntoIri },
+            data: { mode: mode, title: resClass.label, id: iri, parentResource: this.parentResource, resourceClassDefinition: resClass.id },
             disableClose: true
         };
 

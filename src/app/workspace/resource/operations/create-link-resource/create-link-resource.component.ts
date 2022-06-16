@@ -127,8 +127,14 @@ export class CreateLinkResourceComponent implements OnInit {
                     case 'audio':
                         this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
                         break;
+                    case 'movingImage':
+                        this.propertiesObj[Constants.HasMovingImageFileValue] = [this.fileValue];
+                        break;
                     case 'archive':
                         this.propertiesObj[Constants.HasArchiveFileValue] = [this.fileValue];
+                        break;
+                    case 'text':
+                        this.propertiesObj[Constants.HasTextFileValue] = [this.fileValue];
                 }
             }
 
