@@ -71,9 +71,6 @@
                         (click)="openDialog('editProject', project.shortname, project.shortcode)">
                         Edit project information
                     </button>
-                    <button mat-menu-item *ngIf="status" (click)="openProjectPage(project.shortcode, 'collaboration')">
-                        Manage project members
-                    </button>
                     <!-- disable the deactivate-button for the following two projects:
                     - http://www.knora.org/ontology/knora-admin#SystemProject
                     - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject

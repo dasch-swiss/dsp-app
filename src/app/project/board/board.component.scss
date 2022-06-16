@@ -6,6 +6,13 @@ section {
   margin: 24px 16px;
 }
 
+.note {
+  border-radius: $border-radius;
+  width: 100%;
+  display: inline-flex;
+  margin-bottom: 16px;
+}
+
 // phone devices
 @media (max-width: map-get($grid-breakpoints, phone)) {
 

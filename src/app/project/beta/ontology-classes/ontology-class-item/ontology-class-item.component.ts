@@ -14,6 +14,8 @@ export class OntologyClassItemComponent implements OnInit {
 
     @Input() resClass: ClassDefinition;
 
+    @Input() projectMember: boolean;
+
     gravsearch: string;
 
     results: number;
@@ -22,9 +24,9 @@ export class OntologyClassItemComponent implements OnInit {
 
     // i18n setup
     itemPluralMapping = {
-        instance: {
-            '=1': '1 instance',
-            other: '# instances'
+        resource: {
+            '=1': '1 resource',
+            other: '# resources'
         }
     };
 

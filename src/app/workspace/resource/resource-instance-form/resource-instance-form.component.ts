@@ -142,6 +142,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges, OnDestr
             // boolean to show only the first step of the form (= selectResourceForm)
             this.showNextStepForm = true;
         }
+
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -245,12 +246,24 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges, OnDestr
                 (res: ReadResource) => {
                     this.resource = res;
 
-                    const path = this._resourceService.getResourcePath(this.resource.id);
+                    let goto: string;
 
-                    const goto = '/resource' + path;
-                    this._router.navigate([]).then(result => window.open(goto, '_blank'));
+                    if (this.beta) {
+                        const uuid = this._resourceService.getResourceUuid(this.resource.id);
+                        const params = this._route.snapshot.url;
+                        // go to ontology/[ontoname]/[classname]/[classuuid] relative to parent route beta/project/[projectcode]/
+                        this._router.navigate([params[0].path, params[1].path, params[2].path, uuid],
+                            { relativeTo: this._route.parent }).then(() => {
+                            // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                            window.location.reload();
+                        });
+                    } else {
+                        const path = this._resourceService.getResourcePath(this.resource.id);
+                        goto = '/resource' + path;
+                        this._router.navigate([]).then(result => window.open(goto, '_blank'));
+                        this.closeDialog.emit();
+                    }
 
-                    this.closeDialog.emit();
                 },
                 (error: ApiResponseError) => {
                     this.error = true;

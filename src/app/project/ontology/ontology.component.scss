@@ -30,6 +30,13 @@ $width: 340px;
   margin: 0 auto 60px auto;
   z-index: 0;
 
+  &.beta {
+    // resize the with in beta view because of sidenav container
+    width: auto;
+    margin: 0;
+    height: calc(100vh - #{$header-height} - 2px);
+  }
+
   .ontology-editor-header {
     z-index: 2;
     top: 121px;
@@ -81,12 +88,15 @@ $width: 340px;
 }
 
 .ontology-editor-container {
+  height: calc(100% - #{$header-height} - 8px);
+
   .ontology-editor-subheader {
     height: $sub-header-height;
   }
 
   .ontology-editor-sidenav {
     width: 200px;
+    border: none;
 
     button {
       width: 100%;

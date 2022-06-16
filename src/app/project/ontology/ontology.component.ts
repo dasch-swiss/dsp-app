@@ -134,7 +134,6 @@ export class OntologyComponent implements OnInit {
         private _sortingService: SortingService,
         private _titleService: Title
     ) {
-
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectCode = params.get('shortcode');
@@ -158,14 +157,11 @@ export class OntologyComponent implements OnInit {
             const projectCode = this._route.parent.snapshot.params.shortcode;
             this._route.params.subscribe(params => {
                 const iriBase = this._ontologyService.getIriBaseUrl();
-
                 const ontologyName = params['onto'];
                 this.ontologyIri = `${iriBase}/ontology/${projectCode}/${ontologyName}/v2`;
                 this.ngOnInit();
             });
-            console.warn('This is a pre-released (beta) project\'s ontology view');
         }
-
     }
 
     @HostListener('window:resize', ['$event']) onWindwoResize(e: Event) {
@@ -183,6 +179,7 @@ export class OntologyComponent implements OnInit {
 
         // get information about the logged-in user
         this.session = this._session.getSession();
+
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
@@ -469,6 +466,10 @@ export class OntologyComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             // update the view
             this.initOntologiesList();
+            if (this.beta) {
+                // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                window.location.reload();
+            }
         });
     }
 
@@ -542,8 +543,14 @@ export class OntologyComponent implements OnInit {
                                 // get the ontologies for this project
                                 this.initOntologiesList();
                                 // go to project ontology page
-                                const goto = 'project/' + this.projectCode + '/ontologies/';
-                                this._router.navigateByUrl(goto, { skipLocationChange: false });
+                                let goto = `/project/${this.projectCode}/ontologies/`;
+                                if (this.beta) {
+                                    goto = `/beta/project/${this.projectCode}`;
+                                }
+                                this._router.navigateByUrl(goto, { skipLocationChange: false }).then(() => {
+                                    // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                                    window.location.reload();
+                                });
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
@@ -563,6 +570,10 @@ export class OntologyComponent implements OnInit {
                             (response: OntologyMetadata) => {
                                 this.loading = false;
                                 this.resetOntology(this.ontologyIri);
+                                if (this.beta) {
+                                    // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                                    window.location.reload();
+                                }
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);

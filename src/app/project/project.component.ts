@@ -10,7 +10,7 @@ import {
     OntologiesMetadata,
     ProjectResponse,
     ReadOntology,
-    ReadProject
+    ReadProject, UserResponse
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
@@ -36,6 +36,7 @@ export class ProjectComponent implements OnInit {
     session: Session;
     sysAdmin = false;
     projectAdmin = false;
+    projectMember = false;
 
     // project shortcode; as identifier in project cache service
     projectCode: string;
@@ -49,6 +50,8 @@ export class ProjectComponent implements OnInit {
 
     // feature toggle for new concept
     beta = false;
+
+    ontologies: ReadOntology[] = [];
 
     // list of project ontologies
     projectOntologies: ReadOntology[] = [];
@@ -111,6 +114,28 @@ export class ProjectComponent implements OnInit {
 
                         // is the logged-in user project admin?
                         this.projectAdmin = this.sysAdmin ? this.sysAdmin : (this.session.user.projectAdmin.some(e => e === this.project.id));
+
+                        // or at least project member?
+                        if (!this.projectAdmin) {
+                            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                                (res: ApiResponseData<UserResponse>) => {
+                                    const usersProjects = res.body.user.projects;
+                                    if (usersProjects.length === 0) {
+                                        // the user is not part of any project
+                                        this.projectMember = false;
+                                    } else {
+                                        // check if the user is member of the current project
+                                        this.projectMember = usersProjects.some(p => p.shortcode === this.projectCode);
+                                    }
+                                },
+                                (error: ApiResponseError) => {
+                                    this._errorHandler.showMessage(error);
+                                }
+                            );
+                        } else {
+                            this.projectMember = this.projectAdmin;
+                        }
+
                     }
 
                     // set the cache for project members and groups
@@ -121,21 +146,32 @@ export class ProjectComponent implements OnInit {
 
                     // in the new concept of project view, we have to make many requests to get all project relevant information
                     if(this.beta) {
+
                         // get all project ontologies
                         this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
                             (ontoMeta: OntologiesMetadata) => {
-                                ontoMeta.ontologies.forEach(onto => {
-                                    this._dspApiConnection.v2.onto.getOntology(onto.id).subscribe(
-                                        (ontology: ReadOntology) => {
-                                            this.projectOntologies.push(ontology);
-                                            this.loading = !this._cache.has(this.projectCode);
-                                        },
-                                        (error: ApiResponseError) => {
-                                            this.loading = false;
-                                            this._errorHandler.showMessage(error);
-                                        }
-                                    );
-                                });
+                                if (ontoMeta.ontologies.length) {
+                                    ontoMeta.ontologies.forEach(onto => {
+
+                                        // const name = this._ontologyService.getOntologyName(onto.id);
+                                        this._dspApiConnection.v2.onto.getOntology(onto.id).subscribe(
+                                            (ontology: ReadOntology) => {
+                                                this.projectOntologies.push(ontology);
+                                                this.ontologies.push(ontology);
+                                                if (ontoMeta.ontologies.length === this.ontologies.length) {
+                                                    this._cache.set('currentProjectOntologies', this.ontologies);
+                                                    this.loading = !this._cache.has(this.projectCode);
+                                                }
+                                            },
+                                            (error: ApiResponseError) => {
+                                                this.loading = false;
+                                                this._errorHandler.showMessage(error);
+                                            }
+                                        );
+                                    });
+                                } else {
+                                    this.loading = !this._cache.has(this.projectCode);
+                                }
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
@@ -168,14 +204,6 @@ export class ProjectComponent implements OnInit {
         }
     }
 
-    /**
-     * open form to create new ontology, class, property or list
-     * @param type
-     */
-    create(type: 'ontology' | 'class' | 'property' | 'list' | 'user') {
-        console.log('this will create a new', type);
-    }
-
     open(route: string, id?: string) {
         if (route === 'ontology' && id) {
             // get name of ontology
@@ -187,9 +215,11 @@ export class ProjectComponent implements OnInit {
             const pos = array.length - 1;
             id = array[pos];
         }
-        const param = (id ? `/${encodeURIComponent(id)}` : '');
-        this._router.navigateByUrl(`/beta/project/${this.projectCode}/${route}${param}`);
-
+        if (id) {
+            this._router.navigate([route, encodeURIComponent(id)], { relativeTo: this._route });
+        } else {
+            this._router.navigate([route], { relativeTo: this._route });
+        }
     }
 
     /**

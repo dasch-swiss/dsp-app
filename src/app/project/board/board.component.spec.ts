@@ -3,6 +3,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
@@ -37,6 +38,7 @@ describe('BoardComponent', () => {
                 MatDialogModule,
                 MatDividerModule,
                 MatIconModule,
+                MatSlideToggleModule,
                 MatSnackBarModule,
                 RouterTestingModule
             ],
@@ -51,7 +53,12 @@ describe('BoardComponent', () => {
                                         return TestConfig.ProjectCode;
                                     }
                                 }
-                            })
+                            }),
+                            snapshot: {
+                                url: [
+                                    { path: 'project' }
+                                ]
+                            }
                         }
                     }
                 },

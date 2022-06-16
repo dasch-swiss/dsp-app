@@ -8,10 +8,13 @@ import { HelpComponent } from './main/help/help.component';
 import { MainComponent } from './main/main.component';
 import { StatusComponent } from './main/status/status.component';
 import { OntologyClassInstanceComponent } from './project/beta/ontology-classes/ontology-class-instance/ontology-class-instance.component';
+import { SettingsComponent } from './project/beta/settings/settings.component';
 // project
 import { BoardComponent } from './project/board/board.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
+import { ListInfoFormComponent } from './project/list/list-info-form/list-info-form.component';
 import { ListComponent } from './project/list/list.component';
+import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { PermissionComponent } from './project/permission/permission.component';
 import { ProjectComponent } from './project/project.component';
@@ -112,6 +115,11 @@ const routes: Routes = [
                 redirectTo: ''
             },
             {
+                path: 'add-ontology',
+                component: OntologyFormComponent,
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'ontology',
                 component: HintComponent,
                 data: { topic: 'ontology' }
@@ -136,6 +144,11 @@ const routes: Routes = [
                 component: OntologyClassInstanceComponent,
             },
             {
+                path: 'add-list',
+                component: ListInfoFormComponent,
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'list',
                 component: HintComponent,
                 data: { topic: 'list' }
@@ -147,19 +160,23 @@ const routes: Routes = [
             },
             {
                 path: 'settings',
-                component: StatusComponent,
-                data: { status: 501, comment: 'Here you will be able to configure the project: e.g. setup collaboration and permissions.' },
-                canActivate: [AuthGuard]
-            },
-            {
-                path: 'settings/collaboration',
-                component: CollaborationComponent,
-                canActivate: [AuthGuard]
-            },
-            {
-                path: 'settings/permissions',
-                component: PermissionComponent,
-                canActivate: [AuthGuard]
+                component: SettingsComponent,
+                canActivate: [AuthGuard],
+                children: [
+                    {
+                        path: '',
+                        pathMatch: 'full',
+                        redirectTo: 'collaboration'
+                    },
+                    {
+                        path: 'collaboration',
+                        component: CollaborationComponent
+                    },
+                    {
+                        path: 'permissions',
+                        component: PermissionComponent
+                    },
+                ]
             },
             {
                 path: '**',

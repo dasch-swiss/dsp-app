@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
     ApiResponseError,
     ReadProject
@@ -42,19 +42,24 @@ export class BoardComponent implements OnInit {
 
     color = 'primary';
 
+    beta = false;
+
     constructor(
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _dialog: MatDialog,
         private _route: ActivatedRoute,
-        private _titleService: Title,
-        private _snackBar: MatSnackBar
+        private _router: Router,
+        private _titleService: Title
     ) {
         // get the shortcode of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectCode = params.get('shortcode');
         });
+
+        // get feature toggle information if url contains beta
+        this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
 
         // set the page title
         this._titleService.setTitle('Project ' + this.projectCode);
@@ -95,17 +100,6 @@ export class BoardComponent implements OnInit {
         this.loading = false;
     }
 
-    // copy link to clipboard
-    copyToClipboard(msg: string) {
-        const message = 'Copied to clipboard!';
-        const action = msg;
-        this._snackBar.open(message, action, {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-        });
-    }
-
     openDialog(mode: string, name: string, id?: string): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
@@ -122,5 +116,9 @@ export class BoardComponent implements OnInit {
             // update the view
             this.getProject();
         });
+    }
+
+    featureToggle() {
+        this._router.navigate([(this.beta ? 'beta' : ''), 'project', this.projectCode ]);
     }
 }

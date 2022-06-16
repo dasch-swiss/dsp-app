@@ -254,7 +254,12 @@ export class ListComponent implements OnInit {
                     break;
                 }
                 case 'editListInfo': {
-                    this.initList();
+                    if (this.beta) {
+                        // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                        window.location.reload();
+                    } else {
+                        this.initList();
+                    }
                     break;
                 }
                 case 'deleteList': {
@@ -263,15 +268,22 @@ export class ListComponent implements OnInit {
                             (res: ApiResponseData<DeleteListResponse>) => {
                                 this.lists = this.lists.filter(list => list.id !== res.body.iri);
 
-                                // if there are still lists remaining after deleting a list, load the first list among lists
-                                if (this.lists.length) {
-                                    this.listIri = this.lists[0].id;
-                                    this.listForm.controls.list.setValue(this.listIri);
-                                    this.openList(this.listIri);
-                                    this.initList();
-                                } else { // else set the list to null to remove it from the UI
-                                    this.list = null;
-                                    this.listIri = undefined;
+                                if (this.beta) {
+                                    this._router.navigateByUrl(`/beta/project/${this.projectCode}`).then(() => {
+                                        // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    // if there are still lists remaining after deleting a list, load the first list among lists
+                                    if (this.lists.length) {
+                                        this.listIri = this.lists[0].id;
+                                        this.listForm.controls.list.setValue(this.listIri);
+                                        this.openList(this.listIri);
+                                        this.initList();
+                                    } else { // else set the list to null to remove it from the UI
+                                        this.list = null;
+                                        this.listIri = undefined;
+                                    }
                                 }
                             },
                             (error: ApiResponseError) => {

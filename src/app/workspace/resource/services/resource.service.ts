@@ -24,6 +24,15 @@ export class ResourceService {
     }
 
     /**
+     * gets resource uuid `[resource-uuid]`
+     * @param iri e.g. http://rdfh.ch/082B/SQkTPdHdTzq_gqbwj6QR-A
+     * @returns resource uuid --> SQkTPdHdTzq_gqbwj6QR-A
+     */
+    getResourceUuid(iri: string): string {
+        return this.getResourcePath(iri).split('/')[2];
+    }
+
+    /**
      * gets resource iri
      * @param shortcode e.g. 082B
      * @param uuid e.g. SQkTPdHdTzq_gqbwj6QR-A

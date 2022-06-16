@@ -56,6 +56,10 @@
   .project-nav {
     width: 220px;
 
+    .mat-list.main-list {
+      margin-bottom: calc(#{$header-height} - 8px);
+    }
+
     .mat-title,
     .mat-subheading-2,
     .mat-subheading-1 {
@@ -118,6 +122,15 @@
   }
 
   padding-top: 0 !important;
+
+  &.settings {
+    height: 72px;
+    padding-top: 8px !important;
+
+    .mat-tab-links {
+      margin-top: 24px;
+    }
+  }
 
   .nav-item {
     height: 48px;

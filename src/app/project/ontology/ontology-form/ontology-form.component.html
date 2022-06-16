@@ -1,6 +1,6 @@
 <form [formGroup]="ontologyForm" (ngSubmit)="submitData()" class="form">
-    <!-- auto complete list to select resource classes -->
     <div class="form-content">
+        <h3 *ngIf="beta && !iri">Create new ontology</h3>
         <mat-form-field class="large-field ontology-name">
             <input matInput class="ontology-name" autocomplete="off" [maxlength]="nameMaxLength" [formControl]="ontologyForm.controls['name']"
                 [placeholder]="'Set a unique name'">
@@ -13,7 +13,9 @@
 
         <mat-form-field class="large-field ontology-label">
             <span *ngIf="!iri" matPrefix>{{project.shortname}}:&nbsp;</span>
-            <input matInput [formControl]="ontologyForm.controls['label']" placeholder="Label"
+            <input matInput
+                placeholder="Label"
+                [formControl]="ontologyForm.controls['label']"
                 [value]="ontologyLabel">
             <mat-hint *ngIf="formErrors.label">
                 {{ formErrors.label }}
@@ -21,18 +23,20 @@
         </mat-form-field>
 
         <mat-form-field class="large-field ontology-comment">
-            <textarea matInput [formControl]="ontologyForm.controls['comment']"
+            <textarea matInput
                 placeholder="Comment" [value]="ontologyComment"
-                [cdkTextareaAutosize]="true" [cdkAutosizeMinRows]="6" [cdkAutosizeMaxRows]="12">
+                [formControl]="ontologyForm.controls['comment']"
+                [cdkTextareaAutosize]="true"
+                [cdkAutosizeMinRows]="6"
+                [cdkAutosizeMaxRows]="12">
             </textarea>
         </mat-form-field>
 
         <div class="form-panel form-action">
-            <span>
-                <button mat-button type="button" (click)="closeDialog.emit()">
-                    {{ 'appLabels.form.action.cancel' | translate }}
-                </button>
-            </span>
+            <button mat-button type="button" (click)="closeDialog.emit()"
+                *ngIf="!beta || iri">
+                {{ 'appLabels.form.action.cancel' | translate }}
+            </button>
             <span class="fill-remaining-space"></span>
             <span>
                 <button mat-raised-button type="submit" [color]="error ? 'warn' : 'primary'" [disabled]="!ontologyForm.valid">

@@ -1,0 +1,8 @@
+<nav mat-tab-nav-bar mat-align-tabs="center" class="settings navigation" animationDuration="0ms">
+    <a mat-tab-link *ngFor="let link of navigation; let first = first" id="{{link.route}}" [routerLink]="link.route"
+        routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive">
+        <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
+        {{link.label}}
+    </a>
+</nav>
+<router-outlet></router-outlet>

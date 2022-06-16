@@ -1,6 +1,13 @@
 <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
 <div *ngIf="!loading && project" class="content large middle">
+    <!-- beta hint with feature toggle to switch between the stable and the beta version  -->
+    <div class="note warning">
+        <span *ngIf="beta">This is a preview of a new project view concept!</span>
+        <span *ngIf="!beta">We are working on a new project view concept. Switch to the beta version.</span>
+        <span class="fill-remaining-space"></span>
+        <mat-slide-toggle [(ngModel)]="beta" [color]="'primary'" (change)="featureToggle()">Beta Preview</mat-slide-toggle>
+    </div>
     <!--  mobile version: status and edit icon displayed before the title -->
     <div class="app-toolbar-mobile">
         <span class="app-toolbar-action-status">
@@ -10,8 +17,8 @@
             </span>
         </span>
         <span class="fill-remaining-space-action"></span>
-        <span class="app-toolbar-action-edit">
-            <button mat-icon-button *ngIf="projectAdmin && project.status"
+        <span class="app-toolbar-action-edit" *ngIf="projectAdmin">
+            <button mat-icon-button *ngIf="project.status"
                 (click)="openDialog('editProject', project.shortname, project.shortcode)" class="right">
                 <mat-icon>edit</mat-icon>
             </button>

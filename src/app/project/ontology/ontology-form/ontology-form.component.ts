@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
     ApiResponseError,
     CreateOntology,
@@ -36,7 +37,7 @@ export class OntologyFormComponent implements OnInit {
     @Input() iri: string;
 
     // existing ontology names; name has to be unique
-    @Input() existingOntologyNames: string[];
+    @Input() existingOntologyNames: string[] = [];
 
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
@@ -52,6 +53,9 @@ export class OntologyFormComponent implements OnInit {
     ontologyComment: string;
 
     lastModificationDate: string;
+
+    // feature toggle for new concept
+    beta = false;
 
     // ontology name must not contain one of the following words
     forbiddenNames: string[] = [
@@ -104,18 +108,44 @@ export class OntologyFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: FormBuilder,
-        private _ontologyService: OntologyService
-    ) { }
+        private _ontologyService: OntologyService,
+        private _route: ActivatedRoute,
+        private _router: Router
+    ) {
+        // get feature toggle information if url contains beta
+        // in case of creating new
+        if (this._route.parent) {
+            this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
+        }
+        // in case of edit
+        if (this._route.firstChild) {
+            this.beta = (this._route.firstChild.snapshot.url[0].path === 'beta');
+        }
+    }
 
     ngOnInit() {
 
         this.loading = true;
+        if (!this.projectCode) {
+            // if project shorcode is missing, get it from the url
+            this.projectCode = this._route.parent.snapshot.params.shortcode;
+        }
+
+        if (!this.existingOntologyNames.length) {
+            this._cache.get('currentProjectOntologies').subscribe(
+                (response: ReadOntology[]) => {
+                    response.forEach(onto => {
+                        const name = this._ontologyService.getOntologyName(onto.id);
+                        this.existingOntologyNames.push(name);
+                    });
+                }
+            );
+        }
 
         this._cache.get(this.projectCode).subscribe(
             (response: ReadProject) => {
                 this.project = response;
                 this.buildForm();
-
                 this.loading = false;
             },
             (error: ApiResponseError) => {
@@ -239,6 +269,13 @@ export class OntologyFormComponent implements OnInit {
                     this.updateParent.emit(response.id);
                     this.loading = false;
                     this.closeDialog.emit(response.id);
+                    if (this.beta) {
+                        // go to the new ontology page
+                        const name = this._ontologyService.getOntologyName(response.id);
+                        this._router.navigate(['ontology', name], { relativeTo: this._route.firstChild }).then(() => {
+                            window.location.reload();
+                        });
+                    }
                 },
                 (error: ApiResponseError) => {
                     // in case of an error
@@ -262,7 +299,15 @@ export class OntologyFormComponent implements OnInit {
                 (response: OntologyMetadata) => {
                     this.updateParent.emit(response.id);
                     this.loading = false;
-                    this.closeDialog.emit(response.id);
+                    if (this.beta) {
+                        // go to the new ontology page
+                        const name = this._ontologyService.getOntologyName(response.id);
+                        this._router.navigate(['ontology', name], { relativeTo: this._route.parent }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        this.closeDialog.emit(response.id);
+                    }
                 },
                 (error: ApiResponseError) => {
                     // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message

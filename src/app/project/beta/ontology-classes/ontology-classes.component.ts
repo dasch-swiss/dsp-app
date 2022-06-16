@@ -11,6 +11,8 @@ export class OntologyClassesComponent implements OnInit {
 
     @Input() resClasses: ClassDefinition[];
 
+    @Input() projectMember: boolean;
+
     classesToDisplay: ClassDefinition[] = [];
 
     constructor(

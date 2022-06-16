@@ -6,6 +6,10 @@
 }
 
 .section-title {
+
+  .section-label {
+    display: inline-flex;
+  }
   .hover-only {
     display: none;
   }
@@ -39,10 +43,12 @@
   bottom: 0;
   position: absolute;
   width: 100%;
+  background-color: #fff;
+}
 
-  .mat-icon {
-    margin-right: 16px;
-  }
+.sidenav-prefix-icon {
+  margin-right: 8px;
+  margin-top: 4px;
 }
 
 .sidenav-container {

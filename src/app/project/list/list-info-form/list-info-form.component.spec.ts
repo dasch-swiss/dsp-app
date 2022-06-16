@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -15,6 +15,7 @@ import { ApiResponseData, CreateListRequest, ListInfoResponse, ListResponse, Lis
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
@@ -72,6 +73,12 @@ describe('ListInfoFormComponent', () => {
         }
     };
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
@@ -94,6 +101,10 @@ describe('ListInfoFormComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
                 {
                     provide: DspApiConnectionToken,
                     useValue: listsEndpointSpyObj

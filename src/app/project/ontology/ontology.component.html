@@ -52,7 +52,7 @@
     </div>
 
     <!-- main content: overview shows resource classes of ontology -->
-    <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
+    <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor" [class.beta]="beta">
 
         <!-- TODO: add here the select ontology functionality -->
         <mat-toolbar class="ontology-editor-header" [class.beta]="beta">

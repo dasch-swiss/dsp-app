@@ -164,6 +164,7 @@ import { TextComponent } from './workspace/resource/representation/text/text.com
 import { OntologyClassesComponent } from './project/beta/ontology-classes/ontology-classes.component';
 import { OntologyClassItemComponent } from './project/beta/ontology-classes/ontology-class-item/ontology-class-item.component';
 import { OntologyClassInstanceComponent } from './project/beta/ontology-classes/ontology-class-instance/ontology-class-instance.component';
+import { SettingsComponent } from './project/beta/settings/settings.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -314,7 +315,8 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         TextComponent,
         OntologyClassesComponent,
         OntologyClassItemComponent,
-        OntologyClassInstanceComponent
+        OntologyClassInstanceComponent,
+        SettingsComponent
     ],
     imports: [
         AngularSplitModule.forRoot(),

@@ -53,7 +53,12 @@ describe('PermissionComponent', () => {
                                         return TestConfig.ProjectCode;
                                     }
                                 }
-                            })
+                            }),
+                            parent: {
+                                snapshot: {
+                                    url: []
+                                }
+                            }
                         }
                     }
                 },

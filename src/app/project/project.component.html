@@ -1,5 +1,4 @@
 <div *ngIf="!error; else StatusMsg">
-
     <!-- normal version -->
     <div *ngIf="!beta">
         <nav *ngIf="projectAdmin && !loading" mat-tab-nav-bar mat-align-tabs="center"
@@ -11,16 +10,14 @@
                 {{link.label}}
             </a>
         </nav>
-
         <app-progress-indicator *ngIf="loading"></app-progress-indicator>
-
         <router-outlet *ngIf="!loading"></router-outlet>
     </div>
     <!-- new concept of project view: sidenav instead tabs -->
     <div *ngIf="beta">
         <mat-sidenav-container class="project-view">
             <mat-sidenav mode="side" opened class="project-nav">
-                <mat-list>
+                <mat-list class="main-list">
                     <!-- Project label -->
                     <mat-list-item class="link" [routerLink]="'/beta/project/' + project.shortcode">
                         <span matLine>
@@ -37,9 +34,12 @@
 
                     <!-- Ontology Section -->
                     <mat-list-item class="section-title">
-                        <h2 class="mat-title link" (click)="open('ontology')">Data Models</h2>
+                        <span class="link section-label" (click)="open('ontology')">
+                            <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
+                            <h2 class="mat-title">Data Models</h2>
+                        </span>
                         <span class="fill-remaining-space"></span>
-                        <button mat-icon-button *ngIf="projectAdmin" class="hover-only" (click)="create('ontology')">
+                        <button mat-icon-button *ngIf="projectAdmin" class="hover-only" (click)="open('add-ontology')">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-list-item>
@@ -50,7 +50,7 @@
                         <mat-expansion-panel [expanded]="true">
                             <mat-expansion-panel-header>
                                 <div class="sidenav-panel-header" (click)="$event.stopPropagation();">
-                                    <mat-panel-title class="mat-subheading-2" (click)="open('ontology', onto.id)">
+                                    <mat-panel-title class="mat-subheading-2" (click)="projectAdmin ? open('ontology', onto.id) : null">
                                         {{onto.label}}
                                     </mat-panel-title>
                                     <mat-panel-description>
@@ -64,12 +64,12 @@
                             <!-- <mat-list-item>
                                 Classes
                                 <span class="fill-remaining-space"></span>
-                                <button mat-icon-button (click)="create('class')">
+                                <button mat-icon-button (click)="open('class')">
                                     <mat-icon>add</mat-icon>
                                 </button>
                             </mat-list-item> -->
                             <mat-list>
-                                <app-ontology-classes [resClasses]="onto.getAllClassDefinitions()">
+                                <app-ontology-classes [resClasses]="onto.getAllClassDefinitions()" [projectMember]="projectMember">
                                 </app-ontology-classes>
                             </mat-list>
                         </mat-expansion-panel>
@@ -81,9 +81,12 @@
                     <!-- Lists Section -->
                     <span *ngIf="projectAdmin">
                         <mat-list-item class="section-title">
-                            <h2 class="mat-title link" (click)="open('list')">Lists</h2>
+                            <span class="link section-label" (click)="open('list')">
+                                <mat-icon class="sidenav-prefix-icon">list</mat-icon>
+                                <h2 class="mat-title">Lists</h2>
+                            </span>
                             <span class="fill-remaining-space"></span>
-                            <button mat-icon-button class="hover-only" (click)="create('list')">
+                            <button mat-icon-button class="hover-only"(click)="open('add-list')">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </mat-list-item>
@@ -96,16 +99,18 @@
                     <mat-divider></mat-divider>
 
                     <!-- Project members if project admin -->
-                    <mat-list-item *ngIf="projectAdmin" class="link section-title" routerLink="collaboration">
+                    <!-- <mat-list-item *ngIf="projectAdmin" class="link section-title" routerLink="settings/collaboration">
                         <h2 class="mat-title">Members</h2>
-                    </mat-list-item>
+                    </mat-list-item> -->
 
                     <!-- Project permissions ??? will it ever come? -->
 
-                    <div class="sidenav-footer">
-                        <mat-list-item *ngIf="projectAdmin" class="link section-title" routerLink="settings">
-                            <mat-icon>settings</mat-icon>
-                            <h2 class="mat-title">Settings</h2>
+                    <div class="sidenav-footer" *ngIf="projectAdmin" >
+                        <mat-list-item class="section-title">
+                            <span class="link section-label" (click)="open('settings')">
+                                <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
+                                <h2 class="mat-title">Settings</h2>
+                            </span>
                         </mat-list-item>
                     </div>
                 </mat-list>

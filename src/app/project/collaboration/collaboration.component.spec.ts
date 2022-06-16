@@ -69,7 +69,12 @@ describe('CollaborationComponent', () => {
                                         return TestConfig.ProjectCode;
                                     }
                                 }
-                            })
+                            }),
+                            parent: {
+                                snapshot: {
+                                    url: []
+                                }
+                            }
                         }
                     }
                 },
