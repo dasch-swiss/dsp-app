@@ -1,5 +1,26 @@
 # Changelog
 
+## [10.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.2.0...v10.3.0) (2022-06-16)
+
+
+### Bug Fixes
+
+* **docs:** resolve dead links to documentation ([#764](https://www.github.com/dasch-swiss/dsp-app/issues/764)) ([9c83b7e](https://www.github.com/dasch-swiss/dsp-app/commit/9c83b7ef80c08de2e28fc9a79920618249b9ac05))
+* **link-value:** loop through all ontologies of a project to create list of resource classes ([#766](https://www.github.com/dasch-swiss/dsp-app/issues/766)) ([7c824bf](https://www.github.com/dasch-swiss/dsp-app/commit/7c824bf84775c3dc7db98c55cecf61491aab7635))
+
+
+### Maintenance
+
+* change codeowner before I leave ([#762](https://www.github.com/dasch-swiss/dsp-app/issues/762)) ([5884f51](https://www.github.com/dasch-swiss/dsp-app/commit/5884f51502a382979504f391498459247842b715))
+* **link-value:** recursively loop through all of a superclass's subclasses ([#763](https://www.github.com/dasch-swiss/dsp-app/issues/763)) ([5efed72](https://www.github.com/dasch-swiss/dsp-app/commit/5efed7213f8c2746924e21430dc6113d06bbc907))
+
+
+### Enhancements
+
+* **project:** proof of new project workflow concept (DEV-1001) ([#765](https://www.github.com/dasch-swiss/dsp-app/issues/765)) ([fb29253](https://www.github.com/dasch-swiss/dsp-app/commit/fb29253f1ab9cbdd0f18cbca703d10db0ee3427f))
+* **project:** proof of new project workflow concept (DEV-985) ([#760](https://www.github.com/dasch-swiss/dsp-app/issues/760)) ([2391f2a](https://www.github.com/dasch-swiss/dsp-app/commit/2391f2a107ce3c760167f21f786f9369501a9535))
+* **resource:** create new resource instance directly from ontology's class (DEV-959) ([#755](https://www.github.com/dasch-swiss/dsp-app/issues/755)) ([5f30719](https://www.github.com/dasch-swiss/dsp-app/commit/5f30719e0a1a6fd77f228aa43d03a3d26450fa9e))
+
 ## [10.2.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.1.0...v10.2.0) (2022-06-02)
 
 
