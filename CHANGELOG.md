@@ -1,5 +1,13 @@
 # Changelog
 
+### [10.3.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.0...v10.3.1) (2022-06-23)
+
+
+### Bug Fixes
+
+* **link-value:** add onto iri to api request ([#770](https://www.github.com/dasch-swiss/dsp-app/issues/770)) ([d16e5b5](https://www.github.com/dasch-swiss/dsp-app/commit/d16e5b5032268dc99c6f46e55de10ed10127c530))
+* update broken links of the main README file ([#767](https://www.github.com/dasch-swiss/dsp-app/issues/767)) ([a3408f6](https://www.github.com/dasch-swiss/dsp-app/commit/a3408f60fb7b4c4a17d24e6b73b34b1693f38595))
+
 ## [10.3.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.2.0...v10.3.0) (2022-06-16)
 
 
