@@ -56,7 +56,7 @@
                     "configurations": {
                         "development": {
                             "optimization": false,
-                            "sourceMap": false,
+                            "sourceMap": true,
                             "namedChunks": true,
                             "aot": true,
                             "extractLicenses": false,

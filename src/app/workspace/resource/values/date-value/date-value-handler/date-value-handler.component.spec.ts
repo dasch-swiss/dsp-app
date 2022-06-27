@@ -286,16 +286,25 @@ describe('DateValueHandlerComponent', () => {
         (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
         (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
 
+        testHostFixture.detectChanges();
+
         const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
 
         (endDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(new KnoraDate('JULIAN', 'CE', 2020, 5, 19));
         (endDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
+
+        testHostFixture.detectChanges();
 
         await testHostFixture.whenStable();
 
         expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
 
         expect(testHostComponent.form.controls.date.value).toEqual(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2019, 5, 19), new KnoraDate('JULIAN', 'CE', 2020, 5, 19)));
+
+        // access private _subscriptions property and ensure that each subscription is still open
+        testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach((sub) => {
+            expect(sub.closed).toBeFalse();
+        });
     });
 
     it('should return "null" for an invalid user input (start date greater than end date)', async () => {
@@ -373,7 +382,44 @@ describe('DateValueHandlerComponent (no validator required)', () => {
         expect(testHostComponent).toBeTruthy();
     });
 
-    it('should receive the propagated valueRequiredValidator from the parent component', () => {
+    it('should propagate changes made by the user for a period', async () => {
+        expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeFalse();
+
+        testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
+
+        expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
+
+        testHostFixture.detectChanges();
+
+        const hostCompDe = testHostFixture.debugElement;
+
+        const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
+
+        (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
+        (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
+
+        testHostFixture.detectChanges();
+
+        const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
+
+        (endDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(new KnoraDate('JULIAN', 'CE', 2020, 5, 19));
+        (endDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
+
+        testHostFixture.detectChanges();
+
+        await testHostFixture.whenStable();
+
+        expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
+
+        expect(testHostComponent.form.controls.date.value).toEqual(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2019, 5, 19), new KnoraDate('JULIAN', 'CE', 2020, 5, 19)));
+
+        // access private _subscriptions property and ensure that each subscription is still open
+        testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach((sub) => {
+            expect(sub.closed).toBeFalse();
+        });
+    });
+
+    it('should not receive the propagated valueRequiredValidator from the parent component', () => {
         expect(testHostComponent.dateValueHandlerComponent.valueRequiredValidator).toBe(false);
     });
 

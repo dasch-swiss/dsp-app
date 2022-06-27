@@ -12,8 +12,9 @@
             <mat-icon *ngIf="isPeriodControl.value">remove</mat-icon>
         </button>
 
-        <div *ngIf="isPeriodControl.value" class="date-form-field">
-            <app-date-picker class="end-date" [formControlName]="'endDate'" [disableCalendarSelector]="true" [calendar]="startDate.value.calendar">
+        <div *ngIf="isPeriodControl.value && startDate.value" class="date-form-field">
+            <app-date-picker class="end-date" [formControlName]="'endDate'" [disableCalendarSelector]="true"
+                [calendar]="startDate.value.calendar">
             </app-date-picker>
         </div>
     </div>

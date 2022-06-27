@@ -100,7 +100,7 @@ export class DateValueHandlerComponent extends _MatInputMixinBase implements Con
         if (!this.isPeriodControl.value) {
             return this.startDate.value;
         } else {
-            if (this.startDate.value.calendar !== this.endDate.value.calendar) {
+            if (this.endDate.value && (this.startDate.value.calendar !== this.endDate.value.calendar)) {
                 this.endDate.value.calendar = this.startDate.value.calendar;
             }
 
@@ -109,7 +109,6 @@ export class DateValueHandlerComponent extends _MatInputMixinBase implements Con
     }
 
     set value(date: KnoraDate | KnoraPeriod | null) {
-
         if (date instanceof KnoraDate) {
             // single date
             this.calendarControl.setValue(date.calendar);
