@@ -1,5 +1,17 @@
 # Changelog
 
+### [10.3.2](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.1...v10.3.2) (2022-06-30)
+
+
+### Bug Fixes
+
+* **date-value-handler:** add some null checks to ensure component has everything it needs before trying to use a property ([#771](https://www.github.com/dasch-swiss/dsp-app/issues/771)) ([4076f3e](https://www.github.com/dasch-swiss/dsp-app/commit/4076f3e94a94b10467817ce6e17aab8ef0e774b9))
+
+
+### Maintenance
+
+* **deps:** bump version of js-lib ([#773](https://www.github.com/dasch-swiss/dsp-app/issues/773)) ([9a5252d](https://www.github.com/dasch-swiss/dsp-app/commit/9a5252d071f5a8ff4b02e207a4ffdc3088c4a032))
+
 ### [10.3.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.0...v10.3.1) (2022-06-23)
 
 
