@@ -1,5 +1,12 @@
 # Changelog
 
+### [10.3.3](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.2...v10.3.3) (2022-07-19)
+
+
+### Documentation
+
+* Update the user guide (DEV-1049) ([#769](https://www.github.com/dasch-swiss/dsp-app/issues/769)) ([12d0edc](https://www.github.com/dasch-swiss/dsp-app/commit/12d0edce949976b223cee5dd9c9346fc3a929857))
+
 ### [10.3.2](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.1...v10.3.2) (2022-06-30)
 
 
