@@ -2,7 +2,7 @@
 
 ## Project
 
-Once you are [logged in](/user-guide/#login), the dashboard displays the list of your project(s). If you are a project administrator or a system administrator, you can edit the project information or archive your project from the project menu. Archived projects are stored in a list on your dashboard and they can be "reactivated" at any time.
+Once you are [logged in](https://docs.dasch.swiss/latest/DSP-APP/user-guide/#login), the dashboard displays the list of your project(s). If you are a project administrator or a system administrator, you can edit the project information or archive your project from the project menu. Archived projects are stored in a list on your dashboard and they can be "reactivated" at any time.
 
 ![Project list and project menu](../assets/images/dashboard.png)*<https://admin.dasch.swiss/dashboard> - By clicking on the project name, you get access to the full project information.*
 
@@ -16,21 +16,19 @@ As project administrator or system administrator, you can define your project, a
 
 ---
 
-## Collaboration
+## Project members
 
-As a system administrator, you can add users as project members and define their permissions roles: *Who is able to edit or to see your project data?* Data includes the research sources and their metadata. [Permissions](/user-guide/project/#permission-groups) can be set for the entire project or for single metadata fields. 
+As a system administrator, you can add users as project members. A user menu with different actions is accessible for each member of the project (the three-dot icon to the right side of the user line). The admin can grant another user as project admin (or remove this permission), edit user's information, change user's password if forgotten, and remove a user from the project.
 
-A user menu with different actions is accessible for each member of the project (link to the right side of the user line). The admin can appoint another user as project admin (or remove this permission), edit user's information, change user's password if forgotten, and remove a user.
+![Collaboration page](../assets/images/project-members.png)*<https://admin.dasch.swiss/project/0803/collaboration> - Project members page where project admin and system admin can add new user to the team.*
 
-![Collaboration page](../assets/images/project-collaboration.png)*<https://admin.dasch.swiss/project/0803/collaboration> - Collaboration page where project admin and system admin can add new user to the team.*
-
-> **_NOTE:_** **Permissions for project admins to add new users as project member will be implemented soon.**
+<!-- >> **_NOTE:_** **Permissions for project admins to add new users as project member will be implemented soon.** -->
 
 ---
 
 ## Data model
 
-The definition of the data model (*ontology*) is the most important step. The data model is indispensable for structuring your data. Our platform provides a tool for an easy creation of one or more project data models. First, you have to know which data and sources you want to work with. The data model can be flexible and customizable. 
+The definition of the data model (*ontology*) is the most important step. The data model is indispensable for structuring your data. Our platform provides a tool for an easy creation of one or more project data models. First, you have to know which data and resources you want to work with. The data model can be flexible and customizable.
 
 The question which you have to answer before you create your data model is **according to which criteria do you organize your data**? In this respect it may be useful to ask yourself:
 
@@ -38,7 +36,6 @@ The question which you have to answer before you create your data model is **acc
 - *What are the goals you want to achieve, which research questions do you want to answer?*
 
 As soon as you have come to a conclusion concerning the structure of your data, you're all set to create your data model.
-
 
 ### Create your data model
 
@@ -49,7 +46,6 @@ Go to your project, select the tab `Data model` (step 1) and click the button `N
 
 By clicking `New data model`, a dialog box opens:
 ![Define new data model.](../assets/images/Fig3.png)
-
 
 **Create data model**
 
@@ -120,10 +116,10 @@ You can choose from a selection of the following basic types with various subtyp
 - Location (*Place*; a [geonames-identifier](https://www.geonames.org/))
 - Shape (*color*)
 
-Since in our example you want to add a property for the number of pages of your book, you choose `Number`. Now you will see that you can either choose the type `Decimal`, `Integer` or `Page number` for your property. 
+Since in our example you want to add a property for the number of pages of your book, you choose `Number`. Now you will see that you can either choose the type `Decimal`, `Integer` or `Page number` for your property.
 ![Property types.](../assets/images/Fig14.png)
 
-Page numbers have no decimal places, thus you will selecet `Integer` (or `Page number` which is a special case (s. [next section](#correct-property-selection-in-case-of-special-classes))) as the type for your property. The following window pops up:
+Page numbers have no decimal places, thus you will select `Integer` (or `Page number` which is a special case (s. [next section](#correct-property-selection-in-case-of-special-classes))) as the type for your property. The following window pops up:
 ![Property of integer type.](../assets/images/Fig15.png)
 
 In the field *Property label* add for example *Number of pages*, in the comment section you should add a meaningful explanation. It might also make sense to toggle `Required field?` since every PDF Document consists of a number of pages. If you toggle it, the number of pages MUST be given if you add data to the class *Book* - it would then be a required field, not an optional one and data could only be saved if you add the number of pages.
@@ -194,31 +190,39 @@ To delete a whole data model, you have to click the button `Delete` on the right
 
 In the alert window appearing, you click the red button `Delete`. The data model is now deleted.
 
-
 ## An example
 In the following example we focus on how we can reflect about our data before building our model and how a data model can relate classes to each other.
 
-
 ### Preparing a data model
 You have interviewed 20 people and recorded the interviews. During these interviews you talked about photographs. Among all the data collected during the project, the most important are:
-o	audio-files of the interview
-o	transcribed text of conversations (or transcribe the files within the web application)
-o	photographs
-o	data about the person you interviewed
-o	location where the photograph was taken
 
-The following Diagram 1 shows the initial situation: 
-![Diagram 1: the initial situation.](../assets/images/Fig23.png)*Diagram 1: the initial situation.*
+-	audio-files of the interview
+-	transcribed text of conversations (or transcribe the files within the web application)
+-	photographs
+-	data about the person you interviewed
+-	location where the photograph was taken
+
+The following Diagram 1 shows the initial situation:
+
+![Diagram 1: the initial situation.](../assets/images/Fig23.png)
+
+*Diagram 1: the initial situation.*
 
 The second step will be to consider the hierarchy of the data. How your hierarchy looks like depends on which criteria your data were organized and what your purposes are. It might even be possible that you don’t need a hierarchy as shown in Diagram 1.
 
 In our case, we know that the transcripts are linked to the audio-interviews, persons are linked to interviews and audio-interviews, photographs are linked to audio-interviews and transcripts plus locations are linked to the photographs.
 
 How the practical arrangement finally looks like depends on your purposes and preferences. For example we could choose to arrange the data with regards to their audio source as seen in Diagram 2:
-![Diagram 2: Focus on the audio-interview.](../assets/images/Fig24.png)*Diagram 2: Focus on the audio-interview.*
+
+![Diagram 2: Focus on the audio-interview.](../assets/images/Fig24.png)
+
+*Diagram 2: Focus on the audio-interview.*
 
 However, we can also prefer another visualization which focuses on the transcript (Diagram 3):
-![Diagram 3: Focus on the transcript.](../assets/images/Fig25.png)*Diagram 3: Focus on the transcript.*
+
+![Diagram 3: Focus on the transcript.](../assets/images/Fig25.png)
+
+*Diagram 3: Focus on the transcript.*
 
 We could think of many different hierarchies, lastly it depends on what serves your purposes best. Our next step will be to implement the hierarchy in Diagram 3 in our data model.
 
@@ -229,7 +233,7 @@ First, we create the resource classes that constitute the basic containers of ou
 ![Create resource classes.](../assets/images/Fig26.png)
 
 **2. Relate resource classes**
-According to our Diagram 3, we determined the transcript to be the centre of the hierarchy. In the transcript, the photographs are mentioned, the interviewed person is linked to the transcript and the audio-interview as the raw source is linked to the transcript too. Thus, we have to add photograph, audio-interview and person as properties to the transcript. 
+According to our Diagram 3, we determined the transcript to be the center of the hierarchy. In the transcript, the photographs are mentioned, the interviewed person is linked to the transcript and the audio-interview as the raw resource is linked to the transcript too. Thus, we have to add photograph, audio-interview and person as properties to the transcript.
 
 In the box of *Transcript* click on `+ Add property`:
 ![Add property to resource class.](../assets/images/Fig27.png)

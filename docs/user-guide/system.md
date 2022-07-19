@@ -38,4 +38,4 @@ For each user, the system admin has access to several actions:
 
 ![System admin can add a user as a member user of a project](../assets/images/system-manage-project-membership.png)
 
-- *Suspend user*: the user is deactivated and has no more access to DSP-APP. The system admin can reactivate it at any time.
+- *Suspend user*: the user is deactivated and no longer has access to DSP-APP. The system admin can reactivate it at any time.
