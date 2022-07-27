@@ -165,6 +165,8 @@ import { OntologyClassesComponent } from './project/beta/ontology-classes/ontolo
 import { OntologyClassItemComponent } from './project/beta/ontology-classes/ontology-class-item/ontology-class-item.component';
 import { OntologyClassInstanceComponent } from './project/beta/ontology-classes/ontology-class-instance/ontology-class-instance.component';
 import { SettingsComponent } from './project/beta/settings/settings.component';
+import { OverviewComponent } from './user/overview/overview.component';
+import { ProjectTileComponent } from './system/project-tile/project-tile.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -316,7 +318,9 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         OntologyClassesComponent,
         OntologyClassItemComponent,
         OntologyClassInstanceComponent,
-        SettingsComponent
+        SettingsComponent,
+        OverviewComponent,
+        ProjectTileComponent,
     ],
     imports: [
         AngularSplitModule.forRoot(),

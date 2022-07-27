@@ -31,7 +31,12 @@
                     </mat-list-item>
                     <!-- Maybe we can have a project selector here (similar to the github dashboard page) -->
                     <mat-divider></mat-divider>
-
+                    <mat-list-item>
+                        <span class="link section-label" (click)="goToOverview()">
+                            <p>Go to projects overview</p>
+                        </span>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
                     <!-- Ontology Section -->
                     <mat-list-item class="section-title">
                         <span class="link section-label" (click)="open('ontology')">
@@ -50,7 +55,8 @@
                         <mat-expansion-panel [expanded]="true">
                             <mat-expansion-panel-header>
                                 <div class="sidenav-panel-header" (click)="$event.stopPropagation();">
-                                    <mat-panel-title class="mat-subheading-2" (click)="projectAdmin ? open('ontology', onto.id) : null">
+                                    <mat-panel-title class="mat-subheading-2"
+                                        (click)="projectAdmin ? open('ontology', onto.id) : null">
                                         {{onto.label}}
                                     </mat-panel-title>
                                     <mat-panel-description>
@@ -69,7 +75,8 @@
                                 </button>
                             </mat-list-item> -->
                             <mat-list>
-                                <app-ontology-classes [resClasses]="onto.getAllClassDefinitions()" [projectMember]="projectMember">
+                                <app-ontology-classes [resClasses]="onto.getAllClassDefinitions()"
+                                    [projectMember]="projectMember">
                                 </app-ontology-classes>
                             </mat-list>
                         </mat-expansion-panel>
@@ -86,7 +93,7 @@
                                 <h2 class="mat-title">Lists</h2>
                             </span>
                             <span class="fill-remaining-space"></span>
-                            <button mat-icon-button class="hover-only"(click)="open('add-list')">
+                            <button mat-icon-button class="hover-only" (click)="open('add-list')">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </mat-list-item>
@@ -105,7 +112,7 @@
 
                     <!-- Project permissions ??? will it ever come? -->
 
-                    <div class="sidenav-footer" *ngIf="projectAdmin" >
+                    <div class="sidenav-footer" *ngIf="projectAdmin">
                         <mat-list-item class="section-title">
                             <span class="link section-label" (click)="open('settings')">
                                 <mat-icon class="sidenav-prefix-icon">settings</mat-icon>

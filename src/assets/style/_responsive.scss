@@ -52,7 +52,8 @@ $grid-breakpoints: (
   .content {
     &.small,
     &.medium,
-    &.large {
+    &.large,
+    &.extra-large {
       padding: 0;
     }
 
@@ -61,7 +62,8 @@ $grid-breakpoints: (
     }
 
     &.medium,
-    &.large {
+    &.large,
+    &.extra-large {
       max-width: 100%;
     }
   }
@@ -88,7 +90,8 @@ $grid-breakpoints: (
   .content {
     &.small,
     &.medium,
-    &.large {
+    &.large,
+    &.extra-large {
       padding: 0 !important;
     }
 
@@ -97,7 +100,8 @@ $grid-breakpoints: (
     }
 
     &.medium,
-    &.large {
+    &.large,
+    &.extra-large {
       max-width: calc(100% - 36px) !important;
     }
   }

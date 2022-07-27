@@ -14,11 +14,8 @@
         <div class="app-toolbar-row">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
-                <app-sort-button *ngIf="list.length > 1"
-                    [icon]="'sort_by_alpha'"
-                    [sortProps]="sortProps"
-                    [activeKey]="sortBy"
-                    (sortKeyChange)="sortList($event)">
+                <app-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
+                    [activeKey]="sortBy" (sortKeyChange)="sortList($event)">
                 </app-sort-button>
             </span>
             <h2 class="mat-title">
@@ -83,7 +80,7 @@
                         (click)="updateProjectAdminMembership(user.id, user.permissions)">
                         <span *ngIf="!userIsProjectAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsProjectAdmin(user.permissions)">Remove</span>
-                        <span>&nbsp;as project admin</span>
+                        <span>as project admin</span>
                     </button>
                     <!-- update user's system admin group membership; only in system admin view -->
                     <button mat-menu-item
@@ -91,7 +88,7 @@
                         (click)="updateSystemAdminMembership(user, !userIsSystemAdmin(user.permissions))">
                         <span *ngIf="!userIsSystemAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsSystemAdmin(user.permissions)">Remove</span>
-                        <span>&nbsp;as system admin</span>
+                        <span>as system admin</span>
                     </button>
                     <!-- update user's profile data; only for system admin -->
                     <button mat-menu-item *ngIf="sysAdmin  && user.status"

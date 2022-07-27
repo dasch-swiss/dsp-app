@@ -59,7 +59,12 @@ describe('UsersListComponent', () => {
                                         return TestConfig.ProjectCode;
                                     }
                                 }
-                            })
+                            }),
+                            parent: {
+                                snapshot: {
+                                    url: []
+                                }
+                            }
                         }
                     }
                 },

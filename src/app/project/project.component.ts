@@ -223,6 +223,13 @@ export class ProjectComponent implements OnInit {
     }
 
     /**
+     * go to overview page
+     */
+    goToOverview() {
+        this._router.navigate(['/overview'], { relativeTo: this._route });
+    }
+
+    /**
      * checks if the shortcode is valid: hexadecimal and length = 4
      *
      * @param code project shortcode which is a parameter in the route

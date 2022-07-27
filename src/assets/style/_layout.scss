@@ -29,7 +29,8 @@
 
   &.small,
   &.medium,
-  &.large {
+  &.large,
+  &.extra-large {
     padding: 36px 48px;
   }
 
@@ -43,6 +44,10 @@
 
   &.large {
     max-width: 940px;
+  }
+
+  &.extra-large {
+    max-width: 1440px;
   }
 }
 

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, UserResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '../../declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -158,9 +158,26 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                         this.session = this._session.getSession();
 
                         this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, true));
+
+                        // if user hit a page that requires to be logged in, they will have a returnUrl in the url
                         this.returnUrl = this._route.snapshot.queryParams['returnUrl'];
                         if (this.returnUrl) {
                             this._router.navigate([this.returnUrl]);
+                        } else if (this._route.snapshot.url.length && this._route.snapshot.url[0].path === 'login') { // if user is on /login
+                            const username = this.session.user.name;
+                            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(username).subscribe(
+                                (userResponse: ApiResponseData<UserResponse>) => {
+                                    // if user is only a member of one project, redirect them to that projects dashboard
+                                    if(userResponse.body.user.projects.length === 1) {
+                                        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                                            () => this._router.navigate(['/beta/project/' + userResponse.body.user.projects[0].shortcode])
+                                        );
+                                    } else { // if user is a member of multiple projects, redirect them to the overview
+                                        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
+                                            () => this._router.navigate(['/overview'])
+                                        );
+                                    }
+                                });
                         } else {
                             window.location.reload();
                         }
