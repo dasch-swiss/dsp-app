@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.3...v10.4.0) (2022-07-27)
+
+
+### Enhancements
+
+* **overview:** add overview and project tile components (DEV-984) ([#777](https://www.github.com/dasch-swiss/dsp-app/issues/777)) ([a64359b](https://www.github.com/dasch-swiss/dsp-app/commit/a64359b33f7c5e73efb2c3e602ebeb3ade8cc02e))
+
 ### [10.3.3](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.2...v10.3.3) (2022-07-19)
 
 
