@@ -1,5 +1,18 @@
 # Changelog
 
+### [10.4.2](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.1...v10.4.2) (2022-07-28)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([#775](https://www.github.com/dasch-swiss/dsp-app/issues/775)) ([064a7dc](https://www.github.com/dasch-swiss/dsp-app/commit/064a7dc6e634ea17d5e7a129d5f9b12d6a3437ac))
+
+
+### Maintenance
+
+* **deps:** bump moment from 2.29.2 to 2.29.4 ([#774](https://www.github.com/dasch-swiss/dsp-app/issues/774)) ([2831255](https://www.github.com/dasch-swiss/dsp-app/commit/2831255128071a8883a077944d95adaa67e8ea3e))
+* **login-form:** don't redirect user if they are a member of only one project AND they are a sysAdmin ([#782](https://www.github.com/dasch-swiss/dsp-app/issues/782)) ([1a103ba](https://www.github.com/dasch-swiss/dsp-app/commit/1a103ba8273ada9e913c7a1a541d446b9c74121a))
+
 ### [10.4.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.0...v10.4.1) (2022-07-28)
 
 
