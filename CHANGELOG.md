@@ -1,5 +1,12 @@
 # Changelog
 
+### [10.4.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.0...v10.4.1) (2022-07-28)
+
+
+### Maintenance
+
+* **routing:** home button should direct to overview page (DEV-1152) ([#779](https://www.github.com/dasch-swiss/dsp-app/issues/779)) ([d3011ae](https://www.github.com/dasch-swiss/dsp-app/commit/d3011ae166fc9ce1f1212314034c48fc0869dd58))
+
 ## [10.4.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.3.3...v10.4.0) (2022-07-27)
 
 
