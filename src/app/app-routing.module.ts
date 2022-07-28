@@ -33,7 +33,7 @@ import { ResultsComponent } from './workspace/results/results.component';
 const routes: Routes = [
     {
         path: '',
-        component: MainComponent
+        component: OverviewComponent
     },
     {
         path: 'help',
@@ -42,10 +42,6 @@ const routes: Routes = [
     {
         path: 'login',
         component: LoginFormComponent
-    },
-    {
-        path: 'overview',
-        component: OverviewComponent
     },
     {
         path: 'dashboard',

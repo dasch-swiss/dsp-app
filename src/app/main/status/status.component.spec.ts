@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,19 @@ import { of } from 'rxjs';
 import { HttpStatusMsg } from 'src/assets/http/statusMsg';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
 import { StatusComponent } from './status.component';
+
+
+/**
+ * mocked linkify pipe from main/pipes.
+ */
+@Pipe({ name: 'appLinkify' })
+class MockPipe implements PipeTransform {
+    transform(value: string): string {
+        // do stuff here, if you want
+        return value;
+    }
+}
+
 
 /**
  * test host component to simulate parent component.

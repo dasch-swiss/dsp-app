@@ -163,7 +163,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                         this.returnUrl = this._route.snapshot.queryParams['returnUrl'];
                         if (this.returnUrl) {
                             this._router.navigate([this.returnUrl]);
-                        } else if (this._route.snapshot.url.length && this._route.snapshot.url[0].path === 'login') { // if user is on /login
+                        } else if (!this._route.snapshot.url.length || (this._route.snapshot.url.length && this._route.snapshot.url[0].path === 'login')) { // if user is on "/" or "/login"
                             const username = this.session.user.name;
                             this._dspApiConnection.admin.usersEndpoint.getUserByUsername(username).subscribe(
                                 (userResponse: ApiResponseData<UserResponse>) => {
@@ -174,7 +174,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                                         );
                                     } else { // if user is a member of multiple projects, redirect them to the overview
                                         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                                            () => this._router.navigate(['/overview'])
+                                            () => this._router.navigate(['/'])
                                         );
                                     }
                                 });

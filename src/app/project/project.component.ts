@@ -226,7 +226,7 @@ export class ProjectComponent implements OnInit {
      * go to overview page
      */
     goToOverview() {
-        this._router.navigate(['/overview'], { relativeTo: this._route });
+        this._router.navigate(['/'], { relativeTo: this._route });
     }
 
     /**
