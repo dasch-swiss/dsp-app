@@ -1,5 +1,12 @@
 # Changelog
 
+### [10.4.3](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.2...v10.4.3) (2022-07-29)
+
+
+### Bug Fixes
+
+* **property-form:** only send API request to change the guiElement for TextValue object types ([#783](https://www.github.com/dasch-swiss/dsp-app/issues/783)) ([109ca05](https://www.github.com/dasch-swiss/dsp-app/commit/109ca05717962c792214991fe791eb0462ddaac8))
+
 ### [10.4.2](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.1...v10.4.2) (2022-07-28)
 
 
