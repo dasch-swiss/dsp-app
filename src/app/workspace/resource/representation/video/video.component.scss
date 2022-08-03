@@ -73,6 +73,7 @@
     .action {
       position: inherit;
       height: 40px;
+      flex-wrap: nowrap;
 
       .mat-icon-button[disabled][disabled] {
         color: rgba(255, 255, 255, 0.26);
@@ -120,6 +121,7 @@
 
     .action {
       margin: 24px 0 0;
+      flex-wrap: nowrap;
     }
   }
 

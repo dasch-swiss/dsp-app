@@ -4,8 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -13,6 +13,7 @@ import { TestConfig } from 'test.config';
 import { FileRepresentation } from '../file-representation';
 
 import { ArchiveComponent } from './archive.component';
+
 
 const archiveFileValue = {
     'arkUrl': 'http://0.0.0.0:3336/ark:/72163/1/0123/6c=f69h6Ss6GXPME565EqAS/dDHcFHlwQ9K46255QfUGrQ8',
@@ -64,7 +65,8 @@ describe('ArchiveComponent', () => {
             imports: [
                 HttpClientTestingModule,
                 MatDialogModule,
-                MatSnackBarModule
+                MatSnackBarModule,
+                MatMenuModule
             ],
             providers: [
                 AppInitService,
@@ -91,20 +93,5 @@ describe('ArchiveComponent', () => {
 
     it('should have a file url', () => {
         expect(testHostComponent.archiveFileRepresentation.fileValue.fileUrl).toEqual('http://0.0.0.0:1024/0123/Eu71soNXOAL-DVweVgODkFh.zip/file');
-    });
-
-    it('should show a download button if the file url is provided', async () => {
-        const downloadButtonElement = await loader.getHarness(MatButtonHarness.with({ selector: '.download' }));
-
-        expect(downloadButtonElement).toBeTruthy();
-    });
-
-    it('should NOT show a download button if the file url is NOT provided', async () => {
-        testHostComponent.archiveFileRepresentation = undefined;
-        testHostFixture.detectChanges();
-
-        const downloadButtonElement = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '.download' }));
-
-        expect(downloadButtonElement.length).toEqual(0);
     });
 });
