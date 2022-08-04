@@ -8,6 +8,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { ComponentCommunicationEventService, EmitEvent, Events } from '../../services/component-communication-event.service';
 import { DatadogRumService } from '../../services/datadog-rum.service';
 import { Session, SessionService } from '../../services/session.service';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-login-form',
@@ -103,6 +104,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         private _session: SessionService,
         private _route: ActivatedRoute,
         private _router: Router,
+        private _location: Location
     ) {
         this.returnUrl = this._route.snapshot.queryParams['returnUrl'];
     }
@@ -158,12 +160,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                         this.session = this._session.getSession();
 
                         this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, true));
-
                         // if user hit a page that requires to be logged in, they will have a returnUrl in the url
                         this.returnUrl = this._route.snapshot.queryParams['returnUrl'];
                         if (this.returnUrl) {
                             this._router.navigate([this.returnUrl]);
-                        } else if (!this._route.snapshot.url.length || (this._route.snapshot.url.length && this._route.snapshot.url[0].path === 'login')) { // if user is on "/" or "/login"
+                        } else if (!this._location.path() || (this._route.snapshot.url.length && this._route.snapshot.url[0].path === 'login')) { // if user is on "/" or "/login"
                             const username = this.session.user.name;
                             this._dspApiConnection.admin.usersEndpoint.getUserByUsername(username).subscribe(
                                 (userResponse: ApiResponseData<UserResponse>) => {
