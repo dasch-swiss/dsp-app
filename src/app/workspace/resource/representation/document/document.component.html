@@ -1,21 +1,34 @@
 <div class="pdf-container">
-    <div class="action horizontal top overlay">
+    <div class="action horizontal bottom overlay">
         <!-- caption -->
-        <span class="caption mat-caption">
-            <input
-                #queryInp
-                type="text"
-                id="searchbox"
-                name="searchbox"
-                class="pdf-searchbox"
-                placeholder="Search in pdf..."
-                [value]="pdfQuery"
-                [disabled]="failedToLoad"
-                (input)="searchQueryChanged($event.target.value)"
-                (keyup.enter)="searchQueryChanged(queryInp.value)"
-            />
+        <span>
+            <button mat-icon-button [matMenuTriggerFor]="more">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #more="matMenu">
+                <a mat-menu-item (click)="downloadDocument(src.fileValue.fileUrl)">
+                    Download file
+                </a>
+                <button mat-menu-item (click)="openReplaceFileDialog()">
+                    Replace file
+                </button>
+            </mat-menu>
         </span>
-        <span class="fill-remaining-space"></span>
+
+        <!-- input field for searching through document -->
+        <input matInput
+               #queryInp
+               type="text"
+               id="searchbox"
+               name="searchbox"
+               class="pdf-searchbox fill-remaining-space"
+               placeholder="Search in pdf..."
+               [value]="pdfQuery"
+               [disabled]="failedToLoad"
+               (input)="searchQueryChanged($event.target.value)"
+               (keyup.enter)="searchQueryChanged(queryInp.value)"
+        />
+
         <!-- image action tools e.g. zoom, rotate and flip -->
         <span>
             <!-- zoom buttons -->
@@ -28,18 +41,25 @@
             <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in" (click)="zoomFactor = zoomFactor + 0.2" [disabled]="failedToLoad">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
-            <button mat-icon-button id="DSP_PDF_REPLACE_FILE" class="replace-file" matTooltip="Replace PDF file" (click)="openReplaceFileDialog()">
-                <mat-icon>cloud_upload</mat-icon>
+        </span>
+
+        <!-- empty placeholders to center the zoom buttons -->
+        <span class="fill-remaining-space"></span>
+        <span class="empty-space"></span>
+        <span class="empty-space"></span>
+        <span class="empty-space"></span>
+
+        <!-- full screen button -->
+        <span>
+            <button mat-icon-button id="DSP_PDF_FULL_SCREEN" matTooltip="Fullscreen" (click)="openFullscreen()" [disabled]="failedToLoad">
+                <mat-icon>fullscreen</mat-icon>
             </button>
-            <a [href]="src.fileValue.fileUrl" download mat-icon-button id="DSP_PDF_DOWNLOAD" matTooltip="Open pdf in new tab">
-                <mat-icon>launch</mat-icon>
-            </a>
         </span>
     </div>
     <!-- in case of an error -->
     <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'document'" *ngIf="failedToLoad"></app-status>
 
-    <pdf-viewer [src]="src.fileValue.fileUrl" [original-size]="false" [autoresize]="true" [show-all]="true"
+    <pdf-viewer class="pdf-viewer" [src]="src.fileValue.fileUrl" [original-size]="false" [autoresize]="true" [show-all]="true"
         [show-borders]="true" [zoom]="zoomFactor" [zoom-scale]="'page-width'">
     </pdf-viewer>
 </div>
