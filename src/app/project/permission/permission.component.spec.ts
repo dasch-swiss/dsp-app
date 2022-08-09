@@ -1,4 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +19,18 @@ import { TestConfig } from 'test.config';
 import { AddGroupComponent } from './add-group/add-group.component';
 import { PermissionComponent } from './permission.component';
 
+
+/**
+ * mocked linkify pipe from main/pipes.
+ */
+@Pipe({ name: 'appLinkify' })
+class MockPipe implements PipeTransform {
+    transform(value: string): string {
+        // do stuff here, if you want
+        return value;
+    }
+}
+
 describe('PermissionComponent', () => {
     let component: PermissionComponent;
     let fixture: ComponentFixture<PermissionComponent>;
@@ -32,7 +45,8 @@ describe('PermissionComponent', () => {
                 AddGroupComponent,
                 GroupsListComponent,
                 DialogComponent,
-                StatusComponent
+                StatusComponent,
+                MockPipe
             ],
             imports: [
                 BrowserAnimationsModule,

@@ -80,7 +80,8 @@ describe('StatusComponent', () => {
             declarations: [
                 StatusComponent,
                 NoContentTestHostComponent,
-                TeapotTestHostComponent
+                TeapotTestHostComponent,
+                MockPipe
             ],
             imports: [
                 BrowserAnimationsModule,

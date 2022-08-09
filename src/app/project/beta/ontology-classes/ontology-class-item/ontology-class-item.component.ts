@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClassDefinition, KnoraApiConnection, CountQueryResponse, ApiResponseError } from '@dasch-swiss/dsp-js';
+import { ClassDefinition, KnoraApiConnection, CountQueryResponse, ApiResponseError, Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { OntologyService } from 'src/app/project/ontology/ontology.service';
@@ -22,11 +22,13 @@ export class OntologyClassItemComponent implements OnInit {
 
     link: string;
 
+    icon: string;
+
     // i18n setup
     itemPluralMapping = {
-        resource: {
-            '=1': '1 resource',
-            other: '# resources'
+        entry: {
+            '=1': '1 Entry',
+            other: '# Entries'
         }
     };
 
@@ -58,10 +60,22 @@ export class OntologyClassItemComponent implements OnInit {
                 this._errorHandler.showMessage(error);
             }
         );
+
+        this.icon = this._getIcon();
     }
 
     open(route: string) {
         this._router.navigateByUrl(route);
+    }
+
+    /**
+     * given an Html element, compare the scrollHeight and the clientHeight
+     *
+     * @param elem the element which has the line-clamp css
+     * @returns inverse of comparison between the scrollHeight and the clientHeight of elem
+     */
+    compareElementHeights(elem: HTMLElement): boolean {
+        return !(elem.scrollHeight > elem.clientHeight);
     }
 
     private _setGravsearch(iri: string): string {
@@ -80,6 +94,31 @@ export class OntologyClassItemComponent implements OnInit {
         }
 
         OFFSET 0`;
+    }
+
+    /**
+     * return the correct mat-icon depending on the subclass of the resource
+     *
+     * @returns mat-icon name as string
+     */
+    private _getIcon(): string {
+
+        switch (this.resClass.subClassOf[0]) {
+            case Constants.AudioRepresentation:
+                return 'audio_file';
+            case Constants.ArchiveRepresentation:
+                return 'folder_zip';
+            case Constants.DocumentRepresentation:
+                return 'description';
+            case Constants.MovingImageRepresentation:
+                return 'video_file';
+            case Constants.StillImageRepresentation:
+                return 'image';
+            case Constants.TextRepresentation:
+                return 'text_snippet';
+            default: // resource does not have a file representation
+                return 'insert_drive_file';
+        }
     }
 
 }

@@ -1,16 +1,24 @@
-<span class="link" [routerLink]="link">
-    <h2 matLine class="label mat-subheading-1">{{resClass.label}}</h2>
-    <span matLine class="instances">
-        {{results | i18nPlural: itemPluralMapping['resource']}}
-    </span>
-</span>
-
-<span class="overlay-buttons hover-only" *ngIf="projectMember">
-    <!-- with the following button, it should be possible to edit the resource class in a quick way; but maybe we don't need it
-    <button mat-icon-button class="conf" [routerLink]="link + '/conf'">
-        <mat-icon>tune</mat-icon>
-    </button> -->
-    <button mat-icon-button class="add" [routerLink]="link + '/add'">
-        <mat-icon>add</mat-icon>
-    </button>
-</span>
+<div class="class-item-container">
+    <div class="content" [routerLinkActive]="['is-active']">
+        <div class="top link" [routerLink]="link">
+            <div class="file-icon">
+                <div class="icon-wrapper">
+                    <mat-icon>{{icon}}</mat-icon>
+                </div>
+            </div>
+            <div class="info">
+                <p class="label" #classLabel matTooltip="{{resClass.label}}" matTooltipShowDelay="750"
+                    [matTooltipDisabled]="compareElementHeights(classLabel)"> {{resClass.label}}</p>
+                <p class="entries">{{results | i18nPlural: itemPluralMapping['entry']}}</p>
+            </div>
+        </div>
+        <div class="bottom link" *ngIf="projectMember" [routerLink]="link + '/add'">
+            <div class="add-icon">
+                <mat-icon>add_circle_outline</mat-icon>
+            </div>
+            <div class="add-new">
+                <p class="add-new-label">Add a new resource</p>
+            </div>
+        </div>
+    </div>
+</div>

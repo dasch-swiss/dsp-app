@@ -230,6 +230,16 @@ export class ProjectComponent implements OnInit {
     }
 
     /**
+     * given an Html element, compare the scrollHeight and the clientHeight
+     *
+     * @param elem the element which has the line-clamp css
+     * @returns inverse of comparison between the scrollHeight and the clientHeight of elem
+     */
+    compareElementHeights(elem: HTMLElement): boolean {
+        return !(elem.scrollHeight > elem.clientHeight);
+    }
+
+    /**
      * checks if the shortcode is valid: hexadecimal and length = 4
      *
      * @param code project shortcode which is a parameter in the route

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { CheckboxUpdate, FilteredResources } from '../list-view.component';
 import { ListViewService } from '../list-view.service';
 
@@ -60,6 +60,32 @@ export class ResourceListComponent implements OnInit {
 
         this.resourcesSelected.emit(selection);
 
+    }
+
+    /**
+     * given a resource, return the corresponding mat-icon for the subclass
+     *
+     * @returns mat-icon name as string
+     */
+    getIcon(resource: ReadResource): string {
+        const subclass = resource.entityInfo.classes[resource.type].subClassOf[0];
+
+        switch (subclass) {
+            case Constants.AudioRepresentation:
+                return 'audio_file';
+            case Constants.ArchiveRepresentation:
+                return 'folder_zip';
+            case Constants.DocumentRepresentation:
+                return 'description';
+            case Constants.MovingImageRepresentation:
+                return 'video_file';
+            case Constants.StillImageRepresentation:
+                return 'image';
+            case Constants.TextRepresentation:
+                return 'text_snippet';
+            default: // resource does not have a file representation
+                return 'insert_drive_file';
+        }
     }
 
 }

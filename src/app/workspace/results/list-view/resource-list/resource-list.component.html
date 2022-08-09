@@ -1,12 +1,11 @@
 <!-- When withMultipleSelection is false and user can select only one resource at a time to view -->
 <mat-list class="resource-list">
-    <div class="link"
-        [class.selected-resource]="selectedResourceIdx.indexOf(i) > -1"
-        [class.border-bottom]="!last"
+    <div class="link" [class.selected-resource]="selectedResourceIdx.indexOf(i) > -1" [class.border-bottom]="!last"
         *ngFor="let resource of resources.resources; let i = index; let last = last">
         <mat-list-item>
-            <mat-icon matListIcon>image_search</mat-icon>
-            <div matLine (click)="selectResource({ checked: true, resIndex: i, resId: resource.id, resLabel: resource.label, isCheckbox: false })">
+            <mat-icon matListIcon>{{ getIcon(resource) }}</mat-icon>
+            <div matLine
+                (click)="selectResource({ checked: true, resIndex: i, resId: resource.id, resLabel: resource.label, isCheckbox: false })">
                 <p matLine class="res-class-label">
                     {{ resource.entityInfo.classes[resource.type].label }}
                 </p>
@@ -21,9 +20,7 @@
                 </div>
             </div>
             <!-- if withMultipleSelection is true, we display checkbox -->
-            <mat-checkbox #ckbox
-                *ngIf="withMultipleSelection"
-                id="{{ i }}"
+            <mat-checkbox #ckbox *ngIf="withMultipleSelection" id="{{ i }}"
                 (change)="selectResource({ checked: $event.checked, resIndex: i, resId: resource.id, resLabel: resource.label, isCheckbox: true })"
                 class="res-checkbox">
             </mat-checkbox>
