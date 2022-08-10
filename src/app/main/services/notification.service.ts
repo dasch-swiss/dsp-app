@@ -50,7 +50,5 @@ export class NotificationService {
         }
 
         this._snackBar.open(message, 'x', conf);
-
-        this._snackBar.dismiss();
     }
 }
