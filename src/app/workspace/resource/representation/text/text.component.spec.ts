@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -13,6 +12,7 @@ import { TestConfig } from 'test.config';
 import { FileRepresentation } from '../file-representation';
 
 import { TextComponent } from './text.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 const textFileValue = {
     'arkUrl': 'http://0.0.0.0:3336/ark:/72163/1/9876/=wcU1HzYTEKbJCYPybyKmAs/Kp81r_BPTHKa4oSd5iIxXgd',
@@ -63,7 +63,8 @@ describe('TextComponent', () => {
             imports: [
                 HttpClientTestingModule,
                 MatDialogModule,
-                MatSnackBarModule
+                MatSnackBarModule,
+                MatMenuModule
             ],
             providers: [
                 AppInitService,
@@ -90,20 +91,5 @@ describe('TextComponent', () => {
 
     it('should have a file url', () => {
         expect(testHostComponent.textFileRepresentation.fileValue.fileUrl).toEqual('http://0.0.0.0:1024/9876/Jjic1ixccX7-BUHCAFNlEts.txt/file');
-    });
-
-    it('should show a download button if the file url is provided', async () => {
-        const downloadButtonElement = await loader.getHarness(MatButtonHarness.with({ selector: '.download' }));
-
-        expect(downloadButtonElement).toBeTruthy();
-    });
-
-    it('should NOT show a download button if the file url is NOT provided', async () => {
-        testHostComponent.textFileRepresentation = undefined;
-        testHostFixture.detectChanges();
-
-        const downloadButtonElement = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '.download' }));
-
-        expect(downloadButtonElement.length).toEqual(0);
     });
 });

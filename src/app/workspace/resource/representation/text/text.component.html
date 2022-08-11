@@ -2,15 +2,37 @@
     <!-- in case of an error -->
     <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'text'" *ngIf="failedToLoad"></app-status>
 
-    <button class="download" mat-button (click)="downloadText(src.fileValue.fileUrl)" [disabled]="failedToLoad">
-        <mat-icon>
-            file_download
-        </mat-icon>
-        Click to download
-    </button>
-    <button mat-button matTooltip="Replace text file" (click)="openReplaceFileDialog()">
-        <mat-icon>cloud_upload</mat-icon>
-    </button>
+    <div class="file-representation">
+        <div class="container">
+            <div class="contents">
+                <div class="icon">
+                    <mat-icon>
+                        text_snippet
+                    </mat-icon>
+                </div>
+                <div class="file">
+                    <p>{{originalFilename}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="toolbar">
+            <!-- toolbar -->
+            <div class="action horizontal bottom">
+                <!-- three dot menu to download and replace file -->
+                <button mat-icon-button [matMenuTriggerFor]="more">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #more="matMenu" class="mat-menu-custom-black">
+                    <button class="menu-content" mat-menu-item (click)="downloadText(src.fileValue.fileUrl)" [disabled]="failedToLoad">
+                        Download file
+                    </button>
+                    <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
+                        Replace file
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </div>
 </div>
 <div *ngIf="!src || !src.fileValue.fileUrl">
     No valid file url found for this resource.
