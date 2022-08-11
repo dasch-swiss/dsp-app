@@ -35,12 +35,18 @@
             <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu">
-            <a mat-menu-item [href]="iiifUrl" target="_blank">
-                Open file in new tab
-            </a>
+            <button mat-menu-item (click)="openImageInNewTab(iiifUrl)">
+                Open IIIF file in new tab
+            </button>
             <button mat-menu-item [cdkCopyToClipboard]="iiifUrl"
             (click)="openSnackBar('IIIF URL copied to clipboard!')">
                 Copy IIIF URL to clipboard
+            </button>
+            <button mat-menu-item (click)="downloadStillImage(images[0].fileValue.fileUrl)">
+                Download file
+            </button>
+            <button mat-menu-item (click)="openReplaceFileDialog()">
+                Replace file
             </button>
         </mat-menu>
         <!-- empty placeholder to simulate two buttons; this helps to have the zoom buttons centered with fill-remaining-space setup -->
@@ -88,15 +94,11 @@
 
         <span class="fill-remaining-space"></span>
 
-        <!-- action buttons: create annotation/region, replace file, fullscreen -->
+        <!-- action buttons: create annotation/region, fullscreen -->
         <span>
             <button mat-icon-button id="DSP_OSD_DRAW_REGION" matTooltip="Draw Region" [disabled]="failedToLoad"
             (click)="drawButtonClicked()" [class.active]="regionDrawMode">
                 <mat-icon svgIcon="draw_region_icon"></mat-icon>
-            </button>
-            <button mat-icon-button id="DSP_OSD_REPLACE_IMAGE" class="replace-image" matTooltip="Replace image"
-                (click)="openReplaceFileDialog()">
-                <mat-icon>cloud_upload</mat-icon>
             </button>
             <button mat-icon-button id="DSP_OSD_FULL_PAGE" matTooltip="Open in fullscreen" [disabled]="failedToLoad">
                 <mat-icon>fullscreen</mat-icon>

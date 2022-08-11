@@ -13,7 +13,7 @@
                 [resourceIri]="incomingResource ? incomingResource.res.id : resource.res.id"
                 [project]="resource.res.attachedToProject"
                 [currentTab]="selectedTabLabel"
-                [parentResource]="resource.res"
+                [parentResource]="incomingResource ? incomingResource.res : resource.res"
                 [activateRegion]="selectedRegion"
                 (loaded)="representationLoaded($event)"
                 (goToPage)="compoundNavigation($event)"

@@ -2,9 +2,9 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -124,7 +124,7 @@ describe('StillImageComponent', () => {
     let rootLoader: HarnessLoader;
     let overlayContainer: OverlayContainer;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(() => {
 
         const adminSpyObj = {
             v2: {
@@ -140,7 +140,7 @@ describe('StillImageComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                HttpClientModule,
+                HttpClientTestingModule,
                 MatDialogModule,
                 MatIconModule,
                 MatMenuModule,
@@ -164,7 +164,7 @@ describe('StillImageComponent', () => {
             ]
         })
             .compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
@@ -173,9 +173,6 @@ describe('StillImageComponent', () => {
 
         overlayContainer = TestBed.inject(OverlayContainer);
         rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
-    });
-
-    it('should create', () => {
         expect(testHostComponent).toBeTruthy();
         expect(testHostComponent.osdViewerComp).toBeTruthy();
     });

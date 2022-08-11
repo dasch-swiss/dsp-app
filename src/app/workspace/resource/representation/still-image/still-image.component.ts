@@ -14,6 +14,7 @@ import {
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
     ApiResponseError,
     Constants,
@@ -136,6 +137,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
     loading = true;
     failedToLoad = false;
+    originalFilename: string;
 
     regionDrawMode = false; // stores whether viewer is currently drawing a region
     private _regionDragInfo; // stores the information of the first click for drawing a region
@@ -144,6 +146,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        private readonly _http: HttpClient,
         private _dialog: MatDialog,
         private _domSanitizer: DomSanitizer,
         private _elementRef: ElementRef,
@@ -190,6 +193,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
             this._setupViewer();
         }
         if (changes['images']) {
+            this._getOriginalFilename();
+
             this._openImages();
             this._unhighlightAllRegions();
             // --> TODO: check if this is necessary or could be handled below
@@ -220,7 +225,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
     /**
      * renders all ReadStillImageFileValues to be found in [[this.images]].
-     * (Although this.images is a Angular Input property, the built-in change detection of Angular does not detect changes in complex objects or arrays, only reassignment of objects/arrays.
+     * (Although this.images is an Angular Input property, the built-in change detection of Angular does not detect changes in complex objects or arrays, only reassignment of objects/arrays.
      * Use this method if additional ReadStillImageFileValues were added to this.images after creation/assignment of the this.images array.)
      */
     updateImages() {
@@ -232,7 +237,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
     /**
      * renders all regions to be found in [[this.images]].
-     * (Although this.images is a Angular Input property, the built-in change detection of Angular does not detect changes in complex objects or arrays, only reassignment of objects/arrays.
+     * (Although this.images is an Angular Input property, the built-in change detection of Angular does not detect changes in complex objects or arrays, only reassignment of objects/arrays.
      * Use this method if additional regions were added to the resources.images)
      */
     updateRegions() {
@@ -360,6 +365,32 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         this._notification.openSnackBar(message);
     }
 
+    async downloadStillImage(url: string) {
+        try {
+            const res = await this._http.get(url, { responseType: 'blob' }).toPromise();
+            this.downloadFile(res);
+        } catch (e) {
+            this._errorHandler.showMessage(e);
+        }
+    }
+
+    downloadFile(data) {
+        const url = window.URL.createObjectURL(data);
+        const e = document.createElement('a');
+        e.href = url;
+
+        // set filename
+        if (this.originalFilename === undefined) {
+            e.download = url.substr(url.lastIndexOf('/') + 1);
+        } else {
+            e.download = this.originalFilename;
+        }
+
+        document.body.appendChild(e);
+        e.click();
+        document.body.removeChild(e);
+    }
+
     openReplaceFileDialog() {
         const propId = this.parentResource.properties[Constants.HasStillImageFileValue][0].id;
 
@@ -384,9 +415,29 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         });
     }
 
+    openImageInNewTab(url: string) {
+        window.open(url, '_blank');
+    }
+
     openPage(p: number) {
         this.regionDrawMode = false;
         this.goToPage.emit(p);
+    }
+
+    private _getOriginalFilename() {
+        const requestOptions = {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+            withCredentials: true
+        };
+
+        const index = this.images[0].fileValue.fileUrl.indexOf(this.images[0].fileValue.filename);
+        const pathToJson = this.images[0].fileValue.fileUrl.substring(0, index + this.images[0].fileValue.filename.length) + '/knora.json';
+
+        this._http.get(pathToJson, requestOptions).subscribe(
+            res => {
+                this.originalFilename = res['originalFilename'];
+            }
+        );
     }
 
     private _replaceFile(file: UpdateFileValue) {
@@ -403,6 +454,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
                 this._valueOperationEventService.emit(
                     new EmitEvent(Events.FileValueUpdated, new UpdatedFileEventValue(
                         res2.properties[Constants.HasStillImageFileValue][0])));
+
+                this._getOriginalFilename();
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -415,6 +468,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
      * @param startPoint the start point of the drawing
      * @param endPoint the end point of the drawing
      * @param imageSize the image size for calculations
+     * @param overlay the overlay element that represents the region
      */
     private _openRegionDialog(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, overlay: Element): void {
         const dialogConfig: MatDialogConfig = {
@@ -708,7 +762,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
      * @param geometry - the geometry describing the ROI
      * @param aspectRatio -  the aspectRatio (h/w) of the image on which the geometry should be placed
      * @param xOffset -  the x-offset in Openseadragon viewport coordinates of the image on which the geometry should be placed
-     * @param toolTip -  the tooltip which should be displayed on mousehover of the svg element
+     * @param regionLabel -  the label of the region
+     * @param regionComment - the comment of the region
      */
     private _createSVGOverlay(regionIri: string, geometry: RegionGeometry, aspectRatio: number, xOffset: number, regionLabel: string, regionComment: string): void {
         const lineColor = geometry.lineColor;
