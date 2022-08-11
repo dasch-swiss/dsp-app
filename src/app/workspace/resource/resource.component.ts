@@ -57,6 +57,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     @Input() splitSizeChanged: SplitSize;
 
+    oldResourceIri: string; // for change detection
+
     projectCode: string;
 
     resourceUuid: string;
@@ -127,6 +129,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             this.valueUuid = params['value'];
             if (this.projectCode && this.resourceUuid) {
                 this.resourceIri = this._resourceService.getResourceIri(this.projectCode, this.resourceUuid);
+                this.oldResourceIri = this.resourceIri;
             }
             this.getResource(this.resourceIri);
         });
@@ -164,12 +167,11 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnInit() {
-
     }
 
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-        // do not reload the whole resource when the split size has changed
-        if (this.splitSizeChanged) {
+        // do not reload the whole resource when the iri did not change
+        if (this.oldResourceIri === this.resourceIri) {
             return;
         }
 
@@ -185,6 +187,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         if (this.resourceIri) {
             this.getResource(this.resourceIri);
         }
+        this.oldResourceIri = this.resourceIri;
     }
 
     ngOnDestroy() {

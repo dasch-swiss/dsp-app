@@ -37,10 +37,7 @@ export class ComparisonComponent implements OnChanges {
     ngOnChanges(): void {
 
         if (this.resources && this.resources.length) {
-            this.resourceIds = [];
-            this.resources.forEach(res => {
-                this.resourceIds.push(res.id);
-            });
+            this.resourceIds = this.resources.map(res => res.id);
         }
 
         if (!this.noOfResources) {

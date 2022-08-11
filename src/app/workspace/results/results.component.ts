@@ -33,7 +33,7 @@ export class ResultsComponent {
 
     loading = true;
 
-    splitSizeChanged: SplitSize;
+    splitSize: SplitSize;
 
     constructor(
         private _route: ActivatedRoute,
@@ -61,18 +61,18 @@ export class ResultsComponent {
         this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
     }
 
-    openSelectedResources(res: FilteredResources) {
-
+    onSelectionChange(res: FilteredResources) {
         this.selectedResources = res;
+        this.resourceIri = this.selectedResources.resInfo[0].id;
 
         if (!res || res.count <= 1) {
             this.viewMode = 'single';
+
         } else {
             if (this.viewMode !== 'compare') {
                 this.viewMode = ((res && res.count > 0) ? 'intermediate' : 'single');
             }
         }
-
     }
 
 }
