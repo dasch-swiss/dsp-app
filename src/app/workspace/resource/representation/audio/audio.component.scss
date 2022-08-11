@@ -1,18 +1,44 @@
-.controls {
-  width: 100%;
 
-  .audio-player,
-  .upload-button {
-    display: inline-block;
-    vertical-align: middle;
-  }
+@import "../../../../../assets/style/responsive";
+@import "../../../../../assets/style/config";
 
-  .audio-player {
-    width: 80%;
+.file-representation {
+    width: 100%;
 
-    audio {
-      width: 100%;
+    .container {
+        background: #292929;
+        border-radius: 8px 8px 0px 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15.5% 0%;
+
+        .contents {
+            color: #FFFFFF;
+
+            .icon {
+                mat-icon {
+                    height: 90px;
+                    width: 90px;
+                    font-size: 90px;
+                    line-height: 90px;
+                }
+            }
+        }
     }
-  }
+}
+.current-time-span {
+    padding-left: 2.5%;
+    font-weight: bold;
 }
 
+.time-slider-container {
+    .time-slider {
+        width: 90%;
+        ::ng-deep {
+            .mat-slider-track-background {
+                background-color: whitesmoke !important;
+            }
+        }        
+    }
+}

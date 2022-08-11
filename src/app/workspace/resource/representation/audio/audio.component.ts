@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {
@@ -20,7 +21,6 @@ import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } 
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
 
-
 @Component({
     selector: 'app-audio',
     templateUrl: './audio.component.html',
@@ -35,7 +35,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
     @Output() loaded = new EventEmitter<boolean>();
 
     failedToLoad = false;
-
+    currentTime = 0;
     audio: SafeUrl;
 
     constructor(
@@ -44,16 +44,52 @@ export class AudioComponent implements OnInit, AfterViewInit {
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _rs: RepresentationService,
-        private _valueOperationEventService: ValueOperationEventService
+        private _valueOperationEventService: ValueOperationEventService,
+        private readonly _http: HttpClient
     ) { }
 
     ngOnInit(): void {
         this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
         this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        player.addEventListener('timeupdate', () => {
+            this.currentTime = player.currentTime;
+        });
     }
 
     ngAfterViewInit() {
         this.loaded.emit(true);
+    }
+
+    togglePlay(){
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        if (player.paused){
+            player.play();
+        } else {
+            player.pause();
+        }
+    }
+
+    isPaused(){
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        return player.paused;
+    }
+
+    parseTime(time){
+        if (isNaN(time)){
+            return '00:00';
+        }
+        const minutes = Math.floor(time/60);
+        const seconds = Math.floor(time - minutes*60);
+        let minutesString = minutes.toString();
+        if (minutes < 10){
+            minutesString = '0' + minutesString;
+        }
+        let secondsString = seconds.toString();
+        if (seconds < 10){
+            secondsString = '0' + secondsString;
+        }
+        return minutesString + ':' + secondsString;
     }
 
     openReplaceFileDialog(){
@@ -78,6 +114,53 @@ export class AudioComponent implements OnInit, AfterViewInit {
                 this._replaceFile(data);
             }
         });
+    }
+
+    openIIIFnewTab(){
+        window.open(this.src.fileValue.fileUrl, '_blank');
+    }
+
+    // https://stackoverflow.com/questions/66986983/angular-10-download-file-from-firebase-link-without-opening-into-new-tab
+    async downloadAudio(url: string){
+        try {
+            const res = await this._http.get(url, { responseType: 'blob' }).toPromise();
+            this.downloadFile(res);
+        } catch (e) {
+            this._errorHandler.showMessage(e);
+        }
+    }
+
+    downloadFile(data){
+        const url = window.URL.createObjectURL(data);
+        const e = document.createElement('a');
+        e.href = url;
+
+        // set filename
+        e.download = url.substr(url.lastIndexOf('/') + 1);
+
+        document.body.appendChild(e);
+        e.click();
+        document.body.removeChild(e);
+    }
+
+    onSliderChangeEnd(event){
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        player.currentTime = event.value;
+    }
+
+    getDuration(){
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        return player.duration;
+    }
+
+    toggleMute(){
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        player.muted = !player.muted;
+    }
+
+    isMuted(){
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        return player.muted;
     }
 
     private _replaceFile(file: UpdateFileValue) {
