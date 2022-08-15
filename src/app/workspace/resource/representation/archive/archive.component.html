@@ -23,11 +23,11 @@
                 <button mat-icon-button [matMenuTriggerFor]="more">
                     <mat-icon>more_vert</mat-icon>
                 </button>
-                <mat-menu #more="matMenu">
-                    <button mat-menu-item (click)="downloadArchive(src.fileValue.fileUrl)">
+                <mat-menu #more="matMenu" class="mat-menu-custom-black">
+                    <button class="menu-content" mat-menu-item (click)="downloadArchive(src.fileValue.fileUrl)">
                         Download file
                     </button>
-                    <button mat-menu-item (click)="openReplaceFileDialog()">
+                    <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
                         Replace file
                     </button>
                 </mat-menu>

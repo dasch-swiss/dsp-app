@@ -27,6 +27,7 @@
         }
     }
 }
+
 .current-time-span {
     padding-left: 2.5%;
     font-weight: bold;
@@ -42,3 +43,10 @@
         }        
     }
 }
+
+::ng-deep .mat-menu-custom-black {
+    background: #292929;
+    .menu-content {
+      color: #FFFFFF;
+    }
+  }

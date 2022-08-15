@@ -7,7 +7,6 @@ $panelSize: 40px;
 $osd-height: 460px;
 
 :host {
-  border: 1px solid $black;
 
   @media (max-height: 636px) {
     height: 364px;
@@ -24,12 +23,17 @@ $osd-height: 460px;
 
   .pdf-container {
     color: $bright;
-    height: 100%;
-    background-color: $black;
+    height: 90%;
+    background-color: #292929;
+    border-radius: 8px 8px 0px 0px;
 
     pdf-viewer {
       position: inherit;
-      height: calc(100% - 4px);
+      height: 100%;
+
+      ::ng-deep .ng2-pdf-viewer-container {
+        height: 90%;
+      }
     }
   }
 
@@ -44,6 +48,12 @@ $osd-height: 460px;
     }
   }
 
+}
 
+::ng-deep .mat-menu-custom-black {
+  background: #292929;
+  .menu-content {
+    color: #FFFFFF;
+  }
 }
 

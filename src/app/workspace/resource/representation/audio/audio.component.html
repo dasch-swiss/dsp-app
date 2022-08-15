@@ -1,6 +1,7 @@
 <div class="controls">
     <!-- in case of an error -->
-    <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'audio'" *ngIf="failedToLoad"></app-status>
+    <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'audio'" *ngIf="failedToLoad">
+    </app-status>
 
     <div class="file-representation">
         <div class="container">
@@ -9,7 +10,7 @@
                     <mat-icon>
                         audio_file
                     </mat-icon>
-                </div>  
+                </div>
                 <div *ngIf="failedToLoad">Your browser does not support the audio element.</div>
                 <div class="audio-player">
                     <audio id="audio" preload="auto">
@@ -25,17 +26,17 @@
                 <button mat-icon-button [matMenuTriggerFor]="more">
                     <mat-icon>more_vert</mat-icon>
                 </button>
-                <mat-menu #more="matMenu">
-                    <button mat-menu-item (click)="openIIIFnewTab()">
+                <mat-menu #more="matMenu" class="mat-menu-custom-black">
+                    <button class="menu-content" mat-menu-item (click)="openIIIFnewTab()">
                         Open IIIF URL in new tab
                     </button>
-                    <button mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">
+                    <button class="menu-content" mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">
                         Copy IIIF URL to clipboard
                     </button>
-                    <button mat-menu-item (click)="downloadAudio(src.fileValue.fileUrl)">
+                    <button class="menu-content" mat-menu-item (click)="downloadAudio(src.fileValue.fileUrl)">
                         Download audio
                     </button>
-                    <button mat-menu-item (click)="openReplaceFileDialog()">
+                    <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
                         Replace file
                     </button>
                 </mat-menu>
@@ -55,7 +56,8 @@
                     </span>
                 </div>
                 <div class="time-slider-container fill-remaining-space">
-                    <mat-slider class="time-slider" min="0" [max]="getDuration()" step="1" [value]="currentTime" (input)="onSliderChangeEnd($event)"></mat-slider>
+                    <mat-slider class="time-slider" min="0" [max]="getDuration()" step="1" [value]="currentTime"
+                        (input)="onSliderChangeEnd($event)"></mat-slider>
                 </div>
                 <button mat-icon-button (click)="toggleMute()" *ngIf="!isMuted()">
                     <mat-icon>

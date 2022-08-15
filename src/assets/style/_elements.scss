@@ -341,7 +341,7 @@ a,
     }
 
     &.overlay {
-      background: rgba(0, 0, 0, 0.48);
+      background: #292929;
     }
 
     &.vertical {
@@ -373,9 +373,9 @@ a,
     }
   }
 
-  .pdfViewer {
-    margin-top: $panel-height;
-  }
+  // .pdfViewer {
+  //   margin-bottom: 64px;
+  // }
 }
 
 .no-results {
