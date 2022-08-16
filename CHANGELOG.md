@@ -1,5 +1,29 @@
 # Changelog
 
+## [10.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.3...v10.5.0) (2022-08-15)
+
+
+### Bug Fixes
+
+* **login-form:** keep user on same page after login (DEV-1158) ([#788](https://www.github.com/dasch-swiss/dsp-app/issues/788)) ([9ec6870](https://www.github.com/dasch-swiss/dsp-app/commit/9ec6870eee3d8101676cbf44f778f3cb4be4e0a8))
+* **notification:** fix snackbar notification only appearing for a split second ([#794](https://www.github.com/dasch-swiss/dsp-app/issues/794)) ([110039d](https://www.github.com/dasch-swiss/dsp-app/commit/110039d8bc5d590ab8c22375f37a55215c995661))
+* **resource view:** dsp app the resource viewer does not reload properly after deselecting a resource from the comparison viewer(Dev-1123) ([#793](https://www.github.com/dasch-swiss/dsp-app/issues/793)) ([f690a37](https://www.github.com/dasch-swiss/dsp-app/commit/f690a37e35abc13792de1bd4121c29f332ef756d))
+
+
+### Enhancements
+
+* **archive:** new archive representation view (DEV-1084) ([#785](https://www.github.com/dasch-swiss/dsp-app/issues/785)) ([db40310](https://www.github.com/dasch-swiss/dsp-app/commit/db40310092f5dd55f0531444703d6fdd9ae4f9af))
+* **audio:** Make changes to audio component (DEV-1148) ([#796](https://www.github.com/dasch-swiss/dsp-app/issues/796)) ([0cabfe3](https://www.github.com/dasch-swiss/dsp-app/commit/0cabfe32cdda3a7c528d9742dcac66637187258d))
+* **document:** changes to pdf viewer (DEV-1149) ([#789](https://www.github.com/dasch-swiss/dsp-app/issues/789)) ([d39ed14](https://www.github.com/dasch-swiss/dsp-app/commit/d39ed1471fc9b513e98e2a8ce5578d258f213fe4))
+* **document:** make changes to text component (DEV-1147) ([#791](https://www.github.com/dasch-swiss/dsp-app/issues/791)) ([e8adde9](https://www.github.com/dasch-swiss/dsp-app/commit/e8adde9e25f0e578eace12cb25115d7830b6b86b))
+* **projects:** changes to nav bar (DEV-1101) ([#790](https://www.github.com/dasch-swiss/dsp-app/issues/790)) ([d9570b9](https://www.github.com/dasch-swiss/dsp-app/commit/d9570b96e4230fb6b114c040260253e6fc812758))
+* **still-image:** new still-image viewer (DEV-1150) ([#792](https://www.github.com/dasch-swiss/dsp-app/issues/792)) ([2eccd8a](https://www.github.com/dasch-swiss/dsp-app/commit/2eccd8a6afc5bb78e6a9fd8cf4bd3e718cb4c78a))
+
+
+### Maintenance
+
+* **file-representations:** adjust styling of file representation components ([#797](https://www.github.com/dasch-swiss/dsp-app/issues/797)) ([18aa134](https://www.github.com/dasch-swiss/dsp-app/commit/18aa134a6fe6e854f7695e176c2748560f2b53ed))
+
 ### [10.4.3](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.2...v10.4.3) (2022-07-29)
 
 
