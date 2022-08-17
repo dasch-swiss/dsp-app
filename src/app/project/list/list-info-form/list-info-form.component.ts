@@ -71,6 +71,7 @@ export class ListInfoFormComponent implements OnInit {
         // get feature toggle information if url contains beta
         // in case of creating new
         if (this._route.parent) {
+            this.mode = 'create';
             this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
             if (this.beta) {
                 // get the shortcode of the current project
@@ -82,6 +83,7 @@ export class ListInfoFormComponent implements OnInit {
         }
         // in case of edit
         if (this._route.firstChild) {
+            this.mode = 'update';
             this.beta = (this._route.firstChild.snapshot.url[0].path === 'beta');
             if (this.beta) {
                 // get the shortcode of the current project

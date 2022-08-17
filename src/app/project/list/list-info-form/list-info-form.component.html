@@ -2,7 +2,7 @@
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <div *ngIf="!loading" class="form-content list-info">
-        <h3 *ngIf="beta">Create new list</h3>
+        <h3 *ngIf="beta && mode =='create'">Create new list</h3>
         <!-- list label -->
         <app-string-literal-input [placeholder]="'List label *'" [value]="labels"
             (dataChanged)="handleData($event, 'labels')">
