@@ -16,11 +16,8 @@ export class SettingsComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        // we need only two items from the old project navigation
         // collaboration
         this.navigation.push(AppGlobal.projectNav[1]);
-        // permissions
-        this.navigation.push(AppGlobal.projectNav[2]);
     }
 
 }

@@ -1,11 +1,11 @@
 <div *ngIf="!error; else StatusMsg">
     <!-- normal version -->
     <div *ngIf="!beta">
-        <nav *ngIf="projectAdmin && !loading" mat-tab-nav-bar mat-align-tabs="center"
+        <nav *ngIf="projectMember && !loading" mat-tab-nav-bar mat-align-tabs="center"
             class="navigation tab-bar margin-from-top" animationDuration="0ms" [color]="color">
-            <a mat-tab-link *ngFor="let link of navigation; let first = first" id="{{link.route}}"
+            <a mat-tab-link *ngFor="let link of navigation; let first = first; let i = index" id="{{link.route}}"
                 [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive"
-                [disabled]="!first && !projectAdmin" [class.deactivated]="!project?.status">
+                [disabled]="!first && !projectAdmin && i !== 3" [class.deactivated]="!project?.status">
                 <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
                 {{link.label}}
             </a>
@@ -20,7 +20,7 @@
                 <!-- Project label -->
                 <div class="link project-title" [routerLink]="'/beta/project/' + project.shortcode">
                     <p #projectTitle matTooltip="{{project.longname}}" matTooltipShowDelay="500"
-                        [matTooltipDisabled]="compareElementHeights(projectTitle)">
+                        [matTooltipDisabled]="compareElementHeights(projectTitle)" matTooltipPosition="right">
                         {{project.longname}}
                     </p>
                 </div>
@@ -65,10 +65,11 @@
                         <mat-expansion-panel [expanded]="first">
                             <mat-expansion-panel-header>
                                 <div class="sidenav-panel-header"
-                                    (click)="projectAdmin ? $event.stopPropagation() : true">
+                                    (click)="projectMember ? $event.stopPropagation() : true">
                                     <mat-panel-title class="mat-subheading-2"
-                                        (click)="projectAdmin ? open('ontology', onto.id) : null">
+                                        (click)="projectMember ? open('ontology', onto.id) : null">
                                         <p #ontoTitle matTooltip="{{onto.label}}" matTooltipShowDelay="500"
+                                            matTooltipPosition="right"
                                             [matTooltipDisabled]="compareElementHeights(ontoTitle)">{{onto.label}}</p>
                                     </mat-panel-title>
                                 </div>
@@ -100,7 +101,8 @@
                         <mat-list-item *ngFor="let list of projectLists" class="list link"
                             (click)="open('list', list.id)">
                             <p #listTitle matTooltip="{{list.labels | appStringifyStringLiteral}}"
-                                matTooltipShowDelay="500" [matTooltipDisabled]="compareElementHeights(listTitle)">
+                                matTooltipShowDelay="500" matTooltipPosition="right"
+                                [matTooltipDisabled]="compareElementHeights(listTitle)">
                                 {{list.labels | appStringifyStringLiteral}}
                             </p>
                             <mat-divider></mat-divider>

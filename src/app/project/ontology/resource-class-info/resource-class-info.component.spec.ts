@@ -30,7 +30,7 @@ import { ResourceClassInfoComponent } from './resource-class-info.component';
  * Property is of type simple text
  */
 @Component({
-    template: '<app-resource-class-info #resClassInfo [resourceClass]="resourceClass" [projectStatus]="true"></app-resource-class-info>'
+    template: '<app-resource-class-info #resClassInfo [resourceClass]="resourceClass" [projectStatus]="true" [userCanEdit]="userCanEdit"></app-resource-class-info>'
 })
 class HostComponent implements OnInit {
 
@@ -40,6 +40,8 @@ class HostComponent implements OnInit {
     ontology: ReadOntology;
 
     resourceClass: ClassDefinition;
+
+    userCanEdit: boolean;
 
     constructor(
         private _cache: CacheService,
@@ -71,6 +73,8 @@ class HostComponent implements OnInit {
                 this.resourceClass = classesToDisplay[0];
             }
         );
+
+        this.userCanEdit = true;
 
     }
 

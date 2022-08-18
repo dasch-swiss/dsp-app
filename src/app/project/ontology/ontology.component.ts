@@ -19,7 +19,8 @@ import {
     PropertyDefinition,
     ReadOntology,
     ReadProject,
-    UpdateOntology
+    UpdateOntology,
+    UserResponse
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -58,9 +59,10 @@ export class OntologyComponent implements OnInit {
 
     // permissions of logged-in user
     session: Session;
-    // system admin or project admin is by default false
+    // system admin, project admin, and project member are by default false
     sysAdmin = false;
     projectAdmin = false;
+    projectMember = false;
 
     // project shortcode; as identifier in project cache service
     projectCode: string;
@@ -194,8 +196,13 @@ export class OntologyComponent implements OnInit {
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
-                // get the ontologies for this project
-                this.initOntologiesList();
+                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                    (userResponse: ApiResponseData<UserResponse>) => {
+                        this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
+
+                        // get the ontologies for this project
+                        this.initOntologiesList();
+                    });
 
                 this.ontologyForm = this._fb.group({
                     ontology: new FormControl({

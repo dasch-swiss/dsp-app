@@ -18,7 +18,8 @@
         <span class="resource-class-header-action">
             <span class="resource-class-more" *ngIf="projectStatus"
                 [matTooltip]="(ontology.lastModificationDate ? 'more' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                <button mat-icon-button [matMenuTriggerFor]="resClassMenu" class="res-class-menu" [disabled]="!ontology.lastModificationDate" (click)="canBeDeleted()">
+                <button mat-icon-button [matMenuTriggerFor]="resClassMenu" class="res-class-menu"
+                    [disabled]="!ontology.lastModificationDate" (click)="canBeDeleted()">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
             </span>
@@ -29,22 +30,28 @@
             </span>
         </span>
         <mat-menu #resClassMenu="matMenu" xPosition="before">
-            <button mat-menu-item class="res-class-edit"
-                (click)="editResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
-                Edit resource class info
-            </button>
+            <span *ngIf="userCanEdit">
+                <button mat-menu-item class="res-class-edit"
+                    (click)="editResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
+                    Edit resource class info
+                </button>
+            </span>
             <span [matTooltip]="'This opens the resource instance form'" matTooltipPosition="before">
-                <button mat-menu-item (click)="createResourceInstance(resourceClass.id, resourceClass.label + ' (' + subClassOfLabel + ')')">
+                <button mat-menu-item
+                    (click)="createResourceInstance(resourceClass.id, resourceClass.label + ' (' + subClassOfLabel + ')')">
                     Create new resource instance
                 </button>
             </span>
-            <span [matTooltip]="(classCanBeDeleted ? 'This class doesn\'t have any instances yet' : null)" matTooltipPosition="before">
+            <span [matTooltip]="(classCanBeDeleted ? 'This class doesn\'t have any instances yet' : null)"
+                matTooltipPosition="before">
                 <button mat-menu-item (click)="openResourceInstances(resourceClass.id)" [disabled]="classCanBeDeleted">
                     Open resource instances
                 </button>
             </span>
-            <span [matTooltip]="(classCanBeDeleted ? null : 'This class can\'t be deleted because it is in use')" matTooltipPosition="before">
-                <button mat-menu-item [disabled]="!classCanBeDeleted" class="res-class-delete"
+            <span *ngIf="userCanEdit"
+                [matTooltip]="classCanBeDeleted ? null : 'This class can\'t be deleted because it is in use'"
+                matTooltipPosition="before">
+                <button mat-menu-item [disabled]="!classCanBeDeleted || !userCanEdit" class="res-class-delete"
                     (click)="deleteResourceClass.emit({iri: resourceClass.id, label: resourceClass.label})">
                     Delete resource class
                 </button>
@@ -56,40 +63,40 @@
     <mat-card-content *ngIf="expanded">
         <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
             *ngIf="propsToDisplay.length; else noProperties">
-            <div cdkDrag [cdkDragDisabled]="!ontology.lastModificationDate || !cardinalityUpdateEnabled"
+            <div cdkDrag
+                [cdkDragDisabled]="(!ontology.lastModificationDate || !cardinalityUpdateEnabled) || !userCanEdit"
                 *ngFor="let prop of propsToDisplay; let i = index;">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
                 <mat-list-item class="property" [disabled]="loadProperty">
                     <span cdkDragHandle mat-list-icon class="list-icon gui-order">
-                        <span [class.hide-on-hover]="cardinalityUpdateEnabled && lastModificationDate">{{i + 1}})</span>
-                        <span *ngIf="lastModificationDate && cardinalityUpdateEnabled"
+                        <span [class.hide-on-hover]="cardinalityUpdateEnabled && lastModificationDate && userCanEdit">
+                            {{i + 1}})
+                        </span>
+                        <span *ngIf="cardinalityUpdateEnabled && lastModificationDate &&  userCanEdit"
                             class="display-on-hover drag-n-drop-handle">
                             <mat-icon>drag_indicator</mat-icon>
                         </span>
                     </span>
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
-                    <app-property-info class="property-info"
-                        [propDef]="propsToDisplay[i].propDef"
-                        [propCard]="propsToDisplay[i]"
-                        [projectCode]="projectCode"
-                        [projectStatus]="projectStatus"
-                        [resourceIri]="resourceClass.id"
-                        [(lastModificationDate)]="lastModificationDate"
-                        (removePropertyFromClass)="removeProperty($event)">
+                    <app-property-info class="property-info" [propDef]="propsToDisplay[i].propDef"
+                        [propCard]="propsToDisplay[i]" [projectCode]="projectCode" [projectStatus]="projectStatus"
+                        [resourceIri]="resourceClass.id" [(lastModificationDate)]="lastModificationDate"
+                        [userCanEdit]="userCanEdit" (removePropertyFromClass)="removeProperty($event)">
                     </app-property-info>
                 </mat-list-item>
             </div>
         </mat-list>
-        <!-- message if the class doesn't have any property -->
+        <!-- message if the class doesn't have any properties -->
         <ng-template #noProperties>
-            <p>There is no property assigned to this class yet.</p>
+            <p>There are no properties assigned to this class yet.</p>
         </ng-template>
         <!-- button to assign new property to class -->
         <mat-list>
             <!-- here we have to know if the class has values or not;
                 this information is important to handle the cardinality (1 resp. 1-n); we get this information from the canReplaceCardinality method -->
-            <mat-list-item *ngIf="lastModificationDate && projectStatus" class="property link" [matMenuTriggerFor]="addPropertyMenu" (click)="canReplaceCardinality()">
+            <mat-list-item *ngIf="lastModificationDate && projectStatus && userCanEdit" class="property link"
+                [matMenuTriggerFor]="addPropertyMenu" (click)="canReplaceCardinality()">
                 <span mat-list-icon class="list-icon">
                     <mat-icon>add</mat-icon>
                 </span>
@@ -105,9 +112,8 @@
             <ng-container *ngFor="let type of defaultProperties">
                 <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                 <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-                    <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele"
-                        [matTooltip]="ele.description" matTooltipPosition="after"
-                        (click)="addNewProperty(ele)">
+                    <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele" [matTooltip]="ele.description"
+                        matTooltipPosition="after" (click)="addNewProperty(ele)">
                         <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
                     </button>
                 </mat-menu>
@@ -115,10 +121,11 @@
         </mat-menu>
         <mat-menu #addExistingProp="matMenu" class="default-nested-sub-menu">
             <ng-container *ngFor="let onto of existingProperties">
-                <button mat-menu-item [disabled]="!onto.properties.length" [matMenuTriggerFor]="sub_menu">{{ onto.ontologyLabel }}</button>
+                <button mat-menu-item [disabled]="!onto.properties.length" [matMenuTriggerFor]="sub_menu">{{
+                    onto.ontologyLabel }}</button>
                 <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-                    <button mat-menu-item *ngFor="let prop of onto.properties" [matTooltip]="prop.propDef.comment" matTooltipPosition="after"
-                        (click)="addExistingProperty(prop)">
+                    <button mat-menu-item *ngFor="let prop of onto.properties" [matTooltip]="prop.propDef.comment"
+                        matTooltipPosition="after" (click)="addExistingProperty(prop)">
                         <mat-icon>{{prop.propType?.icon}}</mat-icon> {{prop.propDef.label}}
                     </button>
                 </mat-menu>

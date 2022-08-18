@@ -1,4 +1,4 @@
-<div *ngIf="projectAdmin && !disableContent">
+<div *ngIf="(projectMember || projectAdmin) && !disableContent">
 
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
@@ -41,7 +41,8 @@
 
                 <span class="fill-remaining-space"></span>
 
-                <span class="app-toolbar-action" [class.select-form]="ontologies.length" *ngIf="project.status">
+                <span class="app-toolbar-action" [class.select-form]="ontologies.length"
+                    *ngIf="project.status && projectAdmin">
                     <button mat-raised-button color="primary" class="create-data-model-btn"
                         (click)="openOntologyForm('createOntology')">
                         {{ontologies.length ? 'New data model' : 'Create your first data model'}}
@@ -101,16 +102,17 @@
                 <span class="ontology-actions project-actions" *ngIf="project.status">
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
-                        [matTooltip]="(ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!')">
-                        <button mat-button [disabled]="!ontology.lastModificationDate"
+                        [matTooltip]="(projectAdmin ? (ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
+                        <button mat-button [disabled]="!ontology.lastModificationDate || !projectAdmin"
                             (click)="$event.stopPropagation(); openOntologyForm('editOntology', ontology.id)">
                             <mat-icon>edit</mat-icon>
                             Edit
                         </button>
                     </span>
                     <span
-                        [matTooltip]="(ontology.lastModificationDate ? (ontologyCanBeDeleted ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!')">
-                        <button mat-button [disabled]="!ontology.lastModificationDate || !ontologyCanBeDeleted"
+                        [matTooltip]="(projectAdmin ? (ontology.lastModificationDate ? (ontologyCanBeDeleted ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!') : null)">
+                        <button mat-button
+                            [disabled]="(!ontology.lastModificationDate || !ontologyCanBeDeleted) || (!projectAdmin || !sysAdmin)"
                             (click)="$event.stopPropagation(); delete('Ontology', {iri: ontologyIri, label: ontology.label})">
                             <mat-icon>delete</mat-icon>
                             Delete
@@ -182,6 +184,7 @@
                     <app-resource-class-info *ngFor="let resClass of ontoClasses" [resourceClass]="resClass"
                         [projectCode]="projectCode" [projectStatus]="project.status" [ontologies]="ontologies"
                         [expanded]="expandClasses" [(lastModificationDate)]="lastModificationDate"
+                        [userCanEdit]="(projectAdmin || sysAdmin)"
                         (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
                         (deleteResourceClass)="delete('ResourceClass', $event)"
                         (updateCardinality)="initOntology($event)">
@@ -196,6 +199,7 @@
                                  if objectType is a linkValue hide it (otherwise we have the property twice) -->
                             <app-property-info [propDef]="ontology?.properties[prop.id]" [projectCode]="projectCode"
                                 [projectStatus]="project.status" [(lastModificationDate)]="lastModificationDate"
+                                [userCanEdit]="(projectAdmin || sysAdmin)"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
                                 (deleteResourceProperty)="delete('Property', $event)">
                             </app-property-info>
@@ -210,7 +214,7 @@
 
 </div>
 
-<div *ngIf="!projectAdmin && !disableContent" class="content large middle">
+<div *ngIf="!projectMember && !disableContent && !loading" class="content large middle">
     <app-status [status]="403"></app-status>
 </div>
 

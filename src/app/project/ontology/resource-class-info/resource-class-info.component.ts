@@ -57,6 +57,8 @@ export class ResourceClassInfoComponent implements OnInit {
 
     @Input() lastModificationDate?: string;
 
+    @Input() userCanEdit: boolean; // is user a project admin or sys admin?
+
     // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
     @Output() lastModificationDateChange: EventEmitter<string> = new EventEmitter<string>();
 
