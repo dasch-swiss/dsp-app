@@ -28,10 +28,10 @@
                 </button>
                 <mat-menu #more="matMenu" class="mat-menu-custom-black">
                     <button class="menu-content" mat-menu-item (click)="openIIIFnewTab()">
-                        Open IIIF URL in new tab
+                        Open audio in new tab
                     </button>
                     <button class="menu-content" mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">
-                        Copy IIIF URL to clipboard
+                        Copy audio URL to clipboard
                     </button>
                     <button class="menu-content" mat-menu-item (click)="downloadAudio(src.fileValue.fileUrl)">
                         Download audio

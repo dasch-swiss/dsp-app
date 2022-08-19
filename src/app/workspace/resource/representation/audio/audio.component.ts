@@ -123,7 +123,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
     // https://stackoverflow.com/questions/66986983/angular-10-download-file-from-firebase-link-without-opening-into-new-tab
     async downloadAudio(url: string){
         try {
-            const res = await this._http.get(url, { responseType: 'blob' }).toPromise();
+            const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
             this.downloadFile(res);
         } catch (e) {
             this._errorHandler.showMessage(e);

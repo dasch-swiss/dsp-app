@@ -84,7 +84,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
     async downloadDocument(url: string) {
         try {
-            const res = await this._http.get(url, { responseType: 'blob' }).toPromise();
+            const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
             this.downloadFile(res);
         } catch (e) {
             this._errorHandler.showMessage(e);
