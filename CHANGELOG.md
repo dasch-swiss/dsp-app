@@ -1,5 +1,28 @@
 # Changelog
 
+## [10.6.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.5.0...v10.6.0) (2022-08-19)
+
+
+### Bug Fixes
+
+* **list:** hide title ([#801](https://www.github.com/dasch-swiss/dsp-app/issues/801)) ([19fcaba](https://www.github.com/dasch-swiss/dsp-app/commit/19fcabaf3d4d4610eff307b0994c7c1219fa66c6))
+
+
+### Documentation
+
+* Update the section Linkage and annotation ([#802](https://www.github.com/dasch-swiss/dsp-app/issues/802)) ([5f4d52f](https://www.github.com/dasch-swiss/dsp-app/commit/5f4d52f0b936d5e1da2efb097920c39649bc18fa))
+
+
+### Enhancements
+
+* **ontology:** ontology editor read mode (DEV-1183) ([#799](https://www.github.com/dasch-swiss/dsp-app/issues/799)) ([02b5a48](https://www.github.com/dasch-swiss/dsp-app/commit/02b5a489b539c555d557d8f78d03a88b30470fc6))
+* **video:** add download button and overlay to video player (DEV-1151) ([#798](https://www.github.com/dasch-swiss/dsp-app/issues/798)) ([ac06f6b](https://www.github.com/dasch-swiss/dsp-app/commit/ac06f6b9225ad343443116c552e8019781e60388))
+
+
+### Maintenance
+
+* **file-representation:** add credentials to all file download requests ([#803](https://www.github.com/dasch-swiss/dsp-app/issues/803)) ([b247f85](https://www.github.com/dasch-swiss/dsp-app/commit/b247f859179847023fe882791d402546dead5cfa))
+
 ## [10.5.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.4.3...v10.5.0) (2022-08-15)
 
 
