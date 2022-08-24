@@ -2,13 +2,24 @@
 
 .read-mode-view {
   font: 400 15px/24px sans-serif;
-  .rm-value, .rm-comment {
+
+  .rm-value,
+  .rm-comment {
     display: block;
     margin: 0px;
   }
 
   .rm-value.text-value {
     white-space: pre-wrap;
+  }
+
+  .rm-value.list,
+  .rm-value .hierarchy {
+    display: inline-flex;
+
+    .last {
+      font-weight: bold;
+    }
   }
 }
 
@@ -36,6 +47,7 @@
   display: inline-block;
   vertical-align: bottom;
   width: 49%;
+
   &:nth-child(2) {
     padding-left: 2%;
   }
@@ -91,6 +103,7 @@
 }
 
 .value-action {
+
   .material-icons,
   .mat-icon {
     font-size: 18px;
@@ -139,9 +152,10 @@
   background-color: inherit !important;
 }
 
-code, pre {
+code,
+pre {
   font-family: monospace !important;
-  background-color: hsla(0,0%,78%,.3);
+  background-color: hsla(0, 0%, 78%, .3);
   padding: .15em;
   border-radius: 2px;
 }

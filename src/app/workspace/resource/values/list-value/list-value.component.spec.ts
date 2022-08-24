@@ -5,6 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
@@ -40,7 +41,7 @@ class TestHostDisplayValueComponent implements OnInit {
 
         MockResource.getTestThing().subscribe(res => {
             const inputVal: ReadListValue =
-        res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem', ReadListValue)[0];
+                res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem', ReadListValue)[0];
             this.displayInputVal = inputVal;
             this.mode = 'read';
         });
@@ -92,6 +93,7 @@ describe('ListValueComponent', () => {
                 MatInputModule,
                 MatMenuModule,
                 MatSnackBarModule,
+                MatTooltipModule,
                 ReactiveFormsModule,
             ],
             providers: [
@@ -114,6 +116,18 @@ describe('ListValueComponent', () => {
         let commentInputNativeElement;
 
         beforeEach(() => {
+            const valuesSpy = TestBed.inject(DspApiConnectionToken);
+            (valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>).getList.and.callFake(
+                (rootNodeIri: string) => {
+                    const res = new ListNodeV2();
+                    res.id = 'http://rdfh.ch/lists/0001/treeList01';
+                    res.label = 'Tree list node 01';
+                    res.isRootNode = false;
+                    res.children = [];
+                    return of(res);
+                }
+            );
+
             testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
             testHostComponent = testHostFixture.componentInstance;
             testHostFixture.detectChanges();
@@ -158,7 +172,7 @@ describe('ListValueComponent', () => {
 
             expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
-            expect(valuesSpy.v2.list.getList).toHaveBeenCalledTimes(1);
+            expect(valuesSpy.v2.list.getList).toHaveBeenCalledTimes(3);
             expect(valuesSpy.v2.list.getList).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/treeList');
             expect(testHostComponent.inputValueComponent.listRootNode.children.length).toEqual(0);
 

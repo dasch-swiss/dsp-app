@@ -1,8 +1,11 @@
 <span *ngIf="mode !== 'read' && listRootNode !== undefined">
 
     <!-- button to select a list node -->
-    <span [matTooltip]="(!selectedNode && !listRootNode.children.length) ? 'This list doesn\'t have any node values' : 'Select list value'" [matTooltipPosition]="'above'">
-        <button mat-stroked-button [matMenuTriggerFor]="mainMenu" type="button" placeholder="List value" [disabled]="!selectedNode && !listRootNode.children.length">
+    <span
+        [matTooltip]="(!selectedNode && !listRootNode.children.length) ? 'This list doesn\'t have any node values' : 'Select list value'"
+        [matTooltipPosition]="'above'">
+        <button mat-stroked-button [matMenuTriggerFor]="mainMenu" type="button" placeholder="List value"
+            [disabled]="!selectedNode && !listRootNode.children.length">
 
             <!-- if no node is selected: display list label; if the list does not have any list nodes, the button should be disabled -->
             <span *ngIf="!selectedNode">{{listRootNode.label}}</span>
@@ -17,7 +20,7 @@
         <span *ngFor="let child of listRootNode.children">
             <span *ngIf="child.children && child.children.length > 0">
                 <button mat-menu-item [matMenuTriggerFor]="menu.childMenu" (click)="getSelectedNode(child)"
-                        type="button">
+                    type="button">
                     {{child.label}}
                 </button>
                 <app-sublist-value #menu [children]="child.children" (selectedNode)="getSelectedNode($event)">
@@ -36,29 +39,28 @@
         <span class="custom-error-message">New value must be different than the current value.</span>
     </mat-error>
     <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
-        <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
+        <span class="custom-error-message">This value already exists for this property. Duplicate values are not
+            allowed.</span>
     </mat-error>
 </span>
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
-    <span class="rm-value">{{valueFormControl.value}}</span>
+    <span class="rm-value list">
+        <span class="hierarchy" *ngFor="let item of selectedNodeHierarchy, let first = first, let last = last">
+            <mat-icon *ngIf="!first">chevron_right</mat-icon>
+            <span [class.last]="last">{{ item }}</span>
+        </span>
+    </span>
     <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
 </span>
 <ng-template #showForm>
     <span [formGroup]="form">
-    <mat-form-field class="large-field child-value-component" *ngIf="mode === 'read'" floatLabel="never">
+        <mat-form-field class="large-field child-value-component" *ngIf="mode === 'read'" floatLabel="never">
             <input [formControlName]="'value'" class="value" type="text" placeholder="List value" matInput readonly>
-    </mat-form-field>
-    <mat-form-field class="large-field value-component-comment">
-        <textarea matInput
-                  cdkTextareaAutosize
-                  cdkAutosizeMinRows="1"
-                  cdkAutosizeMaxRows="6"
-                  [formControlName]="'comment'"
-                  class="comment"
-                  placeholder="Comment"
-                  type="text"
-                  spellcheck="false">
+        </mat-form-field>
+        <mat-form-field class="large-field value-component-comment">
+            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"
+                [formControlName]="'comment'" class="comment" placeholder="Comment" type="text" spellcheck="false">
         </textarea>
-    </mat-form-field>
+        </mat-form-field>
     </span>
 </ng-template>
