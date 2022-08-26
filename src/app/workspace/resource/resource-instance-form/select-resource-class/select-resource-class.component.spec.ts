@@ -59,14 +59,14 @@ describe('SelectResourceClassComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [ SelectResourceClassComponent, TestHostComponent ],
+            declarations: [SelectResourceClassComponent, TestHostComponent],
             imports: [
                 ReactiveFormsModule,
                 FormsModule,
                 BrowserAnimationsModule,
                 MatFormFieldModule,
                 MatSelectModule,
-                MatInputModule ]
+                MatInputModule]
         })
             .compileComponents();
     }));
@@ -96,7 +96,7 @@ describe('SelectResourceClassComponent', () => {
 
     it('should initialise the resource classes', () => {
         expect(testHostComponent.selectResource.resourceClassDefinitions).toBeDefined();
-        expect(testHostComponent.selectResource.resourceClassDefinitions.length).toEqual(8);
+        expect(testHostComponent.selectResource.resourceClassDefinitions.length).toEqual(12);
     });
 
     it('should init the MatSelect and MatOptions correctly', async () => {
@@ -111,15 +111,15 @@ describe('SelectResourceClassComponent', () => {
 
         const options = await select.getOptions();
 
-        expect(options.length).toEqual(8);
+        expect(options.length).toEqual(12);
 
         const option1 = await options[0].getText();
 
-        expect(option1).toEqual('Blue thing');
+        expect(option1).toEqual('Audio Sequence Thing');
 
         const option2 = await options[1].getText();
 
-        expect(option2).toEqual('Thing');
+        expect(option2).toEqual('Audio Thing');
 
     });
 

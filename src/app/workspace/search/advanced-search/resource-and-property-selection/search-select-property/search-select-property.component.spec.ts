@@ -123,8 +123,8 @@ describe('SearchSelectPropertyComponent', () => {
         expect(testHostComponent.selectProperty.formGroup).toBeDefined();
         expect(testHostComponent.selectProperty.index).toEqual(0);
         expect(testHostComponent.selectProperty.activeResourceClass).toBeUndefined();
-        expect(Object.keys(testHostComponent.selectProperty.properties).length).toEqual(22);
-        expect(testHostComponent.selectProperty.properties.length).toEqual(22);
+        expect(Object.keys(testHostComponent.selectProperty.properties).length).toEqual(23);
+        expect(testHostComponent.selectProperty.properties.length).toEqual(23);
     });
 
     it('should add a new control to the parent form', waitForAsync(() => {
@@ -151,7 +151,7 @@ describe('SearchSelectPropertyComponent', () => {
 
         const options = await select.getOptions();
 
-        expect(options.length).toEqual(22);
+        expect(options.length).toEqual(23);
 
     });
 

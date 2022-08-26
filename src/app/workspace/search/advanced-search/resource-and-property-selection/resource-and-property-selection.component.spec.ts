@@ -162,11 +162,11 @@ describe('ResourceAndPropertySelectionComponent', () => {
         expect(testHostComponent.resourceClassAndPropertySelection.activeOntology).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
         expect(testHostComponent.resourceClassAndPropertySelection.activeResourceClass).toEqual(undefined);
-        expect(testHostComponent.resourceClassAndPropertySelection.resourceClasses.length).toEqual(8);
-        expect(Object.keys(testHostComponent.resourceClassAndPropertySelection.properties).length).toEqual(28);
+        expect(testHostComponent.resourceClassAndPropertySelection.resourceClasses.length).toEqual(12);
+        expect(Object.keys(testHostComponent.resourceClassAndPropertySelection.properties).length).toEqual(29);
 
         const selectResClassComp = hostCompDe.query(By.directive(TestSearchSelectResourceClassComponent));
-        expect((selectResClassComp.componentInstance as TestSearchSelectResourceClassComponent).resourceClassDefinitions.length).toEqual(8);
+        expect((selectResClassComp.componentInstance as TestSearchSelectResourceClassComponent).resourceClassDefinitions.length).toEqual(12);
 
         expect(dspConnSpy.v2.ontologyCache.getOntology).toHaveBeenCalledTimes(1);
         expect(dspConnSpy.v2.ontologyCache.getOntology).toHaveBeenCalledWith('http://0.0.0.0:3333/ontology/0001/anything/v2');

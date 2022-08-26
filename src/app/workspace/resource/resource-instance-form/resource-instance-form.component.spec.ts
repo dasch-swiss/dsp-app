@@ -483,7 +483,7 @@ describe('ResourceInstanceFormComponent', () => {
 
         const selectResourceClassComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectResourceClassComponent));
 
-        expect((selectResourceClassComp.componentInstance as MockSelectResourceClassComponent).resourceClassDefinitions.length).toEqual(8);
+        expect((selectResourceClassComp.componentInstance as MockSelectResourceClassComponent).resourceClassDefinitions.length).toEqual(12);
     });
 
     it('should show the select-properties component', async () => {
