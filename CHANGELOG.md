@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.7.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.6.0...v10.7.0) (2022-08-24)
+
+
+### Enhancements
+
+* **list-value:** show hierarchy of list node (DEV-1092) ([#805](https://www.github.com/dasch-swiss/dsp-app/issues/805)) ([26e88c3](https://www.github.com/dasch-swiss/dsp-app/commit/26e88c300badaf539c2e3baaac61d8134480dea0))
+
 ## [10.6.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.5.0...v10.6.0) (2022-08-19)
 
 
