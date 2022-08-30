@@ -183,15 +183,61 @@ If you don't have the permissions you were supposed to get, please contact the [
 
 #### Display a resource
 
-DSP-APP offers different resource views for different media types. There's a viewer for still images, moving images, audio, and document files. You open them from the list of search results. Depending on the media type, DSP-APP offers different tools to work on the resource.
+DSP-APP offers different resource views for different media types (images, videos, audio, archives, text, and PDF files). You can access the resources from the list of search results. Depending on the media type, DSP-APP offers different tools to work on the resource.
+Additionally, you can work on the resource directly, e.g, mark regions of interest on images and documents.
 
-In a still image resource, you're able to draw regions on the image and annotate this region. Usually, a still image resource is used for book pages, photographs, postcards, letters, etc.
+Each media viewer offers different tools and functionalities, either displayed in the bottom toolbar (e.g. zoom, open in fullscreen button, play button, etc. - captioned in orange thereafter) or in the menu - the three-dot button on the bottom-left side (e.g. copy the ARK URL to the clipboard, download/replace the file, open the file in a new tab - captioned in red thereafter).
 
-<!--In time-based resources like moving images or audio documents, you can mark sequences on the timeline. A transcription tool helps to annotate and to transcribe the sequence.-->
+![Single resource view. The resource type in this example is "Page".](../assets/images/resource-view-with-image.png)*Single resource view. The resource type in this example is "Page" and an image viewer displays the photograph of the manuscript page.*
 
-![Single resource view. The resource type in this example is "Photo".](../assets/images/resource-view-with-image.png)*Single resource view. The resource type in this example is "Page".*
+Everything about the resource is displayed below the media viewer (when there is one). All the information about the resource itself (e.g. type, label, permissions, creator, date of creation, etc.), the data (properties and values), and different functionalities such as editing, deleting, sharing the resource. You can find more information about the functionalities in the following sections.
 
-Additionally, you can work on the resource directly, e.g, mark regions of interest on still images and on documents.
+![Resource toolbar description.](../assets/images/resource-toolbar.png)
+
+##### Audio file
+
+Supported file types: **mp3**, **wav**
+
+![Audio viewer](../assets/images/audio-file.png)
+
+##### Image file
+
+Supported file types: **jpeg**, **jp2**, **jpg**, **tiff**, **tif**, **png**
+
+In a resource of type "still image", you're able to draw regions on the image and annotate this region. Usually, a still image resource is used for book pages, photographs, postcards, letters, etc.
+
+When you open a resource that contains an image, it is displayed in a viewer. Several functionalities are accessible from the image viewer, e.g. zoom in/out, copy the IIIF link, replace the image or draw a region on the image.
+
+<!-- ![Image viewer](../assets/images/region_annotation_panel.png)*Image viewer toolbar.* -->
+![Image viewer](../assets/images/image-file.png)
+
+To access the regions, go to the **annotation** panel. You can **click on an existing region** in the image viewer, the focus of the page will be redirected to the annotation information.
+
+![Access the annotation panel](../assets/images/access_annotation_panel.png)*Access the annotation panel from the resource toolbar.*
+
+##### Document file
+
+Supported file types: **pdf**, **doc**, **docx**, **xls**, **xlsx**, **ppt**, **pptx**
+
+![PDF viewer](../assets/images/pdf-file.png)
+
+##### Text file
+
+Supported file types: **csv**, **txt**, **xml**, **xsd**, **xsl**
+
+![Text viewer](../assets/images/text-doc-file.png)
+
+##### Video file
+
+Supported file types: **mp4**
+
+![Video viewer](../assets/images/video-file.png)
+
+##### Archive file
+
+Supported file types: **7z**, **gz**, **gzip**, **tar**, **tgz**, **z**, **zip**
+
+![Archive viewer](../assets/images/zip-file.png)
 
 #### Display resource properties
 
@@ -208,16 +254,6 @@ To get more information about the property value, i.e. date of creation and auth
 To display the existing value comment, you mouse over the property value and click on the comment button (3rd icon from the left).
 
 ![Mouse over the property value to see if there is a comment.](../assets/images/comment-value.png)*Mouse over the property value to see if there is a comment and display it.*
-
-#### Image viewer
-
-When you open a resource that contains an image, this one is displayed in a viewer. Several functionalities are accessible from the image viewer, e.g. zoom in/out, copy the IIIF link, replace the image or draw a region on the image.
-
-![Image viewer](../assets/images/region_annotation_panel.png)*Image viewer toolbar.*
-
-To access the regions, go to the annotation panel. You can **click on a region** in the image viewer, the focus of the page will be redirected to the annotation information.
-
-![Access the annotation panel](../assets/images/access_annotation_panel.png)*Access the annotation panel from the resource toolbar.*
 
 ---
 

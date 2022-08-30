@@ -18,7 +18,7 @@ As project administrator or system administrator, you can define your project, a
 
 ## Project members
 
-As a system administrator, you can add users as project members. A user menu with different actions is accessible for each member of the project (the three-dot icon to the right side of the user line). The admin can grant another user as project admin (or remove this permission), edit user's information, change user's password if forgotten, and remove a user from the project.
+As a system administrator or a project administrator, you can add users as project members. A user menu with different actions is accessible for each member of the project (the three-dot icon to the right side of the user line). The admin can grant another user as project admin (or remove this permission), edit user's information, change user's password if forgotten, and remove a user from the project.
 
 ![Collaboration page](../assets/images/project-members.png)*<https://admin.dasch.swiss/project/0803/collaboration> - Project members page where project admin and system admin can add new user to the team.*
 
