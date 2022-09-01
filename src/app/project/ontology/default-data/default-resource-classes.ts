@@ -128,7 +128,7 @@ export class DefaultResourceClasses {
         },
         {
             iri: Constants.DocumentRepresentation,
-            label: 'Document (PDF, etc.)',
+            label: 'Document',
             icons: [
                 'description',
                 'article',
@@ -143,7 +143,7 @@ export class DefaultResourceClasses {
         },
         {
             iri: Constants.ArchiveRepresentation,
-            label: 'Archive (zip, x-tar, gzip)',
+            label: 'Archive',
             icons: [
                 'archive',
                 'folder',

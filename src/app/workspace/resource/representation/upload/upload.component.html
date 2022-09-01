@@ -9,13 +9,9 @@
             <app-progress-indicator *ngIf="isLoading"></app-progress-indicator>
             <p class="title">Upload file<br>
                 <span class="mat-body-1">The following file types are supported:<br>
-                    <span *ngIf="representation !== 'audio' && representation !== 'text'">
-                        <span *ngFor="let item of allowedFileTypes; let last = last">{{ item | split: '/':1 }}
-                            <span *ngIf="!last">,&nbsp;</span>
-                        </span>
+                    <span *ngFor="let item of allowedFileTypes; let last = last">{{ item }}
+                        <span *ngIf="!last">,&nbsp;</span>
                     </span>
-                    <span *ngIf="representation === 'audio'">&nbsp;mp3</span>
-                    <span *ngIf="representation === 'text'">&nbsp;csv, txt, xml</span>
                 </span>
             </p>
             <div class="bottom-line">
