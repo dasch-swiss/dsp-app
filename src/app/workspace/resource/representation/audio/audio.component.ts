@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -34,6 +34,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
 
     @Output() loaded = new EventEmitter<boolean>();
 
+    originalFilename: string;
     failedToLoad = false;
     currentTime = 0;
     audio: SafeUrl;
@@ -49,6 +50,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
     ) { }
 
     ngOnInit(): void {
+        this._getOriginalFilename();
         this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
         this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
         const player = document.getElementById('audio') as HTMLAudioElement;
@@ -61,38 +63,38 @@ export class AudioComponent implements OnInit, AfterViewInit {
         this.loaded.emit(true);
     }
 
-    togglePlay(){
+    togglePlay() {
         const player = document.getElementById('audio') as HTMLAudioElement;
-        if (player.paused){
+        if (player.paused) {
             player.play();
         } else {
             player.pause();
         }
     }
 
-    isPaused(){
+    isPaused() {
         const player = document.getElementById('audio') as HTMLAudioElement;
         return player.paused;
     }
 
-    parseTime(time){
-        if (isNaN(time)){
+    parseTime(time) {
+        if (isNaN(time)) {
             return '00:00';
         }
-        const minutes = Math.floor(time/60);
-        const seconds = Math.floor(time - minutes*60);
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time - minutes * 60);
         let minutesString = minutes.toString();
-        if (minutes < 10){
+        if (minutes < 10) {
             minutesString = '0' + minutesString;
         }
         let secondsString = seconds.toString();
-        if (seconds < 10){
+        if (seconds < 10) {
             secondsString = '0' + secondsString;
         }
         return minutesString + ':' + secondsString;
     }
 
-    openReplaceFileDialog(){
+    openReplaceFileDialog() {
         const propId = this.parentResource.properties[Constants.HasAudioFileValue][0].id;
 
         const dialogConfig: MatDialogConfig = {
@@ -101,7 +103,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
             position: {
                 top: '112px'
             },
-            data: { mode: 'replaceFile', title: 'Audio', subtitle: 'Update the audio file of this resource' , representation: 'audio', id: propId },
+            data: { mode: 'replaceFile', title: 'Audio', subtitle: 'Update the audio file of this resource', representation: 'audio', id: propId },
             disableClose: true
         };
         const dialogRef = this._dialog.open(
@@ -116,12 +118,12 @@ export class AudioComponent implements OnInit, AfterViewInit {
         });
     }
 
-    openIIIFnewTab(){
+    openIIIFnewTab() {
         window.open(this.src.fileValue.fileUrl, '_blank');
     }
 
     // https://stackoverflow.com/questions/66986983/angular-10-download-file-from-firebase-link-without-opening-into-new-tab
-    async downloadAudio(url: string){
+    async downloadAudio(url: string) {
         try {
             const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
             this.downloadFile(res);
@@ -130,37 +132,56 @@ export class AudioComponent implements OnInit, AfterViewInit {
         }
     }
 
-    downloadFile(data){
+    downloadFile(data) {
         const url = window.URL.createObjectURL(data);
         const e = document.createElement('a');
         e.href = url;
 
         // set filename
-        e.download = url.substr(url.lastIndexOf('/') + 1);
+        if (this.originalFilename === undefined) {
+            e.download = url.substr(url.lastIndexOf('/') + 1);
+        } else {
+            e.download = this.originalFilename;
+        }
 
         document.body.appendChild(e);
         e.click();
         document.body.removeChild(e);
     }
 
-    onSliderChangeEnd(event){
+    onSliderChangeEnd(event) {
         const player = document.getElementById('audio') as HTMLAudioElement;
         player.currentTime = event.value;
     }
 
-    getDuration(){
+    getDuration() {
         const player = document.getElementById('audio') as HTMLAudioElement;
         return player.duration;
     }
 
-    toggleMute(){
+    toggleMute() {
         const player = document.getElementById('audio') as HTMLAudioElement;
         player.muted = !player.muted;
     }
 
-    isMuted(){
+    isMuted() {
         const player = document.getElementById('audio') as HTMLAudioElement;
         return player.muted;
+    }
+
+    private _getOriginalFilename() {
+        const requestOptions = {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+            withCredentials: true
+        };
+
+        const pathToJson = this.src.fileValue.fileUrl.substring(0, this.src.fileValue.fileUrl.lastIndexOf('/')) + '/knora.json';
+
+        this._http.get(pathToJson, requestOptions).subscribe(
+            res => {
+                this.originalFilename = res['originalFilename'];
+            }
+        );
     }
 
     private _replaceFile(file: UpdateFileValue) {
@@ -181,6 +202,8 @@ export class AudioComponent implements OnInit, AfterViewInit {
                 this.src.fileValue.valueCreationDate = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).valueCreationDate;
 
                 this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+
+                this._getOriginalFilename();
 
                 this._valueOperationEventService.emit(
                     new EmitEvent(Events.FileValueUpdated, new UpdatedFileEventValue(
