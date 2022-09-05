@@ -550,6 +550,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
                 } else {
                     this.loading = false;
+                    this.representationsToDisplay = [];
                 }
             },
             (error: ApiResponseError) => {
