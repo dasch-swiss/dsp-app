@@ -9,6 +9,8 @@ import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
 
+const DECIMAL_VALUE = 10;
+
 @Component({
     selector: 'app-int-value',
     templateUrl: './int-value.component.html',
@@ -87,7 +89,7 @@ export class IntValueComponent extends BaseValueDirective implements OnInit, OnC
 
         const newIntValue = new CreateIntValue();
 
-        newIntValue.int = this.valueFormControl.value;
+        newIntValue.int = parseInt(this.valueFormControl.value, DECIMAL_VALUE);
 
         if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
             newIntValue.valueHasComment = this.commentFormControl.value;
@@ -105,7 +107,7 @@ export class IntValueComponent extends BaseValueDirective implements OnInit, OnC
 
         updatedIntValue.id = this.displayValue.id;
 
-        updatedIntValue.int = this.valueFormControl.value;
+        updatedIntValue.int = parseInt(this.valueFormControl.value, DECIMAL_VALUE);
 
         // add the submitted comment to updatedIntValue only if user has added a comment
         if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {

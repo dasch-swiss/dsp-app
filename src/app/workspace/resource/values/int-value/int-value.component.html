@@ -5,7 +5,7 @@
 <ng-template #showForm>
     <span [formGroup]="form">
         <mat-form-field class="large-field child-value-component" floatLabel="never">
-            <input matInput [formControlName]="'value'" class="value" placeholder="Int value" type="number" [errorStateMatcher]="matcher">
+            <input matInput [formControlName]="'value'" class="value" placeholder="Int value" [errorStateMatcher]="matcher">
             <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') &&
                 (valueFormControl.touched || valueFormControl.dirty)">
                 <span class="custom-error-message">New value must be different than the current value.</span>
