@@ -214,7 +214,7 @@
 
 </div>
 
-<div *ngIf="!projectMember && !disableContent && !loading" class="content large middle">
+<div *ngIf="!(projectMember || projectAdmin) && !disableContent && !loading" class="content large middle">
     <app-status [status]="403"></app-status>
 </div>
 
