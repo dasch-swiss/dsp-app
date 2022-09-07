@@ -21,7 +21,8 @@
                 (regionAdded)="updateRegions($event)">
             </app-still-image>
 
-            <app-document #document class="dsp-representation document" *ngSwitchCase="representationConstants.document"
+            <app-document #document class="dsp-representation document" [class.pdf]="representationsToDisplay[0].fileValue.filename.split('.').pop() === 'pdf'"
+                *ngSwitchCase="representationConstants.document"
                 [src]="representationsToDisplay[0]"
                 [parentResource]="resource.res"
                 (loaded)="representationLoaded($event)">

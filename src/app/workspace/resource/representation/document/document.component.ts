@@ -47,6 +47,8 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
     elem: any;
 
+    fileType: string;
+
     constructor(
         @Inject(DOCUMENT) private document: any,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -58,7 +60,10 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     ) { }
 
     ngOnInit(): void {
-        this.elem = document.getElementsByClassName('pdf-viewer')[0];
+        this.fileType = this._getFileType(this.src.fileValue.filename);
+        if (this.fileType === 'pdf') {
+            this.elem = document.getElementsByClassName('pdf-viewer')[0];
+        }
         this._getOriginalFilename();
         this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
     }
@@ -108,7 +113,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         document.body.removeChild(e);
     }
 
-    openReplaceFileDialog(){
+    openReplaceFileDialog() {
         const propId = this.parentResource.properties[Constants.HasDocumentFileValue][0].id;
 
         const dialogConfig: MatDialogConfig = {
@@ -117,7 +122,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
             position: {
                 top: '112px'
             },
-            data: { mode: 'replaceFile', title: 'Document', subtitle: 'Update the document file of this resource' , representation: 'document', id: propId },
+            data: { mode: 'replaceFile', title: 'Document', subtitle: 'Update the document file of this resource', representation: 'document', id: propId },
             disableClose: true
         };
         const dialogRef = this._dialog.open(
@@ -145,6 +150,10 @@ export class DocumentComponent implements OnInit, AfterViewInit {
             // edge, ie
             this.elem.msRequestFullscreen();
         }
+    }
+
+    private _getFileType(filename: string): string {
+        return filename.split('.').pop();
     }
 
     private _getOriginalFilename() {
@@ -179,6 +188,10 @@ export class DocumentComponent implements OnInit, AfterViewInit {
                 this.src.fileValue.strval = (res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue).strval;
                 this.src.fileValue.valueCreationDate = (res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue).valueCreationDate;
 
+                this.fileType = this._getFileType(this.src.fileValue.filename);
+                if (this.fileType === 'pdf') {
+                    this.elem = document.getElementsByClassName('pdf-viewer')[0];
+                }
                 this._getOriginalFilename();
 
                 this.zoomFactor = 1.0;

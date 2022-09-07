@@ -301,9 +301,15 @@ a,
   &.video,
   &.audio,
   &.archive,
-  &.text {
+  &.text,
+  &.document {
     height: auto;
+
+    &.pdf {
+      height: 70vh;
+    }
   }
+  
   .caption {
     padding: 10px 16px;
     white-space: nowrap;
