@@ -24,9 +24,6 @@ import {
     ReadResourceSequence,
     ReadStillImageFileValue,
     ReadTextFileValue,
-    ResourceClassAndPropertyDefinitions,
-    ResourceClassDefinition,
-    ResourceClassDefinitionWithPropertyDefinition,
     SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
@@ -415,9 +412,17 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         );
 
         // sort properties by guiOrder
-        props = props
-            .filter(prop => prop.propDef.objectType !== Constants.GeomValue)
-            .sort((a, b) => (a.guiDef.guiOrder > b.guiDef.guiOrder) ? 1 : -1);
+        props =
+            props
+                .filter(prop => prop.propDef.objectType !== Constants.GeomValue)
+                .sort((a, b) => (a.guiDef.guiOrder > b.guiDef.guiOrder) ? 1 : -1)
+                // to get equal results on all browser engines which implements sorting in different way
+                // properties list has to be sorted again, pushing all "has..." properties to the bottom
+                .sort((a, b) => {
+                    if (a.guiDef.guiOrder === undefined) {
+                        return 1;
+                    }
+                });
 
         return props;
     }
