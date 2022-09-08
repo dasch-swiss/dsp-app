@@ -191,7 +191,8 @@ export class PropertyFormComponent implements OnInit {
                         this.ontologyClasses.push(ontoClasses);
                     }
                 });
-            }
+            },
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
         );
 
         // b) in case of list value:

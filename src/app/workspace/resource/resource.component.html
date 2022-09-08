@@ -2,7 +2,7 @@
     <div class="resource-view" *ngIf="resource">
 
         <!-- dsp-resource-representation -->
-        <div class="representation-container center" *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue"
+        <div class="representation-container center" *ngIf="representationsToDisplay?.length && representationsToDisplay[0].fileValue"
             [ngSwitch]="representationsToDisplay[0].fileValue?.type">
             <!-- still image view -->
             <app-still-image #stillImage class="dsp-representation stillimage" *ngSwitchCase="representationConstants.stillImage"
@@ -88,7 +88,7 @@
 
                 <!-- annotations -->
                 <mat-tab label="annotations"
-                    *ngIf="representationsToDisplay.length && representationsToDisplay[0].fileValue && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
+                    *ngIf="representationsToDisplay?.length && representationsToDisplay[0].fileValue && representationsToDisplay[0].fileValue.type === representationConstants.stillImage">
                     <ng-template matTabLabel class="annotations">
                         <span [matBadge]="representationsToDisplay[0]?.annotations.length"
                             [matBadgeHidden]="representationsToDisplay[0]?.annotations.length === 0" matBadgeColor="primary"

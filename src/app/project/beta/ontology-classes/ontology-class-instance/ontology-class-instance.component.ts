@@ -87,7 +87,8 @@ export class OntologyClassInstanceComponent implements OnChanges {
                 // find ontology of current resource class to get the class label
                 const classes = ontologies[ontologies.findIndex(onto => onto.id === this.ontoId)].getAllClassDefinitions();
                 this.resClass = <ResourceClassDefinition>classes[classes.findIndex(res => res.id === this.classId)];
-            }
+            },
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
         );
     }
 

@@ -383,7 +383,8 @@ export class OntologyComponent implements OnInit {
                 // update current list of project ontologies
                 ontologies[ontologies.findIndex(onto => onto.id === ontology.id)] = ontology;
                 this._cache.set('currentProjectOntologies', ontologies);
-            }
+            },
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
         );
 
         // grab the onto class information to display

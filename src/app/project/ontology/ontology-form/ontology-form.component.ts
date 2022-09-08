@@ -138,7 +138,8 @@ export class OntologyFormComponent implements OnInit {
                         const name = this._ontologyService.getOntologyName(onto.id);
                         this.existingOntologyNames.push(name);
                     });
-                }
+                },
+                () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
             );
         }
 

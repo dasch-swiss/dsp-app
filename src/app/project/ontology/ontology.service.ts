@@ -116,7 +116,8 @@ export class OntologyService {
                         (ontologies: ReadOntology[]) => {
                             const onto = ontologies.find(i => i.id === baseOntoIri);
                             superPropIri = onto.properties[subProp].subPropertyOf[0];
-                        }
+                        },
+                        () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
                     );
                 }
 
