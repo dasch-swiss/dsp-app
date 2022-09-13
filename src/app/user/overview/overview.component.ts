@@ -39,7 +39,7 @@ export class OverviewComponent implements OnInit {
         this.session = this._session.getSession();
 
         // if session is null, user is not logged in
-        if(this.session) {
+        if (this.session) {
             this.username = this.session.user.name;
             this.sysAdmin = this.session.user.sysAdmin;
         }
@@ -69,7 +69,13 @@ export class OverviewComponent implements OnInit {
                     this.otherProjects = [];
 
                     for (const project of response.body.projects) {
-                        this.otherProjects.push(project);
+                        // for not logged in user don't display deactivated projects
+                        if (!this.session && project.status !== false) {
+                            this.otherProjects.push(project);
+                        }
+                        if (this.sysAdmin) {
+                            this.otherProjects.push(project);
+                        }
                     }
 
                     this.loading = false;
@@ -87,9 +93,11 @@ export class OverviewComponent implements OnInit {
                     this.userProjects = [];
                     this.otherProjects = [];
 
-                    // get list of all projects the user is a member of
+                    // get list of all projects the user is a member of except the deactivated ones
                     for (const project of userResponse.body.user.projects) {
-                        this.userProjects.push(project);
+                        if (project.status !== false) {
+                            this.userProjects.push(project);
+                        }
                     }
 
                     this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
@@ -97,7 +105,7 @@ export class OverviewComponent implements OnInit {
 
                             // get list of all projects the user is NOT a member of
                             for (const project of projectsResponse.body.projects) {
-                                if(this.userProjects.findIndex(userProj => userProj.id === project.id) === -1){
+                                if (this.userProjects.findIndex(userProj => userProj.id === project.id) === -1) {
                                     this.otherProjects.push(project);
                                 }
                             }
