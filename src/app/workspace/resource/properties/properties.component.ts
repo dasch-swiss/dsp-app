@@ -343,22 +343,28 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
                     // update resource's label if it has changed
                     if (this.resource.res.label !== answer.comment) {
-                        const payload = new UpdateResourceMetadata();
-                        payload.id = this.resource.res.id;
-                        payload.type = this.resource.res.type;
-                        payload.lastModificationDate = this.lastModificationDate;
-                        payload.label = answer.comment;
-                        this._dspApiConnection.v2.res.updateResourceMetadata(payload).subscribe(
-                            (response: UpdateResourceMetadataResponse) => {
-                                this.resource.res.label = payload.label;
-                                this.lastModificationDate = response.lastModificationDate;
-                                // if annotations tab is active; a label of a region has been changed --> update regions
-                                if (this.isAnnotation) {
-                                    this.regionChanged.emit();
-                                }
-                            },
-                            (error: ApiResponseError) => {
-                                this._errorHandler.showMessage(error);
+                        // get the correct lastModificationDate from the resource
+                        this._dspApiConnection.v2.res.getResource(this.resource.res.id).subscribe(
+                            (res: ReadResource) => {
+                                const payload = new UpdateResourceMetadata();
+                                payload.id = this.resource.res.id;
+                                payload.type = this.resource.res.type;
+                                payload.lastModificationDate = res.lastModificationDate;
+                                payload.label = answer.comment;
+
+                                this._dspApiConnection.v2.res.updateResourceMetadata(payload).subscribe(
+                                    (response: UpdateResourceMetadataResponse) => {
+                                        this.resource.res.label = payload.label;
+                                        this.lastModificationDate = response.lastModificationDate;
+                                        // if annotations tab is active; a label of a region has been changed --> update regions
+                                        if (this.isAnnotation) {
+                                            this.regionChanged.emit();
+                                        }
+                                    },
+                                    (error: ApiResponseError) => {
+                                        this._errorHandler.showMessage(error);
+                                    }
+                                );
                             }
                         );
                     }
