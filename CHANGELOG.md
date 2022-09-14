@@ -1,5 +1,13 @@
 # Changelog
 
+### [10.8.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.8.0...v10.8.1) (2022-09-14)
+
+
+### Bug Fixes
+
+* make deactivated projects invisible for all except sysadmin (DEV-1261) ([#821](https://www.github.com/dasch-swiss/dsp-app/issues/821)) ([88a2cbd](https://www.github.com/dasch-swiss/dsp-app/commit/88a2cbd93cee29f2191bd4eff924f20d1a9bc5ae))
+* **properties:** resolve 409 conflict ([#822](https://www.github.com/dasch-swiss/dsp-app/issues/822)) ([bf0ed83](https://www.github.com/dasch-swiss/dsp-app/commit/bf0ed8388c9845eb6e8760e5f6f8d1a0bec07552))
+
 ## [10.8.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.7.0...v10.8.0) (2022-09-09)
 
 
