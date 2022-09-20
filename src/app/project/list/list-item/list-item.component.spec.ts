@@ -4,12 +4,22 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ApiResponseData, ListNode, ListNodeInfo, ListResponse, ListsEndpointAdmin, RepositionChildNodeResponse } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ListNode,
+    ListNodeInfo,
+    ListResponse,
+    ListsEndpointAdmin, MockProjects,
+    ProjectResponse, ReadProject,
+    RepositionChildNodeResponse
+} from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ListNodeOperation } from '../list-item-form/list-item-form.component';
 import { ListItemComponent } from './list-item.component';
+import { Session, SessionService } from '../../../main/services/session.service';
+import { CacheService } from '../../../main/cache/cache.service';
 
 /**
  * test host component to simulate parent component.
@@ -71,6 +81,10 @@ describe('ListItemComponent', () => {
             }
         };
 
+        const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
+
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+
         TestBed.configureTestingModule({
             declarations: [
                 ListItemComponent,
@@ -87,6 +101,14 @@ describe('ListItemComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: listsEndpointSpyObj
+                },
+                {
+                    provide: SessionService,
+                    useValue: sessionServiceSpy
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
                 }
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -95,6 +117,40 @@ describe('ListItemComponent', () => {
     }));
 
     beforeEach(() => {
+        // mock session service
+        const sessionSpy = TestBed.inject(SessionService);
+
+        (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
+            () => {
+                const session: Session = {
+                    id: 12345,
+                    user: {
+                        name: 'username',
+                        jwt: 'myToken',
+                        lang: 'en',
+                        sysAdmin: true,
+                        projectAdmin: []
+                    }
+                };
+
+                return session;
+            }
+        );
+
+        // mock cache service
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ProjectResponse = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(response.project as ReadProject);
+            }
+        );
 
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 

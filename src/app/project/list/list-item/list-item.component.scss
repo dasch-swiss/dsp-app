@@ -3,6 +3,11 @@
   display: flex;
   flex-wrap: wrap;
   width: 640px;
+
+  .expand-close-container {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .child-node {

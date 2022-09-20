@@ -6,12 +6,15 @@ import {
     ListChildNodeResponse,
     ListNode,
     ListResponse,
+    ReadProject,
     RepositionChildNodeRequest,
-    RepositionChildNodeResponse
+    RepositionChildNodeResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { ListNodeOperation } from '../list-item-form/list-item-form.component';
+import { Session, SessionService } from '../../../main/services/session.service';
+import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({
     selector: 'app-list-item',
@@ -36,14 +39,38 @@ export class ListItemComponent implements OnInit {
 
     @Output() refreshChildren: EventEmitter<ListNode[]> = new EventEmitter<ListNode[]>();
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin = false;
+    projectAdmin = false;
+
     expandedNode: string;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: ErrorHandlerService,
+        private _session: SessionService,
+        private _cache: CacheService,
     ) { }
 
     ngOnInit() {
+        // get information about the logged-in user
+        this.session = this._session.getSession();
+
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // get the project data from cache
+        this._cache.get(this.projectCode).subscribe(
+            (response: ReadProject) => {
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
+
         // in case of parent node: run the following request to get the entire list
         if (!this.childNode) {
             this._dspApiConnection.admin.listsEndpoint.getList(this.parentIri).subscribe(

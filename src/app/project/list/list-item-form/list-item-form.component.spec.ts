@@ -10,7 +10,13 @@ import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ApiResponseData, DeleteListNodeResponse, ListsEndpointAdmin, StringLiteral } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    DeleteListNodeResponse,
+    ListsEndpointAdmin, MockProjects,
+    ProjectResponse, ReadProject,
+    StringLiteral
+} from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -20,6 +26,8 @@ import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StringifyStringLiteralPipe } from 'src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TruncatePipe } from 'src/app/main/pipes/string-transformation/truncate.pipe';
 import { ListItemFormComponent, ListNodeOperation } from './list-item-form.component';
+import { Session, SessionService } from '../../../main/services/session.service';
+import { CacheService } from '../../../main/cache/cache.service';
 
 /**
  * test host component to simulate parent component.
@@ -78,6 +86,10 @@ describe('ListItemFormComponent', () => {
             }
         };
 
+        const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
+
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+
         TestBed.configureTestingModule({
             declarations: [
                 ListItemFormComponent,
@@ -108,12 +120,55 @@ describe('ListItemFormComponent', () => {
                     provide: MatDialogRef,
                     useValue: {}
                 },
+                {
+                    provide: SessionService,
+                    useValue: sessionServiceSpy
+                },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
+                }
             ]
         })
             .compileComponents();
     }));
 
     beforeEach(() => {
+        // mock session service
+        const sessionSpy = TestBed.inject(SessionService);
+
+        (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
+            () => {
+                const session: Session = {
+                    id: 12345,
+                    user: {
+                        name: 'username',
+                        jwt: 'myToken',
+                        lang: 'en',
+                        sysAdmin: true,
+                        projectAdmin: []
+                    }
+                };
+
+                return session;
+            }
+        );
+
+        // mock cache service
+        const cacheSpy = TestBed.inject(CacheService);
+
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            () => {
+                const response: ProjectResponse = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(response.project as ReadProject);
+            }
+        );
+
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();

@@ -11,11 +11,14 @@ import {
     ListInfoResponse,
     ListNode,
     ListNodeInfoResponse,
+    ReadProject,
     StringLiteral
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { Session, SessionService } from '../../../main/services/session.service';
+import { CacheService } from '../../../main/cache/cache.service';
 
 export class ListNodeOperation {
     operation: 'create' | 'insert' | 'update' | 'delete' | 'reposition';
@@ -90,6 +93,11 @@ export class ListItemFormComponent implements OnInit {
 
     @Output() refreshParent: EventEmitter<ListNodeOperation> = new EventEmitter<ListNodeOperation>();
 
+    // permissions of logged-in user
+    session: Session;
+    sysAdmin = false;
+    projectAdmin = false;
+
     loading: boolean;
 
     initComponent: boolean;
@@ -101,10 +109,29 @@ export class ListItemFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService,
-        private _dialog: MatDialog
+        private _dialog: MatDialog,
+        private _session: SessionService,
+        private _cache: CacheService,
     ) { }
 
     ngOnInit() {
+        // get information about the logged-in user
+        this.session = this._session.getSession();
+
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // get the project data from cache
+        this._cache.get(this.projectCode).subscribe(
+            (response: ReadProject) => {
+
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
 
         this.initComponent = true;
 
@@ -199,7 +226,9 @@ export class ListItemFormComponent implements OnInit {
      * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
-        this.showActionBubble = true;
+        if (this.projectAdmin) {
+            this.showActionBubble = true;
+        }
     }
 
     /**

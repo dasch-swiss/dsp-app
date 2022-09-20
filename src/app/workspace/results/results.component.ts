@@ -6,7 +6,7 @@ import { FilteredResources, SearchParams } from './list-view/list-view.component
 export interface SplitSize {
     gutterNum: number;
     sizes: Array<number>;
-};
+}
 
 @Component({
     selector: 'app-results',

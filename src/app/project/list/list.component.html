@@ -1,26 +1,29 @@
-<div *ngIf="projectAdmin && !disableContent" class="content large middle">
-
+<div *ngIf="!disableContent">
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
-    <!-- header toolbar -->
-    <div class="app-toolbar transparent more-space-bottom" *ngIf="!loading && !beta">
-        <div class="app-toolbar-row toolbar-subtitle">
-            <h3 class="mat-body subtitle">Lists are reusable data</h3>
-        </div>
+    <!-- display only when loading is finished and project member has value -->
+    <div *ngIf="!loading && projectMember !== undefined">
+        <div *ngIf="projectMember" class="content large middle">
 
-        <div class="app-toolbar-row toolbar-form">
-            <h2 class="mat-title">
+            <!-- header toolbar -->
+            <div class="app-toolbar transparent more-space-bottom" *ngIf="!beta">
+                <div class="app-toolbar-row toolbar-subtitle">
+                    <h3 class="mat-body subtitle">Lists are reusable data</h3>
+                </div>
+
+                <div class="app-toolbar-row toolbar-form">
+                    <h2 class="mat-title">
                 <span *ngIf="lists.length > 0">
                     Project has {{lists.length | i18nPlural: itemPluralMapping['list']}}
                 </span>
-                <span *ngIf="lists.length === 0">
+                        <span *ngIf="lists.length === 0">
                     It seems there's no list defined yet
                 </span>
-            </h2>
+                    </h2>
 
-            <span class="fill-remaining-space"></span>
+                    <span class="fill-remaining-space"></span>
 
-            <span class="app-toolbar-action" [class.select-form]="lists.length">
+                    <span class="app-toolbar-action" [class.select-form]="lists.length">
                 <form [formGroup]="listForm" class="form" *ngIf="!loading">
 
                     <!-- list to select ontology -->
@@ -32,7 +35,7 @@
                             <mat-select [formControl]="listForm.controls['list']" [(value)]="listIri">
 
                                 <mat-option *ngFor="let list of lists; let first = first" [value]="list.id"
-                                    [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="below">
+                                            [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="below">
                                     {{list.labels | appStringifyStringLiteral:'all'}}
                                 </mat-option>
 
@@ -43,57 +46,58 @@
                 </form>
             </span>
 
-            <span class="fill-remaining-space"></span>
+                    <span class="fill-remaining-space"></span>
 
-            <span class="app-toolbar-action" [class.select-form]="lists.length" *ngIf="project.status">
+                    <span class="app-toolbar-action" [class.select-form]="lists.length" *ngIf="project.status && projectAdmin">
                 <button mat-raised-button color="primary" class="create-list-btn"
-                    (click)="openDialog('createList', 'List', project.id)">
+                        (click)="openDialog('createList', 'List', project.id)">
                     {{lists.length ? 'New list' : 'Create your first list'}}
                 </button>
             </span>
-        </div>
+                </div>
 
-    </div>
+            </div>
 
-    <!-- main content: show selected list -->
-    <div *ngIf="list && !loadList" class="list-editor" #listEditor>
+            <!-- main content: show selected list -->
+            <div *ngIf="list && !loadList" class="list-editor" #listEditor>
 
-        <mat-toolbar class="more-space-bottom">
-            <mat-toolbar-row>
-                <h3 class="mat-title" [matTooltip]="list.labels |appStringifyStringLiteral:'all'"
-                    matTooltipPosition="above">{{list.labels | appStringifyStringLiteral}}</h3>
-                <span class="fill-remaining-space"></span>
-                <p class="mat-body" [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="above">
-                    {{list.comments | appStringifyStringLiteral | appTruncate:64}}</p>
-                <span class="fill-remaining-space"></span>
+                <mat-toolbar class="more-space-bottom">
+                    <mat-toolbar-row>
+                        <h3 class="mat-title" [matTooltip]="list.labels |appStringifyStringLiteral:'all'"
+                            matTooltipPosition="above">{{list.labels | appStringifyStringLiteral}}</h3>
+                        <span class="fill-remaining-space"></span>
+                        <p class="mat-body" [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="above">
+                            {{list.comments | appStringifyStringLiteral | appTruncate:64}}</p>
+                        <span class="fill-remaining-space"></span>
 
-                <span class="project-actions" *ngIf="project.status">
+                        <span class="project-actions" *ngIf="project.status && projectAdmin">
                     <p class="mat-caption space-reducer">List configuration</p>
                     <button mat-button
-                        (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
-                        matTooltip="Edit list info">
+                            (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
+                            matTooltip="Edit list info">
                         <mat-icon>edit</mat-icon>
                         Edit
                     </button>
                     <button mat-button class="delete"
-                        (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
-                        matTooltip="Delete list">
+                            (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
+                            matTooltip="Delete list">
                         <mat-icon>delete</mat-icon>
                         Delete
                     </button>
                 </span>
-            </mat-toolbar-row>
-        </mat-toolbar>
+                    </mat-toolbar-row>
+                </mat-toolbar>
 
-        <app-list-item [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectCode]="projectCode" [projectStatus]="project.status">
-        </app-list-item>
+                <app-list-item [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectCode]="projectCode" [projectStatus]="project.status">
+                </app-list-item>
 
+            </div>
+        </div>
+
+        <div *ngIf="!projectMember" class="content large middle">
+            <app-status [status]="403"></app-status>
+        </div>
     </div>
-
-</div>
-
-<div *ngIf="!projectAdmin && !disableContent" class="content large middle">
-    <app-status [status]="403"></app-status>
 </div>
 
 <app-status *ngIf="disableContent" [status]="204"></app-status>

@@ -26,8 +26,10 @@ import { OntologyService } from './ontology/ontology.service';
     styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
+    readonly TAB_DATA_MODEL = 3;
+    readonly TAB_LISTS = 4;
 
-    // loading for progess indicator
+    // loading for progress indicator
     loading: boolean;
     // error in case of wrong project code
     error: boolean;

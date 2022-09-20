@@ -12,7 +12,8 @@ import {
     ListNodeInfo,
     ListsResponse,
     ReadProject,
-    StringLiteral
+    StringLiteral,
+    UserResponse
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from 'src/app/app-global';
 import { AppInitService } from 'src/app/app-init.service';
@@ -29,7 +30,7 @@ import { Session, SessionService } from 'src/app/main/services/session.service';
 })
 export class ListComponent implements OnInit {
 
-    // loading for progess indicator
+    // loading for progress indicator
     loading: boolean;
     loadList: boolean;
 
@@ -37,6 +38,7 @@ export class ListComponent implements OnInit {
     session: Session;
     sysAdmin = false;
     projectAdmin = false;
+    projectMember = undefined;
 
     // project shortcode; as identifier in project cache service
     projectCode: string;
@@ -141,6 +143,27 @@ export class ListComponent implements OnInit {
 
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+
+                // or at least project member?
+                if (!this.projectAdmin) {
+                    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                        (res: ApiResponseData<UserResponse>) => {
+                            const usersProjects = res.body.user.projects;
+                            if (usersProjects.length === 0) {
+                                // the user is not part of any project
+                                this.projectMember = false;
+                            } else {
+                                // check if the user is member of the current project
+                                this.projectMember = usersProjects.some(p => p.shortcode === this.projectCode);
+                            }
+                        },
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
+                        }
+                    );
+                } else {
+                    this.projectMember = this.projectAdmin;
+                }
 
                 this.initList();
 

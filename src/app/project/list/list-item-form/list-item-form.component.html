@@ -1,5 +1,5 @@
 <!-- add new node item -->
-<div class="new-list-item medium-field" *ngIf="newNode">
+<div class="new-list-item medium-field" *ngIf="newNode && projectAdmin">
     <app-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
         (dataChanged)="handleData($event)" [language]="language" (enter)="createChildNode()">
     </app-string-literal-input>
