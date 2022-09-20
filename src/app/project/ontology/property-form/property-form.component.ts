@@ -503,6 +503,9 @@ export class PropertyFormComponent implements OnInit {
                                 }
                             );
                         }
+
+                        this.ontology.lastModificationDate = this.lastModificationDate;
+                        this._cache.set('currentOntology', this.ontology);
                     },
                     (error: ApiResponseError) => {
                         this.error = true;
