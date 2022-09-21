@@ -30,6 +30,7 @@ import {
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ConfirmationWithComment, DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { ComponentCommunicationEventService, EmitEvent, Events as CommsEvents } from 'src/app/main/services/component-communication-event.service';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { DspResource } from '../dsp-resource';
@@ -155,6 +156,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         private _userService: UserService,
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService,
+        private _componentCommsService: ComponentCommunicationEventService
     ) { }
 
     ngOnInit(): void {
@@ -318,6 +320,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                     // display notification and mark resource as 'deleted'
                                     this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
                                     this.deletedResource = true;
+                                    this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
                                 },
                                 (error: ApiResponseError) => {
                                     this._errorHandler.showMessage(error);
@@ -332,6 +335,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                     // display notification and mark resource as 'erased'
                                     this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
                                     this.deletedResource = true;
+                                    this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
                                 },
                                 (error: ApiResponseError) => {
                                     this._errorHandler.showMessage(error);

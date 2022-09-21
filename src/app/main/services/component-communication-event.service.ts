@@ -38,5 +38,6 @@ export class EmitEvent {
 export enum Events {
     loginSuccess,
     gravSearchExecuted,
-    projectCreated
+    projectCreated,
+    resourceDeleted
 }

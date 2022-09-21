@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ApiResponseError, CountQueryResponse, IFulltextSearchParams, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -6,6 +6,7 @@ import { ErrorHandlerService } from 'src/app/main/services/error-handler.service
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 /**
  * query: search query. It can be gravserch query or fulltext string query.
@@ -59,7 +60,7 @@ export interface CheckboxUpdate {
     templateUrl: './list-view.component.html',
     styleUrls: ['./list-view.component.scss']
 })
-export class ListViewComponent implements OnChanges {
+export class ListViewComponent implements OnChanges, OnInit {
 
     @Input() search: SearchParams;
 
@@ -80,6 +81,8 @@ export class ListViewComponent implements OnChanges {
     resources: ReadResourceSequence;
 
     selectedResourceIdx: number[] = [];
+
+    componentCommsSubscriptions: Subscription[] = [];
 
     resetCheckBoxes = false;
 
@@ -108,6 +111,14 @@ export class ListViewComponent implements OnChanges {
         if (this.beta) {
             console.warn('This is a pre-released (beta) search results view');
         }
+    }
+
+    ngOnInit(): void {
+        this.componentCommsSubscriptions.push(this._componentCommsService.on(
+            Events.resourceDeleted, () => {
+                this._doSearch();
+            }
+        ));
     }
 
     ngOnChanges(): void {

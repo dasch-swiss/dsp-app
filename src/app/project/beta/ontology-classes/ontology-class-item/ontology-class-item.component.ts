@@ -1,7 +1,9 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClassDefinition, KnoraApiConnection, CountQueryResponse, ApiResponseError, Constants } from '@dasch-swiss/dsp-js';
+import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { OntologyService } from 'src/app/project/ontology/ontology.service';
 
@@ -24,6 +26,8 @@ export class OntologyClassItemComponent implements OnInit {
 
     icon: string;
 
+    componentCommsSubscriptions: Subscription[]= [];
+
     // i18n setup
     itemPluralMapping = {
         entry: {
@@ -37,13 +41,13 @@ export class OntologyClassItemComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _ontologyService: OntologyService,
         private _route: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        private _componentCommsService: ComponentCommunicationEventService,
     ) {
 
     }
 
     ngOnInit(): void {
-
         const projectCode = this._route.snapshot.params.shortcode;
         const splitIri = this.resClass.id.split('#');
         const ontologyName = this._ontologyService.getOntologyName(splitIri[0]);
@@ -52,16 +56,15 @@ export class OntologyClassItemComponent implements OnInit {
         this.gravsearch = this._setGravsearch(this.resClass.id);
 
         // get number of resource instances
-        this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.gravsearch).subscribe(
-            (res: CountQueryResponse) => {
-                this.results = res.numberOfResults;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+        this._getSearchCount();
 
         this.icon = this._getIcon();
+
+        this.componentCommsSubscriptions.push(this._componentCommsService.on(
+            Events.resourceDeleted, () => {
+                this._getSearchCount();
+            }
+        ));
     }
 
     open(route: string) {
@@ -119,6 +122,17 @@ export class OntologyClassItemComponent implements OnInit {
             default: // resource does not have a file representation
                 return 'insert_drive_file';
         }
+    }
+
+    private _getSearchCount() {
+        this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.gravsearch).subscribe(
+            (res: CountQueryResponse) => {
+                this.results = res.numberOfResults;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 
 }
