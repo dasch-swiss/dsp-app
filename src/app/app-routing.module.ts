@@ -131,6 +131,11 @@ const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
+                path: 'ontology/:onto/editor/:view',
+                component: OntologyComponent,
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'ontology/:onto/:class',
                 component: OntologyClassInstanceComponent,
             },

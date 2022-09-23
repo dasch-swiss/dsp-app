@@ -618,7 +618,10 @@ export class OntologyComponent implements OnInit {
                         this._dspApiConnection.v2.onto.deleteResourceProperty(resProp).subscribe(
                             (response: OntologyMetadata) => {
                                 this.loading = false;
-                                this.resetOntology(this.ontologyIri);
+                                // get the ontologies for this project
+                                this.initOntologiesList();
+                                // update the view of resource class or list of properties
+                                this.initOntology(this.ontologyIri);
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
