@@ -382,7 +382,26 @@ export class OntologyComponent implements OnInit {
             (ontologies: ReadOntology[]) => {
                 // update current list of project ontologies
                 ontologies[ontologies.findIndex(onto => onto.id === ontology.id)] = ontology;
-                this._cache.set('currentProjectOntologies', ontologies);
+                // avoid duplicates
+                const uniqueOntologies: ReadOntology[] = [];
+                const uniqueIds: String[] = [];
+                for (const onto of ontologies){
+                    if (uniqueIds.indexOf(onto.id) !== -1){
+                        let oldOntoIndex: number;
+                        uniqueOntologies.forEach((o, index) => {
+                            if (o.id === onto.id) {
+                                oldOntoIndex = index;
+                            }
+                        });
+                        if (Object.keys(onto.properties).length > Object.keys(uniqueOntologies[oldOntoIndex].properties).length){ // new onto has more props -> replace
+                            uniqueOntologies[oldOntoIndex] = onto;
+                        }
+                    } else {
+                        uniqueIds.push(onto.id);
+                        uniqueOntologies.push(onto);
+                    }
+                }
+                this._cache.set('currentProjectOntologies', uniqueOntologies);
             },
             () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
         );
