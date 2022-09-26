@@ -218,7 +218,11 @@ export class ProjectComponent implements OnInit {
             id = array[pos];
         }
         if (id) {
-            this._router.navigate([route, encodeURIComponent(id), 'editor', 'classes'], { relativeTo: this._route });
+            if (route === 'ontology') {
+                this._router.navigate([route, encodeURIComponent(id), 'editor', 'classes'], { relativeTo: this._route });
+            } else {
+                this._router.navigate([route, encodeURIComponent(id)], { relativeTo: this._route });
+            }
         } else {
             this._router.navigate([route], { relativeTo: this._route });
         }
