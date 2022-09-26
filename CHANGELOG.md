@@ -1,5 +1,12 @@
 # Changelog
 
+### [10.9.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.9.0...v10.9.1) (2022-09-26)
+
+
+### Bug Fixes
+
+* **project:** fix route to lists ([#834](https://www.github.com/dasch-swiss/dsp-app/issues/834)) ([1d32a03](https://www.github.com/dasch-swiss/dsp-app/commit/1d32a03a8f2a4e182a6032fce7c81b5e2c50cf3a))
+
 ## [10.9.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.8.1...v10.9.0) (2022-09-26)
 
 
