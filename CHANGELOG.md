@@ -1,5 +1,25 @@
 # Changelog
 
+## [10.9.0](https://www.github.com/dasch-swiss/dsp-app/compare/v10.8.1...v10.9.0) (2022-09-26)
+
+
+### Bug Fixes
+
+* **list-view:** refresh list view after a resource is deleted or erased (DEV-1353) ([#828](https://www.github.com/dasch-swiss/dsp-app/issues/828)) ([c15d87b](https://www.github.com/dasch-swiss/dsp-app/commit/c15d87b079b55e0a3caf64b121b9340feb492e5d))
+* Onto editor 404 error (DEV-1355) ([#831](https://www.github.com/dasch-swiss/dsp-app/issues/831)) ([e7836a9](https://www.github.com/dasch-swiss/dsp-app/commit/e7836a92a18f402049e9b99e7dbd2fc6a7f671c9))
+* Ontologies displayed twice (DEV-1325) ([#832](https://www.github.com/dasch-swiss/dsp-app/issues/832)) ([ba35d6f](https://www.github.com/dasch-swiss/dsp-app/commit/ba35d6fb41407b3d3abff8fed62b2e9c1febad06))
+* **property-form:** set the cache after the ontology changes with the new lastModificationDate to prevent 409 http errors ([#824](https://www.github.com/dasch-swiss/dsp-app/issues/824)) ([0304943](https://www.github.com/dasch-swiss/dsp-app/commit/03049436333056ca5db28ae45bc3d2c2a9898266))
+
+
+### Enhancements
+
+* **lists:** read mode project member (DEV-1343) ([#825](https://www.github.com/dasch-swiss/dsp-app/issues/825)) ([b818288](https://www.github.com/dasch-swiss/dsp-app/commit/b81828840428ca21e3cf6819c6beea8aca1540e0))
+
+
+### Maintenance
+
+* update js-lib to v7.4.5 ([#833](https://www.github.com/dasch-swiss/dsp-app/issues/833)) ([6d14ca7](https://www.github.com/dasch-swiss/dsp-app/commit/6d14ca736422169016fca2579176fc21ac02041e))
+
 ### [10.8.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.8.0...v10.8.1) (2022-09-14)
 
 
