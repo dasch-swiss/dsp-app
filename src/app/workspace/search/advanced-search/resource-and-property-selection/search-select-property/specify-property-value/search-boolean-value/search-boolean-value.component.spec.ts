@@ -1,7 +1,7 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SearchBooleanValueComponent } from './search-boolean-value.component';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ValueLiteral } from '../operator';
@@ -22,7 +22,7 @@ class TestHostComponent implements OnInit {
 
     form;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {

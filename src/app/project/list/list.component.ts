@@ -1,5 +1,5 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -56,7 +56,7 @@ export class ListComponent implements OnInit {
     language: string;
 
     // form to select list
-    listForm: FormGroup;
+    listForm: UntypedFormGroup;
 
     // selected list
     list: ListNodeInfo;
@@ -85,7 +85,7 @@ export class ListComponent implements OnInit {
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
@@ -168,7 +168,7 @@ export class ListComponent implements OnInit {
                 this.initList();
 
                 this.listForm = this._fb.group({
-                    list: new FormControl({
+                    list: new UntypedFormControl({
                         value: this.listIri, disabled: false
                     })
                 });

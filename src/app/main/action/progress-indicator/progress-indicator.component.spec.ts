@@ -128,7 +128,7 @@ describe('ProgressIndicatorComponent', () => {
         const matIconEl = divProgressElement.query(By.css('mat-icon'));
 
         // new status: done
-        expect(matIconEl.attributes.class).toEqual('mat-icon notranslate after-submit material-icons mat-icon-no-color');
+        expect(matIconEl.attributes.class).toEqual('mat-icon notranslate after-submit material-icons mat-ligature-font mat-icon-no-color');
         expect(matIconEl.nativeElement.innerText).toEqual('done');
         expect(matIconEl.styles.color).toEqual('red');
     });

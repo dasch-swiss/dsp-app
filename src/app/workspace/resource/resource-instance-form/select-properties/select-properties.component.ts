@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import {
     Cardinality,
     CardinalityUtil,
@@ -30,7 +30,7 @@ export class SelectPropertiesComponent implements OnInit {
 
     @Input() selectedResourceClass: ResourceClassDefinition;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     @Input() currentOntoIri: string;
 

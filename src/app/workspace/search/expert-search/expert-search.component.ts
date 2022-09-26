@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { OntologyService } from 'src/app/project/ontology/ontology.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import { AdvancedSearchParams, AdvancedSearchParamsService } from '../services/advanced-search-params.service';
@@ -30,8 +30,8 @@ export class ExpertSearchComponent implements OnInit {
      */
     @Output() search = new EventEmitter<SearchParams>();
 
-    expertSearchForm: FormGroup;
-    queryFormControl: FormControl;
+    expertSearchForm: UntypedFormGroup;
+    queryFormControl: UntypedFormControl;
 
     iriBaseUrl = this._os.getIriBaseUrl();
 
@@ -52,12 +52,12 @@ CONSTRUCT {
     constructor(
         private _os: OntologyService,
         private _searchParamsService: AdvancedSearchParamsService,
-        private _fb: FormBuilder
+        private _fb: UntypedFormBuilder
     ) { }
 
     ngOnInit(): void {
         // initialize the form with predefined Gravsearch query as example.
-        this.queryFormControl = new FormControl(this.defaultGravsearchQuery);
+        this.queryFormControl = new UntypedFormControl(this.defaultGravsearchQuery);
 
         this.expertSearchForm = this._fb.group({
             gravsearchquery: [

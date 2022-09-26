@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, Input, ElementRef, EventEmitter, Output } from '@angular/core';
 import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 
@@ -17,10 +17,10 @@ export class TextValueAsHtmlComponent extends BaseValueDirective implements OnIn
 
     @Output() internalLinkHovered: EventEmitter<string> = new EventEmitter<string>();
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     valueChangesSubscription: Subscription;
 

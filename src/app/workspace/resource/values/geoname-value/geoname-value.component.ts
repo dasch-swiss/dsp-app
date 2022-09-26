@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { CreateGeonameValue, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
 import { Observable, Subscription } from 'rxjs';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -24,10 +24,10 @@ const resolvedPromise = Promise.resolve(null);
 export class GeonameValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
     @Input() displayValue?: ReadGeonameValue;
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     valueChangesSubscription: Subscription;
     matcher = new ValueErrorStateMatcher();
@@ -37,7 +37,7 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
 
     places: SearchPlace[];
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder, private _geonameService: GeonameService) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder, private _geonameService: GeonameService) {
         super();
     }
 
@@ -70,9 +70,9 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
     ngOnInit() {
 
         // initialize form control elements
-        this.valueFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
 
-        this.commentFormControl = new FormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         // react to user typing places
         this.valueFormControl.valueChanges.subscribe(

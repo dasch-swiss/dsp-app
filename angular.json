@@ -225,6 +225,5 @@
                 }
             }
         }
-    },
-    "defaultProject": "dsp-app"
+    }
 }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { Constants, ReadResource, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { ValueService } from '../../../services/value.service';
@@ -17,7 +17,7 @@ export class SwitchPropertiesComponent implements OnInit {
 
     @Input() parentResource: ReadResource;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     @Input() formName: string;
 

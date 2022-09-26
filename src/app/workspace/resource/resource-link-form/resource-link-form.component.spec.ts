@@ -1,6 +1,6 @@
 import { Component, DebugElement, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -82,13 +82,13 @@ class TestHostComponent implements OnInit {
     selector: 'app-select-project'
 })
 class MockSelectProjectComponent implements OnInit {
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
     @Input() usersProjects: StoredProject[];
     @Output() projectSelected = new EventEmitter<string>();
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit() {
         this.form = this._fb.group({

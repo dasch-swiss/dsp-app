@@ -1,5 +1,5 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
     ApiResponseError,
     ClassDefinition,
@@ -88,7 +88,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     error: boolean;
 
     // form group, form array (for properties) errors and validation messages
-    resourceClassForm: FormGroup;
+    resourceClassForm: UntypedFormGroup;
 
     // label and comment are stringLiterals
     resourceClassLabels: StringLiteralV2[] = [];
@@ -130,7 +130,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         private _cache: CacheService,
         private _cdr: ChangeDetectorRef,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _os: OntologyService
     ) { }
 
@@ -198,7 +198,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         }
 
         this.resourceClassForm = this._fb.group({
-            name: new FormControl({
+            name: new UntypedFormControl({
                 value: (this.edit ? this._os.getNameFromIri(this.iri) : ''),
                 disabled: this.edit
             }, [
@@ -206,12 +206,12 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
                 existingNamesValidator(this.existingNames),
                 Validators.pattern(CustomRegex.ID_NAME_REGEX)
             ]),
-            label: new FormControl({
+            label: new UntypedFormControl({
                 value: this.resourceClassLabels, disabled: false
             }, [
                 Validators.required
             ]),
-            comment: new FormControl({
+            comment: new UntypedFormControl({
                 value: this.resourceClassComments, disabled: false
             })
         });

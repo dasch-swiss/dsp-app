@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
     ApiResponseError,
@@ -24,13 +24,13 @@ export class SearchListValueComponent implements OnInit, OnDestroy, PropertyValu
 
     @Input() property: ResourcePropertyDefinition;
     // parent FormGroup
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
     type = Constants.ListValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     listRootNode: ListNodeV2;
 
@@ -39,7 +39,7 @@ export class SearchListValueComponent implements OnInit, OnDestroy, PropertyValu
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        @Inject(FormBuilder) private _fb: FormBuilder,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         private _errorHandler: ErrorHandlerService
     ) {
     }

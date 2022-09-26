@@ -8,7 +8,7 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ResourceClassDefinition } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -21,7 +21,7 @@ const resolvedPromise = Promise.resolve(null);
 })
 export class SelectResourceClassComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() resourceClassDefinitions: ResourceClassDefinition[];
 
@@ -33,13 +33,13 @@ export class SelectResourceClassComponent implements OnInit, OnDestroy, AfterVie
 
     @Output() resourceClassSelected = new EventEmitter<string>();
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     checkPattern = '^\d*[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF_]+( [a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF@_.]+)*$';
 
     resourceChangesSubscription: Subscription;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {}
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {}
 
     ngOnInit(): void {
 

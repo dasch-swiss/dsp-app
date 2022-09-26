@@ -8,7 +8,7 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { OntologiesMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -21,7 +21,7 @@ const resolvedPromise = Promise.resolve(null);
 })
 export class SelectOntologyComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() ontologiesMetadata: OntologiesMetadata;
 
@@ -30,11 +30,11 @@ export class SelectOntologyComponent implements OnInit, OnDestroy, AfterViewInit
 
     @Output() ontologySelected = new EventEmitter<string>();
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     ontologyChangesSubscription: Subscription;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
 

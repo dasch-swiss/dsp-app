@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges }
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { CreateUriValue, ReadUriValue, UpdateUriValue } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { CustomRegex } from '../custom-regex';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 
@@ -19,16 +19,16 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
     @Input() displayValue?: ReadUriValue;
     @Input() label?: string;
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
     matcher = new ValueErrorStateMatcher();
     valueChangesSubscription: Subscription;
 
     customValidators = [Validators.pattern(CustomRegex.URI_REGEX)];
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
         super();
     }
 
@@ -41,8 +41,8 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
     }
 
     ngOnInit() {
-        this.valueFormControl = new FormControl(null);
-        this.commentFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
             data => {

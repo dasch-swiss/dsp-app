@@ -10,7 +10,7 @@ import {
     SimpleChanges,
     ViewChild
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
@@ -58,9 +58,9 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
     resources: ReadResource[] = [];
     restrictToResourceClass: string;
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
-    form: FormGroup;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
+    form: UntypedFormGroup;
     resourceClassLabel: string;
 
     valueChangesSubscription: Subscription;
@@ -77,7 +77,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
     constructor(
         private _dialog: MatDialog,
-        @Inject(FormBuilder) private _fb: FormBuilder,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection) {
         super();
     }
@@ -174,9 +174,9 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
         );
 
         // initialize form control elements
-        this.valueFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
 
-        this.commentFormControl = new FormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         // subscribe to any change on the comment and recheck validity
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(

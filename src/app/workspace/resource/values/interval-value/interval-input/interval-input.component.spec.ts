@@ -1,7 +1,7 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Interval, IntervalInputComponent } from './interval-input.component';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,9 +23,9 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('intervalInput') intervalInputComponent: IntervalInputComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {
@@ -52,15 +52,15 @@ class NoValueRequiredTestHostComponent implements OnInit {
 
     @ViewChild('intervalInput') intervalInputComponent: IntervalInputComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {
 
         this.form = this._fb.group({
-            interval: new FormControl(null)
+            interval: new UntypedFormControl(null)
         });
 
     }

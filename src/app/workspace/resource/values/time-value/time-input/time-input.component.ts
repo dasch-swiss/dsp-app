@@ -8,41 +8,43 @@ import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, 
 import {
     AbstractControl,
     ControlValueAccessor,
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     FormGroupDirective,
     NgControl,
     NgForm,
     ValidatorFn,
     Validators
 } from '@angular/forms';
-import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
-import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
+import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState, _AbstractConstructor, _Constructor } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { CalendarDate, CalendarPeriod, GregorianCalendarDate } from 'jdnconvertiblecalendar';
 import { Subject } from 'rxjs';
 import { CustomRegex } from '../../custom-regex';
 
 /** a valid time value must have both a date and a time, or both inputs must be null */
-export function dateTimeValidator(otherControl: FormControl): ValidatorFn {
+export function dateTimeValidator(otherControl: UntypedFormControl): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
 
         // valid if both date and time are null or have values, excluding empty strings
         const invalid = !(control.value === null && otherControl.value === null ||
-                        ((control.value !== null && control.value !== '') && (otherControl.value !== null && otherControl.value !== '')));
+            ((control.value !== null && control.value !== '') && (otherControl.value !== null && otherControl.value !== '')));
 
         return invalid ? { 'validDateTimeRequired': { value: control.value } } : null;
     };
 }
 
-type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
-    constructor(public _defaultErrorStateMatcher: ErrorStateMatcher,
+    constructor(
+        public _defaultErrorStateMatcher: ErrorStateMatcher,
         public _parentForm: NgForm,
         public _parentFormGroup: FormGroupDirective,
-        public ngControl: NgControl) { }
+        public ngControl: NgControl,
+        public stateChanges: Subject<void>
+    ) { }
 }
 const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
@@ -59,14 +61,16 @@ export class DateTime {
     selector: 'app-time-input',
     templateUrl: './time-input.component.html',
     styleUrls: ['./time-input.component.scss'],
-    providers: [{ provide: MatFormFieldControl, useExisting: TimeInputComponent }]
+    providers: [
+        { provide: MatFormFieldControl, useExisting: TimeInputComponent },
+        { provide: Subject }
+    ]
 })
 export class TimeInputComponent extends _MatInputMixinBase implements ControlValueAccessor, MatFormFieldControl<string>, DoCheck, CanUpdateErrorState, OnDestroy, OnInit {
 
     static nextId = 0;
 
-    form: FormGroup;
-    stateChanges = new Subject<void>();
+    form: UntypedFormGroup;
     @HostBinding() id = `app-time-input-${TimeInputComponent.nextId++}`;
     focused = false;
     errorState = false;
@@ -79,8 +83,8 @@ export class TimeInputComponent extends _MatInputMixinBase implements ControlVal
     @Input() timeLabel = 'Time';
     @Input() valueRequiredValidator = true;
 
-    dateFormControl: FormControl;
-    timeFormControl: FormControl;
+    dateFormControl: UntypedFormControl;
+    timeFormControl: UntypedFormControl;
 
     datePipe = new DatePipe('en-US');
 
@@ -170,19 +174,20 @@ export class TimeInputComponent extends _MatInputMixinBase implements ControlVal
 
     @Input() errorStateMatcher: ErrorStateMatcher;
 
-    constructor(fb: FormBuilder,
+    constructor(fb: UntypedFormBuilder,
         @Optional() @Self() public ngControl: NgControl,
+        private _stateChanges: Subject<void>,
         private _fm: FocusMonitor,
         private _elRef: ElementRef<HTMLElement>,
         @Optional() _parentForm: NgForm,
         @Optional() _parentFormGroup: FormGroupDirective,
         _defaultErrorStateMatcher: ErrorStateMatcher) {
 
-        super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl);
+        super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
-        this.dateFormControl = new FormControl(null);
+        this.dateFormControl = new UntypedFormControl(null);
 
-        this.timeFormControl = new FormControl(null);
+        this.timeFormControl = new UntypedFormControl(null);
 
         this.form = fb.group({
             date: this.dateFormControl,

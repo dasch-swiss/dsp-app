@@ -9,7 +9,7 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ApiResponseError, Constants, KnoraApiConnection, OntologiesMetadata, OntologyMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -46,7 +46,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
     ontologiesMetadata: OntologiesMetadata;
 
     // formGroup (used as parent for child components)
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     // form validation status
     formValid = false;
@@ -57,7 +57,7 @@ export class AdvancedSearchComponent implements OnInit, OnDestroy, AfterViewChec
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        @Inject(FormBuilder) private _fb: FormBuilder,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         private _errorHandler: ErrorHandlerService,
         private _gravsearchGenerationService: GravsearchGenerationService
     ) { }

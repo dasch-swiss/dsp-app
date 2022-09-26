@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { PropertyValue, Value, ValueLiteral } from '../operator';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
@@ -15,13 +15,13 @@ const resolvedPromise = Promise.resolve(null);
 export class SearchBooleanValueComponent implements OnInit, OnDestroy, PropertyValue {
 
     // parent FormGroup
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     type = Constants.BooleanValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
 
     }
 

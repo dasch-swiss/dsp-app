@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-add-region-form',
@@ -8,9 +8,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class AddRegionFormComponent implements OnInit {
     @Input() resourceIri: string;
-    regionForm: FormGroup;
+    regionForm: UntypedFormGroup;
     colorPattern = '^#[a-f0-9]{6}$';
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {

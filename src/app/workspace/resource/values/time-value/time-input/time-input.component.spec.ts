@@ -2,7 +2,7 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TimeInputComponent, DateTime } from './time-input.component';
 import { Component, OnInit, ViewChild, DebugElement } from '@angular/core';
-import { FormGroup, FormBuilder, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -28,9 +28,9 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('timeInput') timeInputComponent: TimeInputComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {
@@ -57,15 +57,15 @@ class NoValueRequiredTestHostComponent implements OnInit {
 
     @ViewChild('timeInput') timeInputComponent: TimeInputComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {
 
         this.form = this._fb.group({
-            time: new FormControl(null)
+            time: new UntypedFormControl(null)
         });
 
     }

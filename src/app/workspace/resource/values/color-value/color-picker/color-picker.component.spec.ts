@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerComponent } from './color-picker.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,9 +23,9 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('colorInput') colorPickerComponent: ColorPickerComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {

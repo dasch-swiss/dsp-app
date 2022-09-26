@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -24,9 +24,9 @@ class TestHostComponent implements OnInit {
 
     representation = 'stillImage';
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {
@@ -38,7 +38,7 @@ class TestHostComponent implements OnInit {
 describe('UploadComponent', () => {
     const mockFile = new File(['1'], 'testfile.jpg', { type: 'image/jpeg' });
 
-    const fb = new FormBuilder();
+    const fb = new UntypedFormBuilder();
 
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;

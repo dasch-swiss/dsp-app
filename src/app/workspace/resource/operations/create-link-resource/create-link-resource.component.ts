@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import {
     ApiResponseError,
     Constants,
@@ -35,7 +35,7 @@ export class CreateLinkResourceComponent implements OnInit {
     @ViewChild('selectProps') selectPropertiesComponent: SelectPropertiesComponent;
 
     properties: ResourcePropertyDefinition[];
-    propertiesForm: FormGroup;
+    propertiesForm: UntypedFormGroup;
     resourceClass: ResourceClassDefinition;
     ontologyInfo: ResourceClassAndPropertyDefinitions;
     fileValue: CreateFileValue;
@@ -46,7 +46,7 @@ export class CreateLinkResourceComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _errorHandler: ErrorHandlerService,
     ) { }
 

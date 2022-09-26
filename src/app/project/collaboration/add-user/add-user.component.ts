@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseData,
@@ -46,7 +46,7 @@ export class AddUserComponent implements OnInit {
     /**
      * form group
      */
-    selectUserForm: FormGroup;
+    selectUserForm: UntypedFormGroup;
 
     /**
      * form errors
@@ -117,7 +117,7 @@ export class AddUserComponent implements OnInit {
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
-        private _formBuilder: FormBuilder
+        private _formBuilder: UntypedFormBuilder
     ) { }
 
     ngOnInit() {
@@ -209,7 +209,7 @@ export class AddUserComponent implements OnInit {
         );
 
         this.selectUserForm = this._formBuilder.group({
-            'username': new FormControl({
+            'username': new UntypedFormControl({
                 value: '', disabled: false
             }, [
                 existingNamesValidator(this.existingUsernames),

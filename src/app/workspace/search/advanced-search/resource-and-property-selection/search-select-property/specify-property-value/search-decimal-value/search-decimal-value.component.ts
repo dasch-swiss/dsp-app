@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { Value, ValueLiteral } from '../operator';
 
@@ -14,13 +14,13 @@ const resolvedPromise = Promise.resolve(null);
 export class SearchDecimalValueComponent implements OnInit, OnDestroy {
 
     // parent FormGroup
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     type = Constants.DecimalValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {

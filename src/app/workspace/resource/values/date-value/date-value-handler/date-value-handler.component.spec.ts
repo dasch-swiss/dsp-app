@@ -4,9 +4,9 @@ import { Component, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
     ControlValueAccessor,
-    FormBuilder,
-    FormControl,
-    FormGroup, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -34,9 +34,9 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('dateValueHandler') dateValueHandlerComponent: DateValueHandlerComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {
@@ -64,15 +64,15 @@ class NoValueRequiredTestHostComponent implements OnInit {
 
     @ViewChild('dateValueHandler') dateValueHandlerComponent: DateValueHandlerComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    constructor(private _fb: FormBuilder) {
+    constructor(private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit(): void {
 
         this.form = this._fb.group({
-            date: new FormControl(null)
+            date: new UntypedFormControl(null)
         });
 
     }

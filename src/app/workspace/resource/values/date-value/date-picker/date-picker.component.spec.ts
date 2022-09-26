@@ -26,7 +26,7 @@ describe('DatePickerComponent', () => {
                 MatInputModule,
                 MatMenuModule,
                 MatSelectModule,
-                ReactiveFormsModule,
+                ReactiveFormsModule
             ],
         })
             .compileComponents();

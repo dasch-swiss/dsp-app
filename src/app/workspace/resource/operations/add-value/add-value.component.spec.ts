@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -32,14 +32,14 @@ class TestIntValueComponent implements OnInit {
 
     @Input() displayValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    valueFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
-        this.valueFormControl = new FormControl(null, [Validators.required]);
+        this.valueFormControl = new UntypedFormControl(null, [Validators.required]);
 
         this.form = this._fb.group({
             test: this.valueFormControl
@@ -138,7 +138,7 @@ describe('AddValueComponent', () => {
                     provide: ValueOperationEventService,
                     useValue: eventSpy
                 },
-                FormBuilder
+                UntypedFormBuilder
             ]
         })
             .compileComponents();

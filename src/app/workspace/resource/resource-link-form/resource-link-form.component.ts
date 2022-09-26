@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
     ApiResponseError,
@@ -31,7 +31,7 @@ export class ResourceLinkFormComponent implements OnInit {
     /**
      * form group, errors and validation messages
      */
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     formErrors = {
         'label': ''
@@ -53,7 +53,7 @@ export class ResourceLinkFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _project: ProjectService,
         private _resourceService: ResourceService,
         private _router: Router
@@ -69,13 +69,13 @@ export class ResourceLinkFormComponent implements OnInit {
         );
 
         this.form = this._fb.group({
-            'label': new FormControl({
+            'label': new UntypedFormControl({
                 value: '', disabled: false
             }, [
                 Validators.required
             ]),
-            'comment': new FormControl(),
-            'project': new FormControl()
+            'comment': new UntypedFormControl(),
+            'project': new UntypedFormControl()
         });
 
         this.form.valueChanges

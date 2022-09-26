@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
     ApiResponseData,
     ApiResponseError,
@@ -48,12 +48,12 @@ export class PasswordFormComponent implements OnInit {
     showPasswordForm: boolean;
 
     // password form
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     matchingPasswords = false;
 
     // in case of change not own password, we need a sys admin confirm password form
-    confirmForm: FormGroup;
+    confirmForm: UntypedFormGroup;
 
     // error checking on the following fields
     formErrors = {
@@ -88,7 +88,7 @@ export class PasswordFormComponent implements OnInit {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _notification: NotificationService,
         private _session: SessionService
     ) { }
@@ -142,7 +142,7 @@ export class PasswordFormComponent implements OnInit {
 
     buildConfirmForm() {
         this.confirmForm = this._fb.group({
-            requesterPassword: new FormControl(
+            requesterPassword: new UntypedFormControl(
                 {
                     value: '',
                     disabled: false
@@ -169,11 +169,11 @@ export class PasswordFormComponent implements OnInit {
         const name = (this.username ? this.username : '');
 
         this.form = this._fb.group({
-            username: new FormControl({
+            username: new UntypedFormControl({
                 value: name,
                 disabled: !this.username
             }),
-            requesterPassword: new FormControl(
+            requesterPassword: new UntypedFormControl(
                 {
                     value: requesterPassword,
                     disabled: false
@@ -182,7 +182,7 @@ export class PasswordFormComponent implements OnInit {
                     Validators.required
                 ]
             ),
-            password: new FormControl(
+            password: new UntypedFormControl(
                 {
                     value: '',
                     disabled: false
@@ -193,7 +193,7 @@ export class PasswordFormComponent implements OnInit {
                     Validators.pattern(CustomRegex.PASSWORD_REGEX)
                 ]
             ),
-            confirmPassword: new FormControl(
+            confirmPassword: new UntypedFormControl(
                 {
                     value: '',
                     disabled: false
@@ -231,7 +231,7 @@ export class PasswordFormComponent implements OnInit {
     }
 
 
-    onValueChanged(form: FormGroup, data?: any) {
+    onValueChanged(form: UntypedFormGroup, data?: any) {
         // const form = this.userPasswordForm;
 
         Object.keys(this.formErrors).map(field => {

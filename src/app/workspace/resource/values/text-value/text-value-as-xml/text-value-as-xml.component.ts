@@ -10,7 +10,7 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Constants, CreateTextValueAsXml, ReadTextValueAsXml, UpdateTextValueAsXml } from '@dasch-swiss/dsp-js';
 import * as Editor from 'ckeditor5-custom-build';
 import { Subscription } from 'rxjs';
@@ -35,10 +35,10 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
 
     readonly standardMapping = Constants.StandardMapping; // todo: define this somewhere else
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     valueChangesSubscription: Subscription;
     matcher = new ValueErrorStateMatcher();
@@ -60,7 +60,7 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
         '<br>': '<br/>'
     };
 
-    constructor(@Inject(FormBuilder) private fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private fb: UntypedFormBuilder) {
         super();
     }
 
@@ -87,9 +87,9 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
         this.editorConfig = ckEditor.config;
 
         // initialize form control elements
-        this.valueFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
 
-        this.commentFormControl = new FormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
             data => {

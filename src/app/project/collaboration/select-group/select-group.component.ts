@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { ApiResponseData, ApiResponseError, GroupsResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -31,7 +31,7 @@ export class SelectGroupComponent implements OnInit {
     // default system groups and project specific groups
     projectGroups: AutocompleteItem[] = [];
 
-    groupCtrl = new FormControl();
+    groupCtrl = new UntypedFormControl();
 
     // send data only, when the selection has changed
     sendData = false;

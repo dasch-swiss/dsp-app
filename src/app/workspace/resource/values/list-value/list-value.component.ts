@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
     ApiResponseError,
@@ -29,13 +29,13 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     @Input() propertyDef: ResourcePropertyDefinition;
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
     listRootNode: ListNodeV2;
     // active node
     selectedNode: ListNodeV2;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     valueChangesSubscription: Subscription;
 
@@ -44,7 +44,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     selectedNodeHierarchy: string[] = [];
 
     constructor(
-        @Inject(FormBuilder) private _fb: FormBuilder,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService
     ) {
@@ -88,8 +88,8 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
 
     ngOnInit() {
 
-        this.valueFormControl = new FormControl(null);
-        this.commentFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
             data => {
                 this.valueFormControl.updateValueAndValidity();

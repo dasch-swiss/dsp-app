@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,7 +24,7 @@ import { ResourceAndPropertySelectionComponent } from './resource-and-property-s
 })
 class TestSearchSelectResourceClassComponent {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() resourceClassDefinitions: ResourceClassDefinition[];
 
@@ -42,7 +42,7 @@ class TestSearchSelectResourceClassComponent {
 class TestSearchSelectPropertyComponent {
 
     // parent FormGroup
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     // index of the given property (unique)
     @Input() index: number;
@@ -70,13 +70,13 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('resClassAndProp') resourceClassAndPropertySelection: ResourceAndPropertySelectionComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     activeOntology = 'http://0.0.0.0:3333/ontology/0001/anything/v2';
 
     restrictByResourceClass?: string;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {

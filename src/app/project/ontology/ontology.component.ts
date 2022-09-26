@@ -1,5 +1,5 @@
 import { Component, HostListener, Inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -97,7 +97,7 @@ export class OntologyComponent implements OnInit {
     ontoProperties: OntologyProperties;
 
     // form to select ontology from list
-    ontologyForm: FormGroup;
+    ontologyForm: UntypedFormGroup;
 
     // display resource classes as grid or as graph
     view: 'classes' | 'properties' | 'graph' = 'classes';
@@ -128,7 +128,7 @@ export class OntologyComponent implements OnInit {
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _ontologyService: OntologyService,
         private _route: ActivatedRoute,
         private _router: Router,
@@ -205,7 +205,7 @@ export class OntologyComponent implements OnInit {
                     });
 
                 this.ontologyForm = this._fb.group({
-                    ontology: new FormControl({
+                    ontology: new UntypedFormControl({
                         value: this.ontologyIri, disabled: false
                     })
                 });

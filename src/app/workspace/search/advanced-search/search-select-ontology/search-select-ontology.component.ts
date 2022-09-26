@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { OntologiesMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -10,17 +10,17 @@ import { Subscription } from 'rxjs';
 })
 export class SearchSelectOntologyComponent implements OnInit, OnDestroy {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() ontologiesMetadata: OntologiesMetadata;
 
     @Output() ontologySelected = new EventEmitter<string>();
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     ontologyChangesSubscription: Subscription;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {

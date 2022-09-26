@@ -7,9 +7,9 @@ import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, 
 import {
     AbstractControl,
     ControlValueAccessor,
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     FormGroupDirective,
     NgControl,
     NgForm,
@@ -19,9 +19,10 @@ import {
 import {
     CanUpdateErrorState,
     ErrorStateMatcher,
-    mixinErrorState
+    mixinErrorState,
+    _AbstractConstructor,
+    _Constructor
 } from '@angular/material/core';
-import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
 import { JDNConvertibleCalendar } from 'jdnconvertiblecalendar';
@@ -29,44 +30,46 @@ import { Subject, Subscription } from 'rxjs';
 import { ValueService } from '../../../services/value.service';
 
 /** if a period is defined, start date must be before end date */
-export function periodStartEndValidator(isPeriod: FormControl, endDate: FormControl, valueService: ValueService): ValidatorFn {
+export function periodStartEndValidator(isPeriod: UntypedFormControl, endDate: UntypedFormControl, valueService: ValueService): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
 
         if (isPeriod.value && control.value !== null && endDate.value !== null) {
             // period: check if start is before end
-
             const jdnStartDate = valueService.createJDNCalendarDateFromKnoraDate(control.value);
             const jdnEndDate = valueService.createJDNCalendarDateFromKnoraDate(endDate.value);
 
             const invalid = jdnStartDate.toJDNPeriod().periodEnd >= jdnEndDate.toJDNPeriod().periodStart;
 
             return invalid ? { 'periodStartEnd': { value: control.value } } : null;
-
         }
 
         return null;
     };
 }
 
-type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
-    constructor(public _defaultErrorStateMatcher: ErrorStateMatcher,
+    constructor(
+        public _defaultErrorStateMatcher: ErrorStateMatcher,
         public _parentForm: NgForm,
         public _parentFormGroup: FormGroupDirective,
-        public ngControl: NgControl) {
-    }
+        public ngControl: NgControl,
+        public stateChanges: Subject<void>,
+    ) { }
 }
 
 const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
     mixinErrorState(MatInputBase);
 
-
 @Component({
     selector: 'app-date-value-handler',
     templateUrl: './date-value-handler.component.html',
     styleUrls: ['./date-value-handler.component.scss'],
-    providers: [{ provide: MatFormFieldControl, useExisting: DateValueHandlerComponent }]
+    providers: [
+        { provide: MatFormFieldControl, useExisting: DateValueHandlerComponent },
+        { provide: Subject }
+    ]
 })
 export class DateValueHandlerComponent extends _MatInputMixinBase implements ControlValueAccessor, MatFormFieldControl<KnoraDate | KnoraPeriod>, DoCheck, CanUpdateErrorState, OnInit, OnDestroy {
 
@@ -74,13 +77,12 @@ export class DateValueHandlerComponent extends _MatInputMixinBase implements Con
 
     @Input() valueRequiredValidator = true;
 
-    form: FormGroup;
-    stateChanges = new Subject<void>();
+    form: UntypedFormGroup;
 
-    isPeriodControl: FormControl;
-    calendarControl: FormControl;
-    startDate: FormControl;
-    endDate: FormControl;
+    isPeriodControl: UntypedFormControl;
+    calendarControl: UntypedFormControl;
+    startDate: UntypedFormControl;
+    endDate: UntypedFormControl;
 
     readonly focused = false;
 
@@ -175,15 +177,16 @@ export class DateValueHandlerComponent extends _MatInputMixinBase implements Con
 
     @HostBinding() id = `app-date-value-handler-${DateValueHandlerComponent.nextId++}`;
 
-    constructor(fb: FormBuilder,
+    constructor(fb: UntypedFormBuilder,
         @Optional() @Self() public ngControl: NgControl,
+        private _stateChanges: Subject<void>,
         private _fm: FocusMonitor,
         private _elRef: ElementRef<HTMLElement>,
         @Optional() _parentForm: NgForm,
         @Optional() _parentFormGroup: FormGroupDirective,
         _defaultErrorStateMatcher: ErrorStateMatcher,
         private _valueService: ValueService) {
-        super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl);
+        super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
         if (this.ngControl != null) {
             // setting the value accessor directly (instead of using
@@ -191,11 +194,11 @@ export class DateValueHandlerComponent extends _MatInputMixinBase implements Con
             this.ngControl.valueAccessor = this;
         }
 
-        this.isPeriodControl = new FormControl(false); // tODO: if period, check if start is before end
-        this.calendarControl = new FormControl(null);
+        this.isPeriodControl = new UntypedFormControl(false); // tODO: if period, check if start is before end
+        this.calendarControl = new UntypedFormControl(null);
 
-        this.endDate = new FormControl(null);
-        this.startDate = new FormControl(null);
+        this.endDate = new UntypedFormControl(null);
+        this.startDate = new UntypedFormControl(null);
 
         const eraChangesSubscription = this.isPeriodControl.valueChanges.subscribe(
             isPeriod => {

@@ -4,7 +4,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
@@ -146,14 +146,14 @@ class TestIntValueComponent implements OnInit {
 
     @Input() displayValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    valueFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
-        this.valueFormControl = new FormControl(null, [Validators.required]);
+        this.valueFormControl = new UntypedFormControl(null, [Validators.required]);
 
         this.form = this._fb.group({
             test: this.valueFormControl

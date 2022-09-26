@@ -8,7 +8,7 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { StoredProject } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -21,7 +21,7 @@ const resolvedPromise = Promise.resolve(null);
 })
 export class SelectProjectComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() usersProjects: StoredProject[];
 
@@ -30,12 +30,12 @@ export class SelectProjectComponent implements OnInit, OnDestroy, AfterViewInit 
 
     @Output() projectSelected = new EventEmitter<string>();
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     projectChangesSubscription: Subscription;
 
     constructor(
-        @Inject(FormBuilder) private _fb: FormBuilder) { }
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
 

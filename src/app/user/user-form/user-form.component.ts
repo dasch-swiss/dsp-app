@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
     ApiResponseData,
@@ -95,7 +95,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     /**
      * form group for the form controller
      */
-    userForm: FormGroup;
+    userForm: UntypedFormGroup;
 
     /**
      * error checking on the following fields
@@ -163,7 +163,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private _notification: NotificationService,
         private _route: ActivatedRoute,
         private _session: SessionService
@@ -266,21 +266,21 @@ export class UserFormComponent implements OnInit, OnChanges {
         const editMode = !!user.id;
 
         this.userForm = this._formBuilder.group({
-            givenName: new FormControl(
+            givenName: new UntypedFormControl(
                 {
                     value: user.givenName,
                     disabled: false
                 },
                 [Validators.required]
             ),
-            familyName: new FormControl(
+            familyName: new UntypedFormControl(
                 {
                     value: user.familyName,
                     disabled: false
                 },
                 [Validators.required]
             ),
-            email: new FormControl(
+            email: new UntypedFormControl(
                 {
                     value: user.email,
                     disabled: editMode
@@ -291,7 +291,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                     existingNamesValidator(this.existingEmails)
                 ]
             ),
-            username: new FormControl(
+            username: new UntypedFormControl(
                 {
                     value: user.username,
                     disabled: editMode
@@ -303,21 +303,21 @@ export class UserFormComponent implements OnInit, OnChanges {
                     existingNamesValidator(this.existingUsernames)
                 ]
             ),
-            password: new FormControl(
+            password: new UntypedFormControl(
                 {
                     value: '',
                     disabled: editMode
                 }
             ),
-            lang: new FormControl({
+            lang: new UntypedFormControl({
                 value: user.lang ? user.lang : 'en',
                 disabled: false
             }),
-            status: new FormControl({
+            status: new UntypedFormControl({
                 value: user.status ? user.status : true,
                 disabled: editMode
             }),
-            systemAdmin: new FormControl({
+            systemAdmin: new UntypedFormControl({
                 value: this.sysAdminPermission,
                 disabled: editMode
             })

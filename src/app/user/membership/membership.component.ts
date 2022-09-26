@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
     ApiResponseData,
@@ -41,7 +41,7 @@ export class MembershipComponent implements OnInit {
     user: ReadUser;
 
     projects: AutocompleteItem[] = [];
-    newProject = new FormControl();
+    newProject = new UntypedFormControl();
 
     // i18n plural mapping
     itemPluralMapping = {

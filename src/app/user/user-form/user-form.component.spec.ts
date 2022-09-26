@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -23,7 +23,7 @@ import { UserFormComponent } from './user-form.component';
 describe('UserFormComponent', () => {
     let component: UserFormComponent;
     let fixture: ComponentFixture<UserFormComponent>;
-    const formBuilder: FormBuilder = new FormBuilder();
+    const formBuilder: UntypedFormBuilder = new UntypedFormBuilder();
 
     // const cacheServiceSpyUser = jasmine.createSpyObj('CacheServiceUser', ['get']);
     const cacheServiceSpyAllUsers = jasmine.createSpyObj('CacheServiceAllUsers', ['get']);
@@ -69,7 +69,7 @@ describe('UserFormComponent', () => {
                     useValue: cacheServiceSpyAllUsers
                 },
                 {
-                    provide: FormBuilder,
+                    provide: UntypedFormBuilder,
                     useValue: formBuilder
                 }
             ]

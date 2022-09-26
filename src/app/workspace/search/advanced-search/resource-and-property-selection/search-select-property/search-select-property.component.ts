@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Cardinality, IHasProperty, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { SortingService } from 'src/app/main/services/sorting.service';
@@ -19,7 +19,7 @@ export class SearchSelectPropertyComponent implements OnInit, OnDestroy {
     @ViewChild('specifyPropertyValue', { static: false }) specifyPropertyValue: SpecifyPropertyValueComponent;
 
     // parent FormGroup
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     // index of the given property (unique)
     @Input() index: number;
@@ -47,7 +47,7 @@ export class SearchSelectPropertyComponent implements OnInit, OnDestroy {
     // represents the currently selected property
     propertySelected: ResourcePropertyDefinition;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     // unique name for this property to be used in the parent FormGroup
     propIndex: string;
@@ -60,7 +60,7 @@ export class SearchSelectPropertyComponent implements OnInit, OnDestroy {
     private _activeResourceClass?: ResourceClassDefinition;
 
     constructor(
-        @Inject(FormBuilder) private _fb: FormBuilder,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         private _sortingService: SortingService) {
     }
 

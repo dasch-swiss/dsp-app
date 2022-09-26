@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { CreateDateValue, KnoraDate, KnoraPeriod, ReadDateValue, UpdateDateValue } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
@@ -26,14 +26,14 @@ export class DateValueComponent extends BaseValueDirective implements OnInit, On
 
     // @Input() showHexCode = false;
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
-    form: FormGroup;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
+    form: UntypedFormGroup;
     valueChangesSubscription: Subscription;
     customValidators = [];
     matcher = new ValueErrorStateMatcher();
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
         super();
     }
 
@@ -71,8 +71,8 @@ export class DateValueComponent extends BaseValueDirective implements OnInit, On
     ngOnInit() {
 
         // initialize form control elements
-        this.valueFormControl = new FormControl(null);
-        this.commentFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         // subscribe to any change on the comment and recheck validity
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(

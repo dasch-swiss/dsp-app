@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -21,7 +21,7 @@ describe('OntologyFormComponent', () => {
     let ontologyFormComponent: OntologyFormComponent;
     let ontologyFormFixture: ComponentFixture<OntologyFormComponent>;
 
-    const formBuilder: FormBuilder = new FormBuilder();
+    const formBuilder: UntypedFormBuilder = new UntypedFormBuilder();
 
     const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
@@ -43,7 +43,7 @@ describe('OntologyFormComponent', () => {
             ],
             providers: [
                 // reference the new instance of formBuilder from above
-                { provide: FormBuilder, useValue: formBuilder },
+                { provide: UntypedFormBuilder, useValue: formBuilder },
                 AppInitService,
                 {
                     provide: DspApiConfigToken,

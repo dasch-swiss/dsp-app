@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { CreateIntValue, CreateValue, MockOntology, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { IntValueComponent } from '../../../values/int-value/int-value.component';
 import { SwitchPropertiesComponent } from './switch-properties.component';
@@ -28,7 +28,7 @@ class TestSwitchPropertiesParentComponent implements OnInit {
 
     parentResource: ReadResource;
 
-    parentForm: FormGroup;
+    parentForm: UntypedFormGroup;
 
     formName: string;
 
@@ -52,7 +52,7 @@ class MockCreateIntValueComponent implements OnInit {
 
     @ViewChild('createVal') createValueComponent: IntValueComponent;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     @Input() formName: string;
 
@@ -60,14 +60,14 @@ class MockCreateIntValueComponent implements OnInit {
 
     @Input() displayValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    valueFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
-        this.valueFormControl = new FormControl(null, [Validators.required]);
+        this.valueFormControl = new UntypedFormControl(null, [Validators.required]);
 
         this.form = this._fb.group({
             test: this.valueFormControl
@@ -98,7 +98,7 @@ describe('SwitchPropertiesComponent', () => {
             ],
             providers: [
                 CommonModule,
-                FormBuilder
+                UntypedFormBuilder
             ]
         })
             .compileComponents();

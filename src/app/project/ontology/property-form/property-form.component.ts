@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
     ApiResponseError,
     ClassDefinition,
@@ -73,7 +73,7 @@ export class PropertyFormComponent implements OnInit {
     /**
      * form group, errors and validation messages
      */
-    propertyForm: FormGroup;
+    propertyForm: UntypedFormGroup;
 
     formErrors = {
         'name': '',
@@ -135,7 +135,7 @@ export class PropertyFormComponent implements OnInit {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _os: OntologyService,
         private _sortingService: SortingService
     ) { }
@@ -250,7 +250,7 @@ export class PropertyFormComponent implements OnInit {
         }
 
         this.propertyForm = this._fb.group({
-            'name': new FormControl({
+            'name': new UntypedFormControl({
                 value: (this.propertyInfo.propDef ? this._os.getNameFromIri(this.propertyInfo.propDef.id) : ''),
                 disabled: this.propertyInfo.propDef
             }, [
@@ -258,20 +258,20 @@ export class PropertyFormComponent implements OnInit {
                 existingNamesValidator(this.existingNames),
                 Validators.pattern(CustomRegex.ID_NAME_REGEX)
             ]),
-            'propType': new FormControl({
+            'propType': new UntypedFormControl({
                 value: this.propertyInfo.propType,
                 disabled: disablePropType || this.resClassIri
             }),
-            'guiAttr': new FormControl({
+            'guiAttr': new UntypedFormControl({
                 value: this.guiAttributes
             }),
-            'multiple': new FormControl({
+            'multiple': new UntypedFormControl({
                 value: '',  // --> TODO: will be set in update cardinality task
                 disabled: this.propertyInfo.propType.objectType === Constants.BooleanValue
                 // --> TODO: here we also have to check, if it can be updated (update cardinality task);
                 // case updateCardinality: disabled if !canSetFullCardinality && multiple.value !== true
             }),
-            'required': new FormControl({
+            'required': new UntypedFormControl({
                 value: '',  // --> TODO: will be set in update cardinality task
                 disabled: !this.canSetFullCardinality
             })

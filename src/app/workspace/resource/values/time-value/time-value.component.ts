@@ -1,7 +1,7 @@
 import { Component, OnInit, OnChanges, OnDestroy, ViewChild, Input, Inject, SimpleChanges } from '@angular/core';
 import { TimeInputComponent } from './time-input/time-input.component';
 import { ReadTimeValue, CreateTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
@@ -20,10 +20,10 @@ export class TimeValueComponent extends BaseValueDirective implements OnInit, On
 
     @Input() displayValue?: ReadTimeValue;
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     valueChangesSubscription: Subscription;
 
@@ -31,7 +31,7 @@ export class TimeValueComponent extends BaseValueDirective implements OnInit, On
 
     matcher = new ValueErrorStateMatcher();
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
         super();
     }
 
@@ -45,9 +45,9 @@ export class TimeValueComponent extends BaseValueDirective implements OnInit, On
 
     ngOnInit() {
         // initialize form control elements
-        this.valueFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
 
-        this.commentFormControl = new FormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         // subscribe to any change on the comment and recheck validity
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(

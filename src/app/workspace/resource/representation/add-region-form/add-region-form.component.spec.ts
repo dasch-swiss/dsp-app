@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { AddRegionFormComponent } from './add-region-form.component';
@@ -17,7 +17,7 @@ describe('AddRegionFormComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers:[
-                FormBuilder
+                UntypedFormBuilder
             ]
         })
             .compileComponents();

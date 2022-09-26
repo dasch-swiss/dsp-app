@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -37,11 +37,11 @@ class TestSelectPropertiesParentComponent implements OnInit {
 
     selectedResourceClass: ResourceClassDefinition;
 
-    propertiesParentForm: FormGroup;
+    propertiesParentForm: UntypedFormGroup;
 
     currentOntoIri: string;
 
-    constructor(private _fb: FormBuilder) { }
+    constructor(private _fb: UntypedFormBuilder) { }
 
     ngOnInit() {
         this.propertiesParentForm = this._fb.group({});
@@ -74,7 +74,7 @@ describe('SelectPropertiesComponent', () => {
                 MatTooltipModule
             ],
             providers: [
-                FormBuilder
+                UntypedFormBuilder
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         })

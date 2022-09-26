@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse, UserResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '../../declarations/dsp-api-tokens';
@@ -46,7 +46,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     session: Session;
 
     // form
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     // show progress indicator
     loading = false;
@@ -100,7 +100,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         private _componentCommsService: ComponentCommunicationEventService,
         private _datadogRumService: DatadogRumService,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _session: SessionService,
         private _route: ActivatedRoute,
         private _router: Router,

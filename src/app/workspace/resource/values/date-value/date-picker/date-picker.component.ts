@@ -1,9 +1,8 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, DoCheck, ElementRef, HostBinding, Input, OnChanges, OnDestroy, Optional, Self, SimpleChanges, ViewChild } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormControl, FormGroup, FormGroupDirective, NgControl, NgForm, Validators } from '@angular/forms';
-import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState } from '@angular/material/core';
-import { AbstractConstructor, Constructor } from '@angular/material/core/common-behaviors/constructor';
+import { ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgControl, NgForm, Validators } from '@angular/forms';
+import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState, _AbstractConstructor, _Constructor } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
@@ -13,24 +12,25 @@ import { ValueService } from '../../../services/value.service';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
-    isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
         const isSubmitted = form && form.submitted;
         return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
     }
 }
 
-type CanUpdateErrorStateCtor = Constructor<CanUpdateErrorState> & AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
     constructor(
         public _defaultErrorStateMatcher: ErrorStateMatcher,
         public _parentForm: NgForm,
         public _parentFormGroup: FormGroupDirective,
-        public ngControl: NgControl) { }
+        public ngControl: NgControl,
+        public stateChanges: Subject<void>
+    ) { }
 }
 const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
     mixinErrorState(MatInputBase);
-
 
 @Component({
     selector: 'app-date-picker',
@@ -38,7 +38,8 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
     styleUrls: ['./date-picker.component.scss'],
     providers: [
         { provide: MatFormFieldControl, useExisting: DatePickerComponent },
-        { provide: KnoraDatePipe }
+        { provide: KnoraDatePipe },
+        { provide: Subject }
     ]
 })
 export class DatePickerComponent extends _MatInputMixinBase implements ControlValueAccessor, MatFormFieldControl<KnoraDate>, OnChanges, DoCheck, CanUpdateErrorState, OnDestroy {
@@ -58,8 +59,7 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
     @HostBinding() id = `app-date-picker-${DatePickerComponent.nextId++}`;
 
     @HostBinding('attr.aria-describedby') describedBy = '';
-    dateForm: FormGroup;
-    stateChanges = new Subject<void>();
+    dateForm: UntypedFormGroup;
     focused = false;
     errorState = false;
     controlType = 'app-date-picker';
@@ -67,7 +67,7 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
 
     // own date picker variables
     date: KnoraDate;
-    form: FormGroup;
+    form: UntypedFormGroup;
     formErrors = {
         'year': ''
     };
@@ -210,14 +210,15 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
         @Optional() _parentForm: NgForm,
         @Optional() _parentFormGroup: FormGroupDirective,
         @Optional() @Self() public ngControl: NgControl,
-        fb: FormBuilder,
+        private _stateChanges: Subject<void>,
+        fb: UntypedFormBuilder,
         private _elRef: ElementRef<HTMLElement>,
         private _fm: FocusMonitor,
         private _knoraDatePipe: KnoraDatePipe,
         private _valueService: ValueService,
     ) {
 
-        super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl);
+        super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
         this.dateForm = fb.group({
             date: [null, Validators.required],
@@ -292,14 +293,14 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
 
     buildForm() {
 
-        this.form = new FormGroup({
-            calendar: new FormControl(),
-            era: new FormControl(''),
-            year: new FormControl('', [
+        this.form = new UntypedFormGroup({
+            calendar: new UntypedFormControl(),
+            era: new UntypedFormControl(''),
+            year: new UntypedFormControl('', [
                 Validators.required,
                 Validators.min(1)
             ]),
-            month: new FormControl('')
+            month: new UntypedFormControl('')
         });
 
         this.disableDaySelector = (this.month === 0);

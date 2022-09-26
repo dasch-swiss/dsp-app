@@ -35,8 +35,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
     @Output() loaded = new EventEmitter<boolean>();
 
-    @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
-
     originalFilename: string;
 
     zoomFactor = 1.0;
@@ -48,6 +46,8 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     elem: any;
 
     fileType: string;
+
+    @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
 
     constructor(
         @Inject(DOCUMENT) private document: any,

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadComponent } from '../upload/upload.component';
@@ -31,7 +31,7 @@ class TestHostComponent implements OnInit {
     template: ''
 })
 class TestUploadComponent {
-    @Input() parentForm?: FormGroup;
+    @Input() parentForm?: UntypedFormGroup;
 
     @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
 

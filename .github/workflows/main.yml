@@ -1,6 +1,6 @@
 name: CI
 env:
-  NV: 12.x  # node version
+  node-version: 16.15.0
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
     types: [published]
 
 jobs:
-
   find-ignored-tests:
     name: Find ignored tests
     runs-on: ubuntu-latest
@@ -25,10 +24,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.NV }}
+      - name: Set up Node.js ${{ env.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ env.NV }}
+          node-version: ${{ env.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Run the tests
@@ -36,23 +35,23 @@ jobs:
         env:
           TZ: Europe/Zurich
 
-  e2e-tests:
-    name: Run e2e tests
-    needs: [find-ignored-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.NV }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NV }}
-      - name: Install dependencies
-        run: npm install
-      - name: Webdriver update
-        run: npm run webdriver-update
-      - name: Run the tests
-        run: npm run test-e2e-protractor
+  # e2e-tests:
+  #   name: Run e2e tests
+  #   needs: [find-ignored-tests]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout source
+  #       uses: actions/checkout@v2
+  #     - name: Set up Node.js ${{ env.node-version }}
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{ env.node-version }}
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Webdriver update
+  #       run: npm run webdriver-update
+  #     - name: Run the tests
+  #       run: npm run test-e2e-protractor
 
   lint:
     name: Run lint
@@ -60,10 +59,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.NV }}
+      - name: Set up Node.js ${{ env.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ env.NV }}
+          node-version: ${{ env.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Run the script
@@ -75,10 +74,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.NV }}
+      - name: Set up Node.js ${{ env.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ env.NV }}
+          node-version: ${{ env.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build in prod mode
@@ -111,7 +110,7 @@ jobs:
     needs: [
       build,
       lint,
-      e2e-tests,
+      # e2e-tests,
       unit-tests
     ]
     runs-on: ubuntu-latest

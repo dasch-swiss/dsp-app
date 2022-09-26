@@ -1,6 +1,6 @@
 import { Component, DebugElement, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -84,7 +84,7 @@ class MockSelectPropertiesComponent {
 
     @Input() resourceClass: ResourceClassDefinition;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     parentResource = new ReadResource();
 
@@ -104,7 +104,7 @@ class MockSwitchPropertiesComponent {
 
     @Input() parentResource: ReadResource;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     @Input() formName: string;
 }
@@ -119,7 +119,7 @@ class MockCreateIntValueComponent implements OnInit {
 
     @ViewChild('createVal') createValueComponent: IntValueComponent;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     @Input() formName: string;
 
@@ -127,14 +127,14 @@ class MockCreateIntValueComponent implements OnInit {
 
     @Input() displayValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    valueFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
-        this.valueFormControl = new FormControl(null, [Validators.required]);
+        this.valueFormControl = new UntypedFormControl(null, [Validators.required]);
 
         this.form = this._fb.group({
             test: this.valueFormControl
@@ -162,7 +162,7 @@ class MockCreateTextValueComponent implements OnInit {
 
     @ViewChild('createVal') createValueComponent: TextValueAsStringComponent;
 
-    @Input() parentForm: FormGroup;
+    @Input() parentForm: UntypedFormGroup;
 
     @Input() formName: string;
 
@@ -174,12 +174,12 @@ class MockCreateTextValueComponent implements OnInit {
 
     @Input() valueRequiredValidator: boolean;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
-    valueFormControl: FormControl;
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) { }
+    valueFormControl: UntypedFormControl;
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
     ngOnInit(): void {
-        this.valueFormControl = new FormControl(null, [Validators.required]);
+        this.valueFormControl = new UntypedFormControl(null, [Validators.required]);
         this.form = this._fb.group({
             label: this.valueFormControl
         });

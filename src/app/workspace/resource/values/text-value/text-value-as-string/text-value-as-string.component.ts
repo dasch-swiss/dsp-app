@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { CreateTextValueAsString, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
 import * as Editor from 'ckeditor5-custom-build';
 import { Subscription } from 'rxjs';
@@ -22,10 +22,10 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
 
     @Input() guiElement: 'simpleText' | 'textArea' | 'richText' = 'simpleText';
 
-    valueFormControl: FormControl;
-    commentFormControl: FormControl;
+    valueFormControl: UntypedFormControl;
+    commentFormControl: UntypedFormControl;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     valueChangesSubscription: Subscription;
     matcher = new ValueErrorStateMatcher();
@@ -35,7 +35,7 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     editor: Editor;
     editorConfig;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
         super();
     }
 
@@ -51,9 +51,9 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     ngOnInit() {
 
         // initialize form control elements
-        this.valueFormControl = new FormControl(null);
+        this.valueFormControl = new UntypedFormControl(null);
 
-        this.commentFormControl = new FormControl(null);
+        this.commentFormControl = new UntypedFormControl(null);
 
         this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
             data => {

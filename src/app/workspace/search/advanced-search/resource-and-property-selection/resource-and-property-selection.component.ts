@@ -9,7 +9,7 @@ import {
     ViewChild,
     ViewChildren
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import {
     KnoraApiConnection,
     ReadOntology, ResourceClassAndPropertyDefinitions,
@@ -36,7 +36,7 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
     // reference to the component controlling the property selection
     @ViewChildren('property') propertyComponents: QueryList<SearchSelectPropertyComponent>;
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() activeOntology: string;
 
@@ -44,7 +44,7 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
 
     @Input() topLevel;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     activeResourceClass: ResourceClassDefinition;
 
@@ -56,7 +56,7 @@ export class ResourceAndPropertySelectionComponent implements OnInit, OnChanges 
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        @Inject(FormBuilder) private _fb: FormBuilder,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         private _errorHandler: ErrorHandlerService,
         private _sortingService: SortingService
     ) { }

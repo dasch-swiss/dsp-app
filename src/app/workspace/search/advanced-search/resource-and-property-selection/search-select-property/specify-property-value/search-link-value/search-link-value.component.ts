@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Constants, KnoraApiConnection, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { IRI, PropertyValue, Value } from '../operator';
@@ -15,11 +15,11 @@ const resolvedPromise = Promise.resolve(null);
 export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValue {
 
     // parent FormGroup
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     type = Constants.LinkValue;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     resources: ReadResource[];
 
@@ -36,7 +36,7 @@ export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValu
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        @Inject(FormBuilder) private _fb: FormBuilder) {
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {
@@ -106,7 +106,7 @@ export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValu
      *
      * @param form element whose value has to be checked.
      */
-    validateResource(c: FormControl) {
+    validateResource(c: UntypedFormControl) {
 
         const isValidResource = (c.value instanceof ReadResource);
 

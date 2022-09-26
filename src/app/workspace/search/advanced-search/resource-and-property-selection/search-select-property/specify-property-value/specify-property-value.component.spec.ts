@@ -2,7 +2,7 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SpecifyPropertyValueComponent } from './specify-property-value.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { Constants, MockOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
@@ -23,13 +23,13 @@ class TestHostComponent implements OnInit {
 
     @ViewChild('specifyProp') specifyProperty: SpecifyPropertyValueComponent;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     propertyDef: ResourcePropertyDefinition;
 
     topLevel = true;
 
-    constructor(@Inject(FormBuilder) private _fb: FormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     ngOnInit() {
@@ -51,7 +51,7 @@ class TestHostComponent implements OnInit {
 })
 class TestSearchIntValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     getValue(): Value {
         return new ValueLiteral(String(1), Constants.XsdInteger);
@@ -72,7 +72,7 @@ class TestSearchIntValueComponent implements OnInit {
 })
 class TestSearchDecimalValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     getValue(): Value {
         return new ValueLiteral(String(1.1), Constants.XsdDecimal);
@@ -93,7 +93,7 @@ class TestSearchDecimalValueComponent implements OnInit {
 })
 class TestSearchBooleanValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     getValue(): Value {
         return new ValueLiteral(String(true), Constants.XsdBoolean);
@@ -114,7 +114,7 @@ class TestSearchBooleanValueComponent implements OnInit {
 })
 class TestSearchDateValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     getValue(): Value {
         return new ValueLiteral('GREGORIAN:2018-10-30:2018-10-30', 'http://api.knora.org/ontology/knora-api/simple/v2#Date');
@@ -135,7 +135,7 @@ class TestSearchDateValueComponent implements OnInit {
 })
 class TestSearchListValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     @Input() property: ResourcePropertyDefinition;
 
@@ -158,7 +158,7 @@ class TestSearchListValueComponent implements OnInit {
 })
 class TestSearchTextValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     getValue(): Value {
         return new ValueLiteral('test', 'http://www.w3.org/2001/XMLSchema#string');
@@ -179,7 +179,7 @@ class TestSearchTextValueComponent implements OnInit {
 })
 class TestSearchUriValueComponent implements OnInit {
 
-    @Input() formGroup: FormGroup;
+    @Input() formGroup: UntypedFormGroup;
 
     getValue(): Value {
         return new ValueLiteral('http://www.knora.org', 'http://www.w3.org/2001/XMLSchema#anyURI');

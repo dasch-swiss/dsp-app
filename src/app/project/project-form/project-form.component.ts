@@ -1,6 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import {
@@ -99,7 +99,7 @@ export class ProjectFormComponent implements OnInit {
     /**
      * form group, errors and validation messages
      */
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     formErrors = {
         'shortname': '',
@@ -143,7 +143,7 @@ export class ProjectFormComponent implements OnInit {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _router: Router,
         private _session: SessionService
     ) {
@@ -227,7 +227,7 @@ export class ProjectFormComponent implements OnInit {
         this.keywords = project.keywords;
 
         this.form = this._fb.group({
-            'shortname': new FormControl({
+            'shortname': new UntypedFormControl({
                 value: project.shortname, disabled: (this.projectCode)
             }, [
                 Validators.required,
@@ -236,12 +236,12 @@ export class ProjectFormComponent implements OnInit {
                 existingNamesValidator(this.existingShortNames),
                 Validators.pattern(this.shortnameRegex)
             ]),
-            'longname': new FormControl({
+            'longname': new UntypedFormControl({
                 value: project.longname, disabled: disabled
             }, [
                 Validators.required
             ]),
-            'shortcode': new FormControl({
+            'shortcode': new UntypedFormControl({
                 value: project.shortcode, disabled: ((this.projectCode) && project.shortcode !== null)
             }, [
                 Validators.required,
@@ -250,12 +250,12 @@ export class ProjectFormComponent implements OnInit {
                 existingNamesValidator(this.existingShortcodes),
                 Validators.pattern(this.shortcodeRegex)
             ]),
-            'logo': new FormControl({
+            'logo': new UntypedFormControl({
                 value: project.logo, disabled: disabled
             }),
             'status': [true],
             'selfjoin': [false],
-            'keywords': new FormControl({
+            'keywords': new UntypedFormControl({
                 // must be empty (even in edit mode), because of the mat-chip-list
                 value: [], disabled: disabled
             })

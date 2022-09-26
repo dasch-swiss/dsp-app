@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
     ApiResponseError,
@@ -54,8 +54,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges, OnDestr
     @ViewChild('selectOntology') selectOntologyComponent: SelectOntologyComponent;
 
     // forms
-    selectResourceForm: FormGroup;
-    propertiesParentForm: FormGroup;
+    selectResourceForm: UntypedFormGroup;
+    propertiesParentForm: UntypedFormGroup;
 
     // form validation status
     formValid = false;
@@ -102,7 +102,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges, OnDestr
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService,
-        private _fb: FormBuilder,
+        private _fb: UntypedFormBuilder,
         private _project: ProjectService,
         private _resourceService: ResourceService,
         private _route: ActivatedRoute,

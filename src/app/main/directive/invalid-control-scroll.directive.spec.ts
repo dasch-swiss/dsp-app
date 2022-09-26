@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InvalidControlScrollDirective } from './invalid-control-scroll.directive';
 
 @Component({
@@ -24,15 +24,15 @@ import { InvalidControlScrollDirective } from './invalid-control-scroll.directiv
 })
 class TestLinkHostComponent implements OnInit {
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     constructor() { }
 
     ngOnInit() {
-        this.form = new FormGroup({
-            control1: new FormControl(),
-            control2: new FormControl(),
-            control3: new FormControl()
+        this.form = new UntypedFormGroup({
+            control1: new UntypedFormControl(),
+            control2: new UntypedFormControl(),
+            control3: new UntypedFormControl()
         });
     }
 
