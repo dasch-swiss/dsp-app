@@ -1,13 +1,10 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { CreateUriValue, ReadUriValue, UpdateUriValue } from '@dasch-swiss/dsp-js';
-import { Subscription } from 'rxjs';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { CustomRegex } from '../custom-regex';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 
-// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
-const resolvedPromise = Promise.resolve(null);
 
 @Component({
     selector: 'app-uri-value',
@@ -19,16 +16,11 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
     @Input() displayValue?: ReadUriValue;
     @Input() label?: string;
 
-    valueFormControl: UntypedFormControl;
-    commentFormControl: UntypedFormControl;
-
-    form: UntypedFormGroup;
     matcher = new ValueErrorStateMatcher();
-    valueChangesSubscription: Subscription;
 
     customValidators = [Validators.pattern(CustomRegex.URI_REGEX)];
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
+    constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
         super();
     }
 
@@ -41,26 +33,7 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
     }
 
     ngOnInit() {
-        this.valueFormControl = new UntypedFormControl(null);
-        this.commentFormControl = new UntypedFormControl(null);
-
-        this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
-            data => {
-                this.valueFormControl.updateValueAndValidity();
-            }
-        );
-
-        this.form = this._fb.group({
-            value: this.valueFormControl,
-            comment: this.commentFormControl
-        });
-
-        this.resetFormControl();
-
-        resolvedPromise.then(() => {
-            // add form to the parent form group
-            this.addToParentFormGroup(this.formName, this.form);
-        });
+        super.ngOnInit();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -68,12 +41,7 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
     }
 
     ngOnDestroy(): void {
-        this.unsubscribeFromValueChanges();
-
-        resolvedPromise.then(() => {
-            // remove form from the parent form group
-            this.removeFromParentFormGroup(this.formName);
-        });
+        super.ngOnDestroy();
     }
 
     getNewValue(): CreateUriValue | false {
@@ -85,7 +53,7 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
 
         newUriValue.uri = this.valueFormControl.value;
 
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             newUriValue.valueHasComment = this.commentFormControl.value;
         }
 
@@ -102,7 +70,7 @@ export class UriValueComponent extends BaseValueDirective implements OnInit, OnC
 
         updatedUriValue.uri = this.valueFormControl.value;
 
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             updatedUriValue.valueHasComment = this.commentFormControl.value;
         }
 

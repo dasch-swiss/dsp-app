@@ -6,25 +6,25 @@
 <ng-template #showForm>
     <span [formGroup]="form">
         <mat-form-field *ngIf="guiElement !== 'richText'; else showRichText" class="large-field child-value-component"
-            floatLabel="never">
+                        floatLabel="never">
 
             <!-- default gui-element: simple text -->
             <input *ngIf="guiElement === 'simpleText'" matInput
-                class="value"
-                placeholder="Text value"
-                type="text"
-                [formControlName]="'value'"
-                [errorStateMatcher]="matcher">
+                   class="value"
+                   placeholder="Text value"
+                   type="text"
+                   [formControlName]="'value'"
+                   [errorStateMatcher]="matcher">
 
             <!-- gui-element: text area -->
             <textarea *ngIf="guiElement === 'textArea'" matInput
-                class="value"
-                placeholder="Text value"
-                [formControlName]="'value'"
-                [errorStateMatcher]="matcher"
-                [cdkTextareaAutosize]="true"
-                [cdkAutosizeMinRows]="6"
-                [cdkAutosizeMaxRows]="12">
+                      class="value"
+                      placeholder="Text value"
+                      [formControlName]="'value'"
+                      [errorStateMatcher]="matcher"
+                      [cdkTextareaAutosize]="true"
+                      [cdkAutosizeMinRows]="6"
+                      [cdkAutosizeMaxRows]="12">
             </textarea>
 
             <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') &&
@@ -43,19 +43,6 @@
         <ng-template #showRichText>
             <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor"></ckeditor>
         </ng-template>
-
-        <!-- comment -->
-        <mat-form-field *ngIf="!commentDisabled" class="large-field value-component-comment">
-            <textarea
-                matInput
-                class="comment"
-                placeholder="Comment"
-                spellcheck="false"
-                [cdkTextareaAutosize]="true"
-                [cdkAutosizeMinRows]="1"
-                [cdkAutosizeMaxRows]="6"
-                [formControlName]="'comment'">
-            </textarea>
-        </mat-form-field>
+        <app-comment-form *ngIf="!commentDisabled && valueFormControl && commentFormControl" [valueFormControlHasError]="hasError()" [(commentFormControl)]="commentFormControl" [valueFormControlValue]="valueFormControl.value"></app-comment-form>
     </span>
 </ng-template>

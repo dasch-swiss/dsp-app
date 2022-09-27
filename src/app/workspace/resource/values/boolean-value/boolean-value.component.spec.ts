@@ -11,6 +11,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormattedBooleanPipe } from 'src/app/main/pipes/formatting/formatted-boolean.pipe';
 
+
 /**
  * test host component to simulate parent component.
  */
@@ -87,9 +88,6 @@ describe('BooleanValueComponent', () => {
         let valueReadModeDebugElement: DebugElement;
         let valueReadModeNativeElement;
         let checkboxEl;
-        let checkboxLabel;
-        let commentBooleanDebugElement: DebugElement;
-        let commentBooleanNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -165,30 +163,24 @@ describe('BooleanValueComponent', () => {
 
             checkboxEl = valueBooleanDebugElement.query(By.css('input[type="checkbox"]')).nativeElement;
 
-            commentBooleanDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentBooleanNativeElement = commentBooleanDebugElement.nativeElement;
-
             expect(testHostComponent.booleanValueComponent.mode).toEqual('update');
 
             expect(checkboxEl.disabled).toBe(false);
 
-            expect(testHostComponent.booleanValueComponent.form.valid).toBeFalsy();
+            expect(testHostComponent.booleanValueComponent.form.valid).toBeFalsy(); // because the booleans value did not change. it is still == true
 
             expect(checkboxEl.checked).toBe(true);
 
-            commentBooleanNativeElement.value = 'this is a comment';
-
-            commentBooleanNativeElement.dispatchEvent(new Event('input'));
+            // set a comment value
+            testHostComponent.booleanValueComponent.commentFormControl.setValue('a comment');
 
             testHostFixture.detectChanges();
 
-            expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
-
+            expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy(); // the form is valid now, because the comments value changed
             const updatedValue = testHostComponent.booleanValueComponent.getUpdatedValue();
 
             expect(updatedValue instanceof UpdateBooleanValue).toBeTruthy();
 
-            expect((updatedValue as UpdateBooleanValue).valueHasComment).toEqual('this is a comment');
         });
 
         it('should restore the initially displayed value', () => {
@@ -241,15 +233,6 @@ describe('BooleanValueComponent', () => {
 
             expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
         });
-
-        it('should unsubscribe when destroyed', () => {
-            expect(testHostComponent.booleanValueComponent.valueChangesSubscription.closed).toBeFalsy();
-
-            testHostComponent.booleanValueComponent.ngOnDestroy();
-
-            expect(testHostComponent.booleanValueComponent.valueChangesSubscription.closed).toBeTruthy();
-        });
-
     });
 
     describe('create a boolean value', () => {
@@ -260,8 +243,6 @@ describe('BooleanValueComponent', () => {
         let valueBooleanDebugElement: DebugElement;
         let valueBooleanNativeElement;
         let checkboxEl;
-        let commentBooleanDebugElement: DebugElement;
-        let commentBooleanNativeElement;
 
         beforeEach(() => {
 
@@ -279,14 +260,10 @@ describe('BooleanValueComponent', () => {
             valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
             checkboxEl = valueBooleanDebugElement.query(By.css('input[type="checkbox"]')).nativeElement;
 
-            commentBooleanDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentBooleanNativeElement = commentBooleanDebugElement.nativeElement;
-
             expect(testHostComponent.booleanValueComponent.displayValue).toEqual(undefined);
             expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
             expect(checkboxEl.disabled).toBe(false);
             expect(checkboxEl.checked).toBe(false);
-            expect(commentBooleanNativeElement.value).toEqual('');
         });
 
         it('should create a value', () => {
@@ -308,10 +285,6 @@ describe('BooleanValueComponent', () => {
 
         it('should reset form after cancellation', () => {
 
-            commentBooleanNativeElement.value = 'created comment';
-
-            commentBooleanNativeElement.dispatchEvent(new Event('input'));
-
             checkboxEl.click();
 
             testHostFixture.detectChanges();
@@ -325,8 +298,6 @@ describe('BooleanValueComponent', () => {
             expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
 
             expect(checkboxEl.checked).toBe(true);
-
-            expect(commentBooleanNativeElement.value).toEqual('');
 
         });
     });

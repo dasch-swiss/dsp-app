@@ -275,12 +275,6 @@ describe('TextValueAsStringComponent', () => {
         let valueInputDebugElement: DebugElement;
         let valueInputNativeElement;
 
-        let commentReadModeDebugElement: DebugElement;
-        let commentReadModeNativeElement;
-
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
-
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostDisplayValueCommentComponent);
             testHostComponent = testHostFixture.componentInstance;
@@ -297,7 +291,7 @@ describe('TextValueAsStringComponent', () => {
 
         });
 
-        it('should display an existing value', () => {
+        it('should display an existing value with an added comment', () => {
 
             expect(testHostComponent.inputValueComponent.displayValue.text).toEqual('test');
 
@@ -318,22 +312,17 @@ describe('TextValueAsStringComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(valueInputNativeElement.value).toEqual('test');
 
-            expect(commentInputNativeElement.value).toEqual('this is a comment');
+            expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual('this is a comment');
 
             valueInputNativeElement.value = 'updated text';
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'this is an updated comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('this is an updated comment');
 
             testHostFixture.detectChanges();
 
@@ -358,22 +347,17 @@ describe('TextValueAsStringComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(valueInputNativeElement.value).toEqual('test');
 
-            expect(commentInputNativeElement.value).toEqual('this is a comment');
+            expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual('this is a comment');
 
             valueInputNativeElement.value = '';
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'this is an updated comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('this is an updated comment');
 
             testHostFixture.detectChanges();
 
@@ -394,9 +378,6 @@ describe('TextValueAsStringComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(valueInputNativeElement.value).toEqual('test');
@@ -405,9 +386,7 @@ describe('TextValueAsStringComponent', () => {
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'this is an updated comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('this is an updated comment');
 
             testHostFixture.detectChanges();
 
@@ -415,7 +394,7 @@ describe('TextValueAsStringComponent', () => {
 
             expect(valueInputNativeElement.value).toEqual('test');
 
-            expect(commentInputNativeElement.value).toEqual('this is a comment');
+            testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
@@ -441,19 +420,12 @@ describe('TextValueAsStringComponent', () => {
 
             testHostFixture.detectChanges();
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             testHostComponent.mode = 'read';
             testHostComponent.inputValueComponent.shouldShowComment = true;
 
             testHostFixture.detectChanges();
 
-            commentReadModeDebugElement = valueComponentDe.query(By.css('.rm-comment'));
-
-            commentReadModeNativeElement = commentReadModeDebugElement.nativeElement;
-
-            expect(commentReadModeNativeElement.innerText).toEqual('my updated comment');
+            expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual('my updated comment');
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -467,7 +439,6 @@ describe('TextValueAsStringComponent', () => {
         let valueComponentDe: DebugElement;
         let valueInputDebugElement: DebugElement;
         let valueInputNativeElement;
-        let commentInputDebugElement: DebugElement;
         let commentInputNativeElement;
 
         beforeEach(() => {
@@ -484,13 +455,11 @@ describe('TextValueAsStringComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
             expect(valueInputNativeElement.value).toEqual('');
-            expect(commentInputNativeElement.value).toEqual('');
+            testHostFixture.detectChanges();
+            expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual(null);
         });
 
         it('should create a value', () => {
@@ -516,9 +485,7 @@ describe('TextValueAsStringComponent', () => {
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'created comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('created comment');
 
             testHostFixture.detectChanges();
 
@@ -532,7 +499,7 @@ describe('TextValueAsStringComponent', () => {
 
             expect(valueInputNativeElement.value).toEqual('');
 
-            expect(commentInputNativeElement.value).toEqual('');
+            expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual(null);
 
         });
 
@@ -544,9 +511,7 @@ describe('TextValueAsStringComponent', () => {
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('comment');
 
             testHostFixture.detectChanges();
 
@@ -566,9 +531,7 @@ describe('TextValueAsStringComponent', () => {
 
         // value: no  comment:yes
         it('should not allow a comment if a value does not exist', () => {
-            commentInputNativeElement.value = 'comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('comment');
 
             testHostFixture.detectChanges();
 

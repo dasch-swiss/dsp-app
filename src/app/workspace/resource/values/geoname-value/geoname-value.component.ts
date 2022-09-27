@@ -1,10 +1,13 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { CreateGeonameValue, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
 import { Observable, Subscription } from 'rxjs';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { DisplayPlace, GeonameService, SearchPlace } from '../../services/geoname.service';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
+
+// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
+const resolvedPromise = Promise.resolve(null);
 
 export function geonameIdValidator(control: AbstractControl) {
     // null or empty checks are out of this validator's scope
@@ -12,9 +15,6 @@ export function geonameIdValidator(control: AbstractControl) {
     const invalid = !(control.value === null || control.value === '' || (typeof control.value === 'object' && 'id' in control.value));
     return invalid ? { invalidType: { value: control.value } } : null;
 }
-
-// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
-const resolvedPromise = Promise.resolve(null);
 
 @Component({
     selector: 'app-geoname-value',
@@ -24,12 +24,8 @@ const resolvedPromise = Promise.resolve(null);
 export class GeonameValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
     @Input() displayValue?: ReadGeonameValue;
 
-    valueFormControl: UntypedFormControl;
-    commentFormControl: UntypedFormControl;
-
-    form: UntypedFormGroup;
-
     valueChangesSubscription: Subscription;
+
     matcher = new ValueErrorStateMatcher();
     customValidators = [geonameIdValidator];
 
@@ -37,7 +33,7 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
 
     places: SearchPlace[];
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder, private _geonameService: GeonameService) {
+    constructor(@Inject(FormBuilder) protected _fb: FormBuilder, private _geonameService: GeonameService) {
         super();
     }
 
@@ -69,13 +65,18 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
 
     ngOnInit() {
 
-        // initialize form control elements
-        this.valueFormControl = new UntypedFormControl(null);
+        // initialize component separately hence there is additional logic and different order which is not covered by super.ngOnInit
+        this.valueFormControl = new FormControl(null);
 
-        this.commentFormControl = new UntypedFormControl(null);
+        this.commentFormControl = new FormControl(null);
+
+        this.form = this._fb.group({
+            value: this.valueFormControl,
+            comment: this.commentFormControl
+        });
 
         // react to user typing places
-        this.valueFormControl.valueChanges.subscribe(
+        this.valueChangesSubscription = this.valueFormControl.valueChanges.subscribe(
             (searchTerm: string) => {
 
                 // console.log(searchTerm);
@@ -94,16 +95,11 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
             }
         );
 
-        this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
+        this.commentChangesSubscription = this.commentFormControl.valueChanges.subscribe(
             data => {
                 this.valueFormControl.updateValueAndValidity();
             }
         );
-
-        this.form = this._fb.group({
-            value: this.valueFormControl,
-            comment: this.commentFormControl
-        });
 
         this.resetFormControl();
 
@@ -129,8 +125,8 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
     }
 
     ngOnDestroy(): void {
-        this.unsubscribeFromValueChanges();
-
+        this.valueChangesSubscription.unsubscribe();
+        this.commentChangesSubscription.unsubscribe();
         resolvedPromise.then(() => {
             // remove form from the parent form group
             this.removeFromParentFormGroup(this.formName);
@@ -147,7 +143,7 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
 
         newGeonameValue.geoname = this.valueFormControl.value.id;
 
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             newGeonameValue.valueHasComment = this.commentFormControl.value;
         }
 
@@ -167,7 +163,7 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
 
         updatedGeonameValue.geoname = this.valueFormControl.value.id;
 
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             updatedGeonameValue.valueHasComment = this.commentFormControl.value;
         }
 

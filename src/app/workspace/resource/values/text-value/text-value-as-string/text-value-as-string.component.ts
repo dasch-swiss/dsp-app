@@ -1,14 +1,18 @@
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import {
+    Component,
+    Inject,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    SimpleChanges
+} from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { CreateTextValueAsString, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
 import * as Editor from 'ckeditor5-custom-build';
-import { Subscription } from 'rxjs';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
 import { ckEditor } from '../ck-editor';
-
-// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
-const resolvedPromise = Promise.resolve(null);
 
 @Component({
     selector: 'app-text-value-as-string',
@@ -22,12 +26,6 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
 
     @Input() guiElement: 'simpleText' | 'textArea' | 'richText' = 'simpleText';
 
-    valueFormControl: UntypedFormControl;
-    commentFormControl: UntypedFormControl;
-
-    form: UntypedFormGroup;
-
-    valueChangesSubscription: Subscription;
     matcher = new ValueErrorStateMatcher();
     customValidators = [];
 
@@ -35,12 +33,11 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     editor: Editor;
     editorConfig;
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
+    constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
         super();
     }
 
     getInitValue(): string | null {
-
         if (this.displayValue !== undefined) {
             return this.displayValue.text;
         } else {
@@ -49,34 +46,12 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     }
 
     ngOnInit() {
-
-        // initialize form control elements
-        this.valueFormControl = new UntypedFormControl(null);
-
-        this.commentFormControl = new UntypedFormControl(null);
-
-        this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
-            data => {
-                this.valueFormControl.updateValueAndValidity();
-            }
-        );
-
-        this.form = this._fb.group({
-            value: this.valueFormControl,
-            comment: this.commentFormControl
-        });
+        super.ngOnInit();
 
         if (this.guiElement === 'richText') {
             this.editor = Editor;
             this.editorConfig = ckEditor.config;
         }
-
-        this.resetFormControl();
-
-        resolvedPromise.then(() => {
-            // add form to the parent form group
-            this.addToParentFormGroup(this.formName, this.form);
-        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -87,12 +62,7 @@ export class TextValueAsStringComponent extends BaseValueDirective implements On
     }
 
     ngOnDestroy(): void {
-        this.unsubscribeFromValueChanges();
-
-        resolvedPromise.then(() => {
-            // remove form from the parent form group
-            this.removeFromParentFormGroup(this.formName);
-        });
+        super.ngOnDestroy();
     }
 
     getNewValue(): CreateTextValueAsString | false {

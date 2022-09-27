@@ -15,18 +15,7 @@
     <div *ngIf="editor; else noConfig" [formGroup]="form">
         <span [formGroup]="form">
             <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor"></ckeditor>
-            <mat-form-field class="large-field value-component-comment">
-                <textarea
-                    matInput
-                    class="comment"
-                    placeholder="Comment"
-                    spellcheck="false"
-                    [cdkTextareaAutosize]="true"
-                    [cdkAutosizeMinRows]="1"
-                    [cdkAutosizeMaxRows]="6"
-                    [formControlName]="'comment'">
-                </textarea>
-            </mat-form-field>
+            <app-comment-form *ngIf="!commentDisabled && valueFormControl && commentFormControl" [valueFormControlHasError]="hasError()" [(commentFormControl)]="commentFormControl" [valueFormControlValue]="valueFormControl.value"></app-comment-form>
         </span>
     </div>
     <ng-template #noConfig>

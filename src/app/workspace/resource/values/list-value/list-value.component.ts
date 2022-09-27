@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
     ApiResponseError,
@@ -10,41 +10,33 @@ import {
     ResourcePropertyDefinition,
     UpdateListValue
 } from '@dasch-swiss/dsp-js';
-import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 
-// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
-const resolvedPromise = Promise.resolve(null);
 
 @Component({
     selector: 'app-list-value',
     templateUrl: './list-value.component.html',
     styleUrls: ['./list-value.component.scss']
 })
+
 export class ListValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
 
     @Input() displayValue?: ReadListValue;
     @Input() propertyDef: ResourcePropertyDefinition;
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
-    valueFormControl: UntypedFormControl;
-    commentFormControl: UntypedFormControl;
     listRootNode: ListNodeV2;
     // active node
     selectedNode: ListNodeV2;
-
-    form: UntypedFormGroup;
-
-    valueChangesSubscription: Subscription;
 
     customValidators = [];
 
     selectedNodeHierarchy: string[] = [];
 
     constructor(
-        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
+        @Inject(FormBuilder) protected _fb: FormBuilder,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService
     ) {
@@ -87,37 +79,15 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     }
 
     ngOnInit() {
-
-        this.valueFormControl = new UntypedFormControl(null);
-        this.commentFormControl = new UntypedFormControl(null);
-        this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
-            data => {
-                this.valueFormControl.updateValueAndValidity();
-            }
-        );
-        this.form = this._fb.group({
-            value: this.valueFormControl,
-            comment: this.commentFormControl
-        });
-
-        this.resetFormControl();
-
-        resolvedPromise.then(() => {
-            // add form to the parent form group
-            this.addToParentFormGroup(this.formName, this.form);
-        });
+        super.ngOnInit();
     }
+
     ngOnChanges(changes: SimpleChanges): void {
         this.resetFormControl();
     }
 
     ngOnDestroy(): void {
-        this.unsubscribeFromValueChanges();
-
-        resolvedPromise.then(() => {
-            // remove form from the parent form group
-            this.removeFromParentFormGroup(this.formName);
-        });
+        super.ngOnDestroy();
     }
 
     getNewValue(): CreateListValue | false {
@@ -196,6 +166,4 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
             }
         }
     }
-
-
 }

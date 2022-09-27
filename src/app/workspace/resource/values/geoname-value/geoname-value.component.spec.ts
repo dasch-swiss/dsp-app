@@ -311,8 +311,6 @@ describe('GeonameValueComponent', () => {
         let valueComponentDe: DebugElement;
         let valueInputDebugElement: DebugElement;
         let valueInputNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         let loader: HarnessLoader;
 
@@ -331,13 +329,9 @@ describe('GeonameValueComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
             expect(valueInputNativeElement.value).toEqual('');
-            expect(commentInputNativeElement.value).toEqual('');
         });
 
         it('should create a value', async () => {
@@ -420,8 +414,6 @@ describe('GeonameValueComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(await autocomplete.getValue()).toEqual('');
-
-            expect(commentInputNativeElement.value).toEqual('');
 
         });
     });

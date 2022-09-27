@@ -479,8 +479,6 @@ describe('TextValueAsXMLComponent', () => {
         let ckeditorDe: DebugElement;
 
         let valueComponentDe: DebugElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostCreateValueComponent);
@@ -492,8 +490,6 @@ describe('TextValueAsXMLComponent', () => {
             ckeditorDe = hostCompDe.query(By.directive(TestCKEditorComponent));
 
             valueComponentDe = hostCompDe.query(By.directive(TextValueAsXMLComponent));
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
         });
 
         it('should create a value', () => {
@@ -521,10 +517,6 @@ describe('TextValueAsXMLComponent', () => {
             ckeditorDe.componentInstance.value = '<p>created text<p></p>';
             ckeditorDe.componentInstance._handleInput();
 
-            commentInputNativeElement.value = 'created comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
-
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.mode).toEqual('create');
@@ -536,8 +528,6 @@ describe('TextValueAsXMLComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(ckeditorDe.componentInstance.value).toEqual(null);
-
-            expect(commentInputNativeElement.value).toEqual('');
 
         });
 

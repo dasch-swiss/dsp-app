@@ -11,7 +11,6 @@ import { ColorPickerModule } from 'ngx-color-picker';
 import { Subject } from 'rxjs';
 import { ColorValueComponent } from './color-value.component';
 
-
 @Component({
     selector: 'app-color-picker',
     template: '',
@@ -114,7 +113,6 @@ class TestHostCreateValueComponent implements OnInit {
     }
 }
 
-
 describe('ColorValueComponent', () => {
 
     beforeEach(waitForAsync(() => {
@@ -143,8 +141,7 @@ describe('ColorValueComponent', () => {
         let valueComponentDe: DebugElement;
         let valueReadModeDebugElement: DebugElement;
         let valueReadModeNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
+
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -159,6 +156,7 @@ describe('ColorValueComponent', () => {
             valueComponentDe = hostCompDe.query(By.directive(ColorValueComponent));
             valueReadModeDebugElement = valueComponentDe.query(By.css('.rm-value'));
             valueReadModeNativeElement = valueReadModeDebugElement.nativeElement;
+
         });
 
         it('should display an existing value without a hex color code', () => {
@@ -231,28 +229,20 @@ describe('ColorValueComponent', () => {
 
             testHostFixture.detectChanges();
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.colorValueComponent.mode).toEqual('update');
 
             expect(testHostComponent.colorValueComponent.displayValue.color).toEqual('#ff3333');
 
-            expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy();
+            expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy(); // because no value or comment changed
 
-            commentInputNativeElement.value = 'this is a comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
-
+            // set a comment value
+            testHostComponent.colorValueComponent.commentFormControl.setValue('a comment');
             testHostFixture.detectChanges();
-
-            expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy();
+            expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy(); // because now the comment changed
 
             const updatedValue = testHostComponent.colorValueComponent.getUpdatedValue();
 
             expect(updatedValue instanceof UpdateColorValue).toBeTruthy();
-
-            expect((updatedValue as UpdateColorValue).valueHasComment).toEqual('this is a comment');
 
         });
 
@@ -345,7 +335,6 @@ describe('ColorValueComponent', () => {
             expect(valueReadModeNativeElement.style.backgroundColor).not.toBeUndefined();
 
             expect(valueReadModeNativeElement.innerText).toEqual('');
-
             expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy();
 
         });
@@ -372,11 +361,11 @@ describe('ColorValueComponent', () => {
         });
 
         it('should unsubscribe when destroyed', () => {
-            expect(testHostComponent.colorValueComponent.valueChangesSubscription.closed).toBeFalsy();
+            expect(testHostComponent.colorValueComponent.commentChangesSubscription.closed).toBeFalsy();
 
             testHostComponent.colorValueComponent.ngOnDestroy();
 
-            expect(testHostComponent.colorValueComponent.valueChangesSubscription.closed).toBeTruthy();
+            expect(testHostComponent.colorValueComponent.commentChangesSubscription.closed).toBeTruthy();
         });
 
     });
@@ -387,8 +376,6 @@ describe('ColorValueComponent', () => {
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
 
         let valueComponentDe: DebugElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostCreateValueComponent);
@@ -401,8 +388,6 @@ describe('ColorValueComponent', () => {
             const hostCompDe = testHostFixture.debugElement;
 
             valueComponentDe = hostCompDe.query(By.directive(ColorValueComponent));
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
         });
 
         it('should create a value', () => {
@@ -438,10 +423,6 @@ describe('ColorValueComponent', () => {
 
             testHostFixture.detectChanges();
 
-            commentInputNativeElement.value = 'created comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
-
             testHostFixture.detectChanges();
 
             expect(testHostComponent.colorValueComponent.mode).toEqual('create');
@@ -453,8 +434,6 @@ describe('ColorValueComponent', () => {
             expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy();
 
             expect(testHostComponent.colorValueComponent.colorPickerComponent.value).toEqual(null);
-
-            expect(commentInputNativeElement.value).toEqual('');
 
         });
 

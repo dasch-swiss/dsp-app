@@ -5,24 +5,12 @@
     <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
 </span>
 <ng-template #showForm>
-    <span [formGroup]="form" (ngSubmit)="onSubmit()">
-
+    <span [formGroup]="form">
         <mat-checkbox [formControlName]="'value'" class="value boolValue child-value-component" [class.more-space]="moreSpace">
         </mat-checkbox>
         <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') && valueFormControl.dirty">
                 <span class="custom-error-message">New value must be different than the current value.</span>
         </mat-error>
-        <mat-form-field class="large-field value-component-comment">
-            <textarea
-                matInput
-                class="comment"
-                placeholder="Comment"
-                spellcheck="false"
-                [cdkTextareaAutosize]="true"
-                [cdkAutosizeMinRows]="1"
-                [cdkAutosizeMaxRows]="6"
-                [formControlName]="'comment'">
-            </textarea>
-        </mat-form-field>
+        <app-comment-form [valueFormControlHasError]="hasError()" [(commentFormControl)]="commentFormControl" [valueFormControlValue]="valueFormControl.value"></app-comment-form>
     </span>
 </ng-template>

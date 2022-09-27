@@ -26,17 +26,6 @@
                 <span class="custom-error-message">This value already exists for this property. Duplicate values are not allowed.</span>
             </mat-error>
         </mat-form-field>
-        <mat-form-field class="large-field value-component-comment">
-            <textarea
-                matInput
-                class="comment"
-                placeholder="Comment"
-                spellcheck="false"
-                [cdkTextareaAutosize]="true"
-                [cdkAutosizeMinRows]="1"
-                [cdkAutosizeMaxRows]="6"
-                [formControlName]="'comment'">
-            </textarea>
-        </mat-form-field>
+        <app-comment-form *ngIf="!commentDisabled && valueFormControl && commentFormControl" [valueFormControlHasError]="hasError()" [(commentFormControl)]="commentFormControl" [valueFormControlValue]="valueFormControl.value"></app-comment-form>
     </span>
 </ng-template>

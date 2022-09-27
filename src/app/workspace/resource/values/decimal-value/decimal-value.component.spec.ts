@@ -1,12 +1,11 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DecimalValueComponent } from './decimal-value.component';
-import { ReadDecimalValue, MockResource, UpdateValue, UpdateDecimalValue, CreateDecimalValue } from '@dasch-swiss/dsp-js';
+import { ReadDecimalValue, MockResource, UpdateDecimalValue, CreateDecimalValue } from '@dasch-swiss/dsp-js';
 import { OnInit, Component, ViewChild, DebugElement } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { $ } from 'protractor';
 import { By } from '@angular/platform-browser';
 
 /**
@@ -71,7 +70,7 @@ describe('DecimalValueComponent', () => {
                 ReactiveFormsModule,
                 MatInputModule,
                 BrowserAnimationsModule
-            ],
+            ]
         })
             .compileComponents();
     }));
@@ -84,8 +83,6 @@ describe('DecimalValueComponent', () => {
         let valueInputNativeElement;
         let valueReadModeDebugElement: DebugElement;
         let valueReadModeNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -155,18 +152,14 @@ describe('DecimalValueComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.mode).toEqual('update');
-
-            expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(valueInputNativeElement.value).toEqual('1.5');
 
-            commentInputNativeElement.value = 'this is a comment';
+            expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            // set a comment value
+            testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
             testHostFixture.detectChanges();
 
@@ -254,14 +247,6 @@ describe('DecimalValueComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
         });
-
-        it('should unsubscribe when destroyed', () => {
-            expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeFalsy();
-
-            testHostComponent.inputValueComponent.ngOnDestroy();
-
-            expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeTruthy();
-        });
     });
 
     describe('create a decimal value', () => {
@@ -271,8 +256,6 @@ describe('DecimalValueComponent', () => {
         let valueComponentDe: DebugElement;
         let valueInputDebugElement: DebugElement;
         let valueInputNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostCreateValueComponent);
@@ -288,13 +271,9 @@ describe('DecimalValueComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
             expect(valueInputNativeElement.value).toEqual('');
-            expect(commentInputNativeElement.value).toEqual('');
         });
 
         it('should create a value', () => {
@@ -320,10 +299,6 @@ describe('DecimalValueComponent', () => {
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'created comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
-
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.mode).toEqual('create');
@@ -335,8 +310,6 @@ describe('DecimalValueComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(valueInputNativeElement.value).toEqual('');
-
-            expect(commentInputNativeElement.value).toEqual('');
 
         });
     });

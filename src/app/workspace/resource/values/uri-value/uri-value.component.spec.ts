@@ -1,7 +1,7 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UriValueComponent } from './uri-value.component';
-import { ReadUriValue, MockResource, UpdateValue, UpdateUriValue, CreateUriValue } from '@dasch-swiss/dsp-js';
+import { ReadUriValue, MockResource, UpdateUriValue, CreateUriValue } from '@dasch-swiss/dsp-js';
 import { OnInit, Component, ViewChild, DebugElement } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -60,6 +60,7 @@ class TestHostCreateValueComponent implements OnInit {
     }
 }
 
+
 describe('UriValueComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -72,7 +73,7 @@ describe('UriValueComponent', () => {
                 ReactiveFormsModule,
                 MatInputModule,
                 BrowserAnimationsModule
-            ],
+            ]
         })
             .compileComponents();
     }));
@@ -85,8 +86,6 @@ describe('UriValueComponent', () => {
         let valueInputNativeElement;
         let valueReadModeDebugElement: DebugElement;
         let valueReadModeNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -183,18 +182,13 @@ describe('UriValueComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.mode).toEqual('update');
-
-            expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(valueInputNativeElement.value).toEqual('http://www.google.ch');
 
-            commentInputNativeElement.value = 'this is a comment';
+            expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy(); // because no value nor the comment changed
 
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
             testHostFixture.detectChanges();
 
@@ -282,14 +276,6 @@ describe('UriValueComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
         });
-
-        it('should unsubscribe when destroyed', () => {
-            expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeFalsy();
-
-            testHostComponent.inputValueComponent.ngOnDestroy();
-
-            expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeTruthy();
-        });
     });
 
     describe('create a URI value', () => {
@@ -299,8 +285,6 @@ describe('UriValueComponent', () => {
         let valueComponentDe: DebugElement;
         let valueInputDebugElement: DebugElement;
         let valueInputNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostCreateValueComponent);
@@ -316,13 +300,10 @@ describe('UriValueComponent', () => {
             valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
             valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
             expect(valueInputNativeElement.value).toEqual('');
-            expect(commentInputNativeElement.value).toEqual('');
+            expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual(null);
         });
 
         it('should create a value', () => {
@@ -348,9 +329,7 @@ describe('UriValueComponent', () => {
 
             valueInputNativeElement.dispatchEvent(new Event('input'));
 
-            commentInputNativeElement.value = 'created comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            testHostComponent.inputValueComponent.commentFormControl.setValue('created comment');
 
             testHostFixture.detectChanges();
 
@@ -364,7 +343,8 @@ describe('UriValueComponent', () => {
 
             expect(valueInputNativeElement.value).toEqual('');
 
-            expect(commentInputNativeElement.value).toEqual('');
+            expect(testHostComponent.inputValueComponent.commentFormControl
+                .value).toEqual(null);
 
         });
     });

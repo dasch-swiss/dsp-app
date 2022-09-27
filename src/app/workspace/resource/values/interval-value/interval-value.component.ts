@@ -1,17 +1,9 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { CreateIntervalValue, ReadIntervalValue, UpdateIntervalValue } from '@dasch-swiss/dsp-js';
-import {
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup
-} from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { FormBuilder } from '@angular/forms';
 import { Interval, IntervalInputComponent } from './interval-input/interval-input.component';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
-
-// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
-const resolvedPromise = Promise.resolve(null);
 
 @Component({
     selector: 'app-interval-value',
@@ -24,18 +16,11 @@ export class IntervalValueComponent extends BaseValueDirective implements OnInit
 
     @Input() displayValue?: ReadIntervalValue;
 
-    valueFormControl: UntypedFormControl;
-    commentFormControl: UntypedFormControl;
-
-    form: UntypedFormGroup;
-
-    valueChangesSubscription: Subscription;
-
     customValidators = [];
 
     matcher = new ValueErrorStateMatcher();
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
+    constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
         super();
     }
 
@@ -52,29 +37,7 @@ export class IntervalValueComponent extends BaseValueDirective implements OnInit
     }
 
     ngOnInit() {
-        // initialize form control elements
-        this.valueFormControl = new UntypedFormControl(null);
-
-        this.commentFormControl = new UntypedFormControl(null);
-
-        // subscribe to any change on the comment and recheck validity
-        this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
-            data => {
-                this.valueFormControl.updateValueAndValidity();
-            }
-        );
-
-        this.form = this._fb.group({
-            value: this.valueFormControl,
-            comment: this.commentFormControl
-        });
-
-        this.resetFormControl();
-
-        resolvedPromise.then(() => {
-            // add form to the parent form group
-            this.addToParentFormGroup(this.formName, this.form);
-        });
+        super.ngOnInit();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -83,12 +46,7 @@ export class IntervalValueComponent extends BaseValueDirective implements OnInit
 
     // unsubscribe when the object is destroyed to prevent memory leaks
     ngOnDestroy(): void {
-        this.unsubscribeFromValueChanges();
-
-        resolvedPromise.then(() => {
-            // remove form from the parent form group
-            this.removeFromParentFormGroup(this.formName);
-        });
+        super.ngOnDestroy();
     }
 
     getNewValue(): CreateIntervalValue | false {
@@ -101,7 +59,7 @@ export class IntervalValueComponent extends BaseValueDirective implements OnInit
         newIntervalValue.start = this.valueFormControl.value.start;
         newIntervalValue.end = this.valueFormControl.value.end;
 
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             newIntervalValue.valueHasComment = this.commentFormControl.value;
         }
 

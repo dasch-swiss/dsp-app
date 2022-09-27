@@ -10,7 +10,7 @@ import {
     SimpleChanges,
     ViewChild
 } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
@@ -36,9 +36,6 @@ export function resourceValidator(control: AbstractControl) {
     return invalid ? { invalidType: { value: control.value } } : null;
 }
 
-// https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
-const resolvedPromise = Promise.resolve(null);
-
 @Component({
     selector: 'app-link-value',
     templateUrl: './link-value.component.html',
@@ -58,12 +55,8 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
     resources: ReadResource[] = [];
     restrictToResourceClass: string;
-    valueFormControl: UntypedFormControl;
-    commentFormControl: UntypedFormControl;
-    form: UntypedFormGroup;
     resourceClassLabel: string;
 
-    valueChangesSubscription: Subscription;
     labelChangesSubscription: Subscription;
     // label cannot contain logical operations of lucene index
     customValidators = [resourceValidator];
@@ -77,7 +70,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
     constructor(
         private _dialog: MatDialog,
-        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
+        @Inject(FormBuilder) protected _fb: FormBuilder,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection) {
         super();
     }
@@ -111,7 +104,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
                 (response: ReadResourceSequence) => {
                     this.resources = response.resources;
                     this.loadingResults = false;
-                    this.showNoResultsMessage = this.resources.length > 0 ? false : true;
+                    this.showNoResultsMessage = this.resources.length > 0;
                 });
         } else {
             this.resources = [];
@@ -173,32 +166,10 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
             }
         );
 
-        // initialize form control elements
-        this.valueFormControl = new UntypedFormControl(null);
-
-        this.commentFormControl = new UntypedFormControl(null);
-
-        // subscribe to any change on the comment and recheck validity
-        this.valueChangesSubscription = this.commentFormControl.valueChanges.subscribe(
-            data => {
-                this.valueFormControl.updateValueAndValidity();
-            }
-        );
+        super.ngOnInit();
 
         this.labelChangesSubscription = this.valueFormControl.valueChanges.subscribe(data => {
             this.searchByLabel(data);
-        });
-
-        this.form = this._fb.group({
-            value: this.valueFormControl,
-            comment: this.commentFormControl
-        });
-
-        this.resetFormControl();
-
-        resolvedPromise.then(() => {
-            // add form to the parent form group
-            this.addToParentFormGroup(this.formName, this.form);
         });
     }
 
@@ -208,16 +179,11 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
     // unsubscribe when the object is destroyed to prevent memory leaks
     ngOnDestroy(): void {
-        this.unsubscribeFromValueChanges();
 
         if (this.labelChangesSubscription !== undefined) {
             this.labelChangesSubscription.unsubscribe();
         }
-
-        resolvedPromise.then(() => {
-            // remove form from the parent form group
-            this.removeFromParentFormGroup(this.formName);
-        });
+        super.ngOnDestroy();
     }
 
     getNewValue(): CreateLinkValue | false {
@@ -227,7 +193,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
         const newLinkValue = new CreateLinkValue();
         newLinkValue.linkedResourceIri = this.valueFormControl.value.id;
 
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             newLinkValue.valueHasComment = this.commentFormControl.value;
         }
 
@@ -246,7 +212,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
         updatedLinkValue.linkedResourceIri = this.valueFormControl.value.id;
 
         // add the submitted comment to updatedLinkValue only if user has added a comment
-        if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
+        if (this.commentFormControl.value) {
             updatedLinkValue.valueHasComment = this.commentFormControl.value;
         }
 

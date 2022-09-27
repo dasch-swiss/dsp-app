@@ -1,7 +1,7 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimeValueComponent } from './time-value.component';
 import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
-import { CreateTimeValue, MockResource, ReadTimeValue, UpdateTimeValue, KnoraDate } from '@dasch-swiss/dsp-js';
+import { CreateTimeValue, MockResource, ReadTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
@@ -146,7 +146,7 @@ describe('TimeValueComponent', () => {
                 ReactiveFormsModule,
                 MatInputModule,
                 BrowserAnimationsModule
-            ],
+            ]
         })
             .compileComponents();
     }));
@@ -161,9 +161,6 @@ describe('TimeValueComponent', () => {
 
         let timeReadModeDebugElement: DebugElement;
         let timeReadModeNativeElement;
-
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -226,34 +223,28 @@ describe('TimeValueComponent', () => {
 
         });
 
-        it('should validate an existing value with an added comment', () => {
+        it('should validate an existing value with han added comment', () => {
 
             testHostComponent.mode = 'update';
 
             testHostFixture.detectChanges();
 
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
-
             expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
             expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual('2019-08-30T10:45:20.173572Z');
 
-            expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
+            expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy(); // because no value nor the comment changed
 
-            commentInputNativeElement.value = 'this is a comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
+            // set a comment value
+            testHostComponent.inputValueComponent.commentFormControl.setValue('a comment');
 
             testHostFixture.detectChanges();
 
-            expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
+            expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy(); // now the form must be valid, hence the comment changed
 
             const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
             expect(updatedValue instanceof UpdateTimeValue).toBeTruthy();
-
-            expect((updatedValue as UpdateTimeValue).valueHasComment).toEqual('this is a comment');
 
         });
 
@@ -324,14 +315,6 @@ describe('TimeValueComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
         });
-
-        it('should unsubscribe when destroyed', () => {
-            expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeFalsy();
-
-            testHostComponent.inputValueComponent.ngOnDestroy();
-
-            expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeTruthy();
-        });
     });
 
     describe('create a time value', () => {
@@ -339,8 +322,6 @@ describe('TimeValueComponent', () => {
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
 
         let valueComponentDe: DebugElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(TestHostCreateValueComponent);
@@ -353,8 +334,6 @@ describe('TimeValueComponent', () => {
             const hostCompDe = testHostFixture.debugElement;
 
             valueComponentDe = hostCompDe.query(By.directive(TimeValueComponent));
-            commentInputDebugElement = valueComponentDe.query(By.css('textarea.comment'));
-            commentInputNativeElement = commentInputDebugElement.nativeElement;
         });
 
         it('should create a value', () => {
@@ -384,10 +363,6 @@ describe('TimeValueComponent', () => {
 
             testHostFixture.detectChanges();
 
-            commentInputNativeElement.value = 'created comment';
-
-            commentInputNativeElement.dispatchEvent(new Event('input'));
-
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.mode).toEqual('create');
@@ -399,8 +374,6 @@ describe('TimeValueComponent', () => {
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
             expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual(null);
-
-            expect(commentInputNativeElement.value).toEqual('');
 
         });
     });

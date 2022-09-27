@@ -5,7 +5,7 @@
         [matTooltip]="(!selectedNode && !listRootNode.children.length) ? 'This list doesn\'t have any node values' : 'Select list value'"
         [matTooltipPosition]="'above'">
         <button mat-stroked-button [matMenuTriggerFor]="mainMenu" type="button" placeholder="List value"
-            [disabled]="!selectedNode && !listRootNode.children.length">
+                [disabled]="!selectedNode && !listRootNode.children.length">
 
             <!-- if no node is selected: display list label; if the list does not have any list nodes, the button should be disabled -->
             <span *ngIf="!selectedNode">{{listRootNode.label}}</span>
@@ -20,7 +20,7 @@
         <span *ngFor="let child of listRootNode.children">
             <span *ngIf="child.children && child.children.length > 0">
                 <button mat-menu-item [matMenuTriggerFor]="menu.childMenu" (click)="getSelectedNode(child)"
-                    type="button">
+                        type="button">
                     {{child.label}}
                 </button>
                 <app-sublist-value #menu [children]="child.children" (selectedNode)="getSelectedNode($event)">
@@ -57,10 +57,6 @@
         <mat-form-field class="large-field child-value-component" *ngIf="mode === 'read'" floatLabel="never">
             <input [formControlName]="'value'" class="value" type="text" placeholder="List value" matInput readonly>
         </mat-form-field>
-        <mat-form-field class="large-field value-component-comment">
-            <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"
-                [formControlName]="'comment'" class="comment" placeholder="Comment" type="text" spellcheck="false">
-        </textarea>
-        </mat-form-field>
+        <app-comment-form *ngIf="!commentDisabled && valueFormControl && commentFormControl" [valueFormControlHasError]="hasError()" [(commentFormControl)]="commentFormControl" [valueFormControlValue]="valueFormControl.value"></app-comment-form>
     </span>
 </ng-template>
