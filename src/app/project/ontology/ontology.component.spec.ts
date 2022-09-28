@@ -218,6 +218,7 @@ describe('OntologyComponent', () => {
         fixture = TestBed.createComponent(OntologyComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        fixture.destroy();
     });
 
     it('should create', () => {
