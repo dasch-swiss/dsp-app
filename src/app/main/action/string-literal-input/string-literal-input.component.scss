@@ -30,7 +30,7 @@
     }
 
     .mat-button-toggle-vertical {
-      height: calc(4 * 36px + 2px);
+      height: calc(5 * 36px + 2px);
       border-radius: 4px 0 0 4px !important;
       border-right: 0px;
       overflow-y: auto;
@@ -44,7 +44,7 @@
       display: flex !important;
 
       textarea {
-        min-height: calc(4 * 36px) !important;
+        min-height: calc(5 * 36px) !important;
       }
     }
   }

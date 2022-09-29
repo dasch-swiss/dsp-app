@@ -80,7 +80,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     @ViewChild('btnToSelectLanguage', { static: false }) btnToSelectLanguage: MatMenuTrigger;
 
     form: UntypedFormGroup;
-    languages: string[] = ['de', 'fr', 'it', 'en'];
+    languages: string[] = ['de', 'fr', 'it', 'en', 'rm'];
 
     constructor(private _fb: UntypedFormBuilder,
         private _sessionService: SessionService) {

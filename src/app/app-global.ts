@@ -109,6 +109,10 @@ export class AppGlobal {
         {
             language: 'it',
             value: 'italiano'
+        },
+        {
+            language: 'rm',
+            value: 'rumantsch'
         }
     ];
 }

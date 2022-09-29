@@ -59,6 +59,10 @@ class TestHostStringLiteralInputComponent implements OnInit {
                 value: 'Mondo',
                 language: 'it'
             },
+            {
+                value: 'Mund',
+                language: 'rm'
+            }
         ];
 
         this.language = 'en';
@@ -167,6 +171,15 @@ describe('StringLiteralInputComponent', () => {
 
         // expect the value of the italian input to equal 'Mondo'
         expect(await inputElement.getValue()).toEqual('Mondo');
+
+        // select 'rm' button
+        langButton = sliMenuNativeElement.children[0].children[4];
+
+        // switch to romansh
+        langButton.click();
+
+        // expect the value of the romansh input to equal 'Mund'
+        expect(await inputElement.getValue()).toEqual('Mund');
     });
 
     it('should change a value and assign it to the correct language', async () => {
@@ -267,6 +280,15 @@ describe('StringLiteralInputComponent', () => {
         // expect the value of the english input to equal 'World'
         expect(await inputElement.getValue()).toEqual('World');
 
+        // select 'rm' button
+        langButton = sliMenuNativeElement.children[4];
+
+        // switch to english
+        langButton.click();
+
+        // expect the value of the romansh input to equal 'Mund'
+        expect(await inputElement.getValue()).toEqual('Mund');
+
     });
 
     it('should store a new value inside a textarea in the correct language', async () => {
@@ -337,6 +359,10 @@ describe('StringLiteralInputComponent', () => {
                 value: 'Mondo',
                 language: 'it'
             },
+            {
+                value: 'Mund',
+                language: 'rm'
+            }
         ];
 
         testHostFixture.detectChanges();
