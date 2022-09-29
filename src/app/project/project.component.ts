@@ -159,6 +159,8 @@ export class ProjectComponent implements OnInit {
                                         this._dspApiConnection.v2.onto.getOntology(onto.id).subscribe(
                                             (ontology: ReadOntology) => {
                                                 this.projectOntologies.push(ontology);
+                                                this.projectOntologies
+                                                    .sort((o1,o2) => this._compareOntologies(o1, o2));
                                                 this.ontologies.push(ontology);
                                                 if (ontoMeta.ontologies.length === this.ontologies.length) {
                                                     this._cache.set('currentProjectOntologies', this.ontologies);
@@ -243,6 +245,25 @@ export class ProjectComponent implements OnInit {
      */
     compareElementHeights(elem: HTMLElement): boolean {
         return !(elem.scrollHeight > elem.clientHeight);
+    }
+
+    /**
+     * compare function which sorts the ontologies in the ascending order.
+     *
+     * @param o1 ontology 1
+     * @param o2 ontology 2
+     * @private
+     */
+    private _compareOntologies(o1: ReadOntology, o2: ReadOntology) {
+        if (o1.label > o2.label) {
+            return 1;
+        }
+
+        if (o1.label < o2.label) {
+            return -1;
+        }
+
+        return 0;
     }
 
     /**
