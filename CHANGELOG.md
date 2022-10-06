@@ -1,5 +1,26 @@
 # Changelog
 
+## [10.10.0](https://github.com/dasch-swiss/dsp-app/compare/v10.9.1...v10.10.0) (2022-10-06)
+
+
+### Bug Fixes
+
+* **sidenav:** sort data models (DEV-1359) ([#841](https://github.com/dasch-swiss/dsp-app/issues/841)) ([75087b5](https://github.com/dasch-swiss/dsp-app/commit/75087b57c2e781015dcab1345b3e0aabfa2bac47))
+* **upload:** convert file extensions to lowercase before checking for validity (DEV-1391) ([#844](https://github.com/dasch-swiss/dsp-app/issues/844)) ([61005c6](https://github.com/dasch-swiss/dsp-app/commit/61005c62a9c43b93baa107b55155732fd259ac19))
+
+
+### Maintenance
+
+* maintain dependencies (DEV-1358) ([#839](https://github.com/dasch-swiss/dsp-app/issues/839)) ([e8c5140](https://github.com/dasch-swiss/dsp-app/commit/e8c5140e78595990a71c093f3915d573cb5293a8))
+* update release-please-action to v3 ([#837](https://github.com/dasch-swiss/dsp-app/issues/837)) ([9b1e7e1](https://github.com/dasch-swiss/dsp-app/commit/9b1e7e1c0455ea35d7d8f466fa3795deaaf47ffc))
+* upgrade Angular and Material to v14 (DEV-1322) ([#830](https://github.com/dasch-swiss/dsp-app/issues/830)) ([a46609f](https://github.com/dasch-swiss/dsp-app/commit/a46609f6453a5ad461ce17dd00e95abda4221572))
+
+
+### Enhancements
+
+* add support for Romansh language (DEV-557) ([#840](https://github.com/dasch-swiss/dsp-app/issues/840)) ([1ec8cff](https://github.com/dasch-swiss/dsp-app/commit/1ec8cff510e5d91a31209be57d9c9b7fd8c8b0eb))
+* **forms:** Comments are disabled or highlighted to be not saved if there is a invalid or an empty property value (DEV-1124) ([#836](https://github.com/dasch-swiss/dsp-app/issues/836)) ([f5b7abd](https://github.com/dasch-swiss/dsp-app/commit/f5b7abd26186d99d2f5d3f83f33698a7023b7655))
+
 ### [10.9.1](https://www.github.com/dasch-swiss/dsp-app/compare/v10.9.0...v10.9.1) (2022-09-26)
 
 
