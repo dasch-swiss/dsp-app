@@ -306,7 +306,7 @@ export class UploadComponent implements OnInit {
      * @param fileType file type to be checked
      */
     private _isFileTypeSupported(fileType: string): boolean {
-        return this._supportedFileTypes().includes(fileType);
+        return this._supportedFileTypes().includes(fileType.toLowerCase());
     }
 
     /**
