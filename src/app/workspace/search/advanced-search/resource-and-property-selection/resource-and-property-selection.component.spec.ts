@@ -163,7 +163,7 @@ describe('ResourceAndPropertySelectionComponent', () => {
 
         expect(testHostComponent.resourceClassAndPropertySelection.activeResourceClass).toEqual(undefined);
         expect(testHostComponent.resourceClassAndPropertySelection.resourceClasses.length).toEqual(12);
-        expect(Object.keys(testHostComponent.resourceClassAndPropertySelection.properties).length).toEqual(29);
+        expect(Object.keys(testHostComponent.resourceClassAndPropertySelection.properties).length).toEqual(30);
 
         const selectResClassComp = hostCompDe.query(By.directive(TestSearchSelectResourceClassComponent));
         expect((selectResClassComp.componentInstance as TestSearchSelectResourceClassComponent).resourceClassDefinitions.length).toEqual(12);
