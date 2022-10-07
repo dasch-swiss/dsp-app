@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.10.1](https://github.com/dasch-swiss/dsp-app/compare/v10.10.0...v10.10.1) (2022-10-07)
+
+
+### Bug Fixes
+
+* **list-info-form:** fix project iri generation (DEV-1387) ([#845](https://github.com/dasch-swiss/dsp-app/issues/845)) ([79c4791](https://github.com/dasch-swiss/dsp-app/commit/79c4791fde91c10b2c2266ef5c081bb3f8c35e27))
+
+
+### Maintenance
+
+* **deps:** bump JS-LIB to 7.4.6 ([#847](https://github.com/dasch-swiss/dsp-app/issues/847)) ([17d3af1](https://github.com/dasch-swiss/dsp-app/commit/17d3af1114f2f62b534f3b3d6a65491c6c82670f))
+
 ## [10.10.0](https://github.com/dasch-swiss/dsp-app/compare/v10.9.1...v10.10.0) (2022-10-06)
 
 
