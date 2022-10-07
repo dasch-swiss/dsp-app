@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
     ApiResponseData,
@@ -10,7 +9,7 @@ import {
     ListInfoResponse,
     ListNodeInfo,
     ListResponse,
-    ReadProject,
+    ProjectResponse,
     StringLiteral,
     UpdateListInfoRequest
 } from '@dasch-swiss/dsp-js';
@@ -68,6 +67,7 @@ export class ListInfoFormComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router
     ) {
+
         // get feature toggle information if url contains beta
         // in case of creating new
         if (this._route.parent) {
@@ -77,7 +77,15 @@ export class ListInfoFormComponent implements OnInit {
                 // get the shortcode of the current project
                 this._route.parent.paramMap.subscribe((params: Params) => {
                     this.projectCode = params.get('shortcode');
-                    this.projectIri = `${this._ais.dspAppConfig.iriBase}/projects/${this.projectCode}`;
+
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+                        (response: ApiResponseData<ProjectResponse>) => {
+                            this.projectIri = response.body.project.id;
+                        },
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
+                        }
+                    );
                 });
             }
         }
@@ -89,7 +97,15 @@ export class ListInfoFormComponent implements OnInit {
                 // get the shortcode of the current project
                 this._route.firstChild.paramMap.subscribe((params: Params) => {
                     this.projectCode = params.get('shortcode');
-                    this.projectIri = `${this._ais.dspAppConfig.iriBase}/projects/${this.projectCode}`;
+
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+                        (response: ApiResponseData<ProjectResponse>) => {
+                            this.projectIri = response.body.project.id;
+                        },
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
+                        }
+                    );
                 });
             }
         }
@@ -99,7 +115,6 @@ export class ListInfoFormComponent implements OnInit {
     ngOnInit() {
 
         this.loading = true;
-
         // get list info in case of edit mode
         if (this.mode === 'update') {
             // edit mode, get list
