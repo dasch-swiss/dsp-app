@@ -3,7 +3,7 @@
 <div class="multiple-instances" *ngIf="searchParams">
     <as-split direction="horizontal" (dragEnd)="splitSizeChanged = $event">
         <as-split-area [size]="40">
-            <app-list-view [search]="searchParams" [displayViewSwitch]="true" [withMultipleSelection]="true"
+            <app-list-view [search]="searchParams" [withMultipleSelection]="true"
             (selectedResources)="openSelectedResources($event)">
             </app-list-view>
         </as-split-area>

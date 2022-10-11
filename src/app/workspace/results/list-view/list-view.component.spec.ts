@@ -29,18 +29,6 @@ class TestResourceListComponent {
 
 }
 
-/**
- * test component to simulate child component, here resource-grid.
- */
-@Component({
-    selector: 'app-resource-grid',
-    template: ''
-})
-class TestResourceGridComponent {
-
-    @Input() resources: ReadResourceSequence;
-
-}
 
 /**
  * test component to simulate child component, here progress-indicator from action module.
@@ -111,7 +99,6 @@ describe('ListViewComponent', () => {
                 ListViewComponent,
                 TestParentComponent,
                 TestProgressIndicatorComponent,
-                TestResourceGridComponent,
                 TestResourceListComponent
             ],
             imports: [

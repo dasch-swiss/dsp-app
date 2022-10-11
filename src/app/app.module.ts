@@ -137,7 +137,6 @@ import { TimeInputComponent } from './workspace/resource/values/time-value/time-
 import { TimeValueComponent } from './workspace/resource/values/time-value/time-value.component';
 import { UriValueComponent } from './workspace/resource/values/uri-value/uri-value.component';
 import { ListViewComponent } from './workspace/results/list-view/list-view.component';
-import { ResourceGridComponent } from './workspace/results/list-view/resource-grid/resource-grid.component';
 import { ResourceListComponent } from './workspace/results/list-view/resource-list/resource-list.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AdvancedSearchComponent } from './workspace/search/advanced-search/advanced-search.component';
@@ -261,7 +260,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ResourceClassFormComponent,
         ResourceClassInfoComponent,
         ResourceComponent,
-        ResourceGridComponent,
         ResourceInstanceFormComponent,
         ResourceLinkFormComponent,
         ResourceListComponent,

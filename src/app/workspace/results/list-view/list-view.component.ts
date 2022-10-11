@@ -64,10 +64,6 @@ export class ListViewComponent implements OnChanges, OnInit {
 
     @Input() search: SearchParams;
 
-    @Input() view?: 'list' | 'grid' = 'list';    // todo: will be expanded with 'table' as soon as resource-table component is done
-
-    @Input() displayViewSwitch?: boolean = true;
-
     /**
      * set to true if multiple resources can be selected for comparison
      */
@@ -129,14 +125,6 @@ export class ListViewComponent implements OnChanges, OnInit {
         this.emitSelectedResources();
 
         this._doSearch();
-    }
-
-    /**
-     *
-     * @param view 'list' | ' grid'; TODO: will be expanded with 'table' as soon as resource-table component is done
-     */
-    toggleView(view: 'list' | 'grid') {
-        this.view = view;
     }
 
     // the child component send the selected resources to the parent of this component directly;

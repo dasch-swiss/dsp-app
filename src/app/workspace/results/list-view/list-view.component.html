@@ -1,15 +1,5 @@
 <!-- header / toolbar to select view and pagination -->
 <div class="list-view-header" [class.beta]="beta">
-    <span *ngIf="displayViewSwitch" class="switch-list">
-        <!-- <span class="switch-list-label">Display as&nbsp;</span> -->
-        <button mat-button (click)="toggleView('list')" [class.active]="view === 'list'">
-            <mat-icon>view_list</mat-icon>
-        </button>
-        <button mat-button (click)="toggleView('grid')" [class.active]="view === 'grid'">
-            <mat-icon>view_module</mat-icon>
-        </button>
-        <!-- TODO: add button to show as table, if possible (filter by same resource class) -->
-    </span>
     <span class="fill-remaining-space"></span>
     <span class="page-navigation" *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources.length)">
         <mat-paginator [length]="numberOfAllResults" [pageSize]="25" [hidePageSize]="true"
@@ -21,27 +11,13 @@
 <!-- container with search results -->
 <div class="list-view-container">
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
-
-    <!-- When multiple resources are selected for comparision -->
     <div class="list-view" *ngIf="!loading && (numberOfAllResults > 0 && resources)">
-        <div [ngSwitch]="view">
-            <app-resource-list
-                *ngSwitchCase="'list'"
-                [withMultipleSelection]="true"
-                [resources]="resources"
-                [selectedResourceIdx]="selectedResourceIdx"
-                (resourcesSelected)="emitSelectedResources($event)">
-            </app-resource-list>
-            <app-resource-grid
-                *ngSwitchCase="'grid'"
-                [withMultipleSelection]="true"
-                [resources]="resources"
-                [selectedResourceIdx]="selectedResourceIdx"
-                (resourcesSelected)="emitSelectedResources($event)">
-            </app-resource-grid>
-            <!-- TODO: implement table view -->
-            <!-- <kui-table-view *ngSwitchCase="'table'" [resources]="resources"></kui-table-view> -->
-        </div>
+        <app-resource-list
+            [withMultipleSelection]="true"
+            [resources]="resources"
+            [selectedResourceIdx]="selectedResourceIdx"
+            (resourcesSelected)="emitSelectedResources($event)">
+        </app-resource-list>
     </div>
 
     <!-- In case of 0 result -->
