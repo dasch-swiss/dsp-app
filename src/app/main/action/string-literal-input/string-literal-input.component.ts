@@ -92,7 +92,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
                 this.language = this._sessionService.getSession().user.lang;
             } else {
                 // get default language from browser
-                this.language = navigator.language.substr(0, 2);
+                this.language = navigator.language.substring(0, 2);
             }
         }
 

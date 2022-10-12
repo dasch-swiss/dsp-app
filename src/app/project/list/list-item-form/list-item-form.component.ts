@@ -174,7 +174,7 @@ export class ListItemFormComponent implements OnInit {
         const childNode: CreateChildNodeRequest = new CreateChildNodeRequest();
         childNode.parentNodeIri = this.parentIri;
         childNode.projectIri = this.projectIri;
-        childNode.name = this.projectCode + '-' + Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
+        childNode.name = this.projectCode + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
 
         // initialize labels
         let i = 0;

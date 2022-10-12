@@ -7,7 +7,7 @@
         <br><br>
         <p class="action center" *ngIf="item.url">
 
-            <span [ngSwitch]="item.url.substr(0,4)">
+            <span [ngSwitch]="item.url.substring(0,4)">
 
                 <!-- in case of http (external address) -->
                 <a mat-button *ngSwitchCase="'http'" [href]="item.url" target="_blank" color="primary" class="external-url">

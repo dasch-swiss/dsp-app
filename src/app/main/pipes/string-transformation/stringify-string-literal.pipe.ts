@@ -46,7 +46,7 @@ export class StringifyStringLiteralPipe implements PipeTransform {
                 language = this._sessionService.getSession().user.lang;
             } else {
                 // get default language from browser
-                language = navigator.language.substr(0, 2);
+                language = navigator.language.substring(0, 2);
             }
             // does the defined language exists and does it have a value?
             const index = value.findIndex(i => i.language === language);

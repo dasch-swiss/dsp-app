@@ -92,7 +92,7 @@ export class SearchListValueComponent implements OnInit, OnDestroy, PropertyValu
         const guiAttr = this.property.guiAttributes;
 
         if (guiAttr.length === 1 && guiAttr[0].startsWith('hlist=')) {
-            const listNodeIri = guiAttr[0].substr(7, guiAttr[0].length - (1 + 7)); // hlist=<>, get also rid of <>
+            const listNodeIri = guiAttr[0].substring(7, guiAttr[0].length - 1); // hlist=<>, get also rid of <>
             return listNodeIri;
         } else {
             console.log('No root node Iri given for property');

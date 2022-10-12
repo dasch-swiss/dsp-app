@@ -93,7 +93,7 @@ export class KnoraDatePipe implements PipeTransform {
      * @returns string
      */
     private _titleCase(str: string): string {
-        return str.split(' ').map(w => w[0].toUpperCase() + w.substr(1).toLowerCase()).join(' ');
+        return str.split(' ').map(w => w[0].toUpperCase() + w.substring(1).toLowerCase()).join(' ');
     }
 
 }

@@ -139,7 +139,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
 
         // set filename
         if (this.originalFilename === undefined) {
-            e.download = url.substr(url.lastIndexOf('/') + 1);
+            e.download = url.substring(url.lastIndexOf('/') + 1);
         } else {
             e.download = this.originalFilename;
         }
