@@ -113,7 +113,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
         const updatedListValue = new UpdateListValue();
 
         updatedListValue.id = this.displayValue.id;
-        if (this.selectedNode) {
+        if (this.selectedNode.id !== '') {
             updatedListValue.listNode = this.selectedNode.id;
         } else {
             updatedListValue.listNode = this.displayValue.listNode;
