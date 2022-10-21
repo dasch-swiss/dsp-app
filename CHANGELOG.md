@@ -1,5 +1,20 @@
 # Changelog
 
+## [10.10.2](https://github.com/dasch-swiss/dsp-app/compare/v10.10.1...v10.10.2) (2022-10-21)
+
+
+### Bug Fixes
+
+* **edit-list-item:** only send delete comment request if necessary (DEV-1406) ([#850](https://github.com/dasch-swiss/dsp-app/issues/850)) ([a2bddfc](https://github.com/dasch-swiss/dsp-app/commit/a2bddfc6c4c25ecb6b62d8108fec12c3617b914c))
+* **list-value:** fix payload for API request to update a link value (DEV-1420) ([#854](https://github.com/dasch-swiss/dsp-app/issues/854)) ([e350d21](https://github.com/dasch-swiss/dsp-app/commit/e350d21264657ceae028daf50ae4b496e8cb8940))
+
+
+### Maintenance
+
+* **deps:** bump JS-LIB to 7.4.7 ([#856](https://github.com/dasch-swiss/dsp-app/issues/856)) ([d10f9c4](https://github.com/dasch-swiss/dsp-app/commit/d10f9c451eb7087ee6e169efa255b182bc8575e4))
+* **project workspace:** Remove grid view from the project workspace (DEV-1318) ([#849](https://github.com/dasch-swiss/dsp-app/issues/849)) ([1083512](https://github.com/dasch-swiss/dsp-app/commit/1083512abd7f7b3aa842c4d8c4a1ef3fedf5acb7))
+* replace substr with substring (DEV-1409) ([#853](https://github.com/dasch-swiss/dsp-app/issues/853)) ([5b94d3b](https://github.com/dasch-swiss/dsp-app/commit/5b94d3bcc92ae13baa93604a59b8751d6e5d14b8))
+
 ## [10.10.1](https://github.com/dasch-swiss/dsp-app/compare/v10.10.0...v10.10.1) (2022-10-07)
 
 
