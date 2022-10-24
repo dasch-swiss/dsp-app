@@ -7,6 +7,7 @@ import { MatListModule } from '@angular/material/list';
 import { MockResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { ResourceListComponent } from './resource-list.component';
 import { FilteredResources } from '../list-view.component';
+import { ResourceService } from '../../../resource/services/resource.service';
 
 /**
  * mocked truncate pipe from action module.
@@ -49,6 +50,13 @@ class TestParentComponent implements OnInit {
 
 }
 
+// used to replace the service used by the component to test
+class TestResourceService {
+    getResourcePath(iri: string): string {
+        return 'ThisisAFakeIri';
+    }
+}
+
 describe('ResourceListComponent', () => {
     let testHostComponent: TestParentComponent;
     let testHostFixture: ComponentFixture<TestParentComponent>;
@@ -66,7 +74,7 @@ describe('ResourceListComponent', () => {
                 MatLineModule,
                 MatListModule
             ],
-            providers: []
+            providers: [{ provide: ResourceService, useClass: TestResourceService }]
         })
             .compileComponents();
     }));

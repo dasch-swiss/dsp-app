@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { Constants, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import { Constants, ReadLinkValue, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { CheckboxUpdate, FilteredResources } from '../list-view.component';
 import { ListViewService } from '../list-view.service';
+import { ResourceService } from '../../../resource/services/resource.service';
 
 @Component({
     selector: 'app-resource-list',
@@ -43,7 +44,8 @@ export class ResourceListComponent implements OnInit {
     @Output() resourcesSelected?: EventEmitter<FilteredResources> = new EventEmitter<FilteredResources>();
 
     constructor(
-        private _listView: ListViewService
+        private _listView: ListViewService,
+        private _resourceService: ResourceService
     ) { }
 
     ngOnInit() {
@@ -51,6 +53,16 @@ export class ResourceListComponent implements OnInit {
         if (this.resources.resources.length) {
             this.selectResource({ checked: true, resIndex: 0, resId: this.resources.resources[0].id, resLabel: this.resources.resources[0].label, isCheckbox: false });
         }
+    }
+
+    /**
+     * opens a clicked internal link
+     * @param linkValue
+     */
+    openResource(linkValue: ReadLinkValue | string) {
+        const iri = ((typeof linkValue == 'string') ? linkValue : linkValue.linkedResourceIri);
+        const path = this._resourceService.getResourcePath(iri);
+        window.open('/resource' + path, '_blank');
     }
 
     selectResource(status: CheckboxUpdate) {

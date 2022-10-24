@@ -15,7 +15,11 @@
                         <span class="res-prop-label">
                             {{ resource.entityInfo.properties[val.property].label }}
                         </span>
-                        <div class="res-prop-value shorten-long-text" [innerHtml]="val.strval"></div>
+                        <div
+                            appHtmlLink
+                            class="res-prop-value shorten-long-text" [innerHtml]="val.strval"
+                            (internalLinkClicked)="openResource($event)" >
+                        </div>
                     </div>
                 </div>
             </div>
