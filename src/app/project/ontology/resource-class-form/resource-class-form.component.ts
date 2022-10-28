@@ -112,7 +112,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         'name': {
             'required': 'Name is required.',
             'existingName': 'This name is already taken. Please choose another one.',
-            'pattern': 'Name shouldn\'t start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.'
+            'pattern': 'Name cannot start with a number or a number prefixed with "v". Spaces or special characters (except dash, dot and underscore) are not allowed.'
         },
         'label': {
             'required': 'Label is required.'
