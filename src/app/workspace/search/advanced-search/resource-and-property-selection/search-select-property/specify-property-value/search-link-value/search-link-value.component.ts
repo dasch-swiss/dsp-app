@@ -1,6 +1,8 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Constants, KnoraApiConnection, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { IRI, PropertyValue, Value } from '../operator';
 
@@ -22,6 +24,8 @@ export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValu
     form: UntypedFormGroup;
 
     resources: ReadResource[];
+
+    formValueChangesSubscription: Subscription;
 
     private _restrictToResourceClass: string;
 
@@ -47,9 +51,11 @@ export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValu
             ])]
         });
 
-        this.form.valueChanges.subscribe((data) => {
-            this.searchByLabel(data.resource);
-        });
+        this.formValueChangesSubscription = this.form.valueChanges
+            .pipe(
+                debounceTime(400), // only proceed if value has not changed for this amount of milliseconds
+                distinctUntilChanged()) // only proceed if value has changed to a different value
+            .subscribe(data => this.searchByLabel(data.resource));
 
         resolvedPromise.then(() => {
             // add form to the parent form group
@@ -63,6 +69,10 @@ export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValu
         resolvedPromise.then(() => {
             this.formGroup.removeControl('propValue');
         });
+
+        if(this.formValueChangesSubscription !== undefined) {
+            this.formValueChangesSubscription.unsubscribe();
+        }
 
     }
 

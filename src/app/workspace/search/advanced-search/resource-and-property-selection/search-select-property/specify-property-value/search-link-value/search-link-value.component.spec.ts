@@ -134,7 +134,7 @@ describe('SearchLinkValueComponent', () => {
         expect(testHostComponent.linkValue.form.valid).toBe(true);
         expect(testHostComponent.linkValue.form.controls['resource'].value.id).toEqual('http://testIri');
 
-        expect(searchSpy.v2.search.doSearchByLabel).toHaveBeenCalledTimes(5); // starts sending requests when 3 chars long: 'testres' -> tes (1) + tres (4)
+        expect(searchSpy.v2.search.doSearchByLabel).toHaveBeenCalledTimes(1); // only sends one request due to debouncing
         expect(searchSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith('testres', 0, { limitToResourceClass: 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing' });
 
     });

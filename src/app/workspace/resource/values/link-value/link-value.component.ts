@@ -27,6 +27,7 @@ import {
     UpdateLinkValue
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent, DialogEvent } from 'src/app/main/dialog/dialog.component';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
@@ -104,7 +105,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
                 (response: ReadResourceSequence) => {
                     this.resources = response.resources;
                     this.loadingResults = false;
-                    this.showNoResultsMessage = this.resources.length > 0;
+                    this.showNoResultsMessage = this.resources.length <= 0;
                 });
         } else {
             this.resources = [];
@@ -168,9 +169,11 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
 
         super.ngOnInit();
 
-        this.labelChangesSubscription = this.valueFormControl.valueChanges.subscribe(data => {
-            this.searchByLabel(data);
-        });
+        this.labelChangesSubscription = this.valueFormControl.valueChanges
+            .pipe(
+                debounceTime(400), // only proceed if value has not changed for this amount of milliseconds
+                distinctUntilChanged()) // only proceed if value has changed to a different value
+            .subscribe(data => this.searchByLabel(data));
     }
 
     ngOnChanges(changes: SimpleChanges): void {

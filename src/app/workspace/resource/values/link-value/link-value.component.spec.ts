@@ -22,6 +22,8 @@ import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { LinkValueComponent } from './link-value.component';
 
+const DEBOUNCING_VALUE = 400;
+
 /**
  * test host component to simulate parent component.
  */
@@ -213,9 +215,8 @@ describe('LinkValueComponent', () => {
             const res = testHostComponent.inputValueComponent.valueFormControl.value;
             testHostComponent.inputValueComponent.valueFormControl.setValue(res);
 
-            // https://github.com/angular/components/blob/29e74eb9431ba01d951ee33df554f465609b59fa/src/material/autocomplete/autocomplete.spec.ts#L2577-L2580
-            testHostFixture.detectChanges();
-            tick();
+            // https://medium.com/@golbie/angular-testing-async-stuff-in-the-fakedasync-zone-vs-providing-custom-schedulers-27a7f83c7774
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(valueReadModeNativeElement.innerText).toEqual('Sierra');
@@ -241,9 +242,9 @@ describe('LinkValueComponent', () => {
 
             testHostComponent.inputValueComponent.valueFormControl.setValue(update);
 
-            // https://github.com/angular/components/blob/29e74eb9431ba01d951ee33df554f465609b59fa/src/material/autocomplete/autocomplete.spec.ts#L2577-L2580
+            // https://medium.com/@golbie/angular-testing-async-stuff-in-the-fakedasync-zone-vs-providing-custom-schedulers-27a7f83c7774
             testHostFixture.detectChanges();
-            tick();
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(valueInputNativeElement.value).toEqual('new target');
@@ -297,7 +298,7 @@ describe('LinkValueComponent', () => {
 
         });
 
-        it('should search for resources by their label', () => {
+        it('should search for resources by their label', fakeAsync(() => {
 
             const valuesSpy = TestBed.inject(DspApiConnectionToken);
             (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(
@@ -312,10 +313,14 @@ describe('LinkValueComponent', () => {
             // simulate user searching for label 'thing'
             testHostComponent.inputValueComponent.valueFormControl.setValue('thing');
 
+            // https://medium.com/@golbie/angular-testing-async-stuff-in-the-fakedasync-zone-vs-providing-custom-schedulers-27a7f83c7774
+            tick(DEBOUNCING_VALUE);
+            testHostFixture.detectChanges();
+
             expect(valuesSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith('thing', 0, { limitToResourceClass: 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing' });
             expect(testHostComponent.inputValueComponent.resources.length).toEqual(1);
             expect(testHostComponent.inputValueComponent.resources[0].id).toEqual('http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ');
-        });
+        }));
 
         it('should not return an invalid update value (string)', () => {
 
@@ -420,9 +425,8 @@ describe('LinkValueComponent', () => {
 
             testHostComponent.inputValueComponent.valueFormControl.setValue(update);
 
-            // https://github.com/angular/components/blob/29e74eb9431ba01d951ee33df554f465609b59fa/src/material/autocomplete/autocomplete.spec.ts#L2577-L2580
-            testHostFixture.detectChanges();
-            tick();
+            // https://medium.com/@golbie/angular-testing-async-stuff-in-the-fakedasync-zone-vs-providing-custom-schedulers-27a7f83c7774
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(valueInputNativeElement.value).toEqual('new target');
@@ -431,8 +435,7 @@ describe('LinkValueComponent', () => {
 
             testHostComponent.inputValueComponent.resetFormControl();
 
-            testHostFixture.detectChanges();
-            tick();
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(valueInputNativeElement.value).toEqual('Sierra');
@@ -447,9 +450,8 @@ describe('LinkValueComponent', () => {
             const res = testHostComponent.inputValueComponent.valueFormControl.value;
             testHostComponent.inputValueComponent.valueFormControl.setValue(res);
 
-            // https://github.com/angular/components/blob/29e74eb9431ba01d951ee33df554f465609b59fa/src/material/autocomplete/autocomplete.spec.ts#L2577-L2580
-            testHostFixture.detectChanges();
-            tick();
+            // https://medium.com/@golbie/angular-testing-async-stuff-in-the-fakedasync-zone-vs-providing-custom-schedulers-27a7f83c7774
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.valueFormControl.value.label).toEqual('Sierra');
@@ -466,7 +468,7 @@ describe('LinkValueComponent', () => {
             testHostComponent.displayInputVal = newLink;
 
             testHostFixture.detectChanges();
-            tick();
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(valueReadModeNativeElement.innerText).toEqual('new target');
@@ -547,7 +549,7 @@ describe('LinkValueComponent', () => {
 
         });
 
-        it('should search a new value', () => {
+        it('should search a new value', fakeAsync(() => {
             const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
             (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(
@@ -560,12 +562,14 @@ describe('LinkValueComponent', () => {
             );
 
             testHostComponent.inputValueComponent.searchByLabel('thing');
+
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.mode).toEqual('create');
             expect(valuesSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith('thing', 0, { limitToResourceClass: 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing' });
             expect(testHostComponent.inputValueComponent.resources.length).toEqual(1);
-        });
+        }));
 
         it('should create a value', () => {
 
@@ -620,9 +624,8 @@ describe('LinkValueComponent', () => {
             res.label = 'hidden thing';
             testHostComponent.inputValueComponent.valueFormControl.setValue(res);
 
-            // https://github.com/angular/components/blob/29e74eb9431ba01d951ee33df554f465609b59fa/src/material/autocomplete/autocomplete.spec.ts#L2577-L2580
-            testHostFixture.detectChanges();
-            tick();
+            // https://medium.com/@golbie/angular-testing-async-stuff-in-the-fakedasync-zone-vs-providing-custom-schedulers-27a7f83c7774
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(valueInputNativeElement.value).toEqual('hidden thing');
@@ -635,8 +638,7 @@ describe('LinkValueComponent', () => {
 
             testHostComponent.inputValueComponent.resetFormControl();
 
-            testHostFixture.detectChanges();
-            tick();
+            tick(DEBOUNCING_VALUE);
             testHostFixture.detectChanges();
 
             expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
