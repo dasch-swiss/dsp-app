@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.11.0](https://github.com/dasch-swiss/dsp-app/compare/v10.10.2...v10.11.0) (2022-11-02)
+
+
+### Bug Fixes
+
+* **css:** adjust css of form error message (DEV-1458) ([#861](https://github.com/dasch-swiss/dsp-app/issues/861)) ([54e15d0](https://github.com/dasch-swiss/dsp-app/commit/54e15d06019be450145f1fadc06002d850c3f06f))
+* **ontology:** list of class properties sometimes not loading correctly (DEV-1435) ([#857](https://github.com/dasch-swiss/dsp-app/issues/857)) ([302d83b](https://github.com/dasch-swiss/dsp-app/commit/302d83be8431a9508c47aa393ce06f34350b24e0))
+
+
+### Enhancements
+
+* **link-value, search-link-value:** add debouncing to search requests (DEV-1463) ([#860](https://github.com/dasch-swiss/dsp-app/issues/860)) ([a49af8e](https://github.com/dasch-swiss/dsp-app/commit/a49af8e70490b6cf272e808c9617dfe78c18e203))
+* **result list:** Internal links open resource in new window (DEV-1405) ([#855](https://github.com/dasch-swiss/dsp-app/issues/855)) ([3396701](https://github.com/dasch-swiss/dsp-app/commit/3396701ed8559efccbb1301a6990204f76ef714f))
+
 ## [10.10.2](https://github.com/dasch-swiss/dsp-app/compare/v10.10.1...v10.10.2) (2022-10-21)
 
 
