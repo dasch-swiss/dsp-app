@@ -114,8 +114,7 @@ export class DisplayEditComponent implements OnInit {
 
     showDateLabels = false;
 
-    // gui element in case of textValue
-    textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
+    textArea = false;
 
     dateFormat: string;
 
@@ -153,12 +152,8 @@ export class DisplayEditComponent implements OnInit {
             (propDef: ResourcePropertyDefinition) => propDef.id === this.displayValue.property
         );
 
-        // we should also take the gui element into account in case of text value
-        // since simple text values and rich text values share the same object type 'TextValue',
-        // we need to use the ValueTypeService in order to assign it the correct object type for the ngSwitch in the template
-        if (this.valueTypeOrClass === 'ReadTextValueAsString') {
-            // handle the correct gui element depending on guiEle property
-            this.textValueGuiEle = this._valueService.getTextValueGuiEle(resPropDef[0].guiElement);
+        if(resPropDef[0].guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
+            this.textArea = true;
         }
 
         if (resPropDef.length !== 1) {

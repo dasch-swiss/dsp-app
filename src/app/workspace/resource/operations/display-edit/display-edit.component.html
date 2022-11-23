@@ -5,7 +5,7 @@
         [ngClass]="{'hover' : valueHovered, 'highlight' : shouldHighlightValue(valueUuidToHighlight)}">
         <span [ngSwitch]="valueTypeOrClass">
             <!-- display value is cast as 'any' because the compiler cannot infer the value type expected by the child component -->
-            <app-text-value-as-string class="parent-value-component" #displayVal *ngSwitchCase="'ReadTextValueAsString'" [mode]="mode" [displayValue]="$any(displayValue)" [guiElement]="textValueGuiEle"></app-text-value-as-string>
+            <app-text-value-as-string class="parent-value-component" #displayVal *ngSwitchCase="'ReadTextValueAsString'" [mode]="mode" [displayValue]="$any(displayValue)" [textArea]="textArea"></app-text-value-as-string>
             <app-text-value-as-html class="parent-value-component" #displayVal *ngSwitchCase="'ReadTextValueAsHtml'" [mode]="mode" [displayValue]="$any(displayValue)"
                                     (internalLinkClicked)="standoffLinkClicked($event)" (internalLinkHovered)="standoffLinkHovered($event)"></app-text-value-as-html>
             <app-text-value-as-xml class="parent-value-component" #displayVal *ngSwitchCase="'ReadTextValueAsXml'" [mode]="mode" [displayValue]="$any(displayValue)"

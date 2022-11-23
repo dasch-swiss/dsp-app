@@ -1,31 +1,14 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
     <!-- only use linkify pipe if property's gui-element is not richtext; I had the same issue in regions -->
-    <span class="rm-value text-value" [innerHtml]="guiElement === 'richText' ?  valueFormControl.value : valueFormControl.value | appLinkify" style="white-space: pre-wrap;"></span>
+    <span class="rm-value text-value" [innerHtml]="valueFormControl.value | appLinkify"></span>
     <span class="rm-comment" *ngIf="shouldShowComment">{{commentFormControl.value}}</span>
 </span>
 <ng-template #showForm>
     <span [formGroup]="form">
-        <mat-form-field *ngIf="guiElement !== 'richText'; else showRichText" class="large-field child-value-component"
-                        floatLabel="never">
+        <mat-form-field class="large-field child-value-component" floatLabel="never">
 
-            <!-- default gui-element: simple text -->
-            <input *ngIf="guiElement === 'simpleText'" matInput
-                   class="value"
-                   placeholder="Text value"
-                   type="text"
-                   [formControlName]="'value'"
-                   [errorStateMatcher]="matcher">
-
-            <!-- gui-element: text area -->
-            <textarea *ngIf="guiElement === 'textArea'" matInput
-                      class="value"
-                      placeholder="Text value"
-                      [formControlName]="'value'"
-                      [errorStateMatcher]="matcher"
-                      [cdkTextareaAutosize]="true"
-                      [cdkAutosizeMinRows]="6"
-                      [cdkAutosizeMaxRows]="12">
-            </textarea>
+            <input *ngIf="!textArea" matInput [formControlName]="'value'" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher">
+            <textarea *ngIf="textArea" matInput [formControlName]="'value'" class="value" placeholder="Text value" type="text" [errorStateMatcher]="matcher" rows="10"></textarea>
 
             <mat-error *ngIf="valueFormControl.hasError('valueNotChanged') &&
                 (valueFormControl.touched || valueFormControl.dirty)">
@@ -39,10 +22,6 @@
                     allowed.</span>
             </mat-error>
         </mat-form-field>
-        <!-- gui-element: rich-text -->
-        <ng-template #showRichText>
-            <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor"></ckeditor>
-        </ng-template>
         <app-comment-form *ngIf="!commentDisabled && valueFormControl && commentFormControl" [valueFormControlHasError]="hasError()" [(commentFormControl)]="commentFormControl" [valueFormControlValue]="valueFormControl.value"></app-comment-form>
     </span>
 </ng-template>

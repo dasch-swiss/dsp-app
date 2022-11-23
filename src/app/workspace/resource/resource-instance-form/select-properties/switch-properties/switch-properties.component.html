@@ -1,5 +1,5 @@
 <span [ngSwitch]="property.objectType">
-    <app-text-value-as-string #createVal *ngSwitchCase="'ReadTextValueAsString'" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName" [guiElement]="textValueGuiEle"></app-text-value-as-string>
+    <app-text-value-as-string #createVal *ngSwitchCase="'ReadTextValueAsString'" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName" [textArea]="textArea"></app-text-value-as-string>
     <app-text-value-as-xml #createVal *ngSwitchCase="'ReadTextValueAsXml'" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"></app-text-value-as-xml>
     <app-int-value #createVal *ngSwitchCase="constants.IntValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName"></app-int-value>
     <app-boolean-value #createVal *ngSwitchCase="constants.BooleanValue" [mode]="mode" [valueRequiredValidator]="isRequiredProp" [parentForm]="parentForm" [formName]="formName" [moreSpace]="true"></app-boolean-value>

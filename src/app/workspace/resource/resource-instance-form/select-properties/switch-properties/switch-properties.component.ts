@@ -1,9 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { Constants, ReadResource, ResourceClassDefinition, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
-import { ValueService } from '../../../services/value.service';
-
 @Component({
     selector: 'app-switch-properties',
     templateUrl: './switch-properties.component.html',
@@ -27,21 +25,21 @@ export class SwitchPropertiesComponent implements OnInit {
 
     mode = 'create';
 
-    // gui element in case of textValue
-    textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
+    textArea = false;
 
     constants = Constants;
 
-    constructor(
-        private _valueService: ValueService
-    ) { }
+    constructor() { }
 
     ngOnInit(): void {
         // the input isRequiredProp provided by KeyValuePair is stored as a number
         // a conversion from a number to a boolean is required by the input valueRequiredValidator
         this.isRequiredProp = !!+this.isRequiredProp;
 
-        this.textValueGuiEle = this._valueService.getTextValueGuiEle(this.property.guiElement);
+        if(this.property.guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
+            this.textArea = true;
+        }
+
     }
 
     saveNewValue() {
