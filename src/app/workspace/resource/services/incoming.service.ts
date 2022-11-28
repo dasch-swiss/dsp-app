@@ -211,7 +211,6 @@ FILTER NOT EXISTS {
 
 } OFFSET ${offset}
 `;
-
         return countQuery ? this._dspApiConnection.v2.search.doExtendedSearchCountQuery(sparqlQueryStr) : this._dspApiConnection.v2.search.doExtendedSearch(sparqlQueryStr);
     }
 }

@@ -222,10 +222,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             // get incoming resource, if the offset is the same but page changed
             this.getIncomingResource(this.resource.incomingRepresentations[position].id);
         }
-
         this.compoundPosition.position = position;
         this.compoundPosition.page = page;
-
         this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
 
     }
@@ -338,17 +336,14 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 const res = new DspResource(response);
 
                 this.incomingResource = res;
-
                 // if the resource is a still image, assign the iiiUrl to be passed as an input to the still-image component
                 if (this.incomingResource.res.properties[Constants.HasStillImageFileValue]) {
                     this.iiifUrl = (this.incomingResource.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue).fileUrl;
                 }
-
                 res.resProps = this.initProps(response);
                 res.systemProps = this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
                 this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
-
                 if (this.representationsToDisplay.length && this.representationsToDisplay[0].fileValue && this.compoundPosition) {
                     this.getIncomingRegions(this.incomingResource, 0);
                 }
@@ -406,7 +401,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                             values: resource.getValues(prop.propertyIndex)
                         };
                 }
-
                 return propInfoAndValues;
             }
         );
@@ -520,7 +514,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             const text = new FileRepresentation(fileValue);
             representations.push(text);
         }
-
         return representations;
 
     }
@@ -570,7 +563,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
      * Incoming resources are: regions, representations, and incoming links.
      */
     protected requestIncomingResources(resource: DspResource): void {
-
         // make sure that this resource has been initialized correctly
         if (resource === undefined) {
             return;
@@ -634,7 +626,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
      * It takes the number of images returned as an argument.
      */
     protected getIncomingLinks(offset: number): void {
-
         this._incomingService.getIncomingLinksForResource(this.resource.res.id, offset).subscribe(
             (incomingResources: ReadResourceSequence) => {
 
