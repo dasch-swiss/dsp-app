@@ -23,7 +23,7 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #more="matMenu" class="mat-menu-custom-black">
-                    <button class="menu-content" mat-menu-item (click)="downloadText(src.fileValue.fileUrl)" [disabled]="failedToLoad">
+                    <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)" [disabled]="failedToLoad">
                         Download file
                     </button>
                     <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">

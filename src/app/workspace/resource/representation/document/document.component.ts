@@ -19,7 +19,6 @@ import { ErrorHandlerService } from 'src/app/main/services/error-handler.service
 import { EmitEvent, Events, UpdatedFileEventValue, ValueOperationEventService } from '../../services/value-operation-event.service';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
@@ -52,7 +51,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     constructor(
         @Inject(DOCUMENT) private document: any,
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private readonly _http: HttpClient,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _rs: RepresentationService,
@@ -64,7 +62,11 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         if (this.fileType === 'pdf') {
             this.elem = document.getElementsByClassName('pdf-viewer')[0];
         }
-        this._getOriginalFilename();
+
+        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+            res => this.originalFilename = res['originalFilename']
+        );
+
         this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
     }
 
@@ -87,30 +89,8 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         }
     }
 
-    async downloadDocument(url: string) {
-        try {
-            const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
-            this.downloadFile(res);
-        } catch (e) {
-            this._errorHandler.showMessage(e);
-        }
-    }
-
-    downloadFile(data) {
-        const url = window.URL.createObjectURL(data);
-        const e = document.createElement('a');
-        e.href = url;
-
-        // set filename
-        if (this.originalFilename === undefined) {
-            e.download = url.substring(url.lastIndexOf('/') + 1);
-        } else {
-            e.download = this.originalFilename;
-        }
-
-        document.body.appendChild(e);
-        e.click();
-        document.body.removeChild(e);
+    download(url: string){
+        this._rs.downloadFile(url);
     }
 
     openReplaceFileDialog() {
@@ -156,21 +136,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         return filename.split('.').pop();
     }
 
-    private _getOriginalFilename() {
-        const requestOptions = {
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            withCredentials: true
-        };
-
-        const pathToJson = this.src.fileValue.fileUrl.substring(0, this.src.fileValue.fileUrl.lastIndexOf('/')) + '/knora.json';
-
-        this._http.get(pathToJson, requestOptions).subscribe(
-            res => {
-                this.originalFilename = res['originalFilename'];
-            }
-        );
-    }
-
     private _replaceFile(file: UpdateFileValue) {
         const updateRes = new UpdateResource();
         updateRes.id = this.parentResource.id;
@@ -192,7 +157,10 @@ export class DocumentComponent implements OnInit, AfterViewInit {
                 if (this.fileType === 'pdf') {
                     this.elem = document.getElementsByClassName('pdf-viewer')[0];
                 }
-                this._getOriginalFilename();
+
+                this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+                    res => this.originalFilename = res['originalFilename']
+                );
 
                 this.zoomFactor = 1.0;
                 this.pdfQuery = '';

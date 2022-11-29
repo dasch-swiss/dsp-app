@@ -1,18 +1,16 @@
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInitService } from 'src/app/app-init.service';
-import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { TestConfig } from 'test.config';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { FileRepresentation } from '../file-representation';
 
 import { ArchiveComponent } from './archive.component';
+import { RepresentationService } from '../representation.service';
+import { of } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
 
 
 const archiveFileValue = {
@@ -34,6 +32,22 @@ const archiveFileValue = {
     'versionArkUrl': 'http://0.0.0.0:3336/ark:/72163/1/0123/6c=f69h6Ss6GXPME565EqAS/dDHcFHlwQ9K46255QfUGrQ8.20211203T095946609839Z'
 };
 
+const knoraJson = `{
+    "@context": "http://sipi.io/api/file/3/context.json",
+    "id": "http://iiif.test.dasch.swiss/0123/FeWLDZ4a0Tw-BBECkdbIVUW.zip",
+    "checksumOriginal": "24f8bdd4cb52413e28480bab928ad00747392a17837a6ce505c00ad9927d6109",
+    "checksumDerivative": "24f8bdd4cb52413e28480bab928ad00747392a17837a6ce505c00ad9927d6109",
+    "internalMimeType": "application/zip",
+    "fileSize": 228,
+    "originalFilename": "test.zip"
+}`;
+
+const appInitSpy = {
+    dspAppConfig: {
+        iriBase: 'http://rdfh.ch'
+    }
+};
+
 @Component({
     template: `
         <app-archive [src]="archiveFileRepresentation">
@@ -51,32 +65,45 @@ class TestHostComponent implements OnInit {
     }
 }
 
+@Component({ selector: 'app-status', template: '' })
+class MockStatusComponent {
+    @Input() status: number;
+
+    @Input() comment?: string;
+    @Input() url?: string;
+    @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
+
+    constructor() { }
+}
+
 describe('ArchiveComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let loader: HarnessLoader;
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({
+        const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo', 'doesFileExist']);
+
+        TestBed.configureTestingModule({
             declarations: [
                 ArchiveComponent,
-                TestHostComponent
+                TestHostComponent,
+                MockStatusComponent
             ],
             imports: [
-                HttpClientTestingModule,
                 MatDialogModule,
                 MatSnackBarModule,
-                MatMenuModule
+                MatMenuModule,
+                MatIconModule
             ],
             providers: [
                 AppInitService,
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig
+                    provide: DspApiConnectionToken,
+                    useValue: appInitSpy
                 },
                 {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                    provide: RepresentationService,
+                    useValue: representationServiceSpyObj
                 }
             ]
         })
@@ -84,9 +111,13 @@ describe('ArchiveComponent', () => {
     });
 
     beforeEach(() => {
+        const representationServiceSpy = TestBed.inject(RepresentationService);
+        (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(
+            () => of(knoraJson)
+        );
+
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
-        loader = TestbedHarnessEnvironment.loader(testHostFixture);
         testHostFixture.detectChanges();
         expect(testHostComponent).toBeTruthy();
     });

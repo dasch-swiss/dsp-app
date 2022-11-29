@@ -1,6 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
+import { of } from 'rxjs';
+import { AppInitService } from 'src/app/app-init.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 import { AudioComponent } from './audio.component';
 
 // --> TODO: get test data from dsp-js or from dsp-api test data
@@ -23,6 +34,22 @@ const audioFileValue = {
     'propertyComment': 'Connects a Representation to an audio file'
 };
 
+const knoraJson = `{
+    "@context": "http://sipi.io/api/file/3/context.json",
+    "id": "http://iiif.test.dasch.swiss/0123/2ESjhjJnQzL-GTnokcfm5bV.mp3",
+    "checksumOriginal": "9a27c32bd80a0ab73dc5d4a3dfb655b78232508b1c60978d03ccfcdc28288c24",
+    "checksumDerivative": "9a27c32bd80a0ab73dc5d4a3dfb655b78232508b1c60978d03ccfcdc28288c24",
+    "internalMimeType": "audio/mpeg",
+    "fileSize": 1693405,
+    "originalFilename": "sample.mp3"
+}`;
+
+const appInitSpy = {
+    dspAppConfig: {
+        iriBase: 'http://rdfh.ch'
+    }
+};
+
 @Component({
     template: `
         <app-audio [src]="audioFileRepresentation">
@@ -40,25 +67,80 @@ class TestHostComponent implements OnInit {
     }
 }
 
+@Component({ selector: 'app-status', template: '' })
+class MockStatusComponent {
+    @Input() status: number;
+
+    @Input() comment?: string;
+    @Input() url?: string;
+    @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
+
+    constructor() { }
+}
+
 describe('AudioComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
 
     beforeEach(async () => {
+        const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo', 'doesFileExist']);
+        // const sanitizerSpyObj = jasmine.createSpyObj('DomSanitizer', ['bypassSecurityTrustUrl']);
+
         await TestBed.configureTestingModule({
-            declarations: [AudioComponent]
+            declarations: [
+                AudioComponent,
+                TestHostComponent,
+                MockStatusComponent,
+                CdkCopyToClipboard
+            ],
+            imports: [
+                MatDialogModule,
+                MatSnackBarModule,
+                MatMenuModule,
+                MatSliderModule,
+                MatIconModule,
+                BrowserModule
+            ],
+            providers: [
+                AppInitService,
+                {
+                    provide: DspApiConnectionToken,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: RepresentationService,
+                    useValue: representationServiceSpyObj
+                },
+                // {
+                //     provide: DomSanitizer,
+                //     useValue: {
+                //         sanitize: (ctx: any, val: string) => val,
+                //         bypassSecurityTrustUrl: (val: string) => val,
+                //       }
+                // }
+            ]
         })
             .compileComponents();
     });
 
     beforeEach(() => {
+        const representationServiceSpy = TestBed.inject(RepresentationService);
+        (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(
+            () => of(knoraJson)
+        );
+
+        (representationServiceSpy as jasmine.SpyObj<RepresentationService>).doesFileExist.and.callFake(
+            () => true
+        );
+
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();
+        expect(testHostComponent).toBeTruthy();
     });
 
-    it('should create', () => {
-        expect(testHostComponent).toBeTruthy();
+    it('should have a file url', () => {
+        expect(testHostComponent.audioFileRepresentation.fileValue.fileUrl).toEqual('http://0.0.0.0:1024/1111/7vpVORXYoFV-FkzJ5Fg4bkU.mp3/file');
     });
 });

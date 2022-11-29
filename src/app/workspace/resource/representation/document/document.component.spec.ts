@@ -7,12 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
-import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
-import { TestConfig } from 'test.config';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 import { DocumentComponent } from './document.component';
 
 const documentPdfFileValue = {
@@ -52,6 +52,35 @@ const documentPptFileValue = {
     'property': 'http://api.knora.org/ontology/knora-api/v2#hasDocumentFileValue',
     'propertyLabel': 'hat Dokument',
     'propertyComment': 'Connects a Representation to a document'
+};
+
+const knoraJsonPdf = `{
+    "@context": "http://sipi.io/api/file/3/context.json",
+    "id": "http://iiif.test.dasch.swiss/0123/8IaEvWaRzum-FM8ewNYChGo.pdf",
+    "checksumOriginal": "3df79d34abbca99308e79cb94461c1893582604d68329a41fd4bec1885e6adb4",
+    "checksumDerivative": "3df79d34abbca99308e79cb94461c1893582604d68329a41fd4bec1885e6adb4",
+    "width": 2479,
+    "height": 3508,
+    "numpages": 1,
+    "internalMimeType": "application/pdf",
+    "originalMimeType": "application/pdf",
+    "originalFilename": "test.pdf"
+}`;
+
+const knoraJsonPpt = `{
+    "@context": "http://sipi.io/api/file/3/context.json",
+   "id": "http://iiif.test.dasch.swiss/0123/Ji1DvXdU5hG-GKjsOtfDbIg.ppt",
+   "checksumOriginal": "7cf2016a0742cc13686028a6553b49260a76404e43c4a56657af99d87e636e69",
+   "checksumDerivative": "7cf2016a0742cc13686028a6553b49260a76404e43c4a56657af99d87e636e69",
+   "internalMimeType": "application/vnd.ms-powerpoint",
+   "fileSize": 2863616,
+   "originalFilename": "test.ppt"
+}`;
+
+const appInitSpy = {
+    dspAppConfig: {
+        iriBase: 'http://rdfh.ch'
+    }
 };
 
 /**
@@ -106,6 +135,8 @@ class MockStatusComponent {
 describe('DocumentComponent', () => {
 
     beforeEach(async () => {
+        const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo', 'doesFileExist']);
+
         await TestBed.configureTestingModule({
             declarations: [
                 DocumentComponent,
@@ -121,17 +152,16 @@ describe('DocumentComponent', () => {
                 MatMenuModule,
                 MatSnackBarModule,
                 PdfViewerModule
-
             ],
             providers: [
                 AppInitService,
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig
+                    provide: DspApiConnectionToken,
+                    useValue: appInitSpy
                 },
                 {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                    provide: RepresentationService,
+                    useValue: representationServiceSpyObj
                 }
             ]
         })
@@ -144,6 +174,11 @@ describe('DocumentComponent', () => {
         let documentComponentDe: DebugElement;
 
         beforeEach(() => {
+            const representationServiceSpy = TestBed.inject(RepresentationService);
+            (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(
+                () => of(knoraJsonPdf)
+            );
+
             testHostFixture = TestBed.createComponent(TestPdfDocumentHostComponent);
             testHostComponent = testHostFixture.componentInstance;
             testHostFixture.detectChanges();
@@ -170,6 +205,11 @@ describe('DocumentComponent', () => {
         let documentComponentDe: DebugElement;
 
         beforeEach(() => {
+            const representationServiceSpy = TestBed.inject(RepresentationService);
+            (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(
+                () => of(knoraJsonPpt)
+            );
+
             testHostFixture = TestBed.createComponent(TestPptDocumentHostComponent);
             testHostComponent = testHostFixture.componentInstance;
             testHostFixture.detectChanges();

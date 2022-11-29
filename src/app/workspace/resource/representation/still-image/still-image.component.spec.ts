@@ -12,9 +12,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Constants, MockResource, ReadGeomValue, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
+import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { FileRepresentation } from '../file-representation';
+import { RepresentationService } from '../representation.service';
 import { Region, StillImageComponent } from './still-image.component';
 
 // --> TODO: get test data from dsp-js
@@ -39,6 +41,18 @@ const stillImageFileValue = {
     'propertyLabel': 'has image file',
     'propertyComment': 'Connects a Representation to an image file'
 };
+
+const knoraJson = `{
+    "@context": "http://sipi.io/api/file/3/context.json",
+    "id": "http://0.0.0.0:1024/0123/4QDrmFc74t3-CcHrliRmPWZ.jp2",
+    "checksumOriginal": "2de469409abf8781d38e63fcb26149404c18067906054b75731e2acc57275214",
+    "checksumDerivative": "15c749335d5feacfe93dd05ce661a30a42ac332ab55d7476d599b98a58f7057a",
+    "width": 640,
+    "height": 426,
+    "internalMimeType": "image/jpx",
+    "originalMimeType": "image/jpeg",
+    "originalFilename": "test.jpeg"
+}`;
 
 // --> TODO: remove dummy regions: https://dasch.myjetbrains.com/youtrack/issue/DSP-506
 const rectangleGeom = `{
@@ -132,6 +146,8 @@ describe('StillImageComponent', () => {
             }
         };
 
+        const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo', 'doesFileExist']);
+
         TestBed.configureTestingModule({
             declarations: [
                 StillImageComponent,
@@ -154,6 +170,10 @@ describe('StillImageComponent', () => {
                     useValue: adminSpyObj
                 },
                 {
+                    provide: RepresentationService,
+                    useValue: representationServiceSpyObj
+                },
+                {
                     provide: MAT_DIALOG_DATA,
                     useValue: {}
                 },
@@ -167,6 +187,11 @@ describe('StillImageComponent', () => {
     });
 
     beforeEach(() => {
+        const representationServiceSpy = TestBed.inject(RepresentationService);
+        (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(
+            () => of(knoraJson)
+        );
+
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();

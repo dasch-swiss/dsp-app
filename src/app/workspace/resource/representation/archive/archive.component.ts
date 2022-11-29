@@ -1,4 +1,3 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
@@ -39,7 +38,6 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private readonly _http: HttpClient,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _rs: RepresentationService,
@@ -47,7 +45,10 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
     ) { }
 
     ngOnInit(): void {
-        this._getOriginalFilename();
+        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+            res => this.originalFilename = res['originalFilename']
+        );
+
         this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
     }
 
@@ -55,31 +56,8 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
         this.loaded.emit(true);
     }
 
-    // https://stackoverflow.com/questions/66986983/angular-10-download-file-from-firebase-link-without-opening-into-new-tab
-    async downloadArchive(url: string) {
-        try {
-            const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
-            this.downloadFile(res);
-        } catch (e) {
-            this._errorHandler.showMessage(e);
-        }
-    }
-
-    downloadFile(data) {
-        const url = window.URL.createObjectURL(data);
-        const e = document.createElement('a');
-        e.href = url;
-
-        // set filename
-        if (this.originalFilename === undefined) {
-            e.download = url.substring(url.lastIndexOf('/') + 1);
-        } else {
-            e.download = this.originalFilename;
-        }
-
-        document.body.appendChild(e);
-        e.click();
-        document.body.removeChild(e);
+    download(url: string){
+        this._rs.downloadFile(url);
     }
 
     openReplaceFileDialog() {
@@ -106,21 +84,6 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private _getOriginalFilename() {
-        const requestOptions = {
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            withCredentials: true
-        };
-
-        const pathToJson = this.src.fileValue.fileUrl.substring(0, this.src.fileValue.fileUrl.lastIndexOf('/')) + '/knora.json';
-
-        this._http.get(pathToJson, requestOptions).subscribe(
-            res => {
-                this.originalFilename = res['originalFilename'];
-            }
-        );
-    }
-
     private _replaceFile(file: UpdateFileValue) {
         const updateRes = new UpdateResource();
         updateRes.id = this.parentResource.id;
@@ -136,11 +99,16 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
                 this.src.fileValue.filename = (res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue).filename;
                 this.src.fileValue.strval = (res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue).strval;
 
-                this._getOriginalFilename();
+                this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
+                    res => {
+                        this.originalFilename = res['originalFilename'];
 
-                this._valueOperationEventService.emit(
-                    new EmitEvent(Events.FileValueUpdated, new UpdatedFileEventValue(
-                        res2.properties[Constants.HasArchiveFileValue][0])));
+                        this._valueOperationEventService.emit(
+                            new EmitEvent(Events.FileValueUpdated, new UpdatedFileEventValue(
+                                res2.properties[Constants.HasArchiveFileValue][0])));
+                    }
+                );
+
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);

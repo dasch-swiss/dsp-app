@@ -193,12 +193,13 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
             this._setupViewer();
         }
         if (changes['images']) {
-            this._getOriginalFilename();
-
-            this._openImages();
-            this._unhighlightAllRegions();
-            // --> TODO: check if this is necessary or could be handled below
-            //  (remove the 'else' before the 'if', so changes['activateRegion'] is always checked for)
+            this._rs.getFileInfo(this.images[0].fileValue.fileUrl, this.images[0].fileValue.filename).subscribe(
+                res => {
+                    this.originalFilename = res['originalFilename'];
+                    this._openImages();
+                    this._unhighlightAllRegions();
+                }
+            );
         }
 
         if (this.currentTab === 'annotations') {
@@ -365,30 +366,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         this._notification.openSnackBar(message);
     }
 
-    async downloadStillImage(url: string) {
-        try {
-            const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
-            this.downloadFile(res);
-        } catch (e) {
-            this._errorHandler.showMessage(e);
-        }
-    }
-
-    downloadFile(data) {
-        const url = window.URL.createObjectURL(data);
-        const e = document.createElement('a');
-        e.href = url;
-
-        // set filename
-        if (this.originalFilename === undefined) {
-            e.download = url.substring(url.lastIndexOf('/') + 1);
-        } else {
-            e.download = this.originalFilename;
-        }
-
-        document.body.appendChild(e);
-        e.click();
-        document.body.removeChild(e);
+    download(url: string){
+        this._rs.downloadFile(url, this.images[0].fileValue.filename);
     }
 
     openReplaceFileDialog() {
@@ -424,22 +403,6 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         this.goToPage.emit(p);
     }
 
-    private _getOriginalFilename() {
-        const requestOptions = {
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            withCredentials: true
-        };
-
-        const index = this.images[0].fileValue.fileUrl.indexOf(this.images[0].fileValue.filename);
-        const pathToJson = this.images[0].fileValue.fileUrl.substring(0, index + this.images[0].fileValue.filename.length) + '/knora.json';
-
-        this._http.get(pathToJson, requestOptions).subscribe(
-            res => {
-                this.originalFilename = res['originalFilename'];
-            }
-        );
-    }
-
     private _replaceFile(file: UpdateFileValue) {
         const updateRes = new UpdateResource();
         updateRes.id = this.parentResource.id;
@@ -455,7 +418,11 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
                     new EmitEvent(Events.FileValueUpdated, new UpdatedFileEventValue(
                         res2.properties[Constants.HasStillImageFileValue][0])));
 
-                this._getOriginalFilename();
+                this._rs.getFileInfo(this.images[0].fileValue.fileUrl, this.images[0].fileValue.filename).subscribe(
+                    res => {
+                        this.originalFilename = res['originalFilename'];
+                    }
+                );
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);

@@ -33,7 +33,7 @@
                     <button class="menu-content" mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">
                         Copy audio URL to clipboard
                     </button>
-                    <button class="menu-content" mat-menu-item (click)="downloadAudio(src.fileValue.fileUrl)">
+                    <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)">
                         Download audio
                     </button>
                     <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">
