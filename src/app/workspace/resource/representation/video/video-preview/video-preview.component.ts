@@ -211,7 +211,6 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
 
         this._getMatrixDimension(image).subscribe(
             (dim: Dimension) => {
-
                 // we got a dimension. There's no error
                 this.previewError = false;
 
@@ -219,7 +218,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
                 this.matrixWidth = dim.width;
                 this.matrixHeight = dim.height;
 
-                let lines: number = (this.fileInfo.duration > 360 ? 6 : Math.round(this.fileInfo.duration / 60));
+                let lines: number = (this.fileInfo.duration > 360 ? 6 : Math.floor((this.fileInfo.duration / 60)+1));
                 lines = (lines > 0 ? lines : 1);
 
                 // last matrix file could have a different height than the previous ones
@@ -227,7 +226,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
                 this.lastMatrixNr = Math.floor((this.fileInfo.duration - 10) / 360);
                 if (this.lastMatrixNr === fileNumber) {
                     // re-calc number of lines
-                    this.lastMatrixFrameNr = Math.floor((this.fileInfo.duration - 8) / 10);
+                    this.lastMatrixFrameNr = Math.floor(((this.fileInfo.duration - 8) / 10)+1);
                     lines = Math.floor((this.lastMatrixFrameNr - (this.lastMatrixNr * 36)) / 6) + 1;
                 }
 
