@@ -9,19 +9,36 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { MockProjects, MockUsers, ProjectsEndpointAdmin, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
+import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
-import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
-import { TestConfig } from 'test.config';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { MembershipComponent } from './membership.component';
 
 describe('MembershipComponent', () => {
     let component: MembershipComponent;
     let fixture: ComponentFixture<MembershipComponent>;
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
+
+        const adminEndpointSpyObj = {
+            admin: {
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjects', 'getProjectMembersByIri']),
+                usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername', 'addUserToProjectMembership', 'removeUserFromProjectMembership'])
+            }
+        };
+
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
+
         TestBed.configureTestingModule({
             declarations: [
                 MembershipComponent,
@@ -41,14 +58,17 @@ describe('MembershipComponent', () => {
                 RouterTestingModule
             ],
             providers: [
-                AppInitService,
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                    useValue: adminEndpointSpyObj
                 }
             ]
         })
@@ -56,6 +76,22 @@ describe('MembershipComponent', () => {
     }));
 
     beforeEach(() => {
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(
+            () => {
+                const loggedInUser = MockUsers.mockUser();
+                return of(loggedInUser);
+            }
+        );
+
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjects.and.callFake(
+            () => {
+                const projects = MockProjects.mockProjects();
+                return of(projects);
+            }
+        );
+
         fixture = TestBed.createComponent(MembershipComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

@@ -40,17 +40,13 @@
                     <span *ngIf="status">assignment</span>
                     <span *ngIf="!status">lock</span>
                 </mat-icon>
-                <!-- QUESTION: should we show the project logo
-                <img kuiAdminImage [image]="project.logo" [type]="'project'" class="avatar-image link"
-                     (click)="gotoProjectBoard(project.shortcode)" />
-                -->
             </td>
             <td class="table-info">
                 <!-- Longname hidden on phone devices -->
-                <h5 class="mat-subheading-2 link info-longname" (click)="openProjectPage(project.shortcode)">
+                <h5 class="mat-subheading-2 link info-longname" (click)="openProjectPage(project.id)">
                     {{project.longname}}
                 </h5>
-                <p class="mat-subheading-1 link" (click)="openProjectPage(project.shortcode)">
+                <p class="mat-subheading-1 link" (click)="openProjectPage(project.id)">
                     {{project.shortcode}} | {{project.shortname}}
                 </p>
             </td>
@@ -68,7 +64,7 @@
                 </button>
                 <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
                     <button mat-menu-item *ngIf="status"
-                        (click)="openDialog('editProject', project.shortname, project.shortcode)">
+                        (click)="openDialog('editProject', project.shortname, project.id)">
                         Edit project information
                     </button>
                     <!-- disable the deactivate-button for the following two projects:

@@ -6,23 +6,39 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, MockOntology, MockProjects, OntologiesEndpointV2, ProjectResponse, ProjectsEndpointAdmin, ReadProject } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { TestConfig } from 'test.config';
+import { AjaxResponse } from 'rxjs/ajax';
 import { AppInitService } from '../app-init.service';
 import { CacheService } from '../main/cache/cache.service';
-import { DspApiConfigToken, DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { DialogComponent } from '../main/dialog/dialog.component';
 import { StatusComponent } from '../main/status/status.component';
+import { OntologyService } from './ontology/ontology.service';
 import { ProjectComponent } from './project.component';
 
 describe('ProjectComponent', () => {
     let component: ProjectComponent;
     let fixture: ComponentFixture<ProjectComponent>;
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
 
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set', 'has']);
+        const dspConnSpyObj = {
+            admin: {
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri'])
+            },
+            v2: {
+                onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri']),
+            }
+        };
+        const ontoServiceSpy = jasmine.createSpyObj('OntologyService', ['getOntologyName']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -39,18 +55,21 @@ describe('ProjectComponent', () => {
                 RouterTestingModule
             ],
             providers: [
-                AppInitService,
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig
+                    provide: AppInitService,
+                    useValue: appInitSpy
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig)
+                    useValue: dspConnSpyObj
                 },
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpy
+                },
+                {
+                    provide: OntologyService,
+                    useValue: ontoServiceSpy
                 },
                 {
                     provide: ActivatedRoute,
@@ -60,7 +79,7 @@ describe('ProjectComponent', () => {
                                 { path: 'project' }
                             ],
                             params: [
-                                { shortcode: '0001' }
+                                { uuid: '09aQ4EuRKReCXnO0pTJ92ug001' }
                             ]
                         }
                     }
@@ -85,15 +104,36 @@ describe('ProjectComponent', () => {
                 return of(response.project as ReadProject);
             }
         );
-    });
 
-    beforeEach(() => {
+        // mock API
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        // mock projects endpoint
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
+            () => {
+                const response = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+            }
+        );
+
+        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntologiesByProjectIri.and.callFake(
+            () => {
+                const anythingOnto = MockOntology.mockOntologiesMetadata();
+                return of(anythingOnto);
+            }
+        );
+
         fixture = TestBed.createComponent(ProjectComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    xit('should create', () => {
         expect(component).toBeTruthy();
     });
 

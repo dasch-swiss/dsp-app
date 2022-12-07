@@ -6,6 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StoredProject } from '@dasch-swiss/dsp-js';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 
 import { ProjectTileComponent } from './project-tile.component';
 
@@ -26,7 +27,7 @@ class TestHostProjectTileComponent implements OnInit {
     ngOnInit(){
         this.project.status = true;
         this.project.longname = 'test project';
-        this.project.shortcode = '0123';
+        this.project.id = 'http://rdfh.ch/projects/9aQ4EuRKReCXnO0pTJ92ug';
     }
 
     deactivateProject() {
@@ -52,6 +53,8 @@ describe('ProjectTileComponent', () => {
     let rootLoader: HarnessLoader;
 
     beforeEach(async () => {
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
+
         await TestBed.configureTestingModule({
             declarations: [
                 ProjectTileComponent,
@@ -59,6 +62,12 @@ describe('ProjectTileComponent', () => {
             ],
             imports: [
                 RouterTestingModule
+            ],
+            providers: [
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
+                },
             ]
         })
             .compileComponents();
@@ -80,6 +89,12 @@ describe('ProjectTileComponent', () => {
         testHostComponent.grantSysAdminRole();
 
         testHostFixture.detectChanges();
+
+        const projectServiceSpy = TestBed.inject(ProjectService);
+
+            (projectServiceSpy as jasmine.SpyObj<ProjectService>).iriToUuid.and.callFake(
+                (iri: string) => '9aQ4EuRKReCXnO0pTJ92ug'
+            );
     });
 
     it('should show correct project status', () => {
@@ -136,18 +151,18 @@ describe('ProjectTileComponent', () => {
         expect(settingsBtn.length).toEqual(0);
     });
 
-    it('should go to project dashboard when the "Go to dashboard" button is clicked', async () => {
+    it('should go to project workspace when the "Go to dashboard" button is clicked', async () => {
         // spy on navigateTo method
         const navigateToSpy = spyOn(testHostComponent.projectTileComp, 'navigateTo');
 
         // grab the 'go to dashboard' button
-        const goToProjectDashboardBtn = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.dashboard-button' }));
+        const goToProjectDashboardBtn = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.workspace-button' }));
 
         // click the button
         await goToProjectDashboardBtn.click();
 
         // ensure the correct arguments were passed to the navigateTo method
-        expect(navigateToSpy).toHaveBeenCalledWith('0123', 'dashboard');
+        expect(navigateToSpy).toHaveBeenCalledWith('http://rdfh.ch/projects/9aQ4EuRKReCXnO0pTJ92ug', 'workspace');
     });
 
     it('should go to project settings when the settings button is clicked', async () => {
@@ -161,6 +176,6 @@ describe('ProjectTileComponent', () => {
         await settingsBtn.click();
 
         // ensure the correct arguments were passed to the navigateTo method
-        expect(navigateToSpy).toHaveBeenCalledWith('0123', 'settings');
+        expect(navigateToSpy).toHaveBeenCalledWith('http://rdfh.ch/projects/9aQ4EuRKReCXnO0pTJ92ug', 'settings');
     });
 });

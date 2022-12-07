@@ -9,6 +9,7 @@ import { ComponentCommunicationEventService, EmitEvent, Events } from '../../ser
 import { DatadogRumService } from '../../services/datadog-rum.service';
 import { Session, SessionService } from '../../services/session.service';
 import { Location } from '@angular/common';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 
 @Component({
     selector: 'app-login-form',
@@ -104,7 +105,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         private _session: SessionService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _location: Location
+        private _location: Location,
+        private _projectService: ProjectService
     ) {
         this.returnUrl = this._route.snapshot.queryParams['returnUrl'];
     }
@@ -168,10 +170,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                             const username = this.session.user.name;
                             this._dspApiConnection.admin.usersEndpoint.getUserByUsername(username).subscribe(
                                 (userResponse: ApiResponseData<UserResponse>) => {
+                                    const uuid = this._projectService.iriToUuid(userResponse.body.user.projects[0].id);
                                     // if user is NOT a sysAdmin and only a member of one project, redirect them to that projects dashboard
                                     if(!this.session.user.sysAdmin && userResponse.body.user.projects.length === 1) {
                                         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                                            () => this._router.navigate(['/beta/project/' + userResponse.body.user.projects[0].shortcode])
+                                            () => this._router.navigate(['/beta/project/' + uuid])
                                         );
                                     } else { // if user is a sysAdmin or a member of multiple projects, redirect them to the overview
                                         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(

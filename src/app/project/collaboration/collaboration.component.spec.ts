@@ -21,6 +21,7 @@ import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarati
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
 import { UsersListComponent } from 'src/app/system/users/users-list/users-list.component';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { TestConfig } from 'test.config';
 import { AddUserComponent } from './add-user/add-user.component';
 import { CollaborationComponent } from './collaboration.component';
@@ -30,9 +31,17 @@ describe('CollaborationComponent', () => {
     let component: CollaborationComponent;
     let fixture: ComponentFixture<CollaborationComponent>;
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set', 'del']);
+
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['uuidToIri']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -65,8 +74,8 @@ describe('CollaborationComponent', () => {
                         parent: {
                             paramMap: of({
                                 get: (param: string) => {
-                                    if (param === 'shortcode') {
-                                        return TestConfig.ProjectCode;
+                                    if (param === 'uuid') {
+                                        return TestConfig.ProjectUuid;
                                     }
                                 }
                             }),
@@ -78,7 +87,14 @@ describe('CollaborationComponent', () => {
                         }
                     }
                 },
-                AppInitService,
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
+                },
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig

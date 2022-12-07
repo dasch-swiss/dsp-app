@@ -20,6 +20,7 @@ import { existingNamesValidator } from 'src/app/main/directive/existing-name/exi
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { SessionService } from 'src/app/main/services/session.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
@@ -31,10 +32,10 @@ export class ProjectFormComponent implements OnInit {
 
     /**
      * param of project form component:
-     * Optional projectCode; if exists we are in edit mode
+     * Optional projectIri; if exists we are in edit mode
      * otherwise we build empty form to create new project
      */
-    @Input() projectCode?: string;
+    @Input() projectIri?: string;
 
     /**
      * output of project form component:
@@ -145,18 +146,19 @@ export class ProjectFormComponent implements OnInit {
         private _notification: NotificationService,
         private _fb: UntypedFormBuilder,
         private _router: Router,
-        private _session: SessionService
+        private _session: SessionService,
+        private _projectService: ProjectService
     ) {
     }
 
     ngOnInit() {
 
-        // if projectCode exists, we are in edit mode
+        // if projectIri exists, we are in edit mode
         // otherwise create new project
-        if (this.projectCode) {
+        if (this.projectIri) {
             // edit existing project
             // get origin project data first
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     // save the origin project data in case of reset
                     this.project = response.body.project;
@@ -173,7 +175,7 @@ export class ProjectFormComponent implements OnInit {
         } else {
             // create new project
 
-            // to avoid dublicate shortcodes or shortnames
+            // to avoid duplicate shortcodes or shortnames
             // we have to create a list of already exisiting short codes and names
             this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
                 (response: ApiResponseData<ProjectsResponse>) => {
@@ -212,13 +214,13 @@ export class ProjectFormComponent implements OnInit {
     buildForm(project: ReadProject): void {
         // if project is defined, we're in the edit mode
         // otherwise "create new project" mode is active
-        // edit mode is true, when a projectCode exists
+        // edit mode is true, when a projectIri exists
 
         // disabled is true, if project status is false (= archived);
         const disabled = (!project.status);
 
         // separate description
-        if (!this.projectCode) {
+        if (!this.projectIri) {
             this.description = [new StringLiteral()];
             this.formErrors['description'] = '';
         }
@@ -228,7 +230,7 @@ export class ProjectFormComponent implements OnInit {
 
         this.form = this._fb.group({
             'shortname': new UntypedFormControl({
-                value: project.shortname, disabled: (this.projectCode)
+                value: project.shortname, disabled: (this.projectIri)
             }, [
                 Validators.required,
                 Validators.minLength(this.shortnameMinLength),
@@ -242,7 +244,7 @@ export class ProjectFormComponent implements OnInit {
                 Validators.required
             ]),
             'shortcode': new UntypedFormControl({
-                value: project.shortcode, disabled: ((this.projectCode) && project.shortcode !== null)
+                value: project.shortcode, disabled: ((this.projectIri) && project.shortcode !== null)
             }, [
                 Validators.required,
                 Validators.minLength(this.shortcodeMinLength),
@@ -261,8 +263,8 @@ export class ProjectFormComponent implements OnInit {
             })
         });
 
-        if (!this.projectCode) {
-            // if projectCode does not exist, we are in create mode;
+        if (!this.projectIri) {
+            // if projectIri does not exist, we are in create mode;
             // in this case, the keywords are required in the API request
             this.form.controls['keywords'].setValidators(Validators.required);
         }
@@ -346,7 +348,7 @@ export class ProjectFormComponent implements OnInit {
         }
         this.form.controls['keywords'].setValue(this.keywords);
 
-        if (this.projectCode) {
+        if (this.projectIri) {
             const projectData: UpdateProjectRequest = new UpdateProjectRequest();
             projectData.description = [new StringLiteral()];
             projectData.keywords = this.form.value.keywords;
@@ -369,7 +371,7 @@ export class ProjectFormComponent implements OnInit {
                     this.project = response.body.project;
 
                     // update cache
-                    this._cache.set(this.projectCode, this.project);
+                    this._cache.set(this._projectService.iriToUuid(this.projectIri), this.project);
 
                     this._notification.openSnackBar('You have successfully updated the project information.');
 
@@ -390,7 +392,6 @@ export class ProjectFormComponent implements OnInit {
             projectData.longname = this.form.value.longname;
             projectData.keywords = this.form.value.keywords;
             projectData.description = [new StringLiteral()];
-            // projectData.description = this.description;
             projectData.status = true;
             projectData.selfjoin = false;
 
@@ -413,12 +414,12 @@ export class ProjectFormComponent implements OnInit {
                         (userResponse: ApiResponseData<UserResponse>) => {
                             this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userResponse.body.user.id, projectResponse.body.project.id).subscribe(
                                 (response: ApiResponseData<UserResponse>) => {
-
+                                    const uuid = this._projectService.iriToUuid(projectResponse.body.project.id);
                                     this.loading = false;
                                     this.closeDialog.emit();
                                     // redirect to (new) project page
                                     this._router.navigateByUrl('/beta/project', { skipLocationChange: true }).then(() =>
-                                        this._router.navigate(['/beta/project/' + this.form.controls['shortcode'].value])
+                                        this._router.navigate(['/beta/project/' + uuid])
                                     );
                                 },
                                 (error: ApiResponseError) => {
@@ -445,10 +446,6 @@ export class ProjectFormComponent implements OnInit {
      * @param id Project Iri
      */
     delete(id: string) {
-        // ev.preventDefault();
-        // --> TODO "are you sure?"-dialog
-
-        // if true
         this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 // reload page
@@ -456,21 +453,9 @@ export class ProjectFormComponent implements OnInit {
                 this.refresh();
             },
             (error: ApiResponseError) => {
-                // const message: MessageData = error;
                 this._errorHandler.showMessage(error);
-                /*
-                const errorRef = this._dialog.open(MessageDialogComponent, <MatDialogConfig>{
-                    data: {
-                        message: message
-                    }
-                });
-                */
             }
         );
-
-        // close dialog box
-
-        // else: cancel action
     }
 
     /**
@@ -490,15 +475,7 @@ export class ProjectFormComponent implements OnInit {
                 this.refresh();
             },
             (error: ApiResponseError) => {
-                // const message: MessageData = error;
                 this._errorHandler.showMessage(error);
-                /*
-                const errorRef = this._dialog.open(MessageDialogComponent, <MatDialogConfig>{
-                    data: {
-                        message: message
-                    }
-                });
-                */
             }
         );
     }
@@ -510,12 +487,12 @@ export class ProjectFormComponent implements OnInit {
         // refresh the component
         this.loading = true;
         // update the cache
-        this._cache.del(this.projectCode);
-        this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+        this._cache.del(this._projectService.iriToUuid(this.projectIri));
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 
-                this._cache.set(this.projectCode, this.project);
+                this._cache.set(this._projectService.iriToUuid(this.projectIri), this.project);
 
                 this.buildForm(this.project);
                 window.location.reload();

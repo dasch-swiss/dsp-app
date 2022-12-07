@@ -65,7 +65,7 @@ class TestParentComponent implements OnInit {
             query: 'fake query',
             mode: 'fulltext',
             filter: {
-                limitToProject: 'http://rdfh.ch/projects/0803'
+                limitToProject: 'http://rdfh.ch/projects/yISnUYe6SYmoyuqeMdW39w'
             }
         };
 
@@ -191,10 +191,10 @@ describe('ListViewComponent', () => {
         const searchSpy = TestBed.inject(DspApiConnectionToken);
 
         // do fulltext search count query
-        expect(searchSpy.v2.search.doFulltextSearchCountQuery).toHaveBeenCalledWith('fake query', 0, { limitToProject: 'http://rdfh.ch/projects/0803' });
+        expect(searchSpy.v2.search.doFulltextSearchCountQuery).toHaveBeenCalledWith('fake query', 0, { limitToProject: 'http://rdfh.ch/projects/yISnUYe6SYmoyuqeMdW39w' });
 
         // do fulltext search
-        expect(searchSpy.v2.search.doFulltextSearch).toHaveBeenCalledWith('fake query', 0, { limitToProject: 'http://rdfh.ch/projects/0803' });
+        expect(searchSpy.v2.search.doFulltextSearch).toHaveBeenCalledWith('fake query', 0, { limitToProject: 'http://rdfh.ch/projects/yISnUYe6SYmoyuqeMdW39w' });
         expect(testHostComponent.listViewFulltext.resources.resources.length).toBe(5);
 
     });

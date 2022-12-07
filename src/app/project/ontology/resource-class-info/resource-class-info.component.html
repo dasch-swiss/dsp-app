@@ -80,7 +80,7 @@
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
                     <app-property-info class="property-info" [propDef]="propsToDisplay[i].propDef"
-                        [propCard]="propsToDisplay[i]" [projectCode]="projectCode" [projectStatus]="projectStatus"
+                        [propCard]="propsToDisplay[i]" [projectUuid]="projectUuid" [projectStatus]="projectStatus"
                         [resourceIri]="resourceClass.id" [(lastModificationDate)]="lastModificationDate"
                         [userCanEdit]="userCanEdit" (removePropertyFromClass)="removeProperty($event)">
                     </app-property-info>

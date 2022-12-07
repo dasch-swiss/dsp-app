@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -79,7 +79,7 @@ describe('HeaderComponent', () => {
             ],
             imports: [
                 BrowserAnimationsModule,
-                HttpClientModule,
+                HttpClientTestingModule,
                 MatDialogModule,
                 MatIconModule,
                 MatListModule,

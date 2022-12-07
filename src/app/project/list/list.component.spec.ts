@@ -74,7 +74,7 @@ describe('ListComponent', () => {
         const dspConnSpyObj = {
             admin: {
                 listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject', 'deleteListNode']),
-                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByShortcode'])
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri'])
             }
         };
 
@@ -114,8 +114,8 @@ describe('ListComponent', () => {
                         parent: {
                             paramMap: of({
                                 get: (param: string) => {
-                                    if (param === 'shortcode') {
-                                        return TestConfig.ProjectCode;
+                                    if (param === 'uuid') {
+                                        return TestConfig.ProjectUuid;
                                     }
                                 }
                             }),
@@ -257,7 +257,7 @@ describe('ListComponent', () => {
             rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
 
             // mock projects endpoint
-            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
                 () => {
                     const response = new ProjectResponse();
 
@@ -397,7 +397,7 @@ describe('ListComponent', () => {
             rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
 
             // mock projects endpoint
-            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
                 () => {
                     const response = new ProjectResponse();
 
@@ -562,7 +562,7 @@ describe('ListComponent', () => {
             rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
 
             // mock projects endpoint
-            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
                 () => {
                     const response = new ProjectResponse();
 

@@ -12,6 +12,7 @@ import {
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
 
@@ -32,8 +33,8 @@ export class CollaborationComponent implements OnInit {
     sysAdmin = false;
     projectAdmin = false;
 
-    // project shortcode; as identifier in project cache service
-    projectCode: string;
+    // project uuid; as identifier in project cache service
+    projectUuid: string;
 
     // project data
     project: ReadProject;
@@ -53,33 +54,20 @@ export class CollaborationComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
         private _session: SessionService,
-        private _titleService: Title) {
+        private _titleService: Title,
+        private _projectService: ProjectService) {
 
-        // get the shortcode of the current project
+        // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectCode = params.get('shortcode');
+            this.projectUuid = params.get('uuid');
         });
 
         // in case of new beta view, we are in a grand-child route
         if (this._route.parent.parent.snapshot.url.length) {
             this._route.parent.parent.paramMap.subscribe((params: Params) => {
-                this.projectCode = params.get('shortcode');
+                this.projectUuid = params.get('uuid');
             });
         }
-
-        // set the page title
-        this._titleService.setTitle('Project ' + this.projectCode + ' | Collaboration');
-
-        // --> TODO go back to project page, if the logged-in user has no admin rights
-        // is the logged-in user a project admin?
-        /*
-        const session: Session = JSON.parse(
-            localStorage.getItem('session')
-        );
-        this.loggedInAdmin = session.user.projectAdmin.some(
-            e => e === result.id
-        );
-        */
 
     }
 
@@ -93,9 +81,12 @@ export class CollaborationComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
+
+                // set the page title
+                this._titleService.setTitle('Project ' + this.project.shortname + ' | Collaboration');
 
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
@@ -118,11 +109,13 @@ export class CollaborationComponent implements OnInit {
      * build the list of members
      */
     initList(): void {
+        const projectIri = this._projectService.uuidToIri(this.projectUuid);
+
         // set the cache
-        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode));
+        this._cache.get('members_of_' + this.projectUuid, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri));
 
         // get the project data from cache
-        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode)).subscribe(
+        this._cache.get('members_of_' + this.projectUuid, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri)).subscribe(
             (response: ApiResponseData<MembersResponse>) => {
                 this.projectMembers = response.body.members;
 
@@ -155,7 +148,7 @@ export class CollaborationComponent implements OnInit {
         // referesh the component
         this.loading = true;
         // update the cache
-        this._cache.del('members_of_' + this.projectCode);
+        this._cache.del('members_of_' + this.projectUuid);
 
         this.initList();
 

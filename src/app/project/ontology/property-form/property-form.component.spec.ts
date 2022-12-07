@@ -256,7 +256,7 @@ describe('PropertyFormComponent', () => {
 
         // mock cache service for currentOntology
         const cacheSpyOnto = TestBed.inject(CacheService);
-        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentOntology').and.callFake (
+        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentOntology').and.callFake(
             () => {
                 const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
                 return of(response);
@@ -265,7 +265,7 @@ describe('PropertyFormComponent', () => {
 
         // mock cache service for currentProjectOntologies
         const cacheSpyProjOnto = TestBed.inject(CacheService);
-        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentProjectOntologies').and.callFake (
+        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentProjectOntologies').and.callFake(
             () => {
                 const ontologies: ReadOntology[] = [];
                 ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
@@ -287,7 +287,7 @@ describe('PropertyFormComponent', () => {
                         'language': 'en',
                         'value': 'Tree list root'
                     }],
-                    'projectIri': 'http://rdfh.ch/projects/0001'
+                    'projectIri': 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
                 }, {
                     'comments': [{
                         'language': 'en',
@@ -303,7 +303,7 @@ describe('PropertyFormComponent', () => {
                         'value': 'a list that is not used'
                     }],
                     'name': 'notUsedList',
-                    'projectIri': 'http://rdfh.ch/projects/0001'
+                    'projectIri': 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
                 }, {
                     'comments': [{
                         'language': 'en',
@@ -319,7 +319,7 @@ describe('PropertyFormComponent', () => {
                         'value': 'Tree list root'
                     }],
                     'name': 'treelistroot',
-                    'projectIri': 'http://rdfh.ch/projects/0001'
+                    'projectIri': 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
                 }];
                 return of(response);
             }

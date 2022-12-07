@@ -63,8 +63,8 @@ export class UsersListComponent implements OnInit {
     // dsp-js admin group iri
     adminGroupIri: string = Constants.ProjectAdminGroupIRI;
 
-    // project shortcode; as identifier in project cache service
-    projectCode: string;
+    // project uuid; as identifier in project cache service
+    projectUuid: string;
 
     // project data
     project: ReadProject;
@@ -103,17 +103,17 @@ export class UsersListComponent implements OnInit {
         private _session: SessionService,
         private _sortingService: SortingService
     ) {
-        // get the shortcode of the current project
+        // get the uuid of the current project
         if (this._route.parent.paramMap) {
             this._route.parent.paramMap.subscribe((params: Params) => {
-                this.projectCode = params.get('shortcode');
+                this.projectUuid = params.get('uuid');
             });
         }
 
         // in case of new beta view, we are in a grand-child route
         if (this._route.parent.parent.snapshot.url.length) {
             this._route.parent.parent.paramMap.subscribe((params: Params) => {
-                this.projectCode = params.get('shortcode');
+                this.projectUuid = params.get('uuid');
             });
         }
     }
@@ -126,10 +126,10 @@ export class UsersListComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        if (this.projectCode) {
+        if (this.projectUuid) {
 
             // get the project data from cache
-            this._cache.get(this.projectCode).subscribe(
+            this._cache.get(this.projectUuid).subscribe(
                 (response: ReadProject) => {
                     this.project = response;
                     // is logged-in user projectAdmin?
@@ -281,7 +281,7 @@ export class UsersListComponent implements OnInit {
                             // logged-in user is NOT system admin:
                             // go to project page and reload project admin interface
                             this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                                () => this._router.navigate(['/project/' + this.projectCode])
+                                () => this._router.navigate(['/project/' + this.projectUuid])
                             );
                         }
 

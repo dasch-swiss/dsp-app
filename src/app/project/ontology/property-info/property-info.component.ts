@@ -96,7 +96,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     @Input() resourceIri?: string;
 
-    @Input() projectCode: string;
+    @Input() projectUuid: string;
 
     @Input() projectStatus: boolean;
 
@@ -230,7 +230,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                 (response: ListNodeInfo[]) => {
                     const re = /\<([^)]+)\>/;
                     const listIri = this.propDef.guiAttributes[0].match(re)[1];
-                    const listUrl = `/project/${this.projectCode}/lists/${encodeURIComponent(listIri)}`;
+                    const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(listIri)}`;
                     const list = response.find(i => i.id === listIri);
                     this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
                     this.propAttributeComment = (list.comments.length ? list.comments[0].value : null);

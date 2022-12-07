@@ -30,8 +30,8 @@ export class PermissionComponent implements OnInit {
     sysAdmin = false;
     projectAdmin = false;
 
-    // project shortcode; as identifier in project cache service
-    projectCode: string;
+    // project uuid; as identifier in project cache service
+    projectUuid: string;
 
     // project data
     project: ReadProject;
@@ -48,20 +48,20 @@ export class PermissionComponent implements OnInit {
         private _session: SessionService,
         private _titleService: Title) {
 
-        // get the shortcode of the current project
+        // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectCode = params.get('shortcode');
+            this.projectUuid = params.get('uuid');
         });
 
         // in case of new beta view, we are in a grand-child route
         if (this._route.parent.parent.snapshot.url.length) {
             this._route.parent.parent.paramMap.subscribe((params: Params) => {
-                this.projectCode = params.get('shortcode');
+                this.projectUuid = params.get('uuid');
             });
         }
 
         // set the page title
-        this._titleService.setTitle('Project ' + this.projectCode + ' | Permission Groups');
+        this._titleService.setTitle('Project ' + this.projectUuid + ' | Permission Groups');
 
     }
 
@@ -77,7 +77,7 @@ export class PermissionComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -110,7 +110,7 @@ export class PermissionComponent implements OnInit {
         // referesh the component
         this.loading = true;
         // update the cache
-        this._cache.del('members_of_' + this.projectCode);
+        this._cache.del('members_of_' + this.projectUuid);
 
         this.initList();
 

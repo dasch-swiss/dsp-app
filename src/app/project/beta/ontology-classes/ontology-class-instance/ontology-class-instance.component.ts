@@ -1,9 +1,11 @@
-import { Component, OnChanges } from '@angular/core';
+import { Component, Inject, OnChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ReadOntology, ResourceClassDefinition } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, KnoraApiConnection, ProjectResponse, ReadOntology, ResourceClassDefinition } from '@dasch-swiss/dsp-js';
 import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { OntologyService } from 'src/app/project/ontology/ontology.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { FilteredResources, SearchParams } from 'src/app/workspace/results/list-view/list-view.component';
 import { SplitSize } from 'src/app/workspace/results/results.component';
 
@@ -14,7 +16,7 @@ import { SplitSize } from 'src/app/workspace/results/results.component';
 })
 export class OntologyClassInstanceComponent implements OnChanges {
 
-    projectId: string;
+    projectIri: string;
 
     ontoId: string;
 
@@ -39,46 +41,52 @@ export class OntologyClassInstanceComponent implements OnChanges {
     splitSizeChanged: SplitSize;
 
     constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _ais: AppInitService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
-        private _ontologyService: OntologyService
+        private _ontologyService: OntologyService,
+        private _projectService: ProjectService
     ) {
 
         // parameters from the url
-        const projectCode = this._route.parent.snapshot.params.shortcode;
+        const uuid = this._route.parent.snapshot.params.uuid;
 
-        this.projectId = `${this._ais.dspAppConfig.iriBase}/projects/${projectCode}`;
+        this.projectIri = this._projectService.uuidToIri(uuid);
 
         this._route.params.subscribe(params => {
-            const iriBase = this._ontologyService.getIriBaseUrl();
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
+                (res: ApiResponseData<ProjectResponse>) => {
+                    const shortcode = res.body.project.shortcode;
+                    const iriBase = this._ontologyService.getIriBaseUrl();
 
-            const ontologyName = params['onto'];
-            const className = params['class'];
+                    const ontologyName = params['onto'];
+                    const className = params['class'];
 
-            // get the resource class id from route
-            this.ontoId = `${iriBase}/ontology/${projectCode}/${ontologyName}/v2`;
-            this.classId = `${this.ontoId}#${className}`;
+                    // get the resource class id from route
+                    this.ontoId = `${iriBase}/ontology/${shortcode}/${ontologyName}/v2`;
+                    this.classId = `${this.ontoId}#${className}`;
 
-            this.instanceId = params['instance'];
-            if (this.instanceId) {
-                // single instance view
+                    this.instanceId = params['instance'];
+                    if (this.instanceId) {
+                        // single instance view
 
-                if (this.instanceId === 'add') {
-                    // create new res class instance: display res instance form
-                    this.ngOnChanges();
-                } else {
-                    // get the single resource instance
-                    this.resourceIri = `${this._ais.dspAppConfig.iriBase}/${projectCode}/${this.instanceId}`;
-                }
-            } else {
-                // display all resource instances of this resource class
-                this.searchParams = {
-                    query: this._setGravsearch(this.classId),
-                    mode: 'gravsearch'
-                };
-            }
-        });
+                        if (this.instanceId === 'add') {
+                            // create new res class instance: display res instance form
+                            this.ngOnChanges();
+                        } else {
+                            // get the single resource instance
+                            this.resourceIri = `${this._ais.dspAppConfig.iriBase}/${shortcode}/${this.instanceId}`;
+                        }
+                    } else {
+                        // display all resource instances of this resource class
+                        this.searchParams = {
+                            query: this._setGravsearch(this.classId),
+                            mode: 'gravsearch'
+                        };
+                    }
+                });
+            });
     }
 
     ngOnChanges() {

@@ -30,8 +30,8 @@ export interface NewOntology {
 })
 export class OntologyFormComponent implements OnInit {
 
-    // project short code
-    @Input() projectCode: string;
+    // project uuid
+    @Input() projectUuid: string;
 
     // ontology iri in case of edit
     @Input() iri: string;
@@ -126,9 +126,9 @@ export class OntologyFormComponent implements OnInit {
     ngOnInit() {
 
         this.loading = true;
-        if (!this.projectCode) {
+        if (!this.projectUuid) {
             // if project shorcode is missing, get it from the url
-            this.projectCode = this._route.parent.snapshot.params.shortcode;
+            this.projectUuid = this._route.parent.snapshot.params.uuid;
         }
 
         if (!this.existingOntologyNames.length) {
@@ -143,7 +143,7 @@ export class OntologyFormComponent implements OnInit {
             );
         }
 
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
                 this.buildForm();

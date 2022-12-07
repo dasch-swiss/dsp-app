@@ -22,6 +22,7 @@ import { AppInitService } from 'src/app/app-init.service';
 import { ProgressIndicatorComponent } from 'src/app/main/action/progress-indicator/progress-indicator.component';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { EditListItemComponent } from './edit-list-item.component';
 
 /**
@@ -38,7 +39,7 @@ class TestHostUpdateChildNodeComponent {
 
     mode = 'update';
 
-    projectIri = 'http://rdfh.ch/projects/0001';
+    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
 
     constructor() { }
 }
@@ -63,7 +64,7 @@ class TestHostInsertChildNodeComponent {
 
     projectCode = '0001';
 
-    projectIri = 'http://rdfh.ch/projects/0001';
+    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
 
     constructor() { }
 }
@@ -74,6 +75,12 @@ describe('EditListItemComponent', () => {
     let editListItemComponentDe: DebugElement;
     let formInvalidMessageDe: DebugElement;
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
 
         const listsEndpointSpyObj = {
@@ -83,6 +90,8 @@ describe('EditListItemComponent', () => {
         };
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -98,7 +107,14 @@ describe('EditListItemComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
-                AppInitService,
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
+                },
                 {
                     provide: DspApiConnectionToken,
                     useValue: listsEndpointSpyObj
@@ -271,6 +287,12 @@ describe('EditListItemComponent', () => {
             const hostCompDe = testHostFixture.debugElement;
             editListItemComponentDe = hostCompDe.query(By.directive(EditListItemComponent));
             expect(editListItemComponentDe).toBeTruthy();
+
+            const projectServiceSpy = TestBed.inject(ProjectService);
+
+            (projectServiceSpy as jasmine.SpyObj<ProjectService>).iriToUuid.and.callFake(
+                (iri: string) => 'Lw3FC39BSzCwvmdOaTyLqQ'
+            );
         });
 
         it('should instantiate empty arrays for labels and comments', () => {

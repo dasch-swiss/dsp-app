@@ -16,6 +16,7 @@ import {
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 
 @Component({
     selector: 'app-list-info-form',
@@ -28,8 +29,8 @@ export class ListInfoFormComponent implements OnInit {
 
     @Input() mode: 'create' | 'update';
 
-    // project short code
-    @Input() projectCode: string;
+    // project uuid
+    @Input() projectUuid: string;
 
     @Input() projectIri: string;
 
@@ -65,7 +66,8 @@ export class ListInfoFormComponent implements OnInit {
         private _ais: AppInitService,
         private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        private _projectService: ProjectService
     ) {
 
         // get feature toggle information if url contains beta
@@ -74,11 +76,11 @@ export class ListInfoFormComponent implements OnInit {
             this.mode = 'create';
             this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
             if (this.beta) {
-                // get the shortcode of the current project
+                // get the uuid of the current project
                 this._route.parent.paramMap.subscribe((params: Params) => {
-                    this.projectCode = params.get('shortcode');
+                    this.projectUuid = params.get('uuid');
 
-                    this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid)).subscribe(
                         (response: ApiResponseData<ProjectResponse>) => {
                             this.projectIri = response.body.project.id;
                         },
@@ -94,11 +96,11 @@ export class ListInfoFormComponent implements OnInit {
             this.mode = 'update';
             this.beta = (this._route.firstChild.snapshot.url[0].path === 'beta');
             if (this.beta) {
-                // get the shortcode of the current project
+                // get the uuid of the current project
                 this._route.firstChild.paramMap.subscribe((params: Params) => {
-                    this.projectCode = params.get('shortcode');
+                    this.projectUuid = params.get('uuid');
 
-                    this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid)).subscribe(
                         (response: ApiResponseData<ProjectResponse>) => {
                             this.projectIri = response.body.project.id;
                         },

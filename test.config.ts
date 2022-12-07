@@ -7,6 +7,8 @@ export class TestConfig {
 
     public static ProjectCode = '0001';
 
+    public static ProjectUuid = '9aQ4EuRKReCXnO0pTJ92ug';
+
     public static CurrentSession: Session = {
         id: 1555226377250,
         user: {

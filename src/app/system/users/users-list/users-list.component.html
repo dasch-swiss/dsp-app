@@ -19,8 +19,8 @@
                 </app-sort-button>
             </span>
             <h2 class="mat-title">
-                <span *ngIf="projectCode">{{list.length | i18nPlural: itemPluralMapping['member']}}</span>
-                <span *ngIf="!projectCode">{{list.length | i18nPlural: itemPluralMapping['user']}}</span>
+                <span *ngIf="projectUuid">{{list.length | i18nPlural: itemPluralMapping['member']}}</span>
+                <span *ngIf="!projectUuid">{{list.length | i18nPlural: itemPluralMapping['user']}}</span>
             </h2>
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action button right" *ngIf="status && createNew && sysAdmin">
@@ -53,17 +53,17 @@
 
             <!-- admin: only in project view -->
             <td class="table-admin-chip">
-                <mat-chip-list *ngIf="projectCode">
+                <mat-chip-list *ngIf="projectUuid">
                     <mat-chip class="admin-chip" *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
                 </mat-chip-list>
-                <mat-chip-list *ngIf="!projectCode && userIsSystemAdmin(user.permissions)">
+                <mat-chip-list *ngIf="!projectUuid && userIsSystemAdmin(user.permissions)">
                     <mat-chip class="sys-admin-chip">System Admin</mat-chip>
                 </mat-chip-list>
             </td>
 
             <!-- group: only in project view -->
             <td class="table-select-group">
-                <app-select-group *ngIf="projectAdmin && projectCode" [projectCode]="project.shortcode"
+                <app-select-group *ngIf="projectAdmin && projectUuid" [projectCode]="project.shortcode"
                     [projectid]="project.id" [permissions]="user.permissions.groupsPerProject[project.id]"
                     [disabled]="!status" (groupChange)="updateGroupsMembership(user.id, $event)">
                 </app-select-group>
@@ -76,7 +76,7 @@
                 </button>
                 <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
                     <!-- update user's admin group membership; only in project view -->
-                    <button mat-menu-item *ngIf="projectCode && user.status"
+                    <button mat-menu-item *ngIf="projectUuid && user.status"
                         (click)="updateProjectAdminMembership(user.id, user.permissions)">
                         <span *ngIf="!userIsProjectAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsProjectAdmin(user.permissions)">Remove</span>
@@ -84,7 +84,7 @@
                     </button>
                     <!-- update user's system admin group membership; only in system admin view -->
                     <button mat-menu-item
-                        *ngIf="!projectCode && user.status && sysAdmin && (user.username !== session.user.name)"
+                        *ngIf="!projectUuid && user.status && sysAdmin && (user.username !== session.user.name)"
                         (click)="updateSystemAdminMembership(user, !userIsSystemAdmin(user.permissions))">
                         <span *ngIf="!userIsSystemAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsSystemAdmin(user.permissions)">Remove</span>
@@ -93,28 +93,28 @@
                     <!-- update user's profile data; only for system admin -->
                     <button mat-menu-item *ngIf="sysAdmin  && user.status"
                         (click)="openDialog('editUser', user.username)">
-                        {{ projectCode ? 'Edit member' : 'Edit user'}}
+                        {{ projectUuid ? 'Edit member' : 'Edit user'}}
                     </button>
                     <button mat-menu-item *ngIf="sysAdmin && user.status"
                         (click)="openDialog('editPassword', user.username)">
-                        {{ projectCode ? 'Change member\'s password' : 'Change user\'s password'}}
+                        {{ projectUuid ? 'Change member\'s password' : 'Change user\'s password'}}
                     </button>
                     <!-- remove user from project; only in project view -->
-                    <button mat-menu-item *ngIf="projectCode"
+                    <button mat-menu-item *ngIf="projectUuid"
                         (click)="openDialog('removeFromProject', user.username, user.id)">
                         Remove member from project
                     </button>
                     <!-- manage project membership; only in system view -->
-                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectCode"
+                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectUuid"
                         (click)="openDialog('manageProjectMembership', user.username)">
                         Manage project membership
                     </button>
                     <!-- delete / reactivate user -->
-                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectCode"
+                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectUuid"
                         (click)="openDialog('deleteUser', user.username, user.id)">
                         Suspend user
                     </button>
-                    <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectCode"
+                    <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectUuid"
                         (click)="openDialog('activateUser', user.username, user.id)">
                         Reactivate user
                     </button>

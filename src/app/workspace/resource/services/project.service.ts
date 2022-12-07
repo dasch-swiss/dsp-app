@@ -10,6 +10,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
@@ -24,7 +25,8 @@ export class ProjectService {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
-        private _session: SessionService
+        private _session: SessionService,
+        private _ais: AppInitService
     ) { }
 
     /**
@@ -70,5 +72,22 @@ export class ProjectService {
             );
         }
 
+    }
+
+    iriToUuid(iri: string): string {
+        if(iri) {
+            const array = iri.split('/');
+            return array[array.length - 1];
+        }
+
+        return '';
+    }
+
+    uuidToIri(uuid: string): string {
+        if(uuid) {
+            return `${this._ais.dspAppConfig.iriBase}/projects/${uuid}`;
+        }
+
+        return '';
     }
 }

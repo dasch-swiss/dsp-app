@@ -6,7 +6,7 @@
         <app-dialog-header [title]="'appLabels.form.user.title.profile' | translate"
             [subtitle]="'appLabels.form.user.title.new' | translate">
         </app-dialog-header>
-        <app-user-form [name]="data.name" [projectCode]="data.project" (closeDialog)="dialogRef.close()">
+        <app-user-form [name]="data.name" [projectUuid]="data.project" (closeDialog)="dialogRef.close()">
         </app-user-form>
     </div>
 
@@ -99,7 +99,7 @@
     <div *ngSwitchCase="'editProject'">
         <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.edit' | translate">
         </app-dialog-header>
-        <app-project-form [projectCode]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
+        <app-project-form [projectIri]="data.project" (closeDialog)="dialogRef.close()"></app-project-form>
     </div>
 
     <!-- Deactivate project -->
@@ -141,7 +141,7 @@
     <!-- Create new list -->
     <div *ngSwitchCase="'createList'">
         <app-dialog-header [title]="'Create new list'" [subtitle]=""></app-dialog-header>
-        <app-list-info-form [projectCode]="data.project" [mode]="'create'" [projectIri]="data.id"
+        <app-list-info-form [projectUuid]="data.project" [mode]="'create'" [projectIri]="data.id"
             (closeDialog)="dialogRef.close($event)">
         </app-list-info-form>
     </div>
@@ -150,7 +150,7 @@
     <div *ngSwitchCase="'insertListNode'">
         <app-dialog-header [title]="'Insert new child node'" [subtitle]="">
         </app-dialog-header>
-        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" mode="insert" [projectCode]="data.projectCode"
+        <app-edit-list-item [iri]="data.id" [projectIri]="data.project" mode="insert"
             [parentIri]="data.parentIri" [position]="data.position" (closeDialog)="dialogRef.close($event)">
         </app-edit-list-item>
     </div>
@@ -221,14 +221,14 @@
     <!-- Ontology editor: create new ontology -->
     <div *ngSwitchCase="'createOntology'">
         <app-dialog-header [title]="data.title" [subtitle]="'Create new'"></app-dialog-header>
-        <app-ontology-form [projectCode]="data.project" (closeDialog)="dialogRef.close($event)"
+        <app-ontology-form [projectUuid]="data.project" (closeDialog)="dialogRef.close($event)"
             [existingOntologyNames]="data.existing"></app-ontology-form>
     </div>
 
     <div *ngSwitchCase="'editOntology'">
         <app-dialog-header [title]="data.title" [subtitle]="'Customize data model'" (close)="dialogRef.close()">
         </app-dialog-header>
-        <app-ontology-form [iri]="data.id" [projectCode]="data.project" (closeDialog)="dialogRef.close($event)"
+        <app-ontology-form [iri]="data.id" [projectUuid]="data.project" (closeDialog)="dialogRef.close($event)"
             [existingOntologyNames]="data.existing"></app-ontology-form>
     </div>
 
@@ -250,7 +250,7 @@
     <!-- Ontology editor: customize and add resource class -->
     <div *ngSwitchCase="'createResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project"
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectUuid]="data.project"
             (closeDialog)="dialogRef.close()" (updateParent)="replaceTitle($event)">
         </app-resource-class-form>
     </div>
@@ -258,7 +258,7 @@
     <div *ngSwitchCase="'editResourceClass'">
         <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
         </app-dialog-header>
-        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectCode]="data.project" [edit]="true"
+        <app-resource-class-form [iri]="data.id" [name]="data.title" [projectUuid]="data.project" [edit]="true"
             (closeDialog)="dialogRef.close()">
         </app-resource-class-form>
     </div>

@@ -49,7 +49,7 @@ export class ResourceClassInfoComponent implements OnInit {
 
     @Input() resourceClass: ClassDefinition;
 
-    @Input() projectCode: string;
+    @Input() projectUuid: string;
 
     @Input() projectStatus: boolean;
 
@@ -521,7 +521,7 @@ OFFSET 0`;
     createResourceInstance(iri: string, label: string) {
         let projectIri: string;
         // get project iri
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (res: ReadProject) => {
                 projectIri = res.id;
             }

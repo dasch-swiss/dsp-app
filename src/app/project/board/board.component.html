@@ -19,7 +19,7 @@
         <span class="fill-remaining-space-action"></span>
         <span class="app-toolbar-action-edit" *ngIf="projectAdmin">
             <button mat-icon-button *ngIf="project.status"
-                (click)="openDialog('editProject', project.shortname, project.shortcode)" class="right">
+                (click)="openDialog('editProject', project.shortname, project.id)" class="right">
                 <mat-icon>edit</mat-icon>
             </button>
         </span>
@@ -46,7 +46,7 @@
             <span class="fill-remaining-space"></span>
             <span class="app-toolbar-action">
                 <button mat-icon-button *ngIf="projectAdmin && project.status"
-                    (click)="openDialog('editProject', project.shortname, project.shortcode)" class="right">
+                    (click)="openDialog('editProject', project.shortname, project.id)" class="right">
                     <mat-icon>edit</mat-icon>
                 </button>
             </span>

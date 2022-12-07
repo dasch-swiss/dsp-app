@@ -27,7 +27,7 @@ export class ListItemComponent implements OnInit {
 
     @Input() parentIri?: string;
 
-    @Input() projectCode: string;
+    @Input() projectUuid: string;
 
     @Input() projectStatus: boolean;
 
@@ -61,7 +61,7 @@ export class ListItemComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);

@@ -13,6 +13,7 @@ import {
     ReadProject, UserResponse
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
+import { AppInitService } from '../app-init.service';
 import { CacheService } from '../main/cache/cache.service';
 import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { MenuItem } from '../main/declarations/menu-item';
@@ -40,8 +41,11 @@ export class ProjectComponent implements OnInit {
     projectAdmin = false;
     projectMember = false;
 
-    // project shortcode; as identifier in project cache service
-    projectCode: string;
+    // project uuid; as identifier in project cache service
+    projectUuid: string;
+
+    // project iri; used for API requests
+    iri: string;
 
     // project data
     project: ReadProject;
@@ -67,19 +71,17 @@ export class ProjectComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
-        private _titleService: Title
+        private _titleService: Title,
+        private _ais: AppInitService,
     ) {
-        // get the shortcode of the current project
-        this.projectCode = this._route.snapshot.params.shortcode;
+        // get the uuid of the current project
+        this.projectUuid = this._route.snapshot.params.uuid;
+
+        // create the project iri
+        this.iri = `${this._ais.dspAppConfig.iriBase}/projects/${this.projectUuid}`;
 
         // get session
         this.session = this._session.getSession();
-
-        // set the page title
-        this._titleService.setTitle('Project ' + this.projectCode);
-
-        // error handling in case of wrong project shortcode
-        this.error = this._validateShortcode(this.projectCode);
 
         // get feature toggle information if url contains beta
         this.beta = (this._route.snapshot.url[0].path === 'beta');
@@ -94,11 +96,14 @@ export class ProjectComponent implements OnInit {
             this.loading = true;
             // get current project data, project members and project groups
             // and set the project cache here
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.projectCode).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.iri).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 
-                    this._cache.set(this.projectCode, this.project);
+                    // set the page title
+                    this._titleService.setTitle(this.project.shortname);
+
+                    this._cache.set(this.projectUuid, this.project);
 
                     if (!this.project.status) {
                         this.color = 'warn';
@@ -127,7 +132,8 @@ export class ProjectComponent implements OnInit {
                                         this.projectMember = false;
                                     } else {
                                         // check if the user is member of the current project
-                                        this.projectMember = usersProjects.some(p => p.shortcode === this.projectCode);
+                                        // id contains the iri
+                                        this.projectMember = usersProjects.some(p => p.id === this.iri);
                                     }
                                 },
                                 (error: ApiResponseError) => {
@@ -142,15 +148,15 @@ export class ProjectComponent implements OnInit {
 
                     // set the cache for project members and groups
                     if (this.projectAdmin) {
-                        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode));
-                        this._cache.get('groups_of_' + this.projectCode, this._dspApiConnection.admin.groupsEndpoint.getGroups());
+                        this._cache.get('members_of_' + this.projectUuid, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(this.iri));
+                        this._cache.get('groups_of_' + this.projectUuid, this._dspApiConnection.admin.groupsEndpoint.getGroups());
                     }
 
                     // in the new concept of project view, we have to make many requests to get all project relevant information
                     if(this.beta) {
 
                         // get all project ontologies
-                        this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.project.id).subscribe(
+                        this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.iri).subscribe(
                             (ontoMeta: OntologiesMetadata) => {
                                 if (ontoMeta.ontologies.length) {
                                     ontoMeta.ontologies.forEach(onto => {
@@ -164,7 +170,7 @@ export class ProjectComponent implements OnInit {
                                                 this.ontologies.push(ontology);
                                                 if (ontoMeta.ontologies.length === this.ontologies.length) {
                                                     this._cache.set('currentProjectOntologies', this.ontologies);
-                                                    this.loading = !this._cache.has(this.projectCode);
+                                                    this.loading = !this._cache.has(this.projectUuid);
                                                 }
                                             },
                                             (error: ApiResponseError) => {
@@ -174,7 +180,7 @@ export class ProjectComponent implements OnInit {
                                         );
                                     });
                                 } else {
-                                    this.loading = !this._cache.has(this.projectCode);
+                                    this.loading = !this._cache.has(this.projectUuid);
                                 }
                             },
                             (error: ApiResponseError) => {
@@ -194,7 +200,7 @@ export class ProjectComponent implements OnInit {
                         );
 
                     } else {
-                        if (this._cache.has(this.projectCode)) {
+                        if (this._cache.has(this.projectUuid)) {
                             this.loading = false;
                         }
                     }
@@ -264,16 +270,5 @@ export class ProjectComponent implements OnInit {
         }
 
         return 0;
-    }
-
-    /**
-     * checks if the shortcode is valid: hexadecimal and length = 4
-     *
-     * @param code project shortcode which is a parameter in the route
-     */
-    private _validateShortcode(code: string) {
-        const regexp: any = /^[0-9A-Fa-f]+$/;
-
-        return !(regexp.test(code) && code.length === 4);
     }
 }

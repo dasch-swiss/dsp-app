@@ -15,6 +15,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { Session } from 'src/app/main/services/session.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 
 // --> TODO replace it by IPermissions from dsp-js
@@ -55,7 +56,8 @@ export class MembershipComponent implements OnInit {
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
-        private _router: Router
+        private _router: Router,
+        private _projectService: ProjectService
     ) { }
 
     ngOnInit() {
@@ -124,13 +126,10 @@ export class MembershipComponent implements OnInit {
     }
 
     updateProjectCache(iri: string) {
-        // --> TODO update cache of project
-
-        // get shortcode from iri; not the best way right now
-        const projectCode: string = iri.replace('http://rdfh.ch/projects/', '');
+        const projectUuid: string = this._projectService.iriToUuid(iri);
 
         // reset the cache of project members
-        this._cache.get('members_of_' + projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(projectCode));
+        this._cache.get('members_of_' + projectUuid, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(iri));
 
     }
 
@@ -197,10 +196,10 @@ export class MembershipComponent implements OnInit {
         return (permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1);
     }
 
-    openProject(shortcode: string) {
+    openProject(iri: string) {
         this.closeDialog.emit();
         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-            () => this._router.navigate(['/project/' + shortcode])
+            () => this._router.navigate(['/project/' + this._projectService.iriToUuid(iri)])
         );
     }
 

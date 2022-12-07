@@ -18,6 +18,7 @@ import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens'
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { existingNamesValidator } from 'src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 
 @Component({
@@ -28,10 +29,10 @@ import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resou
 export class AddUserComponent implements OnInit {
 
     /**
-     * project name to get existing team members
+     * project uuid to get existing team members
      * or to know where to add selected user
      */
-    @Input() projectCode: string;
+    @Input() projectUuid: string;
 
     /**
      * event emitter, when the selected user will be added to the list
@@ -112,16 +113,23 @@ export class AddUserComponent implements OnInit {
      */
     isAlreadyMember = false;
 
+    /**
+     * iri of the project; used for API requests
+     */
+    projectIri: string;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
-        private _formBuilder: UntypedFormBuilder
+        private _formBuilder: UntypedFormBuilder,
+        private _projectService: ProjectService
     ) { }
 
     ngOnInit() {
 
+        this.projectIri = this._projectService.uuidToIri(this.projectUuid);
         // build the form
         this.buildForm();
     }
@@ -142,7 +150,7 @@ export class AddUserComponent implements OnInit {
                 const members: string[] = [];
 
                 // get all members of this project; response from cache
-                this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode)).subscribe(
+                this._cache.get('members_of_' + this.projectUuid, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(this.projectIri)).subscribe(
                     (res: ApiResponseData<MembersResponse>) => {
                         for (const m of res.body.members) {
                             members.push(m.id);
@@ -292,38 +300,30 @@ export class AddUserComponent implements OnInit {
                 this.selectedUser = response.body.user;
 
                 // the following request should never start
-                this.isAlreadyMember = (!!response.body.user.projects.find(p => p.shortcode === this.projectCode));
+                this.isAlreadyMember = (!!response.body.user.projects.find(p => p.id === this.projectIri));
 
                 if (!this.isAlreadyMember) {
 
                     this.loading = true;
 
-                    // get project iri by projectCode
-                    this._cache.get(this.projectCode).subscribe(
-                        (p: ReadProject) => {
-                            // add user to project
-                            this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, p.id).subscribe(
-                                (userAdded: ApiResponseData<UserResponse>) => {
+                    // add user to project
+                    this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.selectedUser.id, this.projectIri).subscribe(
+                        (userAdded: ApiResponseData<UserResponse>) => {
 
-                                    // successful post
-                                    // reload the component
-                                    this.buildForm();
-                                    this.refreshParent.emit();
+                            // successful post
+                            // reload the component
+                            this.buildForm();
+                            this.refreshParent.emit();
 
-                                    // update own user profile, if the added user is the same as the logged-in user
-                                    // get logged-in user name
-                                    // const session: Session = JSON.parse(localStorage.getItem('session'));
-                                    // if (add.username === session.user.name) {
-                                    this._cache.del(userAdded.body.user.username);
-                                    this._cache.get(userAdded.body.user.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(userAdded.body.user.username));
-                                    // }
-                                    this.loading = false;
+                            // update own user profile, if the added user is the same as the logged-in user
+                            // get logged-in user name
+                            // const session: Session = JSON.parse(localStorage.getItem('session'));
+                            // if (add.username === session.user.name) {
+                            this._cache.del(userAdded.body.user.username);
+                            this._cache.get(userAdded.body.user.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(userAdded.body.user.username));
+                            // }
+                            this.loading = false;
 
-                                },
-                                (error: ApiResponseError) => {
-                                    this._errorHandler.showMessage(error);
-                                }
-                            );
                         },
                         (error: ApiResponseError) => {
                             this._errorHandler.showMessage(error);
@@ -356,7 +356,7 @@ export class AddUserComponent implements OnInit {
             position: {
                 top: '112px'
             },
-            data: { project: this.projectCode, name: this.selectUserForm.controls['username'].value, mode: mode }
+            data: { project: this.projectUuid, name: this.selectUserForm.controls['username'].value, mode: mode }
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

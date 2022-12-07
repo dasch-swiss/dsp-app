@@ -35,6 +35,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { TestConfig } from 'test.config';
 import { OntologyComponent } from './ontology.component';
 import { PropertyInfoComponent } from './property-info/property-info.component';
@@ -43,6 +44,12 @@ import { ResourceClassInfoComponent } from './resource-class-info/resource-class
 describe('OntologyComponent', () => {
     let component: OntologyComponent;
     let fixture: ComponentFixture<OntologyComponent>;
+
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
 
     beforeEach(waitForAsync(() => {
         const apiSpyObj = {
@@ -63,6 +70,8 @@ describe('OntologyComponent', () => {
         };
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
+
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid', 'uuidToIri']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -90,7 +99,14 @@ describe('OntologyComponent', () => {
                 RouterTestingModule
             ],
             providers: [
-                AppInitService,
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
+                },
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
@@ -105,13 +121,13 @@ describe('OntologyComponent', () => {
                         parent: {
                             paramMap: of({
                                 get: (param: string) => {
-                                    if (param === 'shortcode') {
-                                        return TestConfig.ProjectCode;
+                                    if (param === 'uuid') {
+                                        return TestConfig.ProjectUuid;
                                     }
                                 }
                             }),
                             snapshot: {
-                                params: { shortcode: '0001' },
+                                params: { uuid: '009aQ4EuRKReCXnO0pTJ92ug01' },
                                 url: [
                                     { path: 'project' }
                                 ]

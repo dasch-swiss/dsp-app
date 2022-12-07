@@ -11,6 +11,7 @@ import {
     List,
     ListNodeInfo,
     ListsResponse,
+    ProjectResponse,
     ReadProject,
     StringLiteral,
     UserResponse
@@ -22,6 +23,7 @@ import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens'
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 
 @Component({
     selector: 'app-list',
@@ -40,8 +42,8 @@ export class ListComponent implements OnInit {
     projectAdmin = false;
     projectMember = undefined;
 
-    // project shortcode; as identifier in project cache service
-    projectCode: string;
+    // project uuid; as identifier in project cache service
+    projectUuid: string;
 
     // project data
     project: ReadProject;
@@ -89,11 +91,12 @@ export class ListComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
-        private _titleService: Title) {
+        private _titleService: Title,
+        private _projectService: ProjectService) {
 
-        // get the shortcode of the current project
+        // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectCode = params.get('shortcode');
+            this.projectUuid = params.get('uuid');
         });
 
         // get list iri from route
@@ -101,17 +104,19 @@ export class ListComponent implements OnInit {
             this.listIri = decodeURIComponent(this._route.snapshot.params.id);
         }
 
-        // set the page title
-        this._setPageTitle();
-
         // get feature toggle information if url contains beta
         this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
         if (this.beta) {
-            // get list iri from list name
-            this._route.params.subscribe(params => {
-                const id = `${this._ais.dspAppConfig.iriBase}/lists/${this.projectCode}/${params['list']}`;
-                this.openList(id);
-            });
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid)).subscribe(
+                (res: ApiResponseData<ProjectResponse>) => {
+                    const shortcode = res.body.project.shortcode;
+
+                    // get list iri from list name
+                    this._route.params.subscribe(params => {
+                        const id = `${this._ais.dspAppConfig.iriBase}/lists/${shortcode}/${params['list']}`;
+                        this.openList(id);
+                    });
+                });
         }
 
     }
@@ -137,9 +142,12 @@ export class ListComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
+
+                // set the page title
+                this._setPageTitle();
 
                 // is logged-in user projectAdmin?
                 this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
@@ -154,7 +162,7 @@ export class ListComponent implements OnInit {
                                 this.projectMember = false;
                             } else {
                                 // check if the user is member of the current project
-                                this.projectMember = usersProjects.some(p => p.shortcode === this.projectCode);
+                                this.projectMember = usersProjects.some(p => p.shortcode === this.projectUuid);
                             }
                         },
                         (error: ApiResponseError) => {
@@ -235,7 +243,7 @@ export class ListComponent implements OnInit {
         this.list = this.lists.find(i => i.id === id);
 
         if (!this.beta) {
-            const goto = 'project/' + this.projectCode + '/lists/' + encodeURIComponent(id);
+            const goto = 'project/' + this.projectUuid + '/lists/' + encodeURIComponent(id);
             this._router.navigateByUrl(goto, { skipLocationChange: false });
         }
 
@@ -292,7 +300,7 @@ export class ListComponent implements OnInit {
                                 this.lists = this.lists.filter(list => list.id !== res.body.iri);
 
                                 if (this.beta) {
-                                    this._router.navigateByUrl(`/beta/project/${this.projectCode}`).then(() => {
+                                    this._router.navigateByUrl(`/beta/project/${this.projectUuid}`).then(() => {
                                         // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
                                         window.location.reload();
                                     });
@@ -336,11 +344,7 @@ export class ListComponent implements OnInit {
     }
 
     private _setPageTitle() {
-        if (this.listIri) {
-            this._titleService.setTitle('Project ' + this.projectCode + ' | List');
-        } else {
-            this._titleService.setTitle('Project ' + this.projectCode + ' | Lists');
-        }
+        this._titleService.setTitle('Project ' + this.project?.shortname + ' | List' + (this.listIri? '' : 's'));
     }
 
 }

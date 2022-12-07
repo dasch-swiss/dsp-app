@@ -9,13 +9,12 @@ import {
     List,
     ListNodeInfo,
     ListNodeInfoResponse,
-    ReadProject,
     StringLiteral,
     UpdateChildNodeRequest
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 
 @Component({
     selector: 'app-edit-list-item',
@@ -31,8 +30,6 @@ export class EditListItemComponent implements OnInit {
     @Input() parentIri?: string;
 
     @Input() position?: number;
-
-    @Input() projectCode?: string;
 
     @Input() projectIri: string;
 
@@ -70,24 +67,12 @@ export class EditListItemComponent implements OnInit {
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: ErrorHandlerService,
+        private _projectService: ProjectService
     ) { }
 
     ngOnInit(): void {
         this.loading = true;
-
-        // get the project iri from cache if the project code was provided
-        if (this.projectCode) {
-            this._cache.get(this.projectCode).subscribe(
-                (response: ReadProject) => {
-                    this.projectIri = response.id;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-        }
 
         // if updating a node, get the existing node info
         if (this.mode === 'update') {
@@ -191,7 +176,7 @@ export class EditListItemComponent implements OnInit {
      */
     insertChildNode() {
         const createChildNodeRequest: CreateChildNodeRequest = new CreateChildNodeRequest();
-        createChildNodeRequest.name = this.projectCode + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+        createChildNodeRequest.name = this._projectService.iriToUuid(this.projectIri) + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
         createChildNodeRequest.parentNodeIri = this.parentIri;
         createChildNodeRequest.labels = this.labels;
         createChildNodeRequest.comments = this.comments.length > 0 ? this.comments : undefined;

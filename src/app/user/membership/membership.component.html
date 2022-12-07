@@ -11,7 +11,7 @@
             <mat-icon mat-list-icon>
                 <span>assignment</span>
             </mat-icon>
-            <h4 mat-line class="link" (click)="openProject(project.shortcode)">{{project.longname}}
+            <h4 mat-line class="link" (click)="openProject(project.id)">{{project.longname}}
                 ({{project.shortname}})</h4>
             <p mat-line>
                 <span *ngIf="userIsProjectAdmin(user.permissions, project.id)">

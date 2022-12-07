@@ -18,7 +18,7 @@
         <mat-sidenav-container class="project-view">
             <mat-sidenav mode="side" opened class="project-nav">
                 <!-- Project label -->
-                <div *ngIf="project !== undefined" class="link project-title" [routerLink]="'/beta/project/' + project.shortcode">
+                <div *ngIf="project !== undefined" class="link project-title" [routerLink]="'/beta/project/' + projectUuid">
                     <p #projectTitle matTooltip="{{project.longname}}" matTooltipShowDelay="500"
                         [matTooltipDisabled]="compareElementHeights(projectTitle)" matTooltipPosition="right">
                         {{project.longname}}

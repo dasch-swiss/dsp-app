@@ -37,12 +37,6 @@ export class UserComponent implements OnInit {
         // get the activated route; we need it for the viewer switch
         this.route = this._route.pathFromRoot[1].snapshot.url[0].path;
 
-        /*
-        parent.paramMap.subscribe((params: Params) => {
-            this.projectCode = params.get('shortcode');
-        });
-        */
-
         // get session
         this.session = this._session.getSession();
 

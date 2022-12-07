@@ -34,8 +34,8 @@ export class BoardComponent implements OnInit {
     sysAdmin = false;
     projectAdmin = false;
 
-    // project shortcode; as identifier in project cache service
-    projectCode: string;
+    // project uuid; as identifier in project cache service
+    projectUuid: string;
 
     // project data
     project: ReadProject;
@@ -53,16 +53,14 @@ export class BoardComponent implements OnInit {
         private _router: Router,
         private _titleService: Title
     ) {
-        // get the shortcode of the current project
+        // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectCode = params.get('shortcode');
+            this.projectUuid = params.get('uuid');
         });
 
         // get feature toggle information if url contains beta
         this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
 
-        // set the page title
-        this._titleService.setTitle('Project ' + this.projectCode);
     }
 
     ngOnInit() {
@@ -81,7 +79,7 @@ export class BoardComponent implements OnInit {
 
     getProject() {
         // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -101,6 +99,7 @@ export class BoardComponent implements OnInit {
     }
 
     openDialog(mode: string, name: string, id?: string): void {
+
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',
@@ -119,6 +118,6 @@ export class BoardComponent implements OnInit {
     }
 
     featureToggle() {
-        this._router.navigate([(this.beta ? 'beta' : ''), 'project', this.projectCode ]);
+        this._router.navigate([(this.beta ? 'beta' : ''), 'project', this.projectUuid ]);
     }
 }

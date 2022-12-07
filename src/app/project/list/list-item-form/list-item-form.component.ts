@@ -60,9 +60,9 @@ export class ListItemFormComponent implements OnInit {
     @Input() iri?: string;
 
     /**
-     * project shortcode
+     * project uuid
      */
-    @Input() projectCode?: string;
+    @Input() projectUuid?: string;
 
     /**
      * project status
@@ -122,7 +122,7 @@ export class ListItemFormComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         // get the project data from cache
-        this._cache.get(this.projectCode).subscribe(
+        this._cache.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
 
                 // is logged-in user projectAdmin?
@@ -174,7 +174,7 @@ export class ListItemFormComponent implements OnInit {
         const childNode: CreateChildNodeRequest = new CreateChildNodeRequest();
         childNode.parentNodeIri = this.parentIri;
         childNode.projectIri = this.projectIri;
-        childNode.name = this.projectCode + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+        childNode.name = this.projectUuid + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
 
         // initialize labels
         let i = 0;
@@ -256,7 +256,7 @@ export class ListItemFormComponent implements OnInit {
                 title: mode === 'editListNode' || 'deleteListNode' ? name : '',
                 id: iri,
                 project: this.projectIri,
-                projectCode: this.projectCode,
+                projectUuid: this.projectUuid,
                 parentIri: this.parentIri,
                 position: this.position
             }

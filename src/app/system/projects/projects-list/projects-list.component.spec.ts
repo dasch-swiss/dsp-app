@@ -12,15 +12,23 @@ import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { TestConfig } from 'test.config';
 import { ProjectsListComponent } from './projects-list.component';
 
-// exclude test because of issue #100 in dsp-js
 describe('ProjectsListComponent', () => {
     let component: ProjectsListComponent;
     let fixture: ComponentFixture<ProjectsListComponent>;
 
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     beforeEach(waitForAsync(() => {
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
+
         TestBed.configureTestingModule({
             declarations: [
                 ProjectsListComponent,
@@ -38,7 +46,14 @@ describe('ProjectsListComponent', () => {
                 RouterTestingModule
             ],
             providers: [
-                AppInitService,
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
+                },
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig

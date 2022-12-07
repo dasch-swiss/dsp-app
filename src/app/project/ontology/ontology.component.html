@@ -182,7 +182,7 @@
                 <div class="ontology-editor-grid classes" *ngIf="view === 'classes'">
                     <!-- list of resource classes -->
                     <app-resource-class-info *ngFor="let resClass of ontoClasses" [resourceClass]="resClass"
-                        [projectCode]="projectCode" [projectStatus]="project.status" [ontologies]="ontologies"
+                        [projectUuid]="projectUuid" [projectStatus]="project.status" [ontologies]="ontologies"
                         [expanded]="expandClasses" [(lastModificationDate)]="lastModificationDate"
                         [userCanEdit]="(projectAdmin || sysAdmin)"
                         (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
@@ -197,7 +197,7 @@
                             [class.odd]="odd">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
                                  if objectType is a linkValue hide it (otherwise we have the property twice) -->
-                            <app-property-info [propDef]="ontology?.properties[prop.id]" [projectCode]="projectCode"
+                            <app-property-info [propDef]="ontology?.properties[prop.id]" [projectUuid]="projectUuid"
                                 [projectStatus]="project.status" [(lastModificationDate)]="lastModificationDate"
                                 [userCanEdit]="(projectAdmin || sysAdmin)"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"

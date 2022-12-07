@@ -34,9 +34,9 @@ import { OntologyService } from '../ontology.service';
 export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
 
     /**
-     * current project shortcode
+     * current project uuid
      */
-    @Input() projectCode: string;
+    @Input() projectUuid: string;
 
     /**
      * create mode: iri selected resource class is a subclass from knora base (baseClassIri)

@@ -1,6 +1,6 @@
 <div *ngIf="projectAdmin" class="content large middle">
     <!-- add user to the project -->
-    <app-add-user *ngIf="project?.status && (sysAdmin || projectAdmin)" [projectCode]="projectCode"
+    <app-add-user *ngIf="project?.status && (sysAdmin || projectAdmin)" [projectUuid]="projectUuid"
         (refreshParent)="refresh()" #addUserComponent></app-add-user>
 
     <!-- main content: list of project members -->

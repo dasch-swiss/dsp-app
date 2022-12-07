@@ -18,7 +18,7 @@ export interface DialogData {
     position?: number;
     parentIri?: string;
     parentResource?: ReadResource;
-    projectCode?: string;
+    projectUuid?: string;
     selectedResources?: FilteredResources;
     resourceClassDefinition?: string;
     fullSize?: boolean;

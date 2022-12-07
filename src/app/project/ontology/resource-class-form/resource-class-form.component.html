@@ -77,7 +77,7 @@
 <ng-template #missingLastModificationDate>
     <p class="note warning center">The resource class can't be edited because of missing "lastModificationDate"!</p>
 
-    <app-resource-class-info [resourceClass]="ontology.classes[iri]" [expanded]="true" [projectCode]="projectCode">
+    <app-resource-class-info [resourceClass]="ontology.classes[iri]" [expanded]="true" [projectUuid]="projectUuid">
     </app-resource-class-info>
 
     <mat-dialog-actions>

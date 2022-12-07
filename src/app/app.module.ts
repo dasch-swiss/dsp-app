@@ -39,7 +39,6 @@ import { FooterComponent } from './main/footer/footer.component';
 import { GridComponent } from './main/grid/grid.component';
 import { HeaderComponent } from './main/header/header.component';
 import { HelpComponent } from './main/help/help.component';
-import { MainComponent } from './main/main.component';
 import { FormattedBooleanPipe } from './main/pipes/formatting/formatted-boolean.pipe';
 import { KnoraDatePipe } from './main/pipes/formatting/knoradate.pipe';
 import { SplitPipe } from './main/pipes/split.pipe';
@@ -239,7 +238,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ListValueComponent,
         ListViewComponent,
         LoginFormComponent,
-        MainComponent,
         MembershipComponent,
         OntologyComponent,
         OntologyFormComponent,

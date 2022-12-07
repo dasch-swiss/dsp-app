@@ -75,7 +75,7 @@ describe('OntologyFormComponent', () => {
 
         ontologyFormFixture = TestBed.createComponent(OntologyFormComponent);
         ontologyFormComponent = ontologyFormFixture.componentInstance;
-        ontologyFormComponent.projectCode = '00FF';
+        ontologyFormComponent.projectUuid = 'Lw3FC39BSzCwvmdOaTyLqQ';
         // ontologyFormComponent.iri = 'http://0.0.0.0:3333/ontology/0001/anything/v2';
         ontologyFormComponent.existingOntologyNames = ['images'];
 

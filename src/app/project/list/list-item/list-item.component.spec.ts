@@ -42,11 +42,11 @@ class TestHostComponent implements OnInit {
 
     parentIri = 'http://rdfh.ch/lists/0001/otherTreeList';
 
-    projectIri = 'http://rdfh.ch/projects/0001';
+    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
 
     projectCode = '0001';
 
-    constructor() {}
+    constructor() { }
 
     ngOnInit() {
         this.list = [
@@ -307,7 +307,7 @@ describe('ListItemComponent', () => {
             isRootNode: true,
             id: 'http://rdfh.ch/lists/0001/otherTreeList01',
             labels: [{ value: 'Tree List Root', language: 'en' }],
-            projectIri: 'http://rdfh.ch/projects/0001'
+            projectIri: 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
         };
         listNodeOperation.operation = 'delete';
 

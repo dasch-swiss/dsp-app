@@ -1,7 +1,7 @@
 <div *ngIf="projectAdmin" class="content large middle">
 
     <!-- add group to the project -->
-    <app-add-group *ngIf="project?.status && sysAdmin" [projectCode]="projectCode" (refreshParent)="refresh()"
+    <app-add-group *ngIf="project?.status && sysAdmin" [projectUuid]="projectUuid" (refreshParent)="refresh()"
         #addGroupComponent></app-add-group>
 
     <!-- <mat-divider *ngIf="project?.status" ></mat-divider> -->

@@ -60,7 +60,7 @@
                     {{tag}}
                     <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
-                <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} {{projectCode ? '' : '*'}}"
+                <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} {{projectIri ? '' : '*'}}"
                     [formControl]="form.controls['keywords']"
                     [matChipInputFor]="chipList"
                     [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
@@ -93,13 +93,13 @@
             <span class="fill-remaining-space"></span>
             <span>
                 <button mat-raised-button type="submit" color="primary"
-                    [disabled]="!form.valid || !this.description.length || (projectCode && !project.status)">
+                    [disabled]="!form.valid || !this.description.length || (projectIri && !project.status)">
 
                     <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                     </app-progress-indicator>
                     <mat-icon *ngIf="success && !loading">close</mat-icon>
-                    <span *ngIf="projectCode">{{ 'appLabels.form.action.update' | translate }}</span>
-                    <span *ngIf="!projectCode">{{ 'appLabels.form.action.submit' | translate }}</span>
+                    <span *ngIf="projectIri">{{ 'appLabels.form.action.update' | translate }}</span>
+                    <span *ngIf="!projectIri">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>
             </span>
         </div>

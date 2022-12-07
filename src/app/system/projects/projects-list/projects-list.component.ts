@@ -17,6 +17,7 @@ import { ErrorHandlerService } from 'src/app/main/services/error-handler.service
 import { ComponentCommunicationEventService, EmitEvent, Events } from 'src/app/main/services/component-communication-event.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
 import { SortingService } from 'src/app/main/services/sorting.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 
 @Component({
     selector: 'app-projects-list',
@@ -86,7 +87,8 @@ export class ProjectsListComponent implements OnInit {
         private _router: Router,
         private _session: SessionService,
         private _sortingService: SortingService,
-        private _componentCommsService: ComponentCommunicationEventService
+        private _componentCommsService: ComponentCommunicationEventService,
+        private _projectService: ProjectService
     ) { }
 
     ngOnInit() {
@@ -128,13 +130,15 @@ export class ProjectsListComponent implements OnInit {
      * @param code
      * @param page
      */
-    openProjectPage(code: string, page?: 'collaboration' | 'ontologies' | 'lists') {
+    openProjectPage(iri: string, page?: 'collaboration' | 'ontologies' | 'lists') {
+        const uuid = this._projectService.iriToUuid(iri);
+
         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
             () => {
                 if (page) {
-                    this._router.navigate(['/project/' + code + '/' + page]);
+                    this._router.navigate(['/project/' + uuid + '/' + page]);
                 } else {
-                    this._router.navigate(['/project/' + code]); // project board
+                    this._router.navigate(['/project/' + uuid]); // project board
                 }
             }
         );
@@ -181,13 +185,15 @@ export class ProjectsListComponent implements OnInit {
     }
 
     deactivateProject(id: string) {
+        const uuid = this._projectService.iriToUuid(id);
+
         // the deleteProject() method in js-lib sets the project's status to false, it is not actually deleted
         this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();
                 // update project cache
-                this._cache.del(response.body.project.shortcode);
-                this._cache.get(response.body.project.shortcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
+                this._cache.del(uuid);
+                this._cache.get(uuid, this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id));
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -200,12 +206,14 @@ export class ProjectsListComponent implements OnInit {
         const data: UpdateProjectRequest = new UpdateProjectRequest();
         data.status = true;
 
+        const uuid = this._projectService.iriToUuid(id);
+
         this._dspApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.refreshParent.emit();
                 // update project cache
-                this._cache.del(response.body.project.shortcode);
-                this._cache.get(response.body.project.shortcode, this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(response.body.project.shortcode));
+                this._cache.del(uuid);
+                this._cache.get(uuid, this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id));
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);

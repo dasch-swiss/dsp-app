@@ -7,7 +7,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class AddGroupComponent implements OnInit {
 
-    @Input() projectCode: string;
+    @Input() projectUuid: string;
 
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 

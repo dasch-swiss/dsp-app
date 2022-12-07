@@ -20,6 +20,7 @@ import { existingNamesValidator } from 'src/app/main/directive/existing-name/exi
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { NotificationService } from 'src/app/main/services/notification.service';
 import { Session, SessionService } from 'src/app/main/services/session.service';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 import { CacheService } from '../../main/cache/cache.service';
 
@@ -45,10 +46,10 @@ export class UserFormComponent implements OnInit, OnChanges {
 
     /**
      * if the form was built to add new user to project,
-     * we get a project shortcode and a name (e-mail or username)
+     * we get a project uuid and a name (e-mail or username)
      * from the "add-user-autocomplete" input
      */
-    @Input() projectCode?: string;
+    @Input() projectUuid?: string;
     @Input() name?: string;
 
     /**
@@ -166,7 +167,8 @@ export class UserFormComponent implements OnInit, OnChanges {
         private _formBuilder: UntypedFormBuilder,
         private _notification: NotificationService,
         private _route: ActivatedRoute,
-        private _session: SessionService
+        private _session: SessionService,
+        private _projectService: ProjectService
     ) {
         // get username from url
         if (
@@ -228,9 +230,6 @@ export class UserFormComponent implements OnInit, OnChanges {
                         );
                     }
 
-                    // get parameters from url, if they exist
-                    // this.projectCode = this._route.snapshot.queryParams['project'];
-                    // const name: string = this._route.snapshot.queryParams['value'];
                     const newUser: ReadUser = new ReadUser();
 
                     if (CustomRegex.EMAIL_REGEX.test(this.name)) {
@@ -419,23 +418,16 @@ export class UserFormComponent implements OnInit, OnChanges {
                     this._cache.del('allUsers');
                     this._cache.get('allUsers', this._dspApiConnection.admin.usersEndpoint.getUsers());
 
-                    if (this.projectCode) {
-                        // if a projectCode exists, add the user to the project
-                        // get project iri by projectCode
-                        this._cache.get(this.projectCode).subscribe(
-                            (res: ReadProject) => {
-                                // add user to project
-                                this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, res.id).subscribe(
-                                    () => {
-                                        // update project cache and member of project cache
-                                        this._cache.get('members_of_' + this.projectCode, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByShortcode(this.projectCode));
-                                        this.closeDialog.emit(this.user);
-                                        this.loading = false;
-                                    },
-                                    (error: ApiResponseError) => {
-                                        this._errorHandler.showMessage(error);
-                                    }
-                                );
+                    if (this.projectUuid) {
+                        // if a projectUuid exists, add the user to the project
+                        const projectIri = this._projectService.uuidToIri(this.projectUuid);
+
+                        this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(this.user.id, projectIri).subscribe(
+                            () => {
+                                // update project cache and member of project cache
+                                this._cache.get('members_of_' + this.projectUuid, this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri));
+                                this.closeDialog.emit(this.user);
+                                this.loading = false;
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);

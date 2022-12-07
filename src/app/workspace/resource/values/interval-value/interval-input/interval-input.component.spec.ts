@@ -66,7 +66,7 @@ class NoValueRequiredTestHostComponent implements OnInit {
     }
 }
 
-describe('InvertalInputComponent', () => {
+describe('IntervalInputComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
 

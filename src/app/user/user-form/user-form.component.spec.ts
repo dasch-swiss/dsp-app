@@ -8,7 +8,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, KnoraApiConnection, MockUsers, ReadUser, UserResponse, UsersEndpointAdmin, UsersResponse } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, MockUsers, UsersEndpointAdmin, UsersResponse } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
@@ -16,6 +16,7 @@ import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { TestConfig } from 'test.config';
 import { PasswordFormComponent } from './password-form/password-form.component';
 import { UserFormComponent } from './user-form.component';
@@ -25,7 +26,12 @@ describe('UserFormComponent', () => {
     let fixture: ComponentFixture<UserFormComponent>;
     const formBuilder: UntypedFormBuilder = new UntypedFormBuilder();
 
-    // const cacheServiceSpyUser = jasmine.createSpyObj('CacheServiceUser', ['get']);
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch'
+        }
+    };
+
     const cacheServiceSpyAllUsers = jasmine.createSpyObj('CacheServiceAllUsers', ['get']);
 
     const apiSpyObj = {
@@ -33,6 +39,8 @@ describe('UserFormComponent', () => {
             usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUser', 'getUsers'])
         },
     };
+
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['uuidToIri']);
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -55,15 +63,18 @@ describe('UserFormComponent', () => {
                 TranslateModule.forRoot()
             ],
             providers: [
-                AppInitService,
+                {
+                    provide: AppInitService,
+                    useValue: appInitSpy
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
+                },
                 {
                     provide: DspApiConnectionToken,
                     useValue: apiSpyObj
                 },
-                // {
-                //     provide: CacheService,
-                //     useValue: cacheServiceSpyUser
-                // },
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpyAllUsers
@@ -82,7 +93,7 @@ describe('UserFormComponent', () => {
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
         (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUsers.and.callFake(
             () => {
-                const allUsers: ApiResponseData<UsersResponse> = MockUsers.mockUsers();;
+                const allUsers: ApiResponseData<UsersResponse> = MockUsers.mockUsers();
                 return of(allUsers);
             }
         );
