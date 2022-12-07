@@ -52,13 +52,13 @@ describe('SelectProjectComponent', () => {
     beforeEach(waitForAsync(() => {
 
         TestBed.configureTestingModule({
-            declarations: [ SelectProjectComponent, TestHostComponent ],
+            declarations: [SelectProjectComponent, TestHostComponent],
             imports: [
                 ReactiveFormsModule,
                 FormsModule,
                 BrowserAnimationsModule,
                 MatFormFieldModule,
-                MatSelectModule ]
+                MatSelectModule]
         })
             .compileComponents();
     }));
@@ -133,7 +133,7 @@ describe('SelectProjectComponent', () => {
 
         await options[0].click();
 
-        expect(testHostComponent.selectedProjIri).toEqual('http://rdfh.ch/projects/0001');
+        expect(testHostComponent.selectedProjIri).toEqual('http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ');
     });
 
     it('should unsubscribe from from changes on destruction', () => {

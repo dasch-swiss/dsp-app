@@ -138,7 +138,7 @@ describe('OverviewComponent', () => {
 
                     // recreate anything project
                     const anythingProj = new StoredProject();
-                    anythingProj.id = 'http://rdfh.ch/projects/0001';
+                    anythingProj.id = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
                     anythingProj.longname = 'Anything Project';
                     anythingProj.shortcode = '0001';
                     anythingProj.keywords = ['arbitrary test data', 'things'];
@@ -168,7 +168,6 @@ describe('OverviewComponent', () => {
         });
 
         it('should populate project lists correctly', () => {
-
             expect(testHostComponent.overviewComp.userProjects.length).toEqual(1);
             expect(testHostComponent.overviewComp.otherProjects.length).toEqual(7);
         });
