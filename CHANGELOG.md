@@ -1,5 +1,20 @@
 # Changelog
 
+## [10.11.1](https://github.com/dasch-swiss/dsp-app/compare/v10.11.0...v10.11.1) (2022-12-07)
+
+
+### Bug Fixes
+
+* **properties:** fixing incoming links bug in compound view (DEV-1493) ([#873](https://github.com/dasch-swiss/dsp-app/issues/873)) ([d606cf0](https://github.com/dasch-swiss/dsp-app/commit/d606cf0ce7055dbc2d1f544d161334e61a91492b))
+
+
+### Maintenance
+
+* bump js-lib to v7.4.8 ([#880](https://github.com/dasch-swiss/dsp-app/issues/880)) ([c412dfd](https://github.com/dasch-swiss/dsp-app/commit/c412dfda1dcf71b2b9da60e28a07172ad3174a02))
+* project IRI refactor (DEV-1468) ([#862](https://github.com/dasch-swiss/dsp-app/issues/862)) ([d898109](https://github.com/dasch-swiss/dsp-app/commit/d898109cfc781c53a4283d050e48d3064c29e80b))
+* **representations:** move repeated code to a shared service (DEV-1488) ([#869](https://github.com/dasch-swiss/dsp-app/issues/869)) ([c2dcb17](https://github.com/dasch-swiss/dsp-app/commit/c2dcb17f4d86fdab198941edeb26954476a4ab3c))
+* **text-value-as-string:** no longer account for richText gui attribute (DEV-1471) ([#874](https://github.com/dasch-swiss/dsp-app/issues/874)) ([21f7c6c](https://github.com/dasch-swiss/dsp-app/commit/21f7c6c00ccf212e52c0032a7c6888c0a9ef8f8a))
+
 ## [10.11.0](https://github.com/dasch-swiss/dsp-app/compare/v10.10.2...v10.11.0) (2022-11-02)
 
 
