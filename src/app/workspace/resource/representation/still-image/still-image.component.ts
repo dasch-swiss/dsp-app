@@ -614,8 +614,12 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
             navigatorHeight: '120px',
             navigatorWidth: '120px',
             gestureSettingsMouse: {
-                clickToZoom: false // do not zoom in on click
-            }
+                clickToZoom: false, // do not zoom in on click
+                dblClickToZoom: true, // but zoom on double click
+                flickEnabled: true, // perform a flick gesture to drag image
+                animationTime: 0.1, // direct and instant drag performance
+            },
+            visibilityRatio: 1.0 // viewers focus limited to the image borders; no more cutting the image on zooming out
         };
         this._viewer = new OpenSeadragon.Viewer(osdOptions);
 
