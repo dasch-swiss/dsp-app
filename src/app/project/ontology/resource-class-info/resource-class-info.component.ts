@@ -83,7 +83,7 @@ export class ResourceClassInfoComponent implements OnInit {
 
     classCanReplaceCardinality: boolean;
 
-    // list of properties that can be displayed (not all of the props should be displayed)
+    // list of properties that can be displayed (not all the props should be displayed)
     propsToDisplay: PropToDisplay[] = [];
 
     subClassOfLabel = '';
@@ -133,7 +133,7 @@ export class ResourceClassInfoComponent implements OnInit {
             (response: ReadOntology) => {
                 this.ontology = response;
                 this.lastModificationDate = this.ontology.lastModificationDate;
-                // translate iris from "sub class of" array
+                // translate iris from "subclass of" array
                 this.translateSubClassOfIri(this.resourceClass.subClassOf);
                 // prepare list of properties to display
                 this.preparePropsToDisplay(this.resourceClass.propertiesList);
@@ -150,7 +150,7 @@ export class ResourceClassInfoComponent implements OnInit {
     }
 
     /**
-     * translates iris from "sub class of" array
+     * translates iris from "subclass of" array
      * - display label from default resource classes (as part of DSP System Project)
      * - in case the class is a subclass of another class in the same ontology: display this class label
      * - in none of those cases display the name from the class IRI

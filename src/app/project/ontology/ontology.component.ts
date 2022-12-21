@@ -114,7 +114,7 @@ export class OntologyComponent implements OnInit {
     };
 
     /**
-     * list of all default resource classes (sub class of)
+     * list of all default resource classes (subclass of)
      */
     defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
     defaultProperties: PropertyCategory[] = DefaultProperties.data;
@@ -138,7 +138,18 @@ export class OntologyComponent implements OnInit {
         private _sortingService: SortingService,
         private _titleService: Title,
         private _projectService: ProjectService
-    ) {
+    ) {}
+
+    @HostListener('window:resize', ['$event']) onWindwoResize(e: Event) {
+        this.disableContent = (window.innerWidth <= 768);
+        // reset the page title
+        if (!this.disableContent) {
+            this._setPageTitle();
+        }
+    }
+
+    ngOnInit() {
+        this.loading = true;
         // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectUuid = params.get('uuid');
@@ -164,67 +175,55 @@ export class OntologyComponent implements OnInit {
                         const iriBase = this._ontologyService.getIriBaseUrl();
                         const ontologyName = params['onto'];
                         this.ontologyIri = `${iriBase}/ontology/${shortcode}/${ontologyName}/v2`;
+
+                        this.disableContent = (window.innerWidth <= 768);
+
+                        // get information about the logged-in user
+                        this.session = this._session.getSession();
+
+                        // is the logged-in user system admin?
+                        this.sysAdmin = this.session.user.sysAdmin;
+
+                        // default value for projectAdmin
+                        this.projectAdmin = this.sysAdmin;
+
+                        // get the project data from cache
+                        this._cache.get(this.projectUuid).subscribe(
+                            (response: ReadProject) => {
+                                this.project = response;
+
+                                // set the page title
+                                this._setPageTitle();
+
+                                // is logged-in user projectAdmin?
+                                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+
+                                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                                    (userResponse: ApiResponseData<UserResponse>) => {
+                                        this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
+
+                                        // get the ontologies for this project
+                                        this.initOntologiesList();
+                                    });
+
+                                this.ontologyForm = this._fb.group({
+                                    ontology: new UntypedFormControl({
+                                        value: this.ontologyIri, disabled: false
+                                    })
+                                });
+
+                                this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
+
+                            },
+                            (error: ApiResponseError) => {
+                                this._errorHandler.showMessage(error);
+                                this.loading = false;
+                            }
+                        );
                     }
                 );
             });
         }
-    }
-
-    @HostListener('window:resize', ['$event']) onWindwoResize(e: Event) {
-        this.disableContent = (window.innerWidth <= 768);
-        // reset the page title
-        if (!this.disableContent) {
-            this._setPageTitle();
-        }
-    }
-
-    ngOnInit() {
-
-        this.disableContent = (window.innerWidth <= 768);
-        this.loading = true;
-
-        // get information about the logged-in user
-        this.session = this._session.getSession();
-
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
-
-        // default value for projectAdmin
-        this.projectAdmin = this.sysAdmin;
-
-        // get the project data from cache
-        this._cache.get(this.projectUuid).subscribe(
-            (response: ReadProject) => {
-                this.project = response;
-
-                // set the page title
-                this._setPageTitle();
-
-                // is logged-in user projectAdmin?
-                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
-
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
-                    (userResponse: ApiResponseData<UserResponse>) => {
-                        this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
-
-                        // get the ontologies for this project
-                        this.initOntologiesList();
-                    });
-
-                this.ontologyForm = this._fb.group({
-                    ontology: new UntypedFormControl({
-                        value: this.ontologyIri, disabled: false
-                    })
-                });
-
-                this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
-
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loading = false;
-            }
-        );
     }
 
     /**
@@ -525,8 +524,7 @@ export class OntologyComponent implements OnInit {
     * delete either ontology, resource class or property
     *
     * @param mode Can be 'Ontology' or 'ResourceClass'
-    * @param id
-    * @param title
+    * @param info
     */
     delete(mode: 'Ontology' | 'ResourceClass' | 'Property', info: DefaultClass) {
         const dialogConfig: MatDialogConfig = {
