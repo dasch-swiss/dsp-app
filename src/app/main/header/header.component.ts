@@ -43,8 +43,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
         // create own logo icon to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
-            'dasch_icon_black',
-            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/dasch-icon-black.svg')
+            'dasch_mosaic_icon_color',
+            this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/dasch-mosaic-icon-color.svg')
         );
 
         // logged-in user? show user menu or login button
