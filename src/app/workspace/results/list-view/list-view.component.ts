@@ -206,6 +206,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                         this.numberOfAllResults = count.numberOfResults;
 
                         if (this.numberOfAllResults === 0) {
+                            this._notification.openSnackBar('No resources to display.');
                             this.emitSelectedResources();
                             this.resources = undefined;
                             this.loading = false;
@@ -228,7 +229,8 @@ export class ListViewComponent implements OnChanges, OnInit {
                     (response: ReadResourceSequence) => {
                         // if the response does not contain any resources even the search count is greater than 0,
                         // it means that the user does not have the permissions to see anything: emit an empty result
-                        if (response.resources.length === 0) {
+                        if (response.resources.length === 0 && this.numberOfAllResults > 0) {
+                            this._notification.openSnackBar('No permission to display the resources.');
                             this.emitSelectedResources();
                         }
                         this.resources = response;
@@ -241,12 +243,10 @@ export class ListViewComponent implements OnChanges, OnInit {
                     }
                 );
             } else {
-                this._notification.openSnackBar('The gravsearch query is not set correctly');
+                this._notification.openSnackBar('The gravsearch query is not set correctly.');
                 this.resources = undefined;
                 this.loading = false;
             }
-
         }
-
     }
 }
