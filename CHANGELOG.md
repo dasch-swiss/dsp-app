@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.11.2](https://github.com/dasch-swiss/dsp-app/compare/v10.11.1...v10.11.2) (2023-01-09)
+
+
+### Bug Fixes
+
+* fix gravsearch results infinite loading (DEV-1541) ([#887](https://github.com/dasch-swiss/dsp-app/issues/887)) ([3c8e1a9](https://github.com/dasch-swiss/dsp-app/commit/3c8e1a9d623acdef5cd6e6c59624b28099d82e18))
+* **ontology:** Displaying ontology on click (DEV-1545) ([#882](https://github.com/dasch-swiss/dsp-app/issues/882)) ([479c1e8](https://github.com/dasch-swiss/dsp-app/commit/479c1e8207ed4308d2897441e428ed1a2bf727b5))
+
+
+### Maintenance
+
+* bump JS-LIB to v7.4.9 ([#888](https://github.com/dasch-swiss/dsp-app/issues/888)) ([4b958e2](https://github.com/dasch-swiss/dsp-app/commit/4b958e21193a272fd9474fb3644cccd8df74e805))
+* **header:** Logo & favicon (DEV-1574) ([#885](https://github.com/dasch-swiss/dsp-app/issues/885)) ([384d8ef](https://github.com/dasch-swiss/dsp-app/commit/384d8efd58d599aa9ae2ac09e5babc1799d2c6bf))
+
 ## [10.11.1](https://github.com/dasch-swiss/dsp-app/compare/v10.11.0...v10.11.1) (2022-12-07)
 
 
