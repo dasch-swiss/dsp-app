@@ -138,7 +138,7 @@ describe('OverviewComponent', () => {
 
                     // recreate anything project
                     const anythingProj = new StoredProject();
-                    anythingProj.id = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+                    anythingProj.id = 'http://rdfh.ch/projects/0001';
                     anythingProj.longname = 'Anything Project';
                     anythingProj.shortcode = '0001';
                     anythingProj.keywords = ['arbitrary test data', 'things'];

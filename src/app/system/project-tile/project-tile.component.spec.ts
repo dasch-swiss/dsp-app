@@ -24,10 +24,10 @@ class TestHostProjectTileComponent implements OnInit {
     project = new StoredProject();
     sysAdmin = true;
 
-    ngOnInit(){
+    ngOnInit() {
         this.project.status = true;
         this.project.longname = 'test project';
-        this.project.id = 'http://rdfh.ch/projects/9aQ4EuRKReCXnO0pTJ92ug';
+        this.project.id = 'http://rdfh.ch/projects/0123';
     }
 
     deactivateProject() {
@@ -92,9 +92,9 @@ describe('ProjectTileComponent', () => {
 
         const projectServiceSpy = TestBed.inject(ProjectService);
 
-            (projectServiceSpy as jasmine.SpyObj<ProjectService>).iriToUuid.and.callFake(
-                (iri: string) => '9aQ4EuRKReCXnO0pTJ92ug'
-            );
+        (projectServiceSpy as jasmine.SpyObj<ProjectService>).iriToUuid.and.callFake(
+            (iri: string) => '0123'
+        );
     });
 
     it('should show correct project status', () => {
@@ -162,7 +162,7 @@ describe('ProjectTileComponent', () => {
         await goToProjectDashboardBtn.click();
 
         // ensure the correct arguments were passed to the navigateTo method
-        expect(navigateToSpy).toHaveBeenCalledWith('http://rdfh.ch/projects/9aQ4EuRKReCXnO0pTJ92ug', 'workspace');
+        expect(navigateToSpy).toHaveBeenCalledWith('http://rdfh.ch/projects/0123', 'workspace');
     });
 
     it('should go to project settings when the settings button is clicked', async () => {
@@ -176,6 +176,6 @@ describe('ProjectTileComponent', () => {
         await settingsBtn.click();
 
         // ensure the correct arguments were passed to the navigateTo method
-        expect(navigateToSpy).toHaveBeenCalledWith('http://rdfh.ch/projects/9aQ4EuRKReCXnO0pTJ92ug', 'settings');
+        expect(navigateToSpy).toHaveBeenCalledWith('http://rdfh.ch/projects/0123', 'settings');
     });
 });

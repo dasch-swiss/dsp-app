@@ -36,7 +36,7 @@ class TestHostUpdateListComponent {
 
     mode = 'update';
 
-    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+    projectIri = 'http://rdfh.ch/projects/0001';
 
     constructor() { }
 }
@@ -55,7 +55,7 @@ class TestHostCreateListComponent {
 
     projectCode = '0001';
 
-    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+    projectIri = 'http://rdfh.ch/projects/0001';
 
     constructor() { }
 }

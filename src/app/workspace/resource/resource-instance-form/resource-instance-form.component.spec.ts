@@ -502,9 +502,9 @@ describe('ResourceInstanceFormComponent', () => {
 
         const selectProjectComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectProjectComponent));
 
-        (selectProjectComp.componentInstance as MockSelectProjectComponent).form.controls.projects.setValue('http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ');
+        (selectProjectComp.componentInstance as MockSelectProjectComponent).form.controls.projects.setValue('http://rdfh.ch/projects/0001');
 
-        testHostComponent.resourceInstanceFormComponent.selectedProject = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+        testHostComponent.resourceInstanceFormComponent.selectedProject = 'http://rdfh.ch/projects/0001';
 
         testHostComponent.resourceInstanceFormComponent.ontologiesMetadata = MockOntology.mockOntologiesMetadata();
 

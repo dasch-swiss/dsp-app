@@ -39,7 +39,7 @@ class TestHostUpdateChildNodeComponent {
 
     mode = 'update';
 
-    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+    projectIri = 'http://rdfh.ch/projects/0001';
 
     constructor() { }
 }
@@ -64,7 +64,7 @@ class TestHostInsertChildNodeComponent {
 
     projectCode = '0001';
 
-    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+    projectIri = 'http://rdfh.ch/projects/0001';
 
     constructor() { }
 }
@@ -291,7 +291,7 @@ describe('EditListItemComponent', () => {
             const projectServiceSpy = TestBed.inject(ProjectService);
 
             (projectServiceSpy as jasmine.SpyObj<ProjectService>).iriToUuid.and.callFake(
-                (iri: string) => 'Lw3FC39BSzCwvmdOaTyLqQ'
+                (iri: string) => '0001'
             );
         });
 

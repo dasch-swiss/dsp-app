@@ -53,7 +53,7 @@ class TestHostComponent implements OnInit {
 
     language = 'en';
 
-    projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+    projectIri = 'http://rdfh.ch/projects/0001';
 
     projectCode = '0001';
 
@@ -197,7 +197,7 @@ describe('ListItemFormComponent', () => {
         deleteListNodeResponse.node.id = 'http://rdfh.ch/lists/0001/notUsedList';
         deleteListNodeResponse.node.isRootNode = true;
         deleteListNodeResponse.node.name = 'notUsedList';
-        deleteListNodeResponse.node.projectIri = 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ';
+        deleteListNodeResponse.node.projectIri = 'http://rdfh.ch/projects/0001';
 
         const listSpy = TestBed.inject(DspApiConnectionToken);
 

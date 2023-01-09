@@ -127,7 +127,7 @@ describe('OntologyComponent', () => {
                                 }
                             }),
                             snapshot: {
-                                params: { uuid: '009aQ4EuRKReCXnO0pTJ92ug01' },
+                                params: { uuid: '0001' },
                                 url: [
                                     { path: 'project' }
                                 ]

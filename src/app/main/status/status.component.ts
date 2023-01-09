@@ -144,15 +144,13 @@ export class StatusComponent implements OnInit {
 
         this._dspApiConnection.system.healthEndpoint.getHealthStatus().subscribe(
             (response: ApiResponseData<HealthResponse>) => {
-                if (response.body.status === 'healthy') {
+                if (response.body.status) {
                     window.location.reload();
                 }
             },
             (error: ApiResponseError) => {
-                this. refresh = false;
+                this.refresh = false;
             }
         );
-
     }
-
 }

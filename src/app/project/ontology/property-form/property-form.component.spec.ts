@@ -287,7 +287,7 @@ describe('PropertyFormComponent', () => {
                         'language': 'en',
                         'value': 'Tree list root'
                     }],
-                    'projectIri': 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
+                    'projectIri': 'http://rdfh.ch/projects/0001'
                 }, {
                     'comments': [{
                         'language': 'en',
@@ -303,7 +303,7 @@ describe('PropertyFormComponent', () => {
                         'value': 'a list that is not used'
                     }],
                     'name': 'notUsedList',
-                    'projectIri': 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
+                    'projectIri': 'http://rdfh.ch/projects/0001'
                 }, {
                     'comments': [{
                         'language': 'en',
@@ -319,7 +319,7 @@ describe('PropertyFormComponent', () => {
                         'value': 'Tree list root'
                     }],
                     'name': 'treelistroot',
-                    'projectIri': 'http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ'
+                    'projectIri': 'http://rdfh.ch/projects/0001'
                 }];
                 return of(response);
             }

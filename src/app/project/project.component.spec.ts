@@ -79,7 +79,7 @@ describe('ProjectComponent', () => {
                                 { path: 'project' }
                             ],
                             params: [
-                                { uuid: '09aQ4EuRKReCXnO0pTJ92ug001' }
+                                { uuid: '00123001' }
                             ]
                         }
                     }

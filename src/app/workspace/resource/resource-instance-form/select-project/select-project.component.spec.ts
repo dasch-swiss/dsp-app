@@ -133,7 +133,7 @@ describe('SelectProjectComponent', () => {
 
         await options[0].click();
 
-        expect(testHostComponent.selectedProjIri).toEqual('http://rdfh.ch/projects/Lw3FC39BSzCwvmdOaTyLqQ');
+        expect(testHostComponent.selectedProjIri).toEqual('http://rdfh.ch/projects/0001');
     });
 
     it('should unsubscribe from from changes on destruction', () => {

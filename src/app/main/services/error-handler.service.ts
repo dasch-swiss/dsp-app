@@ -36,7 +36,7 @@ export class ErrorHandlerService {
             // check if the api is healthy:
             this._dspApiConnection.system.healthEndpoint.getHealthStatus().subscribe(
                 (response: ApiResponseData<HealthResponse>) => {
-                    if (response.body.status === 'unhealthy') {
+                    if (!response.body.status) {
                         const healthError: ApiResponseError = {
                             error: response.body.message,
                             method: response.method,
@@ -75,7 +75,7 @@ export class ErrorHandlerService {
                 );
             }
 
-        } else if (error.status === 401 && typeof(error.error) !== 'string') {
+        } else if (error.status === 401 && typeof (error.error) !== 'string') {
             // logout if error status is a 401 error and comes from a DSP-JS request
             this._dspApiConnection.v2.auth.logout().subscribe(
                 (logoutResponse: ApiResponseData<LogoutResponse>) => {

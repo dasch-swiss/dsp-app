@@ -56,7 +56,7 @@ describe('OntologyClassInstanceComponent', () => {
                         }),
                         parent: {
                             snapshot: {
-                                params: { uuid: 'Lw3FC39BSzCwvmdOaTyLqQ' }
+                                params: { uuid: '0001' }
                             }
                         }
                     }
