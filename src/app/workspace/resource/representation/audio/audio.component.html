@@ -12,7 +12,7 @@
                     </mat-icon>
                 </div>
                 <div *ngIf="failedToLoad">Your browser does not support the audio element.</div>
-                <div class="audio-player">
+                <div *ngIf="audio" class="audio-player">
                     <audio id="audio" preload="auto">
                         <source [src]="audio" type="audio/mpeg">
                     </audio>

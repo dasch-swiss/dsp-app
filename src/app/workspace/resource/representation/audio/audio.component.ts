@@ -53,14 +53,16 @@ export class AudioComponent implements OnInit, AfterViewInit {
         );
         this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
         this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
-        const player = document.getElementById('audio') as HTMLAudioElement;
-        player.addEventListener('timeupdate', () => {
-            this.currentTime = player.currentTime;
-        });
     }
 
     ngAfterViewInit() {
         this.loaded.emit(true);
+        const player = document.getElementById('audio') as HTMLAudioElement;
+        if (player) {
+            player.addEventListener('timeupdate', () => {
+                this.currentTime = player.currentTime;
+            });
+        }
     }
 
     togglePlay() {
@@ -122,7 +124,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
         window.open(this.src.fileValue.fileUrl, '_blank');
     }
 
-    download(url: string){
+    download(url: string) {
         this._rs.downloadFile(url);
     }
 
