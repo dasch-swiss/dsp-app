@@ -1,6 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -26,7 +26,8 @@ import { FulltextSearchComponent } from './fulltext-search.component';
     template: `
         <app-fulltext-search #fulltextSearch
             [projectfilter]="projectfilter"
-            [limitToProject]="limitToProject">
+            [limitToProject]="limitToProject"
+            (search)=emitSearch($event)>
         </app-fulltext-search>
     `
 })
@@ -42,6 +43,8 @@ class TestHostFulltextSearchComponent implements OnInit {
 
     ngOnInit() {
     }
+
+    emitSearch(data: any){}
 
 }
 
@@ -170,6 +173,9 @@ describe('FulltextSearchComponent', () => {
         });
 
         it('should do a search', () => {
+            spyOn(testHostComponent.fulltextSearch, 'emitSearchParams').and.callThrough();
+            spyOn(testHostComponent, 'emitSearch');
+
             const searchBtn = fulltextSearchComponentDe.query(By.css('button.app-fulltext-search-button'));
             expect(searchBtn).toBeDefined();
             expect(searchInputNativeEl).toBeDefined();
@@ -190,6 +196,29 @@ describe('FulltextSearchComponent', () => {
                 { query: 'new thing' }
             ];
             expect(localStorage.getItem('prevSearch')).toEqual(JSON.stringify(newPrevSearchArray));
+            expect(testHostComponent.fulltextSearch.emitSearchParams).toHaveBeenCalled();
+            expect(testHostComponent.emitSearch).toHaveBeenCalled();
+            expect(testHostComponent.emitSearch).toHaveBeenCalledWith({ query: 'new thing', mode: 'fulltext' });
+        });
+
+        it('should not do a search for a query less than 3 characters', () => {
+            spyOn(testHostComponent.fulltextSearch, 'emitSearchParams').and.callThrough();
+            spyOn(testHostComponent, 'emitSearch');
+
+            const searchBtn = fulltextSearchComponentDe.query(By.css('button.app-fulltext-search-button'));
+            expect(searchBtn).toBeDefined();
+            expect(searchInputNativeEl).toBeDefined();
+
+            searchInputNativeEl.value = 'aa';
+            searchInputNativeEl.dispatchEvent(new Event('input'));
+
+            // click on the search button and trigger the method doSearch()
+            searchBtn.triggerEventHandler('click', null);
+            testHostFixture.detectChanges();
+
+            expect(testHostComponent.fulltextSearch.searchQuery).toEqual('aa');
+            expect(testHostComponent.fulltextSearch.emitSearchParams).toHaveBeenCalledTimes(0);
+            expect(testHostComponent.emitSearch).toHaveBeenCalledTimes(0);
 
         });
 

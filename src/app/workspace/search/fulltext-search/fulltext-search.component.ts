@@ -28,6 +28,7 @@ import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { ComponentCommunicationEventService, Events } from 'src/app/main/services/component-communication-event.service';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
+import { NotificationService } from 'src/app/main/services/notification.service';
 import { SortingService } from 'src/app/main/services/sorting.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 
@@ -127,6 +128,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         private _overlay: Overlay,
         private _sortingService: SortingService,
         private _viewContainerRef: ViewContainerRef,
+        private _notification: NotificationService,
     ) { }
 
     ngOnInit(): void {
@@ -292,6 +294,17 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     doSearch(): void {
 
         if (this.searchQuery !== undefined && this.searchQuery !== null) {
+
+            // search query must be at least 3 characters
+            if(this.searchQuery.length < 3) {
+
+                // show the error message if the user entered at least 1 character
+                if (this.searchQuery !== '') {
+                    this._notification.openSnackBar('Search query must be at least 3 characters long.', 'error');
+                }
+
+                return;
+            }
 
             // push the search query into the local storage prevSearch array (previous search)
             // to have a list of recent search requests
