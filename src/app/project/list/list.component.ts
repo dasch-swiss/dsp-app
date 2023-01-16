@@ -121,7 +121,7 @@ export class ListComponent implements OnInit {
 
     }
 
-    @HostListener('window:resize', ['$event']) onWindwoResize(e: Event) {
+    @HostListener('window:resize', ['$event']) onWindowResize(e: Event) {
         this.disableContent = (window.innerWidth <= 768);
         // reset the page title
         if (!this.disableContent) {

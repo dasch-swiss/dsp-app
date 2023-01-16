@@ -134,13 +134,13 @@ export class OntologyComponent implements OnInit {
         private _ontologyService: OntologyService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _session: SessionService,
+        private _sessionService: SessionService,
         private _sortingService: SortingService,
         private _titleService: Title,
         private _projectService: ProjectService
     ) {}
 
-    @HostListener('window:resize', ['$event']) onWindwoResize(e: Event) {
+    @HostListener('window:resize', ['$event']) onWindowResize(e: Event) {
         this.disableContent = (window.innerWidth <= 768);
         // reset the page title
         if (!this.disableContent) {
@@ -169,6 +169,7 @@ export class OntologyComponent implements OnInit {
         if (this.beta) {
             const uuid = this._route.parent.snapshot.params.uuid;
             this._route.params.subscribe(params => {
+                this.loading = true;
                 this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(uuid)).subscribe(
                     (res: ApiResponseData<ProjectResponse>) => {
                         const shortcode = res.body.project.shortcode;
@@ -176,54 +177,61 @@ export class OntologyComponent implements OnInit {
                         const ontologyName = params['onto'];
                         this.ontologyIri = `${iriBase}/ontology/${shortcode}/${ontologyName}/v2`;
 
-                        this.disableContent = (window.innerWidth <= 768);
-
-                        // get information about the logged-in user
-                        this.session = this._session.getSession();
-
-                        // is the logged-in user system admin?
-                        this.sysAdmin = this.session.user.sysAdmin;
-
-                        // default value for projectAdmin
-                        this.projectAdmin = this.sysAdmin;
-
-                        // get the project data from cache
-                        this._cache.get(this.projectUuid).subscribe(
-                            (response: ReadProject) => {
-                                this.project = response;
-
-                                // set the page title
-                                this._setPageTitle();
-
-                                // is logged-in user projectAdmin?
-                                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
-
-                                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
-                                    (userResponse: ApiResponseData<UserResponse>) => {
-                                        this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
-
-                                        // get the ontologies for this project
-                                        this.initOntologiesList();
-                                    });
-
-                                this.ontologyForm = this._fb.group({
-                                    ontology: new UntypedFormControl({
-                                        value: this.ontologyIri, disabled: false
-                                    })
-                                });
-
-                                this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
-
-                            },
-                            (error: ApiResponseError) => {
-                                this._errorHandler.showMessage(error);
-                                this.loading = false;
-                            }
-                        );
+                        this.initView();
                     }
                 );
             });
+        } else {
+            // to be removed once the beta view is implemented
+            this.initView();
         }
+    }
+
+    initView(): void {
+        this.disableContent = (window.innerWidth <= 768);
+
+        // get information about the logged-in user
+        this.session = this._sessionService.getSession();
+
+        // is the logged-in user system admin?
+        this.sysAdmin = this.session.user.sysAdmin;
+
+        // default value for projectAdmin
+        this.projectAdmin = this.sysAdmin;
+
+        // get the project data from cache
+        this._cache.get(this.projectUuid).subscribe(
+            (response: ReadProject) => {
+                this.project = response;
+
+                // set the page title
+                this._setPageTitle();
+
+                // is logged-in user projectAdmin?
+                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+
+                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                    (userResponse: ApiResponseData<UserResponse>) => {
+                        this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
+
+                        // get the ontologies for this project
+                        this.initOntologiesList();
+                    });
+
+                this.ontologyForm = this._fb.group({
+                    ontology: new UntypedFormControl({
+                        value: this.ontologyIri, disabled: false
+                    })
+                });
+
+                this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
+
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+                this.loading = false;
+            }
+        );
     }
 
     /**
