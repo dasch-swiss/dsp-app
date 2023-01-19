@@ -153,7 +153,7 @@ export class ProjectComponent implements OnInit {
                     }
 
                     // in the new concept of project view, we have to make many requests to get all project relevant information
-                    if(this.beta) {
+                    if (this.beta) {
 
                         // get all project ontologies
                         this._dspApiConnection.v2.onto.getOntologiesByProjectIri(this.iri).subscribe(
@@ -166,7 +166,7 @@ export class ProjectComponent implements OnInit {
                                             (ontology: ReadOntology) => {
                                                 this.projectOntologies.push(ontology);
                                                 this.projectOntologies
-                                                    .sort((o1,o2) => this._compareOntologies(o1, o2));
+                                                    .sort((o1, o2) => this._compareOntologies(o1, o2));
                                                 this.ontologies.push(ontology);
                                                 if (ontoMeta.ontologies.length === this.ontologies.length) {
                                                     this._cache.set('currentProjectOntologies', this.ontologies);
@@ -224,6 +224,11 @@ export class ProjectComponent implements OnInit {
             const array = id.split('/');
             const pos = array.length - 1;
             id = array[pos];
+        }
+        if (route === 'add-ontology' || route === 'add-list') {
+            if (!this.project || !this.project.status) { // project is deactivated. Do not reroute
+                return;
+            }
         }
         if (id) {
             if (route === 'ontology') {

@@ -5,7 +5,8 @@
             class="navigation tab-bar margin-from-top" animationDuration="0ms" [color]="color">
             <a mat-tab-link *ngFor="let link of navigation; let first = first; let i = index" id="{{link.route}}"
                 [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive"
-                [disabled]="!projectAdmin && !first && i !== TAB_DATA_MODEL && i !== TAB_LISTS" [class.deactivated]="!project?.status">
+                [disabled]="!projectAdmin && !first && i !== TAB_DATA_MODEL && i !== TAB_LISTS"
+                [class.deactivated]="!project?.status">
                 <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
                 {{link.label}}
             </a>
@@ -18,7 +19,8 @@
         <mat-sidenav-container class="project-view">
             <mat-sidenav mode="side" opened class="project-nav">
                 <!-- Project label -->
-                <div *ngIf="project !== undefined" class="link project-title" [routerLink]="'/beta/project/' + projectUuid">
+                <div *ngIf="project !== undefined" class="link project-title"
+                    [routerLink]="'/beta/project/' + projectUuid">
                     <p #projectTitle matTooltip="{{project.longname}}" matTooltipShowDelay="500"
                         [matTooltipDisabled]="compareElementHeights(projectTitle)" matTooltipPosition="right">
                         {{project.longname}}
@@ -51,7 +53,8 @@
                             <p>Data models</p>
                         </span>
                     </mat-list-item> -->
-                    <mat-list-item class="link add-new" *ngIf="projectAdmin" (click)="open('add-ontology')">
+                    <mat-list-item class="link add-new" [class.list-item-deactivated]="!project?.status"
+                        *ngIf="projectAdmin" (click)="open('add-ontology')">
                         <span class="add-new-label">
                             <mat-icon class="sidenav-prefix-icon">add_circle_outline</mat-icon>
                             <p>Add a new data model</p>
@@ -90,7 +93,7 @@
                                 <p>Lists</p>
                             </span>
                         </div>
-                        <mat-list-item class="link add-new" *ngIf="projectAdmin" (click)="open('add-list')">
+                        <mat-list-item class="link add-new" [class.list-item-deactivated]="!project?.status" *ngIf="projectAdmin" (click)="open('add-list')">
                             <span class="add-new-label">
                                 <mat-icon class="sidenav-prefix-icon">add_circle_outline</mat-icon>
                                 <p>Add a new list</p>
