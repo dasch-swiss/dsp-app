@@ -1,5 +1,28 @@
 # Changelog
 
+## [10.12.0](https://github.com/dasch-swiss/dsp-app/compare/v10.11.2...v10.12.0) (2023-01-20)
+
+
+### Bug Fixes
+
+* firefox audio representation (DEV 1553) ([#884](https://github.com/dasch-swiss/dsp-app/issues/884)) ([420d54f](https://github.com/dasch-swiss/dsp-app/commit/420d54f8819692fd1c32b35ab411c522b09a622a))
+* **fulltext-search:** don't allow search queries of less than 3 characters (DEV-1602) ([#890](https://github.com/dasch-swiss/dsp-app/issues/890)) ([5b6a131](https://github.com/dasch-swiss/dsp-app/commit/5b6a13104194432a240f6282a1e1067053795cb3))
+* **ontology:** fix old view ontology editor not appearing (DEV-1603) ([#891](https://github.com/dasch-swiss/dsp-app/issues/891)) ([00ad45e](https://github.com/dasch-swiss/dsp-app/commit/00ad45e517df38b891147d6c4bf192a76fac4216))
+* **project:** Prevent adding new data model for deactivated projects (DEV-1582) ([#892](https://github.com/dasch-swiss/dsp-app/issues/892)) ([c5fcc30](https://github.com/dasch-swiss/dsp-app/commit/c5fcc3028f7d143f9dd786c29efbe5354cd80a82))
+
+
+### Enhancements
+
+* **releasenotes:** Integrate releasenotes (DEV-1600) ([#895](https://github.com/dasch-swiss/dsp-app/issues/895)) ([64ef14b](https://github.com/dasch-swiss/dsp-app/commit/64ef14ba63b18a458aa897448ae25df440aa2714))
+
+
+### Maintenance
+
+* bump JS-LIB to v7.4.10 ([#896](https://github.com/dasch-swiss/dsp-app/issues/896)) ([775b012](https://github.com/dasch-swiss/dsp-app/commit/775b0128019fc77e67c9b41451ece6664870317f))
+* **deps:** bump engine.io from 6.2.0 to 6.2.1 ([#872](https://github.com/dasch-swiss/dsp-app/issues/872)) ([3e208a5](https://github.com/dasch-swiss/dsp-app/commit/3e208a5ad30e184e32e99435f0b3e9a74af2ab3b))
+* **deps:** bump json5 from 1.0.1 to 1.0.2 ([#886](https://github.com/dasch-swiss/dsp-app/issues/886)) ([6064d42](https://github.com/dasch-swiss/dsp-app/commit/6064d4297a5b404b40587f12e82db6943e988dbb))
+* **deps:** bump loader-utils from 2.0.2 to 2.0.4 ([#866](https://github.com/dasch-swiss/dsp-app/issues/866)) ([2dfaa61](https://github.com/dasch-swiss/dsp-app/commit/2dfaa6177587b0120180a8649c3c28650962fb75))
+
 ## [10.11.2](https://github.com/dasch-swiss/dsp-app/compare/v10.11.1...v10.11.2) (2023-01-09)
 
 
