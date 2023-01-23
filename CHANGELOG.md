@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.12.1](https://github.com/dasch-swiss/dsp-app/compare/v10.12.0...v10.12.1) (2023-01-23)
+
+
+### Bug Fixes
+
+* **create-link-resource:** fix issue when creating a new linked resource (DEV-1637) ([#899](https://github.com/dasch-swiss/dsp-app/issues/899)) ([cf9008a](https://github.com/dasch-swiss/dsp-app/commit/cf9008a71085d806e91f527e2d5179ce26b2e74c))
+
 ## [10.12.0](https://github.com/dasch-swiss/dsp-app/compare/v10.11.2...v10.12.0) (2023-01-20)
 
 
