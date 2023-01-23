@@ -8,12 +8,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
+    ApiResponseData,
     CreateIntValue,
     CreateResource,
     CreateTextValueAsString,
     CreateValue,
     MockOntology,
+    MockProjects,
     MockResource,
+    ProjectResponse,
+    ProjectsEndpointAdmin,
     ReadResource,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
@@ -23,6 +27,7 @@ import {
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { BaseValueDirective } from 'src/app/main/directive/base-value.directive';
 import { SwitchPropertiesComponent } from '../../resource-instance-form/select-properties/switch-properties/switch-properties.component';
@@ -203,6 +208,9 @@ describe('CreateLinkResourceComponent', () => {
             v2: {
                 ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition']),
                 res: jasmine.createSpyObj('res', ['createResource'])
+            },
+            admin: {
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByShortcode'])
             }
         };
 
@@ -259,6 +267,19 @@ describe('CreateLinkResourceComponent', () => {
 
     it('should submit the form', () => {
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        // mock projects endpoint
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+            () => {
+                const response = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+            }
+        );
 
         (dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>).createResource.and.callFake(
             () => {

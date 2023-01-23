@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { ApiResponseData, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import {
     ApiResponseError,
     Constants,
@@ -90,62 +91,66 @@ export class CreateLinkResourceComponent implements OnInit {
 
     onSubmit() {
         if (this.propertiesForm.valid) {
-            const createResource = new CreateResource();
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByShortcode(this.resourceClassDef.split('/')[4]).subscribe(
+                (project: ApiResponseData<ProjectResponse>) => {
 
-            const resLabelVal = <CreateTextValueAsString>this.selectPropertiesComponent.createValueComponent.getNewValue();
+                    const createResource = new CreateResource();
 
-            createResource.label = resLabelVal.text;
+                    const resLabelVal = <CreateTextValueAsString>this.selectPropertiesComponent.createValueComponent.getNewValue();
 
-            createResource.type = this.resourceClassDef;
+                    createResource.label = resLabelVal.text;
 
-            // todo: find a better way to do this
-            createResource.attachedToProject = 'http://rdfh.ch/projects/' + this.resourceClassDef.split('/')[4];
+                    createResource.type = this.resourceClassDef;
 
-            this.selectPropertiesComponent.switchPropertiesComponent.forEach((child) => {
-                const createVal = child.createValueComponent.getNewValue();
-                const iri = child.property.id;
-                if (createVal instanceof CreateValue) {
-                    if (this.propertiesObj[iri]) {
-                        // if a key already exists, add the createVal to the array
-                        this.propertiesObj[iri].push(createVal);
-                    } else {
-                        // if no key exists, add one and add the createVal as the first value of the array
-                        this.propertiesObj[iri] = [createVal];
+                    createResource.attachedToProject = project.body.project.id;
+
+                    this.selectPropertiesComponent.switchPropertiesComponent.forEach((child) => {
+                        const createVal = child.createValueComponent.getNewValue();
+                        const iri = child.property.id;
+                        if (createVal instanceof CreateValue) {
+                            if (this.propertiesObj[iri]) {
+                                // if a key already exists, add the createVal to the array
+                                this.propertiesObj[iri].push(createVal);
+                            } else {
+                                // if no key exists, add one and add the createVal as the first value of the array
+                                this.propertiesObj[iri] = [createVal];
+                            }
+                        }
+
+                    });
+
+                    if (this.fileValue) {
+                        switch (this.hasFileValue) {
+                            case 'stillImage':
+                                this.propertiesObj[Constants.HasStillImageFileValue] = [this.fileValue];
+                                break;
+                            case 'document':
+                                this.propertiesObj[Constants.HasDocumentFileValue] = [this.fileValue];
+                                break;
+                            case 'audio':
+                                this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
+                                break;
+                            case 'movingImage':
+                                this.propertiesObj[Constants.HasMovingImageFileValue] = [this.fileValue];
+                                break;
+                            case 'archive':
+                                this.propertiesObj[Constants.HasArchiveFileValue] = [this.fileValue];
+                                break;
+                            case 'text':
+                                this.propertiesObj[Constants.HasTextFileValue] = [this.fileValue];
+                        }
                     }
-                }
 
-            });
+                    createResource.properties = this.propertiesObj;
 
-            if (this.fileValue) {
-                switch (this.hasFileValue) {
-                    case 'stillImage':
-                        this.propertiesObj[Constants.HasStillImageFileValue] = [this.fileValue];
-                        break;
-                    case 'document':
-                        this.propertiesObj[Constants.HasDocumentFileValue] = [this.fileValue];
-                        break;
-                    case 'audio':
-                        this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
-                        break;
-                    case 'movingImage':
-                        this.propertiesObj[Constants.HasMovingImageFileValue] = [this.fileValue];
-                        break;
-                    case 'archive':
-                        this.propertiesObj[Constants.HasArchiveFileValue] = [this.fileValue];
-                        break;
-                    case 'text':
-                        this.propertiesObj[Constants.HasTextFileValue] = [this.fileValue];
-                }
-            }
-
-            createResource.properties = this.propertiesObj;
-
-            this._dspApiConnection.v2.res.createResource(createResource).subscribe(
-                (res: ReadResource) => {
-                    this.closeDialog.emit(res);
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
+                    this._dspApiConnection.v2.res.createResource(createResource).subscribe(
+                        (res: ReadResource) => {
+                            this.closeDialog.emit(res);
+                        },
+                        (error: ApiResponseError) => {
+                            this._errorHandler.showMessage(error);
+                        }
+                    );
                 }
             );
         } else {
