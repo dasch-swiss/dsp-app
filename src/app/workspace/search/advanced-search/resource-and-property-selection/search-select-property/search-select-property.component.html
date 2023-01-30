@@ -1,27 +1,36 @@
 <!-- property header -->
-<div *ngIf="index === 0 && topLevel" class="search-property-header">
+<div *ngIf="index === 0 && topLevel"
+    class="search-property-header">
     <span class="fill-remaining-space"></span>
     <span class="mat-caption">Sort criterion</span>
 </div>
 
-<div *ngIf="properties.length > 0" class="search-property-line" [formGroup]="form">
+<div *ngIf="properties.length > 0"
+    class="search-property-line"
+    [formGroup]="form">
 
     <!-- select property -->
     <mat-form-field class="search-property-field medium-field">
-        <mat-select placeholder="Select Properties" [formControlName]="'property'" class="select-property">
-            <mat-option *ngFor="let prop of properties" [value]="prop">{{ prop.label }}</mat-option>
+        <mat-select placeholder="Select Properties"
+            [formControlName]="'property'"
+            class="select-property">
+            <mat-option *ngFor="let prop of properties"
+                [value]="prop">{{ prop.label }}</mat-option>
         </mat-select>
     </mat-form-field>
 
     <!-- comparison operator and property value field -->
-    <app-specify-property-value #specifyPropertyValue [formGroup]="form" *ngIf="propertySelected !== undefined"
-        [property]="propertySelected" [topLevel]="topLevel"></app-specify-property-value>
+    <app-specify-property-value #specifyPropertyValue
+        [formGroup]="form"
+        *ngIf="propertySelected !== undefined"
+        [property]="propertySelected"
+        [topLevel]="topLevel"></app-specify-property-value>
 
     <span class="fill-remaining-space"></span>
     <span>
         <mat-slide-toggle *ngIf="propertySelected !== undefined && sortCriterion()"
             [formControlName]="'isSortCriterion'"
-            [color]="'primary'"
+            [style.color]="'primary'"
             class="sort-criterion-toggle"
             matTooltip="Sort search results by value of this property"
             matTooltipPosition="above">

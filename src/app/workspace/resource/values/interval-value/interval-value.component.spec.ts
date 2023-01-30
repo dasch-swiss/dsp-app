@@ -11,6 +11,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 @Component({
     selector: 'app-interval-input',
@@ -139,6 +140,7 @@ describe('IntervalValueComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 IntervalValueComponent,
                 TestHostDisplayValueComponent,
                 TestIntervalInputComponent,

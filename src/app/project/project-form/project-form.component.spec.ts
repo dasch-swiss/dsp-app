@@ -1,3 +1,4 @@
+import { Component, Input } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
@@ -7,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, StringLiteral } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
@@ -16,6 +17,17 @@ import { StatusComponent } from 'src/app/main/status/status.component';
 import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { TestConfig } from 'test.config';
 import { ProjectFormComponent } from './project-form.component';
+
+@Component({ selector: 'app-string-literal-input', template: '' })
+class MockStringLiteralInputComponent {
+    @Input() placeholder = 'Label';
+    @Input() language: string;
+    @Input() textarea: boolean;
+    @Input() value: StringLiteral[] = [];
+    @Input() disabled: boolean;
+    @Input() readonly: boolean;
+    constructor() { }
+}
 
 describe('ProjectFormComponent', () => {
     let component: ProjectFormComponent;
@@ -34,7 +46,8 @@ describe('ProjectFormComponent', () => {
             declarations: [
                 ProjectFormComponent,
                 DialogComponent,
-                StatusComponent
+                StatusComponent,
+                MockStringLiteralInputComponent
             ],
             imports: [
                 BrowserAnimationsModule,

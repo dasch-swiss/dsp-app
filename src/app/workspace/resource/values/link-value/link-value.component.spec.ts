@@ -20,6 +20,7 @@ import {
 import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/OntologyCache';
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { LinkValueComponent } from './link-value.component';
 
 const DEBOUNCING_VALUE = 400;
@@ -130,6 +131,7 @@ describe('LinkValueComponent', () => {
         };
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 LinkValueComponent,
                 TestHostDisplayValueComponent,
                 TestHostCreateValueComponent,

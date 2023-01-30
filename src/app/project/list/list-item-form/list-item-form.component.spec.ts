@@ -1,7 +1,7 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -40,7 +40,7 @@ import { CacheService } from '../../../main/cache/cache.service';
         [language]="language"
         (refreshParent)="updateView($event)"
         [projectIri]="projectIri"
-        [projectCode]="projectCode"
+        [projectUuid]="projectUuid"
         [projectStatus]="true"
         [labels]="labels">
     </app-list-item-form>`
@@ -55,7 +55,7 @@ class TestHostComponent implements OnInit {
 
     projectIri = 'http://rdfh.ch/projects/0001';
 
-    projectCode = '0001';
+    projectUuid = '0001';
 
     labels: StringLiteral[];
 
@@ -70,6 +70,20 @@ class TestHostComponent implements OnInit {
         ];
     }
 
+}
+
+/**
+ * test component that mocks StringLiteralInputComponent
+ */
+@Component({ selector: 'app-string-literal-input', template: '' })
+class MockStringLiteralInputComponent {
+    @Input() placeholder = 'Label';
+    @Input() language: string;
+    @Input() textarea: boolean;
+    @Input() value: StringLiteral[] = [];
+    @Input() disabled: boolean;
+    @Input() readonly: boolean;
+    constructor() { }
 }
 
 describe('ListItemFormComponent', () => {
@@ -97,7 +111,8 @@ describe('ListItemFormComponent', () => {
                 DialogComponent,
                 DialogHeaderComponent,
                 StringifyStringLiteralPipe,
-                TruncatePipe
+                TruncatePipe,
+                MockStringLiteralInputComponent
             ],
             imports: [
                 BrowserAnimationsModule,

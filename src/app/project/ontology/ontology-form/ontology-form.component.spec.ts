@@ -1,10 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -14,6 +10,7 @@ import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { MaterialModule } from 'src/app/material-module';
 import { TestConfig } from 'test.config';
 import { OntologyFormComponent } from './ontology-form.component';
 
@@ -33,12 +30,9 @@ describe('OntologyFormComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 HttpClientTestingModule,
-                MatDialogModule,
-                MatFormFieldModule,
-                MatInputModule,
-                MatSnackBarModule,
                 ReactiveFormsModule,
                 RouterTestingModule,
+                MaterialModule,
                 TranslateModule.forRoot()
             ],
             providers: [

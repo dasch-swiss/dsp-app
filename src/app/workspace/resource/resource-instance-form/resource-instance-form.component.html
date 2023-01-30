@@ -1,11 +1,12 @@
 <!-- Step1: form to select one project, one ontology, one resource -->
-<form *ngIf="selectResourceForm && showNextStepForm" [formGroup]="selectResourceForm"
-    class="resource-instance-form stepOne form-content" (ngSubmit)="nextStep()">
+<form *ngIf="selectResourceForm && showNextStepForm"
+    [formGroup]="selectResourceForm"
+    class="resource-instance-form stepOne form-content"
+    (ngSubmit)="nextStep()">
 
     <!-- select one project -->
     <div *ngIf="usersProjects?.length > 0">
-        <app-select-project
-            [formGroup]="selectResourceForm"
+        <app-select-project [formGroup]="selectResourceForm"
             [usersProjects]="usersProjects"
             [selectedProject]="selectedProject"
             (projectSelected)="selectOntologies($event)">
@@ -41,16 +42,25 @@
     <!-- action buttons: cancel and next -->
     <div class="form-panel form-action">
         <span>
-            <button mat-button type="button" (click)="closeDialog.emit()">
+            <button mat-button
+                type="button"
+                (click)="closeDialog.emit()">
                 {{ 'appLabels.form.action.cancel' | translate }}
             </button>
         </span>
         <span class="fill-remaining-space"></span>
         <span>
             <!-- check each 'selected' property in addition to the forms validity because the form is actually valid when fetching ontologies and resource classes  -->
-            <button mat-raised-button type="button" color="primary"
-                [disabled]="(!selectedProject || !selectedOntology || !selectedResourceClass || !selectResourceForm.valid) || this.errorMessage" (click)="nextStep()" class="form-next">
-                <app-progress-indicator *ngIf="loading" [status]="0" [color]="'primary'" class="next-progress"></app-progress-indicator>
+            <button mat-raised-button
+                type="button"
+                color="primary"
+                [disabled]="(!selectedProject || !selectedOntology || !selectedResourceClass || !selectResourceForm.valid) || this.errorMessage"
+                (click)="nextStep()"
+                class="form-next">
+                <app-progress-indicator *ngIf="loading"
+                    [status]="0"
+                    [style.color]="'primary'"
+                    class="next-progress"></app-progress-indicator>
                 {{ 'appLabels.form.action.next' | translate }}
             </button>
         </span>
@@ -86,21 +96,36 @@
     </app-select-properties>
 
     <!-- action buttons: previous, cancel and save -->
-    <div class="form-panel form-action" [class.fixed-at-bottom]="!showNextStepForm && !preparing">
+    <div class="form-panel form-action"
+        [class.fixed-at-bottom]="!showNextStepForm && !preparing">
 
-        <button *ngIf="!selectedResourceClassIri" mat-button type="button" (click)="prevStep($event)">
+        <button *ngIf="!selectedResourceClassIri"
+            mat-button
+            type="button"
+            (click)="prevStep($event)">
             &larr;&nbsp;{{ 'appLabels.form.action.back' | translate }}
         </button>
         <!-- TODO: do not display the cancel button in the new project workflow concept -->
-        <button *ngIf="!beta" mat-button type="button" (click)="closeDialog.emit()">
+        <button *ngIf="!beta"
+            mat-button
+            type="button"
+            (click)="closeDialog.emit()">
             {{ 'appLabels.form.action.cancel' | translate }}
         </button>
         <span class="fill-remaining-space"></span>
         <span>
-            <button mat-raised-button type="submit" [color]="error ? 'warn' : 'primary'"  class="form-submit" [disabled]="!propertiesParentForm.valid">
-                <app-progress-indicator *ngIf="loading && !error" [color]="'white'" [status]="0"  class="submit-progress"></app-progress-indicator>
+            <button mat-raised-button
+                type="submit"
+                [style.color]="error ? 'warn' : 'primary'"
+                class="form-submit"
+                [disabled]="!propertiesParentForm.valid">
+                <app-progress-indicator *ngIf="loading && !error"
+                    [style.color]="'white'"
+                    [status]="0"
+                    class="submit-progress"></app-progress-indicator>
                 <mat-icon *ngIf="!loading && error">close</mat-icon>
-                {{ !loading && error ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.submit' | translate) }}
+                {{ !loading && error ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.submit' |
+                translate) }}
             </button>
         </span>
     </div>

@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +17,17 @@ import { SessionService } from 'src/app/main/services/session.service';
 import { TestConfig } from 'test.config';
 import { UserMenuComponent } from './user-menu.component';
 
+/**
+ * test component to simulate login form component.
+ */
+@Component({
+    selector: 'app-login-form',
+    template: ''
+})
+class TestLoginFormComponent {
+
+}
+
 describe('UserMenuComponent', () => {
     let component: UserMenuComponent;
     let fixture: ComponentFixture<UserMenuComponent>;
@@ -25,7 +37,8 @@ describe('UserMenuComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                UserMenuComponent
+                UserMenuComponent,
+                TestLoginFormComponent
             ],
             imports: [
                 BrowserAnimationsModule,

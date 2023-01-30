@@ -1,12 +1,17 @@
 <mat-toolbar class="toolbar-header">
     <span class="logo">
-        <button mat-button routerLink="/" class="main-toolbar-button home-button">
-            <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color" class="small"></mat-icon>
+        <button mat-button
+            routerLink="/"
+            class="main-toolbar-button home-button">
+            <mat-icon matPrefix
+                svgIcon="dasch_mosaic_icon_color"
+                class="small"></mat-icon>
             <h1 class="mat-headline desktop-only">DaSCH Service Platform</h1>
             <h1 class="mat-headline phone-tablet-only">DSP</h1>
             <p class="mat-caption right app-version">
                 <span *ngIf="dsp.production">{{dsp.release}}</span>
-                <span *ngIf="!dsp.production" class="development badge">
+                <span *ngIf="!dsp.production"
+                    class="development badge">
                     <span class="environment">{{dsp.environment}}</span>
                     <span class="release {{dsp.color}}">{{dsp.release}}</span>
                 </span>
@@ -19,8 +24,7 @@
     <!-- search-panel (in desktop and tablet version) -->
     <span class="action">
         <!-- button to reactivate when dsp-app will be used as a research platform again: -->
-        <app-search-panel
-            [projectfilter]="true"
+        <app-search-panel [projectfilter]="true"
             [advanced]="true"
             [expert]="true"
             (search)="doSearch($event)">
@@ -34,12 +38,18 @@
     <span class="action">
 
         <!-- create new; at the moment only "create new resource" -->
-        <button mat-icon-button *ngIf="session" aria-label="Add a new resource" (click)="openNewResourceForm('createResource')" class="main-toolbar-button new-resource" >
+        <button mat-icon-button
+            *ngIf="session"
+            aria-label="Add a new resource"
+            (click)="openNewResourceForm('createResource')"
+            class="main-toolbar-button new-resource">
             <mat-icon>add_circle_outline</mat-icon>
         </button>
 
         <!-- navigation: help -->
-        <button mat-button [routerLink]="'/help'" class="main-toolbar-button help">Help</button>
+        <button mat-button
+            [routerLink]="'/help'"
+            class="main-toolbar-button help">Help</button>
 
         <!-- language selector; not ativated at the moment -->
         <app-select-language></app-select-language>
@@ -50,7 +60,7 @@
 
 </mat-toolbar>
 <mat-progress-bar *ngIf="!dsp.production"
-    [color]="dsp.color"
+    [style.color]="dsp.color"
     mode="determinate"
     value="100">
 </mat-progress-bar>

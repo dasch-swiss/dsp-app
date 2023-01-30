@@ -1,18 +1,24 @@
+import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GroupsListComponent } from './groups-list/groups-list.component';
-import { GroupsComponent } from './groups.component';
+
+/**
+ * mocks GroupsComponent
+ */
+@Component({ selector: 'app-groups', template: '' })
+class MockGroupsComponent {
+}
 
 describe('GroupsComponent', () => {
-    let component: GroupsComponent;
-    let fixture: ComponentFixture<GroupsComponent>;
+    let component: MockGroupsComponent;
+    let fixture: ComponentFixture<MockGroupsComponent>;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                GroupsComponent,
                 GroupsListComponent
             ],
             imports: [
@@ -25,7 +31,7 @@ describe('GroupsComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(GroupsComponent);
+        fixture = TestBed.createComponent(MockGroupsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

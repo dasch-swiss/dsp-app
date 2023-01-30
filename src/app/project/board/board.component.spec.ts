@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -33,6 +34,7 @@ describe('BoardComponent', () => {
                 StatusComponent
             ],
             imports: [
+                FormsModule,
                 BrowserAnimationsModule,
                 MatChipsModule,
                 MatDialogModule,

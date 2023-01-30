@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MockResource, ReadColorValue, UpdateColorValue, CreateColorValue } from '@dasch-swiss/dsp-js';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { Subject } from 'rxjs';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { ColorValueComponent } from './color-value.component';
 
 @Component({
@@ -85,7 +86,7 @@ class TestHostDisplayValueComponent implements OnInit {
 
         MockResource.getTestThing().subscribe(res => {
             const colorVal: ReadColorValue =
-        res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasColor', ReadColorValue)[0];
+                res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasColor', ReadColorValue)[0];
 
             this.displayColorVal = colorVal;
 
@@ -125,6 +126,7 @@ describe('ColorValueComponent', () => {
                 BrowserAnimationsModule
             ],
             declarations: [
+                CommentFormComponent,
                 ColorValueComponent,
                 TestColorPickerComponent,
                 TestHostDisplayValueComponent,

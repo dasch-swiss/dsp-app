@@ -1,3 +1,4 @@
+import { Component, Input } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
@@ -6,7 +7,18 @@ import { AppInitService } from 'src/app/app-init.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { TestConfig } from 'test.config';
 import { ResourceComponent } from '../resource/resource.component';
+import { SearchParams } from './list-view/list-view.component';
 import { ResultsComponent } from './results.component';
+
+/**
+ * test component that mocks ListViewComponent
+ */
+@Component({ selector: 'app-list-view', template: '' })
+class MockListViewComponent {
+    @Input() search: SearchParams;
+    @Input() withMultipleSelection?: boolean = false;
+    constructor() { }
+}
 
 describe('ResultsComponent', () => {
     let component: ResultsComponent;
@@ -16,7 +28,8 @@ describe('ResultsComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 ResultsComponent,
-                ResourceComponent
+                ResourceComponent,
+                MockListViewComponent
             ],
             imports: [
                 AngularSplitModule,

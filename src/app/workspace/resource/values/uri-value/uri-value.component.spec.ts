@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 
 /**
@@ -30,7 +31,7 @@ class TestHostDisplayValueComponent implements OnInit {
 
         MockResource.getTestThing().subscribe(res => {
             const inputVal: ReadUriValue =
-        res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasUri', ReadUriValue)[0];
+                res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasUri', ReadUriValue)[0];
 
             this.displayInputVal = inputVal;
 
@@ -65,6 +66,7 @@ describe('UriValueComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 UriValueComponent,
                 TestHostDisplayValueComponent,
                 TestHostCreateValueComponent

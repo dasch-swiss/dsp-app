@@ -42,6 +42,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of, throwError } from 'rxjs';
 import { AjaxError } from 'rxjs/ajax';
+import { ConfirmationDialogComponent } from 'src/app/main/action/confirmation-dialog/confirmation-dialog.component';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { PropertyInfoValues } from '../../properties/properties.component';
 import { UserService } from '../../services/user.service';
@@ -60,10 +61,10 @@ import { DisplayEditComponent } from './display-edit.component';
     template: ''
 })
 class TestTextValueAsStringComponent {
+    @Input() displayValue?: ReadTextValueAsString;
+    @Input() textArea?: boolean = false;
 
     @Input() mode;
-
-    @Input() displayValue;
 
     @Input() guiElement: 'simpleText' | 'textArea' | 'richText' = 'simpleText';
 }
@@ -85,14 +86,12 @@ class TestListValueComponent {
     template: ''
 })
 class TestLinkValueComponent {
+    @Input() displayValue?: ReadLinkValue;
+    @Input() parentResource: ReadResource;
+    @Input() propIri: string;
+    @Input() currentOntoIri: string;
 
     @Input() mode;
-
-    @Input() displayValue;
-
-    @Input() parentResource;
-
-    @Input() propIri;
 
     @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter();
 
@@ -250,6 +249,13 @@ class TestDateValueComponent {
     @Input() displayValue;
 }
 
+@Component({ selector: 'app-confirmation-message', template: '' })
+class TestConfirmationMessageComponent {
+    @Input() value: ReadValue;
+
+    constructor() { }
+}
+
 /**
  * test host component to simulate parent component.
  */
@@ -296,7 +302,7 @@ class TestHostDisplayValueComponent implements OnInit {
     // assigns a value when called -> app-display-edit will be instantiated
     assignValue(prop: string, comment?: string) {
         const readVal =
-      this.readResource.getValues(prop)[0];
+            this.readResource.getValues(prop)[0];
 
         readVal.userHasPermission = 'M';
 
@@ -308,7 +314,7 @@ class TestHostDisplayValueComponent implements OnInit {
 
             // adapt ReadLinkValue so it looks like a standoff link value
             const standoffLinkVal: ReadLinkValue
-            = this.readResource.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue', ReadLinkValue)[0];
+                = this.readResource.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue', ReadLinkValue)[0];
 
             standoffLinkVal.linkedResourceIri = 'testIri';
 
@@ -371,6 +377,7 @@ describe('DisplayEditComponent', () => {
             ],
             declarations: [
                 DisplayEditComponent,
+                ConfirmationDialogComponent,
                 TestHostDisplayValueComponent,
                 TestTextValueAsStringComponent,
                 TestTextValueAsHtmlComponent,
@@ -385,7 +392,8 @@ describe('DisplayEditComponent', () => {
                 TestGeonameValueComponent,
                 TestTimeValueComponent,
                 TestColorValueComponent,
-                TestDateValueComponent
+                TestDateValueComponent,
+                TestConfirmationMessageComponent
             ],
             providers: [
                 {
@@ -578,7 +586,7 @@ describe('DisplayEditComponent', () => {
             inputVal.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
             inputVal.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/TEST_ID';
             inputVal.html =
-        '<p>This is a <b>very</b> simple HTML document with a <a href="https://www.google.ch" target="_blank" class="app-link">link</a></p>';
+                '<p>This is a <b>very</b> simple HTML document with a <a href="https://www.google.ch" target="_blank" class="app-link">link</a></p>';
 
             testHostComponent.readValue = inputVal;
 
@@ -943,7 +951,7 @@ describe('DisplayEditComponent', () => {
             inputVal.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
             inputVal.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/TEST_ID';
             inputVal.html =
-        '<p>This is a <b>very</b> simple HTML document with a <a href="https://www.google.ch" target="_blank" class="app-link">link</a></p>';
+                '<p>This is a <b>very</b> simple HTML document with a <a href="https://www.google.ch" target="_blank" class="app-link">link</a></p>';
 
             testHostComponent.readValue = inputVal;
 

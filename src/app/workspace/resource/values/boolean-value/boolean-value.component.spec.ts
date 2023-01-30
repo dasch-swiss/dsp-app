@@ -10,6 +10,8 @@ import { ReadBooleanValue, MockResource, UpdateBooleanValue, CreateBooleanValue 
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormattedBooleanPipe } from 'src/app/main/pipes/formatting/formatted-boolean.pipe';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
+import { MatIconModule } from '@angular/material/icon';
 
 
 /**
@@ -30,7 +32,7 @@ class TestHostDisplayValueComponent implements OnInit {
     ngOnInit() {
         MockResource.getTestThing().subscribe(res => {
             const booleanVal: ReadBooleanValue =
-        res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasBoolean', ReadBooleanValue)[0];
+                res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasBoolean', ReadBooleanValue)[0];
 
             this.displayBooleanVal = booleanVal;
 
@@ -63,6 +65,7 @@ describe('BooleanValueComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 BooleanValueComponent,
+                CommentFormComponent,
                 TestHostDisplayValueComponent,
                 TestHostCreateValueComponent,
                 FormattedBooleanPipe
@@ -73,6 +76,7 @@ describe('BooleanValueComponent', () => {
                 MatInputModule,
                 MatSelectModule,
                 MatOptionModule,
+                MatIconModule,
                 BrowserAnimationsModule
             ]
         })

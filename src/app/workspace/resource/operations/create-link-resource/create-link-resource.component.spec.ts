@@ -87,9 +87,11 @@ class MockSelectPropertiesComponent {
 
     @Input() ontologyInfo: ResourceClassAndPropertyDefinitions;
 
-    @Input() resourceClass: ResourceClassDefinition;
+    @Input() selectedResourceClass: ResourceClassDefinition;
 
     @Input() parentForm: UntypedFormGroup;
+
+    @Input() currentOntoIri: string;
 
     parentResource = new ReadResource();
 

@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, DebugElement, ViewChild } from '@angular/core';
+import { Component, DebugElement, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -14,7 +14,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ListNodeInfo, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
+import { ListNodeInfo, MockOntology, ReadOntology, StringLiteral } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
@@ -190,6 +190,17 @@ class ListHostComponent {
 
 }
 
+@Component({ selector: 'app-string-literal-input', template: '' })
+class MockStringLiteralInputComponent {
+    @Input() placeholder = 'Label';
+    @Input() language: string;
+    @Input() textarea: boolean;
+    @Input() value: StringLiteral[] = [];
+    @Input() disabled: boolean;
+    @Input() readonly: boolean;
+    constructor() { }
+}
+
 describe('PropertyFormComponent', () => {
     let simpleTextHostComponent: SimpleTextHostComponent;
     let simpleTextHostFixture: ComponentFixture<SimpleTextHostComponent>;
@@ -215,7 +226,8 @@ describe('PropertyFormComponent', () => {
                 LinkHostComponent,
                 ListHostComponent,
                 SimpleTextHostComponent,
-                PropertyFormComponent
+                PropertyFormComponent,
+                MockStringLiteralInputComponent
             ],
             imports: [
                 BrowserAnimationsModule,

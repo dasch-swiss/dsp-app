@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, CreateListRequest, ListInfoResponse, ListResponse, ListsEndpointAdmin, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, CreateListRequest, ListInfoResponse, ListResponse, ListsEndpointAdmin, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -45,7 +45,7 @@ class TestHostUpdateListComponent {
  * test host component to simulate parent component for creating a new list.
  */
 @Component({
-    template: '<app-list-info-form #listInfoForm [mode]="mode" [projectCode]="projectCode" [projectIri]="projectIri"></app-list-info-form>'
+    template: '<app-list-info-form #listInfoForm [mode]="mode" [projectUuid]="projectUuid" [projectIri]="projectIri"></app-list-info-form>'
 })
 class TestHostCreateListComponent {
 
@@ -53,10 +53,24 @@ class TestHostCreateListComponent {
 
     mode = 'create';
 
-    projectCode = '0001';
+    projectUuid = '0001';
 
     projectIri = 'http://rdfh.ch/projects/0001';
 
+    constructor() { }
+}
+
+/**
+ * test component that mocks StringLiteralInputComponent
+ */
+@Component({ selector: 'app-string-literal-input', template: '' })
+class MockStringLiteralInputComponent {
+    @Input() placeholder = 'Label';
+    @Input() language: string;
+    @Input() textarea: boolean;
+    @Input() value: StringLiteral[] = [];
+    @Input() disabled: boolean;
+    @Input() readonly: boolean;
     constructor() { }
 }
 
@@ -87,7 +101,8 @@ describe('ListInfoFormComponent', () => {
                 ListInfoFormComponent,
                 DialogComponent,
                 DialogHeaderComponent,
-                StatusComponent
+                StatusComponent,
+                MockStringLiteralInputComponent
             ],
             imports: [
                 BrowserAnimationsModule,

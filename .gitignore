@@ -36,6 +36,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+metals*
 
 #Documentation Files
 docs/_site/

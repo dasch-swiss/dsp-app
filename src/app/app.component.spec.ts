@@ -1,4 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,13 +11,25 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppComponent } from './app.component';
 
+/**
+ * test component to simulate header component.
+ */
+@Component({
+    selector: 'app-header',
+    template: ''
+})
+class TestHeaderComponent {
+
+}
+
 describe('AppComponent', () => {
 
     beforeEach(waitForAsync(() => {
 
         TestBed.configureTestingModule({
             declarations: [
-                AppComponent
+                AppComponent,
+                TestHeaderComponent
             ],
             imports: [
                 HttpClientTestingModule,

@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CreateTextValueAsString, MockResource, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
+import { CommentFormComponent } from '../../comment-form/comment-form.component';
 import { TextValueAsStringComponent } from './text-value-as-string.component';
 
 /**
@@ -102,6 +103,7 @@ describe('TextValueAsStringComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 MockPipe,
                 TestHostDisplayValueComponent,
                 TestHostDisplayValueCommentComponent,

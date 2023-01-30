@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AngularSplitModule } from 'angular-split';
+import { SplitSize } from '../results/results.component';
 import { ComparisonComponent } from './comparison.component';
 
 /**
@@ -12,6 +13,7 @@ import { ComparisonComponent } from './comparison.component';
 })
 class TestResourceComponent {
     @Input() resourceIri: string;
+    @Input() splitSizeChanged: SplitSize;
 }
 
 /**

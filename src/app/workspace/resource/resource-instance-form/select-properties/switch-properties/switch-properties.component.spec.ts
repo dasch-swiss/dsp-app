@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 import { CreateIntValue, CreateValue, MockOntology, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { IntValueComponent } from '../../../values/int-value/int-value.component';
 import { SwitchPropertiesComponent } from './switch-properties.component';
@@ -60,6 +61,8 @@ class MockCreateIntValueComponent implements OnInit {
 
     @Input() displayValue;
 
+    @Input() valueRequiredValidator = true;
+
     form: UntypedFormGroup;
 
     valueFormControl: UntypedFormControl;
@@ -95,6 +98,9 @@ describe('SwitchPropertiesComponent', () => {
                 SwitchPropertiesComponent,
                 MockCreateIntValueComponent,
                 TestSwitchPropertiesParentComponent
+            ],
+            imports: [
+                RouterTestingModule
             ],
             providers: [
                 CommonModule,

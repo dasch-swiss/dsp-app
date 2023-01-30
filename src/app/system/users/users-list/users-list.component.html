@@ -1,6 +1,7 @@
 <div *ngIf="list && !loading">
     <!-- header toolbar -->
-    <div class="app-toolbar" *ngIf="list.length > 0">
+    <div class="app-toolbar"
+        *ngIf="list.length > 0">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span *ngIf="status">Active</span>
@@ -14,8 +15,11 @@
         <div class="app-toolbar-row">
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
-                <app-sort-button *ngIf="list.length > 1" [icon]="'sort_by_alpha'" [sortProps]="sortProps"
-                    [activeKey]="sortBy" (sortKeyChange)="sortList($event)">
+                <app-sort-button *ngIf="list.length > 1"
+                    [icon]="'sort_by_alpha'"
+                    [sortProps]="sortProps"
+                    [activeKey]="sortBy"
+                    (sortKeyChange)="sortList($event)">
                 </app-sort-button>
             </span>
             <h2 class="mat-title">
@@ -23,18 +27,27 @@
                 <span *ngIf="!projectUuid">{{list.length | i18nPlural: itemPluralMapping['user']}}</span>
             </h2>
             <span class="fill-remaining-space"></span>
-            <span class="app-toolbar-action button right" *ngIf="status && createNew && sysAdmin">
-                <button mat-flat-button [color]="'primary'" (click)="openDialog('createUser')">Create new</button>
+            <span class="app-toolbar-action button right"
+                *ngIf="status && createNew && sysAdmin">
+                <button mat-flat-button
+                    [style.color]="'primary'"
+                    (click)="openDialog('createUser')">Create new</button>
             </span>
         </div>
     </div>
 
     <!-- content: list -->
-    <table class="table more-space-bottom" [class.deactivated]="!status">
-        <tr class="table-entry" *ngFor="let user of list; let last = last" [class.no-border]="last">
+    <table class="table more-space-bottom"
+        [class.deactivated]="!status">
+        <tr class="table-entry"
+            *ngFor="let user of list; let last = last"
+            [class.no-border]="last">
             <!-- avatar -->
             <td class="avatar-cell">
-                <img appAdminImage [image]="user.email" [type]="'user'" class="avatar-image" />
+                <img appAdminImage
+                    [image]="user.email"
+                    [type]="'user'"
+                    class="avatar-image" />
             </td>
 
             <!-- name and e-mail address -->
@@ -54,7 +67,8 @@
             <!-- admin: only in project view -->
             <td class="table-admin-chip">
                 <mat-chip-list *ngIf="projectUuid">
-                    <mat-chip class="admin-chip" *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
+                    <mat-chip class="admin-chip"
+                        *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
                 </mat-chip-list>
                 <mat-chip-list *ngIf="!projectUuid && userIsSystemAdmin(user.permissions)">
                     <mat-chip class="sys-admin-chip">System Admin</mat-chip>
@@ -63,20 +77,28 @@
 
             <!-- group: only in project view -->
             <td class="table-select-group">
-                <app-select-group *ngIf="projectAdmin && projectUuid" [projectCode]="project.shortcode"
-                    [projectid]="project.id" [permissions]="user.permissions.groupsPerProject[project.id]"
-                    [disabled]="!status" (groupChange)="updateGroupsMembership(user.id, $event)">
+                <app-select-group *ngIf="projectAdmin && projectUuid"
+                    [projectCode]="project.shortcode"
+                    [projectid]="project.id"
+                    [permissions]="user.permissions.groupsPerProject[project.id]"
+                    [disabled]="!status"
+                    (groupChange)="updateGroupsMembership(user.id, $event)">
                 </app-select-group>
             </td>
 
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="disableMenu()">
+                <button mat-icon-button
+                    [matMenuTriggerFor]="projectUserMenu"
+                    [disabled]="disableMenu()">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
-                <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
+                <mat-menu #projectUserMenu="matMenu"
+                    xPosition="before"
+                    class="menu">
                     <!-- update user's admin group membership; only in project view -->
-                    <button mat-menu-item *ngIf="projectUuid && user.status"
+                    <button mat-menu-item
+                        *ngIf="projectUuid && user.status"
                         (click)="updateProjectAdminMembership(user.id, user.permissions)">
                         <span *ngIf="!userIsProjectAdmin(user.permissions)">Add</span>
                         <span *ngIf="userIsProjectAdmin(user.permissions)">Remove</span>
@@ -91,30 +113,36 @@
                         <span>as system admin</span>
                     </button>
                     <!-- update user's profile data; only for system admin -->
-                    <button mat-menu-item *ngIf="sysAdmin  && user.status"
+                    <button mat-menu-item
+                        *ngIf="sysAdmin  && user.status"
                         (click)="openDialog('editUser', user.username)">
                         {{ projectUuid ? 'Edit member' : 'Edit user'}}
                     </button>
-                    <button mat-menu-item *ngIf="sysAdmin && user.status"
+                    <button mat-menu-item
+                        *ngIf="sysAdmin && user.status"
                         (click)="openDialog('editPassword', user.username)">
                         {{ projectUuid ? 'Change member\'s password' : 'Change user\'s password'}}
                     </button>
                     <!-- remove user from project; only in project view -->
-                    <button mat-menu-item *ngIf="projectUuid"
+                    <button mat-menu-item
+                        *ngIf="projectUuid"
                         (click)="openDialog('removeFromProject', user.username, user.id)">
                         Remove member from project
                     </button>
                     <!-- manage project membership; only in system view -->
-                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectUuid"
+                    <button mat-menu-item
+                        *ngIf="user.status && sysAdmin && !projectUuid"
                         (click)="openDialog('manageProjectMembership', user.username)">
                         Manage project membership
                     </button>
                     <!-- delete / reactivate user -->
-                    <button mat-menu-item *ngIf="user.status && sysAdmin && !projectUuid"
+                    <button mat-menu-item
+                        *ngIf="user.status && sysAdmin && !projectUuid"
                         (click)="openDialog('deleteUser', user.username, user.id)">
                         Suspend user
                     </button>
-                    <button mat-menu-item *ngIf="!user.status && sysAdmin && !projectUuid"
+                    <button mat-menu-item
+                        *ngIf="!user.status && sysAdmin && !projectUuid"
                         (click)="openDialog('activateUser', user.username, user.id)">
                         Reactivate user
                     </button>

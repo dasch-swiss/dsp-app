@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -14,8 +14,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection, MockOntology, ReadOntology } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockOntology, ReadOntology, StringLiteral } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
@@ -35,9 +36,19 @@ import { ResourceClassFormComponent } from './resource-class-form.component';
 })
 class TestHostResourceClassFormComponent { }
 
+@Component({ selector: 'app-string-literal-input', template: '' })
+class MockStringLiteralInputComponent {
+    @Input() placeholder = 'Label';
+    @Input() language: string;
+    @Input() textarea: boolean;
+    @Input() value: StringLiteral[] = [];
+    @Input() disabled: boolean;
+    @Input() readonly: boolean;
+}
+
 describe('ResourceClassFormComponent', () => {
-    let component: ResourceClassFormComponent;
-    let fixture: ComponentFixture<ResourceClassFormComponent>;
+    let component: TestHostResourceClassFormComponent;
+    let fixture: ComponentFixture<TestHostResourceClassFormComponent>;
 
     const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
@@ -45,11 +56,14 @@ describe('ResourceClassFormComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 TestHostResourceClassFormComponent,
+                MockStringLiteralInputComponent,
+                ResourceClassFormComponent,
                 PropertyFormComponent,
                 DialogComponent,
                 StatusComponent
             ],
             imports: [
+                BrowserAnimationsModule,
                 HttpClientTestingModule,
                 MatAutocompleteModule,
                 MatDialogModule,
@@ -97,7 +111,7 @@ describe('ResourceClassFormComponent', () => {
             }
         );
 
-        fixture = TestBed.createComponent(ResourceClassFormComponent);
+        fixture = TestBed.createComponent(TestHostResourceClassFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

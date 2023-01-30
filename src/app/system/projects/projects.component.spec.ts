@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -16,6 +17,17 @@ import { TestConfig } from 'test.config';
 import { ProjectsListComponent } from './projects-list/projects-list.component';
 import { ProjectsComponent } from './projects.component';
 
+/**
+ * test component to simulate child component, here progress-indicator from action module.
+ */
+@Component({
+    selector: 'app-progress-indicator',
+    template: ''
+})
+class TestProgressIndicatorComponent {
+
+}
+
 describe('ProjectsComponent', () => {
     let component: ProjectsComponent;
     let fixture: ComponentFixture<ProjectsComponent>;
@@ -26,7 +38,8 @@ describe('ProjectsComponent', () => {
                 ProjectsComponent,
                 ProjectsListComponent,
                 DialogComponent,
-                StatusComponent
+                StatusComponent,
+                TestProgressIndicatorComponent
             ],
             imports: [
                 BrowserAnimationsModule,

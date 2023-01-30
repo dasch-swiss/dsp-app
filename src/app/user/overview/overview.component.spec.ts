@@ -21,6 +21,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * test host component to simulate parent component as a logged in user.
@@ -49,6 +52,17 @@ class TestProjectTileComponent {
     @Input() sysAdmin: Boolean;
 }
 
+/**
+ * test component to simulate project form component.
+ */
+@Component({
+    selector: 'app-project-form',
+    template: ''
+})
+class TestProjectFormComponent {
+
+}
+
 describe('OverviewComponent', () => {
 
     beforeEach(async () => {
@@ -63,8 +77,11 @@ describe('OverviewComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [
                 OverviewComponent,
+                DialogComponent,
+                DialogHeaderComponent,
                 TestHostOverviewComponent,
-                TestProjectTileComponent
+                TestProjectTileComponent,
+                TestProjectFormComponent
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -74,7 +91,8 @@ describe('OverviewComponent', () => {
                 MatIconModule,
                 MatMenuModule,
                 MatSnackBarModule,
-                RouterTestingModule
+                RouterTestingModule,
+                TranslateModule.forRoot()
             ],
             providers: [
                 AppInitService,

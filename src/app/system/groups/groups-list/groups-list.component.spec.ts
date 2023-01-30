@@ -1,6 +1,17 @@
+import { Component, Input } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GroupsListComponent } from './groups-list.component';
+
+
+@Component({ selector: 'app-status', template: '' })
+class MockStatusComponent {
+    @Input() status: number;
+    @Input() comment?: string;
+    @Input() url?: string;
+    @Input() representation?;
+    constructor() { }
+}
 
 describe('GroupsListComponent', () => {
     let component: GroupsListComponent;
@@ -9,7 +20,8 @@ describe('GroupsListComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                GroupsListComponent
+                GroupsListComponent,
+                MockStatusComponent
             ],
             imports: [
                 RouterTestingModule

@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
@@ -24,6 +25,7 @@ describe('DatePickerComponent', () => {
                 MatButtonToggleModule,
                 MatFormFieldModule,
                 MatInputModule,
+                MatIconModule,
                 MatMenuModule,
                 MatSelectModule,
                 ReactiveFormsModule

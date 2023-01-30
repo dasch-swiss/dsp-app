@@ -31,7 +31,7 @@ import { CacheService } from '../../../main/cache/cache.service';
         [list]="list"
         [parentIri]="parentIri"
         [projectIri]="projectIri"
-        [projectCode]="projectCode">
+        [projectUuid]="projectUuid">
     </app-list-item>`
 })
 class TestHostComponent implements OnInit {
@@ -44,7 +44,7 @@ class TestHostComponent implements OnInit {
 
     projectIri = 'http://rdfh.ch/projects/0001';
 
-    projectCode = '0001';
+    projectUuid = '0001';
 
     constructor() { }
 

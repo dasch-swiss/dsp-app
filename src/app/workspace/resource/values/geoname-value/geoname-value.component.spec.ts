@@ -14,6 +14,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { AppInitService } from 'src/app/app-init.service';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 
 
@@ -36,7 +37,7 @@ class TestHostDisplayValueComponent implements OnInit {
 
         MockResource.getTestThing().subscribe(res => {
             const inputVal: ReadGeonameValue =
-        res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasGeoname', ReadGeonameValue)[0];
+                res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasGeoname', ReadGeonameValue)[0];
 
             this.displayInputVal = inputVal;
 
@@ -73,6 +74,7 @@ describe('GeonameValueComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 GeonameValueComponent,
                 TestHostDisplayValueComponent,
                 TestHostCreateValueComponent

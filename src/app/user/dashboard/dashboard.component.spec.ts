@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppInitService } from 'src/app/app-init.service';
+import { ProgressIndicatorComponent } from 'src/app/main/action/progress-indicator/progress-indicator.component';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
@@ -24,6 +25,7 @@ describe('DashboardComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
+                ProgressIndicatorComponent,
                 DashboardComponent,
                 ProjectsComponent,
                 ProjectsListComponent,

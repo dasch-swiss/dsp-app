@@ -1,7 +1,8 @@
 <div class="content extra-large middle">
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
-    <div *ngIf="!loading" class="overview">
+    <div *ngIf="!loading"
+        class="overview">
 
         <!-- user is a system admin -->
         <div *ngIf="sysAdmin">
@@ -11,14 +12,18 @@
                     <p>Browse Research Projects</p>
                 </div>
                 <div class="create-project-button">
-                    <button mat-flat-button [color]="'primary'" (click)="openDialog('createProject')">
+                    <button mat-flat-button
+                        [style.color]="'primary'"
+                        (click)="openDialog('createProject')">
                         Create new project
                     </button>
                 </div>
             </div>
             <div class="project-tiles">
-                <div *ngFor="let proj of otherProjects" class="project-tile-container">
-                    <app-project-tile [project]="proj" [sysAdmin]="true"></app-project-tile>
+                <div *ngFor="let proj of otherProjects"
+                    class="project-tile-container">
+                    <app-project-tile [project]="proj"
+                        [sysAdmin]="true"></app-project-tile>
                 </div>
             </div>
         </div>
@@ -31,8 +36,10 @@
                 </div>
             </div>
             <div class="project-tiles">
-                <div *ngFor="let userProj of userProjects" class="project-tile-container">
-                    <app-project-tile [project]="userProj" [sysAdmin]="false"></app-project-tile>
+                <div *ngFor="let userProj of userProjects"
+                    class="project-tile-container">
+                    <app-project-tile [project]="userProj"
+                        [sysAdmin]="false"></app-project-tile>
                 </div>
             </div>
             <div class="title-bar other-projects">
@@ -41,8 +48,10 @@
                 </div>
             </div>
             <div class="project-tiles">
-                <div *ngFor="let otherProj of otherProjects" class="project-tile-container">
-                    <app-project-tile [project]="otherProj" [sysAdmin]="false"></app-project-tile>
+                <div *ngFor="let otherProj of otherProjects"
+                    class="project-tile-container">
+                    <app-project-tile [project]="otherProj"
+                        [sysAdmin]="false"></app-project-tile>
                 </div>
             </div>
         </div>
@@ -56,8 +65,10 @@
                 </div>
             </div>
             <div class="project-tiles">
-                <div *ngFor="let proj of otherProjects" class="project-tile-container">
-                    <app-project-tile [project]="proj" [sysAdmin]="false"></app-project-tile>
+                <div *ngFor="let proj of otherProjects"
+                    class="project-tile-container">
+                    <app-project-tile [project]="proj"
+                        [sysAdmin]="false"></app-project-tile>
                 </div>
             </div>
         </div>

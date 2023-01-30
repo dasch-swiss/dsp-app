@@ -10,6 +10,7 @@ import { By } from '@angular/platform-browser';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatInputHarness } from '@angular/material/input/testing';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 /**
  * test host component to simulate parent component.
@@ -85,6 +86,7 @@ describe('IntValueComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 IntValueComponent,
                 TestHostDisplayValueComponent,
                 TestHostCreateValueComponent,

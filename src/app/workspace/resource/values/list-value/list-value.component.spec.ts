@@ -19,6 +19,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { ListValueComponent } from './list-value.component';
 import { SublistValueComponent } from './subList-value/sublist-value.component';
 
@@ -82,6 +83,7 @@ describe('ListValueComponent', () => {
         };
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 ListValueComponent,
                 SublistValueComponent,
                 TestHostDisplayValueComponent,

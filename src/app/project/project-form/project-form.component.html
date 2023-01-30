@@ -1,13 +1,17 @@
 <div class="no-shadow">
 
     <!-- content -->
-    <form *ngIf="!loading && project.status" [formGroup]="form" class="form-content project-data"
+    <form *ngIf="!loading && project.status"
+        [formGroup]="form"
+        class="form-content project-data"
         (ngSubmit)="submitData()">
 
         <!-- short and long name -->
         <mat-form-field class="small-field">
-            <input matInput placeholder="{{'appLabels.form.project.general.shortcode' | translate}}"
-                [maxlength]="shortcodeMaxLength" [formControl]="form.controls['shortcode']">
+            <input matInput
+                placeholder="{{'appLabels.form.project.general.shortcode' | translate}}"
+                [maxlength]="shortcodeMaxLength"
+                [formControl]="form.controls['shortcode']">
             <mat-hint *ngIf="formErrors.shortcode">
                 {{ formErrors.shortcode }}
             </mat-hint>
@@ -15,7 +19,8 @@
 
         <!-- short name -->
         <mat-form-field class="medium-field">
-            <input matInput [maxlength]="shortnameMaxLength"
+            <input matInput
+                [maxlength]="shortnameMaxLength"
                 placeholder="{{'appLabels.form.project.general.shortname' | translate}}"
                 [formControl]="form.controls['shortname']">
             <mat-hint *ngIf="formErrors.shortname">
@@ -25,7 +30,8 @@
 
         <!-- long name -->
         <mat-form-field class="large-field">
-            <input matInput placeholder="{{'appLabels.form.project.general.longname' | translate}}"
+            <input matInput
+                placeholder="{{'appLabels.form.project.general.longname' | translate}}"
                 [formControl]="form.controls['longname']">
             <mat-hint *ngIf="formErrors.longname">
                 {{ formErrors.longname }}
@@ -34,10 +40,13 @@
 
         <!-- description -->
         <app-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}} *"
-            [disabled]="!project.status" [textarea]="true" [value]="project.description"
+            [disabled]="!project.status"
+            [textarea]="true"
+            [value]="project.description"
             (dataChanged)="getStringLiteral($event)">
         </app-string-literal-input>
-        <mat-hint class="string-literal-error" *ngIf="formErrors.description">
+        <mat-hint class="string-literal-error"
+            *ngIf="formErrors.description">
             {{ formErrors.description }}
         </mat-hint>
 
@@ -55,10 +64,13 @@
         <!-- keywords -->
         <mat-form-field class="large-field">
             <mat-chip-list #chipList>
-                <mat-chip *ngFor="let tag of keywords" [selectable]="selectable" [removable]="project.status"
+                <mat-chip *ngFor="let tag of keywords"
+                    [selectable]="selectable"
+                    [removable]="project.status"
                     (removed)="removeKeyword(tag)">
                     {{tag}}
-                    <mat-icon matChipRemove *ngIf="project.status">cancel</mat-icon>
+                    <mat-icon matChipRemove
+                        *ngIf="project.status">cancel</mat-icon>
                 </mat-chip>
                 <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} {{projectIri ? '' : '*'}}"
                     [formControl]="form.controls['keywords']"
@@ -86,16 +98,23 @@
 
         <div class="form-panel form-action">
             <span>
-                <button mat-button type="reset" (click)="closeDialog.emit()">
+                <button mat-button
+                    type="reset"
+                    (click)="closeDialog.emit()">
                     {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button mat-raised-button type="submit" color="primary"
+                <button mat-raised-button
+                    type="submit"
+                    color="primary"
                     [disabled]="!form.valid || !this.description.length || (projectIri && !project.status)">
 
-                    <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                    <app-progress-indicator [style.color]="'white'"
+                        [status]="0"
+                        *ngIf="loading"
+                        class="submit-progress">
                     </app-progress-indicator>
                     <mat-icon *ngIf="success && !loading">close</mat-icon>
                     <span *ngIf="projectIri">{{ 'appLabels.form.action.update' | translate }}</span>

@@ -15,6 +15,7 @@ import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
@@ -92,6 +93,7 @@ class NoValueRequiredTestHostComponent implements OnInit {
 })
 
 class TestDatePickerComponent implements ControlValueAccessor, MatFormFieldControl<any> {
+    @Input() disableCalendarSelector: boolean;
 
     @Input() value;
     @Input() disabled: boolean;
@@ -153,6 +155,7 @@ describe('DateValueHandlerComponent', () => {
                 MatFormFieldModule,
                 MatIconModule,
                 MatInputModule,
+                MatTooltipModule,
                 ReactiveFormsModule,
             ]
         })
@@ -366,6 +369,8 @@ describe('DateValueHandlerComponent (no validator required)', () => {
                 MatSelectModule,
                 MatOptionModule,
                 MatCheckboxModule,
+                MatTooltipModule,
+                MatIconModule,
                 BrowserAnimationsModule,
             ],
             declarations: [DateValueHandlerComponent, TestDatePickerComponent, NoValueRequiredTestHostComponent]

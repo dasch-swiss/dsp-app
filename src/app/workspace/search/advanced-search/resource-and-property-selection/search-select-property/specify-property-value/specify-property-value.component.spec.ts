@@ -191,6 +191,22 @@ class TestSearchUriValueComponent implements OnInit {
 
 }
 
+@Component({ selector: 'app-search-link-value', template: '' })
+class MockSearchLinkValueComponent {
+    @Input() formGroup: UntypedFormGroup;
+
+    private _restrictToResourceClass: string;
+    @Input()
+    set restrictResourceClass(value: string) {
+        this._restrictToResourceClass = value;
+    }
+    get restrictResourceClass() {
+        return this._restrictToResourceClass;
+    }
+
+    constructor() { }
+}
+
 describe('SpecifyPropertyValueComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
@@ -214,7 +230,8 @@ describe('SpecifyPropertyValueComponent', () => {
                 TestSearchDecimalValueComponent,
                 TestSearchListValueComponent,
                 TestSearchTextValueComponent,
-                TestSearchUriValueComponent
+                TestSearchUriValueComponent,
+                MockSearchLinkValueComponent
             ]
         })
             .compileComponents();

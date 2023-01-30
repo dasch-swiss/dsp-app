@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +29,17 @@ import { ProfileComponent } from './profile/profile.component';
 import { PasswordFormComponent } from './user-form/password-form/password-form.component';
 import { UserComponent } from './user.component';
 
+/**
+ * test component to simulate child component, here progress-indicator from action module.
+ */
+@Component({
+    selector: 'app-progress-indicator',
+    template: ''
+})
+class TestProgressIndicatorComponent {
+
+}
+
 describe('UserComponent', () => {
     let component: UserComponent;
     let fixture: ComponentFixture<UserComponent>;
@@ -45,7 +57,8 @@ describe('UserComponent', () => {
                 ProfileComponent,
                 ProjectsComponent,
                 ProjectsListComponent,
-                UserComponent
+                UserComponent,
+                TestProgressIndicatorComponent
             ],
             imports: [
                 BrowserAnimationsModule,

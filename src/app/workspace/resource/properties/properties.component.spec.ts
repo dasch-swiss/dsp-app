@@ -131,6 +131,16 @@ class TestAddValueComponent {
 
 }
 
+/**
+ * test component that mocks PermissionInfoComponent
+ */
+@Component({ selector: 'app-permission-info', template: '' })
+class MockPermissionInfoComponent {
+    @Input() hasPermissions: string;
+    @Input() userHasPermission: string;
+    constructor() { }
+}
+
 describe('PropertiesComponent', () => {
     let testHostComponent: TestPropertyParentComponent;
     let testHostFixture: ComponentFixture<TestPropertyParentComponent>;
@@ -169,7 +179,8 @@ describe('PropertiesComponent', () => {
                 TestPropertyParentComponent,
                 TestDisplayValueComponent,
                 TestAddValueComponent,
-                PropertiesComponent
+                PropertiesComponent,
+                MockPermissionInfoComponent
             ],
             providers: [
                 ValueOperationEventService,

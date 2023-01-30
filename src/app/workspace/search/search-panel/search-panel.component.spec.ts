@@ -1,6 +1,7 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { SearchPanelComponent } from './search-panel.component';
 
@@ -54,7 +55,8 @@ describe('SearchPanelComponent', () => {
             ],
             imports: [
                 OverlayModule,
-                MatMenuModule
+                MatMenuModule,
+                MatIconModule
             ]
         })
             .compileComponents();

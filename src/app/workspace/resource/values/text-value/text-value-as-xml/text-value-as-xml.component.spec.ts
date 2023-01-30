@@ -17,6 +17,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Constants, CreateTextValueAsXml, MockResource, ReadTextValueAsXml, UpdateTextValueAsXml } from '@dasch-swiss/dsp-js';
 import { TextValueAsXMLComponent } from './text-value-as-xml.component';
+import { CommentFormComponent } from '../../comment-form/comment-form.component';
 
 /**
  * test host component to simulate parent component.
@@ -140,6 +141,7 @@ describe('TextValueAsXMLComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
+                CommentFormComponent,
                 TextValueAsXMLComponent,
                 TestHostDisplayValueComponent,
                 TestCKEditorComponent,

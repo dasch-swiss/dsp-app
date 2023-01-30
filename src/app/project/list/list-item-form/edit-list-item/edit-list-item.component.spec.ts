@@ -1,6 +1,7 @@
-import { Component, DebugElement, ViewChild } from '@angular/core';
+import { Component, DebugElement, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,6 +14,7 @@ import {
     MockProjects,
     ProjectResponse,
     ReadProject,
+    StringLiteral,
     UpdateChildNodeRequest
 } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
@@ -48,7 +50,7 @@ class TestHostUpdateChildNodeComponent {
  * test host component to simulate parent component for inserting a new child node.
  */
 @Component({
-    template: '<app-edit-list-item #editListItem [iri]="iri" [mode]="mode" [parentIri]="parentIri" [position]="position" [projectCode]="projectCode" [projectIri]="projectIri"></app-edit-list-item>'
+    template: '<app-edit-list-item #editListItem [iri]="iri" [mode]="mode" [parentIri]="parentIri" [position]="position" [projectIri]="projectIri"></app-edit-list-item>'
 })
 class TestHostInsertChildNodeComponent {
 
@@ -62,10 +64,19 @@ class TestHostInsertChildNodeComponent {
 
     position = 0;
 
-    projectCode = '0001';
-
     projectIri = 'http://rdfh.ch/projects/0001';
 
+    constructor() { }
+}
+
+@Component({ selector: 'app-string-literal-input', template: '' })
+class MockStringLiteralInputComponent {
+    @Input() placeholder = 'Label';
+    @Input() language: string;
+    @Input() textarea: boolean;
+    @Input() value: StringLiteral[] = [];
+    @Input() disabled: boolean;
+    @Input() readonly: boolean;
     constructor() { }
 }
 
@@ -99,11 +110,13 @@ describe('EditListItemComponent', () => {
                 TestHostUpdateChildNodeComponent,
                 TestHostInsertChildNodeComponent,
                 ProgressIndicatorComponent,
+                MockStringLiteralInputComponent
             ],
             imports: [
                 BrowserAnimationsModule,
                 MatDialogModule,
                 MatSnackBarModule,
+                MatFormFieldModule,
                 TranslateModule.forRoot()
             ],
             providers: [

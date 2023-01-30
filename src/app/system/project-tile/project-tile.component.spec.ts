@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatIconModule } from '@angular/material/icon';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StoredProject } from '@dasch-swiss/dsp-js';
@@ -61,6 +62,7 @@ describe('ProjectTileComponent', () => {
                 TestHostProjectTileComponent
             ],
             imports: [
+                MatIconModule,
                 RouterTestingModule
             ],
             providers: [

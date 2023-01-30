@@ -1,5 +1,6 @@
 <!-- content: Step 1 = define resource class -->
-<form [formGroup]="resourceClassForm" class="form-content"
+<form [formGroup]="resourceClassForm"
+    class="form-content"
     *ngIf="ontology.lastModificationDate; else missingLastModificationDate">
 
     <div class="resource-class-data">
@@ -7,34 +8,36 @@
 
             <!-- name -->
             <mat-form-field class="large-field ontology-form-field">
-                <span matPrefix class="ontology-prefix-icon">
+                <span matPrefix
+                    class="ontology-prefix-icon">
                     <mat-icon>fingerprint</mat-icon>&nbsp;
                 </span>
                 <mat-label>Class name</mat-label>
-                <input matInput formControlName="name" >
-                <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name">
+                <input matInput
+                    formControlName="name">
+                <mat-hint class="ontology-error-with-prefix"
+                    *ngIf="formErrors.name">
                     {{formErrors.name}}
                 </mat-hint>
             </mat-form-field>
 
             <!-- label -->
             <div class="large-field string-literal-container more-space-top">
-                <app-string-literal-input
-                    [placeholder]="'Label *'"
+                <app-string-literal-input [placeholder]="'Label *'"
                     [value]="resourceClassLabels"
                     (enter)="submitData()"
                     (touched)="resourceClassLabelsTouched = $event"
                     (dataChanged)="handleData($event, 'label')">
                 </app-string-literal-input>
-                <mat-hint class="string-literal-error" *ngIf="formErrors.label">
+                <mat-hint class="string-literal-error"
+                    *ngIf="formErrors.label">
                     {{ formErrors.label }}
                 </mat-hint>
             </div>
 
             <!-- description -->
             <div class="large-field string-literal-container more-space-top">
-                <app-string-literal-input
-                    placeholder="Comment"
+                <app-string-literal-input placeholder="Comment"
                     [value]="resourceClassComments"
                     [textarea]="true"
                     (touched)="resourceClassCommentsTouched = $event"
@@ -46,21 +49,32 @@
         <!-- action buttons -->
         <div class="form-panel form-action">
             <span>
-                <button mat-button type="button" (click)="closeDialog.emit()">
+                <button mat-button
+                    type="button"
+                    (click)="closeDialog.emit()">
                     {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
             </span>
             <span class="fill-remaining-space"></span>
             <span>
-                <button *ngIf="!edit" mat-raised-button type="button" color="primary"
+                <button *ngIf="!edit"
+                    mat-raised-button
+                    type="button"
+                    color="primary"
                     [disabled]="!resourceClassLabels.length || (resourceClassForm.enabled && !resourceClassForm.valid)"
                     (click)="submitData()">
                     Submit
                 </button>
-                <button *ngIf="edit" mat-raised-button type="button" color="primary"
+                <button *ngIf="edit"
+                    mat-raised-button
+                    type="button"
+                    color="primary"
                     [disabled]="!resourceClassLabels.length || (resourceClassForm.enabled && !resourceClassForm.valid)"
                     (click)="submitData()">
-                    <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
+                    <app-progress-indicator [style.color]="'white'"
+                        [status]="0"
+                        *ngIf="loading"
+                        class="submit-progress">
                     </app-progress-indicator>
                     <mat-icon *ngIf="error && !loading">close</mat-icon>
                     {{error ? 'Failed' : 'Update'}}
@@ -77,12 +91,17 @@
 <ng-template #missingLastModificationDate>
     <p class="note warning center">The resource class can't be edited because of missing "lastModificationDate"!</p>
 
-    <app-resource-class-info [resourceClass]="ontology.classes[iri]" [expanded]="true" [projectUuid]="projectUuid">
+    <app-resource-class-info [resourceClass]="ontology.classes[iri]"
+        [expanded]="true"
+        [projectUuid]="projectUuid">
     </app-resource-class-info>
 
     <mat-dialog-actions>
         <span class="fill-remaining-space"></span>
-        <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
+        <button mat-button
+            mat-dialog-close
+            class="cancel-button center"
+            [mat-dialog-close]="false">
             close
         </button>
         <span class="fill-remaining-space"></span>

@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AvTimelineComponent } from './av-timeline.component';
@@ -10,6 +11,8 @@ describe('AvTimelineComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 AvTimelineComponent
+            ], imports: [
+                DragDropModule
             ]
         })
             .compileComponents();

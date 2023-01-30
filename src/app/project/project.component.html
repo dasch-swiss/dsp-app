@@ -17,7 +17,9 @@
     <!-- new concept of project view: sidenav instead tabs -->
     <div *ngIf="beta">
         <mat-sidenav-container class="project-view">
-            <mat-sidenav mode="side" opened class="project-nav">
+            <mat-sidenav mode="side"
+                opened
+                class="project-nav">
                 <!-- Project label -->
                 <div *ngIf="project !== undefined" class="link project-title"
                     [routerLink]="'/beta/project/' + projectUuid">
@@ -29,7 +31,8 @@
                 <mat-list class="main-list">
                     <!-- Maybe we can have a project selector here (similar to the github dashboard page) -->
                     <mat-divider></mat-divider>
-                    <mat-list-item class="link" (click)="goToOverview()">
+                    <mat-list-item class="link"
+                        (click)="goToOverview()">
                         <span class="link section-label">
                             <p>Go to projects overview</p>
                         </span>
@@ -63,7 +66,8 @@
                     <mat-divider></mat-divider>
 
                     <!-- Project Ontologies -->
-                    <mat-accordion *ngFor="let onto of projectOntologies; let first = first" multi
+                    <mat-accordion *ngFor="let onto of projectOntologies; let first = first"
+                        multi
                         [displayMode]="'flat'">
                         <mat-expansion-panel [expanded]="first">
                             <mat-expansion-panel-header>
@@ -71,7 +75,9 @@
                                     (click)="projectMember ? $event.stopPropagation() : true">
                                     <mat-panel-title class="mat-subheading-2"
                                         (click)="projectMember ? open('ontology', onto.id) : null">
-                                        <p #ontoTitle matTooltip="{{onto.label}}" matTooltipShowDelay="500"
+                                        <p #ontoTitle
+                                            matTooltip="{{onto.label}}"
+                                            matTooltipShowDelay="500"
                                             matTooltipPosition="right"
                                             [matTooltipDisabled]="compareElementHeights(ontoTitle)">{{onto.label}}</p>
                                     </mat-panel-title>
@@ -101,10 +107,13 @@
                         </mat-list-item>
                         <mat-divider></mat-divider>
                         <!-- Project lists -->
-                        <mat-list-item *ngFor="let list of projectLists" class="list link"
+                        <mat-list-item *ngFor="let list of projectLists"
+                            class="list link"
                             (click)="open('list', list.id)">
-                            <p #listTitle matTooltip="{{list.labels | appStringifyStringLiteral}}"
-                                matTooltipShowDelay="500" matTooltipPosition="right"
+                            <p #listTitle
+                                matTooltip="{{list.labels | appStringifyStringLiteral}}"
+                                matTooltipShowDelay="500"
+                                matTooltipPosition="right"
                                 [matTooltipDisabled]="compareElementHeights(listTitle)">
                                 {{list.labels | appStringifyStringLiteral}}
                             </p>
@@ -121,8 +130,10 @@
 
                     <!-- Project permissions ??? will it ever come? -->
 
-                    <div class="sidenav-footer" *ngIf="projectAdmin">
-                        <mat-list-item class="link section-title footer" (click)="open('settings')">
+                    <div class="sidenav-footer"
+                        *ngIf="projectAdmin">
+                        <mat-list-item class="link section-title footer"
+                            (click)="open('settings')">
                             <span class="section-label">
                                 <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
                                 <h2 class="mat-title">Settings</h2>
@@ -147,6 +158,7 @@
 
 <ng-template #StatusMsg>
     <div class="content large middle">
-        <app-status *ngIf="error" [status]="404"></app-status>
+        <app-status *ngIf="error"
+            [status]="404"></app-status>
     </div>
 </ng-template>

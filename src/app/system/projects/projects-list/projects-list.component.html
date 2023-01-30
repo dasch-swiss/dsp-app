@@ -1,6 +1,8 @@
-<div *ngIf="list && !loading" class="app-projects-list">
+<div *ngIf="list && !loading"
+    class="app-projects-list">
     <!-- header toolbar -->
-    <div class="app-toolbar" *ngIf="list.length > 0">
+    <div class="app-toolbar"
+        *ngIf="list.length > 0">
         <div class="app-toolbar-row">
             <h3 class="mat-body subtitle">
                 <span *ngIf="status">Active</span>
@@ -23,16 +25,21 @@
             </span>
             <h2 class="mat-title">{{list.length | i18nPlural: itemPluralMapping['project']}}</h2>
             <span class="fill-remaining-space"></span>
-            <span class="app-toolbar-action button right" *ngIf="status && createNew && sysAdmin">
-                <button mat-flat-button [color]="'primary'" (click)="openDialog('createProject')">Create new</button>
+            <span class="app-toolbar-action button right"
+                *ngIf="status && createNew && sysAdmin">
+                <button mat-flat-button
+                    [style.color]="'primary'"
+                    (click)="openDialog('createProject')">Create new</button>
             </span>
         </div>
     </div>
 
     <!-- content: list -->
-    <table class="table more-space-bottom" [class.deactivated]="!status">
+    <table class="table more-space-bottom"
+        [class.deactivated]="!status">
 
-        <tr class="table-entry" *ngFor="let project of list; let last = last"
+        <tr class="table-entry"
+            *ngFor="let project of list; let last = last"
             [class.no-border]="last">
             <!-- logo -->
             <td class="avatar-cell">
@@ -43,10 +50,12 @@
             </td>
             <td class="table-info">
                 <!-- Longname hidden on phone devices -->
-                <h5 class="mat-subheading-2 link info-longname" (click)="openProjectPage(project.id)">
+                <h5 class="mat-subheading-2 link info-longname"
+                    (click)="openProjectPage(project.id)">
                     {{project.longname}}
                 </h5>
-                <p class="mat-subheading-1 link" (click)="openProjectPage(project.id)">
+                <p class="mat-subheading-1 link"
+                    (click)="openProjectPage(project.id)">
                     {{project.shortcode}} | {{project.shortname}}
                 </p>
             </td>
@@ -58,12 +67,16 @@
             </td>
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">
-                <button mat-icon-button [matMenuTriggerFor]="projectMenu"
+                <button mat-icon-button
+                    [matMenuTriggerFor]="projectMenu"
                     [disabled]="(!sysAdmin && !userIsProjectAdmin(project.id)) || doNotDelete.includes(project.id)">
                     <mat-icon>more_horiz</mat-icon>
                 </button>
-                <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-                    <button mat-menu-item *ngIf="status"
+                <mat-menu #projectMenu="matMenu"
+                    xPosition="before"
+                    class="menu">
+                    <button mat-menu-item
+                        *ngIf="status"
                         (click)="openDialog('editProject', project.shortname, project.id)">
                         Edit project information
                     </button>
@@ -71,11 +84,13 @@
                     - http://www.knora.org/ontology/knora-admin#SystemProject
                     - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject
                     -->
-                    <button mat-menu-item *ngIf="status"
+                    <button mat-menu-item
+                        *ngIf="status"
                         (click)="openDialog('deactivateProject', project.shortname, project.id)">
                         Deactivate project
                     </button>
-                    <button mat-menu-item *ngIf="!status"
+                    <button mat-menu-item
+                        *ngIf="!status"
                         (click)="openDialog('activateProject', project.shortname, project.id)">
                         Reactivate project
                     </button>
