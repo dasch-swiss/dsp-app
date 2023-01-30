@@ -1,6 +1,6 @@
 @import "../../../assets/style/config";
 
-$width: 340px;
+$width: 429px;
 
 .app-toolbar-action {
   &.select-form {
@@ -23,7 +23,6 @@ $width: 340px;
 
 .ontology-editor {
   width: 98vw;
-  max-width: 1280px;
   min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
   border: 1px dotted $primary_200;
   position: relative;
@@ -80,7 +79,6 @@ $width: 340px;
 }
 .ontology-viewer {
   width: 98vw;
-  max-width: 1280px;
   min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
   border: 1px dotted $primary_200;
   position: relative;

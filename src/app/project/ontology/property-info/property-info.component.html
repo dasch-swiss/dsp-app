@@ -26,10 +26,8 @@
         <span class="fill-remaining-space center"></span>
         <!-- in case of res class: display cardinality -->
         <span *ngIf="propCard">
-            <mat-icon class="multiple">{{propInfo.multiple ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
-            multiple
-            <mat-icon class="required">{{propInfo.required ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
-            required
+            <mat-slide-toggle id="multiple" [disabled]="true" [checked]="propInfo.multiple"></mat-slide-toggle> multiple
+            <mat-slide-toggle id="required" [disabled]="true" [checked]="propInfo.required"></mat-slide-toggle> required
         </span>
         <!-- in case of ontology property: display corresponding resource classes -->
         <span *ngIf="!propCard" class="white-space">
@@ -51,10 +49,6 @@
     <div class="action-bubble" *ngIf="lastModificationDate && projectStatus && showActionBubble" [@simpleFadeAnimation]="'in'">
         <!-- property action in case of resource class' view has different buttons and actions -->
         <div class="button-container" *ngIf="propCard">
-            <!-- TODO: edit cardinality is disabled for the moment. Will be activated as soon as we use DSP-API 13.9.1 -->
-            <button mat-button [disabled]="true" [matTooltip]="'Edit property and cardinality'" matTooltipPosition="above">
-                <mat-icon>tune</mat-icon>
-            </button>
             <span matTooltipPosition="above"
                 [matTooltip]="((!propCanBeDeleted) ?
                     (propCard.isInherited ?
@@ -63,7 +57,7 @@
                     ) : 'Remove property from resource class')">
                 <button mat-button [disabled]="!propCanBeDeleted" class="delete"
                     (click)="removePropertyFromClass.emit({iri: propDef.id, label: propDef.label})">
-                    <mat-icon>backspace</mat-icon>
+                    <mat-icon>link_off</mat-icon>
                 </button>
             </span>
         </div>

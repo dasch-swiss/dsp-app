@@ -8,6 +8,7 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
@@ -205,6 +206,7 @@ describe('PropertyInfoComponent', () => {
                 MatDialogModule,
                 MatIconModule,
                 MatListModule,
+                MatSlideToggleModule,
                 MatSnackBarModule,
                 MatTooltipModule
             ],
@@ -355,13 +357,17 @@ describe('PropertyInfoComponent', () => {
 
         const hostCompDe = simpleTextHostFixture.debugElement;
 
-        const multipleIcon: DebugElement = hostCompDe.query(By.css('.multiple'));
-        const requiredIcon: DebugElement = hostCompDe.query(By.css('.required'));
+        const multipleToggle: DebugElement = hostCompDe.query(By.css('#multiple'));
+        const requiredToggle: DebugElement = hostCompDe.query(By.css('#required'));
+
+        function isChecked(toggle: DebugElement): boolean {
+            return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
+        }
 
         // cardinality 0 means 'no multiple values'
-        expect(multipleIcon.nativeElement.innerText).toEqual('check_box_outline_blank');
+        expect(isChecked(multipleToggle)).toEqual(false);
         // and cardinality 0 means also 'required value'
-        expect(requiredIcon.nativeElement.innerText).toEqual('check_box');
+        expect(isChecked(requiredToggle)).toEqual(true);
 
     });
 
@@ -409,13 +415,19 @@ describe('PropertyInfoComponent', () => {
 
         const hostCompDe = linkHostFixture.debugElement;
 
-        const multipleIcon: DebugElement = hostCompDe.query(By.css('.multiple'));
-        const requiredIcon: DebugElement = hostCompDe.query(By.css('.required'));
+        expect(hostCompDe).toBeTruthy();
+
+        const multipleToggle: DebugElement = hostCompDe.query(By.css('#multiple'));
+        const requiredToggle: DebugElement = hostCompDe.query(By.css('#required'));
+
+        function isChecked(toggle: DebugElement): boolean {
+            return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
+        }
 
         // cardinality 2 means 'multiple values'
-        expect(multipleIcon.nativeElement.innerText).toEqual('check_box');
+        expect(isChecked(multipleToggle)).toEqual(true);
         // and cardinality 2 means also 'not required value'
-        expect(requiredIcon.nativeElement.innerText).toEqual('check_box_outline_blank');
+        expect(isChecked(requiredToggle)).toEqual(false);
     });
 
     it('expect list property with connection to list "Listenwurzel"', () => {
