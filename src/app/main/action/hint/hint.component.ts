@@ -39,7 +39,7 @@ export class HintComponent implements OnInit {
     private _getHint(topic: string): string {
         switch(topic) {
             case 'search':
-                this.documentation = 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/data/#search-and-browse';
+                this.documentation = 'https://docs.dasch.swiss/latest/DSP-APP/user-guide/data/search';
                 return `<p>Use special syntax:</p>
                 <ul>
                     <li>question mark<strong>?</strong> can be used as wildcard symbol for a single character.<br>
