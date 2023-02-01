@@ -44,7 +44,7 @@
             [disabled]="!form?.valid"
             [class.mat-primary]="!isError"
             [class.mat-warn]="isError">
-            <app-progress-indicator [style.color]="'white'"
+            <app-progress-indicator [color]="'white'"
                 [status]="0"
                 *ngIf="loading"
                 class="login-progress"></app-progress-indicator>
@@ -70,7 +70,7 @@
     <button mat-raised-button
         (click)="logout()"
         class="full-width mat-warn logout-button">
-        <app-progress-indicator [style.color]="'white'"
+        <app-progress-indicator [color]="'white'"
             [status]="0"
             *ngIf="loading"
             class="login-progress"></app-progress-indicator>

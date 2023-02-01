@@ -55,14 +55,14 @@
         <div class="center more-space-top more-space-bottom">
             <button *ngIf="user.status"
                 mat-button
-                [style.color]="'warn'"
+                [color]="'warn'"
                 (click)="openDialog('deleteUser', user.username, user.id)">
                 {{ 'appLabels.form.user.title.deleteButton' | translate | uppercase }}
             </button>
 
             <button *ngIf="!user.status"
                 mat-button
-                [style.color]="'primary'"
+                [color]="'primary'"
                 (click)="openDialog('activateUser', user.username, user.id)">ACTIVATE ACCOUNT</button>
         </div>
     </div>

@@ -8,7 +8,7 @@
         <span *ngIf="!beta">We are working on a new project view concept. Switch to the beta version.</span>
         <span class="fill-remaining-space"></span>
         <mat-slide-toggle [(ngModel)]="beta"
-            [style.color]="'primary'"
+            [color]="'primary'"
             (change)="featureToggle()">Beta Preview</mat-slide-toggle>
     </div>
     <!--  mobile version: status and edit icon displayed before the title -->

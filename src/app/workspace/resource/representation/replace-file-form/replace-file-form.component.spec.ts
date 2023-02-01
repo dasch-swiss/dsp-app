@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormGroup } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { UploadComponent } from '../upload/upload.component';
@@ -50,6 +51,7 @@ describe('ReplaceFileFormComponent', () => {
                 ReplaceFileFormComponent
             ],
             imports: [
+                MatButtonModule,
                 MatIconModule,
                 TranslateModule.forRoot()
             ]

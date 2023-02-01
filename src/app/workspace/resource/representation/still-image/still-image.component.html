@@ -34,7 +34,7 @@
     <!-- navigation -->
     <div class="navigation horizontal"
         *ngIf="compoundNavigation">
-        <mat-slider [style.color]="'primary'"
+        <mat-slider [color]="'primary'"
             [disabled]="compoundNavigation.totalPages < 2"
             [max]="compoundNavigation.totalPages"
             [min]="1"

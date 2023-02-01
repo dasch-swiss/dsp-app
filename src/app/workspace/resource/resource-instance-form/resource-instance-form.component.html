@@ -59,7 +59,7 @@
                 class="form-next">
                 <app-progress-indicator *ngIf="loading"
                     [status]="0"
-                    [style.color]="'primary'"
+                    [color]="'primary'"
                     class="next-progress"></app-progress-indicator>
                 {{ 'appLabels.form.action.next' | translate }}
             </button>
@@ -116,11 +116,11 @@
         <span>
             <button mat-raised-button
                 type="submit"
-                [style.color]="error ? 'warn' : 'primary'"
+                [color]="error ? 'warn' : 'primary'"
                 class="form-submit"
                 [disabled]="!propertiesParentForm.valid">
                 <app-progress-indicator *ngIf="loading && !error"
-                    [style.color]="'white'"
+                    [color]="'white'"
                     [status]="0"
                     class="submit-progress"></app-progress-indicator>
                 <mat-icon *ngIf="!loading && error">close</mat-icon>
