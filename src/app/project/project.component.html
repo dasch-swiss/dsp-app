@@ -19,7 +19,8 @@
         <mat-sidenav-container class="project-view">
             <mat-sidenav mode="side"
                 opened
-                class="project-nav">
+                class="project-nav"
+                [disableClose]="true">
                 <!-- Project label -->
                 <div *ngIf="project !== undefined" class="link project-title"
                     [routerLink]="'/beta/project/' + projectUuid">
