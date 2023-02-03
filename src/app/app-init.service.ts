@@ -73,6 +73,7 @@ export class AppInitService {
         // make input type safe
         const apiPort = (typeof this._config.apiPort === 'number' ? this._config.apiPort : null);
         const apiPath = (typeof this._config.apiPath === 'string' ? this._config.apiPath : '');
+        const zioApiPort = (typeof this._config.zioApiPort === 'number' ? this._config.zioApiPort : null);
         const jsonWebToken = (typeof this._config.jsonWebToken === 'string' ? this._config.jsonWebToken : '');
         const logErrors = (typeof this._config.logErrors === 'boolean' ? this._config.logErrors : false);
 
@@ -80,6 +81,7 @@ export class AppInitService {
             this._config.apiProtocol,
             this._config.apiHost,
             apiPort,
+            zioApiPort,
             apiPath,
             jsonWebToken,
             logErrors

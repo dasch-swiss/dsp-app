@@ -225,7 +225,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     ngOnChanges(): void {
         // get project information
-        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.resource.res.attachedToProject).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.resource.res.attachedToProject, false).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
             },

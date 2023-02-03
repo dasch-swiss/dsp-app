@@ -158,7 +158,7 @@ export class ProjectFormComponent implements OnInit {
         if (this.projectIri) {
             // edit existing project
             // get origin project data first
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri, false).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     // save the origin project data in case of reset
                     this.project = response.body.project;
@@ -177,7 +177,7 @@ export class ProjectFormComponent implements OnInit {
 
             // to avoid duplicate shortcodes or shortnames
             // we have to create a list of already exisiting short codes and names
-            this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjects(false).subscribe(
                 (response: ApiResponseData<ProjectsResponse>) => {
 
                     for (const project of response.body.projects) {
@@ -403,7 +403,7 @@ export class ProjectFormComponent implements OnInit {
                 i++;
             }
 
-            this._dspApiConnection.admin.projectsEndpoint.createProject(projectData).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.createProject(projectData, false).subscribe(
                 (projectResponse: ApiResponseData<ProjectResponse>) => {
                     this.project = projectResponse.body.project;
                     this.buildForm(this.project);
@@ -488,7 +488,7 @@ export class ProjectFormComponent implements OnInit {
         this.loading = true;
         // update the cache
         this._cache.del(this._projectService.iriToUuid(this.projectIri));
-        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri, false).subscribe(
             (response: ApiResponseData<ProjectResponse>) => {
                 this.project = response.body.project;
 

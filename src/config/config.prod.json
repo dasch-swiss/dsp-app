@@ -3,6 +3,7 @@
   "apiProtocol": "http",
   "apiHost": "0.0.0.0",
   "apiPort": 3333,
+  "zioApiPort": 5555,
   "apiPath": "",
   "iiifProtocol": "http",
   "iiifHost": "0.0.0.0",

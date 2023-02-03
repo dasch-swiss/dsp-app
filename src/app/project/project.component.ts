@@ -96,7 +96,7 @@ export class ProjectComponent implements OnInit {
             this.loading = true;
             // get current project data, project members and project groups
             // and set the project cache here
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.iri).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.iri, false).subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 

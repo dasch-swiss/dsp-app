@@ -102,7 +102,7 @@ export class ProjectsComponent implements OnInit {
         } else {
 
             // logged-in user is system admin (or guest): show all projects
-            this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjects(false).subscribe(
                 (response: ApiResponseData<ProjectsResponse>) => {
 
                     // reset the lists:

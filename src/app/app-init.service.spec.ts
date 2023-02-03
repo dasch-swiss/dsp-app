@@ -12,6 +12,7 @@ describe('AppInitService (dev)', () => {
         apiProtocol: 'http',
         apiHost: '0.0.0.0',
         apiPort: 3333,
+        zioApiPort: 5555,
         apiPath: 'mypath',
         iiifProtocol: 'http',
         iiifHost: '0.0.0.0',
@@ -81,6 +82,7 @@ describe('AppInitService (dev)', () => {
         expect(service.dspApiConfig.apiProtocol).toEqual('http');
         expect(service.dspApiConfig.apiHost).toEqual('0.0.0.0');
         expect(service.dspApiConfig.apiPort).toEqual(3333);
+        expect(service.dspApiConfig.zioApiPort).toEqual(5555);
         expect(service.dspApiConfig.apiPath).toEqual('mypath');
         expect(service.dspIiifConfig.iiifProtocol).toEqual('http');
         expect(service.dspIiifConfig.iiifHost).toEqual('0.0.0.0');
@@ -128,6 +130,7 @@ describe('AppInitService (dev)', () => {
         expect(service.dspApiConfig.apiProtocol).toEqual('http');
         expect(service.dspApiConfig.apiHost).toEqual('0.0.0.0');
         expect(service.dspApiConfig.apiPort).toEqual(null);
+        expect(service.dspApiConfig.zioApiPort).toEqual(null);
         expect(service.dspApiConfig.apiPath).toEqual('');
         expect(service.dspApiConfig.jsonWebToken).toEqual('');
         expect(service.dspApiConfig.logErrors).toEqual(false);
@@ -239,6 +242,7 @@ describe('AppInitService (prod)', () => {
         apiProtocol: 'https',
         apiHost: '0.0.0.0',
         apiPort: undefined,
+        zioApiPort: undefined,
         apiPath: '',
         iiifProtocol: 'https',
         iiifHost: '0.0.0.0',

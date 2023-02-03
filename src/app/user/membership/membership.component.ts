@@ -86,7 +86,7 @@ export class MembershipComponent implements OnInit {
 
         this.projects = [];
         // get all projects and filter by projects where the user is already member of
-        this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjects(false).subscribe(
             (response: ApiResponseData<ProjectsResponse>) => {
 
                 for (const p of response.body.projects) {

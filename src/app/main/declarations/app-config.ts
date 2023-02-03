@@ -3,6 +3,7 @@ export interface IConfig {
     apiProtocol: 'http' | 'https';
     apiHost: string;
     apiPort: number;
+    zioApiPort: number;
     apiPath: string;
     iiifProtocol: 'http' | 'https';
     iiifHost: string;
