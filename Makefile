@@ -40,6 +40,18 @@ docs-clean: ## cleans the project directory
 #################################
 # Build and publish targets
 #################################
+.PHONY: docker-build
+docker-build: ## build and publish DSP-APP Docker image locally
+	docker buildx build -t $(DSP_APP_IMAGE) -t $(DSP_APP_REPO):latest --load .
+
+.PHONY: docker-publish
+docker-publish4: ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64 with latest tag
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) -t $(DSP_APP_REPO):latest --push .
+
+.PHONY: docker-publish-from-branch
+docker-publish-from-branch: ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64 w/o latest tag
+	docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) --push .
+
 .PHONY: build-dsp-app-image
 build-dsp-app-image: ## build DSP APP image locally
 	docker build -t $(DSP_APP_IMAGE) .

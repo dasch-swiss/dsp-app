@@ -1,18 +1,16 @@
 name: Publish from branch
 
 on:
-  workflow_dispatch:
-
+  workflow_dispatch
 jobs:
   publish-from-branch:
     name: Publish from branch
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 50
+        uses: actions/checkout@v3
       - name: Build and publish image
         run: |
           echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
-          make publish-dsp-app-image
+          docker buildx create --use
+          make docker-publish-from-branch
