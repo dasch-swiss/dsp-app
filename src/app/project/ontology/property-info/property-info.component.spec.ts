@@ -357,8 +357,8 @@ describe('PropertyInfoComponent', () => {
 
         const hostCompDe = simpleTextHostFixture.debugElement;
 
-        const multipleToggle: DebugElement = hostCompDe.query(By.css('#multiple'));
-        const requiredToggle: DebugElement = hostCompDe.query(By.css('#required'));
+        const multipleToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="multiple"]'));
+        const requiredToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="required"]'));
 
         function isChecked(toggle: DebugElement): boolean {
             return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
@@ -417,8 +417,9 @@ describe('PropertyInfoComponent', () => {
 
         expect(hostCompDe).toBeTruthy();
 
-        const multipleToggle: DebugElement = hostCompDe.query(By.css('#multiple'));
-        const requiredToggle: DebugElement = hostCompDe.query(By.css('#required'));
+        const multipleToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="multiple"]'));
+        const requiredToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="required"]'));
+
 
         function isChecked(toggle: DebugElement): boolean {
             return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';

@@ -3,13 +3,13 @@ import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Ou
 import {
     ApiResponseError,
     CanDoResponse,
+    Cardinality,
     Constants,
     IHasProperty,
     KnoraApiConnection,
     ListNodeInfo,
     ReadOntology,
     ReadProject,
-    ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages,
     UpdateOntology,
     UpdateResourceClassCardinality
@@ -61,6 +61,13 @@ export interface ShortInfo {
     comment: string;
 }
 
+export interface GuiCardinality {
+    key: CardinalityKey;
+    value: boolean;
+}
+
+export type CardinalityKey = 'multiple' | 'required';
+
 @Component({
     selector: 'app-property-info',
     templateUrl: './property-info.component.html',
@@ -88,6 +95,7 @@ export interface ShortInfo {
         ])
     ]
 })
+
 export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
@@ -113,6 +121,15 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     // submit res class iri to open res class (not yet implemented)
     @Output() clickedOnClass: EventEmitter<ShortInfo> = new EventEmitter<ShortInfo>();
+    @Output() changeCardinalities: EventEmitter<{
+        prop: IHasProperty;
+        propType: DefaultProperty;
+        targetCardinality: GuiCardinality;
+    }> = new EventEmitter<{
+        prop: IHasProperty;
+        propType: DefaultProperty;
+        targetCardinality: GuiCardinality;
+    }>();
 
     propInfo: Property = new Property();
 
@@ -153,28 +170,11 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     }
 
     ngOnChanges(): void {
-
-        // convert cardinality from js-lib convention to app convention
-        // if cardinality is defined; only in resource class view
+        // convert currentCardinality from js-lib convention to app convention
+        // if currentCardinality is defined; only in resource class view
         if (this.propCard) {
-            switch (this.propCard.cardinality) {
-                case 0:
-                    this.propInfo.multiple = false;
-                    this.propInfo.required = true;
-                    break;
-                case 1:
-                    this.propInfo.multiple = false;
-                    this.propInfo.required = false;
-                    break;
-                case 2:
-                    this.propInfo.multiple = true;
-                    this.propInfo.required = false;
-                    break;
-                case 3:
-                    this.propInfo.multiple = true;
-                    this.propInfo.required = true;
-                    break;
-            }
+            this.propInfo.multiple = this.propCard.cardinality === Cardinality._0_n || this.propCard.cardinality === Cardinality._1_n;
+            this.propInfo.required = this.propCard.cardinality === Cardinality._1 || this.propCard.cardinality === Cardinality._1_n;
         }
 
         // get info about subproperties, if they are not a subproperty of knora base ontology

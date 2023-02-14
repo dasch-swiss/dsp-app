@@ -64,25 +64,31 @@
         <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
             *ngIf="propsToDisplay.length; else noProperties">
             <div cdkDrag
-                [cdkDragDisabled]="(!ontology.lastModificationDate || !cardinalityUpdateEnabled) || !userCanEdit"
+                [cdkDragDisabled]="(!ontology.lastModificationDate || !canChangeGuiOrder) || !userCanEdit"
                 *ngFor="let prop of propsToDisplay; let i = index;">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
                 <mat-list-item class="property" [disabled]="loadProperty">
                     <span cdkDragHandle mat-list-icon class="list-icon gui-order">
-                        <span [class.hide-on-hover]="cardinalityUpdateEnabled && lastModificationDate && userCanEdit">
+                        <span [class.hide-on-hover]="canChangeGuiOrder && lastModificationDate && userCanEdit">
                             {{i + 1}})
                         </span>
-                        <span *ngIf="cardinalityUpdateEnabled && lastModificationDate &&  userCanEdit"
+                        <span *ngIf="canChangeGuiOrder && lastModificationDate &&  userCanEdit"
                             class="display-on-hover drag-n-drop-handle">
                             <mat-icon>drag_indicator</mat-icon>
                         </span>
                     </span>
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
-                    <app-property-info class="property-info" [propDef]="propsToDisplay[i].propDef"
-                        [propCard]="propsToDisplay[i]" [projectUuid]="projectUuid" [projectStatus]="projectStatus"
-                        [resourceIri]="resourceClass.id" [(lastModificationDate)]="lastModificationDate"
-                        [userCanEdit]="userCanEdit" (removePropertyFromClass)="removeProperty($event)">
+                    <app-property-info class="property-info"
+                                       [propDef]="propsToDisplay[i].propDef"
+                                       [propCard]="propsToDisplay[i]"
+                                       [projectUuid]="projectUuid"
+                                       [projectStatus]="projectStatus"
+                                       [resourceIri]="resourceClass.id"
+                                       [(lastModificationDate)]="lastModificationDate"
+                                       [userCanEdit]="userCanEdit"
+                                       (removePropertyFromClass)="removeProperty($event)"
+                                       (changeCardinalities)="changeCardinalities($event)">
                     </app-property-info>
                 </mat-list-item>
             </div>
@@ -93,10 +99,9 @@
         </ng-template>
         <!-- button to assign new property to class -->
         <mat-list>
-            <!-- here we have to know if the class has values or not;
-                this information is important to handle the cardinality (1 resp. 1-n); we get this information from the canReplaceCardinality method -->
+            <!-- here we have to know if the class has values or not -->
             <mat-list-item *ngIf="lastModificationDate && projectStatus && userCanEdit" class="property link"
-                [matMenuTriggerFor]="addPropertyMenu" (click)="canReplaceCardinality()">
+                [matMenuTriggerFor]="addPropertyMenu">
                 <span mat-list-icon class="list-icon">
                     <mat-icon>add</mat-icon>
                 </span>
@@ -130,7 +135,6 @@
                     </button>
                 </mat-menu>
             </ng-container>
-
         </mat-menu>
     </mat-card-content>
 </mat-card>

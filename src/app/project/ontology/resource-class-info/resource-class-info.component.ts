@@ -24,8 +24,9 @@ import { NotificationService } from 'src/app/main/services/notification.service'
 import { SortingService } from 'src/app/main/services/sorting.service';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { DefaultClass, DefaultResourceClasses } from '../default-data/default-resource-classes';
-import { CardinalityInfo, OntologyProperties } from '../ontology.component';
+import { PropertyAssignment, OntologyProperties } from '../ontology.component';
 import { OntologyService } from '../ontology.service';
+import { GuiCardinality } from '../property-info/property-info.component';
 
 export interface PropToDisplay extends IHasProperty {
     propDef?: PropertyDefinition;
@@ -69,19 +70,19 @@ export class ResourceClassInfoComponent implements OnInit {
     @Output() editResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
     @Output() deleteResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
-    // to update the cardinality we need the information about property (incl. propType) and resource class
-    @Output() updateCardinality: EventEmitter<string> = new EventEmitter<string>();
+    // to update the assignment of a property to a class we need the information about property (incl. propType)
+    // and resource class
+    @Output() updatePropertyAssignment: EventEmitter<string> = new EventEmitter<string>();
 
     ontology: ReadOntology;
 
     // list of all ontologies with their properties
     ontoProperties: OntologyProperties[] = [];
 
-    cardinalityUpdateEnabled: boolean;
+    // set to false if it is a subclass of a default class inheriting the order
+    canChangeGuiOrder: boolean;
 
     classCanBeDeleted: boolean;
-
-    classCanReplaceCardinality: boolean;
 
     // list of properties that can be displayed (not all the props should be displayed)
     propsToDisplay: PropToDisplay[] = [];
@@ -139,8 +140,6 @@ export class ResourceClassInfoComponent implements OnInit {
                 this.preparePropsToDisplay(this.resourceClass.propertiesList);
                 // check if the class can be deleted
                 this.canBeDeleted();
-                // check if the cardinalities can be changed
-                this.canReplaceCardinality();
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -174,7 +173,7 @@ export class ResourceClassInfoComponent implements OnInit {
             const defaultClass = this.defaultClasses.find(i => i.iri === iri);
             if (defaultClass) {
                 this.subClassOfLabel += defaultClass.label;
-                this.cardinalityUpdateEnabled = true;
+                this.canChangeGuiOrder = true;
             } else if (this.ontology.id === ontologyIri) {
                 // the class is not defined in the default classes
                 // but defined in the current ontology
@@ -182,7 +181,7 @@ export class ResourceClassInfoComponent implements OnInit {
                 this.subClassOfLabel += this.ontology.classes[iri].label;
                 // in this case, the user can't update the cardinality incl. the gui order in this class
                 // we have to disable this update cardinality functionality
-                this.cardinalityUpdateEnabled = false;
+                this.canChangeGuiOrder = false;
             } else {
                 // the ontology iri of the upper class couldn't be found
                 // display the class name
@@ -192,9 +191,9 @@ export class ResourceClassInfoComponent implements OnInit {
                     // iri is not kind of [ontologyIri]#[className]
                     this.subClassOfLabel += iri.split('/').filter(e => e).slice(-1);
                 }
-                // in this case, the user can't update the cardinality incl. the gui order in this class
-                // we have to disable this update cardinality functionality
-                this.cardinalityUpdateEnabled = false;
+                // in this case, the user can't update the currentCardinality incl. the gui order in this class
+                // we have to disable this update currentCardinality functionality
+                this.canChangeGuiOrder = false;
             }
         });
 
@@ -221,7 +220,7 @@ export class ResourceClassInfoComponent implements OnInit {
      * Not all props should be displayed; there are some system / API-specific
      * properties which have to be filtered.
      *
-     * @param props
+     * @param classProps
      */
     preparePropsToDisplay(classProps: PropToDisplay[]) {
 
@@ -307,36 +306,25 @@ export class ResourceClassInfoComponent implements OnInit {
         );
     }
 
-    canReplaceCardinality() {
-        this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resourceClass.id).subscribe(
-            (response: CanDoResponse) => {
-                this.classCanReplaceCardinality = response.canDo;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
-    }
-
     addNewProperty(propType: DefaultProperty) {
-        const cardinality: CardinalityInfo = {
+        const propertyAssignment: PropertyAssignment = {
             resClass: this.resourceClass,
             property: {
                 propType: propType
             }
         };
-        this.updateCard(cardinality);
+        this.assignProperty(propertyAssignment);
     }
 
     addExistingProperty(prop: PropertyInfoObject) {
-        const cardinality: CardinalityInfo = {
+        const propertyAssignment: PropertyAssignment = {
             resClass: this.resourceClass,
             property: {
                 propType: prop.propType,
                 propDef: prop.propDef,
             }
         };
-        this.updateCard(cardinality);
+        this.assignProperty(propertyAssignment);
     }
 
     /**
@@ -369,7 +357,7 @@ export class ResourceClassInfoComponent implements OnInit {
                 this.lastModificationDateChange.emit(this.lastModificationDate);
                 this.preparePropsToDisplay(this.propsToDisplay);
 
-                this.updateCardinality.emit(this.ontology.id);
+                this.updatePropertyAssignment.emit(this.ontology.id);
                 // display success message
                 this._notification.openSnackBar(`You have successfully removed "${property.label}" from "${this.resourceClass.label}".`);
 
@@ -383,53 +371,84 @@ export class ResourceClassInfoComponent implements OnInit {
     }
 
     /**
-     * updates cardinality
-     * @param card cardinality info object
-     */
-    updateCard(card: CardinalityInfo) {
+     * assignProperty: Open the dialogue in order to add an existing property to a class or to create a new
+     * property and add it to the class
+     * @param propertyAssignment information about the link of a property to a class
+     **/
+    assignProperty(propertyAssignment: PropertyAssignment) {
+        if (!propertyAssignment) {
+            return;
+        }
+        const classLabel = propertyAssignment.resClass.label;
 
-        if (card) {
-            const classLabel = card.resClass.label;
-
-            let mode: 'createProperty' | 'updateCardinality' = 'createProperty';
-            let propLabel = card.property.propType.group + ': ' + card.property.propType.label;
-            let title = 'Add new property of type "' + propLabel + '" to class "' + classLabel + '"';
-
-            if (card.property.propDef) {
-                // the property exists already
-                mode = 'updateCardinality';
-                propLabel = card.property.propDef.label;
-                title = 'Add existing property "' + propLabel + '" to class "' + classLabel + '"';
-            }
-
-            const dialogConfig: MatDialogConfig = {
-                width: '640px',
-                maxHeight: '80vh',
-                position: {
-                    top: '112px'
-                },
-                data: {
-                    propInfo: card.property,
-                    title: title,
-                    subtitle: 'Customize property and cardinality',
-                    mode: mode,
-                    parentIri: card.resClass.id,
-                    position: this.propsToDisplay.length + 1,
-                    canBeUpdated: this.classCanReplaceCardinality
-                }
-            };
-
-            const dialogRef = this._dialog.open(
-                DialogComponent,
-                dialogConfig
-            );
-
-            dialogRef.afterClosed().subscribe(result => {
-                // update the view: list of properties in resource class
-                this.updateCardinality.emit(this.ontology.id);
-            });
+        let mode: 'createProperty' | 'editProperty' = 'createProperty';
+        let propLabel = propertyAssignment.property.propType.group + ': ' + propertyAssignment.property.propType.label;
+        let title = 'Add new property of type "' + propLabel + '" to class "' + classLabel + '"';
+        if (propertyAssignment.property.propDef) {
+            // the property already exists. To assign an existing property simply open the dialog in edit mode
+            mode = 'editProperty';
+            propLabel = propertyAssignment.property.propDef.label;
+            title = 'Add existing property "' + propLabel + '" to class "' + classLabel + '"';
         }
 
+        const dialogConfig: MatDialogConfig = {
+            width: '640px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: {
+                propInfo: propertyAssignment.property,
+                title: title,
+                subtitle: 'Customize property and cardinality',
+                mode: mode,
+                parentIri: propertyAssignment.resClass.id,
+                position: this.propsToDisplay.length + 1
+            }
+        };
+        this.openEditDialog(dialogConfig);
+    }
+
+    /**
+     * changeCardinalities: Open the dialogue in order to change the currentCardinality of an existing property and
+     * class combination
+     * @param cardRequest information about the property, its type and its new cardinalities to be set
+     **/
+    changeCardinalities(cardRequest: { prop: PropToDisplay; propType: DefaultProperty; targetCardinality: GuiCardinality }) {
+        const dialogConfig: MatDialogConfig = {
+            width: '640px',
+            maxHeight: '80vh',
+            position: {
+                top: '112px'
+            },
+            data: {
+                propInfo: { propDef: cardRequest.prop.propDef, propType: cardRequest.propType },
+                title: 'Update cardinality',
+                subtitle: `Set the cardinality for property ${ cardRequest.prop.propDef.label }`,
+                mode: 'updateCardinality',
+                parentIri: this.resourceClass.id,
+                currentCardinality: cardRequest.prop.cardinality,
+                targetCardinality: cardRequest.targetCardinality,
+            }
+        };
+        this.openEditDialog(dialogConfig);
+
+    }
+
+    /**
+     * openEditDialog: Open the dialogue in order assign a property or change cardinalities
+     * @param dialogConfig the MatDialogConfig
+     **/
+    openEditDialog(dialogConfig: MatDialogConfig) {
+        const dialogRef = this._dialog.open(
+            DialogComponent,
+            dialogConfig
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            // update the view: list of properties in resource class
+            this.updatePropertyAssignment.emit(this.ontology.id);
+        });
     }
 
 

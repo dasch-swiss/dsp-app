@@ -34,7 +34,10 @@ import { DefaultProperties, PropertyCategory, PropertyInfoObject } from './defau
 import { DefaultClass, DefaultResourceClasses } from './default-data/default-resource-classes';
 import { OntologyService } from './ontology.service';
 
-export interface CardinalityInfo {
+/**
+ * contains the information about the assignment of a property to a class
+ **/
+export interface PropertyAssignment {
     resClass: ClassDefinition;
     property: PropertyInfoObject;
 }
@@ -499,10 +502,10 @@ export class OntologyComponent implements OnInit {
 
     /**
      * opens property form to create or edit property info
-     * @param mode
-     * @param propertyInfo (could be subClassOf (create mode) or resource class itself (edit mode))
+     * @param mode whether an existing property is assigned or a new one is created
+     * @param propertyInfo the property to assign and edit
      */
-    openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject,): void {
+    openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
 
         const title = (propertyInfo.propDef ? propertyInfo.propDef.label : propertyInfo.propType.group + ': ' + propertyInfo.propType.label);
 

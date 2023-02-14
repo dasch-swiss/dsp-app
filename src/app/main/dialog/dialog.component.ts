@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { Cardinality, ReadResource } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from 'src/app/project/ontology/default-data/default-properties';
 import { FilteredResources } from 'src/app/workspace/results/list-view/list-view.component';
+import { GuiCardinality } from '../../project/ontology/property-info/property-info.component';
 
 export interface DialogData {
     mode: string;       // switch mode
@@ -14,7 +15,8 @@ export interface DialogData {
     name?: string;
     existing?: string[];
     propInfo?: PropertyInfoObject;
-    canBeUpdated?: boolean;
+    currentCardinality?: Cardinality;
+    targetCardinality?: GuiCardinality;
     position?: number;
     parentIri?: string;
     parentResource?: ReadResource;
@@ -56,7 +58,8 @@ export class DialogComponent implements OnInit {
         }
     }
 
-    ngOnInit() { }
+    ngOnInit() {
+    }
 
     closeDialog(data: any): void {
         this.dialogRef.close();

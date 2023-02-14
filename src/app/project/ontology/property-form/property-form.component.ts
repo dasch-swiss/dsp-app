@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
-    ApiResponseError,
+    ApiResponseError, CanDoResponse,
+    Cardinality,
     ClassDefinition,
     Constants,
     CreateResourceProperty,
@@ -29,6 +30,7 @@ import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
 import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
 import { OntologyService } from '../ontology.service';
+import { GuiCardinality } from '../property-info/property-info.component';
 
 export interface ClassToSelect {
     ontologyId: string;
@@ -54,11 +56,11 @@ export class PropertyFormComponent implements OnInit {
      */
     @Input() resClassIri?: string;
 
-    /**
-     * info if the cardinality can be fully set or not
-     * (depending on canReplaceCardinalityOfResourceClass request)
-     */
-    @Input() canSetFullCardinality?: boolean = true;
+    @Input() changeCardinalities?: boolean; // whether only the cardinalities should be edited or the whole property
+
+    @Input() currentCardinality?: Cardinality; // the currently active cardinality
+
+    @Input() targetCardinality?: GuiCardinality; // the cardinality which is requested to be set
 
     /**
      * position of property in case of cardinality update
@@ -131,6 +133,8 @@ export class PropertyFormComponent implements OnInit {
 
     dspConstants = Constants;
 
+    canSetFullCardinality: boolean;
+
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
@@ -141,7 +145,6 @@ export class PropertyFormComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-
         this.loading = true;
 
         // set various lists to select from
@@ -205,6 +208,21 @@ export class PropertyFormComponent implements OnInit {
 
         this.buildForm();
 
+        this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resClassIri).subscribe(
+            (response: CanDoResponse) => {
+                this.canSetFullCardinality = response.canDo;
+                // enable the cardinality toggles if canDo. todo: replace/enrich with new routes to come
+                if (this.canSetFullCardinality) {
+                    this.propertyForm.controls['required'].enable();
+                }
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
+        if (this.changeCardinalities && this.targetCardinality) { // request for changing cardinalities
+            this.propertyForm.patchValue({ [this.targetCardinality.key] : this.targetCardinality.value });
+        }
     }
 
     buildForm() {
@@ -266,14 +284,13 @@ export class PropertyFormComponent implements OnInit {
                 value: this.guiAttributes
             }),
             'multiple': new UntypedFormControl({
-                value: '',  // --> TODO: will be set in update cardinality task
+                value: this.getCardinalityGuiValues(this.currentCardinality).multiple,
                 disabled: this.propertyInfo.propType.objectType === Constants.BooleanValue
                 // --> TODO: here we also have to check, if it can be updated (update cardinality task);
-                // case updateCardinality: disabled if !canSetFullCardinality && multiple.value !== true
             }),
             'required': new UntypedFormControl({
-                value: '',  // --> TODO: will be set in update cardinality task
-                disabled: !this.canSetFullCardinality
+                value: this.getCardinalityGuiValues(this.currentCardinality).required,
+                disabled: !this.canSetFullCardinality // default, is set by api response
             })
         });
 
@@ -289,7 +306,6 @@ export class PropertyFormComponent implements OnInit {
      * @param data Data which changed.
      */
     onValueChanged(data?: any) {
-
         if (!this.propertyForm) {
             return;
         }
@@ -414,6 +430,19 @@ export class PropertyFormComponent implements OnInit {
         this.loading = false;
 
     }
+
+    /**
+     * getCardinalityGuiValues: get a cardinalities boolean equivalent;
+     * @param card The cardinality enum
+     * @returns typed object with boolean values for 'multiple' and 'required'
+     */
+    getCardinalityGuiValues(card: Cardinality): { multiple: boolean; required: boolean } {
+        return {
+            multiple: card === Cardinality._0_n || card === Cardinality._1_n,
+            required: card === Cardinality._1 || card === Cardinality._1_n
+        };
+    }
+
 
     submitData() {
         this.loading = true;

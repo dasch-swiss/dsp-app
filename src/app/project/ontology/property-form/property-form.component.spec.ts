@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, DebugElement, Input, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Component, DebugElement, ViewChild, Input } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,7 +29,7 @@ import { PropertyFormComponent } from './property-form.component';
  * Property is of type simple text
  */
 @Component({
-    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo" [canSetFullCardinality]="false"></app-property-form>'
+    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo" [changeCardinalities] = "false"></app-property-form>'
 })
 class SimpleTextHostComponent {
 
@@ -80,7 +80,7 @@ class SimpleTextHostComponent {
  * Property is of type resource link
  */
 @Component({
-    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo"></app-property-form>'
+    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo" [changeCardinalities] = "false"></app-property-form>'
 })
 class LinkHostComponent {
 
@@ -126,12 +126,29 @@ class LinkHostComponent {
 
 }
 
+class DspApiConnectionMock {
+    v2 = {
+        onto: {
+            canReplaceCardinalityOfResourceClass: (resClassIri: string) => of({ canDo: true }),
+        },
+    };
+}
+
+class DspApiConnectionMockFalse {
+    v2 = {
+        onto: {
+            canReplaceCardinalityOfResourceClass: (resClassIri: string) => of({ canDo: false }),
+        },
+    };
+}
+
+
 /**
  * test host component to simulate parent component
  * Property is of type resource link
  */
 @Component({
-    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo"></app-property-form>'
+    template: '<app-property-form #propertyForm [propertyInfo]="propertyInfo" [changeCardinalities] = "false"></app-property-form>'
 })
 class ListHostComponent {
 
@@ -201,6 +218,49 @@ class MockStringLiteralInputComponent {
     constructor() { }
 }
 
+const listNodeInfo = [{
+    'comments': [],
+    'id': 'http://rdfh.ch/lists/0001/otherTreeList',
+    'isRootNode': true,
+    'labels': [{
+        'language': 'en',
+        'value': 'Tree list root'
+    }],
+    'projectIri': 'http://rdfh.ch/projects/0001'
+}, {
+    'comments': [{
+        'language': 'en',
+        'value': 'a list that is not in used in ontology or data'
+    }],
+    'id': 'http://rdfh.ch/lists/0001/notUsedList',
+    'isRootNode': true,
+    'labels': [{
+        'language': 'de',
+        'value': 'unbenutzte Liste'
+    }, {
+        'language': 'en',
+        'value': 'a list that is not used'
+    }],
+    'name': 'notUsedList',
+    'projectIri': 'http://rdfh.ch/projects/0001'
+}, {
+    'comments': [{
+        'language': 'en',
+        'value': 'Anything Tree List'
+    }],
+    'id': 'http://rdfh.ch/lists/0001/treeList',
+    'isRootNode': true,
+    'labels': [{
+        'language': 'de',
+        'value': 'Listenwurzel'
+    }, {
+        'language': 'en',
+        'value': 'Tree list root'
+    }],
+    'name': 'treelistroot',
+    'projectIri': 'http://rdfh.ch/projects/0001'
+}];
+
 describe('PropertyFormComponent', () => {
     let simpleTextHostComponent: SimpleTextHostComponent;
     let simpleTextHostFixture: ComponentFixture<SimpleTextHostComponent>;
@@ -215,19 +275,13 @@ describe('PropertyFormComponent', () => {
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
-        const ontologyEndpointSpyObj = {
-            v2: {
-                onto: jasmine.createSpyObj('onto', ['updateResourceProperty', 'createResourceProperty', 'replaceGuiElementOfProperty'])
-            }
-        };
-
         TestBed.configureTestingModule({
             declarations: [
                 LinkHostComponent,
                 ListHostComponent,
-                SimpleTextHostComponent,
+                MockStringLiteralInputComponent,
                 PropertyFormComponent,
-                MockStringLiteralInputComponent
+                SimpleTextHostComponent
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -251,14 +305,11 @@ describe('PropertyFormComponent', () => {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig
                 },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: ontologyEndpointSpyObj
-                },
+                { provide: DspApiConnectionToken, useClass: DspApiConnectionMock },
                 {
                     provide: CacheService,
                     useValue: cacheServiceSpy
-                }
+                },
             ]
         })
             .compileComponents();
@@ -291,51 +342,11 @@ describe('PropertyFormComponent', () => {
         const cacheSpyLists = TestBed.inject(CacheService);
         (cacheSpyLists as jasmine.SpyObj<CacheService>).get.withArgs('currentOntologyLists').and.callFake(
             () => {
-                const response: ListNodeInfo[] = [{
-                    'comments': [],
-                    'id': 'http://rdfh.ch/lists/0001/otherTreeList',
-                    'isRootNode': true,
-                    'labels': [{
-                        'language': 'en',
-                        'value': 'Tree list root'
-                    }],
-                    'projectIri': 'http://rdfh.ch/projects/0001'
-                }, {
-                    'comments': [{
-                        'language': 'en',
-                        'value': 'a list that is not in used in ontology or data'
-                    }],
-                    'id': 'http://rdfh.ch/lists/0001/notUsedList',
-                    'isRootNode': true,
-                    'labels': [{
-                        'language': 'de',
-                        'value': 'unbenutzte Liste'
-                    }, {
-                        'language': 'en',
-                        'value': 'a list that is not used'
-                    }],
-                    'name': 'notUsedList',
-                    'projectIri': 'http://rdfh.ch/projects/0001'
-                }, {
-                    'comments': [{
-                        'language': 'en',
-                        'value': 'Anything Tree List'
-                    }],
-                    'id': 'http://rdfh.ch/lists/0001/treeList',
-                    'isRootNode': true,
-                    'labels': [{
-                        'language': 'de',
-                        'value': 'Listenwurzel'
-                    }, {
-                        'language': 'en',
-                        'value': 'Tree list root'
-                    }],
-                    'name': 'treelistroot',
-                    'projectIri': 'http://rdfh.ch/projects/0001'
-                }];
+                const response: ListNodeInfo[] = listNodeInfo;
                 return of(response);
             }
         );
+
 
         // simple text
         simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
@@ -427,23 +438,126 @@ describe('PropertyFormComponent', () => {
 
     });
 
-    it('expect "required" toggle switch (cardinality) to be disabled', () => {
+    it('should enable the cardinality toggles if canSetFullCardinality is true', fakeAsync(() => {
+        // the concrete components or property types or classes (...) do not matter anymore for enabling/disabling the
+        // cardinalities. All that matters is the canDo response.
+        simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
+        simpleTextHostComponent = simpleTextHostFixture.componentInstance;
+        simpleTextHostFixture.detectChanges();
+
+        tick(); // wait for the async task to complete
+        simpleTextHostFixture.detectChanges();
+
+        expect(simpleTextHostComponent.propertyFormComponent.propertyForm.controls['required'].enabled).toBeTrue();
+        expect(simpleTextHostComponent.propertyFormComponent.propertyForm.controls['multiple'].enabled).toBeTrue();
+    }));
+
+});
+
+describe('Cardinality restriction', () => {
+    let simpleTextHostComponent: SimpleTextHostComponent;
+    let simpleTextHostFixture: ComponentFixture<SimpleTextHostComponent>;
+
+    beforeEach(waitForAsync(() => {
+
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+
+        TestBed.configureTestingModule({
+            declarations: [
+                LinkHostComponent,
+                ListHostComponent,
+                MockStringLiteralInputComponent,
+                PropertyFormComponent,
+                SimpleTextHostComponent
+            ],
+            imports: [
+                BrowserAnimationsModule,
+                HttpClientTestingModule,
+                MatAutocompleteModule,
+                MatButtonModule,
+                MatDialogModule,
+                MatFormFieldModule,
+                MatIconModule,
+                MatInputModule,
+                MatOptionModule,
+                MatSelectModule,
+                MatSnackBarModule,
+                ReactiveFormsModule,
+                RouterTestingModule,
+                TranslateModule.forRoot()
+            ],
+            providers: [
+                AppInitService,
+                {
+                    provide: DspApiConfigToken,
+                    useValue: TestConfig.ApiConfig
+                },
+                { provide: DspApiConnectionToken, useClass: DspApiConnectionMockFalse },
+                {
+                    provide: CacheService,
+                    useValue: cacheServiceSpy
+                },
+            ]
+        })
+            .compileComponents();
+    }));
+
+    beforeEach(() => {
+
+        // mock cache service for currentOntology
+        const cacheSpyOnto = TestBed.inject(CacheService);
+        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentOntology').and.callFake(
+            () => {
+                const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+                return of(response);
+            }
+        );
+
+        // mock cache service for currentProjectOntologies
+        const cacheSpyProjOnto = TestBed.inject(CacheService);
+        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentProjectOntologies').and.callFake(
+            () => {
+                const ontologies: ReadOntology[] = [];
+                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
+                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
+                const response: ReadOntology[] = ontologies;
+                return of(response);
+            }
+        );
+
+        // mock cache service for currentOntologyLists
+        const cacheSpyLists = TestBed.inject(CacheService);
+        (cacheSpyLists as jasmine.SpyObj<CacheService>).get.withArgs('currentOntologyLists').and.callFake(
+            () => {
+                const response: ListNodeInfo[] = listNodeInfo;
+                return of(response);
+            }
+        );
+
+        // simple text
+        simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
+        simpleTextHostComponent = simpleTextHostFixture.componentInstance;
+        simpleTextHostFixture.detectChanges();
+
+        expect(simpleTextHostComponent).toBeTruthy();
+
+    });
+
+    it('should create an instance', () => {
         expect(simpleTextHostComponent.propertyFormComponent).toBeTruthy();
-        expect(simpleTextHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
-        expect(simpleTextHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
-
-        const form = simpleTextHostComponent.propertyFormComponent.propertyForm;
-        expect(form.controls['required'].disabled).toBeTruthy();
-
     });
 
-    it('expect "required" toggle switch (cardinality) to be enabled', () => {
-        expect(linkHostComponent.propertyFormComponent).toBeTruthy();
-        expect(linkHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
-        expect(linkHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
+    it('should disable the cardinality toggles if canSetFullCardinality is false', fakeAsync(() => {
+        // the concrete components or property types or classes (...) do not matter anymore for enabling/disabling the
+        // cardinalities. All that matters is the canDo response.
+        simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
+        simpleTextHostComponent = simpleTextHostFixture.componentInstance;
+        simpleTextHostFixture.detectChanges();
 
-        const form = linkHostComponent.propertyFormComponent.propertyForm;
-        expect(form.controls['required'].disabled).toBeFalsy();
+        tick(); // wait for the async task to complete
+        simpleTextHostFixture.detectChanges();
 
-    });
+        expect(simpleTextHostComponent.propertyFormComponent.propertyForm.controls['required'].enabled).toBeFalse();
+    }));
+
 });

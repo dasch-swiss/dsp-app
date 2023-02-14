@@ -387,14 +387,14 @@
     </div>
 
     <div *ngSwitchCase="'updateCardinality'">
-        <app-dialog-header [title]="data.title"
-            [subtitle]="data.subtitle">
-        </app-dialog-header>
         <app-property-form [propertyInfo]="data.propInfo"
-            [resClassIri]="data.parentIri"
-            [guiOrder]="data.position"
-            [canSetFullCardinality]="data.canBeUpdated"
-            (closeDialog)="dialogRef.close()">
+                           [resClassIri]="data.parentIri"
+                           [guiOrder]="data.position"
+                           [changeCardinalities]="true"
+                           [targetCardinality]="data.targetCardinality"
+                           [currentCardinality]="data.currentCardinality"
+                           (closeDialog)="dialogRef.close()">
+
         </app-property-form>
     </div>
 
@@ -403,10 +403,9 @@
             [subtitle]="data.subtitle">
         </app-dialog-header>
         <app-property-form [propertyInfo]="data.propInfo"
-            [resClassIri]="data.parentIri"
-            [guiOrder]="data.position"
-            [canSetFullCardinality]="data.canBeUpdated"
-            (closeDialog)="dialogRef.close()">
+                           [resClassIri]="data.parentIri"
+                           [guiOrder]="data.position"
+                           (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
 
@@ -415,14 +414,11 @@
             [subtitle]="data.subtitle">
         </app-dialog-header>
         <app-property-form [propertyInfo]="data.propInfo"
-            [resClassIri]="data.parentIri"
-            [guiOrder]="data.position"
-            [canSetFullCardinality]="data.canBeUpdated"
-            (closeDialog)="dialogRef.close()">
+                           [resClassIri]="data.parentIri"
+                           [guiOrder]="data.position"
+                           (closeDialog)="dialogRef.close()">
         </app-property-form>
     </div>
-
-
     <div *ngSwitchCase="'deleteProperty'">
         <app-dialog-header [title]="data.title"
             [subtitle]="'Delete property'"></app-dialog-header>

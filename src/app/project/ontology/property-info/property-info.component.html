@@ -6,7 +6,7 @@
             <mat-icon class="type">{{propType?.icon}}</mat-icon>
         </span>
         <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above" matTooltipClass="multi-line-tooltip">
-            <!-- display label if cardinality exists (in case the component is used in resource class view) -->
+            <!-- display label if there is a propCard (in case the component is used in resource class view) -->
             <span *ngIf="propCard; else displayAllLabels">{{propDef.label ? propDef.label : propDef.id}}</span>
             <!-- otherwise display label in all languages (if defined) -->
             <ng-template #displayAllLabels>
@@ -24,10 +24,20 @@
             {{propDef.id | split: '#':1}}
         </span>
         <span class="fill-remaining-space center"></span>
-        <!-- in case of res class: display cardinality -->
+        <!-- cardinality toggles are disabled until new routes are there -->
         <span *ngIf="propCard">
-            <mat-slide-toggle id="multiple" [disabled]="true" [checked]="propInfo.multiple"></mat-slide-toggle> multiple
-            <mat-slide-toggle id="required" [disabled]="true" [checked]="propInfo.required"></mat-slide-toggle> required
+            <mat-slide-toggle
+                [disabled]="true"
+                data-name="multiple"
+                [checked]="propInfo.multiple"
+                (toggleChange)="changeCardinalities.emit({ prop: propCard, propType: propType, targetCardinality: {key: 'multiple', value: ![propInfo.multiple]} })">
+            </mat-slide-toggle> multiple
+            <mat-slide-toggle
+                [disabled]="true"
+                data-name="required"
+                [checked]="propInfo.required"
+                (toggleChange)="changeCardinalities.emit({prop: propCard, propType: propType, targetCardinality: {key: 'required', value: ![propInfo.required]} })">
+            </mat-slide-toggle> required
         </span>
         <!-- in case of ontology property: display corresponding resource classes -->
         <span *ngIf="!propCard" class="white-space">
