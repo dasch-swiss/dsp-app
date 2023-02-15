@@ -2,7 +2,7 @@
 
 ## Project
 
-Once you are [logged in](https://docs.dasch.swiss/latest/DSP-APP/user-guide/#login), the dashboard displays the list of your project(s). If you are a project administrator or a system administrator, you can edit the project information or archive your project from the project menu. Archived projects are stored in a list on your dashboard and they can be "reactivated" at any time.
+Once you are [logged in](index.md#login), the dashboard displays the list of your project(s). If you are a project administrator or a system administrator, you can edit the project information or archive your project from the project menu. Archived projects are stored in a list on your dashboard and they can be "reactivated" at any time.
 
 ![Project list and project menu](../assets/images/dashboard.png)*<https://admin.dasch.swiss/dashboard> - By clicking on the project name, you get access to the full project information.*
 

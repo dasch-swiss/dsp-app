@@ -7,7 +7,7 @@ DSP-APP is built with [Angular](https://angular.io/) and uses [NPM](https://docs
 
 You have to install the corresponding packages with `npm i`. Now you have to possibilites to run the application in developer mode:
 
-- With a local installed [DSP-API environment](https://docs-api.dasch.swiss/04-publishing-deployment/getting-started/) run `ng serve` or `npm run start`.
+- With a local installed [DSP-API environment](https://docs.dasch.swiss/latest/developers/getting-started/) run `ng serve` or `npm run start`.
 - If you want to connect to the DSP-API on our test server run `ng serve --configuration=test-server` or `npm run start-with-test-server`. Please consider which version of DSP-API is currently running on the test server (see webapi: <https://api.test.dasch.swiss/version>). With this solution you will also have access to all the representation files.
 
 In both case navigate to `http://0.0.0.0:4200/`. The app will automatically reload if you change any of the resource files.

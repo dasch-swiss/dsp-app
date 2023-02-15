@@ -4,7 +4,7 @@ Once you have found the desired resources, you can (re)view them and annotate th
 
 ## Data permissions
 
-In order to know what you are allowed to see or do with the selected resource, please check the permissions that are granted for your user role. You can find more details about the [permissions in the documentation of DSP-API](https://docs.dasch.swiss/latest/DSP-API/02-knora-ontologies/knora-base/?h=permission#permissions).
+In order to know what you are allowed to see or do with the selected resource, please check the permissions that are granted for your user role. You can find more details about the [permissions in the documentation of DSP-API](https://docs.dasch.swiss/latest/DSP-API/02-dsp-ontologies/knora-base/?h=permission#permissions).
 
 If you don't have the permissions you were supposed to get, please contact the [DaSCH team](mailto:support@dasch.swiss).
 
@@ -106,7 +106,7 @@ To keep in mind: The more you compare, the smaller the resource viewer for each 
 
 ### Add a resource
 
-See section [Create new resource instances](https://docs.dasch.swiss/latest/DSP-APP/user-guide/data/#create-new-resource-instances).
+See section [Create new resource instances](./start.md#create-new-resource-instances).
 
 ### Add a property value
 
@@ -225,7 +225,7 @@ You fill out the form indicating the project in which you want to register the l
 
 ![Link object form](../../assets/images/link-object-form.png)*Fill in the form about the new link object.*
 
-The linked resources are listed in the `has Link to` property of the link object resource viewer. The label of your link object is searchable through a [full-text search](https://docs.dasch.swiss/latest/DSP-APP/user-guide/data/#full-text-search).
+The linked resources are listed in the `has Link to` property of the link object resource viewer. The label of your link object is searchable through a [full-text search](./search.md#full-text-search).
 
 ![Link object resource](../../assets/images/link-object-resource-view.png)
 

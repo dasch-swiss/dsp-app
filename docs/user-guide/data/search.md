@@ -53,7 +53,7 @@ one or more of the following comparison operators can be selected:
 - `exists`: value for the given property exists.
 - `is like`: search value is contained in a text using the SPARQL [REGEX](https://www.w3.org/TR/sparql11-query/#func-regex) function (supports regular expressions).
 - `matches`:
-  - text property: search value matches the text ([Lucene Query Parser Syntax](https://docs-api.dasch.swiss/08-lucene/lucene-query-parser-syntax/)).
+  - text property: search value matches the text ([Lucene Query Parser Syntax](https://docs.dasch.swiss/latest/DSP-API/07-lucene/lucene-query-parser-syntax/)).
   - linking property: matches the specified linked resource.
 
 ### Search Examples
@@ -70,7 +70,7 @@ For general information about regular expressions, see this [interactive tutoria
 #### matches (Lucene Parser Syntax)
 
 Used with a text property, the `matches` operator lets the user search for texts that *match* the search value,
-supporting [Lucene Query Parser Syntax](https://docs-api.dasch.swiss/08-lucene/lucene-query-parser-syntax/).
+supporting [Lucene Query Parser Syntax](https://docs.dasch.swiss/latest/DSP-API/07-lucene/lucene-query-parser-syntax/).
 In this example, all persons are found whose names contain "Ja" and "ob" with a character in between (represented by the wildcard "?").
 This search finds "Jacob" as well as "Jakob".
 
@@ -102,4 +102,4 @@ The expert search can be more powerful than the advanced search, but requires kn
 
 ![Expert search is a text area in which you can create Gravsearch queries.](../../assets/images/search-expert.png)*<https://admin.dasch.swiss> - Search 3: Expert search is a text area in which you can create Gravsearch queries. Here is the default example you can find in the app.*
 
-To learn Gravsearch, go to the DSP-API documentation [&rarr; Gravsearch](https://docs-api.dasch.swiss/03-apis/api-v2/query-language/)
+To learn Gravsearch, go to the DSP-API documentation [&rarr; Gravsearch](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/query-language/)
