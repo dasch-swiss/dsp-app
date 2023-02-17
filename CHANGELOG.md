@@ -1,5 +1,24 @@
 # Changelog
 
+## [10.14.0](https://github.com/dasch-swiss/dsp-app/compare/v10.13.0...v10.14.0) (2023-02-17)
+
+
+### Enhancements
+
+* **cardinalities:** implement cardinalities user workflow (Dev-1615 ) ([#917](https://github.com/dasch-swiss/dsp-app/issues/917)) ([4f0347a](https://github.com/dasch-swiss/dsp-app/commit/4f0347a12eeacad37b5b01b39aae011fc59df2d1))
+
+
+### Documentation
+
+* Fix broken links ([#921](https://github.com/dasch-swiss/dsp-app/issues/921)) ([ad368aa](https://github.com/dasch-swiss/dsp-app/commit/ad368aaf00e1926e1c5bcfc64ab0e04ccc2ca0de))
+
+
+### Maintenance
+
+* bump js-lib to 8.0.0 ([#923](https://github.com/dasch-swiss/dsp-app/issues/923)) ([f7c4847](https://github.com/dasch-swiss/dsp-app/commit/f7c48476a765626777a5d754d05516cbc2fc96b5))
+* **deps:** fix breaking changes from js-lib v8.0.0 ([#918](https://github.com/dasch-swiss/dsp-app/issues/918)) ([f2d14be](https://github.com/dasch-swiss/dsp-app/commit/f2d14be3c0fd7dd6014839870e12b34351b850a5))
+* enable publishing docker image arm64 and amd64 architectures (DEV-1701) ([#915](https://github.com/dasch-swiss/dsp-app/issues/915)) ([65d3120](https://github.com/dasch-swiss/dsp-app/commit/65d31208217a747dac12e3d4b909c1c38fd46d87))
+
 ## [10.13.0](https://github.com/dasch-swiss/dsp-app/compare/v10.12.1...v10.13.0) (2023-02-03)
 
 
