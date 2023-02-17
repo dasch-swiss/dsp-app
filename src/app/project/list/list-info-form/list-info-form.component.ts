@@ -80,7 +80,7 @@ export class ListInfoFormComponent implements OnInit {
                 this._route.parent.paramMap.subscribe((params: Params) => {
                     this.projectUuid = params.get('uuid');
 
-                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid), false).subscribe(
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid)).subscribe(
                         (response: ApiResponseData<ProjectResponse>) => {
                             this.projectIri = response.body.project.id;
                         },
@@ -100,7 +100,7 @@ export class ListInfoFormComponent implements OnInit {
                 this._route.firstChild.paramMap.subscribe((params: Params) => {
                     this.projectUuid = params.get('uuid');
 
-                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid), false).subscribe(
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid)).subscribe(
                         (response: ApiResponseData<ProjectResponse>) => {
                             this.projectIri = response.body.project.id;
                         },

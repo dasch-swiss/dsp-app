@@ -107,7 +107,7 @@ export class ListComponent implements OnInit {
         // get feature toggle information if url contains beta
         this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
         if (this.beta) {
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid), false).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(this.projectUuid)).subscribe(
                 (res: ApiResponseData<ProjectResponse>) => {
                     const shortcode = res.body.project.shortcode;
 

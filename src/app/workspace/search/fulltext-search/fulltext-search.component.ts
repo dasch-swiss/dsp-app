@@ -196,7 +196,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
      * get all public projects from DSP-API
      */
     getAllProjects(): void {
-        this._dspApiConnection.admin.projectsEndpoint.getProjects(false).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
             (response: ApiResponseData<ProjectsResponse>) => {
                 this.projects = response.body.projects;
                 // this.loadSystem = false;
@@ -219,7 +219,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
      * @param id Project Id
      */
     getProject(id: string): void {
-        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id, false).subscribe(
+        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id).subscribe(
             (project: ApiResponseData<ProjectResponse>) => {
                 this.setProject(project.body.project);
             },

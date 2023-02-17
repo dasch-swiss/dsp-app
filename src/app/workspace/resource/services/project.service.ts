@@ -56,7 +56,7 @@ export class ProjectService {
                 })
             );
         } else {
-            return this._dspApiConnection.admin.projectsEndpoint.getProjects(false).pipe(
+            return this._dspApiConnection.admin.projectsEndpoint.getProjects().pipe(
                 map((response: ApiResponseData<ProjectsResponse>) => {
                     for (const project of response.body.projects) {
                         if (project.status && project.id !== Constants.SystemProjectIRI && project.id !== Constants.DefaultSharedOntologyIRI) {

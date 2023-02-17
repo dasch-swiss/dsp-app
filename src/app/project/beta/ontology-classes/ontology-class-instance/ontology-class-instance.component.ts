@@ -55,7 +55,7 @@ export class OntologyClassInstanceComponent implements OnChanges {
         this.projectIri = this._projectService.uuidToIri(uuid);
 
         this._route.params.subscribe(params => {
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri, false).subscribe(
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
                 (res: ApiResponseData<ProjectResponse>) => {
                     const shortcode = res.body.project.shortcode;
                     const iriBase = this._ontologyService.getIriBaseUrl();

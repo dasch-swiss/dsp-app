@@ -12,6 +12,8 @@
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": false,
+  "zioPrefix": ":5555",
+  "zioEndpoints": [],
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
     "environment": "prod",

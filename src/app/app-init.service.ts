@@ -73,18 +73,20 @@ export class AppInitService {
         // make input type safe
         const apiPort = (typeof this._config.apiPort === 'number' ? this._config.apiPort : null);
         const apiPath = (typeof this._config.apiPath === 'string' ? this._config.apiPath : '');
-        const zioApiPort = (typeof this._config.zioApiPort === 'number' ? this._config.zioApiPort : null);
         const jsonWebToken = (typeof this._config.jsonWebToken === 'string' ? this._config.jsonWebToken : '');
         const logErrors = (typeof this._config.logErrors === 'boolean' ? this._config.logErrors : false);
+        const zioPrefix = (this._config.zioPrefix === '/zio' || this._config.zioPrefix === ':5555' ? this._config.zioPrefix : '/zio');
+        const zioEndpoints = (Array.isArray(this._config.zioEndpoints) ? this._config.zioEndpoints : []);
 
         this._dspApiConfig = new KnoraApiConfig(
             this._config.apiProtocol,
             this._config.apiHost,
             apiPort,
-            zioApiPort,
             apiPath,
             jsonWebToken,
-            logErrors
+            logErrors,
+            zioPrefix,
+            zioEndpoints
         );
 
         const iiifPort = (typeof this._config.iiifPort === 'number' ? this._config.iiifPort : null);
