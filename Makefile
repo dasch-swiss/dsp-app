@@ -45,7 +45,7 @@ docker-build: ## build and publish DSP-APP Docker image locally
 	docker buildx build -t $(DSP_APP_IMAGE) -t $(DSP_APP_REPO):latest --load .
 
 .PHONY: docker-publish
-docker-publish4: ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64 with latest tag
+docker-publish: ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64 with latest tag
 	docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) -t $(DSP_APP_REPO):latest --push .
 
 .PHONY: docker-publish-from-branch
