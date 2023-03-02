@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
-    ApiResponseError, CanDoResponse,
+    ApiResponseError,
+    CanDoResponse,
     Cardinality,
     ClassDefinition,
     Constants,
@@ -27,10 +28,18 @@ import { existingNamesValidator } from 'src/app/main/directive/existing-name/exi
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { SortingService } from 'src/app/main/services/sorting.service';
 import { CustomRegex } from 'src/app/workspace/resource/values/custom-regex';
-import { AutocompleteItem } from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
-import { DefaultProperties, DefaultProperty, PropertyCategory, PropertyInfoObject } from '../default-data/default-properties';
+import {
+    AutocompleteItem
+} from 'src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
+import {
+    DefaultProperties,
+    DefaultProperty,
+    PropertyCategory,
+    PropertyInfoObject
+} from '../default-data/default-properties';
 import { OntologyService } from '../ontology.service';
 import { GuiCardinality } from '../property-info/property-info.component';
+import { PropToDisplay } from '../resource-class-info/resource-class-info.component';
 
 export interface ClassToSelect {
     ontologyId: string;
@@ -54,14 +63,15 @@ export class PropertyFormComponent implements OnInit {
     /**
      * iri of resClassIri; will be used to set cardinality
      */
-    @Input() resClassIri?: string;
+    @Input() resClassIri?: string; // the classes iri to which a property can be assigned
 
-    @Input() changeCardinalities?: boolean; // whether only the cardinalities should be edited or the whole property
+    @Input() changeCardinalities?: boolean; // whether only the cardinalities should be changed or a property
 
     @Input() currentCardinality?: Cardinality; // the currently active cardinality
 
-    @Input() targetCardinality?: GuiCardinality; // the cardinality which is requested to be set
+    @Input() targetGuiCardinality?: GuiCardinality; // the cardinality which is requested to be set
 
+    @Input() classProperties?: PropToDisplay[]; // the properties of a resource class. Needed for changing a cardinality
     /**
      * position of property in case of cardinality update
      */
@@ -133,7 +143,17 @@ export class PropertyFormComponent implements OnInit {
 
     dspConstants = Constants;
 
-    canSetFullCardinality: boolean;
+    // general for changing to a specific cardinality of an existing property
+    canSetCardinality: boolean;
+    canNotSetCardinalityReason = ''; // response from the api
+    canNotSetCardinalityUiReason = { // default user readable reason
+        detail: this.canNotSetCardinalityReason,
+        hint: ''
+    };
+
+    // if assigning a new property to a class
+    canSetRequiredCardinality = false;
+
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
@@ -208,25 +228,16 @@ export class PropertyFormComponent implements OnInit {
 
         this.buildForm();
 
-        this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resClassIri).subscribe(
-            (response: CanDoResponse) => {
-                this.canSetFullCardinality = response.canDo;
-                // enable the cardinality toggles if canDo. todo: replace/enrich with new routes to come
-                if (this.canSetFullCardinality) {
-                    this.propertyForm.controls['required'].enable();
-                }
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
-        if (this.changeCardinalities && this.targetCardinality) { // request for changing cardinalities
-            this.propertyForm.patchValue({ [this.targetCardinality.key] : this.targetCardinality.value });
+        if (this.resClassIri && !this.changeCardinalities) { // assigning a property to a class
+            this.canEnableRequiredToggle();
+        }
+
+        if (this.changeCardinalities) { // request for changing cardinalities
+            this.canChangeCardinality(this.targetGuiCardinality);
         }
     }
 
     buildForm() {
-
         let disablePropType = true;
 
         // if property definition exists
@@ -284,13 +295,12 @@ export class PropertyFormComponent implements OnInit {
                 value: this.guiAttributes
             }),
             'multiple': new UntypedFormControl({
-                value: this.getCardinalityGuiValues(this.currentCardinality).multiple,
+                value: this._os.getCardinalityGuiValues(this.currentCardinality).multiple,
                 disabled: this.propertyInfo.propType.objectType === Constants.BooleanValue
-                // --> TODO: here we also have to check, if it can be updated (update cardinality task);
             }),
             'required': new UntypedFormControl({
-                value: this.getCardinalityGuiValues(this.currentCardinality).required,
-                disabled: !this.canSetFullCardinality // default, is set by api response
+                value: this._os.getCardinalityGuiValues(this.currentCardinality).required,
+                disabled: !this.canSetRequiredCardinality
             })
         });
 
@@ -432,24 +442,61 @@ export class PropertyFormComponent implements OnInit {
     }
 
     /**
-     * getCardinalityGuiValues: get a cardinalities boolean equivalent;
-     * @param card The cardinality enum
-     * @returns typed object with boolean values for 'multiple' and 'required'
+     * canEnableRequiredToggle: evaluate if the required toggle can be set for a newly assigned property of a class
      */
-    getCardinalityGuiValues(card: Cardinality): { multiple: boolean; required: boolean } {
-        return {
-            multiple: card === Cardinality._0_n || card === Cardinality._1_n,
-            required: card === Cardinality._1 || card === Cardinality._1_n
-        };
+    canEnableRequiredToggle() {
+        this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resClassIri).subscribe(
+            (response: CanDoResponse) => {
+                if (response.canDo) {
+                    this.canSetRequiredCardinality = response.canDo;
+                }
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 
+    /**
+     * canChangeCardinality: check if an update of the cardinalities is possible for a given GuiCardinality
+     * @param targetGuiCardinality the GuiCardinality to which the current cardinality should be changed
+     */
+    canChangeCardinality(targetGuiCardinality: GuiCardinality) {
+        // disable the change of booleans to multiple
+        if (this.propertyInfo.propType.objectType === Constants.BooleanValue &&
+            targetGuiCardinality.key === 'multiple' && targetGuiCardinality.value === true) {
+            this.canSetCardinality = false;
+            return;
+        }
+        // check if cardinality can be changed
+        const targetCardinality: Cardinality = this.getTargetCardinality(targetGuiCardinality);
+        this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClassWith(this.resClassIri, this.propertyInfo.propDef.id, targetCardinality).subscribe(
+            (response: CanDoResponse) => {
+                this.canSetCardinality = response.canDo;
+                this.canNotSetCardinalityReason = response.cannotDoReason;
+                this.canNotSetCardinalityUiReason = this.getCanNotSetCardinalityUserReason();
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
+    /**
+     * getTargetCardinality: create a Cardinality based on currentCardinality but updated by the desired target value
+     * @param targetValue the value by which the current cardinality is updated
+     * @return the equivalent cardinality enum
+     */
+    getTargetCardinality(targetValue: GuiCardinality): Cardinality {
+        const currentCardinality = this._os.getCardinalityGuiValues(this.currentCardinality);
+        const updatedCardinality = Object.assign(currentCardinality, { [targetValue.key]:targetValue.value });
+        return this._os.translateCardinality(updatedCardinality.multiple, updatedCardinality.required);
+    }
 
     submitData() {
         this.loading = true;
-
-        // the property exist already; update label, comment and/or gui element
-        if (this.propertyInfo.propDef) {
-
+        if (this.propertyInfo.propDef && !this.changeCardinalities) {
+            // the property exist already; update label, comment and/or gui element
             if (this.resClassIri) {
                 // set cardinality with existing property in res class
                 this.setCardinality(this.propertyInfo.propDef);
@@ -543,6 +590,9 @@ export class PropertyFormComponent implements OnInit {
                     }
                 );
             }
+        }
+        if (this.changeCardinalities) {
+            this.submitCardinalitiesChange();
         } else {
             // create mode: new property incl. gui type and attribute
             // submit property
@@ -599,6 +649,43 @@ export class PropertyFormComponent implements OnInit {
         }
     }
 
+    /**
+     * submitCardinalitiesChange: create a transaction based on currentCardinality but updated by the desired
+     * target cardinality set in the gui
+     */
+    submitCardinalitiesChange(){
+        // get the ontology, the class and its properties
+        const classUpdate = new UpdateOntology<UpdateResourceClassCardinality>();
+        classUpdate.lastModificationDate = this.lastModificationDate;
+        classUpdate.id = this.ontology.id;
+        const changedClass = new UpdateResourceClassCardinality();
+        changedClass.id = this.resClassIri;
+        changedClass.cardinalities = this.classProperties;
+
+        // get the property for replacing the cardinality
+        const idx = changedClass.cardinalities.findIndex(c => c.propertyIndex === this.propertyInfo.propDef.id);
+        if (idx === -1) {
+            return;
+        }
+        // set the new cardinality
+        changedClass.cardinalities[idx].cardinality = this.getTargetCardinality(this.targetGuiCardinality);
+
+        classUpdate.entity = changedClass;
+        this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(classUpdate).subscribe(
+            (res: ResourceClassDefinitionWithAllLanguages) => {
+                this.lastModificationDate = res.lastModificationDate;
+                // close the dialog box
+                this.loading = false;
+                this.closeDialog.emit();
+            },
+            (error: ApiResponseError) => {
+                this.error = true;
+                this.loading = false;
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
     replaceGuiElement() {
         const onto4guiEle = new UpdateOntology<UpdateResourcePropertyGuiElement>();
         onto4guiEle.id = this.ontology.id;
@@ -630,6 +717,7 @@ export class PropertyFormComponent implements OnInit {
         );
     }
 
+    // actually nothing to do with a cardinality like 1_n asf. This is simply assigning a property to a class
     setCardinality(prop: ResourcePropertyDefinitionWithAllLanguages) {
 
         const onto = new UpdateOntology<UpdateResourceClassCardinality>();
@@ -667,7 +755,6 @@ export class PropertyFormComponent implements OnInit {
                 this._errorHandler.showMessage(error);
             }
         );
-
     }
 
     setGuiAttribute(guiAttr: string): string[] {
@@ -701,6 +788,33 @@ export class PropertyFormComponent implements OnInit {
         }
 
         return guiAttributes;
+    }
+
+    /**
+     * getCanNotSetCardinalityUserReason: get the user readable reason why a cardinality can not be changed.
+     */
+    getCanNotSetCardinalityUserReason() {
+        const reason = {  detail: this.canNotSetCardinalityReason, hint: '' }; // default
+        const classLabel = this.resClassIri.split('#')[1];
+        const pLabel = this.propertyInfo.propDef.label;
+
+        if (this.canNotSetCardinalityReason.includes('is not included in the new cardinality')) {
+            // data contradicting the change
+            if (this.targetGuiCardinality.key === 'multiple' && this.targetGuiCardinality.value === false) {
+                // there are instances which have that property multiple times and do not allow to set multiple to false
+                reason.detail = `At least one ${classLabel} has multiple ${pLabel} properties in your data.`;
+                reason.hint =   `In order to change the data model and set the property ${pLabel} from multiple to ` +
+                                `single, every ${classLabel} must have only one ${pLabel} in the data.`;
+            }
+            if (this.targetGuiCardinality.key === 'required' && this.targetGuiCardinality.value === true) {
+                // setting from multiple to single is not possible because there are instances which have that property
+                // multiple times and do not allow to set multiple to false
+                reason.detail = `At least one ${classLabel} does not have a ${pLabel} property in your data.`;
+                reason.hint =   `In order to change the data model and set the property ${pLabel} to required ` +
+                                `every ${classLabel} needs to have a ${pLabel} in the data.`;
+            }
+        }
+        return reason;
     }
 
 }

@@ -98,6 +98,18 @@ export class OntologyService {
         }
     }
 
+    /**
+     * getCardinalityGuiValues: get a cardinalities boolean equivalent values;
+     * @param card The cardinality enum
+     * @returns object with boolean values for 'multiple' and 'required'
+     */
+    getCardinalityGuiValues(card: Cardinality): { multiple: boolean; required: boolean } {
+        return {
+            multiple: card === Cardinality._0_n || card === Cardinality._1_n,
+            required: card === Cardinality._1 || card === Cardinality._1_n
+        };
+    }
+
     getSuperProperty(property: ResourcePropertyDefinitionWithAllLanguages): string {
         // get ontology from property info
         const ontoIri = property.id.split(Constants.HashDelimiter)[0];

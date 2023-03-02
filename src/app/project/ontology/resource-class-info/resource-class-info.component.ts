@@ -429,6 +429,7 @@ export class ResourceClassInfoComponent implements OnInit {
                 parentIri: this.resourceClass.id,
                 currentCardinality: cardRequest.prop.cardinality,
                 targetCardinality: cardRequest.targetCardinality,
+                classProperties: this.propsToDisplay
             }
         };
         this.openEditDialog(dialogConfig);

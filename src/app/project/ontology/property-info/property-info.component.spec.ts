@@ -420,7 +420,6 @@ describe('PropertyInfoComponent', () => {
         const multipleToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="multiple"]'));
         const requiredToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="required"]'));
 
-
         function isChecked(toggle: DebugElement): boolean {
             return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
         }

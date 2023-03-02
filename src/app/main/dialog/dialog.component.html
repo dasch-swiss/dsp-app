@@ -390,11 +390,11 @@
         <app-property-form [propertyInfo]="data.propInfo"
                            [resClassIri]="data.parentIri"
                            [guiOrder]="data.position"
+                           [classProperties]="data.classProperties"
                            [changeCardinalities]="true"
-                           [targetCardinality]="data.targetCardinality"
+                           [targetGuiCardinality]="data.targetCardinality"
                            [currentCardinality]="data.currentCardinality"
                            (closeDialog)="dialogRef.close()">
-
         </app-property-form>
     </div>
 

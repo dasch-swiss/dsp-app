@@ -110,7 +110,7 @@
                 </span>
                 <mat-label>Select resource class</mat-label>
                 <mat-select formControlName="guiAttr">
-                    <mat-optgroup *ngFor="let onto of ontologyClasses" 
+                    <mat-optgroup *ngFor="let onto of ontologyClasses"
                         [label]="onto.ontologyLabel">
                         <mat-option *ngFor="let oClass of onto.classes"
                                     [value]="oClass.id">
@@ -150,13 +150,15 @@
         <div class="large-field cardinality" *ngIf="resClassIri">
             <mat-slide-toggle formControlName="multiple"
                 [matTooltip]="'The property in this class can have multiple values'"
-                [matTooltipPosition]="'above'">
+                [matTooltipPosition]="'above'"
+                [checked]="propertyForm.get('multiple').value">
                 Multiple values?
             </mat-slide-toggle>
 
             <mat-slide-toggle formControlName="required"
                 [matTooltip]="'The property in this class must have one value'"
-                [matTooltipPosition]="'above'">
+                [matTooltipPosition]="'above'"
+                [checked]="propertyForm.get('required').value">
                 Required field?
             </mat-slide-toggle>
         </div>
@@ -190,30 +192,37 @@
 <div>
     <form [formGroup]="propertyForm" *ngIf="changeCardinalities" class="form-content">
         <div class="center">
-            <div *ngIf="!canSetFullCardinality">
-                <div class="mat-title">This action is not possible</div>
+            <div *ngIf="!canSetCardinality">
                 <mat-icon aria-label="cancel icon" fontIcon="cancel" color="warn"></mat-icon>
-                <div>This action is not possible</div>
+                <div class="mat-title">This action is not possible</div>
+                <div>
+                    <p>{{canNotSetCardinalityUiReason.detail}}</p>
+                    <p>{{canNotSetCardinalityUiReason.hint}}</p>
+                </div>
             </div>
-            <div *ngIf="canSetFullCardinality">
+            <div *ngIf="canSetCardinality">
                 <mat-icon aria-label="warn icon" fontIcon="warning_amber" color="accent"></mat-icon>
                 <div class="mat-title">Attention</div>
                 <div>Please note that this change may not be reversible.</div>
             </div>
         </div>
-        <div *ngIf="canSetFullCardinality" [ngClass]="canSetFullCardinality? 'form-panel form-action' : 'center'">
+        <div *ngIf="canSetCardinality" [ngClass]="canSetCardinality? 'form-panel form-action' : 'center'">
             <button mat-button type="button" (click)="closeDialog.emit()">
                 {{ 'appLabels.form.action.cancel' | translate }}
             </button>
-            <span class="fill-remaining-space" *ngIf="canSetFullCardinality"></span>
+            <span class="fill-remaining-space" *ngIf="canSetCardinality"></span>
             <button mat-raised-button type="button" color="primary"
-                    *ngIf="canSetFullCardinality"
-                    [disabled]="true" (click)="submitData()"
+                    [disabled]="!canSetCardinality" (click)="submitData()"
                     class="submit">
                 <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                 </app-progress-indicator>
                 <mat-icon *ngIf="error && !loading">close</mat-icon>
                 {{error ? 'Failed' : ('Continue')}}
+            </button>
+        </div>
+        <div *ngIf="!canSetCardinality" class="center">
+            <button mat-raised-button type="button" color="primary" (click)="closeDialog.emit()">
+                {{ 'Okay' }}
             </button>
         </div>
     </form>

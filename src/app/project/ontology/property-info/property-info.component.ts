@@ -173,8 +173,9 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         // convert currentCardinality from js-lib convention to app convention
         // if currentCardinality is defined; only in resource class view
         if (this.propCard) {
-            this.propInfo.multiple = this.propCard.cardinality === Cardinality._0_n || this.propCard.cardinality === Cardinality._1_n;
-            this.propInfo.required = this.propCard.cardinality === Cardinality._1 || this.propCard.cardinality === Cardinality._1_n;
+            const cards = this._ontoService.getCardinalityGuiValues(this.propCard.cardinality);
+            this.propInfo.multiple = cards.multiple;
+            this.propInfo.required = cards.required;
         }
 
         // get info about subproperties, if they are not a subproperty of knora base ontology
@@ -319,7 +320,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
      * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
-        if (this.userCanEdit) {
+        if (this.userCanEdit && !this.changeCardinalities) {
             this.canBeDeleted();
             this.showActionBubble = true;
         }
