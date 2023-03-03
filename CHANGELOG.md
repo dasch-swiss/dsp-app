@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.15.0](https://github.com/dasch-swiss/dsp-app/compare/v10.14.0...v10.15.0) (2023-03-03)
+
+
+### Enhancements
+
+* **cardinalities:** incorporate new routes in dsp app (DEV-1710) ([#929](https://github.com/dasch-swiss/dsp-app/issues/929)) ([d4ee7c6](https://github.com/dasch-swiss/dsp-app/commit/d4ee7c61066735830c6f108a87fd780c3909e5df))
+
+
+### Maintenance
+
+* **deps:** update js-lib to version 8.1.0 ([#936](https://github.com/dasch-swiss/dsp-app/issues/936)) ([f2f4111](https://github.com/dasch-swiss/dsp-app/commit/f2f41117acede888f4ea25ee645961a0234ba6b6))
+* fix typo on publish make target ([#925](https://github.com/dasch-swiss/dsp-app/issues/925)) ([e4d09ac](https://github.com/dasch-swiss/dsp-app/commit/e4d09acd6f44e67c872d3df0daaf66eec33b55aa))
+
 ## [10.14.0](https://github.com/dasch-swiss/dsp-app/compare/v10.13.0...v10.14.0) (2023-02-17)
 
 
