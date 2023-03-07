@@ -5,17 +5,17 @@
         <h3 *ngIf="beta && mode =='create'">Create new list</h3>
         <!-- list label -->
         <app-string-literal-input [placeholder]="'List label *'" [value]="labels"
-            (dataChanged)="handleData($event, 'labels')">
+            (dataChanged)="handleData($event, 'labels')" (focus)="isLabelTouched = $event">
         </app-string-literal-input>
-        <mat-hint class="invalid-form string-literal-error" *ngIf="labelInvalidMessage">{{ labelInvalidMessage }}</mat-hint>
+        <mat-hint class="invalid-form string-literal-error" *ngIf="labelInvalidMessage && isLabelTouched">{{ labelInvalidMessage }}</mat-hint>
 
         <br><br>
 
         <!-- list description / comment -->
         <app-string-literal-input [textarea]="true" [placeholder]="'List description *'" [value]="comments"
-            (dataChanged)="handleData($event, 'comments')" [language]="labels.length ? labels[0].language : 'en'">
+            (dataChanged)="handleData($event, 'comments')" (focus)="isCommentTouched = $event" [language]="labels.length ? labels[0].language : 'en'">
         </app-string-literal-input>
-        <mat-hint class="invalid-form string-literal-error" *ngIf="commentInvalidMessage">{{ commentInvalidMessage }}</mat-hint>
+        <mat-hint class="invalid-form string-literal-error" *ngIf="commentInvalidMessage && isCommentTouched">{{ commentInvalidMessage }}</mat-hint>
 
         <div class="form-panel form-action">
             <button *ngIf="!beta" mat-button type="button" (click)="closeDialog.emit(list)">

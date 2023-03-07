@@ -43,6 +43,7 @@
             class="inputValue"
             #textInput
             [readonly]="readonly"
+            (focus)="focus.emit(true)"
             (keyup.enter)="enter.emit(true)"
         >
     </mat-form-field>
@@ -69,6 +70,7 @@
                 matInput
                 [placeholder]="placeholder"
                 [formControlName]="'text'"
+                (focus)="focus.emit(true)"
                 class="textAreaValue"
                 #textInput
                 [readonly]="readonly">

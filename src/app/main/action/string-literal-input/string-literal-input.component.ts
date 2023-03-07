@@ -75,6 +75,13 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      */
     @Output() enter: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+    /**
+     * returns true when the field is focused. Use similarly to touched for data validation.
+     *
+     * @emits {boolean} focus
+     */
+    @Output() focus: EventEmitter<boolean> = new EventEmitter<boolean>();
+
     @ViewChild('textInput', { static: false }) textInput: ElementRef;
 
     @ViewChild('btnToSelectLanguage', { static: false }) btnToSelectLanguage: MatMenuTrigger;
