@@ -8,7 +8,7 @@
         <!-- Be careful when editing it, it could have an effect in other resource classes if it is used there. -->
     </p>
 
-    <div class="center">
+    <div *ngIf="!loading" class="center">
 
         <!-- property type -->
         <mat-form-field *ngIf="propertyInfo.propType"

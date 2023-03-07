@@ -4,7 +4,7 @@
     *ngIf="ontology.lastModificationDate; else missingLastModificationDate">
 
     <div class="resource-class-data">
-        <div class="center more-space-top">
+        <div *ngIf="!loading" class="center more-space-top">
 
             <!-- name -->
             <mat-form-field class="large-field ontology-form-field">

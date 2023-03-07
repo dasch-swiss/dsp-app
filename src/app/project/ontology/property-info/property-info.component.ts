@@ -320,7 +320,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
      * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
-        if (this.userCanEdit && !this.changeCardinalities) {
+        if (this.userCanEdit) {
             this.canBeDeleted();
             this.showActionBubble = true;
         }
