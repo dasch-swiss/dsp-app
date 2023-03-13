@@ -41,6 +41,8 @@ import { OntologyService } from '../ontology.service';
 import { GuiCardinality } from '../property-info/property-info.component';
 import { PropToDisplay } from '../resource-class-info/resource-class-info.component';
 
+export type EditMode = 'createProperty' | 'editProperty' | 'assignExistingProperty' | 'assignNewProperty';
+
 export interface ClassToSelect {
     ontologyId: string;
     ontologyLabel: string;
@@ -53,6 +55,8 @@ export interface ClassToSelect {
     styleUrls: ['./property-form.component.scss']
 })
 export class PropertyFormComponent implements OnInit {
+
+    editMode: EditMode;
 
     /**
      * propertyInfo contains default property type information
@@ -152,10 +156,6 @@ export class PropertyFormComponent implements OnInit {
     };
     canChangeCardinalityChecked = false;
 
-    // if assigning a new property to a class
-    canSetRequiredCardinality = false;
-
-
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
@@ -167,6 +167,7 @@ export class PropertyFormComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
+        this.setEditMode();
 
         // set various lists to select from
         this._cache.get('currentOntology').subscribe(
@@ -229,7 +230,8 @@ export class PropertyFormComponent implements OnInit {
 
         this.buildForm();
 
-        if (this.resClassIri && !this.changeCardinalities) { // assigning a property to a class
+        if (this.editMode === 'assignExistingProperty' || this.editMode === 'assignNewProperty') {
+            // assigning a property to a class
             this.canEnableRequiredToggle();
         }
 
@@ -301,7 +303,7 @@ export class PropertyFormComponent implements OnInit {
             }),
             'required': new UntypedFormControl({
                 value: this._os.getCardinalityGuiValues(this.currentCardinality).required,
-                disabled: !this.canSetRequiredCardinality
+                disabled: true // default; will be reset if possible
             })
         });
 
@@ -449,7 +451,8 @@ export class PropertyFormComponent implements OnInit {
         this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resClassIri).subscribe(
             (response: CanDoResponse) => {
                 if (response.canDo) {
-                    this.canSetRequiredCardinality = response.canDo;
+                    // enable the form
+                    this.propertyForm.controls['required'].enable();
                 }
             },
             (error: ApiResponseError) => {
@@ -821,4 +824,32 @@ export class PropertyFormComponent implements OnInit {
         return reason;
     }
 
+    /**
+     * setEditMode: set the mode, i.e. the context in which a property is edited
+     */
+    setEditMode() {
+        if (this.changeCardinalities) {
+            // no editMode - just cards
+            return;
+        }
+        if (this.resClassIri && !!this.propertyInfo.propDef) {
+            // in context of class and with an existing property
+            this.editMode = 'assignExistingProperty';
+        }
+
+        if (this.resClassIri && !this.propertyInfo.propDef) {
+            // in context of class and without an existing property
+            this.editMode = 'assignNewProperty';
+        }
+
+        if (!this.resClassIri && !this.propertyInfo.propDef) {
+            // in properties context and without an existing property
+            this.editMode = 'createProperty';
+        }
+
+        if (!this.resClassIri && !!this.propertyInfo.propDef) {
+            // in properties context and with an existing property
+            this.editMode = 'editProperty';
+        }
+    }
 }

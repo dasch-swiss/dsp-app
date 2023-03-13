@@ -1,6 +1,6 @@
 
 <form [formGroup]="propertyForm" *ngIf="!changeCardinalities" class="form-content">
-    <p *ngIf="resClassIri && propertyInfo.propDef"
+    <p *ngIf="editMode === 'assignExistingProperty'"
         class="note warning mat-caption center">
         You're adding an already existing property to this class.
         The property can't be modified here.<br>
@@ -59,7 +59,7 @@
         <div class="large-field string-literal-container">
             <app-string-literal-input [placeholder]="'Property label *'"
                 [value]="labels"
-                [disabled]="(resClassIri && !!propertyInfo.propDef)"
+                [disabled]="(editMode === 'assignExistingProperty')"
                 (touched)="labelsTouched = $event"
                 (dataChanged)="handleData($event, 'label')">
             </app-string-literal-input>
@@ -73,7 +73,7 @@
         <div class="large-field string-literal-container">
             <app-string-literal-input placeholder="Comment"
                 [value]="comments"
-                [disabled]="(resClassIri && !!propertyInfo.propDef)"
+                [disabled]="(editMode === 'assignExistingProperty')"
                 [textarea]="true"
                 (dataChanged)="handleData($event, 'comment')">
             </app-string-literal-input>
@@ -147,7 +147,7 @@
             <!-- <div *ngSwitchDefault>{{propertyInfo.propType.subPropOf}} not yet implemented</div> -->
         </div>
 
-        <div class="large-field cardinality" *ngIf="resClassIri">
+        <div class="large-field cardinality" *ngIf="editMode === 'assignNewProperty' || editMode === 'assignExistingProperty'">
             <mat-slide-toggle formControlName="multiple"
                 [matTooltip]="'The property in this class can have multiple values'"
                 [matTooltipPosition]="'above'"
