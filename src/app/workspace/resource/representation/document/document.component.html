@@ -34,7 +34,7 @@
             <span>
                 <!-- zoom buttons -->
                 <button mat-icon-button id="DSP_PDF_ZOOM_OUT" matTooltip="Zoom out"
-                    (click)="zoomFactor = zoomFactor - 0.2" [disabled]="failedToLoad">
+                    (click)="zoom('out')" [disabled]="failedToLoad">
                     <mat-icon>remove_circle_outline</mat-icon>
                 </button>
                 <button mat-icon-button id="DSP_PDF_HOME" matTooltip="Reset zoom" (click)="zoomFactor = 1.0"
@@ -42,7 +42,7 @@
                     <mat-icon>adjust</mat-icon>
                 </button>
                 <button mat-icon-button id="DSP_PDF_ZOOM_IN" matTooltip="Zoom in"
-                    (click)="zoomFactor = zoomFactor + 0.2" [disabled]="failedToLoad">
+                    (click)="zoom('in')" [disabled]="failedToLoad">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
             </span>

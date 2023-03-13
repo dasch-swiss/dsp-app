@@ -132,6 +132,24 @@ export class DocumentComponent implements OnInit, AfterViewInit {
         }
     }
 
+    // help the computer add and subtract floating point numbers
+    zoom(direction: 'in' | 'out'){
+        switch (direction) {
+            case 'in':
+                this.zoomFactor = Math.round((this.zoomFactor + 0.2)* 100) / 100;
+                break;
+            case 'out':
+                // will the zoomFactor be less than or equal to zero?
+                if(Math.round((this.zoomFactor - 0.2)* 100) / 100 <= 0){
+                    // cap zoomFactor at 0.2
+                    this.zoomFactor = 0.2;
+                } else {
+                    this.zoomFactor = Math.round((this.zoomFactor - 0.2)* 100) / 100;
+                    break;
+                }
+        }
+    }
+
     private _getFileType(filename: string): string {
         return filename.split('.').pop();
     }
