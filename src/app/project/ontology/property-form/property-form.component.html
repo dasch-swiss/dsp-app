@@ -189,8 +189,14 @@
         </button>
     </div>
 </form>
-<div>
-    <form [formGroup]="propertyForm" *ngIf="changeCardinalities" class="form-content">
+<div *ngIf="changeCardinalities" class="form-content">
+    <div class="center">
+        <app-progress-indicator [status]="0"
+                                *ngIf="!canChangeCardinalityChecked"
+                                class="submit-progress">
+        </app-progress-indicator>
+    </div>
+    <div *ngIf="canChangeCardinalityChecked">
         <div class="center">
             <div *ngIf="!canSetCardinality">
                 <mat-icon aria-label="cancel icon" fontIcon="cancel" color="warn"></mat-icon>
@@ -225,5 +231,5 @@
                 {{ 'Okay' }}
             </button>
         </div>
-    </form>
+    </div>
 </div>
