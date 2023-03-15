@@ -8,6 +8,12 @@
   padding: 16px;
 }
 
+.upper-prop-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
 .additional-info {
   color: $primary_700;
 }
@@ -46,6 +52,11 @@
   }
 }
 
+.edit-menu {
+  align-self: flex-end;
+  align-items: center;
+}
+
 .not-used {
   color: $warn;
   font-size: 12px;
@@ -53,4 +64,9 @@
 
 .type {
   margin-right: 12px;
+}
+
+.menu-icon-button {
+  font-size: medium;
+  cursor: pointer;
 }

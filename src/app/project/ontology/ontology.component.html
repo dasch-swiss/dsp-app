@@ -181,13 +181,15 @@
             <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
                 <div class="ontology-editor-grid classes" *ngIf="view === 'classes'">
                     <!-- list of resource classes -->
-                    <app-resource-class-info *ngFor="let resClass of ontoClasses" [resourceClass]="resClass"
-                        [projectUuid]="projectUuid" [projectStatus]="project.status" [ontologies]="ontologies"
-                        [expanded]="expandClasses" [(lastModificationDate)]="lastModificationDate"
-                        [userCanEdit]="(projectAdmin || sysAdmin)"
-                        (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
-                        (deleteResourceClass)="delete('ResourceClass', $event)"
-                        (updatePropertyAssignment)="initOntology($event)">
+                    <app-resource-class-info *ngFor="let resClass of ontoClasses"
+                                             [resourceClass]="resClass"
+                                             [projectUuid]="projectUuid" [projectStatus]="project.status" [ontologies]="ontologies"
+                                             [expanded]="expandClasses"
+                                             [lastModificationDate]="lastModificationDate"
+                                             [userCanEdit]="(projectAdmin || sysAdmin)"
+                                             (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
+                                             (deleteResourceClass)="delete('ResourceClass', $event)"
+                                             (updatePropertyAssignment)="initOntology($event)">
                     </app-resource-class-info>
                 </div>
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">

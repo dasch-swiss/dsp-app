@@ -500,160 +500,193 @@ export class PropertyFormComponent implements OnInit {
         return this._os.translateCardinality(updatedCardinality.multiple, updatedCardinality.required);
     }
 
+    /**
+     * submitData: handle submission for changed properties according to the current editMode/workflow.
+     */
     submitData() {
-        this.loading = true;
-        if (this.propertyInfo.propDef && !this.changeCardinalities) {
-            // the property exist already; update label, comment and/or gui element
-            if (this.resClassIri) {
-                // set cardinality with existing property in res class
-                this.setCardinality(this.propertyInfo.propDef);
-            } else {
-                // edit property mode: update res property info (label and comment) or gui element and attribute
+        switch (this.editMode) {
+            case 'createProperty':
+                this.submitNewProperty();
+                break;
+            case 'editProperty':
+                this.submitChangedProperty();
+                break;
+            case 'assignNewProperty':
+                this.createNewPropertyAndAssignToClass();
+                break;
+            case 'assignExistingProperty':
+                this.assignProperty(this.propertyInfo.propDef);
+                break;
+        }
+    }
 
-                // label
-                const onto4Label = new UpdateOntology<UpdateResourcePropertyLabel>();
-                onto4Label.id = this.ontology.id;
-                onto4Label.lastModificationDate = this.lastModificationDate;
+    /**
+     * submitData: handle submission for changed properties.
+     */
+    submitChangedProperty() {
+        // label
+        const onto4Label = this.getUpdateOntolgyForPropertyLabel();
+        // comment
+        const onto4Comment = this.getUpdateOntologyForPropertyComment();
 
-                const updateLabel = new UpdateResourcePropertyLabel();
-                updateLabel.id = this.propertyInfo.propDef.id;
-                updateLabel.labels = this.labels;
-                onto4Label.entity = updateLabel;
+        this._dspApiConnection.v2.onto.updateResourceProperty(onto4Label).subscribe(
+            (propertyLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                this.lastModificationDate = propertyLabelResponse.lastModificationDate;
+                onto4Comment.lastModificationDate = this.lastModificationDate;
 
-                // comment
-                const onto4Comment = new UpdateOntology<UpdateResourcePropertyComment>();
-                onto4Comment.id = this.ontology.id;
+                if (onto4Comment.entity.comments.length) { // if the comments array is not empty, send a request to update the comments
+                    this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
+                        (propertyCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                            this.lastModificationDate = propertyCommentResponse.lastModificationDate;
 
-                const updateComment = new UpdateResourcePropertyComment();
-                updateComment.id = this.propertyInfo.propDef.id;
-                updateComment.comments = this.comments;
-                onto4Comment.entity = updateComment;
+                            // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
+                            // this only works for the TextValue object type currently
+                            // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
+                            if (!this.unsupportedPropertyType &&
+                                this.propertyInfo.propDef.objectType === Constants.TextValue &&
+                                this.propertyInfo.propDef.guiElement !== this.propertyForm.controls['propType'].value.guiEle) {
+                                this.replaceGuiElement();
+                            } else {
+                                this.loading = false;
+                                this.closeDialog.emit();
+                            }
 
-                this._dspApiConnection.v2.onto.updateResourceProperty(onto4Label).subscribe(
-                    (propertyLabelResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                        this.lastModificationDate = propertyLabelResponse.lastModificationDate;
-                        onto4Comment.lastModificationDate = this.lastModificationDate;
-
-                        if (updateComment.comments.length) { // if the comments array is not empty, send a request to update the comments
-                            this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
-                                (propertyCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                                    this.lastModificationDate = propertyCommentResponse.lastModificationDate;
-
-                                    // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
-                                    // this only works for the TextValue object type currently
-                                    // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
-                                    if (!this.unsupportedPropertyType &&
-                                        this.propertyInfo.propDef.objectType === Constants.TextValue &&
-                                        this.propertyInfo.propDef.guiElement !== this.propertyForm.controls['propType'].value.guiEle) {
-                                        this.replaceGuiElement();
-                                    } else {
-                                        this.loading = false;
-                                        this.closeDialog.emit();
-                                    }
-
-                                },
-                                (error: ApiResponseError) => {
-                                    this.error = true;
-                                    this.loading = false;
-                                    this._errorHandler.showMessage(error);
-                                }
-                            );
-                        } else { // if the comments array is empty, send a request to remove the comments
-                            const deleteResourcePropertyComment = new DeleteResourcePropertyComment();
-                            deleteResourcePropertyComment.id = this.propertyInfo.propDef.id;
-                            deleteResourcePropertyComment.lastModificationDate = this.lastModificationDate;
-
-                            this._dspApiConnection.v2.onto.deleteResourcePropertyComment(deleteResourcePropertyComment).subscribe(
-                                (deleteCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-                                    this.lastModificationDate = deleteCommentResponse.lastModificationDate;
-
-                                    // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
-                                    // this only works for the TextValue object type currently
-                                    // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
-                                    if (!this.unsupportedPropertyType &&
-                                        this.propertyInfo.propDef.objectType === Constants.TextValue &&
-                                        this.propertyInfo.propDef.guiElement !== this.propertyForm.controls['propType'].value.guiEle) {
-                                        this.replaceGuiElement();
-                                    } else {
-                                        this.loading = false;
-                                        this.closeDialog.emit();
-                                    }
-                                },
-                                (error: ApiResponseError) => {
-                                    this.error = true;
-                                    this.loading = false;
-                                    this._errorHandler.showMessage(error);
-                                }
-                            );
+                        },
+                        (error: ApiResponseError) => {
+                            this.error = true;
+                            this.loading = false;
+                            this._errorHandler.showMessage(error);
                         }
+                    );
+                } else { // if the comments array is empty, send a request to remove the comments
+                    const deleteResourcePropertyComment = new DeleteResourcePropertyComment();
+                    deleteResourcePropertyComment.id = this.propertyInfo.propDef.id;
+                    deleteResourcePropertyComment.lastModificationDate = this.lastModificationDate;
 
-                        this.ontology.lastModificationDate = this.lastModificationDate;
-                        this._cache.set('currentOntology', this.ontology);
-                    },
-                    (error: ApiResponseError) => {
-                        this.error = true;
-                        this.loading = false;
-                        this._errorHandler.showMessage(error);
-                    }
-                );
-            }
-        }
-        if (this.changeCardinalities) {
-            this.submitCardinalitiesChange();
-        } else {
-            // create mode: new property incl. gui type and attribute
-            // submit property
-            // set resource property name / id: randomized string
-            // const uniquePropName: string = this._os.setUniqueName(this.ontology.id);
+                    this._dspApiConnection.v2.onto.deleteResourcePropertyComment(deleteResourcePropertyComment).subscribe(
+                        (deleteCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+                            this.lastModificationDate = deleteCommentResponse.lastModificationDate;
 
-            const onto = new UpdateOntology<CreateResourceProperty>();
-
-            onto.id = this.ontology.id;
-            onto.lastModificationDate = this.lastModificationDate;
-
-            // prepare payload for property
-            const newResProp = new CreateResourceProperty();
-            newResProp.name = this.propertyForm.controls['name'].value;
-            newResProp.label = this.labels;
-            newResProp.comment = this.comments;
-            const guiAttr = this.propertyForm.controls['guiAttr'].value;
-            if (guiAttr) {
-                newResProp.guiAttributes = this.setGuiAttribute(guiAttr);
-            }
-            newResProp.guiElement = this.propertyInfo.propType.guiEle;
-            newResProp.subPropertyOf = [this.propertyInfo.propType.subPropOf];
-
-            if (this.propertyInfo.propType.subPropOf === Constants.HasLinkTo || this.propertyInfo.propType.subPropOf === Constants.IsPartOf) {
-                newResProp.objectType = guiAttr;
-                newResProp.subjectType = this.resClassIri;
-            } else {
-                newResProp.objectType = this.propertyInfo.propType.objectType;
-            }
-
-            onto.entity = newResProp;
-
-            this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
-                (response: ResourcePropertyDefinitionWithAllLanguages) => {
-                    this.lastModificationDate = response.lastModificationDate;
-
-                    if (this.resClassIri && response.lastModificationDate) {
-                        // set cardinality
-                        this.setCardinality(response);
-                    } else {
-                        // close the dialog box
-                        this.loading = false;
-                        this.closeDialog.emit();
-                    }
-
-                },
-                (error: ApiResponseError) => {
-                    this.error = true;
-                    this.loading = false;
-                    this._errorHandler.showMessage(error);
+                            // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
+                            // this only works for the TextValue object type currently
+                            // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
+                            if (!this.unsupportedPropertyType &&
+                                this.propertyInfo.propDef.objectType === Constants.TextValue &&
+                                this.propertyInfo.propDef.guiElement !== this.propertyForm.controls['propType'].value.guiEle) {
+                                this.replaceGuiElement();
+                            } else {
+                                this.loading = false;
+                                this.closeDialog.emit();
+                            }
+                        },
+                        (error: ApiResponseError) => {
+                            this.error = true;
+                            this.loading = false;
+                            this._errorHandler.showMessage(error);
+                        }
+                    );
                 }
-            );
 
+                this.ontology.lastModificationDate = this.lastModificationDate;
+                this._cache.set('currentOntology', this.ontology);
+            },
+            (error: ApiResponseError) => {
+                this.error = true;
+                this.loading = false;
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
+    createNewPropertyAndAssignToClass(){
+        const onto = this.getOntologyForNewProperty();
+        // create new property and assign it to the class
+        this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
+            (response: ResourcePropertyDefinitionWithAllLanguages) => {
+                this.lastModificationDate = response.lastModificationDate;
+                this.assignProperty(response);
+            },
+            (error: ApiResponseError) => {
+                this.error = true;
+                this.loading = false;
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
+    /**
+     * submitNewProperty: handle submission for newly added properties
+     */
+    submitNewProperty() {
+        const onto = this.getOntologyForNewProperty();
+
+        this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
+            (response: ResourcePropertyDefinitionWithAllLanguages) => {
+                this.lastModificationDate = response.lastModificationDate;
+                this.loading = false;
+                this.closeDialog.emit();
+
+            },
+            (error: ApiResponseError) => {
+                this.error = true;
+                this.loading = false;
+                this._errorHandler.showMessage(error);
+            }
+        );
+    }
+
+    getUpdateOntolgyForPropertyLabel(): UpdateOntology<UpdateResourcePropertyLabel> {
+        const onto4Label = new UpdateOntology<UpdateResourcePropertyLabel>();
+        onto4Label.id = this.ontology.id;
+        onto4Label.lastModificationDate = this.lastModificationDate;
+
+        const updateLabel = new UpdateResourcePropertyLabel();
+        updateLabel.id = this.propertyInfo.propDef.id;
+        updateLabel.labels = this.labels;
+        onto4Label.entity = updateLabel;
+        return onto4Label;
+    }
+
+    getUpdateOntologyForPropertyComment(): UpdateOntology<UpdateResourcePropertyComment> {
+        const onto4Comment = new UpdateOntology<UpdateResourcePropertyComment>();
+        onto4Comment.id = this.ontology.id;
+
+        const updateComment = new UpdateResourcePropertyComment();
+        updateComment.id = this.propertyInfo.propDef.id;
+        updateComment.comments = this.comments;
+        onto4Comment.entity = updateComment;
+
+        return onto4Comment;
+    }
+
+    getOntologyForNewProperty(): UpdateOntology<CreateResourceProperty> {
+        const onto = new UpdateOntology<CreateResourceProperty>();
+
+        onto.id = this.ontology.id;
+        onto.lastModificationDate = this.lastModificationDate;
+
+        // prepare payload for property
+        const newResProp = new CreateResourceProperty();
+        newResProp.name = this.propertyForm.controls['name'].value;
+        newResProp.label = this.labels;
+        newResProp.comment = this.comments;
+
+        const guiAttr = this.propertyForm.controls['guiAttr'].value;
+        if (guiAttr) {
+            newResProp.guiAttributes = this.setGuiAttribute(guiAttr);
         }
+        newResProp.guiElement = this.propertyInfo.propType.guiEle;
+        newResProp.subPropertyOf = [this.propertyInfo.propType.subPropOf];
+
+        if (this.propertyInfo.propType.subPropOf === Constants.HasLinkTo || this.propertyInfo.propType.subPropOf === Constants.IsPartOf) {
+            newResProp.objectType = guiAttr;
+            newResProp.subjectType = this.resClassIri;
+        } else {
+            newResProp.objectType = this.propertyInfo.propType.objectType;
+        }
+
+        onto.entity = newResProp;
+        return onto;
     }
 
     /**
@@ -724,9 +757,10 @@ export class PropertyFormComponent implements OnInit {
         );
     }
 
-    // actually nothing to do with a cardinality like 1_n asf. This is simply assigning a property to a class
-    setCardinality(prop: ResourcePropertyDefinitionWithAllLanguages) {
-
+    /**
+     * assignProperty: assigning an existing property to the class
+     */
+    assignProperty(prop: ResourcePropertyDefinitionWithAllLanguages) {
         const onto = new UpdateOntology<UpdateResourceClassCardinality>();
 
         onto.lastModificationDate = this.lastModificationDate;

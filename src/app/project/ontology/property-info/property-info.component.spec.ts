@@ -33,6 +33,7 @@ import { SplitPipe } from 'src/app/main/pipes/split.pipe';
 import { TestConfig } from 'test.config';
 import { PropertyFormComponent } from '../property-form/property-form.component';
 import { PropertyInfoComponent } from './property-info.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 /**
  * test host component to simulate parent component
@@ -206,6 +207,7 @@ describe('PropertyInfoComponent', () => {
                 MatDialogModule,
                 MatIconModule,
                 MatListModule,
+                MatMenuModule,
                 MatSlideToggleModule,
                 MatSnackBarModule,
                 MatTooltipModule
@@ -423,7 +425,6 @@ describe('PropertyInfoComponent', () => {
         function isChecked(toggle: DebugElement): boolean {
             return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
         }
-
         // cardinality 2 means 'multiple values'
         expect(isChecked(multipleToggle)).toEqual(true);
         // and cardinality 2 means also 'not required value'

@@ -61,7 +61,6 @@ export class ResourceClassInfoComponent implements OnInit {
     @Input() userCanEdit: boolean; // is user a project admin or sys admin?
 
     // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
-    @Output() lastModificationDateChange: EventEmitter<string> = new EventEmitter<string>();
 
     // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
     @Output() ontoPropertiesChange: EventEmitter<PropertyDefinition[]> = new EventEmitter<PropertyDefinition[]>();
@@ -354,9 +353,8 @@ export class ResourceClassInfoComponent implements OnInit {
             (res: ResourceClassDefinitionWithAllLanguages) => {
 
                 this.lastModificationDate = res.lastModificationDate;
-                this.lastModificationDateChange.emit(this.lastModificationDate);
                 this.preparePropsToDisplay(this.propsToDisplay);
-
+                // update the ontology
                 this.updatePropertyAssignment.emit(this.ontology.id);
                 // display success message
                 this._notification.openSnackBar(`You have successfully removed "${property.label}" from "${this.resourceClass.label}".`);
@@ -493,10 +491,8 @@ export class ResourceClassInfoComponent implements OnInit {
             this._dspApiConnection.v2.onto.replaceGuiOrderOfCardinalities(onto).subscribe(
                 (responseGuiOrder: ResourceClassDefinitionWithAllLanguages) => {
                     this.lastModificationDate = responseGuiOrder.lastModificationDate;
-
                     // successful request: update the view
-                    this.lastModificationDateChange.emit(this.lastModificationDate);
-
+                    this.updatePropertyAssignment.emit(this.ontology.id);
                     // display success message
                     this._notification.openSnackBar(`You have successfully changed the order of properties in the resource class "${this.resourceClass.label}".`);
 

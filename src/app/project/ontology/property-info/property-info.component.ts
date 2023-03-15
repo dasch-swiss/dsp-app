@@ -3,7 +3,6 @@ import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Ou
 import {
     ApiResponseError,
     CanDoResponse,
-    Cardinality,
     Constants,
     IHasProperty,
     KnoraApiConnection,
@@ -66,7 +65,10 @@ export interface GuiCardinality {
     value: boolean;
 }
 
-export type CardinalityKey = 'multiple' | 'required';
+// current workflow/gui window
+type Context = 'classEditor' | 'propertyEditor';
+
+type CardinalityKey = 'multiple' | 'required';
 
 @Component({
     selector: 'app-property-info',
@@ -131,6 +133,8 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         targetCardinality: GuiCardinality;
     }>();
 
+    context: Context; // the context in which this component is used
+
     propInfo: Property = new Property();
 
     propType: DefaultProperty;
@@ -139,6 +143,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     propAttributeComment: string;
 
     propCanBeDeleted: boolean;
+    propCanBeRemovedFromClass: boolean;
 
     ontology: ReadOntology;
 
@@ -149,9 +154,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
     // list of resource classes where the property is used
     resClasses: ShortInfo[] = [];
-
-    // disable edit property button in case the property type is not supported in DSP-APP
-    disableEditProperty = false;
 
     showActionBubble = false;
 
@@ -170,9 +172,10 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     }
 
     ngOnChanges(): void {
-        // convert currentCardinality from js-lib convention to app convention
-        // if currentCardinality is defined; only in resource class view
-        if (this.propCard) {
+        this.context = this.getContext();
+
+        if (this.context === 'classEditor') {
+            // set the cardinality values in the class view
             const cards = this._ontoService.getCardinalityGuiValues(this.propCard.cardinality);
             this.propInfo.multiple = cards.multiple;
             this.propInfo.required = cards.required;
@@ -240,7 +243,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         }
 
         // get all classes where the property is used
-        if (!this.propCard) {
+        if (this.context === 'propertyEditor') {
             this.resClasses = [];
             this._cache.get('currentProjectOntologies').subscribe(
                 (ontologies: ReadOntology[]) => {
@@ -265,11 +268,18 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     }
 
     /**
-     * determines whether property can be deleted
-     * resp. removed from res class if we have the cardinality info
+     * return the context of the current workflow. If there is a propCard, classes are displayed/edited in the ontology
+     * editor - if not, properties are displayed/edited.
      */
-    canBeDeleted() {
-        if (!this.propCard) {
+    getContext() {
+        return this.propCard? 'classEditor' : 'propertyEditor';
+    }
+
+    /**
+     * determines whether a property can be deleted or not
+     */
+    canBeDeleted(): void {
+        if (this.context === 'propertyEditor') {
             // check if the property can be deleted
             this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe(
                 (canDoRes: CanDoResponse) => {
@@ -279,51 +289,59 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                     this._errorHandler.showMessage(error);
                 }
             );
-        } else {
-            // check if the property can be removed from res class
-            if (this.lastModificationDate) {
-                const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-
-                onto.lastModificationDate = this.lastModificationDate;
-
-                onto.id = this.ontology.id;
-
-                const delCard = new UpdateResourceClassCardinality();
-
-                delCard.id = this.resourceIri;
-
-                delCard.cardinalities = [];
-
-                delCard.cardinalities = [this.propCard];
-                onto.entity = delCard;
-
-                // property can only be removed from class if it's not inherited from another prop or class
-                if (this.propCard.isInherited) {
-                    this.propCanBeDeleted = false;
-                } else {
-                    this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
-                        (canDoRes: CanDoResponse) => {
-                            this.propCanBeDeleted = canDoRes.canDo;
-                        }
-                        // since this request runs on mouseover, it can always
-                        // ends in a EditConflictException because of a wrong lastModificationDate.
-                        // so, it doesn't make sense to handle the error here and to open the snackbar
-                    );
-                }
-
-
-            }
         }
+    }
+
+    /**
+     * determines whether a property can be removed from a class or not
+     */
+    canBeRemovedFromClass(): void {
+        // check if the property can be removed from res class
+        if (!this.lastModificationDate) { // guard
+            return;
+        }
+
+        // property can only be removed from class if it's not inherited from another prop or class
+        if (this.propCard.isInherited) { // other guard
+            this.propCanBeRemovedFromClass = false;
+            return;
+        }
+        const onto = new UpdateOntology<UpdateResourceClassCardinality>();
+
+        onto.lastModificationDate = this.lastModificationDate;
+
+        onto.id = this.ontology.id;
+
+        const delCard = new UpdateResourceClassCardinality();
+
+        delCard.id = this.resourceIri;
+
+        delCard.cardinalities = [];
+
+        delCard.cardinalities = [this.propCard];
+        onto.entity = delCard;
+
+        this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
+            (canDoRes: CanDoResponse) => {
+                this.propCanBeRemovedFromClass = canDoRes.canDo;
+            },
+            // open snackbar displaying the error
+            (error: ApiResponseError) => {
+            this._errorHandler.showMessage(error);
+            }
+        );
     }
 
     /**
      * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
-        if (this.userCanEdit) {
+        if (!this.userCanEdit || this.context === 'classEditor') { // guard
+            return;
+        } else { // no propCard means in the property editing context - not in classes view
             this.canBeDeleted();
-            this.showActionBubble = true;
         }
+        this.showActionBubble = true;
     }
 
     /**

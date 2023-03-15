@@ -218,7 +218,7 @@
             </button>
             <span class="fill-remaining-space" *ngIf="canSetCardinality"></span>
             <button mat-raised-button type="button" color="primary"
-                    [disabled]="!canSetCardinality" (click)="submitData()"
+                    [disabled]="!canSetCardinality" (click)="submitCardinalitiesChange()"
                     class="submit">
                 <app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
                 </app-progress-indicator>
