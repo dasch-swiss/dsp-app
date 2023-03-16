@@ -6,6 +6,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateModule } from '@ngx-translate/core';
 import {
     CreateLinkValue,
     MockOntology,
@@ -142,7 +143,8 @@ describe('LinkValueComponent', () => {
                 MatInputModule,
                 MatAutocompleteModule,
                 MatDialogModule,
-                BrowserAnimationsModule
+                BrowserAnimationsModule,
+                TranslateModule.forRoot()
             ],
             providers: [
                 {

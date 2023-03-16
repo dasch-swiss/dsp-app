@@ -41,7 +41,8 @@
                 "reset": "Zurücksetzen",
                 "activate": "Aktivieren",
                 "deactivate": "Deaktivieren",
-                "confirm": "Ja"
+                "confirm": "Ja",
+                "searchHelp": "Gebe 3 Zeichen ein um nach einer existierender Resource zu suchen."
             },
             "user": {
                 "general": {

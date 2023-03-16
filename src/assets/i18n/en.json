@@ -60,7 +60,8 @@
                 "deactivate": "Deactivate",
                 "confirm": "Yes",
                 "danger": "Danger zone",
-                "deleted": "Already deleted"
+                "deleted": "Already deleted",
+                "searchHelp": "Type 3 letters to search for an existing resource."
             },
             "user": {
                 "general": {
