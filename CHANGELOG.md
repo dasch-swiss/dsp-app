@@ -1,5 +1,30 @@
 # Changelog
 
+## [10.16.0](https://github.com/dasch-swiss/dsp-app/compare/v10.15.0...v10.16.0) (2023-03-17)
+
+
+### Bug Fixes
+
+* **cardinalities:** dealing with 409 errors (DEV-1793) ([#949](https://github.com/dasch-swiss/dsp-app/issues/949)) ([7430d68](https://github.com/dasch-swiss/dsp-app/commit/7430d6886fdbabd6db32c900de12179e8ed83764))
+* **cardinalities:** enable the required toggle programmatically (DEV-1790) ([#942](https://github.com/dasch-swiss/dsp-app/issues/942)) ([860cae2](https://github.com/dasch-swiss/dsp-app/commit/860cae20ed15c322b5d0340a2f1af9cc4429dfb7))
+* **cardinalities:** wrong user feedback before correct one (DEV-1971) ([#941](https://github.com/dasch-swiss/dsp-app/issues/941)) ([e7d23a9](https://github.com/dasch-swiss/dsp-app/commit/e7d23a9005f5ba36599c80f963b89624591875d6))
+* **document:** fix PDF viewer zoom out issue (DEV-1855) ([#947](https://github.com/dasch-swiss/dsp-app/issues/947)) ([b8e9a73](https://github.com/dasch-swiss/dsp-app/commit/b8e9a7314d183de2a683110dbf62292e35458692))
+* **forms:** hide form after submit (DEV-1476) ([#940](https://github.com/dasch-swiss/dsp-app/issues/940)) ([64315fb](https://github.com/dasch-swiss/dsp-app/commit/64315fb5a589fd77d2da97b645be8f265db3aa1d))
+* **lists:** error messages only appear after focus (DEV-1692) ([#937](https://github.com/dasch-swiss/dsp-app/issues/937)) ([82793a2](https://github.com/dasch-swiss/dsp-app/commit/82793a23b8cbac8afc1e2e5a7b679a6829aa6d40))
+
+
+### Enhancements
+
+* allow upload ODD and RNG file types (DEV-1271) ([#945](https://github.com/dasch-swiss/dsp-app/issues/945)) ([c66954e](https://github.com/dasch-swiss/dsp-app/commit/c66954e4116d91879e0b7ae6c0896bedcdafeb2e))
+* **linked:** help text for linked resources (DEV-1480) ([#939](https://github.com/dasch-swiss/dsp-app/issues/939)) ([3149060](https://github.com/dasch-swiss/dsp-app/commit/31490600986f128b1c5cc09168334ac12c52eeb9))
+
+
+### Maintenance
+
+* bump js-lip to 8.1.1 ([#956](https://github.com/dasch-swiss/dsp-app/issues/956)) ([8bf7450](https://github.com/dasch-swiss/dsp-app/commit/8bf74503e83a78d3de727c24492d383bfff339e4))
+* **document:** fix pdf viewer css (DEV-1821) ([#946](https://github.com/dasch-swiss/dsp-app/issues/946)) ([c370f68](https://github.com/dasch-swiss/dsp-app/commit/c370f6831947fb9bc1604e835311cc61aa8a84af))
+* **material:** update material icons (DEV-1778) ([#932](https://github.com/dasch-swiss/dsp-app/issues/932)) ([8936427](https://github.com/dasch-swiss/dsp-app/commit/89364276dc2eee23c61774d64eeb54d161376f36))
+
 ## [10.15.0](https://github.com/dasch-swiss/dsp-app/compare/v10.14.0...v10.15.0) (2023-03-03)
 
 
