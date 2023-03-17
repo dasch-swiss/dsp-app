@@ -60,6 +60,9 @@ $warn-contrast: mat.get-color-from-palette($app-warn, default-contrast);
         background-color: $warn !important;
         color: $warn-contrast;
       }
+      &.default {
+        background-color: $primary_800 !important;
+      }
     }
   }
 }

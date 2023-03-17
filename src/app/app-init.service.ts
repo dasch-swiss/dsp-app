@@ -60,6 +60,8 @@ export class AppInitService {
                 color = 'accent';
             } else if (env.includes('test')){
                 color = 'warn';
+            } else {
+                color = 'default';
             }
         }
 
