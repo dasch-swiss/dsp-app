@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { ApiResponseError, Constants, KnoraApiConnection, ReadTextFileValue, ReadResource, UpdateFileValue, UpdateResource, UpdateValue, WriteValueResponse } from '@dasch-swiss/dsp-js';
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';

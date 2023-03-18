@@ -1,6 +1,6 @@
 name: CI
 env:
-  node-version: 16.15.0
+  node-version: 18.15.0
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run the script
         run: ./find-ignored-tests.sh
 
@@ -22,12 +22,10 @@ jobs:
     needs: [find-ignored-tests]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.node-version }}
+          node-version: 18
       - name: Install dependencies
         run: npm install
       - name: Run the tests
@@ -57,31 +55,23 @@ jobs:
     name: Run lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.node-version }}
-      - name: Install dependencies
-        run: npm install
-      - name: Run the script
-        run: npm run lint-ci
+          node-version: 18
+      - run: npm install
+      - run: npm run lint-ci
 
   build:
     name: Build the app
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-      - name: Set up Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.node-version }}
-      - name: Install dependencies
-        run: npm install
-      - name: Build in prod mode
-        run: npm run build-prod
+          node-version: 18
+      - run: npm install
+      - run: npm run build-prod
 
   release-please:
     name: Prepare next release
@@ -116,8 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags')
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - name: Build and publish image
@@ -142,10 +131,9 @@ jobs:
     name: Docs Build Test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:

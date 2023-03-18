@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
     ApiResponseData,
@@ -49,10 +49,12 @@ export class UsersListComponent implements OnInit {
     // i18n plural mapping
     itemPluralMapping = {
         user: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             '=1': '1 User',
             other: '# Users'
         },
         member: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             '=1': '1 Member',
             other: '# Members'
         }

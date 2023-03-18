@@ -5,9 +5,9 @@ import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@
 import { CreateIntervalValue, MockResource, ReadIntervalValue, UpdateIntervalValue } from '@dasch-swiss/dsp-js';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from '@angular/material/input';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { Interval } from './interval-input/interval-input.component';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
 import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { ErrorStateMatcher } from '@angular/material/core';

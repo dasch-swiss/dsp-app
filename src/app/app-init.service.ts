@@ -12,35 +12,11 @@ import { DspDataDogConfig, DspInstrumentationConfig, DspRollbarConfig } from './
 })
 export class AppInitService {
 
-    private _dspConfig: DspConfig;
-
-    get dspConfig(): DspConfig {
-        return this._dspConfig;
-    }
-
-    private _dspApiConfig: KnoraApiConfig;
-
-    get dspApiConfig(): KnoraApiConfig {
-        return this._dspApiConfig;
-    }
-
-    private _dspIiifConfig: DspIiifConfig;
-
-    get dspIiifConfig(): DspIiifConfig {
-        return this._dspIiifConfig;
-    }
-
-    private _dspAppConfig: DspAppConfig;
-
-    get dspAppConfig(): DspAppConfig {
-        return this._dspAppConfig;
-    }
-
-    private _dspInstrumentationConfig: DspInstrumentationConfig;
-
-    get dspInstrumentationConfig(): DspInstrumentationConfig {
-        return this._dspInstrumentationConfig;
-    }
+    private readonly _dspConfig: DspConfig;
+    private readonly _dspApiConfig: KnoraApiConfig;
+    private readonly _dspIiifConfig: DspIiifConfig;
+    private readonly _dspAppConfig: DspAppConfig;
+    private readonly _dspInstrumentationConfig: DspInstrumentationConfig;
 
     constructor(
         @Inject(APP_CONFIG) private _config: IConfig,
@@ -123,5 +99,25 @@ export class AppInitService {
                 this._config.instrumentation.rollbar.accessToken
             )
         );
+    }
+
+    get dspConfig(): DspConfig {
+        return this._dspConfig;
+    }
+
+    get dspApiConfig(): KnoraApiConfig {
+        return this._dspApiConfig;
+    }
+
+    get dspIiifConfig(): DspIiifConfig {
+        return this._dspIiifConfig;
+    }
+
+    get dspAppConfig(): DspAppConfig {
+        return this._dspAppConfig;
+    }
+
+    get dspInstrumentationConfig(): DspInstrumentationConfig {
+        return this._dspInstrumentationConfig;
     }
 }

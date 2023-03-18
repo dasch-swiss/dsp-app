@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChildren } from '@angular/core';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatLegacyCheckbox as MatCheckbox } from '@angular/material/legacy-checkbox';
 import { Constants, ReadLinkValue, ReadResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { CheckboxUpdate, FilteredResources } from '../list-view.component';
 import { ListViewService } from '../list-view.service';

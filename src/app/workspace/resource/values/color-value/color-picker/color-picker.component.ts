@@ -3,7 +3,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgControl, NgForm, Validators } from '@angular/forms';
 import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState, _AbstractConstructor, _Constructor } from '@angular/material/core';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
 import { Subject } from 'rxjs';
 
 /** error when invalid control is dirty, touched, or submitted. */
@@ -57,12 +57,9 @@ export class ColorPickerComponent extends _MatInputMixinBase implements ControlV
     private _disabled = false;
     private _placeholder: string;
 
-    onChange = (_: any) => { };
-    onTouched = () => { };
-
-    get empty() {
-        const colorInput = this.colorForm.value;
-        return !colorInput.color;
+    @Input()
+    get placeholder() {
+        return this._placeholder;
     }
 
     @HostBinding('class.floating')
@@ -70,40 +67,16 @@ export class ColorPickerComponent extends _MatInputMixinBase implements ControlV
         return this.focused || !this.empty;
     }
 
+
+
     @Input()
     get required() {
         return this._required;
     }
 
-    set required(req) {
-        this._required = coerceBooleanProperty(req);
-        this.stateChanges.next();
-    }
-
     @Input()
     get disabled(): boolean {
         return this._disabled;
-    }
-
-    set disabled(value: boolean) {
-        this._disabled = coerceBooleanProperty(value);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        this._disabled ? this.colorForm.disable() : this.colorForm.enable();
-        this.stateChanges.next();
-    }
-
-    @Input()
-    get placeholder() {
-        return this._placeholder;
-    }
-
-    set placeholder(plh) {
-        this._placeholder = plh;
-        this.stateChanges.next();
-    }
-
-    setDescribedByIds(ids: string[]) {
-        this.describedBy = ids.join(' ');
     }
 
     @Input()
@@ -115,6 +88,28 @@ export class ColorPickerComponent extends _MatInputMixinBase implements ControlV
         return null;
     }
 
+    get empty() {
+        const colorInput = this.colorForm.value;
+        return !colorInput.color;
+    }
+
+    set required(req) {
+        this._required = coerceBooleanProperty(req);
+        this.stateChanges.next();
+    }
+
+    set disabled(value: boolean) {
+        this._disabled = coerceBooleanProperty(value);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        this._disabled ? this.colorForm.disable() : this.colorForm.enable();
+        this.stateChanges.next();
+    }
+
+    set placeholder(plh) {
+        this._placeholder = plh;
+        this.stateChanges.next();
+    }
+
     set value(colorValue: string | null) {
         if (colorValue !== null) {
             this.colorForm.setValue({ color: colorValue });
@@ -122,6 +117,10 @@ export class ColorPickerComponent extends _MatInputMixinBase implements ControlV
             this.colorForm.setValue({ color: null });
         }
         this.stateChanges.next();
+    }
+
+    setDescribedByIds(ids: string[]) {
+        this.describedBy = ids.join(' ');
     }
 
     // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -152,6 +151,10 @@ export class ColorPickerComponent extends _MatInputMixinBase implements ControlV
 
         this.placeholder = 'Click to select a color';
     }
+
+    onChange = (_: any) => { };
+
+    onTouched = () => { };
 
     ngDoCheck() {
         if (this.ngControl) {

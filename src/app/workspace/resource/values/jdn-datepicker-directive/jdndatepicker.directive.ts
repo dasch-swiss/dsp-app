@@ -19,6 +19,15 @@ export class JDNDatepickerDirective implements OnChanges, OnDestroy {
 
     private _activeCalendar: 'Gregorian' | 'Julian' | 'Islamic';
 
+    constructor(
+        @Inject(ACTIVE_CALENDAR) private _activeCalendarToken,
+        private _adapter: DateAdapter<JDNConvertibleCalendar>) {
+    }
+
+    get activeCalendar() {
+        return this._activeCalendar;
+    }
+
     @Input()
     set activeCalendar(value: 'Gregorian' | 'Julian' | 'Islamic' | null) {
         if (value !== null && value !== undefined) {
@@ -26,15 +35,6 @@ export class JDNDatepickerDirective implements OnChanges, OnDestroy {
         } else {
             this._activeCalendar = 'Gregorian';
         }
-    }
-
-    get activeCalendar() {
-        return this._activeCalendar;
-    }
-
-    constructor(
-        @Inject(ACTIVE_CALENDAR) private _activeCalendarToken,
-        private _adapter: DateAdapter<JDNConvertibleCalendar>) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import {
     ApiResponseError,
     Constants,
@@ -34,6 +34,8 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
     @Output() loaded = new EventEmitter<boolean>();
 
+    @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
+
     originalFilename: string;
 
     zoomFactor = 1.0;
@@ -46,7 +48,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
 
     fileType: string;
 
-    @ViewChild(PdfViewerComponent) private _pdfComponent: PdfViewerComponent;
+
 
     constructor(
         @Inject(DOCUMENT) private document: any,

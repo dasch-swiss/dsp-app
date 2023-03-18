@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ApiResponseData, ApiResponseError, HealthResponse, KnoraApiConnection, LogoutResponse } from '@dasch-swiss/dsp-js';
 import { HttpStatusMsg } from 'src/assets/http/statusMsg';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';

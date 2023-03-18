@@ -29,18 +29,18 @@ export class SearchLinkValueComponent implements OnInit, OnDestroy, PropertyValu
 
     private _restrictToResourceClass: string;
 
-    @Input()
-    set restrictResourceClass(value: string) {
-        this._restrictToResourceClass = value;
+    constructor(
+        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
     }
 
     get restrictResourceClass() {
         return this._restrictToResourceClass;
     }
 
-    constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
-        @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
+    @Input()
+    set restrictResourceClass(value: string) {
+        this._restrictToResourceClass = value;
     }
 
     ngOnInit() {

@@ -3,8 +3,8 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
+import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HarnessLoader } from '@angular/cdk/testing';
 import {
@@ -14,12 +14,12 @@ import {
     ResourceClassDefinition,
     ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import { MatSelectHarness } from '@angular/material/select/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
+import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { ComparisonOperatorAndValue, Equals, ValueLiteral } from './specify-property-value/operator';
 import { SearchSelectPropertyComponent } from './search-select-property.component';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
 
 /**
  * test host component to simulate parent component.

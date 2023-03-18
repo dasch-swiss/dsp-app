@@ -11,7 +11,7 @@ import {
     Renderer2,
     SimpleChanges
 } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -705,6 +705,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
             tileSources.push({
                 // construct IIIF tileSource configuration according to https://iiif.io/api/image/3.0
                 tileSource: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     '@context': 'http://iiif.io/api/image/3/context.json',
                     'id': sipiBasePath,
                     height: height,

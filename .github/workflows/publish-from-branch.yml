@@ -7,8 +7,7 @@ jobs:
     name: Publish from branch
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # gets additionally all tags which we need
       - name: Build and publish image

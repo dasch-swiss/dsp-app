@@ -16,6 +16,7 @@ import { NotificationService } from 'src/app/main/services/notification.service'
 import { FileRepresentation } from '../../file-representation';
 
 export interface MovingImageSidecar {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     '@context': string;
     'checksumDerivative': string;
     'checksumOriginal': string;
@@ -119,6 +120,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         const requestOptions = {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
             withCredentials: true
         };

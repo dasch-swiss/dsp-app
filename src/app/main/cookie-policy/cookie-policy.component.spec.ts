@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { waitForAsync, ComponentFixture, inject, TestBed } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { CookiePolicyComponent } from './cookie-policy.component';

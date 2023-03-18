@@ -1,9 +1,9 @@
 import { Component, OnInit, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLineModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
 import { MockResource, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { ResourceListComponent } from './resource-list.component';
 import { FilteredResources } from '../list-view.component';

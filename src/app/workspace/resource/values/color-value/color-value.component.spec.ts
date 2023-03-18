@@ -2,8 +2,8 @@ import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatLegacyFormFieldControl as MatFormFieldControl, MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MockResource, ReadColorValue, UpdateColorValue, CreateColorValue } from '@dasch-swiss/dsp-js';

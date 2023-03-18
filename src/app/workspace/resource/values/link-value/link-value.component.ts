@@ -11,8 +11,8 @@ import {
     ViewChild
 } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import {
     Constants,
     CreateLinkValue,

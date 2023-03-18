@@ -5,11 +5,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialogHarness } from '@angular/material/dialog/testing';
+import { MatLegacyButtonHarness as MatButtonHarness } from '@angular/material/legacy-button/testing';
+import { MatLegacyDialogModule as MatDialogModule, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatLegacyDialogHarness as MatDialogHarness } from '@angular/material/legacy-dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
@@ -843,6 +843,7 @@ describe('DisplayEditComponent', () => {
                     const resource = new ReadResource();
 
                     resource.properties = {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
                         'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [updatedVal]
                     };
 
@@ -1027,6 +1028,7 @@ describe('DisplayEditComponent', () => {
                     const resource = new ReadResource();
 
                     resource.properties = {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
                         'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [updatedVal]
                     };
 

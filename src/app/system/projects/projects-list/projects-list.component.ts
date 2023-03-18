@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import {
     ApiResponseData,
@@ -55,6 +55,7 @@ export class ProjectsListComponent implements OnInit {
     // i18n plural mapping
     itemPluralMapping = {
         project: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             '=1': '1 Project',
             other: '# Projects'
         }

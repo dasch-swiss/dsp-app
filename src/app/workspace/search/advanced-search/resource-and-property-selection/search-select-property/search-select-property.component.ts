@@ -26,24 +26,6 @@ export class SearchSelectPropertyComponent implements OnInit, OnDestroy {
 
     @Input() topLevel: boolean;
 
-    // setter method for properties when being updated by parent component
-    @Input()
-    set properties(value: ResourcePropertyDefinition[]) {
-        this.propertySelected = undefined; // reset selected property (overwriting any previous selection)
-        this._properties = this._sortingService.keySortByAlphabetical(value, 'label')
-            .filter(propDef => propDef.isEditable && !propDef.isLinkValueProperty);
-    }
-
-    get properties() {
-        return this._properties;
-    }
-
-    // setter method for selected resource class
-    @Input()
-    set activeResourceClass(value: ResourceClassDefinition) {
-        this._activeResourceClass = value;
-    }
-
     // represents the currently selected property
     propertySelected: ResourcePropertyDefinition;
 
@@ -62,6 +44,24 @@ export class SearchSelectPropertyComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
         private _sortingService: SortingService) {
+    }
+
+    get properties() {
+        return this._properties;
+    }
+
+    // setter method for properties when being updated by parent component
+    @Input()
+    set properties(value: ResourcePropertyDefinition[]) {
+        this.propertySelected = undefined; // reset selected property (overwriting any previous selection)
+        this._properties = this._sortingService.keySortByAlphabetical(value, 'label')
+            .filter(propDef => propDef.isEditable && !propDef.isLinkValueProperty);
+    }
+
+    // setter method for selected resource class
+    @Input()
+    set activeResourceClass(value: ResourceClassDefinition) {
+        this._activeResourceClass = value;
     }
 
     ngOnInit() {

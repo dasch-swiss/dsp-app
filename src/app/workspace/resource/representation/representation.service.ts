@@ -45,6 +45,7 @@ export class RepresentationService {
      */
     getFileInfo(url: string, imageFilename?: string): Observable<Object> {
         const requestOptions = {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
             withCredentials: true
         };

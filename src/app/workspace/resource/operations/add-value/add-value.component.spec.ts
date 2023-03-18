@@ -236,6 +236,7 @@ describe('AddValueComponent', () => {
                     const resource = new ReadResource();
 
                     resource.properties = {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
                         'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [createdVal]
                     };
 

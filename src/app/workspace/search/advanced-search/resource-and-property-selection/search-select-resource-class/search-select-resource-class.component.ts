@@ -29,14 +29,6 @@ export class SearchSelectResourceClassComponent implements OnInit, OnChanges, On
 
     @Output() resourceClassSelected = new EventEmitter<string | null>();
 
-    get selectedResourceClassIri(): string | false {
-        if (this._selectedResourceClassIri !== undefined && this._selectedResourceClassIri !== null) {
-            return this._selectedResourceClassIri;
-        } else {
-            return false;
-        }
-    }
-
     ontologyChangesSubscription: Subscription;
 
     form: UntypedFormGroup;
@@ -44,7 +36,14 @@ export class SearchSelectResourceClassComponent implements OnInit, OnChanges, On
     // stores the currently selected resource class
     private _selectedResourceClassIri: string;
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {}
+
+    get selectedResourceClassIri(): string | false {
+        if (this._selectedResourceClassIri !== undefined && this._selectedResourceClassIri !== null) {
+            return this._selectedResourceClassIri;
+        } else {
+            return false;
+        }
     }
 
     ngOnInit(): void {

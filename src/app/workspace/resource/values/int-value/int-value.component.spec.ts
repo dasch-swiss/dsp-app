@@ -4,12 +4,12 @@ import { IntValueComponent } from './int-value.component';
 import { ReadIntValue, MockResource, UpdateIntValue, CreateIntValue } from '@dasch-swiss/dsp-js';
 import { OnInit, Component, ViewChild, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatInputHarness } from '@angular/material/input/testing';
+import { MatLegacyInputHarness as MatInputHarness } from '@angular/material/legacy-input/testing';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 /**

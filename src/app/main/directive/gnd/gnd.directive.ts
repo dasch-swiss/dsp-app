@@ -16,21 +16,18 @@ export class GNDConstants {
 })
 export class GndDirective implements OnChanges {
 
-    @Input()
-    set gnd(value: string) {
-        this._gnd = value;
-    }
+    // the GND identifier to be rendered
+    private _gnd: string;
+
+    constructor(private _ele: ElementRef) {}
 
     get gnd() {
         return this._gnd;
     }
 
-
-    // the GND identifier to be rendered
-    private _gnd: string;
-
-    constructor(private _ele: ElementRef) {
-
+    @Input()
+    set gnd(value: string) {
+        this._gnd = value;
     }
 
     ngOnChanges() {
@@ -51,7 +48,5 @@ export class GndDirective implements OnChanges {
             // no identifier, leave unchanged
             this._ele.nativeElement.innerHTML = this._gnd;
         }
-
     }
-
 }

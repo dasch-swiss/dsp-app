@@ -3,8 +3,8 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, DoCheck, ElementRef, HostBinding, Input, OnChanges, OnDestroy, Optional, Self, SimpleChanges, ViewChild } from '@angular/core';
 import { ControlValueAccessor, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, FormGroupDirective, NgControl, NgForm, Validators } from '@angular/forms';
 import { CanUpdateErrorState, ErrorStateMatcher, mixinErrorState, _AbstractConstructor, _Constructor } from '@angular/material/core';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { Subject } from 'rxjs';
 import { KnoraDatePipe } from 'src/app/main/pipes/formatting/knoradate.pipe';
@@ -126,14 +126,6 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
     private _disabled = false;
     private _placeholder: string;
 
-    onChange = (_: any) => { };
-    onTouched = () => { };
-
-    get empty() {
-        const dateInput = this.dateForm.value;
-        return !dateInput.knoraDate;
-    }
-
     @HostBinding('class.floating')
     get shouldLabelFloat() {
         return this.focused || !this.empty;
@@ -144,35 +136,14 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
         return this._required;
     }
 
-    set required(req) {
-        this._required = coerceBooleanProperty(req);
-        this.stateChanges.next();
-    }
-
     @Input()
     get disabled(): boolean {
         return this._disabled;
     }
 
-    set disabled(value: boolean) {
-        this._disabled = coerceBooleanProperty(value);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        this._disabled ? this.dateForm.disable() : this.dateForm.enable();
-        this.stateChanges.next();
-    }
-
     @Input()
     get placeholder() {
         return this._placeholder;
-    }
-
-    set placeholder(plh) {
-        this._placeholder = plh;
-        this.stateChanges.next();
-    }
-
-    setDescribedByIds(ids: string[]) {
-        this.describedBy = ids.join(' ');
     }
 
     @Input()
@@ -182,6 +153,28 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
             return dateValue.knoraDate;
         }
         return null;
+    }
+
+    get empty() {
+        const dateInput = this.dateForm.value;
+        return !dateInput.knoraDate;
+    }
+
+    set required(req) {
+        this._required = coerceBooleanProperty(req);
+        this.stateChanges.next();
+    }
+
+    set disabled(value: boolean) {
+        this._disabled = coerceBooleanProperty(value);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        this._disabled ? this.dateForm.disable() : this.dateForm.enable();
+        this.stateChanges.next();
+    }
+
+    set placeholder(plh) {
+        this._placeholder = plh;
+        this.stateChanges.next();
     }
 
     set value(dateValue: KnoraDate | null) {
@@ -202,6 +195,10 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
 
         this.stateChanges.next();
         this.buildForm();
+    }
+
+    setDescribedByIds(ids: string[]) {
+        this.describedBy = ids.join(' ');
     }
 
     // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -243,6 +240,10 @@ export class DatePickerComponent extends _MatInputMixinBase implements ControlVa
             .subscribe(data => this.handleInput());
 
     }
+
+    onChange = (_: any) => { };
+
+    onTouched = () => { };
 
     ngOnChanges(changes: SimpleChanges) {
 

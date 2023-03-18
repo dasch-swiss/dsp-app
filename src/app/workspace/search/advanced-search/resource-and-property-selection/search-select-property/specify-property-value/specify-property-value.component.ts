@@ -32,23 +32,6 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
 
     @ViewChild('propertyValue', { static: false }) propertyValueComponent: PropertyValue;
 
-    Constants = Constants;
-
-    objectClassConstraint: string;
-
-    // setter method for the property chosen by the user
-    @Input()
-    set property(prop: ResourcePropertyDefinition) {
-        this._property = prop;
-    }
-
-    // getter method for this._property
-    get property(): ResourcePropertyDefinition {
-        return this._property;
-    }
-
-    form: UntypedFormGroup;
-
     // available comparison operators for the property
     comparisonOperators: Array<ComparisonOperator> = [];
 
@@ -60,9 +43,25 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
 
     comparisonOperatorChangesSubscription: Subscription;
 
+    Constants = Constants;
+
+    objectClassConstraint: string;
+
+    form: UntypedFormGroup;
+
     private _property: ResourcePropertyDefinition;
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {}
+
+    // getter method for this._property
+    get property(): ResourcePropertyDefinition {
+        return this._property;
+    }
+
+    // setter method for the property chosen by the user
+    @Input()
+    set property(prop: ResourcePropertyDefinition) {
+        this._property = prop;
     }
 
     ngOnChanges(): void {

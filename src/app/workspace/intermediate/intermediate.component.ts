@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from 'src/app/main/services/error-handler.service';
 import { FilteredResources } from '../results/list-view/list-view.component';
@@ -18,6 +18,7 @@ export class IntermediateComponent implements OnInit {
     // i18n plural mapping
     itemPluralMapping = {
         resource: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             '=1': 'Resource',
             other: 'Resources'
         }
