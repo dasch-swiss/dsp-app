@@ -1,8 +1,8 @@
-@import "../../../assets/style/responsive";
-@import "../../../assets/style/config";
+@use "responsive" as *;
+@use "config" as *;
 
 .status-page {
-  background: #fff;
+  background: $white;
   height: 100%;
   width: 100%;
   z-index: 999;

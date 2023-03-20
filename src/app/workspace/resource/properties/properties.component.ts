@@ -257,7 +257,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      */
     openProject(project: ReadProject) {
         const uuid = this._projectService.iriToUuid(project.id);
-        window.open('/beta/project/' + uuid, '_blank');
+        window.open('/project/' + uuid, '_blank');
     }
 
     previewProject(project: ReadProject) {

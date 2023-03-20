@@ -40,6 +40,7 @@
         <!-- TODO: create a mat dialog actions component with the following buttons: Cancel to reset and OK to confirm action -->
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -63,6 +64,7 @@
         Do you want to reactivate this user?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -86,6 +88,7 @@
         Do you want to remove this user from the project?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -94,7 +97,7 @@
             <span class="fill-remaining-space"></span>
             <button mat-button
                 mat-raised-button
-                [color]="'accent'"
+                [color]="'primary'"
                 class="confirm-button center"
                 [mat-dialog-close]="true">
                 Remove
@@ -111,6 +114,7 @@
             (closeDialog)="dialogRef.close()"></app-membership>
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -145,6 +149,7 @@
         Do you want to deactivate this project?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -169,6 +174,7 @@
         Do you want to reactivate this project?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -243,6 +249,7 @@
         Do you want to delete this node?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -282,6 +289,7 @@
         Do you want to delete this list?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -324,6 +332,7 @@
         Do you want to delete this data model?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -370,6 +379,7 @@
         Do you want to delete this resource class?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -425,6 +435,7 @@
         Do you want to delete this property?
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="false">
@@ -442,18 +453,6 @@
     </div>
 
     <!-- all about RESOURCE -->
-    <!-- Create resource -->
-    <div *ngSwitchCase="'createResource'">
-        <app-dialog-header [title]="data.title"
-            [subtitle]="data.subtitle">
-        </app-dialog-header>
-        <app-resource-instance-form [selectedResourceClassIri]="data.id"
-            [selectedProject]="data.project"
-            (closeDialog)="dialogRef.close()"
-            (updateParent)="replaceTitle($event)">
-        </app-resource-instance-form>
-    </div>
-
     <div *ngSwitchCase="'editResource'">
         <app-dialog-header [title]="data.title"
             [subtitle]="'Edit resource\'s label'">
@@ -468,6 +467,7 @@
         </mat-dialog-content>
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="{confirmed: false, comment: comment}">
@@ -501,6 +501,7 @@
         </mat-dialog-content>
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="{confirmed: false, comment: comment}">
@@ -523,6 +524,7 @@
         Do you want to erase this resource forever?<br><br>WARNING: This action cannot be undone, so use it with care.
         <mat-dialog-actions>
             <button mat-button
+                color="primary"
                 mat-dialog-close
                 class="cancel-button center"
                 [mat-dialog-close]="{confirmed: false, comment: comment}">

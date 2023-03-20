@@ -1,4 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
@@ -18,14 +19,20 @@ import { RouterTestingModule } from '@angular/router/testing';
 import {
     ApiResponseData,
     CanDoResponse,
+    ClassDefinition,
+    IHasProperty,
     ListNodeInfo,
     ListsEndpointAdmin,
     ListsResponse,
     MockOntology,
+    MockProjects,
     MockUsers,
     OntologiesEndpointV2,
     OntologiesMetadata,
+    ProjectResponse,
+    ProjectsEndpointAdmin,
     ReadOntology,
+    ResourcePropertyDefinitionWithAllLanguages,
     UsersEndpointAdmin
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
@@ -34,6 +41,8 @@ import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
 import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
+import { SplitPipe } from 'src/app/main/pipes/split.pipe';
+import { TruncatePipe } from 'src/app/main/pipes/string-transformation/truncate.pipe';
 import { StatusComponent } from 'src/app/main/status/status.component';
 import { ProjectService } from 'src/app/workspace/resource/services/project.service';
 import { TestConfig } from 'test.config';
@@ -41,9 +50,58 @@ import { OntologyComponent } from './ontology.component';
 import { PropertyInfoComponent } from './property-info/property-info.component';
 import { ResourceClassInfoComponent } from './resource-class-info/resource-class-info.component';
 
+/**
+ * mock ResourceClassInfo.
+ */
+@Component({
+    selector: 'app-resource-class-info'
+})
+class MockResourceClassInfoComponent {
+    @Input() expanded = false;
+
+    @Input() resourceClass: ClassDefinition;
+
+    @Input() projectUuid: string;
+
+    @Input() projectStatus: boolean;
+
+    @Input() ontologies: ReadOntology[] = [];
+
+    @Input() lastModificationDate?: string;
+
+    @Input() userCanEdit: boolean;
+}
+
+/**
+ * mock PropertyInfo.
+ */
+@Component({
+    selector: 'app-property-info'
+})
+class MockPropertyInfoComponent {
+    @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
+
+    @Input() propCard?: IHasProperty;
+
+    @Input() resourceIri?: string;
+
+    @Input() projectUuid: string;
+
+    @Input() projectStatus: boolean;
+
+    @Input() lastModificationDate?: string;
+
+    @Input() userCanEdit: boolean;
+}
+
+@Component({
+    template: '<app-ontology></app-ontology>'
+})
+class TestHostComponent {}
+
 describe('OntologyComponent', () => {
-    let component: OntologyComponent;
-    let fixture: ComponentFixture<OntologyComponent>;
+    let component: TestHostComponent;
+    let fixture: ComponentFixture<TestHostComponent>;
 
     const appInitSpy = {
         dspAppConfig: {
@@ -55,7 +113,8 @@ describe('OntologyComponent', () => {
         const apiSpyObj = {
             admin: {
                 listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject']),
-                usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername'])
+                usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername']),
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri'])
             },
             v2: {
                 onto: jasmine.createSpyObj('onto', [
@@ -78,8 +137,10 @@ describe('OntologyComponent', () => {
                 OntologyComponent,
                 DialogComponent,
                 StatusComponent,
-                PropertyInfoComponent,
-                ResourceClassInfoComponent
+                MockPropertyInfoComponent,
+                MockResourceClassInfoComponent,
+                TruncatePipe,
+                SplitPipe
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -171,12 +232,74 @@ describe('OntologyComponent', () => {
         // set local storage session data
         localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
 
-        // set cache with current ontology
-        const cacheSpy = TestBed.inject(CacheService);
-
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+        // mock cache service for currentOntology
+        const cacheSpyOnto = TestBed.inject(CacheService);
+        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentOntology').and.callFake(
             () => {
                 const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+                return of(response);
+            }
+        );
+
+        // mock cache service for currentProjectOntologies
+        const cacheSpyProjOnto = TestBed.inject(CacheService);
+        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentProjectOntologies').and.callFake(
+            () => {
+                const ontologies: ReadOntology[] = [];
+                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
+                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
+                const response: ReadOntology[] = ontologies;
+                return of(response);
+            }
+        );
+
+        // mock cache service for currentOntologyLists
+        const cacheSpyOntoLists = TestBed.inject(CacheService);
+
+        (cacheSpyOntoLists as jasmine.SpyObj<CacheService>).get.withArgs('currentOntologyLists').and.callFake(
+            () => {
+                const response: ListNodeInfo[] = [{
+                    'comments': [],
+                    'id': 'http://rdfh.ch/lists/0001/otherTreeList',
+                    'isRootNode': true,
+                    'labels': [{
+                        'language': 'en',
+                        'value': 'Tree list root'
+                    }],
+                    'projectIri': 'http://rdfh.ch/projects/0001'
+                }, {
+                    'comments': [{
+                        'language': 'en',
+                        'value': 'a list that is not in used in ontology or data'
+                    }],
+                    'id': 'http://rdfh.ch/lists/0001/notUsedList',
+                    'isRootNode': true,
+                    'labels': [{
+                        'language': 'de',
+                        'value': 'unbenutzte Liste'
+                    }, {
+                        'language': 'en',
+                        'value': 'a list that is not used'
+                    }],
+                    'name': 'notUsedList',
+                    'projectIri': 'http://rdfh.ch/projects/0001'
+                }, {
+                    'comments': [{
+                        'language': 'en',
+                        'value': 'Anything Tree List'
+                    }],
+                    'id': 'http://rdfh.ch/lists/0001/treeList',
+                    'isRootNode': true,
+                    'labels': [{
+                        'language': 'de',
+                        'value': 'Listenwurzel'
+                    }, {
+                        'language': 'en',
+                        'value': 'Tree list root'
+                    }],
+                    'name': 'treelistroot',
+                    'projectIri': 'http://rdfh.ch/projects/0001'
+                }];
                 return of(response);
             }
         );
@@ -240,8 +363,20 @@ describe('OntologyComponent', () => {
             }
         );
 
+        // mock projects endpoint
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
+            () => {
+                const response = new ProjectResponse();
 
-        fixture = TestBed.createComponent(OntologyComponent);
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+            }
+        );
+
+        fixture = TestBed.createComponent(TestHostComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

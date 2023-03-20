@@ -54,9 +54,6 @@ export class OntologyFormComponent implements OnInit {
 
     lastModificationDate: string;
 
-    // feature toggle for new concept
-    beta = false;
-
     // ontology name must not contain one of the following words
     forbiddenNames: string[] = [
         'knora',
@@ -111,17 +108,7 @@ export class OntologyFormComponent implements OnInit {
         private _ontologyService: OntologyService,
         private _route: ActivatedRoute,
         private _router: Router
-    ) {
-        // get feature toggle information if url contains beta
-        // in case of creating new
-        if (this._route.parent) {
-            this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
-        }
-        // in case of edit
-        if (this._route.firstChild) {
-            this.beta = (this._route.firstChild.snapshot.url[0].path === 'beta');
-        }
-    }
+    ) {}
 
     ngOnInit() {
 
@@ -270,13 +257,10 @@ export class OntologyFormComponent implements OnInit {
                     this.updateParent.emit(response.id);
                     this.loading = false;
                     this.closeDialog.emit(response.id);
-                    if (this.beta) {
-                        // go to the new ontology page
-                        const name = this._ontologyService.getOntologyName(response.id);
-                        this._router.navigate(['ontology', name], { relativeTo: this._route.firstChild }).then(() => {
-                            window.location.reload();
-                        });
-                    }
+                    // go to the new ontology page
+                    const name = this._ontologyService.getOntologyName(response.id);
+                    // refresh whole page; todo: would be better to use an event emitter
+                    window.location.reload();
                 },
                 (error: ApiResponseError) => {
                     // in case of an error
@@ -300,15 +284,9 @@ export class OntologyFormComponent implements OnInit {
                 (response: OntologyMetadata) => {
                     this.updateParent.emit(response.id);
                     this.loading = false;
-                    if (this.beta) {
-                        // go to the new ontology page
-                        const name = this._ontologyService.getOntologyName(response.id);
-                        this._router.navigate(['ontology', name], { relativeTo: this._route.parent }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        this.closeDialog.emit(response.id);
-                    }
+                    // go to the new ontology page
+                    const name = this._ontologyService.getOntologyName(response.id);
+                    this._router.navigate(['ontology', name], { relativeTo: this._route.parent });
                 },
                 (error: ApiResponseError) => {
                     // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message

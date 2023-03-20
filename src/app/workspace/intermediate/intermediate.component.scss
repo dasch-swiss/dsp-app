@@ -1,5 +1,5 @@
-@import '../../../assets/style/config';
-@import '../../../assets/style/mixins';
+@use "config" as *;
+@use "mixins";
 
 .card-container {
   position: relative;

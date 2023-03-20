@@ -10,8 +10,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, CreateListRequest, ListInfoResponse, ListResponse, ListsEndpointAdmin, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    CreateListRequest,
+    ListInfoResponse,
+    ListResponse,
+    ListsEndpointAdmin,
+    MockProjects,
+    ProjectResponse,
+    ProjectsEndpointAdmin,
+    StringLiteral,
+    UpdateListInfoRequest
+} from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
@@ -20,6 +32,8 @@ import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens'
 import { DialogHeaderComponent } from 'src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
+import { ProjectService } from 'src/app/workspace/resource/services/project.service';
+import { TestConfig } from 'test.config';
 import { ListInfoFormComponent } from './list-info-form.component';
 
 /**
@@ -83,7 +97,8 @@ describe('ListInfoFormComponent', () => {
 
     const listsEndpointSpyObj = {
         admin: {
-            listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListInfo', 'updateListInfo', 'createList'])
+            listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListInfo', 'updateListInfo', 'createList']),
+            projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri'])
         }
     };
 
@@ -92,6 +107,8 @@ describe('ListInfoFormComponent', () => {
             iriBase: 'http://rdfh.ch'
         }
     };
+
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['uuidToIri']);
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -131,11 +148,52 @@ describe('ListInfoFormComponent', () => {
                 {
                     provide: MatDialogRef,
                     useValue: {}
+                },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        parent: {
+                            paramMap: of({
+                                get: (param: string) => {
+                                    if (param === 'uuid') {
+                                        return TestConfig.ProjectUuid;
+                                    }
+                                }
+                            }),
+                            snapshot: {
+                                url: [
+                                    { path: 'project' }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    provide: ProjectService,
+                    useValue: projectServiceSpy
                 }
             ]
         })
             .compileComponents();
     }));
+
+    beforeEach(() => {
+        // mock API
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        // mock projects endpoint
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
+            () => {
+                const response = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+            }
+        );
+    });
 
     describe('update existing list info', () => {
         beforeEach(() => {

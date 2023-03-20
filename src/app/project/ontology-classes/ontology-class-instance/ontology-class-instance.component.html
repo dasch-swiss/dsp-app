@@ -1,5 +1,5 @@
 <!-- display all resource instances if instance id does not exist -->
-<!-- In case if results present -->
+<!-- If results are present -->
 <div class="multiple-instances" *ngIf="searchParams">
     <as-split direction="horizontal" (dragEnd)="splitSizeChanged = $event">
         <as-split-area [size]="40">
@@ -29,8 +29,8 @@
 <div class="single-instance-form" *ngIf="instanceId && instanceId === 'add'">
     <h3>Create new resource of type: {{resClass?.label}}</h3>
     <app-resource-instance-form
-        [selectedResourceClassIri]="classId"
-        [selectedProject]="projectIri">
+        [resourceClassIri]="classId"
+        [projectIri]="projectIri">
     </app-resource-instance-form>
 </div>
 

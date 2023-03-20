@@ -1,0 +1,67 @@
+@use "config" as *;
+
+.class-item-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding: 10px 0px;
+
+  .content {
+    height: 70px;
+    width: 90%;
+    border-radius: 7px;
+    display: flex;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 1px 2px rgb(0 0 0 / 6%);
+
+    &.is-active {
+      background-color: $primary_100;
+    }
+
+    .box {
+      padding-left: 10px;
+      padding-top: 10px;
+      border-radius: 7px 0 0 7px;
+      flex-grow: 1;
+
+      .label {
+        width: 200px;
+        color: $secondary;
+        padding-left: 4px;
+      }
+
+      .entry-container {
+        color: $primary;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .entry {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .box:hover {
+      background-color: $primary_100;
+    }
+
+    .icon {
+      background-color: $primary;
+      border-radius: 0 7px 7px 0;
+      flex-basis: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      mat-icon {
+        color: white;
+      }
+    }
+
+    .icon:hover {
+      background-color: $primary_100;
+    }
+  }
+}

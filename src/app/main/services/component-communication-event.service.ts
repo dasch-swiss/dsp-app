@@ -39,5 +39,6 @@ export enum Events {
     loginSuccess,
     gravSearchExecuted,
     projectCreated,
-    resourceDeleted
+    resourceDeleted,
+    resourceCreated
 }

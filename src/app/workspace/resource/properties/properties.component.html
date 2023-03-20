@@ -11,7 +11,7 @@
     <span class="action">
 
         <!-- Toggle list of properties: all or only the ones with value -->
-        <button mat-icon-button class="toggle-props" *ngIf="!resource.res.isDeleted"
+        <button color="primary" mat-icon-button class="toggle-props" *ngIf="!resource.res.isDeleted"
             [matTooltip]="(showAllProps ? 'Hide empty' : 'Show all')+' properties'" matTooltipPosition="above"
             (click)="toggleAllProps(showAllProps)">
             <mat-icon>{{showAllProps ? 'unfold_less' : 'unfold_more'}}</mat-icon>
@@ -19,7 +19,7 @@
         </button>
 
         <!-- Share resource: copy ark url, add to favorites or open in new tab -->
-        <button mat-icon-button class="share-res" matTooltip="Share resource: {{resource.res.versionArkUrl}}"
+        <button color="primary" mat-icon-button class="share-res" matTooltip="Share resource: {{resource.res.versionArkUrl}}"
             matTooltipPosition="above" [disabled]="deletedResource" [matMenuTriggerFor]="share">
             <mat-icon>share</mat-icon>
             <!-- <span class="desktop-only">Citation Link</span> -->
@@ -54,7 +54,7 @@
         <app-permission-info *ngIf="!adminPermissions" [userHasPermission]="resource.res.userHasPermission"></app-permission-info>
 
         <!-- more menu with: delete, erase resource -->
-        <button *ngIf="editPermissions && project?.status" mat-icon-button class="more-menu" matTooltip="More"
+        <button color="primary" *ngIf="editPermissions && project?.status" mat-icon-button class="more-menu" matTooltip="More"
             matTooltipPosition="above" [matMenuTriggerFor]="more" [disabled]="deletedResource">
             <mat-icon>more_vert</mat-icon>
         </button>

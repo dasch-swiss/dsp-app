@@ -1,4 +1,4 @@
-@import "../../../assets/style/config";
+@use "config" as *;
 
 $width: 429px;
 
@@ -22,23 +22,18 @@ $width: 429px;
 }
 
 .ontology-editor {
-  width: 98vw;
+  width: auto;
   min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
+  height: calc(100vh - #{$header-height} - 2px);
   border: 1px dotted $primary_200;
   position: relative;
-  margin: 0 auto 60px auto;
+  margin: 0;
   z-index: 0;
-
-  &.beta {
-    // resize the with in beta view because of sidenav container
-    width: auto;
-    margin: 0;
-    height: calc(100vh - #{$header-height} - 2px);
-  }
 
   .ontology-editor-header {
     z-index: 2;
-    top: 121px;
+    top: 0;
+    height: 80px;
 
     .ontology-info {
       width: calc(100% - 176px - 32px);
@@ -56,24 +51,19 @@ $width: 429px;
         margin-top: 6px;
       }
     }
+
+    .mat-toolbar-row,
+    .mat-toolbar-row span {
+      height: 100%;
+      padding-top: 8px;
+    }
+
     .mat-toolbar-row {
       padding-right: 0;
 
       .ontology-actions {
         width: 176px;
       }
-    }
-
-    &.beta {
-      top: 0;
-      height: 80px;
-
-      .mat-toolbar-row,
-      .mat-toolbar-row span {
-        height: 100%;
-        padding-top: 8px;
-      }
-
     }
   }
 }
@@ -147,7 +137,7 @@ $width: 429px;
 }
 
 .active {
-  background-color: rgba(black, 0.12);
+  background-color: $primary_100;
 }
 
 .note {

@@ -26,11 +26,11 @@ export class ProjectTileComponent implements OnInit {
 
         switch (path) {
             case 'workspace':
-                this._router.navigate(['/beta/project/' + uuid]);
+                this._router.navigate(['/project/' + uuid]);
                 break;
 
             case 'settings':
-                this._router.navigate(['/beta/project/' + uuid + '/settings/collaboration']);
+                this._router.navigate(['/project/' + uuid + '/settings/collaboration']);
                 break;
 
             default:

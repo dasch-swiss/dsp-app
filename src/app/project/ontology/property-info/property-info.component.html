@@ -42,11 +42,13 @@
             <mat-slide-toggle
                 data-name="multiple"
                 [checked]="propInfo.multiple"
+                [disabled]="!userCanEdit"
                 (toggleChange)="changeCardinalities.emit({ prop: propCard, propType: propType, targetCardinality: {key: 'multiple', value: !propInfo.multiple} })">
             </mat-slide-toggle> multiple
             <mat-slide-toggle
                 data-name="required"
                 [checked]="propInfo.required"
+                [disabled]="!userCanEdit"
                 (toggleChange)="changeCardinalities.emit({prop: propCard, propType: propType, targetCardinality: {key: 'required', value: !propInfo.required} })">
             </mat-slide-toggle> required
         </span>

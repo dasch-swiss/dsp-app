@@ -1,6 +1,5 @@
-
-@import "../../../../../assets/style/responsive";
-@import "../../../../../assets/style/config";
+@use "config" as *;
+@use "responsive";
 
 .file-representation {
     width: 100%;
@@ -40,7 +39,7 @@
             .mat-slider-track-background {
                 background-color: whitesmoke !important;
             }
-        }        
+        }
     }
 }
 

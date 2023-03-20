@@ -1,5 +1,7 @@
+@use "config" as *;
+
 .active {
-  background: rgba(128,128,128,.39);
+  color: $secondary;
   font-weight: bolder;
 }
 

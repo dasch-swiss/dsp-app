@@ -1,6 +1,5 @@
-@import "../../../assets/style/config";
-@import "../../../assets/style/mixins";
-@import "../../../assets/style/responsive";
+@use "config" as *;
+@use "responsive";
 
 section {
   background-color: #fff;
@@ -22,7 +21,7 @@ section {
   }
 
   &.darken-bg {
-    background-color: $primary_50;
+    background-color: $cool_gray_50;
   }
 }
 

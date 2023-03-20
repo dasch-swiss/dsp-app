@@ -1,64 +1,51 @@
-// Import material design icons
-@use "@angular/material" as mat;
-// @import "~material-design-icons/iconfont/material-icons.css";
-// @import "~material-icons/iconfont/material-icons.scss";
-
-// Import material theming functions
-
-// Copy the palettes from your selected theme (usually theme.scss).
-$app-primary: mat.define-palette(mat.$blue-grey-palette);
-$app-accent: mat.define-palette(mat.$amber-palette);
-$app-warn: mat.define-palette(mat.$red-palette);
-
-// Create your Sass color vars (will be available in all the project)
-$primary: mat.get-color-from-palette($app-primary);
-$accent: mat.get-color-from-palette($app-accent);
-$accent-contrast: mat.get-color-from-palette($app-accent, default-contrast);
-$warn: mat.get-color-from-palette($app-warn);
-$warn-contrast: mat.get-color-from-palette($app-warn, default-contrast);
-
-
-@import "./config";
-@import "./responsive";
-@import "./mixins";
-
+@use "config" as *;
+@use "mixins" as *;
 
 // for development only: display badge with release and environment
 .development {
+
   &.hint {
     border-radius: 4px;
+
     &.accent {
-      background-color: $accent !important;
-      color: $accent-contrast;
+      background-color: $yellow !important;
+      color: $yellow_contrast;
     }
+
     &.warn {
-      background-color: $warn !important;
-      color: $warn-contrast;
+      background-color: $red !important;
+      color: $red_contrast;
     }
   }
+
   &.badge {
     padding: 0;
     margin: 0 0 6px 0;
     display: block;
+
     .environment,
     .release {
       padding: 4px;
       color: $bright;
     }
+
     .environment {
       border-radius: 4px 0 0 4px;
       background-color: rgba(0, 0, 0, 0.75);
     }
+
     .release {
       border-radius: 0 4px 4px 0;
       margin-left: -3px;
+
       &.accent {
-        background-color: $accent !important;
-        color: $accent-contrast;
+        background-color: $yellow !important;
+        color: $yellow_contrast;
       }
+
       &.warn {
-        background-color: $warn !important;
-        color: $warn-contrast;
+        background-color: $red !important;
+        color: $red_contrast;
       }
       &.default {
         background-color: $primary_800 !important;

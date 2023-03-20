@@ -1,0 +1,15 @@
+<div class="class-item-container">
+    <div class="content" [routerLinkActive]="['is-active']">
+        <div class="box link" [routerLink]="link">
+            <div class="label" matTooltip="{{resClass.label}}" matTooltipShowDelay="750" [matTooltipPosition]="'above'"
+                 [matTooltipDisabled]="resClass.label.length < MAX_LABEL_CHAR">{{trimLabel(resClass.label)}}</div>
+            <div class="entry-container">
+                <mat-icon>{{icon}}</mat-icon>
+                <div class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
+            </div>
+        </div>
+        <div class="icon link" *ngIf="projectMember" [routerLink]="link + '/add'">
+            <mat-icon>add_circle_outline</mat-icon>
+        </div>
+    </div>
+</div>

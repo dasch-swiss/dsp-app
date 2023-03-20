@@ -534,31 +534,4 @@ OFFSET 0`;
         window.open(doSearchRoute, '_blank');
     }
 
-    createResourceInstance(iri: string, label: string) {
-        let projectIri: string;
-        // get project iri
-        this._cache.get(this.projectUuid).subscribe(
-            (res: ReadProject) => {
-                projectIri = res.id;
-            }
-        );
-
-        const dialogConfig: MatDialogConfig = {
-            width: '840px',
-            maxHeight: '80vh',
-            position: {
-                top: '112px'
-            },
-            data: { id: iri, mode: 'createResource', project: projectIri, title: label,  subtitle: 'Set the property values of the resource' },
-            disableClose: true
-        };
-
-        const dialogRef = this._dialog.open(
-            DialogComponent,
-            dialogConfig
-        );
-
-        dialogRef.afterClosed().subscribe(() => { });
-    }
-
 }

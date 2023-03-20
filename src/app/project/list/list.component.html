@@ -2,61 +2,8 @@
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <!-- display only when loading is finished and project member has value -->
-    <div *ngIf="!loading && projectMember !== undefined">
-        <div *ngIf="projectMember" class="content large middle">
-
-            <!-- header toolbar -->
-            <div class="app-toolbar transparent more-space-bottom" *ngIf="!beta">
-                <div class="app-toolbar-row toolbar-subtitle">
-                    <h3 class="mat-body subtitle">Lists are reusable data</h3>
-                </div>
-
-                <div class="app-toolbar-row toolbar-form">
-                    <h2 class="mat-title">
-                <span *ngIf="lists.length > 0">
-                    Project has {{lists.length | i18nPlural: itemPluralMapping['list']}}
-                </span>
-                        <span *ngIf="lists.length === 0">
-                    It seems there's no list defined yet
-                </span>
-                    </h2>
-
-                    <span class="fill-remaining-space"></span>
-
-                    <span class="app-toolbar-action" [class.select-form]="lists.length">
-                <form [formGroup]="listForm" class="form" *ngIf="!loading">
-
-                    <!-- list to select ontology -->
-                    <div class="form-content">
-                        <mat-form-field class="large-field select-list" *ngIf="lists.length">
-                            <mat-label>
-                                Open from list...
-                            </mat-label>
-                            <mat-select [formControl]="listForm.controls['list']" [(value)]="listIri">
-
-                                <mat-option *ngFor="let list of lists; let first = first" [value]="list.id"
-                                            [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="below">
-                                    {{list.labels | appStringifyStringLiteral:'all'}}
-                                </mat-option>
-
-                            </mat-select>
-                        </mat-form-field>
-
-                    </div>
-                </form>
-            </span>
-
-                    <span class="fill-remaining-space"></span>
-
-                    <span class="app-toolbar-action" [class.select-form]="lists.length" *ngIf="project.status && projectAdmin">
-                <button mat-raised-button color="primary" class="create-list-btn"
-                        (click)="openDialog('createList', 'List', project.id)">
-                    {{lists.length ? 'New list' : 'Create your first list'}}
-                </button>
-            </span>
-                </div>
-
-            </div>
+    <div *ngIf="!loading">
+        <div class="content large middle">
 
             <!-- main content: show selected list -->
             <div *ngIf="list && !loadList" class="list-editor" #listEditor>
@@ -72,13 +19,13 @@
 
                         <span class="project-actions" *ngIf="project.status && projectAdmin">
                     <p class="mat-caption space-reducer">List configuration</p>
-                    <button mat-button
+                    <button color="primary" mat-button
                             (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
                             matTooltip="Edit list info">
                         <mat-icon>edit</mat-icon>
                         Edit
                     </button>
-                    <button mat-button class="delete"
+                    <button color="warn" mat-button class="delete"
                             (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
                             matTooltip="Delete list">
                         <mat-icon>delete</mat-icon>
@@ -92,10 +39,6 @@
                 </app-list-item>
 
             </div>
-        </div>
-
-        <div *ngIf="!projectMember" class="content large middle">
-            <app-status [status]="403"></app-status>
         </div>
     </div>
 </div>

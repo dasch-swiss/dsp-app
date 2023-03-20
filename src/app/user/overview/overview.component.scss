@@ -33,7 +33,8 @@
     .project-tiles {
         display: grid;
         grid-template-columns: 30% 30% 30%;
-        gap: 5%;
+        grid-row-gap: 2.5%;
+        grid-column-gap: 5%;
         padding-bottom: 2%;
     }
 

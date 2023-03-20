@@ -1,5 +1,7 @@
 // Include non-theme styles for core.
 @use '@angular/material' as mat;
+@use "config";
+@include mat.core();
 // TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
 //  The following line adds:
 //    1. Default typography styles for all components
@@ -12,11 +14,11 @@
 @include mat.legacy-core();
 
 // Define the color palettes for the theme.
-$primary: mat.define-palette(mat.$blue-grey-palette, 700, 500, 900);
-$accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$primary: mat.define-palette(config.$blue_palette, 700, 500, 900);
+$accent: mat.define-palette(config.$light_blue_palette, 900, 600, 900);
 
 // The warn palette is optional (defaults to red).
-$warn: mat.define-palette(mat.$red-palette);
+$warn: mat.define-palette(config.$velvet_red_palette, 700, 500, 900);
 
 // Define a theme.
 $theme: mat.define-light-theme($primary, $accent, $warn);

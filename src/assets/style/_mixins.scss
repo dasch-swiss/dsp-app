@@ -1,14 +1,5 @@
 @use "sass:math";
-
-$black: rgb(11, 11, 11);
-$black-12-opacity: rgba($black, .12);
-$black-14-opacity: rgba($black, .14);
-$black-20-opacity: rgba($black, .2);
-$black-60-opacity: rgba($black, .6);
-
-$white: rgb(244, 244, 244);
-
-$border-color: #ebebeb;
+@use "config" as *;
 
 @mixin background-cover($attachment: scroll, $image: linear-gradient($black-20-opacity, $black-20-opacity)) {
   background-size: cover;
@@ -51,32 +42,6 @@ $border-color: #ebebeb;
 @mixin mat-box-shadow-flat() {
   box-shadow: 0 2px 2px $black-20-opacity, 0 0 2px $black-12-opacity;
 }
-
-@mixin border-top() {
-  border-top: 1px solid $border-color;
-}
-
-@mixin border-right() {
-  border-right: 1px solid $border-color;
-}
-
-@mixin border-bottom() {
-  border-bottom: 1px solid $border-color;
-}
-
-@mixin border-left() {
-  border-left: 1px solid $border-color;
-}
-
-@mixin border() {
-  border: 1px solid $border-color;
-}
-
-@mixin rel-viewheight($h1: 0, $h2: 0, $h3: 0) {
-  // $minus: $h1 + $h2 + $h3 + px;
-  // height: calc(100vh - $minus);
-}
-
 
 // _decimal.scss | MIT License | gist.github.com/terkel/4373420
 

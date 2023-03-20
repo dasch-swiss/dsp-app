@@ -1,0 +1,68 @@
+<div *ngIf="!loading" class="data-models-container">
+    <div class="header">
+        <p class="title">All Data Models</p>
+        <mat-icon
+            color="primary"
+            class="icon"
+            matTooltip="A data model organizes data elements and specifies how they relate to one another and by which properties they are described."
+            matTooltipPosition="above">
+            info
+        </mat-icon>
+    </div>
+    <div *ngIf="projectAdmin" class="action-buttons">
+        <button color="primary" mat-raised-button class="create" (click)="open('add-ontology')">
+            <mat-icon class="v-align-middle">add_circle</mat-icon>
+            <span class="v-align-middle">Create New</span>
+        </button>
+        <button color="primary" mat-stroked-button class="docs" (click)="open('docs')">
+            Read Documentation About How To Create Data Models
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
+    <div *ngIf="projectOntologies" class="projectOntos">
+        <div class="list" [class.top-padding]="projectAdmin">
+            <div
+                class="list-item ontos"
+                [class.no-click]="!session"
+                *ngFor="let onto of projectOntologies.ontologies"
+                (click)="session ? open('ontology', onto.id) : null">
+                <mat-icon class="icon-prefix">bubble_chart</mat-icon>
+                <p
+                    class="label"
+                    matTooltip="You must be logged in to view data models"
+                    matTooltipPosition="right"
+                    [matTooltipDisabled]="session">
+                    {{onto.label}}
+                </p>
+                <span class="fill-remaining-space"></span>
+                <mat-icon class="icon-suffix">chevron_right</mat-icon>
+            </div>
+        </div>
+    </div>
+    <div class="header">
+        <p class="title">Controlled Vocabularies</p>
+        <mat-icon
+            color="primary"
+            class="icon"
+            matTooltip="Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields."
+            matTooltipPosition="above">
+            info
+        </mat-icon>
+    </div>
+    <div *ngIf="projectAdmin" class="action-buttons">
+        <button color="primary" mat-raised-button class="create" (click)="open('add-list')">
+            <mat-icon class="v-align-middle">add_circle</mat-icon>
+            <span class="v-align-middle">Create New</span>
+        </button>
+    </div>
+    <div *ngIf="projectLists" class="projectLists">
+        <div class="list" [class.top-padding]="projectAdmin">
+            <div class="list-item" *ngFor="let list of projectLists" (click)="open('list', list.id)">
+                <mat-icon class="icon-prefix">list</mat-icon>
+                <p class="label">{{list.labels | appStringifyStringLiteral}}</p>
+                <span class="fill-remaining-space"></span>
+                <mat-icon class="icon-suffix">chevron_right</mat-icon>
+            </div>
+        </div>
+    </div>
+</div>

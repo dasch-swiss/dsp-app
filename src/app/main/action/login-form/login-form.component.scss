@@ -1,4 +1,4 @@
-@import "../../../../assets/style/theme";
+@use "config" as *;
 
 $width: 280px;
 
@@ -11,7 +11,7 @@ $width: 280px;
 }
 
 .login-error {
-  color: $warn;
+  color: $red;
   text-align: center;
 }
 

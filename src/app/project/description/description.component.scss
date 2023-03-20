@@ -1,0 +1,74 @@
+@use "config" as *;
+@use "responsive" as *;
+@use "theme";
+
+section {
+  margin: 24px 0px;
+}
+
+.note {
+  border-radius: $border-radius;
+  width: 100%;
+  display: inline-flex;
+  margin-bottom: 16px;
+}
+
+.app-toolbar .app-toolbar-row {
+  padding: 0;
+}
+
+mat-form-field.large-field,
+.form-panel {
+  margin-left: 66px;
+  width: 93%;
+}
+
+mat-form-field.large-field {
+  padding-bottom: 10px;
+}
+
+// phone devices
+@media (max-width: map-get($grid-breakpoints, phone)) {
+
+  .fill-remaining-space {
+    display: none;
+  }
+
+  .app-toolbar-action {
+    display: none;
+  }
+
+  .more-space-bottom {
+    margin-bottom: 0 !important;
+  }
+
+  .app-toolbar-mobile {
+    display: flex;
+
+    .fill-remaining-space-action {
+      flex: 1 1 auto;
+    }
+    .app-toolbar-action-status {
+      padding: 12px 0 0 16px;
+    }
+    .app-toolbar-action-edit {
+      padding-right: 16px;
+    }
+  }
+
+  .description {
+    margin: 0 auto 36px auto;
+  }
+}
+
+// desktop and tablet devices
+@media (min-width: map-get($grid-breakpoints, phone)) {
+
+  .more-space-bottom {
+    margin-bottom: 15px !important;
+  }
+
+  .app-toolbar-mobile {
+    display: none;
+  }
+}

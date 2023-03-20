@@ -1,4 +1,4 @@
-@import "../../../../assets/style/responsive";
+@use "responsive" as *;
 
 .app-toolbar-action {
   &.select-form {

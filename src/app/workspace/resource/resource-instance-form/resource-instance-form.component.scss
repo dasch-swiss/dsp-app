@@ -1,38 +1,18 @@
-@import "../../../../assets/style/config";
+@use "config" as *;
 
-.stepTwo {
-    margin: 24px 56px !important;
-    width: calc(100% - 144px);
-
-    .btn-field {
-      margin-top: 48px;
-      margin-bottom: 0;
-    }
-}
-
-.standalone {
+.resource-instance-form {
   margin: 0;
   width: 100%;
 
   .form-action {
-    &.fixed-at-bottom {
-      background-color: #fafafa;
-      bottom: 0;
-    }
-  }
-}
-
-.form-action {
     width: 100%;
     margin-top: 24px;
-
-    &.fixed-at-bottom {
-      position: sticky;
-      padding: 24px;
-      bottom: -24px;
-      margin-left: -24px;
-      background-color: #fff;
-    }
+    background-color: #fafafa;
+    bottom: 0;
+    position: sticky;
+    padding: 24px;
+    margin-left: -24px;
+  }
 }
 
 .errorIfNoElement {

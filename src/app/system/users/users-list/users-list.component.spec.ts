@@ -10,11 +10,11 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import { MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AppInitService } from 'src/app/app-init.service';
 import { CacheService } from 'src/app/main/cache/cache.service';
-import { DspApiConfigToken, DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from 'src/app/main/declarations/dsp-api-tokens';
 import { DialogComponent } from 'src/app/main/dialog/dialog.component';
 import { StatusComponent } from 'src/app/main/status/status.component';
 import { SelectGroupComponent } from 'src/app/project/collaboration/select-group/select-group.component';
@@ -61,14 +61,14 @@ describe('UsersListComponent', () => {
                     provide: ActivatedRoute,
                     useValue: {
                         parent: {
-                            paramMap: of({
-                                get: (param: string) => {
-                                    if (param === 'uuid') {
-                                        return TestConfig.ProjectUuid;
-                                    }
-                                }
-                            }),
                             parent: {
+                                paramMap: of({
+                                    get: (param: string) => {
+                                        if (param === 'uuid') {
+                                            return TestConfig.ProjectUuid;
+                                        }
+                                    }
+                                }),
                                 snapshot: {
                                     url: []
                                 }

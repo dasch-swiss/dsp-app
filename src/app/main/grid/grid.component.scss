@@ -1,5 +1,5 @@
-@import "../../../assets/style/config";
-@import "../../../assets/style/responsive";
+@use "config" as *;
+@use "responsive" as *;
 
 .app-grid {
   display: grid;

@@ -6,41 +6,45 @@
 <mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
     <!-- first line: user name and close button -->
     <div class="menu-header">
-        <p class="menu-title">
-            {{username}}
-        </p>
+        <div class="menu-title">Signed in as</div>
+        <div class="menu-title">{{user?.givenName}} {{user?.familyName}}</div>
     </div>
     <!-- menu items -->
     <div class="menu-content">
 
         <mat-list class="navigation">
-            <mat-list-item *ngFor="let item of navigation; let i = index;" class="nav-item"
-                [class.border-bottom]="i===0">
-                <button mat-button [routerLink]="item.route" routerLinkActive="active-link" class="nav-item button">
-                    <mat-icon class="prefix">{{item.icon}}</mat-icon>
+            <mat-list-item *ngFor="let item of navigation" class="nav-item">
+                <button
+                    mat-button
+                    [routerLink]="item.route"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    routerLinkActive="active-link"
+                    class="nav-item button">
                     <span class="label">{{item.label}}</span>
                 </button>
             </mat-list-item>
 
             <!-- system for system admin only -->
 
-            <mat-list-item class="nav-item border-top" *ngIf="sysAdmin">
-
-                <button mat-button [routerLink]="'/system'" routerLinkActive="active-link"
-                    class="nav-item button border-top">
-                    <mat-icon class="prefix">all_inbox</mat-icon>
-                    <span class="label">System</span>
+            <mat-list-item *ngIf="sysAdmin" class="nav-item">
+                <button
+                    mat-button
+                    [routerLink]="'/system'"
+                    routerLinkActive="active-link"
+                    class="nav-item button">
+                    <span class="label">System Administration</span>
+                </button>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item *ngIf="session" class="nav-item">
+                <button
+                    mat-button
+                    (click)="logout()"
+                    class="nav-item button">
+                    <span class="label">Logout</span>
                 </button>
             </mat-list-item>
         </mat-list>
-
-    </div>
-
-    <div class="menu-footer border-top">
-        <button mat-button class="menu-action logout" (click)="logout()">
-            <mat-icon>power_settings_new</mat-icon>
-            Logout
-        </button>
     </div>
 </mat-menu>
 

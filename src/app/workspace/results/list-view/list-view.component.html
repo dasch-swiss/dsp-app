@@ -1,11 +1,16 @@
 <!-- header / toolbar to select view and pagination -->
-<div class="list-view-header" [class.beta]="beta">
+<div *ngIf="numberOfAllResults !== 0" class="list-view-header">
+    <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
+        <mat-icon>west</mat-icon>
+        <span>Previous</span>
+    </button>
     <span class="fill-remaining-space"></span>
-    <span class="page-navigation" *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources.length)">
-        <mat-paginator [length]="numberOfAllResults" [pageSize]="25" [hidePageSize]="true"
-            [pageIndex]="pageEvent.pageIndex" [disabled]="loading" (page)="goToPage($event)">
-        </mat-paginator>
-    </span>
+    <div class="range">{{currentRangeStart}} - {{currentRangeEnd}} of {{numberOfAllResults}}</div>
+    <span class="fill-remaining-space"></span>
+    <button mat-button class="pagination-button next" [disabled]="(pageSize > numberOfAllResults) || nextDisabled" (click)="goToPage('next')">
+        <span>Next</span>
+        <mat-icon>east</mat-icon>
+    </button>
 </div>
 
 <!-- container with search results -->
@@ -22,27 +27,36 @@
 
     <!-- In case of 0 result -->
     <div class="list-view no-results" *ngIf="!loading && (numberOfAllResults >= 0 && !resources?.resources.length)">
-        <p>Your search <span *ngIf="search.mode === 'fulltext'">- <strong> {{search.query}}</strong> -</span> did not match any documents.</p>
-        <p>Suggestions:</p>
-        <ul>
-            <li *ngIf="numberOfAllResults > 0">Make sure that you are logged in and you have all the needed permissions.</li>
-            <li>Make sure that all words are spelled correctly.</li>
-            <li>Try different keywords.</li>
-            <li>Try more general keywords.</li>
-            <li>Try fewer keywords.</li>
-        </ul>
-        <mat-divider></mat-divider>
-        <app-hint [topic]="'search'"></app-hint>
+        <!-- Case A: user did a fulltext search -->
+        <div *ngIf="search.mode === 'fulltext'">
+            <p>Your search - <strong> {{search.query}}</strong> - did not match any documents.</p>
+            <p>Suggestions:</p>
+            <ul>
+                <li *ngIf="numberOfAllResults > 0">Make sure that you are logged in and you have all the needed permissions.</li>
+                <li>Make sure that all words are spelled correctly.</li>
+                <li>Try different keywords.</li>
+                <li>Try more general keywords.</li>
+                <li>Try fewer keywords.</li>
+            </ul>
+            <mat-divider></mat-divider>
+            <app-hint [topic]="'search'"></app-hint>
+        </div>
+        <!-- Case B: user clicked on the class item -->
+        <div *ngIf="search.mode !== 'fulltext'">
+            <!-- Case B1: there is no resources created-->
+            <div *ngIf="hasPermission" class="no-results-container">
+                <mat-icon>warning</mat-icon>
+                <div>No resources have been created for this class yet.</div>
+            </div>
+            <!-- Case B2: no permission-->
+            <div *ngIf="!hasPermission" class="no-results-container">
+                <mat-icon>warning</mat-icon>
+                <div>
+                    It seems like you don’t have the necessary permissions.<br>
+                    Check with a project admin if you have the necessary permission or if you are logged in.
+                </div>
+            </div>
+        </div>
     </div>
 
-</div>
-
-<!-- footer with pagination -->
-<div class="list-view-footer" *ngIf="numberOfAllResults > 25 && resources?.resources.length === 25 && !loading">
-    <span class="fill-remaining-space"></span>
-    <span class="page-navigation">
-        <mat-paginator [length]="numberOfAllResults" [pageSize]="25" [hidePageSize]="true"
-            [pageIndex]="pageEvent.pageIndex" [disabled]="loading" (page)="goToPage($event)">
-        </mat-paginator>
-    </span>
 </div>

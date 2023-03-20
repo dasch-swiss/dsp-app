@@ -1,67 +1,45 @@
 <div *ngIf="!error; else StatusMsg">
-    <!-- normal version -->
-    <div *ngIf="!beta">
-        <nav *ngIf="projectMember && !loading" mat-tab-nav-bar mat-align-tabs="center"
-            class="navigation tab-bar margin-from-top" animationDuration="0ms" [color]="color">
-            <a mat-tab-link *ngFor="let link of navigation; let first = first; let i = index" id="{{link.route}}"
-                [routerLink]="link.route" routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive"
-                [disabled]="!projectAdmin && !first && i !== TAB_DATA_MODEL && i !== TAB_LISTS"
-                [class.deactivated]="!project?.status">
-                <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
-                {{link.label}}
-            </a>
-        </nav>
-        <app-progress-indicator *ngIf="loading"></app-progress-indicator>
-        <router-outlet *ngIf="!loading"></router-outlet>
-    </div>
-    <!-- new concept of project view: sidenav instead tabs -->
-    <div *ngIf="beta">
-        <mat-sidenav-container class="project-view">
-            <mat-sidenav mode="side"
-                opened
-                class="project-nav"
-                [disableClose]="true">
+    <mat-sidenav-container class="project-view">
+        <mat-sidenav #sidenav mode="side" [(opened)]="sideNavOpened" [disableClose]="true" class="project-nav">
+            <div *ngIf="sideNavOpened" class="sidenav-collapse-btn">
+                <button mat-icon-button color="primary" class="collapse-btn" (click)="toggleSidenav()" matTooltip="collapse"
+                        matTooltipShowDelay="500" matTooltipPosition="right">
+                    <mat-icon>chevron_left</mat-icon>
+                </button>
+            </div>
+            <div class="main-content">
                 <!-- Project label -->
-                <div *ngIf="project !== undefined" class="link project-title"
-                    [routerLink]="'/beta/project/' + projectUuid">
+                <div *ngIf="project !== undefined" class="project-title">
                     <p #projectTitle matTooltip="{{project.longname}}" matTooltipShowDelay="500"
                         [matTooltipDisabled]="compareElementHeights(projectTitle)" matTooltipPosition="right">
                         {{project.longname}}
                     </p>
                 </div>
                 <mat-list class="main-list">
-                    <!-- Maybe we can have a project selector here (similar to the github dashboard page) -->
+
+                    <!-- Description Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item class="link"
-                        (click)="goToOverview()">
-                        <span class="link section-label">
-                            <p>Go to projects overview</p>
+                    <mat-list-item class="link section-title" (click)="open('/project/' + projectUuid)">
+                        <span class="section-label">
+                            <mat-icon class="sidenav-prefix-icon">description</mat-icon>
+                            <p>Project Description</p>
                         </span>
                         <span class="fill-remaining-space"></span>
-                        <span mat-icon>
+                        <span class="section-icon">
                             <mat-icon>chevron_right</mat-icon>
                         </span>
                     </mat-list-item>
-                    <mat-divider></mat-divider>
 
                     <!-- Ontology Section -->
-                    <div class="section-title">
+                    <mat-divider></mat-divider>
+                    <mat-list-item class="link section-title" (click)="open('data-models')">
                         <span class="section-label">
                             <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
-                            <p>Data models</p>
+                            <p>Data Model</p>
                         </span>
-                    </div>
-                    <!-- <mat-list-item class="section-title">
-                        <span class="section-label">
-                            <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
-                            <p>Data models</p>
-                        </span>
-                    </mat-list-item> -->
-                    <mat-list-item class="link add-new" [class.list-item-deactivated]="!project?.status"
-                        *ngIf="projectAdmin" (click)="open('add-ontology')">
-                        <span class="add-new-label">
-                            <mat-icon class="sidenav-prefix-icon">add_circle_outline</mat-icon>
-                            <p>Add a new data model</p>
+                        <span class="fill-remaining-space"></span>
+                        <span class="section-icon">
+                            <mat-icon>chevron_right</mat-icon>
                         </span>
                     </mat-list-item>
                     <mat-divider></mat-divider>
@@ -72,10 +50,8 @@
                         [displayMode]="'flat'">
                         <mat-expansion-panel [expanded]="first">
                             <mat-expansion-panel-header>
-                                <div class="sidenav-panel-header"
-                                    (click)="projectMember ? $event.stopPropagation() : true">
-                                    <mat-panel-title class="mat-subheading-2"
-                                        (click)="projectMember ? open('ontology', onto.id) : null">
+                                <div class="sidenav-panel-header">
+                                    <mat-panel-title class="mat-subheading-2">
                                         <p #ontoTitle
                                             matTooltip="{{onto.label}}"
                                             matTooltipShowDelay="500"
@@ -92,68 +68,37 @@
                         <mat-divider></mat-divider>
                     </mat-accordion>
 
-                    <!-- Lists Section -->
-                    <span *ngIf="projectMember">
-                        <div class="section-title">
-                            <span class="section-label">
-                                <mat-icon class="sidenav-prefix-icon">list</mat-icon>
-                                <p>Lists</p>
-                            </span>
-                        </div>
-                        <mat-list-item class="link add-new" [class.list-item-deactivated]="!project?.status" *ngIf="projectAdmin" (click)="open('add-list')">
-                            <span class="add-new-label">
-                                <mat-icon class="sidenav-prefix-icon">add_circle_outline</mat-icon>
-                                <p>Add a new list</p>
-                            </span>
-                        </mat-list-item>
-                        <mat-divider></mat-divider>
-                        <!-- Project lists -->
-                        <mat-list-item *ngFor="let list of projectLists"
-                            class="list link"
-                            (click)="open('list', list.id)">
-                            <p #listTitle
-                                matTooltip="{{list.labels | appStringifyStringLiteral}}"
-                                matTooltipShowDelay="500"
-                                matTooltipPosition="right"
-                                [matTooltipDisabled]="compareElementHeights(listTitle)">
-                                {{list.labels | appStringifyStringLiteral}}
-                            </p>
-                            <mat-divider></mat-divider>
-                        </mat-list-item>
-                    </span>
-
-                    <mat-divider></mat-divider>
-
-                    <!-- Project members if project admin -->
-                    <!-- <mat-list-item *ngIf="projectAdmin" class="link section-title" routerLink="settings/collaboration">
-                        <h2 class="mat-title">Members</h2>
-                    </mat-list-item> -->
-
-                    <!-- Project permissions ??? will it ever come? -->
-
                     <div class="sidenav-footer"
                         *ngIf="projectAdmin">
                         <mat-list-item class="link section-title footer"
                             (click)="open('settings')">
                             <span class="section-label">
                                 <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
-                                <h2 class="mat-title">Settings</h2>
+                                <div>Project Settings</div>
                             </span>
                             <span class="fill-remaining-space"></span>
-                            <span mat-icon>
+                            <span class="section-icon">
                                 <mat-icon>chevron_right</mat-icon>
                             </span>
                         </mat-list-item>
                     </div>
                 </mat-list>
 
-            </mat-sidenav>
-            <mat-sidenav-content>
+            </div>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <div *ngIf="!sideNavOpened" class="sidenav-expand-btn">
+                <button mat-icon-button color="primary" class="expand-btn" (click)="toggleSidenav()" matTooltip="expand"
+                        matTooltipShowDelay="500" matTooltipPosition="right">
+                    <mat-icon>chevron_right</mat-icon>
+                </button>
+            </div>
+            <div class="main-content">
                 <app-progress-indicator *ngIf="loading"></app-progress-indicator>
                 <router-outlet *ngIf="!loading"></router-outlet>
-            </mat-sidenav-content>
-        </mat-sidenav-container>
-    </div>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
 
 </div>
 

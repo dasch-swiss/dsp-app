@@ -1,4 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "./assets/style/material-theme";
-@import "./assets/style/main";
+@use "material-theme";
+@use "main";

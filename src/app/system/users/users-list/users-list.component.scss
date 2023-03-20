@@ -1,12 +1,12 @@
-@import "../../../../assets/style/responsive";
-@import "../../../../assets/style/theme";
+@use "responsive" as *;
+@use "theme";
 
 .sys-admin-chip {
     width: 116px;
 }
 
 // tablet devices
-@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) { 
+@media (max-width: map-get($grid-breakpoints, tablet)) and (min-width: map-get($grid-breakpoints, phone)) {
     .info-names, .info-email {
         display: none;
     }

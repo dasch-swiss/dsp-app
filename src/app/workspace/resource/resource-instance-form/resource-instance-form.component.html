@@ -1,78 +1,7 @@
-<!-- Step1: form to select one project, one ontology, one resource -->
-<form *ngIf="selectResourceForm && showNextStepForm"
-    [formGroup]="selectResourceForm"
-    class="resource-instance-form stepOne form-content"
-    (ngSubmit)="nextStep()">
-
-    <!-- select one project -->
-    <div *ngIf="usersProjects?.length > 0">
-        <app-select-project [formGroup]="selectResourceForm"
-            [usersProjects]="usersProjects"
-            [selectedProject]="selectedProject"
-            (projectSelected)="selectOntologies($event)">
-        </app-select-project>
-    </div>
-
-    <!-- select one ontology -->
-    <span>
-        <div *ngIf="ontologiesMetadata?.ontologies.length > 0">
-            <app-select-ontology #selectOntology
-                [formGroup]="selectResourceForm"
-                [ontologiesMetadata]="ontologiesMetadata"
-                [selectedOntology]="selectedOntology"
-                (ontologySelected)="selectResourceClasses($event)">
-            </app-select-ontology>
-        </div>
-    </span>
-
-    <!-- select one resource -->
-    <span *ngIf="resourceClasses?.length > 0">
-        <app-select-resource-class #selectResourceClass
-            [formGroup]="selectResourceForm"
-            [resourceClassDefinitions]="resourceClasses"
-            [selectedResourceClass]="selectedResourceClass"
-            (resourceClassSelected)="selectProperties($event)">
-        </app-select-resource-class>
-    </span>
-
-    <span *ngIf="errorMessage">
-        <p class="errorIfNoElement"><strong>{{errorMessage}}</strong></p>
-    </span>
-
-    <!-- action buttons: cancel and next -->
-    <div class="form-panel form-action">
-        <span>
-            <button mat-button
-                type="button"
-                (click)="closeDialog.emit()">
-                {{ 'appLabels.form.action.cancel' | translate }}
-            </button>
-        </span>
-        <span class="fill-remaining-space"></span>
-        <span>
-            <!-- check each 'selected' property in addition to the forms validity because the form is actually valid when fetching ontologies and resource classes  -->
-            <button mat-raised-button
-                type="button"
-                color="primary"
-                [disabled]="(!selectedProject || !selectedOntology || !selectedResourceClass || !selectResourceForm.valid) || this.errorMessage"
-                (click)="nextStep()"
-                class="form-next">
-                <app-progress-indicator *ngIf="loading"
-                    [status]="0"
-                    [color]="'primary'"
-                    class="next-progress"></app-progress-indicator>
-                {{ 'appLabels.form.action.next' | translate }}
-            </button>
-        </span>
-    </div>
-
-</form>
-
-<!-- Step2: create property values and submit data -->
-<app-progress-indicator *ngIf="preparing && beta"></app-progress-indicator>
-<form *ngIf="propertiesParentForm && !showNextStepForm && !preparing"
-    class="resource-instance-form stepTwo form-content"
-    [class.standalone]="beta"
+<!-- create property values and submit data -->
+<app-progress-indicator *ngIf="preparing"></app-progress-indicator>
+<form *ngIf="propertiesParentForm && !preparing"
+    class="resource-instance-form form-content"
     [formGroup]="propertiesParentForm"
     (ngSubmit)="submitData()"
     appInvalidControlScroll>
@@ -86,32 +15,18 @@
 
     <!-- create property values -->
     <app-select-properties #selectProps
-        *ngIf="selectedResourceClass || (beta && ontologyInfo)"
+        *ngIf="resourceClass"
         [ontologyInfo]="ontologyInfo"
-        [selectedResourceClass]="selectedResourceClass"
+        [selectedResourceClass]="resourceClass"
         [properties]="properties"
         [parentForm]="propertiesParentForm"
-        [currentOntoIri]="selectedOntology"
+        [currentOntoIri]="ontologyIri"
         class="select-properties">
     </app-select-properties>
 
-    <!-- action buttons: previous, cancel and save -->
-    <div class="form-panel form-action"
-        [class.fixed-at-bottom]="!showNextStepForm && !preparing">
+    <!-- action buttons: save -->
+    <div class="form-panel form-action">
 
-        <button *ngIf="!selectedResourceClassIri"
-            mat-button
-            type="button"
-            (click)="prevStep($event)">
-            &larr;&nbsp;{{ 'appLabels.form.action.back' | translate }}
-        </button>
-        <!-- TODO: do not display the cancel button in the new project workflow concept -->
-        <button *ngIf="!beta"
-            mat-button
-            type="button"
-            (click)="closeDialog.emit()">
-            {{ 'appLabels.form.action.cancel' | translate }}
-        </button>
         <span class="fill-remaining-space"></span>
         <span>
             <button mat-raised-button

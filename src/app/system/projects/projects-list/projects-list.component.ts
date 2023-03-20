@@ -131,17 +131,11 @@ export class ProjectsListComponent implements OnInit {
      * @param code
      * @param page
      */
-    openProjectPage(iri: string, page?: 'collaboration' | 'ontologies' | 'lists') {
+    openProjectPage(iri: string) {
         const uuid = this._projectService.iriToUuid(iri);
 
         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-            () => {
-                if (page) {
-                    this._router.navigate(['/project/' + uuid + '/' + page]);
-                } else {
-                    this._router.navigate(['/project/' + uuid]); // project board
-                }
-            }
+            () => this._router.navigate(['project/' + uuid])
         );
     }
 

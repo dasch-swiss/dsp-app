@@ -1,3 +1,5 @@
+@use "config" as *;
+
 .resource-list {
   .mat-list-item {
     height: auto;
@@ -20,7 +22,7 @@
 
 .res-class-label,
 .res-prop-label {
-  color: rgba(0, 0, 0, 0.54);
+  color: $cool_gray_500;
 }
 
 .res-class-label,

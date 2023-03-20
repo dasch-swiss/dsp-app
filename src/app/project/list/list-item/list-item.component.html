@@ -3,7 +3,7 @@
 
         <!-- button to expand / close node -->
         <div class="expand-close-container">
-            <button *ngIf="projectAdmin || node.children.length !== 0" type="button" mat-icon-button (click)="toggleChildren(node.id)">
+            <button *ngIf="projectAdmin || node.children.length !== 0" type="button" color="primary" mat-icon-button (click)="toggleChildren(node.id)">
                 <mat-icon class="mat-icon-rtl-mirror">
                     {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}}
                 </mat-icon>
@@ -22,7 +22,7 @@
                        [projectIri]="projectIri" [projectUuid]="projectUuid" [projectStatus]="projectStatus" (refreshChildren)="updateParentNodeChildren($event, node.position)">
         </app-list-item>
 
-        <!-- in case of none children: show form to append new item -->
+        <!-- in the case of no children: show form to append new item -->
         <div class="child-node" *ngIf="node.id === expandedNode && node.children.length === 0 && projectStatus && projectAdmin">
             <!-- first child should have an empty list? yes -->
             <app-list-item-form class="append-child-node" [parentIri]="node.id" [projectIri]="projectIri"

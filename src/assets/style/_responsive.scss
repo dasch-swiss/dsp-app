@@ -73,6 +73,10 @@ $grid-breakpoints: (
     overflow-y: auto !important;
     /* max-height: 80% !important; */
   }
+
+  .nav-link {
+    display: none;
+  }
 }
 
 // mobile device: phone

@@ -126,9 +126,6 @@ export class OntologyComponent implements OnInit {
     // disable content on small devices
     disableContent = false;
 
-    // feature toggle for new concept
-    beta = false;
-
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
@@ -154,41 +151,32 @@ export class OntologyComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
+
         // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectUuid = params.get('uuid');
         });
 
         if (this._route.snapshot) {
-            // get ontology iri from route
-            if (this._route.snapshot.params.id) {
-                this.ontologyIri = decodeURIComponent(this._route.snapshot.params.id);
-            }
-            // get the selected view from route: display classes, properties or graph
+            // get the selected view from route: display classes or properties view
             this.view = (this._route.snapshot.params.view ? this._route.snapshot.params.view : 'classes');
         }
 
-        // get feature toggle information if url contains beta
-        this.beta = (this._route.parent.snapshot.url[0].path === 'beta');
-        if (this.beta) {
-            const uuid = this._route.parent.snapshot.params.uuid;
-            this._route.params.subscribe(params => {
-                this.loading = true;
-                this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(uuid)).subscribe(
-                    (res: ApiResponseData<ProjectResponse>) => {
-                        const shortcode = res.body.project.shortcode;
-                        const iriBase = this._ontologyService.getIriBaseUrl();
-                        const ontologyName = params['onto'];
-                        this.ontologyIri = `${iriBase}/ontology/${shortcode}/${ontologyName}/v2`;
+        const uuid = this._route.parent.snapshot.params.uuid;
+        this._route.params.subscribe(params => {
+            this.loading = true;
+            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this._projectService.uuidToIri(uuid)).subscribe(
+                (res: ApiResponseData<ProjectResponse>) => {
+                    this.project = res.body.project;
+                    const shortcode = res.body.project.shortcode;
+                    const iriBase = this._ontologyService.getIriBaseUrl();
+                    const ontologyName = params['onto'];
+                    this.ontologyIri = `${iriBase}/ontology/${shortcode}/${ontologyName}/v2`;
 
-                        this.initView();
-                    }
-                );
-            });
-        } else {
-            // to be removed once the beta view is implemented
-            this.initView();
-        }
+                    this.initView();
+                }
+            );
+        });
     }
 
     initView(): void {
@@ -198,44 +186,35 @@ export class OntologyComponent implements OnInit {
         this.session = this._sessionService.getSession();
 
         // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
+        this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
 
         // default value for projectAdmin
         this.projectAdmin = this.sysAdmin;
 
-        // get the project data from cache
-        this._cache.get(this.projectUuid).subscribe(
-            (response: ReadProject) => {
-                this.project = response;
+        // set the page title
+        this._setPageTitle();
 
-                // set the page title
-                this._setPageTitle();
+        if(this.session){
+            // is logged-in user projectAdmin?
+            this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
 
-                // is logged-in user projectAdmin?
-                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+            // or at least a project member?
+            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                (userResponse: ApiResponseData<UserResponse>) => {
+                    this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
 
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
-                    (userResponse: ApiResponseData<UserResponse>) => {
-                        this.projectMember = userResponse.body.user.projects.some(p => p.shortcode === this.project.shortcode);
-
-                        // get the ontologies for this project
-                        this.initOntologiesList();
-                    });
-
-                this.ontologyForm = this._fb.group({
-                    ontology: new UntypedFormControl({
-                        value: this.ontologyIri, disabled: false
-                    })
+                    // get the ontologies for this project
+                    this.initOntologiesList();
                 });
+        }
 
-                this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
+        this.ontologyForm = this._fb.group({
+            ontology: new UntypedFormControl({
+                value: this.ontologyIri, disabled: false
+            })
+        });
 
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loading = false;
-            }
-        );
+        this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
     }
 
     /**
@@ -256,15 +235,6 @@ export class OntologyComponent implements OnInit {
                 if (!response.ontologies.length) {
                     this.setCache();
                 } else {
-                    // in case project has only one ontology: open this ontology
-                    // because there will be no form to select an ontlogy
-                    if (response.ontologies.length === 1 && !this.beta) {
-                        // open this ontology
-                        this.openOntologyRoute(response.ontologies[0].id, this.view);
-                        this.ontologyIri = response.ontologies[0].id;
-                        this.lastModificationDate = response.ontologies[0].lastModificationDate;
-                    }
-
                     response.ontologies.forEach(ontoMeta => {
                         // set list of already existing ontology names
                         // it will be used in ontology form
@@ -494,10 +464,8 @@ export class OntologyComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             // update the view
             this.initOntologiesList();
-            if (this.beta) {
-                // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
-                window.location.reload();
-            }
+            // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+            window.location.reload();
         });
     }
 
@@ -570,10 +538,7 @@ export class OntologyComponent implements OnInit {
                                 // get the ontologies for this project
                                 this.initOntologiesList();
                                 // go to project ontology page
-                                let goto = `/project/${this.projectUuid}/ontologies/`;
-                                if (this.beta) {
-                                    goto = `/beta/project/${this.projectUuid}`;
-                                }
+                                const goto = `/project/${this.projectUuid}`;
                                 this._router.navigateByUrl(goto, { skipLocationChange: false }).then(() => {
                                     // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
                                     window.location.reload();
@@ -596,11 +561,8 @@ export class OntologyComponent implements OnInit {
                         this._dspApiConnection.v2.onto.deleteResourceClass(resClass).subscribe(
                             (response: OntologyMetadata) => {
                                 this.loading = false;
-                                this.resetOntology(this.ontologyIri);
-                                if (this.beta) {
-                                    // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
-                                    window.location.reload();
-                                }
+                                // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
+                                window.location.reload();
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);

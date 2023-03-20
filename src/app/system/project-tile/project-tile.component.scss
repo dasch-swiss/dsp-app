@@ -1,7 +1,9 @@
+@use "config" as *;
+
 .project-tile {
-  border: 1px solid #d1d5db;
+  border: 1px solid $cool_gray_300;
   border-radius: 6px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px $cool_gray_300;
 
   .project-tile-content {
     padding: 10px 5px 10px 10px;
@@ -28,18 +30,18 @@
         }
 
         .status-badge.active {
-          background-color: #99F6E4;
+          background-color: $green_200;
 
           span {
-            color: #0F766E;
+            color: $green_700;
           }
         }
 
         .status-badge.deactivated {
-          background-color: #E5E7EB;
+          background-color: $cool_gray_200;
 
           span {
-            color: #6B7280;
+            color: $cool_gray_500;
           }
         }
 
@@ -73,16 +75,20 @@
     }
 
     .title {
+      padding: 20px;
+      height: 80px;
+    }
+    .title-text {
       font-weight: 700;
       font-size: 24px;
-      color: #3b4856;
+      color: $black;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      overflow-wrap: break-word;
+      text-overflow: ellipsis;
       line-height: 28px;
-      padding: 0px 20px;
-      height: 80px;
     }
 
     .workspace-button-container {

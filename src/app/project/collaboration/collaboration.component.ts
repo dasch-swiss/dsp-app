@@ -58,11 +58,6 @@ export class CollaborationComponent implements OnInit {
         private _projectService: ProjectService) {
 
         // get the uuid of the current project
-        this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectUuid = params.get('uuid');
-        });
-
-        // in case of new beta view, we are in a grand-child route
         if (this._route.parent.parent.snapshot.url.length) {
             this._route.parent.parent.paramMap.subscribe((params: Params) => {
                 this.projectUuid = params.get('uuid');

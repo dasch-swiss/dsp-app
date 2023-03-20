@@ -58,18 +58,20 @@ export class ListItemComponent implements OnInit {
         this.session = this._session.getSession();
 
         // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
+        this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
 
-        // get the project data from cache
-        this._cache.get(this.projectUuid).subscribe(
-            (response: ReadProject) => {
-                // is logged-in user projectAdmin?
-                this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+        if(this.session){
+            // get the project data from cache
+            this._cache.get(this.projectUuid).subscribe(
+                (response: ReadProject) => {
+                    // is logged-in user projectAdmin?
+                    this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
+        }
 
         // in case of parent node: run the following request to get the entire list
         if (!this.childNode) {
@@ -110,7 +112,7 @@ export class ListItemComponent implements OnInit {
      * called when the 'refreshParent' event from ListItemFormComponent is triggered.
      *
      * @param data info about the operation that was performed on the node and should be reflected in the UI.
-     * @param firstNode states whether or not the node is a new child node; defaults to false.
+     * @param firstNode states whether the node is a new child node; defaults to false.
      */
     updateView(data: ListNodeOperation, firstNode: boolean = false) {
         // update the view by updating the existing list

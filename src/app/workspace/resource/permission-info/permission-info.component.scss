@@ -1,5 +1,5 @@
-@import "../../../../assets/style/config";
-@import "../../../../assets/style/mixins";
+@use "config" as *;
+@use "mixins" as *;
 
 .overlay-info-box {
   background: white;
@@ -33,10 +33,10 @@
 }
 
 .status {
-  color: $warn;
+  color: $red;
 
   &.checked {
-    color: $active;
+    color: $secondary;
   }
 }
 

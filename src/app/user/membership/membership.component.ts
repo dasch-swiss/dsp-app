@@ -197,11 +197,4 @@ export class MembershipComponent implements OnInit {
         return (permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1);
     }
 
-    openProject(iri: string) {
-        this.closeDialog.emit();
-        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-            () => this._router.navigate(['/project/' + this._projectService.iriToUuid(iri)])
-        );
-    }
-
 }

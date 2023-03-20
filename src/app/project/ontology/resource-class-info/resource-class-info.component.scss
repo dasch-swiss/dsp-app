@@ -1,6 +1,6 @@
 @use '@angular/material' as mat;
-@import "../../../../assets/style/config";
-@import "../../../../assets/style/mixins";
+@use "config" as *;
+@use "mixins" as *;
 
 .resource-class {
   min-height: 60px;
@@ -10,7 +10,7 @@
   @include mat.elevation(2);
   padding: 12px;
   margin: 6px;
-  background-color: #fff;
+  background-color: $white;
 
   .resource-class-header {
     cursor: move;
@@ -61,7 +61,7 @@
   &:hover,
   &:active,
   &:focus {
-    background-color: $black-14-opacity;
+    background-color: $primary_100;
 
     .gui-order {
       .display-on-hover {
@@ -73,7 +73,6 @@
       }
     }
   }
-
 
 
   .gui-order {
@@ -88,7 +87,6 @@
 
   .list-icon {
     font-size: 16px;
-    color: $primary_700;
     margin-left: -16px;
 
   }
@@ -117,4 +115,8 @@
     left: 32px;
     top: 4px;
   }
+}
+
+.link {
+  color: $primary;
 }

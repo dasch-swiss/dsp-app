@@ -1,9 +1,10 @@
-@import "../../../assets/style/config";
-@import "../../../assets/style/responsive";
+@use "config" as *;
+@use "responsive";
 
 .toolbar-header {
   height: $header-height;
-  background-color: #FFFFFF;
+  background-color: $white;
+  box-shadow: 0 4px 4px $cool_gray_300;
 }
 
 .logo {
@@ -41,6 +42,7 @@
     display: none;
   }
 }
+
 @media (max-width: 1024px) {
   .development.badge {
     font-weight: normal;

@@ -1,5 +1,5 @@
-//
-// flex layout helper
+@use "config" as *;
+@use "mixins" as *;
 @use "sass:math";
 
 .fill-remaining-space {
@@ -78,19 +78,22 @@
 }
 
 .subtitle {
-  color: rgba(0, 0, 0, 0.54);
+  color: $cool_gray_500;
   margin-bottom: 4px;
 }
 
 // --------------------------------------
 
-//
 // Link
 a {
   color: $primary;
 }
 
-.external-link {
+.external-link-dark-bg {
+  color: $white !important;
+}
+
+.external-link-light-bg {
   color: $primary_400 !important;
 }
 
@@ -144,38 +147,9 @@ a,
 
 //
 // menu
-.menu-header,
 .menu-content,
-.menu-footer {
-  width: 192px;
-}
 
 .menu-action,
-.menu-title {
-  width: 100%;
-}
-
-.menu-header {
-  background-color: $primary;
-  color: white;
-  border-bottom: 1px solid rgba($primary, 0.1);
-  border-top-left-radius: $border-radius;
-  border-top-right-radius: $border-radius;
-  display: inline-block;
-  height: 48px;
-
-  &.active {
-    background-color: $primary;
-  }
-
-  &.inactive {
-    background-color: $warn;
-  }
-
-  .menu-title {
-    text-align: center;
-  }
-}
 
 .menu-content {
   .mat-grid-tile button {
@@ -199,19 +173,6 @@ a,
 
 .border-bottom {
   border-bottom: 1px solid rgba($primary, 0.1);
-}
-
-.menu-footer {
-  .menu-action.logout {
-    background: #ebebeb;
-    height: 48px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-
-    &:hover {
-      background: $warn;
-    }
-  }
 }
 
 .mat-menu-content {
@@ -254,24 +215,24 @@ a,
 
   &.status {
     color: white;
-    background: $warn;
+    background: $red;
 
     &.active {
-      background: $active;
+      background: $green;
     }
   }
 }
 
 // status class alone is only for colorized text
 .status.text-only {
-  color: $warn;
+  color: $red;
 
   &.active {
-    color: $active;
+    color: $green;
   }
 
   &.warning {
-    color: $accent_400;
+    color: $yellow_500;
   }
 }
 
@@ -280,7 +241,7 @@ a,
 //
 // danger zone
 .app-danger-zone {
-  border: 1px solid $warn;
+  border: 1px solid $red;
   border-radius: $border-radius;
 }
 
@@ -309,7 +270,7 @@ a,
       height: 70vh;
     }
   }
-  
+
   .caption {
     padding: 10px 16px;
     white-space: nowrap;
@@ -375,7 +336,7 @@ a,
 
   .representation-error {
     .action a {
-      color: $warn !important;
+      color: $red !important;
     }
   }
 
@@ -462,7 +423,7 @@ a,
 
     //    &:not(:first-child):hover {
     &:hover {
-      background-color: darken(#fff, 15%);
+      background-color: $primary_100;
 
       .hidden {
         display: block;
@@ -561,7 +522,7 @@ $gc-small: $form-width - $gc-large - 4;
 
 .string-literal-error {
   font-size: 75%;
-  color: $warn;
+  color: $red;
   top: -14px;
   position: relative;
   text-align: left;
@@ -573,7 +534,7 @@ $gc-small: $form-width - $gc-large - 4;
 .mat-form-field-invalid {
   .mat-form-field-label,
   .mat-hint {
-    color: $warn;
+    color: $red;
   }
 }
 
@@ -592,7 +553,7 @@ $gc-small: $form-width - $gc-large - 4;
 
 .app-progress-indicator {
   g {
-    stroke: $primary_700 !important;
+    stroke: $primary !important;
   }
 }
 
@@ -631,31 +592,33 @@ $gc-small: $form-width - $gc-large - 4;
   }
 
   &.warning {
-    background-color: rgba($accent_100, 0.5);
+    background-color: $yellow_100;
   }
 
   &.error {
-    background-color: rgba($warn, 0.5);
+    background-color: rgba($red, 0.5);
   }
 
   &.success {
-    background-color: rgba($active, 0.5);
+    background-color: rgba($green, 0.5);
   }
 }
 
 .mat-snack-bar-container {
   &.success {
-    color: #000;
-    background-color: rgba($active, 0.9);
+    color: $primary_contrast;
+    background-color: rgba($primary, 0.9);
   }
+
   &.failed,
   &.error {
-    color: #fff;
-    background-color: rgba($warn, 0.9);
+    color: $red_contrast;
+    background-color: rgba($red, 0.9);
   }
+
   &.note {
-    color: #000;
-    background-color: rgba($accent_100, 0.9);
+    color: $yellow_contrast;
+    background-color: rgba($yellow, 0.9);
   }
 }
 
@@ -665,7 +628,7 @@ $gc-small: $form-width - $gc-large - 4;
 // mat tab
 
 .mat-tab-header {
-  background: #fff;
+  background: $white;
   position: sticky !important;
   z-index: 1;
 }
@@ -726,7 +689,7 @@ $gc-small: $form-width - $gc-large - 4;
       padding: 2px;
       outline: none;
       background-color: transparent;
-      color: #000000;
+      color: $primary;
       margin: 0;
       border-radius: 50%;
       transition: background-color ease-out 0.5s;

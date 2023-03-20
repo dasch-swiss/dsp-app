@@ -1,38 +1,388 @@
-$primary_50: #eceff1;
-$primary_100: #cfd8dc;
-$primary_200: #d4d3d3;
-$primary_300: #90a4ae;
-$primary_400: #78909c;
-$primary_500: #607d8b;
-$primary_600: #546e7a;
-$primary_700: #455a64;
-$primary_800: #37474f;
-$primary_900: #263238;
+@use 'sass:map';
 
-$accent_100: #ffe57f;
-$accent_200: #ffd740;
-$accent_400: #ffc400;
-$accent_700: #ffab00;
+// colors for text
+$light-text: rgb(255, 255, 255);
+$dark-text: rgba(black, 0.87);
 
-$border-radius: 4px;
+// --------------------------------------
+// palettes
+$blue_palette: (
+  50: #EAEFF3,
+  100: #D6E0E8,
+  200: #C1D1DD,
+  300: #ADC2D2,
+  400: #99B3C7,
+  500: #84A3BC,
+  600: #7094B1,
+  700: #336790,
+  800: #264C6A,
+  900: #183145,
+  A100: #D6E0E8,
+  A200: #C1D1DD,
+  A400: #99B3C7,
+  A700: #336790,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A100: $dark-text,
+    A200: $light-text,
+    A400: $light-text,
+    A700: $light-text,
+  )
+);
 
-$warn: #ef5350;
-$active: #66bb6a;
+$light_blue_palette: (
+  50: #F1F5FA,
+  100: #E3ECF5,
+  200: #D5E3F0,
+  300: #C7D9EB,
+  400: #B9D0E7,
+  500: #ABC7E2,
+  600: #9DBDDD,
+  700: #8FB4D8,
+  800: #81ABD3,
+  900: #74A2CF,
+  A200: #D5E3F0,
+  A400: #B9D0E7,
+  A600: #9DBDDD,
+  A900: #74A2CF,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A200: $dark-text,
+    A400: $light-text,
+    A600: $light-text,
+    A900: $light-text,
+  )
+);
 
-$header-height: 72px;
-$sub-header-height: 64px;
-$panel-height: 40px;
-$tab-bar-margin: 36px;
+$cold_grey_palette: (
+  50: #E9E9EA,
+  100: #D3D4D6,
+  200: #BDBFC1,
+  300: #A7AAAD,
+  400: #919599,
+  500: #7B7F84,
+  600: #656A70,
+  700: #4E555B,
+  800: #384047,
+  900: #232B33,
+  A100: #D3D4D6,
+  A200: #BDBFC1,
+  A400: #919599,
+  A700: #4E555B,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A100: $dark-text,
+    A200: $light-text,
+    A400: $light-text,
+    A700: $light-text,
+  )
+);
 
+$green_palette: (
+  50: #F0FDFA,
+  100: #CCFBF1,
+  200: #99F6E4,
+  300: #5EEAD4,
+  400: #2DD4BF,
+  500: #14B8A6,
+  600: #0D9488,
+  700: #0F766E,
+  800: #115E59,
+  900: #134E4A,
+  A100: #CCFBF1,
+  A200: #99F6E4,
+  A400: #2DD4BF,
+  A700: #0F766E,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A100: $dark-text,
+    A200: $light-text,
+    A400: $light-text,
+    A700: $light-text,
+  )
+);
+
+$amber_palette: (
+  50: #FFFBEB,
+  100: #FEF3C7,
+  200: #FDE68A,
+  300: #FCD34D,
+  400: #FBBF24,
+  500: #F59E0B,
+  600: #D97706,
+  700: #B45309,
+  800: #92400E,
+  900: #78350F,
+  A100: #FEF3C7,
+  A200: #FDE68A,
+  A400: #FBBF24,
+  A700: #B45309,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A100: $dark-text,
+    A200: $light-text,
+    A400: $light-text,
+    A700: $light-text,
+  )
+);
+
+$velvet_red_palette: (
+  50: #FEF2F2,
+  100: #F9F3F3,
+  200: #FEF2F2,
+  300: #FEE2E2,
+  400: #FCA5A5,
+  500: #F87171,
+  600: #EF4444,
+  700: #E11D48,
+  800: #B9193C,
+  900: #991633,
+  A100: #F9F3F3,
+  A200: #FEF2F2,
+  A400: #FCA5A5,
+  A700: #E11D48,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A100: $dark-text,
+    A200: $light-text,
+    A400: $light-text,
+    A700: $light-text,
+  )
+);
+
+$cool_gray_palette: (
+  50: #F9FAFB,
+  100: #F3F4F6,
+  200: #E5E7EB,
+  300: #D1D5DB,
+  400: #9CA3AF,
+  500: #6B7280,
+  600: #4B5563,
+  700: #374151,
+  800: #1F2937,
+  900: #111827,
+  A100: #F3F4F6,
+  A200: #E5E7EB,
+  A400: #9CA3AF,
+  A700: #374151,
+  contrast: (
+    50: $dark-text,
+    100: $dark-text,
+    200: $dark-text,
+    300: $light-text,
+    400: $light-text,
+    500: $light-text,
+    600: $light-text,
+    700: $light-text,
+    800: $light-text,
+    900: $light-text,
+    A100: $dark-text,
+    A200: $light-text,
+    A400: $light-text,
+    A700: $light-text,
+  )
+);
+
+// --------------------------------------
+// variables for all colors from the palettes
+$primary_50:  map.get($blue_palette, 50);
+$primary_100: map.get($blue_palette, 100);
+$primary_200: map.get($blue_palette, 200);
+$primary_300: map.get($blue_palette, 300);
+$primary_400: map.get($blue_palette, 400);
+$primary_500: map.get($blue_palette, 500);
+$primary_600: map.get($blue_palette, 600);
+$primary_700: map.get($blue_palette, 700);
+$primary_800: map.get($blue_palette, 800);
+$primary_900: map.get($blue_palette, 900);
+$primary_A100: map.get($blue_palette, A100);
+$primary_A200: map.get($blue_palette, A200);
+$primary_A400: map.get($blue_palette, A400);
+$primary_A700: map.get($blue_palette, A700);
+
+$secondary_50:  map.get($light_blue_palette, 50);
+$secondary_100: map.get($light_blue_palette, 100);
+$secondary_200: map.get($light_blue_palette, 200);
+$secondary_300: map.get($light_blue_palette, 300);
+$secondary_400: map.get($light_blue_palette, 400);
+$secondary_500: map.get($light_blue_palette, 500);
+$secondary_600: map.get($light_blue_palette, 600);
+$secondary_700: map.get($light_blue_palette, 700);
+$secondary_800: map.get($light_blue_palette, 800);
+$secondary_900: map.get($light_blue_palette, 900);
+$secondary_A200: map.get($light_blue_palette, A200);
+$secondary_A400: map.get($light_blue_palette, A400);
+$secondary_A600: map.get($light_blue_palette, A600);
+$secondary_A900: map.get($light_blue_palette, A900);
+
+$cold_grey_50: map.get($cold_grey_palette, 50);
+$cold_grey_100: map.get($cold_grey_palette, 100);
+$cold_grey_200: map.get($cold_grey_palette, 200);
+$cold_grey_300: map.get($cold_grey_palette, 300);
+$cold_grey_400: map.get($cold_grey_palette, 400);
+$cold_grey_500: map.get($cold_grey_palette, 500);
+$cold_grey_600: map.get($cold_grey_palette, 600);
+$cold_grey_700: map.get($cold_grey_palette, 700);
+$cold_grey_800: map.get($cold_grey_palette, 800);
+$cold_grey_900: map.get($cold_grey_palette, 900);
+$cold_grey_A100: map.get($cold_grey_palette, A100);
+$cold_grey_A200: map.get($cold_grey_palette, A200);
+$cold_grey_A400: map.get($cold_grey_palette, A400);
+$cold_grey_A700: map.get($cool_gray_palette, A700);
+
+$green_50: map.get($green_palette, 50);
+$green_100: map.get($green_palette, 100);
+$green_200: map.get($green_palette, 200);
+$green_300: map.get($green_palette, 300);
+$green_400: map.get($green_palette, 400);
+$green_500: map.get($green_palette, 500);
+$green_600: map.get($green_palette, 600);
+$green_700: map.get($green_palette, 700);
+$green_800: map.get($green_palette, 800);
+$green_900: map.get($green_palette, 900);
+$green_A100: map.get($green_palette, A100);
+$green_A200: map.get($green_palette, A200);
+$green_A400: map.get($green_palette, A400);
+$green_A700: map.get($green_palette, A700);
+
+$yellow_50: map.get($amber_palette, 50);
+$yellow_100: map.get($amber_palette, 100);
+$yellow_200: map.get($amber_palette, 200);
+$yellow_300: map.get($amber_palette, 300);
+$yellow_400: map.get($amber_palette, 400);
+$yellow_500: map.get($amber_palette, 500);
+$yellow_600: map.get($amber_palette, 600);
+$yellow_700: map.get($amber_palette, 700);
+$yellow_800: map.get($amber_palette, 800);
+$yellow_900: map.get($amber_palette, 900);
+$yellow_A100: map.get($amber_palette, A100);
+$yellow_A200: map.get($amber_palette, A200);
+$yellow_A400: map.get($amber_palette, A400);
+$yellow_A700: map.get($amber_palette, A700);
+
+$red_50: map.get($velvet_red_palette, 50);
+$red_100: map.get($velvet_red_palette, 100);
+$red_200: map.get($velvet_red_palette, 200);
+$red_300: map.get($velvet_red_palette, 300);
+$red_400: map.get($velvet_red_palette, 400);
+$red_500: map.get($velvet_red_palette, 500);
+$red_600: map.get($velvet_red_palette, 600);
+$red_700: map.get($velvet_red_palette, 700);
+$red_800: map.get($velvet_red_palette, 800);
+$red_900: map.get($velvet_red_palette, 900);
+$red_A100: map.get($velvet_red_palette, A100);
+$red_A200: map.get($velvet_red_palette, A200);
+$red_A400: map.get($velvet_red_palette, A400);
+$red_A700: map.get($velvet_red_palette, A700);
+
+$cool_gray_50: map.get($cool_gray_palette, 50);
+$cool_gray_100: map.get($cool_gray_palette, 100);
+$cool_gray_200: map.get($cool_gray_palette, 200);
+$cool_gray_300: map.get($cool_gray_palette, 300);
+$cool_gray_400: map.get($cool_gray_palette, 400);
+$cool_gray_500: map.get($cool_gray_palette, 500);
+$cool_gray_600: map.get($cool_gray_palette, 600);
+$cool_gray_700: map.get($cool_gray_palette, 700);
+$cool_gray_800: map.get($cool_gray_palette, 800);
+$cool_gray_900: map.get($cool_gray_palette, 900);
+$cool_gray_A100: map.get($cool_gray_palette, A100);
+$cool_gray_A200: map.get($cool_gray_palette, A200);
+$cool_gray_A400: map.get($cool_gray_palette, A400);
+$cool_gray_A700: map.get($cool_gray_palette, A700);
+
+// --------------------------------------
+// default colors and default contrast colors
+$primary: $primary_700;
+$primary_contrast: map.get(map.get($blue_palette, contrast), 700);
+
+$secondary: $secondary_900;
+$secondary_contrast: map.get(map.get($light_blue_palette, contrast), 900);
+
+$green: $green_600;
+$green_contrast: map.get(map.get($green_palette, contrast), 600);
+
+$yellow: $yellow_400;
+$yellow_contrast: map.get(map.get($amber_palette, contrast), 400);
+
+$red: $red_700;
+$red_contrast: map.get(map.get($velvet_red_palette, contrast), 700);
+
+$cool_gray: $cool_gray_500;
+$cool_gray_contrast: map.get(map.get($cool_gray_palette, contrast), 500);
+
+$cold_grey: $cold_grey_200;
+$cold_grey_contrast: map.get(map.get($cool_gray_palette, contrast), 200);
+
+// --------------------------------------
 // color variables
-$bright: rgba(249, 249, 249, 1);
-$grey: rgba(184, 184, 184, 1);
-$dark: rgba(41, 41, 41, 1);
+$white: rgb(255, 255, 255);
+$bright: rgb(249, 249, 249);
+$grey: rgb(184, 184, 184);
+$dark: rgb(41, 41, 41);
 $black: rgb(11, 11, 11);
 $black-12-opacity: rgba($black, 0.12);
 $black-14-opacity: rgba($black, 0.14);
 $black-20-opacity: rgba($black, 0.2);
 $black-60-opacity: rgba($black, 0.6);
 
-// general border color
-$border-color: rgb(235, 235, 235);
+// --------------------------------------
+// other variables
+$border-radius: 4px;
+$header-height: 72px;
+$sub-header-height: 64px;
+$panel-height: 40px;
+$tab-bar-margin: 36px;

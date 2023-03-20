@@ -50,6 +50,11 @@
             "styles": [
               "src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/assets/style/"
+              ]
+            },
             "scripts": [
               "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
             ]
@@ -181,6 +186,11 @@
             "styles": [
               "src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/assets/style/"
+              ]
+            },
             "scripts": [
               "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
             ],

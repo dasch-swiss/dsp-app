@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClassDefinition, KnoraApiConnection, CountQueryResponse, ApiResponseError, Constants } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
@@ -12,11 +12,12 @@ import { OntologyService } from 'src/app/project/ontology/ontology.service';
     templateUrl: './ontology-class-item.component.html',
     styleUrls: ['./ontology-class-item.component.scss']
 })
-export class OntologyClassItemComponent implements OnInit {
-
+export class OntologyClassItemComponent implements OnInit, OnDestroy {
     @Input() resClass: ClassDefinition;
 
     @Input() projectMember: boolean;
+
+    readonly MAX_LABEL_CHAR = 25;
 
     gravsearch: string;
 
@@ -26,7 +27,7 @@ export class OntologyClassItemComponent implements OnInit {
 
     icon: string;
 
-    componentCommsSubscriptions: Subscription[]= [];
+    componentCommsSubscriptions: Subscription[] = [];
 
     // i18n setup
     itemPluralMapping = {
@@ -52,7 +53,7 @@ export class OntologyClassItemComponent implements OnInit {
         const uuid = this._route.snapshot.params.uuid;
         const splitIri = this.resClass.id.split('#');
         const ontologyName = this._ontologyService.getOntologyName(splitIri[0]);
-        this.link = `/beta/project/${uuid}/ontology/${ontologyName}/${splitIri[1]}`;
+        this.link = `/project/${uuid}/ontology/${ontologyName}/${splitIri[1]}`;
 
         this.gravsearch = this._setGravsearch(this.resClass.id);
 
@@ -66,20 +67,25 @@ export class OntologyClassItemComponent implements OnInit {
                 this._getSearchCount();
             }
         ));
+
+        this.componentCommsSubscriptions.push(this._componentCommsService.on(
+            Events.resourceCreated, () => {
+                this._getSearchCount();
+            }
+        ));
+    }
+
+    ngOnDestroy(): void {
+        this.componentCommsSubscriptions.forEach(sub => sub.unsubscribe());
     }
 
     open(route: string) {
         this._router.navigateByUrl(route);
     }
 
-    /**
-     * given an Html element, compare the scrollHeight and the clientHeight
-     *
-     * @param elem the element which has the line-clamp css
-     * @returns inverse of comparison between the scrollHeight and the clientHeight of elem
-     */
-    compareElementHeights(elem: HTMLElement): boolean {
-        return !(elem.scrollHeight > elem.clientHeight);
+
+    trimLabel(fullString: string) {
+        return fullString.length > this.MAX_LABEL_CHAR ? `${fullString.slice(0, this.MAX_LABEL_CHAR)}...`: fullString;
     }
 
     private _setGravsearch(iri: string): string {

@@ -2,7 +2,7 @@
     (ngSubmit)="submitData()"
     class="form">
     <div class="form-content">
-        <h3 *ngIf="beta && !iri">Create new ontology</h3>
+        <h3 *ngIf="!iri">Create new ontology</h3>
         <mat-form-field class="large-field ontology-name">
             <input matInput
                 class="ontology-name"
@@ -45,12 +45,6 @@
         </mat-form-field>
 
         <div class="form-panel form-action">
-            <button mat-button
-                type="button"
-                (click)="closeDialog.emit()"
-                *ngIf="!beta || iri">
-                {{ 'appLabels.form.action.cancel' | translate }}
-            </button>
             <span class="fill-remaining-space"></span>
             <span>
                 <button mat-raised-button

@@ -1,62 +1,11 @@
-<div *ngIf="(projectMember || projectAdmin) && !disableContent">
+<div *ngIf="!disableContent">
 
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
-    <!-- toolbar: select ontology -->
-    <div class="content large middle" *ngIf="!loading && !beta">
-        <div class="app-toolbar transparent more-space-bottom">
-            <div class="app-toolbar-row toolbar-subtitle">
-                <h3 class="mat-body subtitle">Define your metadata</h3>
-            </div>
-            <div class="app-toolbar-row toolbar-form">
-                <h2 class="mat-title">
-                    <span *ngIf="ontologies.length > 0">
-                        Project has {{ontologies.length | i18nPlural: itemPluralMapping['ontology']}}
-                    </span>
-                    <span *ngIf="ontologies.length === 0 || !ontologies">
-                        It seems there's no data model defined yet
-                    </span>
-                </h2>
-
-                <span class="fill-remaining-space"></span>
-
-                <span class="app-toolbar-action" [class.select-form]="ontologies.length">
-                    <form [formGroup]="ontologyForm" class="form" *ngIf="!loading && ontologies.length > 1">
-
-                        <!-- list to select ontology -->
-                        <div class="form-content">
-                            <mat-form-field class="large-field select-ontology" *ngIf="ontologies.length">
-                                <mat-label>
-                                    Open from list...
-                                </mat-label>
-                                <mat-select [formControl]="ontologyForm.controls['ontology']" [(value)]="ontologyIri">
-                                    <mat-option *ngFor="let onto of ontologies" [value]="onto.id">
-                                        {{onto.label}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </form>
-                </span>
-
-                <span class="fill-remaining-space"></span>
-
-                <span class="app-toolbar-action" [class.select-form]="ontologies.length"
-                    *ngIf="project.status && projectAdmin">
-                    <button mat-raised-button color="primary" class="create-data-model-btn"
-                        (click)="openOntologyForm('createOntology')">
-                        {{ontologies.length ? 'New data model' : 'Create your first data model'}}
-                    </button>
-                </span>
-            </div>
-        </div>
-    </div>
-
     <!-- main content: overview shows resource classes of ontology -->
-    <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor" [class.beta]="beta">
+    <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
 
-        <!-- TODO: add here the select ontology functionality -->
-        <mat-toolbar class="ontology-editor-header" [class.beta]="beta">
+        <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
                 <span class="ontology-info">
                     <h3 class="mat-title"
@@ -71,7 +20,6 @@
                         </span>
                         <ng-template #noModificationDate>
                             <span class="note warning">
-                                <!-- <mat-icon>report</mat-icon> -->
                                 This data model can't be edited because of missing "lastModificationDate"!
                             </span>
                         </ng-template>
@@ -80,30 +28,12 @@
 
                 <span class="fill-remaining-space"></span>
 
-                <!-- toggle view -->
-                <!-- DSP-1560: disable graph view option in ontology editor
-                <span class="ontology-actions">
-                    <p class="mat-caption space-reducer">Display as</p>
-                    <button mat-button [class.active]="view === 'classes' || view === 'properties'"
-                        (click)="openOntologyRoute(ontology.id, 'classes')">
-                        <mat-icon>view_module</mat-icon>
-                        Grid
-                    </button>
-                    <button mat-button [class.active]="view === 'graph'"
-                        (click)="openOntologyRoute(ontology.id, 'graph')">
-                        <mat-icon>scatter_plot</mat-icon>
-                        Graph
-                    </button>
-                </span>
-                -->
-
                 <!-- edit options -->
-                <!-- TODO: move edit and delete function to config menu and add "Create new data model" to this place -->
                 <span class="ontology-actions project-actions" *ngIf="project.status">
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
                         [matTooltip]="(projectAdmin ? (ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
-                        <button mat-button [disabled]="!ontology.lastModificationDate || !projectAdmin"
+                        <button color="primary" mat-button [disabled]="!ontology.lastModificationDate || !projectAdmin"
                             (click)="$event.stopPropagation(); openOntologyForm('editOntology', ontology.id)">
                             <mat-icon>edit</mat-icon>
                             Edit
@@ -111,7 +41,7 @@
                     </span>
                     <span
                         [matTooltip]="(projectAdmin ? (ontology.lastModificationDate ? (ontologyCanBeDeleted ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!') : null)">
-                        <button mat-button
+                        <button color="warn" mat-button
                             [disabled]="(!ontology.lastModificationDate || !ontologyCanBeDeleted) || (!projectAdmin || !sysAdmin)"
                             (click)="$event.stopPropagation(); delete('Ontology', {iri: ontologyIri, label: ontology.label})">
                             <mat-icon>delete</mat-icon>
@@ -165,7 +95,6 @@
                             <ng-container *ngFor="let type of defaultProperties">
                                 <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                                 <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
-                                    <!-- <button *ngFor="let subItem of my_menu[mainItem]" mat-menu-item>{{ subItem }}</button> -->
                                     <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele"
                                         [matTooltip]="ele.description" matTooltipPosition="before"
                                         (click)="openPropertyForm('createProperty', {propType: ele})">
@@ -214,10 +143,6 @@
         <app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></app-progress-indicator>
     </div>
 
-</div>
-
-<div *ngIf="!(projectMember || projectAdmin) && !disableContent && !loading" class="content large middle">
-    <app-status [status]="403"></app-status>
 </div>
 
 <app-status *ngIf="disableContent" [status]="204"></app-status>

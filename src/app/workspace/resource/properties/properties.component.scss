@@ -1,4 +1,4 @@
-@import "../../../../assets/style/config";
+@use "config" as *;
 
 // toolbar
 .toolbar,
@@ -13,14 +13,15 @@
   color: rgba(0, 0, 0, 0.87);
 }
 .toolbar {
-  background: $primary_200;
+  background: $primary_50;
 
   &.deleted {
-    background: $warn;
+    background: $red;
   }
 
   .label {
     margin: 0 !important;
+    color: $black;
     max-width: 48%;
     white-space: nowrap;
     overflow: hidden;
@@ -156,7 +157,7 @@
 }
 
 .label {
-  color: rgba(0, 0, 0, 0.54);
+  color: $cool_gray_500;
 }
 
 :host::ng-deep .mat-paginator-container {

@@ -2,7 +2,7 @@
     <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
     <div *ngIf="!loading" class="form-content list-info">
-        <h3 *ngIf="beta && mode =='create'">Create new list</h3>
+        <h3 *ngIf="mode =='create'">Create new list</h3>
         <!-- list label -->
         <app-string-literal-input [placeholder]="'List label *'" [value]="labels"
             (dataChanged)="handleData($event, 'labels')" (focus)="isLabelTouched = $event">
@@ -18,9 +18,6 @@
         <mat-hint class="invalid-form string-literal-error" *ngIf="commentInvalidMessage && isCommentTouched">{{ commentInvalidMessage }}</mat-hint>
 
         <div class="form-panel form-action">
-            <button *ngIf="!beta" mat-button type="button" (click)="closeDialog.emit(list)">
-                {{ 'appLabels.form.action.cancel' | translate }}
-            </button>
             <span class="fill-remaining-space"></span>
             <span>
                 <button mat-raised-button type="submit" color="primary" [disabled]="saveButtonDisabled"

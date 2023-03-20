@@ -1,0 +1,135 @@
+<app-progress-indicator *ngIf="loading"></app-progress-indicator>
+
+<div *ngIf="!loading && project"
+    class="content large middle">
+    <div>
+        <p>Project Description</p>
+    </div>
+    <!--  mobile version: status and edit icon displayed before the title -->
+    <div class="app-toolbar-mobile">
+        <span class="app-toolbar-action-edit"
+            *ngIf="projectAdmin">
+            <button mat-icon-button
+                *ngIf="projectAdmin && project.status && !formOpen"
+                class="right"
+                color="primary">
+                <mat-icon>edit_square</mat-icon>
+                Edit project description
+            </button>
+        </span>
+    </div>
+
+    <!-- desktop and tablet version -->
+    <div class="app-toolbar transparent more-space-bottom">
+        <div class="app-toolbar-row">
+            <h3 class="mat-body subtitle">
+                Project {{ project.shortcode }} | {{ project.shortname | uppercase }}
+            </h3>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action">
+                <button mat-button
+                    *ngIf="projectAdmin && project.status && !formOpen"
+                    class="right"
+                    (click)="toggleForm()"
+                    color="primary">
+                    <mat-icon>edit_square</mat-icon>
+                    Edit project description
+                </button>
+            </span>
+        </div>
+    </div>
+
+    <div *ngIf="!formOpen" class="description-rm">
+        <div>
+            <p>{{project.longname}}</p>
+        </div>
+    
+        <!-- description -->
+        <section class="project description"
+            *ngFor="let desc of project.description">
+            <div [innerHtml]="desc.value"></div>
+        </section>
+    
+        <mat-divider *ngIf="project.keywords.length > 0"></mat-divider>
+    
+        <!-- keywords -->
+        <section class="project keywords">
+            <mat-chip-list>
+                <mat-chip *ngFor="let k of project.keywords">{{k}}</mat-chip>
+            </mat-chip-list>
+        </section>
+    </div>
+
+    <div *ngIf="formOpen" class="description-form">
+        <form [formGroup]="form" (ngSubmit)="submitData()">
+            <div>
+                <!-- long name -->
+                <mat-form-field class="large-field">
+                    <input matInput
+                        placeholder="{{'appLabels.form.project.general.longname' | translate}}"
+                        [formControl]="form.controls['longname']">
+                    <mat-hint *ngIf="formErrors.longname">
+                        {{ formErrors.longname }}
+                    </mat-hint>
+                </mat-form-field>
+
+                <!-- description -->
+                <app-string-literal-input placeholder="{{'appLabels.form.project.general.description' | translate}} *"
+                    [disabled]="!project.status"
+                    [textarea]="true"
+                    [value]="description"
+                    (dataChanged)="getStringLiteral($event)">
+                </app-string-literal-input>
+                <mat-hint class="string-literal-error"
+                    *ngIf="formErrors.description">
+                    {{ formErrors.description }}
+                </mat-hint>
+
+                <!-- keywords -->
+                <mat-form-field class="large-field">
+                    <mat-chip-list #chipList>
+                        <mat-chip *ngFor="let tag of keywords"
+                            [selectable]="true"
+                            [removable]="true"
+                            (removed)="removeKeyword(tag)">
+                            {{tag}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                        <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} {{'*'}}"
+                            [formControl]="form.controls['keywords']"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+                            [matChipInputAddOnBlur]="true"
+                            (matChipInputTokenEnd)="addKeyword($event)">
+                    </mat-chip-list>
+                </mat-form-field>
+            </div>
+
+            <div class="form-panel form-action">
+                <span>
+                    <button mat-button
+                        type="reset"
+                        (click)="formOpen = false">
+                        {{ 'appLabels.form.action.cancel' | translate }}
+                    </button>
+                </span>
+                <span class="fill-remaining-space"></span>
+                <span>
+                    <button mat-raised-button
+                        type="submit"
+                        color="primary"
+                        [disabled]="!form.valid || !this.description.length || !this.keywords.length">
+    
+                        <app-progress-indicator [color]="'white'"
+                            [status]="0"
+                            *ngIf="loading"
+                            class="submit-progress">
+                        </app-progress-indicator>
+                        <span>{{ 'appLabels.form.action.update' | translate }}</span>
+                    </button>
+                </span>
+            </div>
+        </form>
+    </div>
+
+</div>

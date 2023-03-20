@@ -13,7 +13,7 @@
             </div>
             <div *ngIf="sysAdmin"
                 class="settings">
-                <button class="settings-button"
+                <button color="primary" class="settings-button"
                     mat-icon-button
                     (click)="navigateTo(project.id, 'settings')">
                     <mat-icon>settings</mat-icon>
@@ -22,11 +22,11 @@
         </div>
 
         <div class="icon">
-            <mat-icon>redeem</mat-icon>
+            <mat-icon color="primary">redeem</mat-icon>
         </div>
 
         <div class="title">
-            <p>{{project.longname}}</p>
+            <p class="title-text">{{project.longname}}</p>
         </div>
 
         <div class="workspace-button-container">
@@ -34,7 +34,7 @@
                 mat-flat-button
                 [color]="'primary'"
                 (click)="navigateTo(project.id, 'workspace')">
-                Go to dashboard
+                Browse Data
             </button>
         </div>
     </div>

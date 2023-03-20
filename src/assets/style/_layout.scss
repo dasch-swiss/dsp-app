@@ -1,4 +1,5 @@
-//
+@use "config" as *;
+
 // general app layout
 .app {
   display: flex;
@@ -59,7 +60,8 @@
   height: calc(100vh - #{$header-height});
 
   .project-nav {
-    width: 290px;
+    width: 315px;
+    background-color: #fafafa;
 
     .project-title {
       padding: 20px 16px 20px 16px;
@@ -68,7 +70,7 @@
         font-size: 24px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;  
+        -webkit-box-orient: vertical;
         overflow: hidden;
         margin: 0px;
       }
@@ -101,7 +103,7 @@
         p {
           display: -webkit-box;
           -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;  
+          -webkit-box-orient: vertical;
           overflow: hidden;
         }
       }
@@ -113,10 +115,22 @@
       .mat-expansion-panel-header {
         padding: 0 16px !important; // override default value
         height: auto !important; // override default value
+
+        .mat-expansion-panel-header-title, .mat-expansion-indicator {
+          color: $primary;
+        }
+
+        .mat-expansion-indicator::after {
+          color: $primary!important;
+        }
       }
 
       .mat-expansion-panel-header.mat-expanded {
-        background: #cacaca;
+        background: $primary_100;
+      }
+
+      .mat-expansion-panel-header:hover {
+        background-color: $primary_100;
       }
 
       .sidenav-panel-header{
@@ -130,7 +144,7 @@
           p {
             display: -webkit-box;
             -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;  
+            -webkit-box-orient: vertical;
             overflow: hidden;
           }
         }
@@ -191,10 +205,6 @@
           display: none;
           right: 0;
         }
-      }
-
-      .label {
-        margin-left: 20px;
       }
     }
 

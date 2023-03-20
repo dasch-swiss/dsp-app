@@ -3,7 +3,7 @@
     <app-string-literal-input class="list-item-label" [placeholder]="placeholder" [value]="[]"
         (dataChanged)="handleData($event)" [language]="language" (enter)="createChildNode()">
     </app-string-literal-input>
-    <button *ngIf="!loading" mat-icon-button matSuffix [disabled]="!labels?.length" class="add-node-btn"
+    <button *ngIf="!loading" color="primary" mat-icon-button matSuffix [disabled]="!labels?.length" class="add-node-btn"
         (click)="createChildNode()">
         <mat-icon>
             add

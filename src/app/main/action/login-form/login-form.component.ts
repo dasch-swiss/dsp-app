@@ -174,7 +174,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                                     // if user is NOT a sysAdmin and only a member of one project, redirect them to that projects dashboard
                                     if(!this.session.user.sysAdmin && userResponse.body.user.projects.length === 1) {
                                         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-                                            () => this._router.navigate(['/beta/project/' + uuid])
+                                            () => this._router.navigate(['/project/' + uuid])
                                         );
                                     } else { // if user is a sysAdmin or a member of multiple projects, redirect them to the overview
                                         this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(

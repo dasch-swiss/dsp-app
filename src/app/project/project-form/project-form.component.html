@@ -98,7 +98,8 @@
 
         <div class="form-panel form-action">
             <span>
-                <button mat-button
+                <button color="primary"
+                    mat-button
                     type="reset"
                     (click)="closeDialog.emit()">
                     {{ 'appLabels.form.action.cancel' | translate }}
@@ -116,7 +117,6 @@
                         *ngIf="loading"
                         class="submit-progress">
                     </app-progress-indicator>
-                    <mat-icon *ngIf="success && !loading">close</mat-icon>
                     <span *ngIf="projectIri">{{ 'appLabels.form.action.update' | translate }}</span>
                     <span *ngIf="!projectIri">{{ 'appLabels.form.action.submit' | translate }}</span>
                 </button>
