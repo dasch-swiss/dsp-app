@@ -1,0 +1,72 @@
+@use "config" as *;
+
+:host {
+  width: 100%;
+}
+
+.property-info.standalone {
+  padding: 16px;
+}
+
+.upper-prop-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.additional-info {
+  color: $primary_700;
+}
+
+.flex {
+  display: flex !important;
+}
+
+.mat-line {
+  &.title {
+    line-height: 1.8;
+    .mat-icon {
+      top: 4px;
+      position: relative;
+    }
+  }
+
+  &.info {
+    font-size: small;
+
+    .mat-caption {
+      color: rgba($dark, 0.7);
+    }
+
+    .mat-icon {
+      width: 12px;
+      height: 12px;
+      font-size: small;
+      top: 2px;
+      position: relative;
+    }
+  }
+
+  &.with-line-break {
+    white-space: normal;
+  }
+}
+
+.edit-menu {
+  align-self: flex-end;
+  align-items: center;
+}
+
+.not-used {
+  color: $red;
+  font-size: 12px;
+}
+
+.type {
+  margin-right: 12px;
+}
+
+.menu-icon-button {
+  font-size: medium;
+  cursor: pointer;
+}

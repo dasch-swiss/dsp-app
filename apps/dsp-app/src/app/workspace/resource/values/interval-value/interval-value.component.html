@@ -1,0 +1,49 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <span class="rm-value interval-start"
+        >Start: {{ valueFormControl.value?.start }}</span
+    >
+    <span class="rm-value interval-end"
+        >End: {{ valueFormControl.value?.end }}</span
+    >
+    <span class="rm-comment" *ngIf="shouldShowComment">{{
+        commentFormControl.value
+    }}</span>
+</span>
+<ng-template #showForm>
+    <span [formGroup]="form">
+        <mat-form-field
+            class="large-field child-value-component"
+            floatLabel="never"
+        >
+            <app-interval-input
+                #intervalInput
+                [formControlName]="'value'"
+                class="value"
+                [errorStateMatcher]="matcher"
+                [valueRequiredValidator]="valueRequiredValidator"
+            ></app-interval-input>
+            <mat-error
+                *ngIf="
+                    valueFormControl.hasError('valueNotChanged') &&
+                    (valueFormControl.touched || valueFormControl.dirty)
+                "
+            >
+                <span class="custom-error-message"
+                    >New value must be different than the current value.</span
+                >
+            </mat-error>
+            <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+                <span class="custom-error-message"
+                    >This value already exists for this property. Duplicate
+                    values are not allowed.</span
+                >
+            </mat-error>
+        </mat-form-field>
+        <app-comment-form
+            *ngIf="!commentDisabled && valueFormControl && commentFormControl"
+            [valueFormControlHasError]="hasError()"
+            [(commentFormControl)]="commentFormControl"
+            [valueFormControlValue]="valueFormControl.value"
+        ></app-comment-form>
+    </span>
+</ng-template>

@@ -1,0 +1,14 @@
+@use "config" as *;
+
+.active {
+  color: $secondary;
+  font-weight: bolder;
+}
+
+.right.sort {
+  float: right;
+
+  .mat-icon {
+    transform: scale(-1, 1);
+  }
+}

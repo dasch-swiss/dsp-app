@@ -1,0 +1,13 @@
+@use "config" as *;
+
+.read-mode-view .mat-icon,
+.boolValue {
+  margin-top: 4px;
+  margin-left: 4px;
+  display: block;
+  color: $primary;
+
+  &.more-space {
+    margin-top: 16px;
+  }
+}

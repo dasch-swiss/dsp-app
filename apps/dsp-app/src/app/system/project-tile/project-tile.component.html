@@ -1,0 +1,47 @@
+<div class="project-tile">
+    <div class="project-tile-content">
+        <div class="top-bar">
+            <div class="status">
+                <div
+                    *ngIf="project.status === true"
+                    class="status-badge active"
+                >
+                    <span>Active</span>
+                </div>
+                <div
+                    *ngIf="project.status === false"
+                    class="status-badge deactivated"
+                >
+                    <span>Deactivated</span>
+                </div>
+            </div>
+            <div *ngIf="sysAdmin"
+                class="settings">
+                <button color="primary" class="settings-button"
+                    mat-icon-button
+                    (click)="navigateTo(project.id, 'settings')"
+                >
+                    <mat-icon>settings</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="icon">
+            <mat-icon color="primary">redeem</mat-icon>
+        </div>
+
+        <div class="title">
+            <p class="title-text">{{project.longname}}</p>
+        </div>
+
+        <div class="workspace-button-container">
+            <button
+                class="workspace-button"
+                mat-flat-button
+                [color]="'primary'"
+                (click)="navigateTo(project.id, 'workspace')">
+                Browse Data
+            </button>
+        </div>
+    </div>
+</div>

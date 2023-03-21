@@ -1,0 +1,17 @@
+.search-input {
+  .value {
+    width: calc(100% - 32px);
+  }
+
+  .progress-indicator {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    app-progress-indicator {
+      transform: scale(0.75);
+      display: block;
+    }
+  }
+}

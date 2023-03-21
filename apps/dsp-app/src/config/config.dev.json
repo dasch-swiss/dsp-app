@@ -1,0 +1,31 @@
+{
+  "dspRelease": "work.in.progress",
+  "apiProtocol": "http",
+  "apiHost": "0.0.0.0",
+  "apiPort": 3333,
+  "apiPath": "",
+  "iiifProtocol": "http",
+  "iiifHost": "0.0.0.0",
+  "iiifPort": 1024,
+  "iiifPath": "",
+  "geonameToken": "knora",
+  "jsonWebToken": "",
+  "logErrors": true,
+  "zioPrefix": ":5555",
+  "zioEndpoints": ["/admin/projects"],
+  "iriBase": "http://rdfh.ch",
+  "instrumentation": {
+    "environment": "local-dev",
+    "dataDog": {
+      "enabled": false,
+      "applicationId": "",
+      "clientToken": "",
+      "site": "",
+      "service": ""
+    },
+    "rollbar": {
+      "enabled": false,
+      "accessToken": ""
+    }
+  }
+}

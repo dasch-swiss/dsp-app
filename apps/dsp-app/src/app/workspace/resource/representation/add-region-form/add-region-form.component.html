@@ -1,0 +1,40 @@
+<form [formGroup]="regionForm" class="form-content small-form">
+    <mat-form-field class="medium-field">
+        <mat-label>Label</mat-label>
+        <input matInput formControlName="label" />
+    </mat-form-field>
+    <mat-form-field class="medium-field">
+        <mat-label>Comment</mat-label>
+        <textarea matInput rows="7" formControlName="comment"></textarea>
+    </mat-form-field>
+    <mat-form-field class="medium-field without-border">
+        <mat-label>Color *</mat-label>
+        <app-color-picker #colorInput [formControlName]="'color'" class="value">
+        </app-color-picker>
+    </mat-form-field>
+    <mat-form-field class="hidden">
+        <mat-label>Is Region Of</mat-label>
+        <input matInput disabled [value]="resourceIri" />
+    </mat-form-field>
+    <!-- Further inputs would be status, lineColor and lineWidth if we want to have these options-->
+    <div class="form-action form-panel medium-field">
+        <span>
+            <button mat-button type="button" mat-dialog-close>
+                {{ 'appLabels.form.action.cancel' | translate }}
+            </button>
+        </span>
+        <span class="fill-remaining-space"></span>
+        <span>
+            <button
+                mat-raised-button
+                [mat-dialog-close]="regionForm.value"
+                type="button"
+                color="primary"
+                [disabled]="!regionForm.valid"
+                class="form-submit"
+            >
+                Submit
+            </button>
+        </span>
+    </div>
+</form>

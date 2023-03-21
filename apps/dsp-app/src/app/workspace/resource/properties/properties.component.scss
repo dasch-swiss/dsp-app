@@ -1,0 +1,194 @@
+@use "config" as *;
+
+// toolbar
+.toolbar,
+.infobar {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0 16px;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.87);
+}
+.toolbar {
+  background: $primary_50;
+
+  &.deleted {
+    background: $red;
+  }
+
+  .label {
+    margin: 0 !important;
+    color: $black;
+    max-width: 48%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .action button {
+    border-radius: 0;
+  }
+}
+
+.infobar {
+  height: 24px;
+  flex-wrap: wrap;
+}
+
+.clipboard-arkurl {
+  width: 264px;
+  height: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 4px 0 0 4px;
+}
+.ark-url-label {
+  margin-bottom: 8px;
+}
+.btn-copy-arkurl {
+  border-radius: 0 4px 4px 0;
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+//
+// list of properties
+.border-bottom {
+  border-bottom: 1px solid rgba(33, 33, 33, 0.1);
+}
+
+// properties container with property item and property value items
+
+.properties-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+
+  .properties,
+  .incoming {
+    margin-top: 16px;
+  }
+
+  .properties {
+    grid-column: 1 / span 6;
+
+    .property {
+      grid-row: 1 / 1;
+
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+
+      .property-label,
+      .property-value {
+        padding: 2px;
+        overflow-wrap: break-word;
+      }
+
+      .property-label {
+        grid-column: 1 / span 1;
+
+        .label {
+          text-align: right;
+        }
+
+        .label-info {
+          cursor: help;
+        }
+      }
+
+      .property-value {
+        grid-column: 2 / span 3;
+      }
+
+      .link-value {
+        padding: 2px 0;
+        display: block;
+      }
+    }
+  }
+
+  // incoming is not yet implemented. TODO: reactivate incoming info box
+  .incoming {
+    grid-column: 5 / span 2;
+
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(6, minmax(60px, auto));
+
+    .annotations,
+    .links {
+      padding: 16px;
+      grid-column: 1 / span 2;
+      border-radius: 6px;
+
+      ul {
+        padding-inline-start: 5px;
+        list-style-type: none;
+        li {
+          margin-bottom: 10px;
+          text-indent: -8px;
+          &:before {
+            content: '- ';
+          }
+        }
+      }
+    }
+
+    .annotations {
+      background: rgba(245, 222, 179, 0.39);
+    }
+
+    .links {
+      background: rgba(222, 184, 135, 0.39);
+    }
+  }
+}
+
+.no-properties,
+.deleted-resource {
+  margin-top: 16px;
+
+  .comment {
+    margin: 16px;
+  }
+}
+
+.label {
+  color: $cool_gray_500;
+}
+
+:host::ng-deep .mat-paginator-container {
+  justify-content: start;
+  padding: 0;
+}
+
+:host::ng-deep .mat-paginator-range-label {
+  margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .properties,
+  .incoming {
+    grid-column: 1 / span 6 !important;
+    gap: 0 !important;
+
+    .property {
+      gap: 0 !important;
+    }
+
+    .annotations,
+    .links,
+    .property-label,
+    .property-value {
+      grid-column: 1 / span 4 !important;
+    }
+  }
+
+  h3.label {
+    text-align: left !important;
+    margin: 16px 0 0 !important;
+  }
+}

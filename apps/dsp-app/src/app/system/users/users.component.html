@@ -1,0 +1,20 @@
+<app-progress-indicator *ngIf="loading"></app-progress-indicator>
+
+<div *ngIf="!loading">
+    <!-- list of active users -->
+    <app-users-list
+        [list]="active"
+        [status]="true"
+        (refreshParent)="refresh()"
+        [createNew]="true"
+    ></app-users-list>
+
+    <!-- <mat-divider class="more-space"></mat-divider> -->
+
+    <!-- list of inactive users -->
+    <app-users-list
+        [list]="inactive"
+        [status]="false"
+        (refreshParent)="refresh()"
+    ></app-users-list>
+</div>

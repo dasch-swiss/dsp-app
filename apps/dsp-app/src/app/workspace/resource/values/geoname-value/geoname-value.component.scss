@@ -1,0 +1,33 @@
+.read-mode-view .more-info,
+.form-fields-container .mat-form-field .more-info {
+  cursor: pointer;
+  border: none;
+  padding: 0em;
+  margin-left: 1em;
+  outline: none;
+  background-color: transparent;
+  color: #000000;
+}
+
+.form-fields-container .mat-form-field .more-info .mat-icon {
+  vertical-align: middle;
+}
+
+.read-mode-view .rm-value,
+.read-mode-view .more-info {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.read-mode-view .more-info {
+  width: 18px;
+  height: 18px;
+}
+
+.read-mode-view .more-info .mat-icon {
+  font-size: 18px;
+}
+
+.current-value {
+  font-size: 12px;
+}

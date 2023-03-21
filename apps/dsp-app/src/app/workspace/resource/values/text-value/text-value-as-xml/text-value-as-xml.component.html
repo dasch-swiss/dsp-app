@@ -1,0 +1,36 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <div
+        *ngIf="this.displayValue?.mapping === standardMapping; else sourceMode"
+        class="rm-value"
+        appHtmlLink
+        [innerHTML]="valueFormControl.value"
+        (internalLinkClicked)="internalLinkClicked.emit($event)"
+        (internalLinkHovered)="internalLinkHovered.emit($event)"
+    ></div>
+    <ng-template #sourceMode>
+        <span class="rm-value">{{ displayValue?.xml }}</span>
+    </ng-template>
+    <span class="rm-comment" *ngIf="shouldShowComment">{{
+        commentFormControl.value
+    }}</span>
+</span>
+<ng-template #showForm>
+    <div *ngIf="editor; else noConfig" [formGroup]="form">
+        <span [formGroup]="form">
+            <ckeditor
+                [formControlName]="'value'"
+                [config]="editorConfig"
+                [editor]="editor"
+            ></ckeditor>
+            <app-comment-form
+                *ngIf="
+                    !commentDisabled && valueFormControl && commentFormControl
+                "
+                [valueFormControlHasError]="hasError()"
+                [(commentFormControl)]="commentFormControl"
+                [valueFormControlValue]="valueFormControl.value"
+            ></app-comment-form>
+        </span>
+    </div>
+    <ng-template #noConfig> No class was provided for CKEditor. </ng-template>
+</ng-template>

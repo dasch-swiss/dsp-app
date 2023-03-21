@@ -1,0 +1,12 @@
+<div class="hint" [innerHtml]="content"></div>
+
+<a
+    *ngIf="documentation"
+    mat-button
+    [href]="documentation"
+    target="_blank"
+    color="primary"
+    class="external-url"
+>
+    Read more in the user guide<mat-icon class="suffix">launch</mat-icon>
+</a>

@@ -1,0 +1,51 @@
+<div *ngIf="src && src.fileValue.fileUrl">
+    <!-- in case of an error -->
+    <app-status
+        [status]="404"
+        [url]="src.fileValue.fileUrl"
+        [representation]="'archive'"
+        *ngIf="failedToLoad"
+    >
+    </app-status>
+
+    <div class="file-representation">
+        <div class="container">
+            <div class="contents">
+                <div class="icon">
+                    <mat-icon> description </mat-icon>
+                </div>
+                <div class="file">
+                    <p>{{ originalFilename }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="toolbar">
+            <!-- toolbar -->
+            <div class="action horizontal bottom">
+                <!-- three dot menu to download and replace file -->
+                <button mat-icon-button [matMenuTriggerFor]="more">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #more="matMenu" class="mat-menu-custom-black">
+                    <button
+                        class="menu-content"
+                        mat-menu-item
+                        (click)="download(src.fileValue.fileUrl)"
+                    >
+                        Download file
+                    </button>
+                    <button
+                        class="menu-content"
+                        mat-menu-item
+                        (click)="openReplaceFileDialog()"
+                    >
+                        Replace file
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!src || !src.fileValue.fileUrl">
+    No valid file url found for this resource.
+</div>

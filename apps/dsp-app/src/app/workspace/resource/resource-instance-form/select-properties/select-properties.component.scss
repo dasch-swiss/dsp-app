@@ -1,0 +1,40 @@
+// grid
+.properties-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+
+  .properties {
+    .property {
+      grid-row: 1 / 1;
+
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+
+      .property-label,
+      .property-value {
+        padding: 2px;
+        overflow-wrap: break-word;
+      }
+
+      .property-label {
+        grid-column: 1 / span 1;
+
+        .label {
+          text-align: right;
+          margin-top: 16px;
+        }
+
+        .label-info {
+          cursor: help;
+        }
+      }
+
+      .property-value {
+        grid-column: 2 / span 3;
+        margin-bottom: 0; // overwrite global value in this case
+      }
+    }
+  }
+}

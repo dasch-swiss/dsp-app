@@ -1,0 +1,36 @@
+<mat-form-field
+    class="large-field value-component-comment"
+    *ngIf="commentFormControl"
+>
+    <textarea
+        matInput
+        [formControl]="commentFormControl"
+        [ngClass]="{
+            comment: valueFormControlValue,
+            'invalid-comment':
+                valueFormControlHasError || !valueFormControlValue
+        }"
+        placeholder="Comment"
+        spellcheck="false"
+        [readonly]="[disallowed]"
+        [cdkTextareaAutosize]="true"
+        [cdkAutosizeMinRows]="1"
+        [cdkAutosizeMaxRows]="6"
+        [formControlName]="'comment'"
+    >
+    </textarea>
+    <mat-icon matPrefix class="material-icons comment-lock" *ngIf="disallowed"
+        >lock</mat-icon
+    >
+    <mat-hint
+        *ngIf="
+            commentFormControl.value &&
+            (!this.valueFormControlValue || this.valueFormControlHasError)
+        "
+    >
+        <span class="custom-error-message"
+            >This comment won't be saved if there is an invalid or an empty
+            property value above.</span
+        >
+    </mat-hint>
+</mat-form-field>

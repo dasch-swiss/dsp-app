@@ -1,0 +1,52 @@
+{
+  "name": "dsp-app-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/dsp-app-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@angular-devkit/build-angular:protractor",
+      "options": {
+        "protractorConfig": "apps/dsp-app-e2e/protractor.conf.js",
+        "devServerTarget": "dsp-app:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "dsp-app:serve:production"
+        },
+        "test-server": {
+          "devServerTarget": "dsp-app:serve:test-server"
+        },
+        "ls-test-server": {
+          "devServerTarget": "dsp-app:serve:ls-test-server"
+        },
+        "staging-server": {
+          "devServerTarget": "dsp-app:serve:staging-server"
+        }
+      }
+    },
+    "e2e-ci": {
+      "executor": "@angular-devkit/build-angular:protractor",
+      "options": {
+        "protractorConfig": "apps/dsp-app-e2e/protractor-ci.conf.js",
+        "devServerTarget": "dsp-app:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "dsp-app:serve:production"
+        },
+        "test-server": {
+          "devServerTarget": "dsp-app:serve:test-server"
+        },
+        "ls-test-server": {
+          "devServerTarget": "dsp-app:serve:ls-test-server"
+        },
+        "staging-server": {
+          "devServerTarget": "dsp-app:serve:staging-server"
+        }
+      }
+    }
+  },
+  "implicitDependencies": ["dsp-app"],
+  "tags": []
+}

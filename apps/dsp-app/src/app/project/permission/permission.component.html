@@ -1,0 +1,24 @@
+<div *ngIf="projectAdmin" class="content large middle">
+    <!-- add group to the project -->
+    <app-add-group
+        *ngIf="project?.status && sysAdmin"
+        [projectUuid]="projectUuid"
+        (refreshParent)="refresh()"
+        #addGroupComponent
+    ></app-add-group>
+
+    <!-- <mat-divider *ngIf="project?.status" ></mat-divider> -->
+
+    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
+
+    <div *ngIf="!loading" class="content">
+        <!-- list of active groups? -->
+        <app-groups-list></app-groups-list>
+
+        <!-- list of inactive groups -->
+    </div>
+</div>
+
+<div *ngIf="!projectAdmin" class="content large middle">
+    <app-status [status]="403"></app-status>
+</div>

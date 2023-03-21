@@ -1,0 +1,204 @@
+{
+  "name": "dsp-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/dsp-app/src",
+  "projectType": "application",
+  "prefix": "app",
+  "generators": {
+    "@schematics/angular:component": {
+      "style": "scss"
+    }
+  },
+  "targets": {
+    "build": {
+      "defaultConfiguration": "development",
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "aot": true,
+        "outputPath": "dist/apps/dsp-app",
+        "index": "apps/dsp-app/src/index.html",
+        "main": "apps/dsp-app/src/main.ts",
+        "polyfills": "apps/dsp-app/src/polyfills.ts",
+        "tsConfig": "apps/dsp-app/tsconfig.app.json",
+        "allowedCommonJsDependencies": [
+          "json2typescript",
+          "ngraph.graph",
+          "ngraph.forcelayout",
+          "tinycolor2",
+          "ng2-pdf-viewer",
+          "openseadragon"
+        ],
+        "assets": [
+          "apps/dsp-app/src/favicon.ico",
+          "apps/dsp-app/src/config",
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets/",
+            "ignore": ["**/*.scss"],
+            "output": "/assets/"
+          }
+        ],
+        "styles": ["apps/dsp-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "apps/dsp-app/src/assets/style/"
+          ]
+        },
+        "scripts": [
+          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
+        ]
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "aot": true,
+          "extractLicenses": false,
+          "vendorChunk": true,
+          "buildOptimizer": false,
+          "budgets": []
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/dsp-app/src/environments/environment.ts",
+              "with": "apps/dsp-app/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "8mb",
+              "maximumError": "8mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "9kb"
+            }
+          ]
+        },
+        "test-server": {
+          "fileReplacements": [
+            {
+              "replace": "apps/dsp-app/src/environments/environment.ts",
+              "with": "apps/dsp-app/src/environments/environment.test-server.ts"
+            }
+          ],
+          "optimization": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "aot": true,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "buildOptimizer": false,
+          "budgets": []
+        },
+        "ls-test-server": {
+          "fileReplacements": [
+            {
+              "replace": "apps/dsp-app/src/environments/environment.ts",
+              "with": "apps/dsp-app/src/environments/environment.ls-test-server.ts"
+            }
+          ],
+          "optimization": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "aot": true,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "buildOptimizer": false,
+          "budgets": []
+        },
+        "staging-server": {
+          "fileReplacements": [
+            {
+              "replace": "apps/dsp-app/src/environments/environment.ts",
+              "with": "apps/dsp-app/src/environments/environment.staging-server.ts"
+            }
+          ],
+          "optimization": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "aot": true,
+          "extractLicenses": false,
+          "vendorChunk": false,
+          "buildOptimizer": false,
+          "budgets": []
+        }
+      }
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "dsp-app:build"
+      },
+      "configurations": {
+        "development": {
+          "browserTarget": "dsp-app:build:development"
+        },
+        "production": {
+          "browserTarget": "dsp-app:build:production"
+        },
+        "test-server": {
+          "browserTarget": "dsp-app:build:test-server"
+        },
+        "ls-test-server": {
+          "browserTarget": "dsp-app:build:ls-test-server"
+        },
+        "staging-server": {
+          "browserTarget": "dsp-app:build:staging-server"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "dsp-app:build"
+      }
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "main": "apps/dsp-app/src/test.ts",
+        "polyfills": "apps/dsp-app/src/polyfills.ts",
+        "tsConfig": "apps/dsp-app/tsconfig.spec.json",
+        "karmaConfig": "apps/dsp-app/karma.conf.js",
+        "styles": ["apps/dsp-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": [
+            "apps/dsp-app/src/assets/style/"
+          ]
+        },
+        "scripts": [
+          "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
+        ],
+        "assets": [
+          "apps/dsp-app/src/favicon.ico",
+          "apps/dsp-app/src/config",
+          {
+            "glob": "**/*",
+            "input": "apps/dsp-app/src/assets/",
+            "ignore": ["**/*.scss"],
+            "output": "/assets/"
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/dsp-app/**/*.ts", "apps/dsp-app/**/*.html"]
+      }
+    }
+  }
+}

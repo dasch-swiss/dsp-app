@@ -1,0 +1,271 @@
+<!-- DESKTOP / TABLET VERSION -->
+<!-- full-text search panel -->
+<div
+    class="app-fulltext-search desktop-only"
+    [class.active]="searchPanelFocus"
+    [class.with-project-filter]="projectfilter"
+    #fulltextSearchPanel
+    cdkOverlayOrigin
+>
+    <div class="app-project-filter" *ngIf="projectfilter">
+        <button
+            mat-button
+            class="app-project-filter-button"
+            [matMenuTriggerFor]="selectProject"
+            #btnToSelectProject="matMenuTrigger"
+            isIconButton
+        >
+            <p class="mat-caption placeholder">Filter by project</p>
+            <p class="label">{{ projectLabel }}</p>
+            <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
+        </button>
+        <mat-menu #selectProject="matMenu">
+            <div class="app-project-filter-menu">
+                <button
+                    mat-menu-item
+                    class="center"
+                    (click)="setProject(); changeFocus()"
+                >
+                    {{ defaultProjectLabel }}
+                </button>
+                <mat-divider></mat-divider>
+                <span *ngFor="let project of projects">
+                    <button
+                        mat-menu-item
+                        class="project-item"
+                        *ngIf="!doNotDisplay.includes(project.id)"
+                        (click)="setProject(project); changeFocus()"
+                        [matTooltip]="project.longname"
+                        [matTooltipPosition]="'after'"
+                    >
+                        {{ project.shortname }}
+                    </button>
+                </span>
+            </div>
+        </mat-menu>
+    </div>
+    <div
+        class="app-fulltext-search-field"
+        [class.with-project-filter]="projectfilter"
+    >
+        <input
+            #fulltextSearchInput
+            class="app-fulltext-search-input"
+            type="search"
+            [(ngModel)]="searchQuery"
+            name="fulltext-search"
+            minlength="3"
+            autocomplete="off"
+            [placeholder]="'Search'"
+            (keyup.esc)="resetSearch()"
+            (keyup.enter)="doSearch()"
+            (click)="setFocus()"
+        />
+        <button
+            class="app-fulltext-search-button suffix"
+            (click)="doSearch()"
+            type="submit"
+        >
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+</div>
+
+<!-- full-text search menu -->
+<ng-template #fulltextSearchMenu>
+    <div class="app-search-menu" [class.with-project-filter]="projectfilter">
+        <div class="app-menu-content">
+            <mat-list class="app-previous-search-list">
+                <div *ngFor="let item of prevSearch; let i = index">
+                    <mat-list-item *ngIf="i < 10">
+                        <h4
+                            mat-line
+                            (click)="doPrevSearch(item)"
+                            class="app-previous-search-item"
+                        >
+                            <div
+                                class="app-project-filter-label"
+                                [class.not-empty]="item.projectIri"
+                                *ngIf="
+                                    projectfilter &&
+                                    !error &&
+                                    projects?.length > 0
+                                "
+                            >
+                                <span *ngIf="item.projectIri">{{
+                                    item.projectLabel
+                                }}</span>
+                            </div>
+                            <div
+                                class="app-previous-search-query"
+                                [class.fix-width]="projectfilter"
+                            >
+                                {{ item.query }}
+                            </div>
+                        </h4>
+                        <button mat-icon-button (click)="resetPrevSearch(item)">
+                            <mat-icon
+                                class="mat-list-close-icon"
+                                aria-label="close"
+                                >close</mat-icon
+                            >
+                        </button>
+                    </mat-list-item>
+                </div>
+            </mat-list>
+
+            <div class="app-menu-action" *ngIf="prevSearch">
+                <mat-divider></mat-divider>
+                <button
+                    mat-button
+                    color="primary"
+                    class="center clear-list-btn"
+                    (click)="resetPrevSearch()"
+                >
+                    Clear list
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- PHONE VERSION -->
+<div class="mobile-only">
+    <!-- search buttton only to open a menu with fulltext-search -->
+    <button
+        mat-button
+        class="app-fulltext-search-button"
+        [class.active]="displayPhonePanel"
+        (click)="togglePhonePanel()"
+        type="button"
+    >
+        <mat-icon>{{ displayPhonePanel ? 'close' : 'search' }}</mat-icon>
+    </button>
+
+    <div class="app-fulltext-search-mobile-panel" *ngIf="displayPhonePanel">
+        <div class="app-project-filter" *ngIf="projectfilter">
+            <button
+                mat-stroked-button
+                class="app-project-filter-button"
+                [matMenuTriggerFor]="selectProject"
+                #btnToSelectProject="matMenuTrigger"
+                isIconButton
+            >
+                <p class="mat-caption placeholder">Filter by project</p>
+                <p class="label">{{ projectLabel }}</p>
+                <mat-icon class="icon" matSuffix>keyboard_arrow_down</mat-icon>
+            </button>
+            <mat-menu #selectProject="matMenu">
+                <div class="app-project-filter-menu">
+                    <button
+                        mat-menu-item
+                        class="center"
+                        (click)="setProject(); changeFocus()"
+                    >
+                        {{ defaultProjectLabel }}
+                    </button>
+                    <mat-divider></mat-divider>
+                    <span *ngFor="let project of projects">
+                        <button
+                            mat-menu-item
+                            *ngIf="!doNotDisplay.includes(project.id)"
+                            (click)="setProject(project); changeFocus()"
+                        >
+                            {{ project.shortname }}
+                        </button>
+                    </span>
+                </div>
+            </mat-menu>
+        </div>
+
+        <div
+            class="app-fulltext-search-field"
+            [class.with-project-filter]="projectfilter"
+        >
+            <input
+                #fulltextSearchInputMobile
+                class="app-fulltext-search-input"
+                type="search"
+                [(ngModel)]="searchQuery"
+                name="fulltext-search"
+                minlength="3"
+                autocomplete="off"
+                [placeholder]="'Search'"
+                (click)="setFocus()"
+                (keyup.esc)="resetSearch()"
+                (keyup.enter)="doSearch()"
+            />
+            <button
+                mat-button
+                color="primary"
+                class="app-fulltext-search-button"
+                (click)="doSearch()"
+                type="submit"
+            >
+                Search
+            </button>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div
+            class="app-search-menu"
+            [class.with-project-filter]="projectfilter"
+        >
+            <div class="app-menu-content">
+                <mat-list class="app-previous-search-list">
+                    <div *ngFor="let item of prevSearch; let i = index">
+                        <mat-list-item *ngIf="i < 10">
+                            <h4
+                                mat-line
+                                (click)="doPrevSearch(item)"
+                                class="app-previous-search-item"
+                            >
+                                <div
+                                    class="app-project-filter-label"
+                                    [class.not-empty]="item.projectIri"
+                                    *ngIf="
+                                        projectfilter &&
+                                        !error &&
+                                        projects?.length > 0
+                                    "
+                                >
+                                    <span *ngIf="item.projectIri">{{
+                                        item.projectLabel
+                                    }}</span>
+                                </div>
+                                <div
+                                    class="app-previous-search-query"
+                                    [class.fix-width]="projectfilter"
+                                >
+                                    {{ item.query }}
+                                </div>
+                            </h4>
+                            <button
+                                mat-icon-button
+                                (click)="resetPrevSearch(item)"
+                            >
+                                <mat-icon
+                                    class="mat-list-close-icon"
+                                    aria-label="close"
+                                    >close</mat-icon
+                                >
+                            </button>
+                        </mat-list-item>
+                    </div>
+                </mat-list>
+            </div>
+            <div class="app-menu-action">
+                <mat-divider></mat-divider>
+                <button
+                    mat-button
+                    color="primary"
+                    class="center clear-list-btn"
+                    (click)="togglePhonePanel()"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

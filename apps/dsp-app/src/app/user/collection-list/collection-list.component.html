@@ -1,0 +1,16 @@
+<app-progress-indicator *ngIf="loading"></app-progress-indicator>
+
+<div *ngIf="!loading">
+    <div class="app-toolbar">
+        <div class="app-toolbar-row">
+            <h3 class="mat-body subtitle">Your stored resources</h3>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action"> </span>
+        </div>
+        <div class="app-toolbar-row">
+            <h2 class="mat-title">0 Collections</h2>
+            <span class="fill-remaining-space"></span>
+            <span class="app-toolbar-action"> </span>
+        </div>
+    </div>
+</div>

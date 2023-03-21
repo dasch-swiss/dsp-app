@@ -1,0 +1,41 @@
+@use "config" as *;
+@use "mixins" as *;
+
+.overlay-info-box {
+  background: white;
+  padding: 8px 16px;
+  @include mat-box-shadow();
+  border-radius: $border-radius;
+
+  table {
+    border-collapse: collapse;
+
+    th,
+    td {
+      min-width: 48px;
+      text-align: center;
+      vertical-align: middle;
+
+      .mat-icon {
+        margin-top: 3px;
+      }
+    }
+
+    .first-col {
+      padding-right: 16px;
+      text-align: left;
+    }
+
+    .border-top {
+      border-top: 1px solid black;
+    }
+  }
+}
+
+.status {
+  color: $red;
+
+  &.checked {
+    color: $secondary;
+  }
+}

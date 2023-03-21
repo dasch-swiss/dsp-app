@@ -1,0 +1,124 @@
+@use "responsive" as *;
+
+// tablet and desktop
+@media (min-width: map-get($grid-breakpoints, phone)) {
+  .user-profile-mobile {
+    display: none;
+  }
+
+  .user-profile {
+    .user-profile-image {
+      width: 100%;
+
+      &:after {
+        content: '';
+        display: block;
+        padding-bottom: 100%;
+      }
+    }
+
+    .user-profile-headline {
+      h3.mat-subheading-2 {
+        font-size: 18px;
+        margin-top: -18px;
+      }
+    }
+
+    ul.user-profile-info {
+      margin-top: 48px;
+      padding-inline-start: 12px;
+
+      li {
+        list-style-type: none;
+        //            font-size: 12px;
+        font-weight: bold;
+        line-height: 1.5em;
+
+        .mat-icon {
+          margin-right: 8px;
+          vertical-align: middle;
+          position: relative;
+          // top: -1px;
+          font-size: 16px;
+          height: 18px;
+        }
+      }
+    }
+  }
+}
+
+// mobile device: phone
+@media (max-width: map-get($grid-breakpoints, phone)) {
+  .user-profile {
+    display: none;
+  }
+
+  .user-profile-mobile {
+    display: flex;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    .user-profile-image {
+      width: 20%;
+      height: 20%;
+      margin-right: 10px;
+
+      &:after {
+        content: '';
+        display: block;
+        padding-bottom: 100%;
+      }
+    }
+
+    .user-profile-headline {
+      width: 50%;
+      h2.mat-title {
+        margin: -3px 0 -3px 0;
+        font-size: 1em;
+      }
+      h3.subtitle {
+        font-size: 0.8em;
+        margin: 0;
+      }
+      ul.user-profile-lang {
+        margin: 0;
+        padding-inline-start: 0 !important;
+        li {
+          list-style-type: none;
+          font-weight: bold;
+          line-height: 1.5em;
+
+          .mat-icon {
+            margin-right: 8px;
+            vertical-align: middle;
+            position: relative;
+            font-size: 16px;
+            height: 18px;
+          }
+        }
+      }
+    }
+
+    .user-profile-status {
+      width: 25%;
+      display: flex;
+      .fill-in-space {
+        width: 50%;
+      }
+      .status {
+        width: 25%;
+        height: 30px;
+      }
+
+      .mat-button {
+        width: 25%;
+        height: 30px;
+        padding: 0;
+        min-width: 48px;
+        .mat-icon {
+          vertical-align: top;
+        }
+      }
+    }
+  }
+}

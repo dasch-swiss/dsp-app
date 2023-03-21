@@ -1,0 +1,239 @@
+@use "config" as *;
+@use "font";
+@use "theme";
+@use "layout";
+@use "elements";
+@use "search";
+@use "viewer";
+@use "ontology";
+
+body {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  margin: 0;
+}
+
+// material icons
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+// The following styles will override material design!
+
+// jdnconvertiblecalendar main style
+.mat-datepicker-content {
+  .mat-calendar {
+    height: auto !important;
+  }
+}
+
+.grid-card .mat-card-header > div.mat-card-header-text {
+  margin: 0 0 !important;
+}
+
+app-color-value {
+  .mat-form-field-flex,
+  .color-picker-input {
+    cursor: pointer !important;
+  }
+
+  .mat-form-field-label span {
+    display: block;
+    padding: 8px 4px;
+    margin: 0 auto;
+  }
+}
+
+// String literal input
+// string literal textarea: overwrite material styling !important
+.string-literal {
+  &.short-text {
+    .mat-form-field-infix {
+      margin-left: 12px;
+    }
+  }
+
+  &.long-text {
+    .mat-button-toggle-appearance-standard {
+      .mat-button-toggle-label-content {
+        line-height: 36px !important;
+        padding: 0 8px !important;
+      }
+    }
+
+    // textarea
+    .mat-form-field-wrapper {
+      width: 100%;
+
+      .mat-form-field-flex {
+        border-left: 1px solid rgba(0, 0, 0, 0.12);
+        min-height: calc(4 * 36px + 2px);
+
+        .mat-form-field-infix {
+          // negative values are not the best choice,
+          // but with this margin-top the placeholder is at the
+          // same position as in the short-text input
+          margin: -12px auto auto 12px;
+        }
+      }
+    }
+  }
+}
+
+.mat-menu-panel.res-share-menu {
+  max-width: 360px !important;
+  padding: 6px !important;
+}
+
+.info-tooltip {
+  white-space: pre-line;
+}
+
+// date picker adaption
+.mat-menu-panel.date-picker {
+  max-width: 312px !important;
+}
+
+.year.withButtonToggle {
+  top: -0.05em;
+
+  .mat-form-field-suffix {
+    .suffix-toggle-group {
+      font-size: 12px;
+      border-radius: 0;
+      height: calc(36px - 0.25em);
+
+      .mat-button-toggle-label-content {
+        line-height: 36px !important;
+      }
+    }
+  }
+}
+
+.year,
+.month {
+  // hide dropdown arrow
+  .mat-select-arrow {
+    border: none;
+  }
+
+  // hide number de- and increase buttons
+  // input[type="number"]::-webkit-inner-spin-button,
+  // input[type="number"]::-webkit-outer-spin-button {
+  //   -webkit-appearance: none;
+  // }
+
+  // input[type="number"] {
+  //   -moz-appearance: textfield;
+  // }
+}
+
+// our own date picker value does not need additional space at the bottom
+// because of the combination with mat-menu which contains the date picker form
+.mat-form-field.date-picker-value {
+  .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+
+    .mat-form-field-underline {
+      bottom: 0 !important;
+    }
+  }
+}
+
+.mat-form-field.without-border {
+  .mat-form-field-underline {
+    display: none;
+  }
+}
+
+.mat-caption.space-reducer {
+  margin-top: 0;
+  margin-bottom: 6px;
+}
+
+.project-actions {
+  border-left: 1px solid $primary_200;
+  padding: 0 12px;
+
+  .mat-caption.space-reducer {
+    margin-top: -6px;
+    margin-bottom: 6px;
+  }
+}
+
+button.space-reducer {
+  margin: 0;
+}
+
+// ckEditor
+.ck-editor__editable_inline {
+  min-height: 256px;
+}
+
+// mat-menu with form element
+.form-menu {
+  &.mat-menu-panel {
+    min-width: 320px !important;
+    max-width: 320px !important;
+  }
+}
+
+.mat-menu-panel {
+  min-height: 48px !important;
+}
+
+.full-size-dialog {
+  transition: unset !important;
+
+  .mat-dialog-container {
+    transition: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+// moving image player: overwrite mat-slider
+.progress {
+  .mat-slider-track-background {
+    background-color: whitesmoke !important;
+  }
+
+  .mat-slider-wrapper {
+    top: 12px !important;
+  }
+
+  .mat-slider-thumb {
+    background-color: $yellow !important;
+    border-color: $yellow !important;
+  }
+}
+
+.ontology-editor {
+  .mat-drawer-inner-container {
+    width: 200px;
+    position: fixed;
+  }
+}
+
+.mat-drawer-inner-container::-webkit-scrollbar {
+  display: none;
+}

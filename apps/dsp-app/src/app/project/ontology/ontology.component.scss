@@ -1,0 +1,154 @@
+@use "config" as *;
+
+$width: 429px;
+
+.app-toolbar-action {
+  &.select-form {
+    margin-top: -18px;
+  }
+
+  .form-content {
+    display: contents;
+
+    .select-ontology {
+      margin: 0 24px 0 0;
+    }
+  }
+
+  .create-data-model-btn {
+    margin: 0 0 16px;
+    min-width: 140px;
+  }
+}
+
+.ontology-editor {
+  width: auto;
+  min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
+  height: calc(100vh - #{$header-height} - 2px);
+  border: 1px dotted $primary_200;
+  position: relative;
+  margin: 0;
+  z-index: 0;
+
+  .ontology-editor-header {
+    z-index: 2;
+    top: 0;
+    height: 80px;
+
+    .ontology-info {
+      width: calc(100% - 176px - 32px);
+
+      h3,
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      h3 {
+        margin-top: 6px;
+      }
+    }
+
+    .mat-toolbar-row,
+    .mat-toolbar-row span {
+      height: 100%;
+      padding-top: 8px;
+    }
+
+    .mat-toolbar-row {
+      padding-right: 0;
+
+      .ontology-actions {
+        width: 176px;
+      }
+    }
+  }
+}
+.ontology-viewer {
+  width: 98vw;
+  min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
+  border: 1px dotted $primary_200;
+  position: relative;
+  margin: 0 auto 60px auto;
+}
+
+.ontology-editor-container {
+  height: calc(100% - #{$header-height} - 8px);
+
+  .ontology-editor-subheader {
+    height: $sub-header-height;
+  }
+
+  .ontology-editor-sidenav {
+    width: 200px;
+    border: none;
+
+    button {
+      width: 100%;
+      text-align: left;
+    }
+  }
+
+  .ontology-editor-canvas {
+    min-height: calc(
+      100vh - #{$sub-header-height} - #{$header-height} - #{$tab-bar-margin} - 100px
+    );
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+    .ontology-editor-grid {
+      display: grid;
+      grid-template-rows: auto; // value would be "masonry" as soon it's implemented in all browsers
+      grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
+      grid-gap: 6px;
+    }
+    .ontology-editor-list {
+      margin: 16px;
+
+      &.properties {
+        width: 80%;
+        margin: 16px 10%;
+
+        .property {
+          height: auto;
+          min-height: 56px !important;
+          margin: 4px 0;
+          padding: 16px 0;
+          &.odd {
+            background-color: $primary_50;
+          }
+          &:hover {
+            background-color: $black-14-opacity;
+          }
+        }
+      }
+    }
+  }
+}
+
+.ontology-editor-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  position: sticky !important;
+  top: 0;
+
+  .switch-view-label {
+    margin-right: 16px;
+  }
+}
+
+.active {
+  background-color: $primary_100;
+}
+
+.note {
+  padding: 2px;
+}
+
+.add-resource-class {
+  position: absolute;
+  right: 12px;
+  top: 80px;
+}

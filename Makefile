@@ -52,15 +52,6 @@ docker-publish: ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM6
 docker-publish-from-branch: ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64 w/o latest tag
 	docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) --push .
 
-.PHONY: build-dsp-app-image
-build-dsp-app-image: ## build DSP APP image locally
-	docker build -t $(DSP_APP_IMAGE) .
-	docker tag $(DSP_APP_IMAGE) $(DSP_APP_REPO):latest
-
-.PHONY: publish-dsp-app-image
-publish-dsp-app-image: build-dsp-app-image ## publish DSP APP Docker image to Docker-Hub
-	docker image push --all-tags $(DSP_APP_REPO)
-
 .PHONY: help
 help: ## this help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort

@@ -1,0 +1,315 @@
+<form
+    [formGroup]="propertyForm"
+    *ngIf="!changeCardinalities"
+    class="form-content"
+>
+    <p
+        *ngIf="editMode === 'assignExistingProperty'"
+        class="note warning mat-caption center"
+    >
+        You're adding an already existing property to this class. The property
+        can't be modified here.<br />
+        If you want to modify the label, the comment or the type, please go to
+        the "properties" view.
+        <!-- Be careful when editing it, it could have an effect in other resource classes if it is used there. -->
+    </p>
+
+    <div *ngIf="!loading" class="center">
+        <!-- property type -->
+        <mat-form-field
+            *ngIf="propertyInfo.propType"
+            class="large-field ontology-form-field"
+        >
+            <span matPrefix class="ontology-prefix-icon">
+                <mat-icon>{{
+                    propertyForm.controls['propType'].value.icon
+                }}</mat-icon
+                >&nbsp;
+            </span>
+            <mat-label>Property type</mat-label>
+            <!-- in case of edit property, the user can change the property type within the same group -->
+            <mat-select formControlName="propType">
+                <mat-select-trigger>
+                    {{ propertyForm.controls['propType'].value.group }}:&nbsp;
+                    {{ propertyForm.controls['propType'].value.label }}
+                </mat-select-trigger>
+
+                <mat-optgroup
+                    *ngFor="let type of restrictedPropertyTypes"
+                    [label]="type.group"
+                    [disabled]="
+                        propertyForm.controls['propType'].value.group !==
+                        type.group
+                    "
+                >
+                    <mat-option *ngFor="let ele of type.elements" [value]="ele">
+                        <mat-icon>{{ ele.icon }}</mat-icon> {{ ele.label }}
+                    </mat-option>
+                </mat-optgroup>
+            </mat-select>
+            <mat-hint
+                *ngIf="unsupportedPropertyType"
+                class="ontology-warning-with-prefix"
+            >
+                {{ propertyForm.controls['propType'].value.description }}
+            </mat-hint>
+        </mat-form-field>
+
+        <!-- name -->
+        <mat-form-field class="large-field ontology-form-field">
+            <span matPrefix class="ontology-prefix-icon">
+                <mat-icon>fingerprint</mat-icon>&nbsp;
+            </span>
+            <mat-label>Property name</mat-label>
+            <input matInput formControlName="name" />
+            <mat-hint
+                class="ontology-error-with-prefix"
+                *ngIf="formErrors.name"
+            >
+                {{ formErrors.name }}
+            </mat-hint>
+        </mat-form-field>
+
+        <!-- label -->
+        <div class="large-field string-literal-container">
+            <app-string-literal-input
+                [placeholder]="'Property label *'"
+                [value]="labels"
+                [disabled]="editMode === 'assignExistingProperty'"
+                (touched)="labelsTouched = $event"
+                (dataChanged)="handleData($event, 'label')"
+            >
+            </app-string-literal-input>
+            <mat-hint class="string-literal-error" *ngIf="formErrors.label">
+                {{ formErrors.label }}
+            </mat-hint>
+        </div>
+
+        <!-- comment/description -->
+        <div class="large-field string-literal-container">
+            <app-string-literal-input
+                placeholder="Comment"
+                [value]="comments"
+                [disabled]="editMode === 'assignExistingProperty'"
+                [textarea]="true"
+                (dataChanged)="handleData($event, 'comment')"
+            >
+            </app-string-literal-input>
+        </div>
+
+        <!-- depending on type: display gui attribute -->
+        <div *ngIf="showGuiAttr" [ngSwitch]="propertyInfo.propType.objectType">
+            <!-- list property -->
+            <mat-form-field
+                class="large-field property-type ontology-form-field"
+                *ngSwitchCase="dspConstants.ListValue"
+            >
+                <span matPrefix class="ontology-prefix-icon">
+                    <mat-icon>{{ guiAttrIcon }}</mat-icon
+                    >&nbsp;
+                </span>
+                <mat-label>Select list</mat-label>
+                <mat-select formControlName="guiAttr">
+                    <mat-option *ngFor="let item of lists" [value]="item.id">
+                        {{ item.labels[0].value }}
+                    </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="formErrors.guiAttr">
+                    {{ formErrors.guiAttr }}
+                </mat-hint>
+            </mat-form-field>
+
+            <!-- link property -->
+            <mat-form-field
+                class="large-field property-type ontology-form-field"
+                *ngSwitchCase="dspConstants.LinkValue"
+            >
+                <span matPrefix class="ontology-prefix-icon">
+                    <mat-icon>{{ guiAttrIcon }}</mat-icon
+                    >&nbsp;
+                </span>
+                <mat-label>Select resource class</mat-label>
+                <mat-select formControlName="guiAttr">
+                    <mat-optgroup
+                        *ngFor="let onto of ontologyClasses"
+                        [label]="onto.ontologyLabel"
+                    >
+                        <mat-option
+                            *ngFor="let oClass of onto.classes"
+                            [value]="oClass.id"
+                        >
+                            {{ oClass.label }}
+                        </mat-option>
+                    </mat-optgroup>
+                </mat-select>
+                <mat-hint *ngIf="formErrors.guiAttr">
+                    {{ formErrors.guiAttr }}
+                </mat-hint>
+            </mat-form-field>
+
+            <!-- the gui-attribute for integer and decimal are not yet supported in the app -->
+            <mat-form-field
+                class="large-field property-type ontology-form-field"
+                *ngSwitchCase="
+                    propertyInfo.propType.objectType ===
+                        dspConstants.IntValue ||
+                    propertyInfo.propType.objectType ===
+                        dspConstants.DecimalValue
+                "
+            >
+                <span matPrefix class="ontology-prefix-icon">
+                    <mat-icon>{{ guiAttrIcon }}</mat-icon
+                    >&nbsp;
+                </span>
+                <mat-label>Define range</mat-label>
+                <input matInput placeholder="min" />
+                <input matInput placeholder="max" />
+                <!-- <mat-select formControlName="guiAttr">
+                            <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
+                                {{item.label}}
+                            </mat-option>
+                        </mat-select> -->
+            </mat-form-field>
+            <mat-hint *ngIf="formErrors.guiAttr">
+                {{ formErrors.guiAttr }}
+            </mat-hint>
+            <!-- <div *ngSwitchDefault>{{propertyInfo.propType.subPropOf}} not yet implemented</div> -->
+        </div>
+
+        <div
+            class="large-field cardinality"
+            *ngIf="
+                editMode === 'assignNewProperty' ||
+                editMode === 'assignExistingProperty'
+            "
+        >
+            <mat-slide-toggle
+                formControlName="multiple"
+                [matTooltip]="
+                    'The property in this class can have multiple values'
+                "
+                [matTooltipPosition]="'above'"
+                [checked]="propertyForm.get('multiple').value"
+            >
+                Multiple values?
+            </mat-slide-toggle>
+
+            <mat-slide-toggle
+                formControlName="required"
+                [matTooltip]="'The property in this class must have one value'"
+                [matTooltipPosition]="'above'"
+                [checked]="propertyForm.get('required').value"
+            >
+                Required field?
+            </mat-slide-toggle>
+        </div>
+    </div>
+
+    <!-- action buttons -->
+    <div class="form-panel form-action">
+        <button mat-button type="button" (click)="closeDialog.emit()">
+            {{ 'appLabels.form.action.cancel' | translate }}
+        </button>
+        <span class="fill-remaining-space"></span>
+        <button
+            mat-raised-button
+            type="button"
+            color="primary"
+            [disabled]="
+                !labels.length || (propertyForm.enabled && !propertyForm.valid)
+            "
+            (click)="submitData()"
+            class="submit"
+        >
+            <app-progress-indicator
+                [color]="'white'"
+                [status]="0"
+                *ngIf="loading"
+                class="submit-progress"
+            >
+            </app-progress-indicator>
+            <mat-icon *ngIf="error && !loading">close</mat-icon>
+            {{
+                error
+                    ? 'Failed'
+                    : resClassIri
+                    ? 'Add to class'
+                    : propertyInfo.propDef
+                    ? 'Update'
+                    : 'Save'
+            }}
+        </button>
+    </div>
+</form>
+<div *ngIf="changeCardinalities" class="form-content">
+    <div class="center">
+        <app-progress-indicator
+            [status]="0"
+            *ngIf="!canChangeCardinalityChecked"
+            class="submit-progress"
+        >
+        </app-progress-indicator>
+    </div>
+    <div *ngIf="canChangeCardinalityChecked">
+        <div class="center">
+            <div *ngIf="!canSetCardinality">
+                <mat-icon
+                    aria-label="cancel icon"
+                    fontIcon="cancel"
+                    color="warn"
+                ></mat-icon>
+                <div class="mat-title">This action is not possible</div>
+                <div>
+                    <p>{{ canNotSetCardinalityUiReason.detail }}</p>
+                    <p>{{ canNotSetCardinalityUiReason.hint }}</p>
+                </div>
+            </div>
+            <div *ngIf="canSetCardinality">
+                <mat-icon
+                    aria-label="warn icon"
+                    fontIcon="warning_amber"
+                    color="accent"
+                ></mat-icon>
+                <div class="mat-title">Attention</div>
+                <div>Please note that this change may not be reversible.</div>
+            </div>
+        </div>
+        <div
+            *ngIf="canSetCardinality"
+            [ngClass]="canSetCardinality ? 'form-panel form-action' : 'center'"
+        >
+            <button mat-button type="button" (click)="closeDialog.emit()">
+                {{ 'appLabels.form.action.cancel' | translate }}
+            </button>
+            <span class="fill-remaining-space" *ngIf="canSetCardinality"></span>
+            <button
+                mat-raised-button
+                type="button"
+                color="primary"
+                [disabled]="!canSetCardinality"
+                (click)="submitCardinalitiesChange()"
+                class="submit"
+            >
+                <app-progress-indicator
+                    [color]="'white'"
+                    [status]="0"
+                    *ngIf="loading"
+                    class="submit-progress"
+                >
+                </app-progress-indicator>
+                <mat-icon *ngIf="error && !loading">close</mat-icon>
+                {{ error ? 'Failed' : 'Continue' }}
+            </button>
+        </div>
+        <div *ngIf="!canSetCardinality" class="center">
+            <button
+                mat-raised-button
+                type="button"
+                color="primary"
+                (click)="closeDialog.emit()"
+            >
+                {{ 'Okay' }}
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,177 @@
+<div class="player" appDisableContextMenu [class.cinema]="cinemaMode">
+    <div class="container">
+        <!-- in case of an error -->
+        <app-status
+            [status]="404"
+            [url]="src.fileValue.fileUrl"
+            [representation]="'video'"
+            *ngIf="failedToLoad"
+        >
+        </app-status>
+
+        <div class="video-container">
+            <video
+                class="video"
+                #videoEle
+                *ngIf="!fileHasChanged; else loading"
+                [src]="video"
+                type="video/mp4"
+                preload="auto"
+                [muted]="muted"
+                (click)="togglePlay()"
+                (timeupdate)="timeUpdate($event)"
+                (loadedmetadata)="loadedMetadata()"
+                (canplaythrough)="loadedVideo()"
+            ></video>
+
+            <div class="overlay">
+                <div>
+                    <mat-icon (click)="updateTimeFromButton(-10)"
+                        >replay_10</mat-icon
+                    >
+                    <mat-icon (click)="togglePlay()"
+                        >{{
+                            reachedTheEnd
+                                ? 'replay'
+                                : play
+                                ? 'pause'
+                                : 'play_arrow'
+                        }}
+                    </mat-icon>
+                    <mat-icon (click)="updateTimeFromButton(10)"
+                        >forward_10</mat-icon
+                    >
+                </div>
+            </div>
+        </div>
+
+        <ng-template #loading>
+            <app-progress-indicator></app-progress-indicator>
+        </ng-template>
+
+        <div class="preview-line" *ngIf="!failedToLoad">
+            <!-- preview image -->
+            <div class="preview" #preview>
+                <app-video-preview
+                    [src]="src"
+                    [time]="previewTime"
+                    [dispTime]="true"
+                    [fileHasChanged]="fileHasChanged"
+                    (loaded)="displayPreview(!$event)"
+                >
+                </app-video-preview>
+            </div>
+        </div>
+    </div>
+
+    <mat-toolbar class="controls">
+        <mat-toolbar-row style="overflow: hidden">
+            <app-av-timeline
+                #timeline
+                [value]="currentTime"
+                [min]="0"
+                [max]="duration"
+                [resized]="cinemaMode"
+                [splitSizeChanged]="splitSizeChanged"
+                (move)="updatePreview($event)"
+                (mouseenter)="displayPreview(true)"
+                (dimension)="timelineDimension = $event"
+                (mouseleave)="displayPreview(false)"
+                (changed)="updateTimeFromSlider($event)"
+                [disabled]="failedToLoad"
+            ></app-av-timeline>
+        </mat-toolbar-row>
+
+        <mat-toolbar-row class="action">
+            <!-- vertical more button with menu to open and copy url -->
+            <button mat-icon-button [matMenuTriggerFor]="more">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #more="matMenu" class="mat-menu-custom-black">
+                <button
+                    mat-menu-item
+                    class="menu-content"
+                    (click)="openVideoInNewTab(this.src.fileValue.fileUrl)"
+                >
+                    Open video in new tab
+                </button>
+                <button
+                    mat-menu-item
+                    class="menu-content"
+                    [cdkCopyToClipboard]="this.src.fileValue.fileUrl"
+                    (click)="openSnackBar('URL copied to clipboard!')"
+                >
+                    Copy video URL to clipboard
+                </button>
+                <button
+                    mat-menu-item
+                    class="menu-content"
+                    (click)="downloadVideo(this.src.fileValue.fileUrl)"
+                >
+                    Download video
+                </button>
+                <button
+                    mat-menu-item
+                    class="menu-content"
+                    (click)="openReplaceFileDialog()"
+                >
+                    Replace file
+                </button>
+            </mat-menu>
+            <button
+                mat-icon-button
+                (click)="goToStart()"
+                [disabled]="currentTime === 0 || failedToLoad"
+                matTooltip="Stop and go to start"
+                [matTooltipPosition]="matTooltipPos"
+            >
+                <mat-icon>skip_previous</mat-icon>
+            </button>
+            <button
+                mat-icon-button
+                (click)="togglePlay()"
+                [matTooltip]="
+                    reachedTheEnd ? 'Replay' : play ? 'Pause' : 'Play'
+                "
+                [matTooltipPosition]="matTooltipPos"
+                [disabled]="failedToLoad"
+            >
+                <mat-icon>{{
+                    reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow'
+                }}</mat-icon>
+            </button>
+
+            <span class="empty-space"></span>
+            <span class="fill-remaining-space"></span>
+
+            <div (wheel)="updateTimeFromScroll($event)">
+                <p class="mat-body-1 time" (click)="togglePlay()">
+                    {{ currentTime | appTime }}
+                    <span *ngIf="duration">/ {{ duration | appTime }}</span>
+                </p>
+            </div>
+            <!--            <button mat-icon-button (click)="muted = !muted" [matTooltip]="(muted ? 'Unmute' : 'Mute')"-->
+            <!--                [matTooltipPosition]="matTooltipPos"-->
+            <!--                [disabled]="failedToLoad">-->
+            <!--                <mat-icon>-->
+            <!--                    {{ muted ? "volume_mute" : "volume_up" }}-->
+            <!--                </mat-icon>-->
+            <!--            </button>-->
+            <span class="fill-remaining-space"></span>
+            <span class="empty-space"></span>
+            <span class="empty-space"></span>
+
+            <button
+                mat-icon-button
+                (click)="toggleCinemaMode()"
+                [disabled]="failedToLoad"
+                [matTooltip]="cinemaMode ? 'Default view' : 'Cinema mode'"
+                [matTooltipPosition]="matTooltipPos"
+            >
+                <mat-icon>{{
+                    cinemaMode ? 'fullscreen_exit' : 'fullscreen'
+                }}</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+</div>

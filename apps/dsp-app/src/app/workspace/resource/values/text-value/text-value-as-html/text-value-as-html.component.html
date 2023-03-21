@@ -1,0 +1,11 @@
+<div
+    [innerHTML]="htmlFromKnora"
+    class="value"
+    appHtmlLink
+    (internalLinkClicked)="internalLinkClicked.emit($event)"
+    (internalLinkHovered)="internalLinkHovered.emit($event)"
+></div>
+<div *ngIf="comment">
+    <label>{{ commentLabel }}: </label
+    ><span class="comment">{{ comment }}</span>
+</div>

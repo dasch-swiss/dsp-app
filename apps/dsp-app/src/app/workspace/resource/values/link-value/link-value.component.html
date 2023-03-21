@@ -1,0 +1,83 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <span
+        class="rm-value"
+        (click)="refResClicked()"
+        (mouseover)="refResHovered()"
+    >
+        <a class="link">{{ valueFormControl.value?.label }}</a>
+    </span>
+    <span class="rm-comment" *ngIf="shouldShowComment">{{
+        commentFormControl.value
+    }}</span>
+</span>
+<ng-template #showForm>
+    <span [formGroup]="form">
+        <mat-form-field class="child-value-component" floatLabel="never">
+            <div class="search-input">
+                <input
+                    matInput
+                    [formControlName]="'value'"
+                    class="value"
+                    type="text"
+                    [placeholder]="
+                        'appLabels.form.action.searchHelp' | translate
+                    "
+                    aria-label="resource"
+                    [matAutocomplete]="auto"
+                />
+                <span matSuffix class="progress-indicator">
+                    <app-progress-indicator
+                        *ngIf="loadingResults"
+                        [status]="0"
+                    ></app-progress-indicator>
+                </span>
+            </div>
+            <mat-autocomplete
+                #auto="matAutocomplete"
+                [displayWith]="displayResource"
+            >
+                <mat-option *ngIf="showNoResultsMessage" disabled="true">
+                    No results were found.
+                </mat-option>
+                <mat-option
+                    *ngFor="let rc of resourceClasses"
+                    (click)="
+                        openDialog('createLinkResource', $event, propIri, rc)
+                    "
+                >
+                    Create New: {{ rc?.label }}
+                </mat-option>
+                <mat-option *ngFor="let res of resources" [value]="res">
+                    {{ res?.label }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
+                <span class="custom-error-message"
+                    >New value must be different than the current value.</span
+                >
+            </mat-error>
+            <mat-error
+                *ngIf="
+                    valueRequiredValidator &&
+                    valueFormControl.hasError('invalidType')
+                "
+            >
+                <span class="custom-error-message"
+                    >New value must be a valid resource type.</span
+                >
+            </mat-error>
+            <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+                <span class="custom-error-message"
+                    >This value already exists for this property. Duplicate
+                    values are not allowed.</span
+                >
+            </mat-error>
+        </mat-form-field>
+        <app-comment-form
+            *ngIf="!commentDisabled && valueFormControl && commentFormControl"
+            [valueFormControlHasError]="hasError()"
+            [(commentFormControl)]="commentFormControl"
+            [valueFormControlValue]="valueFormControl.value"
+        ></app-comment-form>
+    </span>
+</ng-template>

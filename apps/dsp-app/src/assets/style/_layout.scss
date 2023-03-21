@@ -1,0 +1,284 @@
+@use "config" as *;
+
+// general app layout
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  .app-header {
+    height: $header-height;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+
+  .app-content {
+    flex: 1;
+    //    height: calc(100vh - #{$header-height});
+    margin-top: $header-height;
+    // overflow: auto;
+  }
+}
+
+//
+// content wrapper
+.content {
+  &.small,
+  &.medium,
+  &.large,
+  &.extra-large {
+    padding: 36px 48px;
+  }
+
+  &.small {
+    max-width: 320px;
+  }
+
+  &.medium {
+    max-width: 560px;
+  }
+
+  &.large {
+    max-width: 940px;
+  }
+
+  &.extra-large {
+    max-width: 1440px;
+  }
+}
+
+// --------------------------------------
+
+//
+// sidenav in project view
+.project-view {
+  height: calc(100vh - #{$header-height});
+
+  .project-nav {
+    width: 315px;
+    background-color: #fafafa;
+
+    .project-title {
+      padding: 20px 16px 20px 16px;
+
+      p {
+        font-size: 24px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0px;
+      }
+    }
+
+    .mat-list-base {
+      padding-top: 0px;
+    }
+
+    .mat-list.main-list {
+      margin-bottom: calc(#{$header-height} - 8px);
+    }
+
+    .mat-title,
+    .mat-subheading-2,
+    .mat-subheading-1 {
+      margin: 0;
+    }
+
+    .mat-list-item {
+      height: 48px;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+      }
+
+      &.list {
+        height: auto;
+
+        p {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .mat-expansion-panel {
+      box-shadow: none !important;
+
+      .mat-expansion-panel-header {
+        padding: 0 16px !important; // override default value
+        height: auto !important; // override default value
+
+        .mat-expansion-panel-header-title, .mat-expansion-indicator {
+          color: $primary;
+        }
+
+        .mat-expansion-indicator::after {
+          color: $primary!important;
+        }
+      }
+
+      .mat-expansion-panel-header.mat-expanded {
+        background: $primary_100;
+      }
+
+      .mat-expansion-panel-header:hover {
+        background-color: $primary_100;
+      }
+
+      .sidenav-panel-header {
+        width: 100%;
+        mat-panel-title {
+          overflow: unset;
+          white-space: inherit;
+          text-overflow: unset;
+          display: flex;
+
+          p {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+        }
+      }
+
+      .mat-expansion-panel-body {
+        padding: 0 !important;
+      }
+    }
+  }
+}
+
+// --------------------------------------
+
+//
+// navigation is used in menu e.g. user-menu and in case of tab-bar
+.navigation {
+  &.tab-bar {
+    background-color: #fff;
+    position: sticky;
+    top: $header-height;
+    z-index: 1;
+  }
+
+  padding-top: 0 !important;
+
+  &.settings {
+    height: 72px;
+    padding-top: 8px !important;
+
+    .mat-tab-links {
+      margin-top: 24px;
+    }
+  }
+
+  .nav-item {
+    height: 48px;
+    text-align: left;
+    width: 100%;
+
+    &.button {
+      margin-left: -16px;
+      margin-right: -16px;
+      text-align: left;
+      width: calc(100% + 32px);
+      border-radius: 0;
+
+      .mat-icon {
+        position: absolute;
+        top: 12px;
+
+        &.prefix {
+          left: 4px;
+        }
+
+        &.suffix {
+          display: none;
+          right: 0;
+        }
+      }
+    }
+
+    .active-link {
+      background: rgba($primary_50, 1);
+
+      .mat-icon.suffix {
+        display: block;
+      }
+    }
+  }
+}
+
+// --------------------------------------
+
+//
+// positions
+
+// center an element
+.middle {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// center content of an element
+.center {
+  text-align: center !important;
+}
+
+.left {
+  left: 0;
+  text-align: left;
+}
+
+.right {
+  right: 0;
+  text-align: right;
+}
+
+.inline {
+  display: inline-flex;
+}
+
+// --------------------------------------
+
+// ?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
+// TODO: clean up the following classes
+// ?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-?-
+
+.flex-panel {
+  display: flex !important;
+}
+
+// font sizes
+
+.smaller {
+  font-size: small;
+}
+
+//
+// dialog: not the one from material, it's a fullframe dialog box
+.window.fullframe {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+}
+
+// --------------------------------------
+
+//
+// color
+.transparent {
+  background: none;
+}
+
+// --------------------------------------

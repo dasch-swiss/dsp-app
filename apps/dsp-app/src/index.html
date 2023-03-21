@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>DaSCH Service Platform</title>
+        <base href="/" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+
+        <!-- Fathom - beautiful, simple website analytics -->
+        <script
+            src="https://cdn.usefathom.com/script.js"
+            data-spa="auto"
+            data-site="IMXRBKAX"
+            data-include-domains="admin.dasch.swiss"
+            defer
+        ></script>
+        <!-- / Fathom -->
+
+        <!-- ReleaseNotes injection -->
+        <script>
+            (function (w, d, s, o, f, js, fjs) {
+                w['ReleaseNotesWidget'] = o;
+                w[o] =
+                    w[o] ||
+                    function () {
+                        (w[o].q = w[o].q || []).push(arguments);
+                    };
+                (js = d.createElement(s)), (fjs = d.getElementsByTagName(s)[0]);
+                js.id = o;
+                js.src = f;
+                js.async = 1;
+                fjs.parentNode.insertBefore(js, fjs);
+            })(
+                window,
+                document,
+                'script',
+                'rnw',
+                'https://s3.amazonaws.com/cdn.releasenotes.io/v1/bootstrap.js'
+            );
+
+            rnw('init', {
+                account: 'dasch.releasenotes.io',
+                selector: '.rn-badge',
+            });
+        </script>
+    </head>
+
+    <body>
+        <app-root></app-root>
+
+        <!-- Placing the ReleaseNote banner with corporate design on the bottom -->
+        <rn-banner
+            style="position: fixed; bottom: 0; width: 100%"
+            margin="0"
+            border-radius="0"
+            button-text="Check it out"
+            background-color="#336790"
+            prefix-background-color="#3B4856"
+            text-color="#ffffff"
+        >
+        </rn-banner>
+    </body>
+</html>

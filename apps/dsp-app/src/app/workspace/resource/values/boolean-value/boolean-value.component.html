@@ -1,0 +1,35 @@
+<span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
+    <span class="rm-value">
+        <mat-icon>{{
+            valueFormControl.value ? 'check_box' : 'check_box_outline_blank'
+        }}</mat-icon>
+    </span>
+    <span class="rm-comment" *ngIf="shouldShowComment">{{
+        commentFormControl.value
+    }}</span>
+</span>
+<ng-template #showForm>
+    <span [formGroup]="form">
+        <mat-checkbox
+            [formControlName]="'value'"
+            class="value boolValue child-value-component"
+            [class.more-space]="moreSpace"
+        >
+        </mat-checkbox>
+        <mat-error
+            *ngIf="
+                valueFormControl.hasError('valueNotChanged') &&
+                valueFormControl.dirty
+            "
+        >
+            <span class="custom-error-message"
+                >New value must be different than the current value.</span
+            >
+        </mat-error>
+        <app-comment-form
+            [valueFormControlHasError]="hasError()"
+            [(commentFormControl)]="commentFormControl"
+            [valueFormControlValue]="valueFormControl.value"
+        ></app-comment-form>
+    </span>
+</ng-template>

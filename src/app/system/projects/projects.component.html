@@ -1,9 +1,0 @@
-<app-progress-indicator *ngIf="loading"></app-progress-indicator>
-
-<div *ngIf="!loading" class="app-projects">
-    <!-- <mat-divider></mat-divider> -->
-    <app-projects-list [list]="active" [status]="true" (refreshParent)="refresh()" [createNew]="true">
-    </app-projects-list>
-    <!-- already deactivated projects: disable the menu -->
-    <app-projects-list [list]="inactive" [status]="false" (refreshParent)="refresh()"></app-projects-list>
-</div>

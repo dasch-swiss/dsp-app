@@ -1,0 +1,111 @@
+<div class="properties-container">
+    <div class="properties">
+        <!-- resource's label (defined in the base ontology) -->
+        <div class="property">
+            <div class="property-label">
+                <h3
+                    class="label label-info mat-subheading-1"
+                    matTooltip="Each resource needs a (preferably unique) label. It will be a kind of resource identifier."
+                    matTooltipPosition="above"
+                >
+                    Resource label *
+                </h3>
+            </div>
+            <div class="property-value large-field">
+                <div class="value">
+                    <app-text-value-as-string
+                        #createVal
+                        [mode]="'create'"
+                        [commentDisabled]="true"
+                        [valueRequiredValidator]="true"
+                        [parentForm]="parentForm"
+                        [formName]="'label'"
+                    >
+                    </app-text-value-as-string>
+                </div>
+            </div>
+        </div>
+
+        <!-- resource's properties (defined in the ontology) -->
+        <div
+            *ngFor="let prop of properties; let last = last"
+            [class.border-bottom]="!last"
+        >
+            <div class="property" *ngIf="!prop.isLinkProperty || prop">
+                <div class="property-label">
+                    <h3
+                        class="label mat-subheading-1"
+                        [class.label-info]="prop.comment"
+                        [matTooltip]="prop.comment"
+                        matTooltipPosition="above"
+                    >
+                        {{ prop.label }}
+                        <span
+                            *ngIf="
+                                propertyValuesKeyValuePair[
+                                    prop.id + '-cardinality'
+                                ][0] === 1
+                            "
+                            >*</span
+                        >
+                    </h3>
+                </div>
+                <div class="property-value large-field">
+                    <div
+                        *ngFor="
+                            let val of propertyValuesKeyValuePair[prop.id];
+                            let i = index
+                        "
+                    >
+                        <div *ngIf="val !== undefined">
+                            <div class="value">
+                                <app-switch-properties
+                                    #switchProp
+                                    [property]="prop"
+                                    [parentResource]="parentResource"
+                                    [parentForm]="parentForm"
+                                    [formName]="prop.label + '_' + i"
+                                    [isRequiredProp]="
+                                        propertyValuesKeyValuePair[
+                                            prop.id + '-cardinality'
+                                        ]
+                                    "
+                                    [currentOntoIri]="currentOntoIri"
+                                >
+                                </app-switch-properties>
+                            </div>
+                            <div class="buttons">
+                                <button
+                                    mat-icon-button
+                                    *ngIf="
+                                        propertyValuesKeyValuePair[
+                                            prop.id + '-filtered'
+                                        ].length !== 1
+                                    "
+                                    type="button"
+                                    class="value-action delete"
+                                    title="Delete this value"
+                                    (click)="deleteValue(prop, i, $event)"
+                                >
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add button -->
+                    <div *ngIf="addValueIsAllowed(prop)">
+                        <button
+                            mat-icon-button
+                            type="button"
+                            class="value-action create"
+                            title="Add a new value"
+                            (click)="addNewValueFormToProperty(prop, $event)"
+                        >
+                            <mat-icon>add_box</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

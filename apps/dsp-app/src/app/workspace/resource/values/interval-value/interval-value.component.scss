@@ -1,0 +1,16 @@
+:host ::ng-deep .child-value-component {
+  .mat-form-field-underline {
+    display: none;
+  }
+  .mat-form-field-infix {
+    border-top: 0.2em solid transparent !important;
+    .mat-form-field-underline {
+      display: block;
+    }
+  }
+}
+
+.interval-start,
+.interval-end {
+  display: block;
+}

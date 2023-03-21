@@ -1,0 +1,102 @@
+@use "config" as *;
+
+.project-tile {
+  border: 1px solid $cool_gray_300;
+  border-radius: 6px;
+  box-shadow: 0px 4px 4px $cool_gray_300;
+
+  .project-tile-content {
+    padding: 10px 5px 10px 10px;
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .status,
+      .settings {
+        display: inline-block;
+      }
+
+      .status {
+        .status-badge {
+          border-radius: 10px;
+          padding: 2px 10px 4px 10px;
+
+          span {
+            font-size: 12px;
+          }
+        }
+
+        .status-badge.active {
+          background-color: #99F6E4;
+
+          span {
+            color: #0F766E;
+          }
+        }
+
+        .status-badge.deactivated {
+          background-color: #E5E7EB;
+
+          span {
+            color: #6B7280;
+          }
+        }
+      }
+
+      .settings {
+        mat-icon-button {
+          width: 28px;
+          height: 28px;
+          line-height: 28px;
+
+          mat-icon {
+            height: 28px;
+            width: 28px;
+            font-size: 28px;
+            line-height: 28px;
+          }
+        }
+      }
+    }
+
+    .icon {
+      padding-top: 23px;
+
+      mat-icon {
+        font-size: 40px;
+        height: 40px;
+        width: 40px;
+      }
+    }
+
+    .title {
+      padding: 20px;
+      height: 80px;
+    }
+    .title-text {
+      font-weight: 700;
+      font-size: 24px;
+      color: $black;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      overflow-wrap: break-word;
+      text-overflow: ellipsis;
+      line-height: 28px;
+    }
+
+    .workspace-button-container {
+      margin: 14% 0%;
+
+      button {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 400;
+        padding: 13px 21px;
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+<mat-menu #childMenu="matMenu" [overlapTrigger]="false">
+    <span *ngFor="let child of children">
+        <span *ngIf="child.children && child.children.length > 0">
+            <button
+                mat-menu-item
+                [matMenuTriggerFor]="menu.childMenu"
+                (click)="setValue(child)"
+                type="button"
+            >
+                {{ child.label }}
+            </button>
+            <app-sublist-value
+                #menu
+                [children]="child.children"
+                (selectedNode)="setValue($event)"
+            ></app-sublist-value>
+        </span>
+
+        <span *ngIf="!child.children || child.children.length === 0">
+            <button mat-menu-item (click)="setValue(child)" type="button">
+                {{ child.label }}
+            </button>
+        </span>
+    </span>
+</mat-menu>

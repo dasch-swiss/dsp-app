@@ -1,0 +1,32 @@
+<div class="content">
+    <as-split direction="vertical">
+        <as-split-area>
+            <!-- note: This part is repeating twice (not added as component) because angular-split
+                library does not support addition div inside as-split -->
+            <as-split
+                direction="horizontal"
+                (dragEnd)="splitSizeChanged = $event"
+            >
+                <as-split-area *ngFor="let res of topRow">
+                    <app-resource
+                        [resourceIri]="res"
+                        [splitSizeChanged]="splitSizeChanged"
+                    ></app-resource>
+                </as-split-area>
+            </as-split>
+        </as-split-area>
+        <as-split-area *ngIf="noOfResources > 3">
+            <as-split
+                direction="horizontal"
+                (dragEnd)="splitSizeChanged = $event"
+            >
+                <as-split-area *ngFor="let res of bottomRow">
+                    <app-resource
+                        [resourceIri]="res"
+                        [splitSizeChanged]="splitSizeChanged"
+                    ></app-resource>
+                </as-split-area>
+            </as-split>
+        </as-split-area>
+    </as-split>
+</div>

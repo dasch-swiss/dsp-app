@@ -1,0 +1,14 @@
+.date-form-grid {
+  display: flex;
+
+  .date-form-field {
+    min-width: 120px;
+  }
+
+  .toggle-period-control {
+    height: 48px;
+    min-width: 32px;
+    padding: 0;
+    margin: 0 8px;
+  }
+}

@@ -1,0 +1,92 @@
+<div class="content extra-large middle">
+    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
+
+    <div *ngIf="!loading" class="overview">
+        <!-- user is a system admin -->
+        <div *ngIf="sysAdmin">
+            <!-- list all projects -->
+            <div class="title-bar admin">
+                <div class="title">
+                    <p>Browse Research Projects</p>
+                </div>
+                <div class="create-project-button">
+                    <button
+                        mat-flat-button
+                        [color]="'primary'"
+                        (click)="openDialog('createProject')"
+                    >
+                        Create new project
+                    </button>
+                </div>
+            </div>
+            <div class="project-tiles">
+                <div
+                    *ngFor="let proj of otherProjects"
+                    class="project-tile-container"
+                >
+                    <app-project-tile
+                        [project]="proj"
+                        [sysAdmin]="true"
+                    ></app-project-tile>
+                </div>
+            </div>
+        </div>
+
+        <!-- user is logged in and not a system admin -->
+        <div *ngIf="!sysAdmin && this.session">
+            <div class="title-bar">
+                <div class="title">
+                    <p>My Projects</p>
+                </div>
+            </div>
+            <div class="project-tiles">
+                <div
+                    *ngFor="let userProj of userProjects"
+                    class="project-tile-container"
+                >
+                    <app-project-tile
+                        [project]="userProj"
+                        [sysAdmin]="false"
+                    ></app-project-tile>
+                </div>
+            </div>
+            <div class="title-bar other-projects">
+                <div class="title">
+                    <p>Browse Other Research Projects</p>
+                </div>
+            </div>
+            <div class="project-tiles">
+                <div
+                    *ngFor="let otherProj of otherProjects"
+                    class="project-tile-container"
+                >
+                    <app-project-tile
+                        [project]="otherProj"
+                        [sysAdmin]="false"
+                    ></app-project-tile>
+                </div>
+            </div>
+        </div>
+
+        <!-- user is not logged in -->
+        <div *ngIf="!sysAdmin && !this.session">
+            <!-- list all projects -->
+            <div class="title-bar admin">
+                <div class="title">
+                    <p>Browse Research Projects</p>
+                </div>
+            </div>
+            <div class="project-tiles">
+                <div
+                    *ngFor="let proj of otherProjects"
+                    class="project-tile-container"
+                >
+                    <app-project-tile
+                        [project]="proj"
+                        [sysAdmin]="false"
+                    ></app-project-tile>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

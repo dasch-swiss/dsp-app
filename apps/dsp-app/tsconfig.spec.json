@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "outDir": "../out-tsc/spec",
+    "types": ["jasmine", "node"]
+  },
+  "files": ["src/test.ts", "src/polyfills.ts", "src/test.config.ts"],
+  "include": ["src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
+}

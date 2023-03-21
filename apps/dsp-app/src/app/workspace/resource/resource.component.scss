@@ -1,0 +1,50 @@
+@use "config" as *;
+
+.representation-container {
+  width: 100%;
+}
+
+.previousBtn {
+  margin: 24px 48px;
+  position: absolute;
+}
+
+.active {
+  border: 1px solid $primary_800;
+}
+
+.restricted-message {
+  background: $yellow_100;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 25px;
+  border-radius: 20px;
+  gap: 10px;
+  margin: 2%;
+
+  mat-icon {
+    color: $yellow_500;
+    min-width: 25px;
+  }
+
+  p {
+    color:
+    $yellow_700;
+  }
+}
+
+.close {
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .previousBtn {
+    margin: 12px auto 0 12px;
+    // position: relative;
+  }
+
+  .large-screen-only {
+    display: none;
+  }
+}
