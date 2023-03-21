@@ -14,4 +14,4 @@ jobs:
         run: |
           echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
           docker buildx create --use
-          make docker-publish-from-branch
+          make docker-publish
