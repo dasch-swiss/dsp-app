@@ -31,7 +31,7 @@ RUN npm run build-prod
 
 ### STAGE 2: Setup ###
 
-FROM daschswiss/nginx-server:1.1.2
+FROM daschswiss/nginx-server:1.1.3
 
 LABEL maintainer="400790+subotic@users.noreply.github.com"
 
