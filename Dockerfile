@@ -5,5 +5,3 @@ LABEL maintainer="support@dasch.swiss"
 RUN rm -rf /public/*
 
 COPY apps/dsp-app /public
-
-EXPOSE 4200
