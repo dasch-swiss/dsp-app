@@ -18,6 +18,7 @@ import {
     ComparisonOperatorAndValue,
     Equals,
     Exists,
+    NotExists,
     GreaterThan,
     GreaterThanEquals,
     LessThan,
@@ -141,6 +142,7 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                         new Like(),
                         new Match(),
                         new Exists(),
+                        new NotExists(),
                     ];
                 } else {
                     this.comparisonOperators = [
@@ -149,12 +151,17 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                         new Equals(),
                         new NotEquals(),
                         new Exists(),
+                        new NotExists(),
                     ];
                 }
                 break;
 
             case Constants.BooleanValue:
-                this.comparisonOperators = [new Equals(), new Exists()];
+                this.comparisonOperators = [
+                    new Equals(),
+                    new Exists(),
+                    new NotExists(),
+                ];
                 break;
 
             case Constants.UriValue:
@@ -162,6 +169,7 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                     new Equals(),
                     new NotEquals(),
                     new Exists(),
+                    new NotExists(),
                 ];
                 break;
 
@@ -182,6 +190,7 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                     new GreaterThan(),
                     new GreaterThanEquals(),
                     new Exists(),
+                    new NotExists(),
                 ];
                 break;
 
@@ -190,6 +199,7 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
                     new Equals(),
                     new NotEquals(),
                     new Exists(),
+                    new NotExists(),
                 ];
                 break;
 
@@ -203,7 +213,8 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
             case Constants.ColorValue:
             case Constants.IntervalValue:
             case Constants.GeonameValue:
-                this.comparisonOperators = [new Exists()];
+            case Constants.TimeValue:
+                this.comparisonOperators = [new Exists(), new NotExists()];
                 break;
 
             default:
@@ -224,7 +235,8 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
         let value: Value;
 
         // comparison operator 'Exists' does not require a value
-        if (this.comparisonOperatorSelected.getClassName() !== 'Exists') {
+        if (this.comparisonOperatorSelected.getClassName() !== 'Exists' &&
+            this.comparisonOperatorSelected.getClassName() !== 'NotExists') {
             value = this.propertyValueComponent.getValue();
         }
 

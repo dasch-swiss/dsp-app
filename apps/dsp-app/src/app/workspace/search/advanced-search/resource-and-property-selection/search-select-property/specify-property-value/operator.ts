@@ -8,10 +8,8 @@ import { ComparisonOperatorConstants } from './operator-constants';
 export interface ComparisonOperator {
     // type of comparison operator
     type: string;
-
     // the label of the comparison operator to be presented to the user.
     label: string;
-
     // returns the class name when called on an instance
     getClassName(): string;
 }
@@ -19,9 +17,6 @@ export interface ComparisonOperator {
 export class Equals implements ComparisonOperator {
     type = ComparisonOperatorConstants.EqualsComparisonOperator;
     label = ComparisonOperatorConstants.EqualsComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'Equals';
     }
@@ -30,9 +25,6 @@ export class Equals implements ComparisonOperator {
 export class NotEquals implements ComparisonOperator {
     type = ComparisonOperatorConstants.NotEqualsComparisonOperator;
     label = ComparisonOperatorConstants.NotEqualsComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'NotEquals';
     }
@@ -41,9 +33,6 @@ export class NotEquals implements ComparisonOperator {
 export class GreaterThanEquals implements ComparisonOperator {
     type = ComparisonOperatorConstants.GreaterThanEqualsComparisonOperator;
     label = ComparisonOperatorConstants.GreaterThanEqualsComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'GreaterThanEquals';
     }
@@ -52,9 +41,6 @@ export class GreaterThanEquals implements ComparisonOperator {
 export class GreaterThan implements ComparisonOperator {
     type = ComparisonOperatorConstants.GreaterThanComparisonOperator;
     label = ComparisonOperatorConstants.GreaterThanComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'GreaterThan';
     }
@@ -63,9 +49,6 @@ export class GreaterThan implements ComparisonOperator {
 export class LessThan implements ComparisonOperator {
     type = ComparisonOperatorConstants.LessThanComparisonOperator;
     label = ComparisonOperatorConstants.LessThanComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'LessThan';
     }
@@ -73,10 +56,7 @@ export class LessThan implements ComparisonOperator {
 
 export class LessThanEquals implements ComparisonOperator {
     type = ComparisonOperatorConstants.LessThanEqualsComparisonOperator;
-    label = ComparisonOperatorConstants.LessThanQualsComparisonLabel;
-
-    constructor() {}
-
+    label = ComparisonOperatorConstants.LessThanEqualsComparisonLabel;
     getClassName() {
         return 'LessThanEquals';
     }
@@ -85,20 +65,22 @@ export class LessThanEquals implements ComparisonOperator {
 export class Exists implements ComparisonOperator {
     type = ComparisonOperatorConstants.ExistsComparisonOperator;
     label = ComparisonOperatorConstants.ExistsComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'Exists';
+    }
+}
+
+export class NotExists implements ComparisonOperator {
+    type = ComparisonOperatorConstants.NotExistsComparisonOperator;
+    label = ComparisonOperatorConstants.NotExistsComparisonLabel;
+    getClassName() {
+        return 'NotExists';
     }
 }
 
 export class Like implements ComparisonOperator {
     type = ComparisonOperatorConstants.LikeComparisonOperator;
     label = ComparisonOperatorConstants.LikeComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'Like';
     }
@@ -107,9 +89,6 @@ export class Like implements ComparisonOperator {
 export class Match implements ComparisonOperator {
     type = ComparisonOperatorConstants.MatchComparisonOperator;
     label = ComparisonOperatorConstants.MatchComparisonLabel;
-
-    constructor() {}
-
     getClassName() {
         return 'Match';
     }

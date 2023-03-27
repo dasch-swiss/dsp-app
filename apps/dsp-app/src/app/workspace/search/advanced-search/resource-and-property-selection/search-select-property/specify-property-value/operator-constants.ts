@@ -17,10 +17,13 @@ export class ComparisonOperatorConstants {
     static LessThanComparisonLabel = 'is less than';
 
     static LessThanEqualsComparisonOperator = '<=';
-    static LessThanQualsComparisonLabel = 'is less than or equal to';
+    static LessThanEqualsComparisonLabel = 'is less than or equal to';
 
     static ExistsComparisonOperator = 'E';
     static ExistsComparisonLabel = 'exists';
+
+    static NotExistsComparisonOperator = '!E';
+    static NotExistsComparisonLabel = 'not exists';
 
     static LikeComparisonOperator = 'regex';
     static LikeComparisonLabel = 'is like';

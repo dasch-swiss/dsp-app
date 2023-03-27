@@ -19,7 +19,8 @@
     *ngIf="
         comparisonOperatorSelected !== undefined &&
         comparisonOperatorSelected !== null &&
-        comparisonOperatorSelected.getClassName() !== 'Exists'
+        comparisonOperatorSelected.getClassName() !== 'Exists' &&
+        comparisonOperatorSelected.getClassName() !== 'NotExists'
     "
     [ngSwitch]="propertyValueType"
 >

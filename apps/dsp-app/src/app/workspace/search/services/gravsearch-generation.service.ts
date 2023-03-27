@@ -153,10 +153,13 @@ OFFSET ${localOffset}
             let linkedResStatementsAndRestrictions: [string, string][] = [];
             // represents the object of a statement
             let object;
+            // it is not a linking property, or it is a linking property BUT the comparator is either 'exists' or 'not exists'
             if (
                 !propWithVal.property.isLinkProperty ||
                 propWithVal.valueLiteral.comparisonOperator.getClassName() ===
-                    'Exists'
+                    'Exists' ||
+                propWithVal.valueLiteral.comparisonOperator.getClassName() ===
+                    'NotExists'
             ) {
                 // it is not a linking property, create a variable for the value (to be used by a subsequent FILTER)
                 // oR the comparison operator Exists is used in which case we do not need to specify the object any further
@@ -216,11 +219,22 @@ ${statement}
                 if (topLevel) {
                     this._returnStatements.push(statement);
                 }
-                statement = `
+
+                // add filter not exists if comparison operator is 'not exists'
+                if (propWithVal.valueLiteral.comparisonOperator.getClassName() ===
+                    'NotExists') {
+                    statement = `FILTER NOT EXISTS {
+${statement}
+
+
+}`;
+                } else {
+                    statement = `
 ${statement}
 
 
 `;
+                }
             }
 
             // generate restricting expression (e.g., a FILTER) if comparison operator is not Exists
@@ -229,7 +243,9 @@ ${statement}
             if (
                 !propWithVal.property.isLinkProperty &&
                 propWithVal.valueLiteral.comparisonOperator.getClassName() !==
-                    'Exists'
+                    'Exists' &&
+                propWithVal.valueLiteral.comparisonOperator.getClassName() !==
+                    'NotExists'
             ) {
                 // generate variable for value literal
                 const propValueLiteral = `${object}Literal`;
@@ -281,8 +297,8 @@ ${statement}
                         'NotEquals'
                     ) {
                         restriction = `FILTER NOT EXISTS {
-                                ${restriction}
-                            }`;
+${restriction}
+}`;
                     }
                 } else {
                     // generate statement to value literal
