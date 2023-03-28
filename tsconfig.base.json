@@ -7,19 +7,23 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "target": "ES2021",
     "module": "es2020",
+    "lib": ["es2018", "dom"],
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "ES2022",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "dom"],
-    "useDefineForClassFields": false,
+    "useDefineForClassFields": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@dsp-app/*": [
-        "apps/dsp-app/*"
+      "@dsp-app/*": ["apps/dsp-app/*"],
+      "@dasch-swiss/jdnconvertiblecalendar": [
+        "libs/jdnconvertiblecalendar/src/index.ts"
+      ],
+      "@dasch-swiss/jdnconvertiblecalendardateadapter": [
+        "libs/jdnconvertiblecalendardateadapter/src/index.ts"
       ]
     }
   },

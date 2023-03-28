@@ -1,0 +1,44 @@
+{
+  "Gregorian": {
+    "weekdays": {
+      "en": {
+        "long": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "short": ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"],
+        "narrow": ["Su", "M", "Tu", "W", "Th", "F", "Sa"]
+      },
+      "de": {
+        "long": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Sonntag"],
+        "short": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+        "narrow": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
+      }
+    },
+    "months": {
+      "en": {
+        "long": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "short": ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
+      },
+      "de": {
+        "long": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+        "short": ["Jan", "Feb", "März", "Apr", "Mai", "Jun", "Jul", "Aug", "Sept", "Okt", "Nov", "Dez"]
+      }
+    }
+  },
+  "Islamic": {
+    "weekdays": {
+      "en": {
+        "long": ["al-Aḥad", "al-Ithnayn", "al-Thulāthāʾ", "al-Arbiʿāʾ", "al-Khamīs", "al-Jumʿah", "al-Sabt"]
+      },
+      "ar": {
+        "long": ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
+      }
+    },
+    "months": {
+      "en": {
+        "long": ["Muḥarram", "Ṣafar", "Rabīʿ al-Awwal", "Rabīʿ al-Thānī", "Jumādā al-Ūlā", "Jumādā al-Ākhirah", "Rajab", "Shaʿbān", "Ramaḍān", "Shawwāl", "Dhū al-Qaʿdah", "Dhū al-Ḥijjah"]
+      },
+      "ar": {
+        "long": ["محرم", "صفر", "ربيع الأول", "ربيع الثاني", "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الججة"]
+      }
+    }
+  }
+}

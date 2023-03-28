@@ -17,8 +17,8 @@ import {
     GregorianCalendarDate,
     CalendarPeriod,
     CalendarDate,
-} from 'jdnconvertiblecalendar';
-import { MatJDNConvertibleCalendarDateAdapterModule } from 'jdnconvertiblecalendardateadapter';
+} from '@dasch-swiss/jdnconvertiblecalendar';
+import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { JDNDatepickerDirective } from '../../jdn-datepicker-directive/jdndatepicker.directive';
 
 /**

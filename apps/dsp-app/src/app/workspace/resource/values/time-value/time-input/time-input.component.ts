@@ -39,7 +39,7 @@ import {
     CalendarDate,
     CalendarPeriod,
     GregorianCalendarDate,
-} from 'jdnconvertiblecalendar';
+} from '@dasch-swiss/jdnconvertiblecalendar';
 import { Subject } from 'rxjs';
 import { CustomRegex } from '../../custom-regex';
 

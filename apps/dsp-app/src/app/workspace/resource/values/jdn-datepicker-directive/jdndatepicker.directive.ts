@@ -7,11 +7,11 @@ import {
     SimpleChanges,
 } from '@angular/core';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
-import { JDNConvertibleCalendar } from 'jdnconvertiblecalendar';
+import { JDNConvertibleCalendar } from '@dasch-swiss/jdnconvertiblecalendar';
 import {
     ACTIVE_CALENDAR,
     JDNConvertibleCalendarDateAdapter,
-} from 'jdnconvertiblecalendardateadapter';
+} from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { BehaviorSubject } from 'rxjs';
 
 export function makeCalendarToken() {

@@ -12,10 +12,69 @@ jobs:
     name: Find ignored tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
-      - name: Run the script
-        run: ./find-ignored-tests.sh
+      - uses: actions/checkout@v3
+      - run: ./find-ignored-tests.sh
+
+  dsp-app-tests:
+    name: DSP-APP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: browser-actions/setup-chrome@v1
+      - run: npm install
+      - run: npx nx run dsp-app:lint
+      - run: npx nx run dsp-app:test:ci
+        env:
+          TZ: Europe/Zurich
+      # - run: npx nx run dsp-app-e2e:e2e-ci
+
+  dateadapter-tests:
+    name: DateAdapter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npx nx run dateAdapter:lint
+      - run: npx nx run dateAdapter:test:ci
+      # - run: npx nx run dateAdaper-e2e:e2e-ci
+
+  jdnconvertiblecalendar-tests:
+    name: JDNConvertibleCalendar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npx nx run jdnconvertiblecalendar:lint
+      - run: npx nx run jdnconvertiblecalendar:test:ci
+
+  jdnconvertiblecalendardateadapter-tests:
+    name: JDNConvertibleCalendarDateAdapter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npx nx run jdnconvertiblecalendardateadapter:lint
+      - run: npx nx run jdnconvertiblecalendardateadapter:test:ci
 
   unit-tests:
     name: Run unit tests
@@ -26,10 +85,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install dependencies
-        run: npm install
-      - name: Run the tests
-        run: npm run test-ci
+      - run: npm install
+      - run: npx nx run dsp-app:test:ci
         env:
           TZ: Europe/Zurich
 
@@ -60,7 +117,7 @@ jobs:
         with:
           node-version: 18
       - run: npm install
-      - run: npm run lint-ci
+      - run: npx nx run dsp-app:lint
 
   build:
     name: Build the app
@@ -145,15 +202,5 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r docs/requirements.txt
-      - name: Disk Free
-        run: |
-          df -h
-          docker system df
-          docker system prune --all --force --volumes
-          df -h
       - name: Run docs build
         run: make docs-build
-      - name: Disk Free After
-        run: |
-          df -h
-          docker system df

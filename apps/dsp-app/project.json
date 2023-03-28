@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/dsp-app/src",
   "projectType": "application",
-  "prefix": "app",
+  "prefix": "dsp-app",
   "generators": {
     "@schematics/angular:component": {
       "style": "scss"
@@ -11,10 +11,9 @@
   },
   "targets": {
     "build": {
-      "defaultConfiguration": "development",
       "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "aot": true,
         "outputPath": "dist/apps/dsp-app",
         "index": "apps/dsp-app/src/index.html",
         "main": "apps/dsp-app/src/main.ts",
@@ -40,25 +39,13 @@
         ],
         "styles": ["apps/dsp-app/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": [
-            "apps/dsp-app/src/assets/style/"
-          ]
+          "includePaths": ["apps/dsp-app/src/assets/style/"]
         },
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
         ]
       },
       "configurations": {
-        "development": {
-          "optimization": false,
-          "sourceMap": true,
-          "namedChunks": true,
-          "aot": true,
-          "extractLicenses": false,
-          "vendorChunk": true,
-          "buildOptimizer": false,
-          "budgets": []
-        },
         "production": {
           "fileReplacements": [
             {
@@ -66,14 +53,6 @@
               "with": "apps/dsp-app/src/environments/environment.prod.ts"
             }
           ],
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "aot": true,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "buildOptimizer": true,
           "budgets": [
             {
               "type": "initial",
@@ -84,7 +63,16 @@
               "type": "anyComponentStyle",
               "maximumWarning": "9kb"
             }
-          ]
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
         },
         "test-server": {
           "fileReplacements": [
@@ -99,8 +87,7 @@
           "aot": true,
           "extractLicenses": false,
           "vendorChunk": false,
-          "buildOptimizer": false,
-          "budgets": []
+          "buildOptimizer": false
         },
         "ls-test-server": {
           "fileReplacements": [
@@ -115,8 +102,7 @@
           "aot": true,
           "extractLicenses": false,
           "vendorChunk": false,
-          "buildOptimizer": false,
-          "budgets": []
+          "buildOptimizer": false
         },
         "staging-server": {
           "fileReplacements": [
@@ -131,10 +117,10 @@
           "aot": true,
           "extractLicenses": false,
           "vendorChunk": false,
-          "buildOptimizer": false,
-          "budgets": []
+          "buildOptimizer": false
         }
-      }
+      },
+      "defaultConfiguration": "production"
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
@@ -165,6 +151,13 @@
         "browserTarget": "dsp-app:build"
       }
     },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/dsp-app/**/*.ts", "apps/dsp-app/**/*.html"]
+      }
+    },
     "test": {
       "executor": "@angular-devkit/build-angular:karma",
       "options": {
@@ -174,9 +167,7 @@
         "karmaConfig": "apps/dsp-app/karma.conf.js",
         "styles": ["apps/dsp-app/src/styles.scss"],
         "stylePreprocessorOptions": {
-          "includePaths": [
-            "apps/dsp-app/src/assets/style/"
-          ]
+          "includePaths": ["apps/dsp-app/src/assets/style/"]
         },
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
@@ -191,13 +182,12 @@
             "output": "/assets/"
           }
         ]
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/dsp-app/**/*.ts", "apps/dsp-app/**/*.html"]
+      },
+      "configurations": {
+        "ci": {
+          "watch": false,
+          "browsers": "ChromeHeadless"
+        }
       }
     }
   }

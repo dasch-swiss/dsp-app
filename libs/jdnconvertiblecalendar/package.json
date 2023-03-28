@@ -1,0 +1,8 @@
+{
+  "name": "@dasch-swiss/jdnconvertiblecalendar",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "author": "Swiss National Data and Service Center for the Humanities and/or DaSCH Service Platform contributors. Email to support@dasch.swiss.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/dasch-swiss/dsp-app#readme"
+}

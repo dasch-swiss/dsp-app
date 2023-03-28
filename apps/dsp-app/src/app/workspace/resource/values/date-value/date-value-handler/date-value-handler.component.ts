@@ -35,7 +35,7 @@ import {
 } from '@angular/material/core';
 import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { JDNConvertibleCalendar } from 'jdnconvertiblecalendar';
+import { JDNConvertibleCalendar } from '@dasch-swiss/jdnconvertiblecalendar';
 import { Subject, Subscription } from 'rxjs';
 import { ValueService } from '../../../services/value.service';
 
