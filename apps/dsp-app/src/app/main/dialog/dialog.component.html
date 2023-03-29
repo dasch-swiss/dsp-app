@@ -271,7 +271,7 @@
 
     <!-- Update list info -->
     <div *ngSwitchCase="'editListInfo'">
-        <app-dialog-header [title]="data.title" [subtitle]="'Edit list info'">
+        <app-dialog-header [title]="data.title" [subtitle]="'Edit controlled vocabulary info'">
         </app-dialog-header>
         <app-list-info-form
             [iri]="data.id"
@@ -326,7 +326,7 @@
 
     <!-- Delete list node error-->
     <div *ngSwitchCase="'deleteListNodeError'">
-        Unable to delete this list node as it is in use.
+        Unable to delete this controlled vocabulary node as it is in use.
         <mat-dialog-actions>
             <span class="fill-remaining-space"></span>
             <button
@@ -348,7 +348,7 @@
             [subtitle]="'appLabels.form.lists.title.deleteList' | translate"
         >
         </app-dialog-header>
-        Do you want to delete this list?
+        Do you want to delete this controlled vocabulary?
         <mat-dialog-actions>
             <button mat-button
                 color="primary"

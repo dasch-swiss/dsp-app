@@ -18,16 +18,16 @@
                         <span class="fill-remaining-space"></span>
 
                         <span class="project-actions" *ngIf="project.status && projectAdmin">
-                    <p class="mat-caption space-reducer">List configuration</p>
+                    <p class="mat-caption space-reducer">Controlled vocabulary configuration</p>
                     <button color="primary" mat-button
                             (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
-                            matTooltip="Edit list info">
+                            matTooltip="Edit controlled vocabulary info">
                         <mat-icon>edit</mat-icon>
                         Edit
                     </button>
                     <button color="warn" mat-button class="delete"
                             (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
-                            matTooltip="Delete list">
+                            matTooltip="Delete controlled vocabulary">
                         <mat-icon>delete</mat-icon>
                         Delete
                     </button>

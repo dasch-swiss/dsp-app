@@ -154,8 +154,8 @@
       },
       "lists": {
         "title": {
-          "deleteList": "Delete list",
-          "deleteListNode": "Delete list node"
+          "deleteList": "Delete controlled vocabulary",
+          "deleteListNode": "Delete controlled vocabulary node"
         }
       },
       "resource": {
