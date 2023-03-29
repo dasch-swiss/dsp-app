@@ -39,8 +39,11 @@ In a resource of type "still image", you're able to draw regions on the image an
 
 When you open a resource that contains an image, it is displayed in a viewer. Several functionalities are accessible from the image viewer, e.g. zoom in/out, copy the IIIF link, replace the image or draw a region on the image.
 
-<!-- ![Image viewer](../assets/images/region_annotation_panel.png)*Image viewer toolbar.* -->
 ![Image viewer](../../assets/images/image-file.png)
+
+For users without permission to see a restricted image, a notification will warn them at the top of the image viewer.
+
+![Notification for users without permission to view image.](../../assets/images/image-restricted-view-notif.png)
 
 To access the regions, go to the **annotation** panel. You can **click on an existing region** in the image viewer, the focus of the page will be redirected to the annotation information.
 
