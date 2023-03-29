@@ -17,14 +17,14 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (sessionStorage.getItem('cookieBanner') === null) {
-            sessionStorage.setItem(
+        if (localStorage.getItem('cookieBanner') === null) {
+            localStorage.setItem(
                 'cookieBanner',
                 JSON.stringify(this.showCookieBanner)
             );
         } else {
             this.showCookieBanner = JSON.parse(
-                sessionStorage.getItem('cookieBanner')
+                localStorage.getItem('cookieBanner')
             );
         }
     }
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
 
     closeCookieBanner() {
         this.showCookieBanner = !this.showCookieBanner;
-        sessionStorage.setItem(
+        localStorage.setItem(
             'cookieBanner',
             JSON.stringify(this.showCookieBanner)
         );
