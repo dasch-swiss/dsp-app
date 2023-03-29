@@ -275,10 +275,13 @@
             </div>
         </div>
         <div
-            *ngIf="canSetCardinality"
+            *ngIf="canSetCardinality && !submittingChange"
             [ngClass]="canSetCardinality ? 'form-panel form-action' : 'center'"
         >
-            <button mat-button type="button" (click)="closeDialog.emit()">
+            <button
+                mat-button
+                type="button"
+                (click)="closeDialog.emit()">
                 {{ 'appLabels.form.action.cancel' | translate }}
             </button>
             <span class="fill-remaining-space" *ngIf="canSetCardinality"></span>
@@ -290,13 +293,6 @@
                 (click)="submitCardinalitiesChange()"
                 class="submit"
             >
-                <app-progress-indicator
-                    [color]="'white'"
-                    [status]="0"
-                    *ngIf="loading"
-                    class="submit-progress"
-                >
-                </app-progress-indicator>
                 <mat-icon *ngIf="error && !loading">close</mat-icon>
                 {{ error ? 'Failed' : 'Continue' }}
             </button>
@@ -311,5 +307,11 @@
                 {{ 'Okay' }}
             </button>
         </div>
+    </div>
+    <div class="center" *ngIf="submittingChange">
+        <app-progress-indicator
+            class="submit-progress"
+            [status]="0"
+        ></app-progress-indicator>
     </div>
 </div>
