@@ -82,17 +82,18 @@ Although the selection of a resource or a property or both are optional, either 
 Depending on the value type of the chosen property,
 one or more of the following comparison operators can be selected:
 
-- `is equal to`: value equality: same number, exact same string, an overlap of date periods, same target resource.
-- `is not equal to`: value inequality: not same number, not exact same string, no overlap of date periods, not same target resource.
-- `is greater than`: value comparison: number is greater than search value, date period begins after search value.
-- `is greater than or equal to` value equality/value comparison: number is equal to or greater than search value, an overlap of date periods or date period begins after search value.
-- `is less than`: value comparison: number is less than search value, date period ends before search value.
-- `is less than or equal to`: value equality/value comparison: number is equal to or less than search value, an overlap of date periods or date period ends before search value.
-- `exists`: value for the given property exists.
-- `is like`: search value is contained in a text using the SPARQL [REGEX](https://www.w3.org/TR/sparql11-query/#func-regex) function (supports regular expressions).
-- `matches`:
-  - text property: search value matches the text ([Lucene Query Parser Syntax](https://docs.dasch.swiss/latest/DSP-API/07-lucene/lucene-query-parser-syntax/)).
-  - linking property: matches the specified linked resource.
+* `is equal to`: value equality: same number, exact same string, an overlap of date periods, same target resource.
+* `is not equal to`: value inequality: not same number, not exact same string, no overlap of date periods, not same target resource.
+* `is greater than`: value comparison: number is greater than search value, date period begins after search value.
+* `is greater than or equal to` value equality/value comparison: number is equal to or greater than search value, an overlap of date periods or date period begins after search value.
+* `is less than`: value comparison: number is less than search value, date period ends before search value.
+* `is less than or equal to`: value equality/value comparison: number is equal to or less than search value, an overlap of date periods or date period ends before search value.
+* `exists`: value for the given property exists.
+* `not exists`: value for the given property doesn't exist.
+* `is like`: search value is contained in a text using the SPARQL [REGEX](https://www.w3.org/TR/sparql11-query/#func-regex) function (supports regular expressions).
+* `matches`:
+  * text property: search value matches the text ([Lucene Query Parser Syntax](https://docs.dasch.swiss/latest/DSP-API/07-lucene/lucene-query-parser-syntax/)).
+  * linking property: matches the specified linked resource.
 
 ### Search Examples
 
