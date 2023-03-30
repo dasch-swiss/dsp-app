@@ -170,7 +170,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                         const username = this.session.user.name;
                         this._dspApiConnection.admin.usersEndpoint.getUserByUsername(username).subscribe(
                           (userResponse: ApiResponseData<UserResponse>) => {
-                              const uuid = this._projectService.iriToUuid(userResponse.body.user.projects[0].id);
+                              const uuid = this._projectService.iriToUuid(userResponse.body.user.projects[0]?.id);
                               // if user is NOT a sysAdmin and only a member of one project, redirect them to that projects dashboard
                               if(!this.session.user.sysAdmin && userResponse.body.user.projects.length === 1) {
                                   this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(

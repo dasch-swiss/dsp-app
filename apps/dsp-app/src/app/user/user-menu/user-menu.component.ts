@@ -62,7 +62,6 @@ export class UserMenuComponent implements OnChanges {
             this.username = this._session.getSession().user.name;
             this.sysAdmin = this._session.getSession().user.sysAdmin;
 
-            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username));
             this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
