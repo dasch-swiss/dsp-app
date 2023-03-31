@@ -1,5 +1,40 @@
 # Changelog
 
+## [10.17.0](https://github.com/dasch-swiss/dsp-app/compare/v10.16.0...v10.17.0) (2023-03-31)
+
+
+### Bug Fixes
+
+* login button remains after sys admin login ([#975](https://github.com/dasch-swiss/dsp-app/issues/975)) ([5034931](https://github.com/dasch-swiss/dsp-app/commit/503493123334a0b7e2187d0c10f0782a710b0edc))
+* store CookieBanner in LocalStorage (DEV-1953) ([#970](https://github.com/dasch-swiss/dsp-app/issues/970)) ([d2d25da](https://github.com/dasch-swiss/dsp-app/commit/d2d25da21aeb435f8284b58c509280c844e5e080))
+* user guide for cardinalities (DEV-1568) ([#978](https://github.com/dasch-swiss/dsp-app/issues/978)) ([f762546](https://github.com/dasch-swiss/dsp-app/commit/f76254666fe85714b8e9a491aac9d0b97027bab8))
+
+
+### Enhancements
+
+* introduction of not-exists operator (DEV-1845) ([#969](https://github.com/dasch-swiss/dsp-app/issues/969)) ([63c5136](https://github.com/dasch-swiss/dsp-app/commit/63c5136207dddaadcfe622a5d757d0ba948d3dfc))
+* **submit cardinnalities:** disable double click ([#972](https://github.com/dasch-swiss/dsp-app/issues/972)) ([864a656](https://github.com/dasch-swiss/dsp-app/commit/864a65609526a8871a2c291b60a094a25dfdc69e))
+
+
+### Documentation
+
+* Add the operator "not exists" ([#974](https://github.com/dasch-swiss/dsp-app/issues/974)) ([b1c2062](https://github.com/dasch-swiss/dsp-app/commit/b1c20622d684937bc5e3b7e32d7a1f5e045798bd))
+* Update documentation to include the data browser ([#971](https://github.com/dasch-swiss/dsp-app/issues/971)) ([eb8e6c2](https://github.com/dasch-swiss/dsp-app/commit/eb8e6c262ce8cdf44e3503d92d20269861728bc3))
+* Update the user guide regarding the full-text search section ([#951](https://github.com/dasch-swiss/dsp-app/issues/951)) ([e0f5061](https://github.com/dasch-swiss/dsp-app/commit/e0f506144a830d93ae69c7948faee2e8872795df))
+
+
+### Maintenance
+
+* add default background color to release badge (DEV-1918) ([#958](https://github.com/dasch-swiss/dsp-app/issues/958)) ([17c94d7](https://github.com/dasch-swiss/dsp-app/commit/17c94d7a5f49e0e2b8031ddae71225bd011a7ddc))
+* add JDNConvertibleCalendarDateAdapter and JDNConvertibleCalendar to monorepo ([#968](https://github.com/dasch-swiss/dsp-app/issues/968)) ([07b9694](https://github.com/dasch-swiss/dsp-app/commit/07b9694b78e0a97f702e941a66e2fc5e4ba5e0b7))
+* build docker image by first building app outside ([0946246](https://github.com/dasch-swiss/dsp-app/commit/094624684d2707006a64f820ffe3a80bde08b948))
+* bump js-lib to 8.2.0 ([#979](https://github.com/dasch-swiss/dsp-app/issues/979)) ([74c14c1](https://github.com/dasch-swiss/dsp-app/commit/74c14c12bef2d38fd25f8f5cd446951148811bac))
+* bump nginx-server version ([#964](https://github.com/dasch-swiss/dsp-app/issues/964)) ([934c6e4](https://github.com/dasch-swiss/dsp-app/commit/934c6e4c0c0168231676cf11e37d00246a613dbc))
+* convert dsp-app into monorepo using nx (DEV-1888) ([#961](https://github.com/dasch-swiss/dsp-app/issues/961)) ([0614a77](https://github.com/dasch-swiss/dsp-app/commit/0614a77214a6d27818773e5e0b744d3e6495dd93))
+* fix overview page bottom padding ([#977](https://github.com/dasch-swiss/dsp-app/issues/977)) ([a1e7cc6](https://github.com/dasch-swiss/dsp-app/commit/a1e7cc6084346394c690ea139d59adc103333881))
+* rename all occurrences of list to controlled vocabulary ([#976](https://github.com/dasch-swiss/dsp-app/issues/976)) ([53b027d](https://github.com/dasch-swiss/dsp-app/commit/53b027deae2f89b797e28a3d61c71640120a8b36))
+* upgrade Angular to 15 ([#953](https://github.com/dasch-swiss/dsp-app/issues/953)) ([e521db4](https://github.com/dasch-swiss/dsp-app/commit/e521db41ab86d7946af977f95aacc056c8843c92))
+
 ## [10.16.0](https://github.com/dasch-swiss/dsp-app/compare/v10.15.0...v10.16.0) (2023-03-17)
 
 
