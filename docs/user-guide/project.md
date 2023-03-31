@@ -156,6 +156,33 @@ If you want to define a property which can have more than one value, you should 
 Now you should see the new property in the box as seen below:
 ![Layout after the creation of the property.](../assets/images/Fig17.png)
 
+## Changing cardinalities of properties
+
+Changing cardinalities in a data model involves modifying the relationships between resource classes, which can affect the number of instances of a resource class that can be associated with another resource class. *In general, before changing the cardinalities, it is important to understand the affected resource classes and the relationships between them. Determine which resource classes will be affected by the change and how the relationships between them will be changed. This is especially important if data already exists!*
+
+### Widening or restricting a cardinality of a property without data
+
+If there is no data yet available, widening or restricting the cardinality can be relatively straightforward.
+Widening the cardinality of a data model refers to changing the relationship between resource classes in a way that allows more instances of a resource class to be associated with another resource class. Restricting the cardinality of a data model refers to limiting the number of instances of a resource class that can be associated with another resource class. Here are the steps to changing the cardinality of a data model when there is no data yet available:
+
+In this example activate the toggle "multiple" for widening the cardinality:
+![Changing a cardinality of a property without data](../assets/images/changing_without_data_1.png)
+
+The pop-up window informs you that you are going to change the cardinality and you may not be able to reverse it:
+![Changing a cardinality of a property without data](../assets/images/changing_without_data_2.png)
+
+If you want to confirm the change, click "Continue" and the toggle will now be activated. The same procedure applies to the toggle "required":
+![Changing a cardinality of a property without data](../assets/images/changing_without_data_3.png)
+
+### Widening or restricting a cardinality of a property with data
+If data is already present, widening and restricting the cardinality of a property is possible if e.g., in a required property in every resource the values are available. In this case the same procedure applies as described in the sections above.
+
+### Widening or restricting a cardinality of a property if a resource does not contain all the values
+If values are missing in the resources and you want to adjust the cardinality so that the resources do not match the selected cardinality (e.g. set a property to required, but the field is empty), an error message is displayed. In this case, all resources must be corrected first, then the desired cardinality can be set.
+
+### Widening or restricting a cardinality of a property: Special cases
+#### Superclasses and subclasses
+Changing the cardinality of a superclass and a subclass and reversing it does not work if the properties are in a subproperty relationship or the changed property in the superclass does not exist in the subclass.
 ### Correct property selection in case of special classes
 
 #### Book class with pages as individual classes
@@ -199,7 +226,7 @@ If you click the remove button, the property is removed and a green box pops up 
 ### Delete a property
 In order to really delete a property you have to go to the `Properties` section as shown below. Click on `Properties`, and afterwards click on the waste basket sign of the property which you intend to delete.
 ![Delete a property.](../assets/images/Fig38.png)
-*Be aware, you can only delete properties which are NOT used in a resource class!*
+*Be aware, you can only delete properties which are NOT used in a resource class and if they were never used! This means an already used properties even with deleted values cannot be deleted!*
 
 ### Delete a CLASS
 To delete a resource class, click on the three dots in the box of the class which you want to delete.
