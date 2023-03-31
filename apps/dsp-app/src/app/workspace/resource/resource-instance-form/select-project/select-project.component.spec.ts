@@ -105,11 +105,11 @@ describe('SelectProjectComponent', () => {
 
         const option1 = await options[0].getText();
 
-        expect(option1).toEqual('0001 | anything');
+        expect(option1).toEqual('00FF | images');
 
         const option2 = await options[1].getText();
 
-        expect(option2).toEqual('00FF | images');
+        expect(option2).toEqual('0001 | anything');
     });
 
     it('should emit the Iri of a selected project', async () => {
