@@ -50,12 +50,14 @@ import {
 import { OntologyService } from '../ontology.service';
 import { GuiCardinality } from '../property-info/property-info.component';
 import { PropToDisplay } from '../resource-class-info/resource-class-info.component';
+import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 
 export type EditMode =
     | 'createProperty'
     | 'editProperty'
     | 'assignExistingProperty'
-    | 'assignNewProperty';
+    | 'assignNewProperty'
+    | 'changeCardinalities';
 
 export interface ClassToSelect {
     ontologyId: string;
@@ -179,7 +181,8 @@ export class PropertyFormComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,
         private _os: OntologyService,
-        private _sortingService: SortingService
+        private _sortingService: SortingService,
+        private _notification: NotificationService,
     ) {}
 
     ngOnInit() {
@@ -261,7 +264,7 @@ export class PropertyFormComponent implements OnInit {
             this.canEnableRequiredToggle();
         }
 
-        if (this.changeCardinalities) {
+        if (this.editMode === 'changeCardinalities') {
             // request for changing cardinalities
             this.canChangeCardinality(this.targetGuiCardinality);
         }
@@ -521,6 +524,7 @@ export class PropertyFormComponent implements OnInit {
             targetGuiCardinality.value === true
         ) {
             this.canSetCardinality = false;
+            this.canChangeCardinalityChecked = true;
             return;
         }
         // check if cardinality can be changed
@@ -584,6 +588,9 @@ export class PropertyFormComponent implements OnInit {
             case 'assignExistingProperty':
                 this.assignProperty(this.propertyInfo.propDef);
                 break;
+            case 'changeCardinalities':
+                this.submitCardinalitiesChange();
+                break;
         }
     }
 
@@ -632,14 +639,11 @@ export class PropertyFormComponent implements OnInit {
                                     ) {
                                         this.replaceGuiElement();
                                     } else {
-                                        this.loading = false;
-                                        this.closeDialog.emit();
+                                        this.onSuccess();
                                     }
                                 },
                                 (error: ApiResponseError) => {
-                                    this.error = true;
-                                    this.loading = false;
-                                    this._errorHandler.showMessage(error);
+                                    this.onError(error);
                                 }
                             );
                     } else {
@@ -676,14 +680,11 @@ export class PropertyFormComponent implements OnInit {
                                     ) {
                                         this.replaceGuiElement();
                                     } else {
-                                        this.loading = false;
-                                        this.closeDialog.emit();
+                                        this.onSuccess();
                                     }
                                 },
                                 (error: ApiResponseError) => {
-                                    this.error = true;
-                                    this.loading = false;
-                                    this._errorHandler.showMessage(error);
+                                    this.onError(error);
                                 }
                             );
                     }
@@ -725,13 +726,10 @@ export class PropertyFormComponent implements OnInit {
         this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
             (response: ResourcePropertyDefinitionWithAllLanguages) => {
                 this.lastModificationDate = response.lastModificationDate;
-                this.loading = false;
-                this.closeDialog.emit();
+                this.onSuccess();
             },
             (error: ApiResponseError) => {
-                this.error = true;
-                this.loading = false;
-                this._errorHandler.showMessage(error);
+                this.onError(error);
             }
         );
     }
@@ -827,17 +825,13 @@ export class PropertyFormComponent implements OnInit {
             .subscribe(
                 (res: ResourceClassDefinitionWithAllLanguages) => {
                     this.lastModificationDate = res.lastModificationDate;
-                    // close the dialog box
-                    this.loading = false;
                     this.submittingChange = false;
-                    this.closeDialog.emit();
+                    this.onSuccess();
                 },
                 (error: ApiResponseError) => {
-                    this.error = true;
-                    this.loading = false;
-                    this._errorHandler.showMessage(error);
+                    this.onError(error);
                     this.closeDialog.emit();
-                }
+                },
             );
     }
 
@@ -867,14 +861,10 @@ export class PropertyFormComponent implements OnInit {
                 ) => {
                     this.lastModificationDate =
                         guiEleResponse.lastModificationDate;
-                    // close the dialog box
-                    this.loading = false;
-                    this.closeDialog.emit();
+                    this.onSuccess();
                 },
                 (error: ApiResponseError) => {
-                    this.error = true;
-                    this.loading = false;
-                    this._errorHandler.showMessage(error);
+                    this.onError(error);
                 }
             );
     }
@@ -913,14 +903,10 @@ export class PropertyFormComponent implements OnInit {
             .subscribe(
                 (res: ResourceClassDefinitionWithAllLanguages) => {
                     this.lastModificationDate = res.lastModificationDate;
-                    // close the dialog box
-                    this.loading = false;
-                    this.closeDialog.emit();
+                    this.onSuccess();
                 },
                 (error: ApiResponseError) => {
-                    this.error = true;
-                    this.loading = false;
-                    this._errorHandler.showMessage(error);
+                    this.onError(error);
                 }
             );
     }
@@ -1000,27 +986,66 @@ export class PropertyFormComponent implements OnInit {
      */
     setEditMode() {
         if (this.changeCardinalities) {
-            // no editMode - just cards
+            this.editMode = 'changeCardinalities';
             return;
         }
         if (this.resClassIri && !!this.propertyInfo.propDef) {
             // in context of class and with an existing property
             this.editMode = 'assignExistingProperty';
+            return;
         }
-
         if (this.resClassIri && !this.propertyInfo.propDef) {
             // in context of class and without an existing property
             this.editMode = 'assignNewProperty';
+            return;
         }
-
         if (!this.resClassIri && !this.propertyInfo.propDef) {
             // in properties context and without an existing property
             this.editMode = 'createProperty';
+            return;
         }
-
         if (!this.resClassIri && !!this.propertyInfo.propDef) {
             // in properties context and with an existing property
             this.editMode = 'editProperty';
+            return;
         }
+    }
+
+    /**
+     * onSuccess: handle successful operations: Display a notification if
+     * necessary and close the dialog
+     */
+    onSuccess() {
+        this.loading = false;
+        const msg = this.getNotificationMsg();
+        if (msg) {
+            this._notification.openSnackBar(msg);
+        }
+        this.closeDialog.emit();
+    }
+
+    /**
+     * onError: handle erratic operations
+     */
+    onError(err) {
+        this.error = true;
+        this.loading = false;
+        this._errorHandler.showMessage(err);
+    }
+
+    /**
+     * getNotificationMsg: return the message string depending on the editMode
+     */
+    getNotificationMsg(): string {
+        let msg = '';
+        if (this.editMode === 'editProperty') {
+            msg = `Successfully updated ${this.propertyInfo.propDef.label}.`;
+        }
+        if (this.editMode === 'changeCardinalities') {
+            msg = `Successfully changed the cardinalities of
+                ${this.propertyInfo.propDef.label} on class
+                ${this.resClassIri}`;
+        }
+        return msg;
     }
 }

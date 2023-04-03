@@ -1,6 +1,6 @@
 <form
     [formGroup]="propertyForm"
-    *ngIf="!changeCardinalities"
+    *ngIf="editMode !== 'changeCardinalities'"
     class="form-content"
 >
     <p
@@ -241,7 +241,7 @@
         </button>
     </div>
 </form>
-<div *ngIf="changeCardinalities" class="form-content">
+<div *ngIf="editMode === 'changeCardinalities'" class="form-content">
     <div class="center">
         <app-progress-indicator
             [status]="0"
@@ -290,7 +290,7 @@
                 type="button"
                 color="primary"
                 [disabled]="!canSetCardinality"
-                (click)="submitCardinalitiesChange()"
+                (click)="submitData()"
                 class="submit"
             >
                 <mat-icon *ngIf="error && !loading">close</mat-icon>
