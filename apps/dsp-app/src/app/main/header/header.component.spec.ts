@@ -134,13 +134,6 @@ describe('HeaderComponent', () => {
         expect(testHostComponent).toBeTruthy();
     });
 
-    it('should display the lamp icon button', () => {
-        const lampIconBtn = testHostFixture.debugElement.query(
-            By.css('button.home-button')
-        );
-        expect(lampIconBtn).toBeTruthy();
-    });
-
     it('should display the link to the help page', () => {
         const helpBtn = testHostFixture.debugElement.query(
             By.css('button.help')

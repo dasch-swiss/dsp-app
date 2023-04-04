@@ -1,27 +1,17 @@
 <mat-toolbar class="toolbar-header">
-    <span class="logo">
-        <button
-            mat-button
-            routerLink="/"
-            class="main-toolbar-button home-button"
-        >
-            <mat-icon
-                matPrefix
-                svgIcon="dasch_mosaic_icon_color"
-                class="small"
-            ></mat-icon>
-            <h1 class="mat-headline desktop-only">DaSCH Service Platform</h1>
-            <h1 class="mat-headline phone-tablet-only">DSP</h1>
-            <p class="mat-caption right app-version">
+    <span class="logo" routerLink="/">
+        <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color"></mat-icon>
+        <div class="title-container">
+            <div class="title desktop-only">DaSCH Service Platform</div>
+            <div class="title phone-tablet-only">DSP</div>
+            <div class="mat-caption right">
                 <span *ngIf="dsp.production">{{ dsp.release }}</span>
                 <span *ngIf="!dsp.production" class="development badge">
                     <span class="environment">{{ dsp.environment }}</span>
-                    <span class="release {{ dsp.color }}">{{
-                        dsp.release
-                    }}</span>
+                    <span class="release {{ dsp.color }}">{{dsp.release}}</span>
                 </span>
-            </p>
-        </button>
+            </div>
+        </div>
     </span>
 
     <span class="fill-remaining-space"></span>

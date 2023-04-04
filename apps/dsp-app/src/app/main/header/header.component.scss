@@ -8,26 +8,27 @@
 }
 
 .logo {
-  .home-button {
-    display: inline-block;
-    .mat-icon {
-      margin: 0 6px 6px 0;
-      min-width: 40px;
-      height: auto;
-      max-height: 40px;
-      padding-bottom: 6px;
+  display: flex;
+  padding-right: 12px;
+  height: 100%;
+  column-gap: 10px;
+  cursor: pointer;
 
-      &.small {
-        width: 40px;
-      }
-    }
-    .mat-headline {
-      margin-left: 6px;
-    }
-    .app-version {
-      margin: -12px 0;
-    }
+  .mat-icon {
+    height: 72px ;
+    width: 72px ;
   }
+
+  .title-container {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.logo:hover {
+  background-color: $cool_gray_100;;
 }
 
 .login-button {
