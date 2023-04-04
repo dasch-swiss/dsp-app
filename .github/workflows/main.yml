@@ -8,12 +8,6 @@ on:
     types: [published]
 
 jobs:
-  find-ignored-tests:
-    name: Find ignored tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: ./find-ignored-tests.sh
 
   dsp-app-tests:
     name: DSP-APP
@@ -78,7 +72,6 @@ jobs:
 
   unit-tests:
     name: Run unit tests
-    needs: [find-ignored-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
