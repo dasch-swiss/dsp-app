@@ -1,5 +1,4 @@
 .overview {
-    padding-bottom: 5%;
 
     .title-bar {
         .title {
@@ -33,19 +32,18 @@
     .project-tiles {
         display: grid;
         grid-template-columns: 30% 30% 30%;
-        grid-row-gap: 2.5%;
         grid-column-gap: 5%;
         padding-bottom: 2%;
     }
 
     .project-tile-container {
         text-align: center;
+        padding-bottom: 15%;
     }
 }
 
 @media (max-width: 820px) {
     .overview {
-        padding-bottom: 35%;
 
         .title-bar.other-projects {
             padding-top: 5%;
@@ -60,7 +58,6 @@
 
 @media (max-width: 640px) {
     .overview {
-        padding-bottom: 70%;
 
         .title-bar.admin {
             display: block;
@@ -79,8 +76,11 @@
 
         .project-tiles {
             grid-template-columns: 90%;
-            gap: 1%
         }
+
+        .project-tile-container {
+          padding-bottom: 5%;
+      }
     }
 
 }
