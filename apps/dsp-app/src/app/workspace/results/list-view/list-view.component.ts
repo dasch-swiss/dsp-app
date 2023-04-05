@@ -202,6 +202,9 @@ export class ListViewComponent implements OnChanges, OnInit {
 
         this.loading = true;
 
+        // reset number of results
+        this.numberOfAllResults = 0;
+
         if (this.search.mode === 'fulltext') {
             // search mode: fulltext
             if (index === 0) {
@@ -218,7 +221,8 @@ export class ListViewComponent implements OnChanges, OnInit {
                             }
                         },
                         (countError: ApiResponseError) => {
-                            this.loading = countError.status !== 504;
+                            // if error is a timeout, keep the loading animation
+                            this.loading = countError.status === 504;
                             this._errorHandler.showMessage(countError);
                         }
                     );
@@ -227,7 +231,7 @@ export class ListViewComponent implements OnChanges, OnInit {
             // perform full text search
             this._dspApiConnection.v2.search.doFulltextSearch(this.search.query, index, this.search.filter).subscribe(
                 (response: ReadResourceSequence) => {
-                    // if the response does not contain any resources even the search count is greater than 0,
+                    // if the response does not contain any resources even though the search count is greater than 0,
                     // it means that the user does not have the permissions to see anything: emit an empty result
                     if (response.resources.length === 0) {
                         this.emitSelectedResources();
@@ -299,7 +303,8 @@ export class ListViewComponent implements OnChanges, OnInit {
                     }
                 },
                 (countError: ApiResponseError) => {
-                    this.loading = countError.status !== 504;
+                    // if error is a timeout, keep the loading animation
+                    this.loading = countError.status === 504;
                     this._errorHandler.showMessage(countError);
                 }
             );

@@ -1,5 +1,5 @@
 <!-- header / toolbar to select view and pagination -->
-<div *ngIf="numberOfAllResults !== 0" class="list-view-header">
+<div *ngIf="numberOfAllResults !== 0 && loading === false" class="list-view-header">
     <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
         <mat-icon>west</mat-icon>
         <span>Previous</span>
