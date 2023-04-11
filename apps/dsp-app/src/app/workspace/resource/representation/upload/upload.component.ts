@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import {
     UntypedFormBuilder,
     UntypedFormControl,
@@ -49,6 +49,8 @@ export class UploadComponent implements OnInit {
     @Output() fileInfo: EventEmitter<CreateFileValue> =
         new EventEmitter<CreateFileValue>();
 
+    
+    @ViewChild('fileInput') fileInput: ElementRef;
     file: File;
     form: UntypedFormGroup;
     fileControl: UntypedFormControl;
@@ -91,7 +93,6 @@ export class UploadComponent implements OnInit {
     addFile(event: any): void {
         let files: File[] = [];
         files = event.target?.files ? event.target.files : event;
-
         // only one file at a time supported
         if (this._isMoreThanOneFile(files)) {
             const error = 'ERROR: Only one file allowed at a time';
@@ -152,6 +153,7 @@ export class UploadComponent implements OnInit {
                 );
             }
         }
+        this.fileInput.nativeElement.value = null; // set the html input value to null so in case of an error the user can upload the same file again.
     }
 
     /**
