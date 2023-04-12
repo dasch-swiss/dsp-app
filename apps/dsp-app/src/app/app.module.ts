@@ -171,6 +171,9 @@ import { OverviewComponent } from './user/overview/overview.component';
 import { ProjectTileComponent } from './system/project-tile/project-tile.component';
 import { CommentFormComponent } from './workspace/resource/values/comment-form/comment-form.component';
 import { DataModelsComponent } from './project/data-models/data-models.component';
+import {
+    ResourceClassPropertyInfoComponent
+} from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -261,6 +264,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ResourceAndPropertySelectionComponent,
         ResourceClassFormComponent,
         ResourceClassInfoComponent,
+        ResourceClassPropertyInfoComponent,
         ResourceComponent,
         ResourceInstanceFormComponent,
         ResourceLinkFormComponent,

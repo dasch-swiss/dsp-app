@@ -73,17 +73,16 @@
                     </span>
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
-                    <app-property-info class="property-info"
+                    <app-resource-class-property-info class="property-info"
                                        [propDef]="propsToDisplay[i].propDef"
                                        [propCard]="propsToDisplay[i]"
                                        [projectUuid]="projectUuid"
-                                       [projectStatus]="projectStatus"
                                        [resourceIri]="resourceClass.id"
-                                       [(lastModificationDate)]="lastModificationDate"
+                                       [lastModificationDate]="lastModificationDate"
                                        [userCanEdit]="userCanEdit"
                                        (removePropertyFromClass)="removeProperty($event)"
                                        (changeCardinalities)="changeCardinalities($event)">
-                    </app-property-info>
+                    </app-resource-class-property-info>
                 </mat-list-item>
             </div>
         </mat-list>
