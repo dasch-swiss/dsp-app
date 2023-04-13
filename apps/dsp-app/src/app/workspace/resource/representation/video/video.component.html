@@ -145,7 +145,7 @@
             <span class="fill-remaining-space"></span>
 
             <div (wheel)="updateTimeFromScroll($event)">
-                <p class="mat-body-2 time" (click)="togglePlay()">
+                <p class="mat-subtitle-2 time" (click)="togglePlay()">
                     {{ currentTime | appTime }}
                     <span *ngIf="duration">/ {{ duration | appTime }}</span>
                 </p>

@@ -63,16 +63,16 @@
                     {{ project.longname }}
                 </h5>
                 <p
-                    class="mat-body-1 link"
+                    class="mat-body-2 link"
                     (click)="openProjectPage(project.id)"
                 >
                     {{ project.shortcode }} | {{ project.shortname }}
                 </p>
             </td>
             <td class="table-admin-chip">
-                <mat-chip-list *ngIf="userIsProjectAdmin(project.id)">
+                <mat-chip-listbox *ngIf="userIsProjectAdmin(project.id)">
                     <mat-chip class="admin-chip">Project Admin</mat-chip>
-                </mat-chip-list>
+                </mat-chip-listbox>
             </td>
             <!-- action: menu with edit, remove, etc. -->
             <td class="table-action">

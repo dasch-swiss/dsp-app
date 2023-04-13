@@ -43,20 +43,20 @@
         <div>
             <p>{{project.longname}}</p>
         </div>
-    
+
         <!-- description -->
         <section class="project description"
             *ngFor="let desc of project.description">
             <div [innerHtml]="desc.value"></div>
         </section>
-    
+
         <mat-divider *ngIf="project.keywords.length > 0"></mat-divider>
-    
+
         <!-- keywords -->
         <section class="project keywords">
-            <mat-chip-list>
+            <mat-chip-listbox>
                 <mat-chip *ngFor="let k of project.keywords">{{k}}</mat-chip>
-            </mat-chip-list>
+            </mat-chip-listbox>
         </section>
     </div>
 
@@ -87,21 +87,20 @@
 
                 <!-- keywords -->
                 <mat-form-field class="large-field">
-                    <mat-chip-list #chipList>
-                        <mat-chip *ngFor="let tag of keywords"
-                            [selectable]="true"
+                    <mat-chip-grid #chipList>
+                        <mat-chip-row *ngFor="let tag of keywords"
                             [removable]="true"
                             (removed)="removeKeyword(tag)">
                             {{tag}}
                             <mat-icon matChipRemove>cancel</mat-icon>
-                        </mat-chip>
+                        </mat-chip-row>
                         <input placeholder="{{'appLabels.form.project.general.keywords' | translate}} {{'*'}}"
                             [formControl]="form.controls['keywords']"
                             [matChipInputFor]="chipList"
                             [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
                             [matChipInputAddOnBlur]="true"
                             (matChipInputTokenEnd)="addKeyword($event)">
-                    </mat-chip-list>
+                    </mat-chip-grid>
                 </mat-form-field>
             </div>
 
@@ -119,7 +118,7 @@
                         type="submit"
                         color="primary"
                         [disabled]="!form.valid || !this.description.length || !this.keywords.length">
-    
+
                         <app-progress-indicator [color]="'white'"
                             [status]="0"
                             *ngIf="loading"

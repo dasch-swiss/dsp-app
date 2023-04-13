@@ -78,10 +78,9 @@
         -->
         <!-- keywords -->
         <mat-form-field class="large-field">
-            <mat-chip-list #chipList>
-                <mat-chip
+            <mat-chip-grid #chipList>
+                <mat-chip-row
                     *ngFor="let tag of keywords"
-                    [selectable]="selectable"
                     [removable]="project.status"
                     (removed)="removeKeyword(tag)"
                 >
@@ -89,7 +88,7 @@
                     <mat-icon matChipRemove *ngIf="project.status"
                         >cancel</mat-icon
                     >
-                </mat-chip>
+                </mat-chip-row>
                 <input
                     placeholder="{{
                         'appLabels.form.project.general.keywords' | translate
@@ -100,7 +99,7 @@
                     [matChipInputAddOnBlur]="addOnBlur"
                     (matChipInputTokenEnd)="addKeyword($event)"
                 />
-            </mat-chip-list>
+            </mat-chip-grid>
             <mat-hint *ngIf="formErrors.keywords">
                 {{ formErrors.keywords }}
             </mat-hint>
