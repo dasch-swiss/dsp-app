@@ -37,7 +37,6 @@ import { AdminImageDirective } from './main/directive/admin-image/admin-image.di
 import { DisableContextMenuDirective } from './main/directive/disable-context-menu.directive';
 import { ExistingNameDirective } from './main/directive/existing-name/existing-name.directive';
 import { ExternalLinksDirective } from './main/directive/external-links.directive';
-import { GndDirective } from './main/directive/gnd/gnd.directive';
 import { InvalidControlScrollDirective } from './main/directive/invalid-control-scroll.directive';
 
 import { FooterComponent } from './main/footer/footer.component';
@@ -223,7 +222,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         FormattedBooleanPipe,
         FulltextSearchComponent,
         GeonameValueComponent,
-        GndDirective,
         GridComponent,
         GroupsComponent,
         GroupsListComponent,

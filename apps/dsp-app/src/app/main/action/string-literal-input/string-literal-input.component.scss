@@ -9,7 +9,7 @@
 // string literal textarea: overwrite material styling !important
 .string-literal {
   &.short-text {
-    .mat-button.select-lang {
+    .mat-mdc-button.select-lang {
       min-width: 36px !important;
       padding: 0 8px !important;
       border-radius: 4px 0 0 0 !important;
@@ -23,10 +23,6 @@
     .mat-button-toggle {
       height: 36px;
       width: 56px;
-
-      .mat-button-toggle-button {
-        width: 50px !important;
-      }
     }
 
     .mat-button-toggle-vertical {

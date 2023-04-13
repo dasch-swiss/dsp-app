@@ -144,7 +144,7 @@ describe('StatusComponent', () => {
 
         const messageEl = hostCompDe.query(By.directive(StatusComponent));
 
-        const titleEle = messageEl.query(By.css('.mat-title'));
+        const titleEle = messageEl.query(By.css('.mat-headline-6'));
 
         expect(titleEle.nativeElement.innerText).toEqual(
             ' WARNING 204 | No Content '
@@ -164,7 +164,7 @@ describe('StatusComponent', () => {
 
         const messageEl = hostCompDe.query(By.directive(StatusComponent));
 
-        const titleEle = messageEl.query(By.css('.mat-title'));
+        const titleEle = messageEl.query(By.css('.mat-headline-6'));
 
         expect(titleEle.nativeElement.innerText).toEqual(
             "ERROR 418 | I'm a teapot"

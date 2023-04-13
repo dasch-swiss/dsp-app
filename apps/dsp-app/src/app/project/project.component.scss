@@ -126,11 +126,14 @@ mat-sidenav {
 
       mat-icon {
         font-size: 16px;
+        height: 16px;
+        width: 16px;
       }
 
-      // material injects this wrapper with a line-height that is too large
-      ::ng-deep .mat-button-wrapper {
-        line-height: initial;
+      // for such a small button, we need to disable the large touch target
+      ::ng-deep .mat-mdc-button-touch-target {
+        height: 0px !important;
+        width: 0px !important;
       }
     }
   }
@@ -166,11 +169,14 @@ mat-sidenav-content {
 
       mat-icon {
         font-size: 16px;
+        height: 16px;
+        width: 16px;
       }
 
-      // material injects this wrapper with a line-height that is too large
-      ::ng-deep .mat-button-wrapper {
-        line-height: initial;
+      // for such a small button, we need to disable the large touch target
+      ::ng-deep .mat-mdc-button-touch-target {
+        height: 0px !important;
+        width: 0px !important;
       }
     }
   }

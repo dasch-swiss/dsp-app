@@ -57,7 +57,7 @@
     align-items: center;
     white-space: nowrap;
 
-    .mat-title {
+    .mat-headline-6 {
       word-wrap: normal;
       white-space: normal;
     }
@@ -177,12 +177,6 @@ a,
 
 .mat-menu-content {
   padding: 0 !important;
-
-  .menu-action {
-    .mat-button-wrapper {
-      line-height: unset !important;
-    }
-  }
 }
 
 // --------------------------------------
@@ -289,7 +283,8 @@ a,
 
   .action,
   .navigation {
-    .mat-button-disabled {
+    .mat-mdc-button:disabled,
+    .mat-mdc-icon-button:disabled {
       color: grey;
     }
   }
@@ -444,8 +439,8 @@ a,
       padding: 6px 12px;
       text-align: left;
 
-      h5.mat-subheading-2,
-      p.mat-subheading-1 {
+      h5.mat-subtitle-1,
+      p.mat-body-1 {
         margin: 0;
       }
     }
@@ -689,15 +684,20 @@ $gc-small: $form-width - $gc-large - 4;
       outline: none;
       background-color: transparent;
       color: $primary;
-      margin: 0;
+      margin: 0 4px;
       border-radius: 50%;
       transition: background-color ease-out 0.5s;
       min-width: inherit;
       line-height: normal;
+      height: 22px;
 
       &:first-child,
       &:last-child {
         margin: 0 -1px;
+      }
+
+      &:disabled {
+        color: $cold_grey_400;
       }
 
       .material-icons {
@@ -705,10 +705,15 @@ $gc-small: $form-width - $gc-large - 4;
       }
 
       .mat-icon {
-        padding: 2px;
+        margin-right: 0px;
         width: 18px;
         height: 18px;
         vertical-align: middle;
+      }
+
+      .mat-mdc-button-touch-target {
+        height: 0px !important;
+        width: 0px !important;
       }
     }
 
@@ -719,6 +724,8 @@ $gc-small: $form-width - $gc-large - 4;
     button:hover {
       background-color: #c7c7c7;
     }
+
+
   }
 }
 

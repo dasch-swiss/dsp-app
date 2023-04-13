@@ -8,7 +8,7 @@
     height: 364px;
   }
 
-  .mat-button-disabled {
+  .mat-mdc-icon-button:disabled {
     color: $grey !important;
   }
 
@@ -65,12 +65,16 @@
       &.next {
         right: 0;
       }
-      .mat-button.full-size {
+      .mat-mdc-button.full-size {
         height: 100% !important;
         width: $panel-height !important;
-
         padding: 0 !important;
         min-width: $panel-height !important;
+        color: $white
+      }
+
+      .mat-mdc-button.full-size:disabled {
+        color: $grey !important;
       }
     }
 

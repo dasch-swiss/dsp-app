@@ -1,7 +1,7 @@
 <!-- toolbar -->
 <div class="toolbar" *ngIf="project" [class.deleted]="deletedResource || resource.res.isDeleted">
     <!-- resource info -->
-    <h3 class="label mat-title">
+    <h3 class="label mat-headline-6">
         {{resource.res.label}} <span *ngIf="deletedResource">(deleted)</span>
     </h3>
 
@@ -116,7 +116,7 @@
             )" [class.border-bottom]="prop.values && !last" class="property">
                 <div class="property-label">
                     <!-- label of the property -->
-                    <h3 class="label mat-subheading-1" [class.label-info]="prop.propDef.comment"
+                    <h3 class="label mat-body-1" [class.label-info]="prop.propDef.comment"
                         [matTooltip]="prop.propDef.comment" matTooltipPosition="above">
                         {{prop.propDef.label}}
                     </h3>
@@ -171,7 +171,7 @@
             <div class="property border-bottom">
                 <div class="property-label">
                     <!-- delete date -->
-                    <h3 class="label mat-subheading-1">
+                    <h3 class="label mat-body-1">
                         Deleted on
                     </h3>
                 </div>
@@ -182,7 +182,7 @@
             <div class="property">
                 <div class="property-label">
                     <!-- Delete comment -->
-                    <h3 class="label mat-subheading-1">
+                    <h3 class="label mat-body-1">
                         Comment
                     </h3>
                 </div>
@@ -195,7 +195,7 @@
         <div *ngIf="!resource.res.isDeleted" class="properties">
             <div class="property border-bottom">
                 <div class="property-label">
-                    <h3 class="label mat-subheading-1">
+                    <h3 class="label mat-body-1">
                         Info
                     </h3>
                 </div>

@@ -1,10 +1,10 @@
 <div class="help-page">
     <section *ngIf="!dsp.production" class="info">
         <div class="content medium middle development hint {{ dsp.color }}">
-            <p class="mat-subheading-2 content medium middle">
+            <p class="mat-subtitle-1 content medium middle">
                 This is a development version of DSP (release
-                <strong>{{ dsp.release }}</strong
-                >) running in the environment
+                <strong>{{ dsp.release }}</strong>
+                ) running in the environment
                 <strong>{{ dsp.environment }}</strong>
             </p>
         </div>
@@ -12,21 +12,22 @@
 
     <section class="documentation">
         <div class="content large middle">
-            <h1 class="mat-display-1">Need help?</h1>
-            <h2 class="mat-title">Read the user guide: Explore by topic</h2>
+            <h1 class="mat-headline-4">Need help?</h1>
+            <h2 class="mat-headline-6">Read the user guide: Explore by topic</h2>
 
             <app-grid id="app-grid-documentation" [list]="docs"></app-grid>
         </div>
     </section>
-
     <section class="darken-bg software">
         <div class="content large middle">
-            <h2 class="mat-title">Explore our software products</h2>
-            <p class="mat-subheading-2 content medium middle">
-                The DaSCH Service Platform (DSP) is our main product within
-                release <strong>{{ dsp.release }}</strong> &rarr;
+            <h2 class="mat-headline-6">Explore our software products</h2>
+            <p class="mat-subtitle-1 content medium middle">
+                The DaSCH Service Platform (DSP) is our main product with the current release being
+                <br>
+                <strong>{{ dsp.release }}</strong>
+                <br>
                 <a [href]="releaseNotesUrl"
-                    >here you will get the latest news about this main version
+                    >Click here to get the latest news about this main version
                     <mat-icon class="suffix">launch</mat-icon></a
                 >
                 <br /><br />
@@ -40,7 +41,7 @@
 
     <section class="support">
         <div class="content large middle">
-            <h3 class="mat-title">Get more support or help to improve</h3>
+            <h3 class="mat-headline-6">Get more support or help to improve</h3>
 
             <app-grid id="app-grid-tools" [list]="support"></app-grid>
         </div>

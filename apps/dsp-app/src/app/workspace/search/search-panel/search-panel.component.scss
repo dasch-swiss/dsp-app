@@ -13,10 +13,10 @@
     button {
       margin-left: 3px;
       justify-self: end;
-      line-height: 18px !important;
       font-size: 0.8em;
       border-radius: 0 0 4px 4px;
       padding-top: 4px;
+      height: 25px;
 
       &.active {
         background-color: $black-12-opacity;

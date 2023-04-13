@@ -1,7 +1,7 @@
 <app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
 <div class="content" *ngIf="!loading">
-    <h4 class="mat-subheading-1">
+    <h4 class="mat-body-1">
         This user is member of
         {{ user.projects.length | i18nPlural : itemPluralMapping['project'] }}
     </h4>

@@ -18,7 +18,7 @@
     }
 
     .user-profile-headline {
-      h3.mat-subheading-2 {
+      h3.mat-subtitle-1 {
         font-size: 18px;
         margin-top: -18px;
       }
@@ -72,7 +72,7 @@
 
     .user-profile-headline {
       width: 50%;
-      h2.mat-title {
+      h2.mat-headline-6 {
         margin: -3px 0 -3px 0;
         font-size: 1em;
       }
@@ -110,7 +110,7 @@
         height: 30px;
       }
 
-      .mat-button {
+      .mat-mdc-button {
         width: 25%;
         height: 30px;
         padding: 0;

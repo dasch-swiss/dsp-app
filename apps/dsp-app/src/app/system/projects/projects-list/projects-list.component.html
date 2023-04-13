@@ -21,7 +21,7 @@
                 >
                 </app-sort-button>
             </span>
-            <h2 class="mat-title">
+            <h2 class="mat-headline-6">
                 {{ list.length | i18nPlural : itemPluralMapping['project'] }}
             </h2>
             <span class="fill-remaining-space"></span>
@@ -57,13 +57,13 @@
             <td class="table-info">
                 <!-- Longname hidden on phone devices -->
                 <h5
-                    class="mat-subheading-2 link info-longname"
+                    class="mat-subtitle-1 link info-longname"
                     (click)="openProjectPage(project.id)"
                 >
                     {{ project.longname }}
                 </h5>
                 <p
-                    class="mat-subheading-1 link"
+                    class="mat-body-1 link"
                     (click)="openProjectPage(project.id)"
                 >
                     {{ project.shortcode }} | {{ project.shortname }}

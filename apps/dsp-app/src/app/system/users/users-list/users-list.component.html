@@ -21,7 +21,7 @@
                 >
                 </app-sort-button>
             </span>
-            <h2 class="mat-title">
+            <h2 class="mat-headline-6">
                 <span *ngIf="projectUuid">{{
                     list.length | i18nPlural : itemPluralMapping['member']
                 }}</span>
@@ -64,11 +64,11 @@
 
             <!-- name and e-mail address -->
             <td class="table-info">
-                <h5 class="mat-subheading-2 info-names">
+                <h5 class="mat-subtitle-1 info-names">
                     <!-- Names hidden on phone devices -->
                     {{ user.givenName }} {{ user.familyName }}
                 </h5>
-                <p class="mat-subheading-1">
+                <p class="mat-body-1">
                     <span class="info-username">{{ user.username }} </span>
                     <!-- Email hidden on phone devices -->
                     <span class="info-email">| {{ user.email }}</span>
