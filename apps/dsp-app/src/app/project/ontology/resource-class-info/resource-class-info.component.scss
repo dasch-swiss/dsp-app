@@ -15,12 +15,17 @@
   .resource-class-header {
     cursor: move;
     margin-left: -12px;
+    padding: 0px 16px 0;
 
     .resource-class-header-action {
       position: absolute;
       right: 0;
       top: 0;
     }
+  }
+
+  .resource-class-content {
+    padding: 0;
   }
 
   .resource-class-footer {

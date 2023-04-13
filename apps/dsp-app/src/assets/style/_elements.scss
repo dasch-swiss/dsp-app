@@ -183,9 +183,9 @@ a,
 
 //
 // card
-.mat-card {
-  .mat-card-title,
-  .mat-card-subtitle {
+.mat-mdc-card {
+  .mat-mdc-card-title,
+  .mat-mdc-card-subtitle {
     display: flex;
   }
 
@@ -193,7 +193,7 @@ a,
     box-shadow: none !important;
   }
 
-  .mat-card-actions {
+  .mat-mdc-card-actions {
     text-align: right;
   }
 }
@@ -440,7 +440,7 @@ a,
       text-align: left;
 
       h5.mat-subtitle-1,
-      p.mat-body-2 {
+      p.mat-subtitle-2 {
         margin: 0;
       }
     }

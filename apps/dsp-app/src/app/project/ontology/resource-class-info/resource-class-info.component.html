@@ -1,4 +1,4 @@
-<mat-card class="resource-class" cdkDrag cdkDragBoundary=".drag-drop-stop">
+<mat-card appearance="outlined" class="resource-class" cdkDrag cdkDragBoundary=".drag-drop-stop">
     <!-- class card header -->
     <mat-card-header class="resource-class-header" cdkDragHandle>
         <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
@@ -54,7 +54,7 @@
     </mat-card-header>
     <!-- resource class card content with list of properties -->
 
-    <mat-card-content *ngIf="expanded">
+    <mat-card-content *ngIf="expanded" class="resource-class-content">
         <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
             *ngIf="propsToDisplay.length; else noProperties">
             <div cdkDrag
