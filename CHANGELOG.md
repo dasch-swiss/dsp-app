@@ -1,5 +1,32 @@
 # Changelog
 
+## [10.18.0](https://github.com/dasch-swiss/dsp-app/compare/v10.17.0...v10.18.0) (2023-04-14)
+
+
+### Bug Fixes
+
+* **dsp-app/upload:** File upload fix to allow same input after error ([#983](https://github.com/dasch-swiss/dsp-app/issues/983)) ([a9bf4e3](https://github.com/dasch-swiss/dsp-app/commit/a9bf4e3a05a7999c90e06faa0f4b95b3f5ba9869))
+* handle 400 error during fulltext search ([#984](https://github.com/dasch-swiss/dsp-app/issues/984)) ([2aefc9d](https://github.com/dasch-swiss/dsp-app/commit/2aefc9d62dc4dbefb862ec1a0b0029f0c81c7ebf))
+* no autocomplete for username ([#991](https://github.com/dasch-swiss/dsp-app/issues/991)) ([7a132e2](https://github.com/dasch-swiss/dsp-app/commit/7a132e27515d5cb370b389efb860992d6bbb2da3))
+
+
+### Enhancements
+
+* activate not-exists for link prop ([#992](https://github.com/dasch-swiss/dsp-app/issues/992)) ([25be262](https://github.com/dasch-swiss/dsp-app/commit/25be26228eb8f1980e95d326d2eea1d5abbe6564))
+* **editing properties:** user feedback (DEV-1616) ([#973](https://github.com/dasch-swiss/dsp-app/issues/973)) ([1b905e4](https://github.com/dasch-swiss/dsp-app/commit/1b905e439556dc40ab64d6c31012573634f9657b))
+
+
+### Maintenance
+
+* angular mdc migration -  chips ([#993](https://github.com/dasch-swiss/dsp-app/issues/993)) ([367f853](https://github.com/dasch-swiss/dsp-app/commit/367f85356746510c1b744c6d3c61fc765cd1fd6b))
+* angular mdc migration - button ([#989](https://github.com/dasch-swiss/dsp-app/issues/989)) ([dac96bc](https://github.com/dasch-swiss/dsp-app/commit/dac96bc373c08f47e6c1f2d5f021bfebfeb34c05))
+* angular mdc migration - card ([#994](https://github.com/dasch-swiss/dsp-app/issues/994)) ([f5b7fce](https://github.com/dasch-swiss/dsp-app/commit/f5b7fce37f395e7d41ce1cec269f1a8c7c293dbb))
+* angular mdc migration - checkbox ([#995](https://github.com/dasch-swiss/dsp-app/issues/995)) ([5cba244](https://github.com/dasch-swiss/dsp-app/commit/5cba244abe7660168cd165ceb6cdbcc4cf6de16f))
+* **header:** adjust logo ([#985](https://github.com/dasch-swiss/dsp-app/issues/985)) ([879c26f](https://github.com/dasch-swiss/dsp-app/commit/879c26f40349ff9ca3c04ef8dd5c5dc47e0443af))
+* make eslint throw errors on ignored tests ([#986](https://github.com/dasch-swiss/dsp-app/issues/986)) ([a1c9ec6](https://github.com/dasch-swiss/dsp-app/commit/a1c9ec627da292eaaab3cd628cac46793b037c12))
+* overview component bottom padding ([#982](https://github.com/dasch-swiss/dsp-app/issues/982)) ([11518d3](https://github.com/dasch-swiss/dsp-app/commit/11518d317c745e0885baa9b36dc1b2837a1605b3))
+* update js-lib to 8.2.1 ([#996](https://github.com/dasch-swiss/dsp-app/issues/996)) ([252ceff](https://github.com/dasch-swiss/dsp-app/commit/252ceffdaa5557f154140832ad831be47fcc6b1e))
+
 ## [10.17.0](https://github.com/dasch-swiss/dsp-app/compare/v10.16.0...v10.17.0) (2023-03-31)
 
 
