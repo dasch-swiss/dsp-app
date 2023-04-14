@@ -20,7 +20,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
 import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
     ComparisonOperatorAndValue,
     Equals,

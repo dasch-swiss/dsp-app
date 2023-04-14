@@ -6,7 +6,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatLineModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';

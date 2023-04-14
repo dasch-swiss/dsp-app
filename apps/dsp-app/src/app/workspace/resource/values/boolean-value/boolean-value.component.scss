@@ -2,12 +2,19 @@
 
 .read-mode-view .mat-icon,
 .boolValue {
-  margin-top: 4px;
-  margin-left: 4px;
   display: block;
   color: $primary;
 
   &.more-space {
     margin-top: 16px;
   }
+}
+
+.boolValue {
+  margin-top: 4px;
+}
+
+.read-mode-view .mat-icon {
+  margin-top: 13px;
+  margin-left: 4px;
 }

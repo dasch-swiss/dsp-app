@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatLegacyCheckbox as MatCheckbox } from '@angular/material/legacy-checkbox';
+import { MatCheckbox } from '@angular/material/checkbox';
 import {
     CheckboxUpdate,
     FilteredResources,
