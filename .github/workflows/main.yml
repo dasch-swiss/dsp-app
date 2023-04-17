@@ -111,7 +111,7 @@ jobs:
         run: |
           curl -f -u "${JENKINS_BASIC_AUTH_USER}:${JENKINS_BASIC_AUTH_PASS}" \
                -X POST "${JENKINS_DEV_WEBHOOK}" \
-               -d "Service=app&Version=${IMAGE_TAG}" 
+               -d "Service=admin&Version=${IMAGE_TAG}" 
 
   release-please:
     name: Prepare next release
