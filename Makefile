@@ -44,6 +44,10 @@ docs-clean: ## cleans the project directory
 docker-build-app: app-build-prod ## build and publish DSP-APP Docker image locally
 	docker buildx build -t $(DSP_APP_IMAGE) --load .
 
+.PHONY: docker-image-tag
+docker-image-tag: ## prints the docker image tag
+	@echo $(BUILD_TAG)
+
 .PHONY: docker-publish-app
 docker-publish-app: app-build-prod ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64
 	docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) --push .

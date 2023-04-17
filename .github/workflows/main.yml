@@ -77,6 +77,8 @@ jobs:
     ]
     runs-on: ubuntu-latest
     if: github.ref_name == 'main' || startsWith(github.ref, 'refs/tags')
+    outputs:
+      tag: ${{ steps.output_docker_image_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -90,6 +92,26 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - run: make docker-publish
+      - name: Output docker image tag
+        id: output_docker_image_tag
+        run: echo "tag=$(make docker-image-tag | tr -d '\n')" >> "$GITHUB_OUTPUT"
+        shell: bash # Explicit for fail-fast behaviour
+
+  trigger-dev-deployment:
+    name: Trigger deployment to DEV
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Trigger deployment to DEV
+        env:
+          IMAGE_TAG: ${{ needs.publish.outputs.tag }}
+          JENKINS_BASIC_AUTH_USER: ${{ secrets.JENKINS_BASIC_AUTH_USER }}
+          JENKINS_BASIC_AUTH_PASS: ${{ secrets.JENKINS_BASIC_AUTH_PASS }}
+          JENKINS_DEV_WEBHOOK: ${{ secrets.JENKINS_DEV_WEBHOOK }}
+        run: |
+          curl -f -u "${JENKINS_BASIC_AUTH_USER}:${JENKINS_BASIC_AUTH_PASS}" \
+               -X POST "${JENKINS_DEV_WEBHOOK}" \
+               -d "Service=app&Version=${IMAGE_TAG}" 
 
   release-please:
     name: Prepare next release
