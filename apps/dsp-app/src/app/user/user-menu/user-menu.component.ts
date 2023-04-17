@@ -42,7 +42,6 @@ export class UserMenuComponent implements OnChanges {
     ) { }
 
     ngOnChanges() {
-
         this.navigation = [
             {
                 label: 'DSP-App Home Page',
@@ -62,16 +61,15 @@ export class UserMenuComponent implements OnChanges {
             this.username = this._session.getSession().user.name;
             this.sysAdmin = this._session.getSession().user.sysAdmin;
 
-            this._cache.get(this.username, this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username)).subscribe(
+            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
+                    this._cache.set(this.username, this.user);
                 },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                });
         }
-
     }
 
     /**
