@@ -1,3 +1,5 @@
+@use "responsive" as *;
+
 .overview {
 
     .title-bar {
@@ -42,22 +44,20 @@
     }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 840px) {
     .overview {
-
-        .title-bar.other-projects {
-            padding-top: 5%;
-        }
+      padding: 5%;
 
         .project-tiles {
-            grid-template-columns: 45% 45%;
+            grid-template-columns: 47.5% 47.5%;
+            grid-column-gap: 5%;
         }
     }
-
 }
 
 @media (max-width: 640px) {
     .overview {
+        padding: 10%;
 
         .title-bar.admin {
             display: block;
@@ -70,17 +70,18 @@
 
         }
 
-        .title-bar.other-projects {
-            padding-top: 5%;
-        }
-
         .project-tiles {
-            grid-template-columns: 90%;
+            grid-template-columns: 100%;
         }
 
         .project-tile-container {
-          padding-bottom: 5%;
-      }
+            padding-bottom: 5%;
+        }
     }
+}
 
+@media (max-width: map-get($grid-breakpoints, phone)) {
+    .overview {
+        padding: 5%;
+    }
 }
