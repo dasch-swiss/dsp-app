@@ -125,7 +125,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     overlayRef: OverlayRef;
 
     // do not show the following projects: default system projects from knora
-    doNotDisplay: string[] = [
+    hiddenProjects: string[] = [
         Constants.SystemProjectIRI,
         Constants.DefaultSharedOntologyIRI,
     ];
@@ -210,15 +210,16 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     getAllProjects(): void {
         this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
             (response: ApiResponseData<ProjectsResponse>) => {
-                this.projects = response.body.projects;
-                // this.loadSystem = false;
+                // filter out deactivated projects and system projects
+                this.projects = response.body.projects.filter(p => p.status === true && !this.hiddenProjects.includes(p.id));
+
                 if (localStorage.getItem('currentProject') !== null) {
                     this.project = JSON.parse(
                         localStorage.getItem('currentProject')
                     );
                 }
                 this.projects = this._sortingService.keySortByAlphabetical(
-                    response.body.projects,
+                    this.projects,
                     'shortname'
                 );
             },

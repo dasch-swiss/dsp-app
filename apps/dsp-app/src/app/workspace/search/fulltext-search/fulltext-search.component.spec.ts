@@ -183,7 +183,7 @@ describe('FulltextSearchComponent', () => {
         ).toHaveBeenCalledTimes(1);
 
         expect(testHostComponent.fulltextSearch.projects).toBeDefined();
-        expect(testHostComponent.fulltextSearch.projects.length).toEqual(8);
+        expect(testHostComponent.fulltextSearch.projects.length).toEqual(5);
         expect(testHostComponent.fulltextSearch.projectfilter).toEqual(true);
         expect(testHostComponent.fulltextSearch.projectLabel).toEqual(
             'All projects'
