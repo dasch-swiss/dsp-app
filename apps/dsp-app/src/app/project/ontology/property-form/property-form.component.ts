@@ -48,7 +48,7 @@ import {
     PropertyInfoObject,
 } from '../default-data/default-properties';
 import { OntologyService } from '../ontology.service';
-import { GuiCardinality } from '../property-info/property-info.component';
+import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { PropToDisplay } from '../resource-class-info/resource-class-info.component';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 

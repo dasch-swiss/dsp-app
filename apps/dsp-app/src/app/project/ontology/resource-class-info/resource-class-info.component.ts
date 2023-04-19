@@ -44,7 +44,7 @@ import {
 } from '../default-data/default-resource-classes';
 import { PropertyAssignment, OntologyProperties } from '../ontology.component';
 import { OntologyService } from '../ontology.service';
-import { GuiCardinality } from '../property-info/property-info.component';
+import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 
 export interface PropToDisplay extends IHasProperty {
     propDef?: PropertyDefinition;

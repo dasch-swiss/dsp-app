@@ -18,14 +18,11 @@ import {
     ApiResponseError,
     CanDoResponse,
     Constants,
-    IHasProperty,
     KnoraApiConnection,
     ListNodeInfo,
     ReadOntology,
     ReadProject,
     ResourcePropertyDefinitionWithAllLanguages,
-    UpdateOntology,
-    UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
@@ -47,7 +44,6 @@ export class Property {
     multiple: boolean;
     required: boolean;
     guiAttr: string;
-    // permission: string;
 
     constructor(
         iri?: string,
@@ -56,7 +52,6 @@ export class Property {
         multiple?: boolean,
         required?: boolean,
         guiAttr?: string
-        // permission?: string
     ) {
         this.iri = iri;
         this.label = label;
@@ -64,7 +59,6 @@ export class Property {
         this.multiple = multiple;
         this.required = required;
         this.guiAttr = guiAttr;
-        // this.permission = permission;
     }
 }
 
@@ -74,15 +68,6 @@ export interface ShortInfo {
     comment: string;
 }
 
-export interface GuiCardinality {
-    key: CardinalityKey;
-    value: boolean;
-}
-
-// current workflow/gui window
-type Context = 'classEditor' | 'propertyEditor';
-
-type CardinalityKey = 'multiple' | 'required';
 
 @Component({
     selector: 'app-property-info',
@@ -112,12 +97,9 @@ type CardinalityKey = 'multiple' | 'required';
         ]),
     ],
 })
+
 export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
-
-    @Input() propCard?: IHasProperty;
-
-    @Input() resourceIri?: string;
 
     @Input() projectUuid: string;
 
@@ -135,23 +117,10 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         new EventEmitter<PropertyInfoObject>();
     @Output() deleteResourceProperty: EventEmitter<DefaultClass> =
         new EventEmitter<DefaultClass>();
-    @Output() removePropertyFromClass: EventEmitter<DefaultClass> =
-        new EventEmitter<DefaultClass>();
 
     // submit res class iri to open res class (not yet implemented)
     @Output() clickedOnClass: EventEmitter<ShortInfo> =
         new EventEmitter<ShortInfo>();
-    @Output() changeCardinalities: EventEmitter<{
-        prop: IHasProperty;
-        propType: DefaultProperty;
-        targetCardinality: GuiCardinality;
-    }> = new EventEmitter<{
-        prop: IHasProperty;
-        propType: DefaultProperty;
-        targetCardinality: GuiCardinality;
-    }>();
-
-    context: Context; // the context in which this component is used
 
     propInfo: Property = new Property();
 
@@ -161,7 +130,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     propAttributeComment: string;
 
     propCanBeDeleted: boolean;
-    propCanBeRemovedFromClass: boolean;
 
     ontology: ReadOntology;
 
@@ -190,16 +158,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     }
 
     ngOnChanges(): void {
-        this.context = this.getContext();
-
-        if (this.context === 'classEditor') {
-            // set the cardinality values in the class view
-            const cards = this._ontoService.getCardinalityGuiValues(
-                this.propCard.cardinality
-            );
-            this.propInfo.multiple = cards.multiple;
-            this.propInfo.required = cards.required;
-        }
 
         // get info about subproperties, if they are not a subproperty of knora base ontology
         // in this case add it to the list of subproperty iris
@@ -272,104 +230,49 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         }
 
         // get all classes where the property is used
-        if (this.context === 'propertyEditor') {
-            this.resClasses = [];
-            this._cache.get('currentProjectOntologies').subscribe(
-                (ontologies: ReadOntology[]) => {
-                    ontologies.forEach((onto) => {
-                        const classes = onto.getAllClassDefinitions();
-                        classes.forEach((resClass) => {
-                            if (
-                                resClass.propertiesList.find(
-                                    (prop) =>
-                                        prop.propertyIndex === this.propDef.id
-                                )
-                            ) {
-                                // build own resClass object with id, label and comment
-                                const propOfClass: ShortInfo = {
-                                    id: resClass.id,
-                                    label: resClass.label,
-                                    comment:
-                                        onto.label +
-                                        (resClass.comment
-                                            ? ': ' + resClass.comment
-                                            : ''),
-                                };
-                                this.resClasses.push(propOfClass);
-                            }
-                        });
+        this.resClasses = [];
+        this._cache.get('currentProjectOntologies').subscribe(
+            (ontologies: ReadOntology[]) => {
+                if (!ontologies) {return;}
+                ontologies.forEach((onto) => {
+                    const classes = onto.getAllClassDefinitions();
+                    classes.forEach((resClass) => {
+                        if (
+                            resClass.propertiesList.find(
+                                (prop) =>
+                                    prop.propertyIndex === this.propDef.id
+                            )
+                        ) {
+                            // build own resClass object with id, label and comment
+                            const propOfClass: ShortInfo = {
+                                id: resClass.id,
+                                label: resClass.label,
+                                comment:
+                                    onto.label +
+                                    (resClass.comment
+                                        ? ': ' + resClass.comment
+                                        : ''),
+                            };
+                            this.resClasses.push(propOfClass);
+                        }
                     });
-                },
-                () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
-            );
-        }
-    }
-
-    /**
-     * return the context of the current workflow. If there is a propCard, classes are displayed/edited in the ontology
-     * editor - if not, properties are displayed/edited.
-     */
-    getContext() {
-        return this.propCard ? 'classEditor' : 'propertyEditor';
+                });
+            },
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+        );
     }
 
     /**
      * determines whether a property can be deleted or not
      */
     canBeDeleted(): void {
-        if (this.context === 'propertyEditor') {
-            // check if the property can be deleted
-            this._dspApiConnection.v2.onto
-                .canDeleteResourceProperty(this.propDef.id)
-                .subscribe(
-                    (canDoRes: CanDoResponse) => {
-                        this.propCanBeDeleted = canDoRes.canDo;
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
-        }
-    }
-
-    /**
-     * determines whether a property can be removed from a class or not
-     */
-    canBeRemovedFromClass(): void {
-        // check if the property can be removed from res class
-        if (!this.lastModificationDate) {
-            // guard
-            return;
-        }
-
-        // property can only be removed from class if it's not inherited from another prop or class
-        if (this.propCard.isInherited) {
-            // other guard
-            this.propCanBeRemovedFromClass = false;
-            return;
-        }
-        const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-
-        onto.lastModificationDate = this.lastModificationDate;
-
-        onto.id = this.ontology.id;
-
-        const delCard = new UpdateResourceClassCardinality();
-
-        delCard.id = this.resourceIri;
-
-        delCard.cardinalities = [];
-
-        delCard.cardinalities = [this.propCard];
-        onto.entity = delCard;
-
+        // check if the property can be deleted
         this._dspApiConnection.v2.onto
-            .canDeleteCardinalityFromResourceClass(onto)
+            .canDeleteResourceProperty(this.propDef.id)
             .subscribe(
                 (canDoRes: CanDoResponse) => {
-                    this.propCanBeRemovedFromClass = canDoRes.canDo;
+                    this.propCanBeDeleted = canDoRes.canDo;
                 },
-                // open snackbar displaying the error
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                 }
@@ -380,13 +283,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
      * show action bubble with various CRUD buttons when hovered over.
      */
     mouseEnter() {
-        if (!this.userCanEdit || this.context === 'classEditor') {
-            // guard
-            return;
-        } else {
-            // no propCard means in the property editing context - not in classes view
-            this.canBeDeleted();
-        }
+        this.canBeDeleted();
         this.showActionBubble = true;
     }
 

@@ -1,59 +1,27 @@
-<div class="property-info" [class.standalone]="context === 'propertyEditor'" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+<div class="property-info" [class.standalone]="true" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
     <div class="upper-prop-container">
-        <div mat-line class="title" [class.with-line-break]="context === 'propertyEditor'">
+        <div mat-line class="title" [class.with-line-break]="true">
             <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label + ' (' + propDef.id.split('#')[1] + ')'"
                 matTooltipPosition="above">
                 <mat-icon class="type">{{propType?.icon}}</mat-icon>
             </span>
             <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above" matTooltipClass="multi-line-tooltip">
-                <!-- display label if cardinality exists (in case the component is used in resource class view) -->
-                <span *ngIf="context === 'classEditor'; else displayAllLabels">{{propDef.label ? propDef.label : propDef.id}}</span>
-                <!-- otherwise display label in all languages (if defined) -->
-                <ng-template #displayAllLabels>
-                    {{!propDef.labels.length ? propDef?.label : propDef.labels | appStringifyStringLiteral:'all'}}
-                </ng-template>
+                {{!propDef.labels.length ? propDef?.label : propDef.labels | appStringifyStringLiteral:'all'}}
             </span>
             <!-- property is linked to a class or to a list: display connected class or list -->
             <span class="attribute additional-info" *ngIf="propAttribute" [matTooltip]="propAttributeComment"
                 matTooltipPosition="above" [innerHTML]="'&rarr;&nbsp;' + propAttribute">
             </span>
         </div>
-        <div *ngIf="context === 'classEditor'" class="edit-menu">
-            <span class="menu-icon">
-                <mat-icon [matMenuTriggerFor]="classInfoMenu" class="menu-icon-button" (click)="this.canBeRemovedFromClass()">more_vert</mat-icon>
-            </span>
-            <mat-menu #classInfoMenu="matMenu">
-                <button mat-menu-item
-                        [disabled] = "!propCanBeRemovedFromClass"
-                        (click)="removePropertyFromClass.emit({iri: propDef.id, label: propDef.label})">
-                    <mat-icon>link_off</mat-icon>
-                    <span>remove property from class</span>
-                </button>
-            </mat-menu>
-        </div>
     </div>
 
-    <div mat-line class="info additional-info" [class.flex]="context === 'classEditor'" [class.with-line-break]="context==='propertyEditor'">
+    <div mat-line class="info additional-info" [class.with-line-break] = true>
         <span [matTooltip]="'id: ' + propDef.id" matTooltipPosition="above" matTooltipClass="wide-tooltip" class="mat-caption">
             {{propDef.id | split: '#':1}}
         </span>
         <span class="fill-remaining-space center"></span>
-        <span *ngIf="context==='classEditor'">
-            <mat-slide-toggle
-                data-name="multiple"
-                [checked]="propInfo.multiple"
-                [disabled]="!userCanEdit"
-                (toggleChange)="changeCardinalities.emit({ prop: propCard, propType: propType, targetCardinality: {key: 'multiple', value: !propInfo.multiple} })">
-            </mat-slide-toggle> multiple
-            <mat-slide-toggle
-                data-name="required"
-                [checked]="propInfo.required"
-                [disabled]="!userCanEdit"
-                (toggleChange)="changeCardinalities.emit({prop: propCard, propType: propType, targetCardinality: {key: 'required', value: !propInfo.required} })">
-            </mat-slide-toggle> required
-        </span>
         <!-- in case of ontology property: display corresponding resource classes -->
-        <span *ngIf="context === 'propertyEditor'" class="white-space">
+        <span class="white-space">
             <span *ngIf="resClasses.length; else notUsed">
                 <span class="mat-caption">&gt; Property is used in:</span>
                 <span *ngFor="let c of resClasses; let last = last">
@@ -68,7 +36,7 @@
             </ng-template>
         </span>
     </div>
-    <div class="action-bubble" *ngIf="context==='propertyEditor' && lastModificationDate && projectStatus && showActionBubble" [@simpleFadeAnimation]="'in'">
+    <div class="action-bubble" *ngIf="lastModificationDate && projectStatus && showActionBubble" [@simpleFadeAnimation]="'in'">
         <div class="button-container">
             <span matTooltipPosition="above"
                 [matTooltip]="propDef.isEditable ? 'Edit property' : 'The property can\'t be edited; No further information available'">

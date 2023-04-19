@@ -6,7 +6,7 @@ import {
 import { Cardinality, ReadResource } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from '@dsp-app/src/app/project/ontology/default-data/default-properties';
 import { FilteredResources } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
-import { GuiCardinality } from '../../project/ontology/property-info/property-info.component';
+import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { PropToDisplay } from '../../project/ontology/resource-class-info/resource-class-info.component';
 
 export interface DialogData {
