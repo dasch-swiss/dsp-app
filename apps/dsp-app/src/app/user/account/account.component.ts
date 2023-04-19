@@ -56,31 +56,14 @@ export class AccountComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
 
-        // set the cache
-        this._cache.get(
-            this.username,
-            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                this.username
-            )
-        );
-
-        // get from cache
-        this._cache
-            .get(
-                this.username,
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                    this.username
-                )
-            )
-            .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
+        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this.user = response.body.user;
+                this.loading = false;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+        });
     }
 
     openDialog(mode: string, name: string, id?: string): void {

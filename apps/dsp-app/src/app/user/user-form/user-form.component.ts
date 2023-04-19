@@ -202,37 +202,20 @@ export class UserFormComponent implements OnInit, OnChanges {
         this.sysAdmin = this.session.user.sysAdmin;
 
         if (this.username) {
-            /**
-             * edit mode: get user data from cache
-             */
-
             this.title = this.username;
             this.subtitle = "'appLabels.form.user.title.edit' | translate";
 
-            // set the cache first: user data to edit
-            this._cache.get(
-                this.username,
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
+            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
                     this.username
-                )
+                ).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
+                    this.loadingData = !this.buildForm(this.user);
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
             );
-            // get user data from cache
-            this._cache
-                .get(
-                    this.username,
-                    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                        this.username
-                    )
-                )
-                .subscribe(
-                    (response: ApiResponseData<UserResponse>) => {
-                        this.user = response.body.user;
-                        this.loadingData = !this.buildForm(this.user);
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
         } else {
             /**
              * create mode: empty form for new user

@@ -55,24 +55,6 @@ describe('PasswordFormComponent', () => {
         }).compileComponents();
     }));
 
-    // mock localStorage
-    beforeEach(() => {
-        let store = {};
-
-        spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): string => store[key] || null
-        );
-        spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
-            delete store[key];
-        });
-        spyOn(localStorage, 'setItem').and.callFake(
-            (key: string, value: string): string => (store[key] = <any>value)
-        );
-        spyOn(localStorage, 'clear').and.callFake(() => {
-            store = {};
-        });
-    });
-
     beforeEach(() => {
         localStorage.setItem(
             'session',

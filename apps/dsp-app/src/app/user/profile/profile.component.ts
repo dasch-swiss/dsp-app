@@ -21,7 +21,6 @@ import {
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SessionService } from '@dsp-app/src/app/main/services/session.service';
-import { CacheService } from '../../main/cache/cache.service';
 import { DialogComponent } from '../../main/dialog/dialog.component';
 
 @Component({
@@ -46,7 +45,6 @@ export class ProfileComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
@@ -65,43 +63,26 @@ export class ProfileComponent implements OnInit {
     getUser() {
         this.loading = true;
 
-        // set the cache
-        this._cache.get(
-            this.username,
-            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                this.username
-            )
-        );
+        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this.user = response.body.user;
 
-        // get from cache
-        this._cache
-            .get(
-                this.username,
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                    this.username
-                )
-            )
-            .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
+                // set the page title
+                this._titleService.setTitle(
+                    this.user.username +
+                        ' (' +
+                        this.user.givenName +
+                        ' ' +
+                        this.user.familyName +
+                        ')'
+                );
 
-                    // set the page title
-                    this._titleService.setTitle(
-                        this.user.username +
-                            ' (' +
-                            this.user.givenName +
-                            ' ' +
-                            this.user.familyName +
-                            ')'
-                    );
-
-                    this.loading = false;
-                },
+                this.loading = false;
+            },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                     this.loading = false;
-                }
-            );
+            });
     }
 
     openDialog(mode: string, name: string): void {

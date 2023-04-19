@@ -20,7 +20,6 @@ import {
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
@@ -98,7 +97,6 @@ export class PasswordFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,
         private _notification: NotificationService,
@@ -124,30 +122,13 @@ export class PasswordFormComponent implements OnInit {
             }
             this.showPasswordForm = this.updateOwn;
 
-            // set the cache
-            this._cache.get(
-                this.username,
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                    this.username
-                )
-            );
-
-            // get from cache
-            this._cache
-                .get(
-                    this.username,
-                    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                        this.username
-                    )
-                )
-                .subscribe(
-                    (response: ApiResponseData<UserResponse>) => {
-                        this.user = response.body.user;
-                    },
+            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
+                },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);
-                    }
-                );
+            });
 
             if (!this.updateOwn) {
                 this.buildConfirmForm();
