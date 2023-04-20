@@ -1,15 +1,19 @@
 import { Component, Inject, OnChanges } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
     ApiResponseData,
+    ApiResponseError,
     KnoraApiConnection,
     ProjectResponse,
     ReadOntology,
     ResourceClassDefinition,
+    UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { AppInitService } from '@dsp-app/src/app/app-init.service';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import {
@@ -48,6 +52,8 @@ export class OntologyClassInstanceComponent implements OnChanges {
 
     splitSizeChanged: SplitSize;
 
+    session: Session;
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
@@ -55,12 +61,17 @@ export class OntologyClassInstanceComponent implements OnChanges {
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _ontologyService: OntologyService,
-        private _projectService: ProjectService
+        private _projectService: ProjectService,
+        private _sessionService: SessionService,
+        private _router: Router,
+        private _errorHandler: ErrorHandlerService,
     ) {
         // parameters from the url
         const uuid = this._route.parent.snapshot.params.uuid;
 
         this.projectIri = this._projectService.uuidToIri(uuid);
+
+        this.session = this._sessionService.getSession();
 
         this._route.params.subscribe((params) => {
             this._dspApiConnection.admin.projectsEndpoint
@@ -81,8 +92,27 @@ export class OntologyClassInstanceComponent implements OnChanges {
                         // single instance view
 
                         if (this.instanceId === 'add') {
-                            // create new res class instance: display res instance form
-                            this.ngOnChanges();
+                            if(!this.session) { // user isn't signed in, redirect to project description
+                                this._router.navigateByUrl("/project/" + uuid);
+                            } else {
+                                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+                                    (res: ApiResponseData<UserResponse>) => {
+                                        const usersProjects = res.body.user.projects;
+                                        if (usersProjects?.some(p => p.id === this.projectIri) || // project member
+                                            this.session.user.sysAdmin // system admin
+                                        ) {
+                                            // user has permission, display create resource instance form
+                                            this.ngOnChanges();
+                                        } else {
+                                            // user is not a member of the project or a systemAdmin, redirect to project description
+                                            this._router.navigateByUrl("/project/" + uuid);
+                                        }
+                                    },
+                                    (error: ApiResponseError) => {
+                                        this._errorHandler.showMessage(error);
+                                    }
+                                );
+                            }
                         } else {
                             // get the single resource instance
                             this.resourceIri = `${this._ais.dspAppConfig.iriBase}/${shortcode}/${this.instanceId}`;
