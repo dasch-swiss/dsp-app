@@ -273,7 +273,6 @@ class TestConfirmationMessageComponent {
  * test host component to simulate parent component.
  */
 @Component({
-    selector: 'lib-host-component',
     template: ` <app-display-edit
         *ngIf="readValue"
         #displayEditVal

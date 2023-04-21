@@ -143,7 +143,7 @@ class MockSwitchPropertiesComponent {
  * mock value component to use in tests.
  */
 @Component({
-    selector: 'dsp-int-value',
+    selector: 'app-int-value',
 })
 class MockCreateIntValueComponent implements OnInit {
     @ViewChild('createVal') createValueComponent: IntValueComponent;

@@ -17,7 +17,6 @@ import { OntologyClassItemComponent } from './ontology-class-item.component';
  * test host component to simulate parent component.
  */
 @Component({
-    selector: 'test-host-component',
     template: `
         <app-ontology-class-item #ontoClassItem [resClass]="resClass">
         </app-ontology-class-item>

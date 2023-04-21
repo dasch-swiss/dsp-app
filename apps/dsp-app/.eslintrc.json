@@ -23,7 +23,7 @@
                     "warn",
                     {
                         "type": "element",
-                        "prefix": "dsp-app",
+                        "prefix": "app",
                         "style": "kebab-case"
                     }
                 ],

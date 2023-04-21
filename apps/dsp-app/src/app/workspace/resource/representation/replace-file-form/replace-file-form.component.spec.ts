@@ -9,7 +9,6 @@ import { UploadComponent } from '../upload/upload.component';
 import { ReplaceFileFormComponent } from './replace-file-form.component';
 
 @Component({
-    selector: 'test-host-component',
     template: `
         <app-replace-file-form
             #replaceFileForm

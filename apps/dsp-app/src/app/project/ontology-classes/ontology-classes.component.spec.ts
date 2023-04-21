@@ -8,7 +8,6 @@ import { OntologyClassesComponent } from './ontology-classes.component';
  * test host component to simulate parent component.
  */
 @Component({
-    selector: 'test-host-component',
     template: `
         <app-ontology-classess #ontoClasses [resClass]="resClass">
         </app-ontology-classess>

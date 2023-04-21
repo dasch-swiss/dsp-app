@@ -9,9 +9,11 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
+/* eslint-disable */
 @Directive({
     selector: 'a[href]',
 })
+/* eslint-enable */
 export class ExternalLinksDirective implements OnChanges {
     @Input() href: string;
     @HostBinding('attr.rel') relAttr = '';

@@ -33,6 +33,7 @@ import { CommentFormComponent } from '../../comment-form/comment-form.component'
  * test host component to simulate parent component.
  */
 @Component({
+    // eslint-disable-next-line @angular-eslint/component-selector
     selector: 'ckeditor',
     template: '',
     providers: [
