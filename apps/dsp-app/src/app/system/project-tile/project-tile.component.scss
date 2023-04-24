@@ -1,4 +1,6 @@
-@use "config" as *;
+@use '@angular/material' as mat;
+@use "../../../styles/config" as *;
+@use "../../../styles/typography" as t;
 
 .project-tile {
   border: 1px solid $cool_gray_300;
@@ -90,6 +92,8 @@
 
     .workspace-button-container {
       margin: 14% 0%;
+
+      @include mat.button-typography(t.$dsp-typography-config);
 
       button {
         font-size: 16px;

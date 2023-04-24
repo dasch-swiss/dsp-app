@@ -19,6 +19,7 @@
         "main": "apps/dsp-app/src/main.ts",
         "polyfills": "apps/dsp-app/src/polyfills.ts",
         "tsConfig": "apps/dsp-app/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
         "allowedCommonJsDependencies": [
           "json2typescript",
           "ngraph.graph",
@@ -33,14 +34,10 @@
           {
             "glob": "**/*",
             "input": "apps/dsp-app/src/assets/",
-            "ignore": ["**/*.scss"],
             "output": "/assets/"
           }
         ],
         "styles": ["apps/dsp-app/src/styles.scss"],
-        "stylePreprocessorOptions": {
-          "includePaths": ["apps/dsp-app/src/assets/style/"]
-        },
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
         ]
@@ -164,11 +161,9 @@
         "main": "apps/dsp-app/src/test.ts",
         "polyfills": "apps/dsp-app/src/polyfills.ts",
         "tsConfig": "apps/dsp-app/tsconfig.spec.json",
+        "inlineStyleLanguage": "scss",
         "karmaConfig": "apps/dsp-app/karma.conf.js",
         "styles": ["apps/dsp-app/src/styles.scss"],
-        "stylePreprocessorOptions": {
-          "includePaths": ["apps/dsp-app/src/assets/style/"]
-        },
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
         ],
@@ -178,7 +173,6 @@
           {
             "glob": "**/*",
             "input": "apps/dsp-app/src/assets/",
-            "ignore": ["**/*.scss"],
             "output": "/assets/"
           }
         ]

@@ -1,4 +1,4 @@
-@use "config" as *;
+@use "../../../styles/config" as *;
 
 .data-models-container {
     padding-top: 2.5%;
@@ -37,7 +37,7 @@
 
     .list {
         padding-bottom: 4%;
-        
+
         &.top-padding {
             padding-top: 4%;
         }

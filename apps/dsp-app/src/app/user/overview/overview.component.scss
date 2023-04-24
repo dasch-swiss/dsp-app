@@ -1,4 +1,6 @@
-@use "responsive" as *;
+@use '@angular/material' as mat;
+@use "../../../styles/responsive" as *;
+@use "../../../styles/typography" as t;
 
 .overview {
 
@@ -21,13 +23,7 @@
         }
 
         .create-project-button {
-
-            button {
-                font-size: 16px;
-                line-height: 24px;
-                font-weight: 400;
-                padding: 13px 21px;
-            }
+            @include mat.button-typography(t.$dsp-typography-config);
         }
     }
 

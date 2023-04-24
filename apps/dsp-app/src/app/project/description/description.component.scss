@@ -1,6 +1,6 @@
-@use "config" as *;
-@use "responsive" as *;
-@use "theme";
+@use "../../../styles/config" as *;
+@use "../../../styles/responsive" as *;
+@use "../../../styles/theme";
 
 section {
   margin: 24px 0px;

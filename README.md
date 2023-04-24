@@ -1,4 +1,4 @@
-# DSP-APPS Monorepo
+# DaSCH Applications and Libraries Monorepo
 
 [![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-app?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-app)
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
@@ -21,7 +21,19 @@ working with primary resources and data in the humanities.
 DSP-APP is [free software](http://www.gnu.org/philosophy/free-sw.en.html), released
 under [GNU Affero General Public](http://www.gnu.org/licenses/agpl-3.0.en.html) license.
 
-## Developer Monorepo Quickstart
+## User Quickstart
+
+To try out DSP-APP you first need to start the backend [DSP-API](https://github.com/dasch-swiss/dsp-api):
+```shell
+# go the dsp-api repository in a terminal and start the api
+$ make init-db-test
+$ make stack-without-app
+
+# come back to this repository and start the app
+$ npx nx run dsp-app:serve
+```
+
+## Developer Quickstart
 
 The monorepo is implemented using [NX](https://nx.dev).
 

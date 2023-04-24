@@ -1,5 +1,5 @@
-@use "config" as *;
-@use "mixins";
+@use "../../../styles/config" as *;
+@use "../../../styles/mixins";
 
 .card-container {
   position: relative;

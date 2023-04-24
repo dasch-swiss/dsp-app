@@ -1,4 +1,4 @@
-@use "responsive" as *;
+@use "../../styles/responsive" as *;
 
 // phone devices
 @media (max-width: map-get($grid-breakpoints, phone)) {

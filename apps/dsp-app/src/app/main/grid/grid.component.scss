@@ -1,5 +1,5 @@
-@use "config" as *;
-@use "responsive" as *;
+@use "../../../styles/config" as *;
+@use "../../../styles/responsive" as *;
 
 .app-grid {
   display: grid;

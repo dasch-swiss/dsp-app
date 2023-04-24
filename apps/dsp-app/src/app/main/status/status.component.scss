@@ -1,5 +1,5 @@
-@use "responsive" as *;
-@use "config" as *;
+@use "../../../styles/responsive" as *;
+@use "../../../styles/config" as *;
 
 .status-page {
   background: $white;

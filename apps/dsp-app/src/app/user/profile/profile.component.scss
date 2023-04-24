@@ -1,4 +1,4 @@
-@use "responsive" as *;
+@use "../../../styles/responsive" as *;
 
 // tablet and desktop
 @media (min-width: map-get($grid-breakpoints, phone)) {

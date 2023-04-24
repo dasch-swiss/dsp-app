@@ -1,4 +1,4 @@
-@use "responsive" as *;
+@use "../../../styles/responsive" as *;
 
 $gray_100: rgba(243, 244, 246, 1);
 $gray_500: rgba(107, 114, 128, 1);
@@ -48,7 +48,7 @@ $gray_700: rgba(55, 65, 81, 1);
     width: 100%;
   }
 
-    .user-menu-content {
-      width: 100%;
-    }
+  .user-menu-content {
+    width: 100%;
+  }
 }
