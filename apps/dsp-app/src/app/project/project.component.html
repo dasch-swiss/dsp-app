@@ -19,7 +19,7 @@
 
                     <!-- Description Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item class="link section-title" (click)="open('/project/' + projectUuid)">
+                    <mat-list-item [ngClass]="{ 'active': this.listItemSelected === '/project/' + projectUuid}" class="link section-title" (click)="open('/project/' + projectUuid)">
                         <span class="section-label">
                             <mat-icon class="sidenav-prefix-icon">description</mat-icon>
                             <p>Project Description</p>
@@ -32,7 +32,7 @@
 
                     <!-- Ontology Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item class="link section-title" (click)="open('data-models')">
+                    <mat-list-item [ngClass]="{ 'active': listItemSelected === 'data-models'}" class="link section-title" (click)="open('data-models')">
                         <span class="section-label">
                             <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
                             <p>Data Model</p>
@@ -70,7 +70,7 @@
 
                     <div class="sidenav-footer"
                         *ngIf="projectAdmin">
-                        <mat-list-item class="link section-title footer"
+                        <mat-list-item [ngClass]="{ 'active': listItemSelected === 'settings'}" class="link section-title footer"
                             (click)="open('settings')">
                             <span class="section-label">
                                 <mat-icon class="sidenav-prefix-icon">settings</mat-icon>

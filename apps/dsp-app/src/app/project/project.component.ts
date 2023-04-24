@@ -6,12 +6,11 @@ import {
     ApiResponseData,
     ApiResponseError,
     KnoraApiConnection,
-    ListNodeInfo,
-    ListsResponse,
     OntologiesMetadata,
     ProjectResponse,
     ReadOntology,
-    ReadProject, UserResponse
+    ReadProject,
+    UserResponse
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { AppInitService } from '../app-init.service';
@@ -19,7 +18,9 @@ import { CacheService } from '../main/cache/cache.service';
 import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
 import { MenuItem } from '../main/declarations/menu-item';
 import { ErrorHandlerService } from '../main/services/error-handler.service';
+import { ComponentCommunicationEventService, Events } from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { Session, SessionService } from '../main/services/session.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-project',
@@ -28,9 +29,6 @@ import { Session, SessionService } from '../main/services/session.service';
 })
 export class ProjectComponent implements OnInit {
     @ViewChild('sidenav') sidenav: MatSidenav;
-
-    readonly TAB_DATA_MODEL = 3;
-    readonly TAB_LISTS = 4;
 
     // loading for progress indicator
     loading: boolean;
@@ -60,13 +58,17 @@ export class ProjectComponent implements OnInit {
 
     // list of project ontologies
     projectOntologies: ReadOntology[] = [];
-    projectLists: ListNodeInfo[] = [];
+
+    listItemSelected = '';
+
+    componentCommsSubscription: Subscription;
 
     sideNavOpened = true;
 
     constructor(
         @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService,
+        private _componentCommsService: ComponentCommunicationEventService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _router: Router,
@@ -96,6 +98,27 @@ export class ProjectComponent implements OnInit {
       }
 
     ngOnInit() {
+        switch (this._router.url) {
+            case  `/project/${this.projectUuid}`: {
+                this.listItemSelected = this._router.url;
+                break;
+            }
+            case `/project/${this.projectUuid}/data-models`: {
+                this.listItemSelected = 'data-models';
+                break;
+            }
+            case `/project/${this.projectUuid}/settings/collaboration`: {
+                this.listItemSelected = 'settings'
+                break;
+            }
+        }
+
+        this.componentCommsSubscription = this._componentCommsService.on(
+            Events.unselectedListItem,
+            () => {
+                this.listItemSelected = '';
+            }
+        );
 
         if (!this.error) {
             this.loading = true;
@@ -197,12 +220,20 @@ export class ProjectComponent implements OnInit {
         }
     }
 
+    ngOnDestroy() {
+        // unsubscribe from the ValueOperationEventService when component is destroyed
+        if (this.componentCommsSubscription !== undefined) {
+            this.componentCommsSubscription.unsubscribe();
+        }
+    }
+
     open(route: string) {
+        this.listItemSelected = route;
         this._router.navigate([route], { relativeTo: this._route });
     }
 
     /**
-     * given an Html element, compare the scrollHeight and the clientHeight
+     * given a Html element, compare the scrollHeight and the clientHeight
      *
      * @param elem the element which has the line-clamp css
      * @returns inverse of comparison between the scrollHeight and the clientHeight of elem

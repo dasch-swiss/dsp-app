@@ -1,5 +1,5 @@
 <div class="class-item-container">
-    <div class="content" [routerLinkActive]="['is-active']">
+    <div class="content" [routerLinkActive]="['is-active']" (click)="selectItem()">
         <div class="box link" [routerLink]="link">
             <div class="label" matTooltip="{{resClass.label}}" matTooltipShowDelay="750" [matTooltipPosition]="'above'"
                  [matTooltipDisabled]="resClass.label.length < MAX_LABEL_CHAR">{{trimLabel(resClass.label)}}</div>
