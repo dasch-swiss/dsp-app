@@ -41,14 +41,16 @@
             [class.mat-primary]="!isError"
             [class.mat-warn]="isError"
         >
-            <app-progress-indicator
+            <div class="progress-button-content">
+                <app-progress-indicator
+                *ngIf="loading"
                 [color]="'white'"
                 [status]="0"
-                *ngIf="loading"
-                class="login-progress"
-            ></app-progress-indicator>
-            <mat-icon *ngIf="isError && !loading">close</mat-icon>
-            {{ isError ? formLabel.retry : formLabel.submit }}
+                class="login-progress"/>
+                <mat-icon *ngIf="isError && !loading">close</mat-icon>
+                <span>{{ isError ? formLabel.retry : formLabel.submit }}</span>
+            </div>
+
         </button>
 
         <br /><br />
@@ -73,12 +75,13 @@
         (click)="logout()"
         class="full-width mat-warn logout-button"
     >
-        <app-progress-indicator
+        <div class="progress-button-content">
+            <app-progress-indicator
             [color]="'white'"
             [status]="0"
             *ngIf="loading"
-            class="login-progress"
-        ></app-progress-indicator>
-        {{ formLabel.logout }}
+            class="login-progress"/>
+            <span>{{ formLabel.logout }}</span>
+        </div>
     </button>
 </div>

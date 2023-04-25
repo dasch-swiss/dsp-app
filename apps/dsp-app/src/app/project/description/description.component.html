@@ -119,12 +119,15 @@
                         color="primary"
                         [disabled]="!form.valid || !this.description.length || !this.keywords.length">
 
-                        <app-progress-indicator [color]="'white'"
-                            [status]="0"
-                            *ngIf="loading"
-                            class="submit-progress">
-                        </app-progress-indicator>
-                        <span>{{ 'appLabels.form.action.update' | translate }}</span>
+                        <div class="progress-button-content">
+                            <app-progress-indicator
+                                *ngIf="loading"
+                                [color]="'white'"
+                                [status]="0"
+                                class="submit-progress">
+                            </app-progress-indicator>
+                            <span>{{ 'appLabels.form.action.update' | translate }}</span>
+                        </div>
                     </button>
                 </span>
             </div>

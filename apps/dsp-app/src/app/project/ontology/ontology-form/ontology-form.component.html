@@ -61,15 +61,15 @@
                     [color]="error ? 'warn' : 'primary'"
                     [disabled]="!ontologyForm.valid"
                 >
-                    <app-progress-indicator
+                    <div class="progress-button-content">
+                        <app-progress-indicator
+                        *ngIf="loading"
                         [color]="'white'"
                         [status]="0"
-                        *ngIf="loading"
-                        class="submit-progress"
-                    >
-                    </app-progress-indicator>
-                    <mat-icon *ngIf="error && !loading">close</mat-icon>
-                    {{ error ? 'Failed' : iri ? 'Update' : 'Create' }}
+                        class="submit-progress"/>
+                        <mat-icon *ngIf="error && !loading">close</mat-icon>
+                        <span>{{ error ? 'Failed' : iri ? 'Update' : 'Create' }}</span>
+                    </div>
                 </button>
             </span>
         </div>

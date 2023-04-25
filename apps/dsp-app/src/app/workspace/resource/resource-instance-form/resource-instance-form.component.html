@@ -38,18 +38,21 @@
                 class="form-submit"
                 [disabled]="!propertiesParentForm.valid"
             >
+            <div class="progress-button-content">
                 <app-progress-indicator
-                    *ngIf="loading && !error"
-                    [color]="'white'"
-                    [status]="0"
-                    class="submit-progress"
-                ></app-progress-indicator>
+                *ngIf="loading"
+                [color]="'white'"
+                [status]="0"
+                class="submit-progress"/>
                 <mat-icon *ngIf="!loading && error">close</mat-icon>
-                {{
-                    !loading && error
-                        ? ('appLabels.form.action.retry' | translate)
-                        : ('appLabels.form.action.submit' | translate)
-                }}
+                <span>
+                    {{
+                        !loading && error
+                            ? ('appLabels.form.action.retry' | translate)
+                            : ('appLabels.form.action.submit' | translate)
+                    }}
+                </span>
+            </div>
             </button>
         </span>
     </div>
