@@ -1,5 +1,39 @@
 # Changelog
 
+## [10.19.0](https://github.com/dasch-swiss/dsp-das/compare/v10.18.0...v10.19.0) (2023-04-25)
+
+
+### Bug Fixes
+
+* app breaks when on /account route ([#1014](https://github.com/dasch-swiss/dsp-das/issues/1014)) ([2dca23b](https://github.com/dasch-swiss/dsp-das/commit/2dca23b28ebdf8ce868e5fa895038ce5185bdb48))
+* **app/resource-instance-form:** fix same value for property bug ([#1012](https://github.com/dasch-swiss/dsp-das/issues/1012)) ([a8b0f71](https://github.com/dasch-swiss/dsp-das/commit/a8b0f7101c86ef10cb5a615622aabd0dbf025d1e))
+* **CD:** get tag before changes happen (INFRA-241) ([#1003](https://github.com/dasch-swiss/dsp-das/issues/1003)) ([d8fec4b](https://github.com/dasch-swiss/dsp-das/commit/d8fec4b3cb15ffbe02bc13f388c0cc4a334ff228))
+* **CD:** use correct service string (INFRA-241) ([#1002](https://github.com/dasch-swiss/dsp-das/issues/1002)) ([b8f31ee](https://github.com/dasch-swiss/dsp-das/commit/b8f31ee6ba8d7425db17f7dd34cf806523e14e2d))
+* **list-view:** next page of results not showing ([#1017](https://github.com/dasch-swiss/dsp-das/issues/1017)) ([52b6d95](https://github.com/dasch-swiss/dsp-das/commit/52b6d95d342cc5a6a67d52b92c084bcc0faf8cb2))
+* padding on both sides ([#1011](https://github.com/dasch-swiss/dsp-das/issues/1011)) ([edc4d2d](https://github.com/dasch-swiss/dsp-das/commit/edc4d2d1edd3c88d9dc2474970db992d6611a942))
+* **sidenav:** set background color for selected list-item ([#998](https://github.com/dasch-swiss/dsp-das/issues/998)) ([218f64c](https://github.com/dasch-swiss/dsp-das/commit/218f64cbd1fc02c6ee11354bcd6149df483d959d))
+* unauthorized users can access the create resource form ([#1016](https://github.com/dasch-swiss/dsp-das/issues/1016)) ([679a95d](https://github.com/dasch-swiss/dsp-das/commit/679a95d0c125801c2dd8650b73be14806dfc5a9c))
+* Update dsp release version to 2023.04.02 (DEV-2044) ([#1001](https://github.com/dasch-swiss/dsp-das/issues/1001)) ([441ff4a](https://github.com/dasch-swiss/dsp-das/commit/441ff4ac67bb781dea87cea3b91edbc7128f125d))
+* **user menu:** bypass cache; get user from the api and set in cache (DEV-2024) ([#997](https://github.com/dasch-swiss/dsp-das/issues/997)) ([a8190d1](https://github.com/dasch-swiss/dsp-das/commit/a8190d14b9788426aa387c0df3031489fe3bfd8d))
+
+
+### Enhancements
+
+* **CD:** deploy to DEV after every commit (INFRA-241) ([#999](https://github.com/dasch-swiss/dsp-das/issues/999)) ([df4793a](https://github.com/dasch-swiss/dsp-das/commit/df4793ad06f609f9015e953a3a85e64130b43966))
+
+
+### Maintenance
+
+* adjust linter rules for dsp-app ([#1022](https://github.com/dasch-swiss/dsp-das/issues/1022)) ([771c534](https://github.com/dasch-swiss/dsp-das/commit/771c534e5b960832ddb0044cfe69bb211f29bc52))
+* **deps-dev:** bump @angular-devkit/core from 15.2.4 to 15.2.6 ([#1009](https://github.com/dasch-swiss/dsp-das/issues/1009)) ([80f373e](https://github.com/dasch-swiss/dsp-das/commit/80f373e3a513f2fa16e85bb3f84c07cdeeab14cb))
+* **deps-dev:** bump @angular-devkit/schematics from 15.2.4 to 15.2.6 ([#1007](https://github.com/dasch-swiss/dsp-das/issues/1007)) ([abbcd25](https://github.com/dasch-swiss/dsp-das/commit/abbcd25ba769561a04532ce9617ed663382c91e3))
+* **deps-dev:** bump eslint from 8.36.0 to 8.38.0 ([#1019](https://github.com/dasch-swiss/dsp-das/issues/1019)) ([d4d7130](https://github.com/dasch-swiss/dsp-das/commit/d4d71300373e1aa2bb2c164628c5625b99ebc15e))
+* **deps-dev:** bump postcss from 8.4.21 to 8.4.22 ([#1008](https://github.com/dasch-swiss/dsp-das/issues/1008)) ([b7c51c4](https://github.com/dasch-swiss/dsp-das/commit/b7c51c47bd9ade62b578f89919101e704a1a4e92))
+* **deps:** bump rxjs from 6.5.5 to 6.6.7 ([#1020](https://github.com/dasch-swiss/dsp-das/issues/1020)) ([d95c826](https://github.com/dasch-swiss/dsp-das/commit/d95c826eb8482bae50c26fc7ca919fe56a40ad98))
+* fix buttons on start page (more or less) ([#1021](https://github.com/dasch-swiss/dsp-das/issues/1021)) ([824e025](https://github.com/dasch-swiss/dsp-das/commit/824e0259a5caf9d51e529058b212454399ce362b))
+* **fulltext-search:** filter out deactivated projects and system projects ([#1015](https://github.com/dasch-swiss/dsp-das/issues/1015)) ([13895f7](https://github.com/dasch-swiss/dsp-das/commit/13895f76f8271f7896b97e81a0d7e1840024141b))
+* progress indicator spinner ([#1023](https://github.com/dasch-swiss/dsp-das/issues/1023)) ([218ee42](https://github.com/dasch-swiss/dsp-das/commit/218ee426e3d79f8c7235a5977861978c83e1d8bf))
+
 ## [10.18.0](https://github.com/dasch-swiss/dsp-app/compare/v10.17.0...v10.18.0) (2023-04-14)
 
 
