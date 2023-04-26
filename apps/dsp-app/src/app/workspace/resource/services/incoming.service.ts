@@ -181,6 +181,7 @@ FILTER NOT EXISTS {
 
 FILTER NOT EXISTS {
 ?incomingRes  knora-api:isPartOf <${resourceIri}> .
+?incomingRes knora-api:seqnum ?seqnum .
 }
 
 } OFFSET ${offset}
@@ -234,6 +235,7 @@ FILTER NOT EXISTS {
 
 FILTER NOT EXISTS {
 ?incomingRes  knora-api:isPartOf <${resourceIri}> .
+?incomingRes knora-api:seqnum ?seqnum .
 }
 
 } OFFSET ${offset}

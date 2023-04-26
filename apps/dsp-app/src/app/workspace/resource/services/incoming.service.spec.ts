@@ -150,6 +150,7 @@ FILTER NOT EXISTS {
 
 FILTER NOT EXISTS {
 ?incomingRes  knora-api:isPartOf <http://rdfh.ch/0801/letter> .
+?incomingRes knora-api:seqnum ?seqnum .
 }
 
 } OFFSET 0
