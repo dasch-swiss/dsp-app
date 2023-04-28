@@ -34,7 +34,7 @@ class TestHostComponent implements OnInit {
     usersProjects: StoredProject[] = [];
     selectedProjIri: string;
 
-    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {}
+    constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) { }
 
     ngOnInit() {
         this.usersProjects = MockProjects.mockProjects().body.projects;
@@ -87,7 +87,7 @@ describe('SelectProjectComponent', () => {
 
     it('should initialise the projects', () => {
         expect(testHostComponent.selectProject.usersProjects).toBeDefined();
-        expect(testHostComponent.selectProject.usersProjects.length).toEqual(8);
+        expect(testHostComponent.selectProject.usersProjects.length).toEqual(6);
     });
 
     it('should init the MatSelect and MatOptions correctly', async () => {
@@ -101,7 +101,7 @@ describe('SelectProjectComponent', () => {
 
         const options = await select.getOptions();
 
-        expect(options.length).toEqual(8);
+        expect(options.length).toEqual(6);
 
         const option1 = await options[0].getText();
 

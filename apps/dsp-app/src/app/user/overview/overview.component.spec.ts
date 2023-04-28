@@ -65,7 +65,7 @@ class TestProjectTileComponent {
     selector: 'app-project-form',
     template: '',
 })
-class TestProjectFormComponent {}
+class TestProjectFormComponent { }
 
 describe('OverviewComponent', () => {
     beforeEach(async () => {
@@ -201,7 +201,7 @@ describe('OverviewComponent', () => {
                 1
             );
             expect(testHostComponent.overviewComp.otherProjects.length).toEqual(
-                7
+                5
             );
         });
     });
@@ -260,7 +260,7 @@ describe('OverviewComponent', () => {
                 0
             );
             expect(testHostComponent.overviewComp.otherProjects.length).toEqual(
-                8
+                6
             );
         });
 
@@ -330,7 +330,7 @@ describe('OverviewComponent', () => {
                 0
             );
             expect(testHostComponent.overviewComp.otherProjects.length).toEqual(
-                7
+                5
             );
         });
 
