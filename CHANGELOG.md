@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.19.1](https://github.com/dasch-swiss/dsp-das/compare/v10.19.0...v10.19.1) (2023-04-28)
+
+
+### Bug Fixes
+
+* gravsearch incoming links filtering out isPartOf ([#1026](https://github.com/dasch-swiss/dsp-das/issues/1026)) ([4571c31](https://github.com/dasch-swiss/dsp-das/commit/4571c31a8af6e25e41fcba67519c60bacce47f35))
+
+
+### Maintenance
+
+* update js-lib to 8.2.2 ([#1029](https://github.com/dasch-swiss/dsp-das/issues/1029)) ([18b9663](https://github.com/dasch-swiss/dsp-das/commit/18b96637a5194f4effc86806750efd5384d9b616))
+
 ## [10.19.0](https://github.com/dasch-swiss/dsp-das/compare/v10.18.0...v10.19.0) (2023-04-25)
 
 
