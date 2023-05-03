@@ -27,6 +27,7 @@
                     <app-project-tile
                         [project]="proj"
                         [sysAdmin]="true"
+                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
@@ -47,6 +48,7 @@
                     <app-project-tile
                         [project]="userProj"
                         [sysAdmin]="false"
+                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
@@ -63,6 +65,7 @@
                     <app-project-tile
                         [project]="otherProj"
                         [sysAdmin]="false"
+                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
@@ -84,6 +87,7 @@
                     <app-project-tile
                         [project]="proj"
                         [sysAdmin]="false"
+                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>

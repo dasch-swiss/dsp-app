@@ -19,7 +19,7 @@
                 class="settings">
                 <button color="primary" class="settings-button"
                     mat-icon-button
-                    (click)="navigateTo(project.id, 'settings')"
+                    (click)="emitButtonClicked(project.id, 'settings')"
                 >
                     <mat-icon>settings</mat-icon>
                 </button>
@@ -39,7 +39,7 @@
                 class="workspace-button"
                 mat-flat-button
                 [color]="'primary'"
-                (click)="navigateTo(project.id, 'workspace')">
+                (click)="emitButtonClicked(project.id, 'workspace')">
                 Browse Data
             </button>
         </div>

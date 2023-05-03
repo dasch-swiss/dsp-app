@@ -2896,7 +2896,6 @@ OFFSET 0
             0
         );
 
-        console.log('a', gravsearch);
         const expectedGravsearch = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
 CONSTRUCT {

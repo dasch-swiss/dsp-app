@@ -160,11 +160,11 @@ describe('ProjectTileComponent', () => {
         expect(settingsBtn.length).toEqual(0);
     });
 
-    it('should go to project workspace when the "Go to dashboard" button is clicked', async () => {
+    it('should emit the workspace route when the "Browse data" button is clicked', async () => {
         // spy on navigateTo method
-        const navigateToSpy = spyOn(
+        const emitButtonClickedSpy = spyOn(
             testHostComponent.projectTileComp,
-            'navigateTo'
+            'emitButtonClicked'
         );
 
         // grab the 'go to dashboard' button
@@ -176,17 +176,17 @@ describe('ProjectTileComponent', () => {
         await goToProjectDashboardBtn.click();
 
         // ensure the correct arguments were passed to the navigateTo method
-        expect(navigateToSpy).toHaveBeenCalledWith(
+        expect(emitButtonClickedSpy).toHaveBeenCalledWith(
             'http://rdfh.ch/projects/0123',
             'workspace'
         );
     });
 
-    it('should go to project settings when the settings button is clicked', async () => {
+    it('should emit the project settings route when the settings button is clicked', async () => {
         // spy on navigateTo method
-        const navigateToSpy = spyOn(
+        const emitButtonClickedSpy = spyOn(
             testHostComponent.projectTileComp,
-            'navigateTo'
+            'emitButtonClicked'
         );
 
         // grab the 'settings' button
@@ -198,7 +198,7 @@ describe('ProjectTileComponent', () => {
         await settingsBtn.click();
 
         // ensure the correct arguments were passed to the navigateTo method
-        expect(navigateToSpy).toHaveBeenCalledWith(
+        expect(emitButtonClickedSpy).toHaveBeenCalledWith(
             'http://rdfh.ch/projects/0123',
             'settings'
         );

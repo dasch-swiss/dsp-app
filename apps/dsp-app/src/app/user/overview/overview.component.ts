@@ -4,6 +4,7 @@ import {
     MatLegacyDialogConfig as MatDialogConfig,
 } from '@angular/material/legacy-dialog';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import {
     KnoraApiConnection,
     ApiResponseData,
@@ -17,6 +18,16 @@ import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-ap
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+
+// should only be used by this component and child components
+export type TileLinks = 'workspace' | 'settings';
+
+// should only be used by this component and child components
+export interface routeParams {
+    id: string,
+    path: TileLinks
+}
 
 @Component({
     selector: 'app-overview',
@@ -43,7 +54,9 @@ export class OverviewComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _dialog: MatDialog,
-        private _titleService: Title
+        private _titleService: Title,
+        private _router: Router,
+        private _projectService: ProjectService
     ) {
         // get username
         this.session = this._session.getSession();
@@ -162,5 +175,22 @@ export class OverviewComponent implements OnInit {
         };
 
         this._dialog.open(DialogComponent, dialogConfig);
+    }
+
+    navigateTo(params: routeParams) {
+        const uuid = this._projectService.iriToUuid(params.id);
+
+        switch (params.path) {
+            case 'workspace':
+                this._router.navigate(['/project/' + uuid]);
+                break;
+
+            case 'settings':
+                this._router.navigate(['/project/' + uuid + '/settings/collaboration']);
+                break;
+
+            default:
+                break;
+        }
     }
 }
