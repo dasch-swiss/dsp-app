@@ -1,7 +1,4 @@
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -147,8 +144,6 @@ class TestHostComponent implements OnInit {
 describe('StillImageComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let rootLoader: HarnessLoader;
-    let overlayContainer: OverlayContainer;
 
     beforeEach(() => {
         const adminSpyObj = {
@@ -209,9 +204,6 @@ describe('StillImageComponent', () => {
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();
 
-        overlayContainer = TestBed.inject(OverlayContainer);
-        rootLoader =
-            TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
         expect(testHostComponent).toBeTruthy();
         expect(testHostComponent.osdViewerComp).toBeTruthy();
     });
@@ -234,7 +226,7 @@ describe('StillImageComponent', () => {
     it('should have 1 image loaded after resources change with 1 full size image', (done) => {
         testHostComponent.osdViewerComp['_viewer'].addHandler(
             'open',
-            (args) => {
+            () => {
                 expect(
                     testHostComponent.osdViewerComp[
                         '_viewer'

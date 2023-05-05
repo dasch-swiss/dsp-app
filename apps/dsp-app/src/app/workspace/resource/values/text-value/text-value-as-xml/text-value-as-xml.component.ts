@@ -8,7 +8,6 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import {
@@ -94,7 +93,7 @@ export class TextValueAsXMLComponent
         super.ngOnInit();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         // resets values and validators in form controls when input displayValue or mode changes
         // at the first call of ngOnChanges, form control elements are not initialized yet
         this.resetFormControl();

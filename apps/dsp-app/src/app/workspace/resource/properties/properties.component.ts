@@ -27,7 +27,6 @@ import {
     PermissionUtil,
     ProjectResponse,
     PropertyDefinition,
-    ReadColorValue,
     ReadLinkValue,
     ReadProject,
     ReadResource,
@@ -143,8 +142,6 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         new EventEmitter<ReadValue>();
 
     lastModificationDate: string;
-
-    resourcePermissions: any;
 
     deletedResource = false;
 
@@ -316,7 +313,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         window.open('/project/' + uuid, '_blank');
     }
 
-    previewProject(project: ReadProject) {
+    previewProject() {
         // --> TODO: pop up project preview on hover
     }
 
@@ -342,7 +339,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         window.open('/resource' + path, '_blank');
     }
 
-    previewResource(linkValue: ReadLinkValue) {
+    previewResource() {
         // --> TODO: pop up resource preview on hover
     }
 
@@ -584,13 +581,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * @param prop the resource property
      */
     deleteValueIsAllowed(prop: PropertyInfoValues): boolean {
-        const isAllowed = CardinalityUtil.deleteValueForPropertyAllowed(
+        return CardinalityUtil.deleteValueForPropertyAllowed(
             prop.propDef.id,
             prop.values.length,
             this.resource.res.entityInfo.classes[this.resource.res.type]
         );
-
-        return isAllowed;
     }
 
     /**
@@ -665,7 +660,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                         }
                         this.loading = false;
                     },
-                    (error: ApiResponseError) => {
+                    () => {
                         this.loading = false;
                     }
                 );

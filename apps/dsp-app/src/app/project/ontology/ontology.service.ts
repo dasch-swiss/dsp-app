@@ -133,9 +133,6 @@ export class OntologyService {
     getSuperProperty(
         property: ResourcePropertyDefinitionWithAllLanguages
     ): string {
-        // get ontology from property info
-        const ontoIri = property.id.split(Constants.HashDelimiter)[0];
-
         let superPropIri: string;
 
         // get iri from sub properties

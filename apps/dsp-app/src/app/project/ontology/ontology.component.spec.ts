@@ -47,8 +47,6 @@ import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { OntologyComponent } from './ontology.component';
-import { PropertyInfoComponent } from './property-info/property-info.component';
-import { ResourceClassInfoComponent } from './resource-class-info/resource-class-info.component';
 
 /**
  * mock ResourceClassInfo.

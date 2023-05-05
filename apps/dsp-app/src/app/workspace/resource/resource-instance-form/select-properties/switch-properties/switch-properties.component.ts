@@ -46,8 +46,4 @@ export class SwitchPropertiesComponent implements OnInit {
             this.textArea = true;
         }
     }
-
-    saveNewValue() {
-        const createVal = this.createValueComponent.getNewValue();
-    }
 }

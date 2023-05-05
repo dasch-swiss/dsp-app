@@ -136,8 +136,6 @@ describe('ProgressIndicatorComponent', () => {
 
         testHostFixture.detectChanges();
 
-        const divEl = divProgressElement.query(By.css('div'));
-
         const matIconEl = divProgressElement.query(By.css('mat-icon'));
 
         // new status: done

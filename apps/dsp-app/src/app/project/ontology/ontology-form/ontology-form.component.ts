@@ -241,8 +241,8 @@ export class OntologyFormComponent implements OnInit {
             }),
         });
 
-        this.ontologyForm.valueChanges.subscribe((data) =>
-            this.onValueChanged(data)
+        this.ontologyForm.valueChanges.subscribe(() =>
+            this.onValueChanged()
         );
 
         if (!this.iri) {
@@ -254,7 +254,7 @@ export class OntologyFormComponent implements OnInit {
         }
     }
 
-    onValueChanged(data?: any) {
+    onValueChanged() {
         if (!this.ontologyForm) {
             return;
         }
@@ -288,7 +288,6 @@ export class OntologyFormComponent implements OnInit {
                     this.loading = false;
                     this.closeDialog.emit(response.id);
                     // go to the new ontology page
-                    const name = this._ontologyService.getOntologyName(response.id);
                     // refresh whole page; todo: would be better to use an event emitter
                     window.location.reload();
                 },

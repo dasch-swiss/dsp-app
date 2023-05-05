@@ -1,5 +1,5 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -8,7 +8,6 @@ import {
     ApiResponseError,
     DeleteListResponse,
     KnoraApiConnection,
-    List,
     ListNodeInfo,
     ListsResponse,
     ProjectResponse,
@@ -96,7 +95,7 @@ export class ListComponent implements OnInit {
 
     }
 
-    @HostListener('window:resize', ['$event']) onWindowResize(e: Event) {
+    @HostListener('window:resize', ['$event']) onWindowResize() {
         this.disableContent = (window.innerWidth <= 768);
         // reset the page title
         if (!this.disableContent) {

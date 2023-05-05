@@ -1,5 +1,4 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { IntValueComponent } from './int-value.component';
 import {
     ReadIntValue,
@@ -12,7 +11,6 @@ import {
     Component,
     ViewChild,
     DebugElement,
-    NO_ERRORS_SCHEMA,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';

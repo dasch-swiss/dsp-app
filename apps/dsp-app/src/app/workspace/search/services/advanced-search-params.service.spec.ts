@@ -24,7 +24,7 @@ describe('SearchParamsService', () => {
     });
 
     it('should set the parameters of an advanced search', () => {
-        const testMethod1 = (offset: number) => 'test1';
+        const testMethod1 = () => 'test1';
 
         service.changeSearchParamsMsg(new AdvancedSearchParams(testMethod1));
 
@@ -35,7 +35,7 @@ describe('SearchParamsService', () => {
         // check if value is still present
         expect(searchParams.generateGravsearch(0)).toEqual('test1');
 
-        const testMethod2 = (offset: number) => 'test2';
+        const testMethod2 = () => 'test2';
 
         service.changeSearchParamsMsg(new AdvancedSearchParams(testMethod2));
 

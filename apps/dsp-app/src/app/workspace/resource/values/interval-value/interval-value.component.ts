@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -65,7 +64,7 @@ export class IntervalValueComponent
         super.ngOnInit();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
     }
 

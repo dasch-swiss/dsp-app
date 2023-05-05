@@ -65,8 +65,6 @@ class TestUserMenuComponent {
 describe('HeaderComponent', () => {
     let testHostComponent: TestHostHeaderComponent;
     let testHostFixture: ComponentFixture<TestHostHeaderComponent>;
-    let hostCompDe;
-    let headerCompDe;
 
     let componentCommsService: ComponentCommunicationEventService;
 
@@ -125,9 +123,6 @@ describe('HeaderComponent', () => {
         testHostFixture = TestBed.createComponent(TestHostHeaderComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();
-
-        hostCompDe = testHostFixture.debugElement;
-        headerCompDe = hostCompDe.query(By.directive(HeaderComponent));
     });
 
     it('should create', () => {

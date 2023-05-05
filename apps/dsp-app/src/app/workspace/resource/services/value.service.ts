@@ -188,12 +188,10 @@ export class ValueService {
      *
      * @param year year of the given date.
      * @param era era of the given date.
-     * @param calendar calendar of the given date.
      */
     convertHistoricalYearToAstronomicalYear(
         year: number,
-        era: string,
-        calendar: string
+        era: string
     ) {
         let yearAstro = year;
         if (era === 'BCE') {
@@ -216,8 +214,7 @@ export class ValueService {
 
         const yearAstro = this.convertHistoricalYearToAstronomicalYear(
             date.year,
-            date.era,
-            date.calendar
+            date.era
         );
 
         if (date.precision === Precision.dayPrecision) {

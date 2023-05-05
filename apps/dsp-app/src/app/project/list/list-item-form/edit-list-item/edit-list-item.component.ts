@@ -11,7 +11,6 @@ import {
     ApiResponseError,
     ChildNodeInfoResponse,
     CreateChildNodeRequest,
-    DeleteChildNodeCommentsResponse,
     KnoraApiConnection,
     List,
     ListNodeInfo,
@@ -174,9 +173,7 @@ export class EditListItemComponent implements OnInit {
                         this._dspApiConnection.admin.listsEndpoint
                             .deleteChildComments(childNodeUpdateData.listIri)
                             .subscribe(
-                                (
-                                    res: ApiResponseData<DeleteChildNodeCommentsResponse>
-                                ) => {},
+                                () => {},
                                 (error: ApiResponseError) =>
                                     this._errorHandler.showMessage(error)
                             );

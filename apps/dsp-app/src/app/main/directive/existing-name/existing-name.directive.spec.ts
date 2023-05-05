@@ -94,12 +94,12 @@ class TestHostComponent implements OnInit {
         });
 
         // detect changes in the form
-        this.form.valueChanges.subscribe((data) => this.onValueChanged(data));
+        this.form.valueChanges.subscribe(() => this.onValueChanged());
 
         this.onValueChanged();
     }
 
-    onValueChanged(data?: any) {
+    onValueChanged() {
         if (!this.form) {
             return;
         }

@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-    ApiResponseData,
     ApiResponseError,
     KnoraApiConnection,
-    LogoutResponse,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '../cache/cache.service';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
@@ -29,7 +27,7 @@ export class AuthenticationService {
      */
     logout() {
         this._dspApiConnection.v2.auth.logout().subscribe(
-            (response: ApiResponseData<LogoutResponse>) => {
+            () => {
                 // destroy session
                 this._session.destroySession();
 

@@ -128,7 +128,7 @@ export class IntervalInputComponent
     @Input() intervalStartLabel = 'start';
     @Input() intervalEndLabel = 'end';
     @Input() valueRequiredValidator = true;
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onChange = (_: any) => {};
     onTouched = () => {};
 

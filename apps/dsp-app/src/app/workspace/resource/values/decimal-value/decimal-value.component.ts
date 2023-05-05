@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChanges,
 } from '@angular/core';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import {
@@ -48,7 +47,7 @@ export class DecimalValueComponent
         super.ngOnInit();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
     }
 

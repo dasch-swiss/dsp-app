@@ -9,13 +9,11 @@ import {
     CanDoResponse,
     ClassDefinition,
     Constants,
-    DeleteOntologyResponse,
     DeleteResourceClass,
     DeleteResourceProperty,
     KnoraApiConnection,
     ListsResponse,
     OntologiesMetadata,
-    OntologyMetadata,
     ProjectResponse,
     PropertyDefinition,
     ReadOntology,
@@ -141,7 +139,7 @@ export class OntologyComponent implements OnInit {
         private _projectService: ProjectService
     ) {}
 
-    @HostListener('window:resize', ['$event']) onWindowResize(e: Event) {
+    @HostListener('window:resize', ['$event']) onWindowResize() {
         this.disableContent = (window.innerWidth <= 768);
         // reset the page title
         if (!this.disableContent) {
@@ -461,7 +459,7 @@ export class OntologyComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(() => {
             // update the view
             this.initOntologiesList();
             // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
@@ -492,7 +490,7 @@ export class OntologyComponent implements OnInit {
             dialogConfig
         );
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(() => {
             // get the ontologies for this project
             this.initOntologiesList();
             // update the view of resource class or list of properties
@@ -532,7 +530,7 @@ export class OntologyComponent implements OnInit {
                         ontology.id = this.ontology.id;
                         ontology.lastModificationDate = this.ontology.lastModificationDate;
                         this._dspApiConnection.v2.onto.deleteOntology(ontology).subscribe(
-                            (response: DeleteOntologyResponse) => {
+                            () => {
                                 // reset current ontology
                                 this.ontology = undefined;
                                 // get the ontologies for this project
@@ -559,7 +557,7 @@ export class OntologyComponent implements OnInit {
                         resClass.id = info.iri;
                         resClass.lastModificationDate = this.ontology.lastModificationDate;
                         this._dspApiConnection.v2.onto.deleteResourceClass(resClass).subscribe(
-                            (response: OntologyMetadata) => {
+                            () => {
                                 this.loading = false;
                                 // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
                                 window.location.reload();
@@ -578,7 +576,7 @@ export class OntologyComponent implements OnInit {
                         resProp.id = info.iri;
                         resProp.lastModificationDate = this.ontology.lastModificationDate;
                         this._dspApiConnection.v2.onto.deleteResourceProperty(resProp).subscribe(
-                            (response: OntologyMetadata) => {
+                            () => {
                                 this.loading = false;
                                 // get the ontologies for this project
                                 this.initOntologiesList();

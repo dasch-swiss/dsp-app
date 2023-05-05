@@ -110,7 +110,7 @@ export class DescriptionComponent implements OnInit {
      *
      * @param data Data which changed.
      */
-    onValueChanged(data?: any) {
+    onValueChanged() {
 
         if (!this.form) {
             return;
@@ -171,7 +171,7 @@ export class DescriptionComponent implements OnInit {
         });
 
         this.form.valueChanges
-            .subscribe(data => this.onValueChanged(data));
+            .subscribe(() => this.onValueChanged());
     }
 
     /**

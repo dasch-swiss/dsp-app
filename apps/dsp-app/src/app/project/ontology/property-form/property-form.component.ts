@@ -357,17 +357,15 @@ export class PropertyFormComponent implements OnInit {
 
         this.updateAttributeField(this.propertyInfo.propType);
 
-        this.propertyForm.valueChanges.subscribe((data) =>
-            this.onValueChanged(data)
+        this.propertyForm.valueChanges.subscribe(() =>
+            this.onValueChanged()
         );
     }
 
     /**
      * this method is for the form error handling
-     *
-     * @param data Data which changed.
      */
-    onValueChanged(data?: any) {
+    onValueChanged() {
         if (!this.propertyForm) {
             return;
         }

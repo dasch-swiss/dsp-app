@@ -82,7 +82,7 @@
 <!-- additional line with project and user information -->
 <div class="infobar mat-caption" *ngIf="project && user">
     <span *ngIf="displayProjectInfo">This resource {{ resource.res.isDeleted ? 'belonged' : 'belongs' }} to the project
-        <span class="project link" (click)="openProject(project)" (mouseover)="previewProject(project)">
+        <span class="project link" (click)="openProject(project)" (mouseover)="previewProject()">
             <strong>{{project?.shortname}}</strong>
             <mat-icon inline>open_in_new</mat-icon>
         </span>
@@ -128,7 +128,7 @@
                             [propArray]="resource.resProps" [canDelete]="deleteValueIsAllowed(prop)"
                             [projectStatus]="project?.status" [valueUuidToHighlight]="valueUuidToHighlight"
                             (referredResourceClicked)="openResource($event)"
-                            (referredResourceHovered)="previewResource($event)">
+                            (referredResourceHovered)="previewResource()">
                         </app-display-edit>
                     </div>
                     <!-- Add value form -->

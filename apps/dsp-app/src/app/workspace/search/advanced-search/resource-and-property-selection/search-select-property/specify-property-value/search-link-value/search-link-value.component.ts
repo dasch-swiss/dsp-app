@@ -11,12 +11,10 @@ import {
     ReadResource,
     ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
     debounceTime,
     distinctUntilChanged,
-    map,
-    switchMap,
 } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
 import { IRI, PropertyValue, Value } from '../operator';

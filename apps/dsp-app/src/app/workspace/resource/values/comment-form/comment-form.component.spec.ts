@@ -73,7 +73,6 @@ describe('CommentFormComponent', () => {
     describe('display and edit a comment', () => {
         let testHostFixture: ComponentFixture<TestHostValueComponent>;
         let component: TestHostValueComponent;
-        let fixture: ComponentFixture<CommentFormComponent>;
         let commentDe: DebugElement;
         let commentComponent: CommentFormComponent; // what we actually like to test
 

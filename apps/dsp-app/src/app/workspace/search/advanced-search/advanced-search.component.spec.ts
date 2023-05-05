@@ -1,5 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
     Component,
     EventEmitter,
@@ -74,8 +72,6 @@ describe('AdvancedSearchComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
-    let loader: HarnessLoader;
-
     beforeEach(waitForAsync(() => {
         const dspConnSpy = {
             v2: {
@@ -126,9 +122,6 @@ describe('AdvancedSearchComponent', () => {
 
             testHostFixture = TestBed.createComponent(TestHostComponent);
             testHostComponent = testHostFixture.componentInstance;
-
-            loader = TestbedHarnessEnvironment.loader(testHostFixture);
-
             testHostFixture.detectChanges();
         });
 

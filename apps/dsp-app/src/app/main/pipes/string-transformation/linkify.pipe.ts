@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
+
 /**
  * this pipe analyses a string and converts any url into a href tag
  *

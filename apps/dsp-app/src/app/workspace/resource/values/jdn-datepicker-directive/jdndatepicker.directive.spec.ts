@@ -29,7 +29,6 @@ describe('JDNDatepickerDirective', () => {
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
     let testBehaviourSubject;
-    let setNextCalSpy;
     let setCompleteSpy;
 
     let testBehaviourSubjSpy;
@@ -40,7 +39,6 @@ describe('JDNDatepickerDirective', () => {
             'complete',
         ]);
 
-        setNextCalSpy = testBehaviourSubject.next.and.stub();
         setCompleteSpy = testBehaviourSubject.complete.and.stub();
 
         // overrides the injection token defined in JDNDatepickerDirective's metadat

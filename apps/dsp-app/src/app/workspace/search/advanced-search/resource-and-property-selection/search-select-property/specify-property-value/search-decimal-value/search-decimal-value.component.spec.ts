@@ -1,10 +1,7 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SearchDecimalValueComponent } from './search-decimal-value.component';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { ValueLiteral } from '../operator';
@@ -36,8 +33,6 @@ describe('SearchDecimalValueComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
 
-    let loader: HarnessLoader;
-
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
@@ -52,8 +47,6 @@ describe('SearchDecimalValueComponent', () => {
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
-        loader = TestbedHarnessEnvironment.loader(testHostFixture);
-
         testHostFixture.detectChanges();
     });
 

@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -99,7 +98,7 @@ export class ListValueComponent
         super.ngOnInit();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
     }
 

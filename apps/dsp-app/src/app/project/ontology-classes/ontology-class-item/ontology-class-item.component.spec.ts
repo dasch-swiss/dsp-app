@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ClassDefinition, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppInitService } from '@dsp-app/src/app/app-init.service';
@@ -50,8 +49,6 @@ class TestHostComponent {
 describe('OntologyClassItemComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let ontoClassItemComponentDe;
-    let hostCompDe;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -75,11 +72,6 @@ describe('OntologyClassItemComponent', () => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();
-
-        hostCompDe = testHostFixture.debugElement;
-        ontoClassItemComponentDe = hostCompDe.query(
-            By.directive(OntologyClassItemComponent)
-        );
     });
 
     it('should create', () => {

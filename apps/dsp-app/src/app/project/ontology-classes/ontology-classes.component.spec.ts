@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { ClassDefinition } from '@dasch-swiss/dsp-js';
 import { OntologyClassesComponent } from './ontology-classes.component';
 
@@ -43,8 +42,6 @@ class TestHostComponent {
 describe('OntologyClassesComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let ontoClassItemComponentDe;
-    let hostCompDe;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -56,11 +53,6 @@ describe('OntologyClassesComponent', () => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();
-
-        hostCompDe = testHostFixture.debugElement;
-        ontoClassItemComponentDe = hostCompDe.query(
-            By.directive(OntologyClassesComponent)
-        );
     });
 
     it('should create', () => {

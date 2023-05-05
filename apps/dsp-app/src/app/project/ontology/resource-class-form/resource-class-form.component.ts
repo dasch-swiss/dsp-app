@@ -239,12 +239,12 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
             }),
         });
 
-        this.resourceClassForm.valueChanges.subscribe((data) =>
-            this.onValueChanged(data)
+        this.resourceClassForm.valueChanges.subscribe(() =>
+            this.onValueChanged()
         );
     }
 
-    onValueChanged(data?: any) {
+    onValueChanged() {
         if (!this.resourceClassForm) {
             return;
         }

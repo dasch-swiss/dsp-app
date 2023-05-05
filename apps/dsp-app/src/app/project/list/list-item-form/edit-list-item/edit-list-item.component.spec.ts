@@ -441,7 +441,7 @@ describe('EditListItemComponent', () => {
 
             (
                 projectServiceSpy as jasmine.SpyObj<ProjectService>
-            ).iriToUuid.and.callFake((iri: string) => '0001');
+            ).iriToUuid.and.callFake(() => '0001');
         });
 
         it('should instantiate empty arrays for labels and comments', () => {

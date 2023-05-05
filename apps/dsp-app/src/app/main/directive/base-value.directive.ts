@@ -89,7 +89,7 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
         this.resetFormControl();
         // subscribing to comment changes and revalidate. Enables changing of comments and saving values even if the valueFormControls value did not change.
         this.commentChangesSubscription =
-            this.commentFormControl.valueChanges.subscribe((update) => {
+            this.commentFormControl.valueChanges.subscribe(() => {
                 this.valueFormControl.updateValueAndValidity();
             });
         resolvedPromise.then(() => {

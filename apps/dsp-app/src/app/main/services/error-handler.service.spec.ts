@@ -1,4 +1,3 @@
-import { OverlayContainer } from '@angular/cdk/overlay';
 import {
     HttpClientTestingModule,
     HttpTestingController,
@@ -23,7 +22,6 @@ import { ErrorHandlerService } from './error-handler.service';
 describe('ErrorHandlerService', () => {
     let httpTestingController: HttpTestingController;
     let service: ErrorHandlerService;
-    let overlayContainer: OverlayContainer;
 
     let dialog: MatDialog;
 
@@ -70,8 +68,6 @@ describe('ErrorHandlerService', () => {
             const health = MockHealth.mockRunning();
             return of(health);
         });
-
-        overlayContainer = TestBed.inject(OverlayContainer);
 
         dialog = TestBed.inject(MatDialog);
     });

@@ -71,7 +71,6 @@ export function existingNamesValidator(valArrayRegexp: [RegExp]): ValidatorFn {
         for (const existing of valArrayRegexp) {
             no = existing.test(name);
             if (no) {
-                // console.log(no);
                 return no ? { existingName: { name } } : null;
             }
         }
@@ -81,10 +80,9 @@ export function existingNamesValidator(valArrayRegexp: [RegExp]): ValidatorFn {
 
 /**
  * @param {RegExp} pattern
- * @param {string} regType
  * @returns ValidatorFn
  */
-export function notAllowed(pattern: RegExp, regType: string): ValidatorFn {
+export function notAllowed(pattern: RegExp): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } => {
         let name;
 

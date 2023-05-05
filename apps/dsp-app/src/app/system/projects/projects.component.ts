@@ -148,7 +148,7 @@ export class ProjectsComponent implements OnInit {
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((response) => {
+        dialogRef.afterClosed().subscribe(() => {
             // update the view
         });
     }

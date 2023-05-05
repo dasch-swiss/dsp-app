@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -55,7 +54,7 @@ export class ColorValueComponent
         this.textColor = this.getTextColor(this.valueFormControl.value);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
 
         if (this.showHexCode && this.valueFormControl !== undefined) {

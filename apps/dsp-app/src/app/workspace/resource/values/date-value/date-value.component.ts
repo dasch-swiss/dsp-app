@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -95,7 +94,7 @@ export class DateValueComponent
         super.ngOnInit();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
     }
 

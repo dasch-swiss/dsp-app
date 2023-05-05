@@ -58,6 +58,7 @@ class TestTimeInputComponent
     id = 'testid';
     ngControl: NgControl | null;
 
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     onChange = (_: any) => {};
 
     writeValue(dateTime: string | null): void {
@@ -73,6 +74,8 @@ class TestTimeInputComponent
     onContainerClick(event: MouseEvent): void {}
 
     setDescribedByIds(ids: string[]): void {}
+
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     _handleInput(): void {
         this.onChange(this.value);
@@ -386,8 +389,6 @@ describe('TimeValueComponent', () => {
         let testHostComponent: TestHostCreateValueComponent;
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
 
-        let valueComponentDe: DebugElement;
-
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(
                 TestHostCreateValueComponent
@@ -397,12 +398,6 @@ describe('TimeValueComponent', () => {
 
             expect(testHostComponent).toBeTruthy();
             expect(testHostComponent.inputValueComponent).toBeTruthy();
-
-            const hostCompDe = testHostFixture.debugElement;
-
-            valueComponentDe = hostCompDe.query(
-                By.directive(TimeValueComponent)
-            );
         });
 
         it('should create a value', () => {

@@ -1,5 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,7 +37,6 @@ class TestHostSelectedResourcesComponent {
 describe('SelectedResourcesComponent', () => {
     let testHostComponent: TestHostSelectedResourcesComponent;
     let testHostFixture: ComponentFixture<TestHostSelectedResourcesComponent>;
-    let loader: HarnessLoader;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -56,7 +53,6 @@ describe('SelectedResourcesComponent', () => {
             TestHostSelectedResourcesComponent
         );
         testHostComponent = testHostFixture.componentInstance;
-        loader = TestbedHarnessEnvironment.loader(testHostFixture);
         testHostFixture.detectChanges();
     });
 

@@ -7,7 +7,6 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
@@ -177,7 +176,7 @@ export class LinkValueComponent
                     // filter out knorabase ontology
                     const filteredOntoMap = new Map(
                         Array.from(ontoMap).filter(
-                            ([key, _]) => key !== Constants.KnoraApiV2
+                            ([key]) => key !== Constants.KnoraApiV2
                         )
                     );
 
@@ -230,7 +229,7 @@ export class LinkValueComponent
             .subscribe((data) => this.searchByLabel(data));
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
     }
 

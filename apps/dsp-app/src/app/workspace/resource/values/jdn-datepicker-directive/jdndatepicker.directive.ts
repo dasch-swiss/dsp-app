@@ -4,7 +4,6 @@ import {
     Input,
     OnChanges,
     OnDestroy,
-    SimpleChanges,
 } from '@angular/core';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { JDNConvertibleCalendar } from '@dasch-swiss/jdnconvertiblecalendar';
@@ -50,7 +49,7 @@ export class JDNDatepickerDirective implements OnChanges, OnDestroy {
         }
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this._activeCalendarToken.next(this.activeCalendar);
     }
 

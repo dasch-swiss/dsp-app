@@ -295,7 +295,7 @@ export class DateValueHandlerComponent
             endDate: this.endDate,
         });
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onChange = (_: any) => {};
 
     onTouched = () => {};
@@ -362,8 +362,9 @@ export class DateValueHandlerComponent
         ev.preventDefault();
         this.isPeriodControl.setValue(!this.isPeriodControl.value);
     }
-
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     onContainerClick(event: MouseEvent): void {}
 
     setDescribedByIds(ids: string[]): void {}
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 }

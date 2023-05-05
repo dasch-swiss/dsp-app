@@ -357,8 +357,8 @@ describe('GeonameService', () => {
 
         it('should return an error if the requests fails', (done) => {
             service.resolveGeonameID('2661604').subscribe(
-                (name) => {},
-                (err) => {
+                () => {},
+                () => {
                     done();
                 }
             );
@@ -379,8 +379,8 @@ describe('GeonameService', () => {
 
         it('should return an error if the requests response does not contain the expected information', (done) => {
             service.resolveGeonameID('2661604').subscribe(
-                (name) => {},
-                (err) => {
+                () => {},
+                () => {
                     done();
                 }
             );
@@ -423,8 +423,8 @@ describe('GeonameService', () => {
 
             it('should return an error if the requests fails', (done) => {
                 service.searchPlace('Basel').subscribe(
-                    (name) => {},
-                    (err) => {
+                    () => {},
+                    () => {
                         done();
                     }
                 );
@@ -445,8 +445,8 @@ describe('GeonameService', () => {
 
             it('should return an error if the requests response does not contain the expected information', (done) => {
                 service.searchPlace('Basel').subscribe(
-                    (name) => {},
-                    (err) => {
+                    () => {},
+                    () => {
                         done();
                     }
                 );

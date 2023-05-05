@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import {
     ApiResponseData,
-    ApiResponseError,
     HealthResponse,
     KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
@@ -166,7 +165,7 @@ export class StatusComponent implements OnInit {
                         window.location.reload();
                     }
                 },
-                (error: ApiResponseError) => {
+                () => {
                     this.refresh = false;
                 }
             );

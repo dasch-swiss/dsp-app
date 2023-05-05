@@ -9,7 +9,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import {
     CountQueryResponse,
-    IFulltextSearchParams,
     MockResource,
     ReadResourceSequence,
     SearchEndpointV2,
@@ -150,11 +149,7 @@ describe('ListViewComponent', () => {
         (
             searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
         ).doFulltextSearch.and.callFake(
-            (
-                searchTerm: string,
-                offset?: number,
-                params?: IFulltextSearchParams
-            ) => {
+            () => {
                 let resources: ReadResourceSequence;
                 // mock list of resourcses to simulate full-text search response
                 MockResource.getTestThings(5).subscribe((res) => {
@@ -176,7 +171,7 @@ describe('ListViewComponent', () => {
 
         (
             searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doExtendedSearch.and.callFake((searchTerm: string) => {
+        ).doExtendedSearch.and.callFake(() => {
             let resources: ReadResourceSequence;
             // mock list of resourcses to simulate full-text search response
             MockResource.getTestThings(5).subscribe((res) => {

@@ -1,5 +1,4 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { IntervalValueComponent } from './interval-value.component';
 import {
     Component,
@@ -62,6 +61,7 @@ class TestIntervalInputComponent
     focused = false;
     id = 'testid';
     ngControl: NgControl | null;
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     onChange = (_: any) => {};
 
     writeValue(interval: Interval | null): void {
@@ -77,6 +77,7 @@ class TestIntervalInputComponent
     onContainerClick(event: MouseEvent): void {}
 
     setDescribedByIds(ids: string[]): void {}
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     _handleInput(): void {
         this.onChange(this.value);
@@ -474,8 +475,6 @@ describe('IntervalValueComponent', () => {
         let testHostComponent: TestHostCreateValueComponent;
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
 
-        let valueComponentDe: DebugElement;
-
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(
                 TestHostCreateValueComponent
@@ -485,12 +484,6 @@ describe('IntervalValueComponent', () => {
 
             expect(testHostComponent).toBeTruthy();
             expect(testHostComponent.inputValueComponent).toBeTruthy();
-
-            const hostCompDe = testHostFixture.debugElement;
-
-            valueComponentDe = hostCompDe.query(
-                By.directive(IntervalValueComponent)
-            );
         });
 
         it('should create a value', () => {

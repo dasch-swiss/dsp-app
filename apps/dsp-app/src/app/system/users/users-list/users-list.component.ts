@@ -202,7 +202,7 @@ export class UsersListComponent implements OnInit {
                     // console.log('add user to group');
                     for (const newGroup of groups) {
                         this._dspApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
-                            (ngResponse: ApiResponseData<UserResponse>) => { },
+                            () => { },
                             (ngError: ApiResponseError) => {
                                 this._errorHandler.showMessage(ngError);
                             }
@@ -218,7 +218,7 @@ export class UsersListComponent implements OnInit {
                             // console.log('remove from group', oldGroup);
                             // the old group is not anymore one of the selected groups --> remove user from group
                             this._dspApiConnection.admin.usersEndpoint.removeUserFromGroupMembership(id, oldGroup).subscribe(
-                                (ngResponse: ApiResponseData<UserResponse>) => { },
+                                () => { },
                                 (ngError: ApiResponseError) => {
                                     this._errorHandler.showMessage(ngError);
                                 }
@@ -231,7 +231,7 @@ export class UsersListComponent implements OnInit {
                         } else {
                             // console.log('add user to group');
                             this._dspApiConnection.admin.usersEndpoint.addUserToGroupMembership(id, newGroup).subscribe(
-                                (ngResponse: ApiResponseData<UserResponse>) => { },
+                                () => { },
                                 (ngError: ApiResponseError) => {
                                     this._errorHandler.showMessage(ngError);
                                 }
@@ -307,7 +307,7 @@ export class UsersListComponent implements OnInit {
 
     updateSystemAdminMembership(user: ReadUser, systemAdmin: boolean): void {
         this._dspApiConnection.admin.usersEndpoint.updateUserSystemAdminMembership(user.id, systemAdmin).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
+            () => {
                 if (this.session.user.name !== user.username) {
                     this.refreshParent.emit();
                 }
@@ -369,7 +369,7 @@ export class UsersListComponent implements OnInit {
      */
     removeUserFromProject(id: string): void {
         this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(id, this.project.id).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
+            () => {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
@@ -386,7 +386,7 @@ export class UsersListComponent implements OnInit {
      */
     deleteUser(id: string) {
         this._dspApiConnection.admin.usersEndpoint.deleteUser(id).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
+            () => {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
@@ -402,7 +402,7 @@ export class UsersListComponent implements OnInit {
      */
     activateUser(id: string) {
         this._dspApiConnection.admin.usersEndpoint.updateUserStatus(id, true).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
+            () => {
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {

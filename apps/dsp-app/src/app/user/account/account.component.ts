@@ -15,7 +15,6 @@ import {
     ApiResponseData,
     ApiResponseError,
     KnoraApiConnection,
-    LogoutResponse,
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
@@ -99,11 +98,11 @@ export class AccountComponent implements OnInit {
 
     deleteUser(id: string) {
         this._dspApiConnection.admin.usersEndpoint.deleteUser(id).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
+            () => {
                 // console.log('refresh parent after delete', response);
                 // this action will deactivate own user account. The consequence is a logout
                 this._dspApiConnection.v2.auth.logout().subscribe(
-                    (logoutResponse: ApiResponseData<LogoutResponse>) => {
+                    () => {
                         // destroy cache
                         this._cache.destroy();
 
@@ -128,7 +127,7 @@ export class AccountComponent implements OnInit {
         this._dspApiConnection.admin.usersEndpoint
             .updateUserStatus(id, true)
             .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
+                () => {
                     // console.log('refresh parent after activate', response);
                     this.refreshParent.emit();
                 },

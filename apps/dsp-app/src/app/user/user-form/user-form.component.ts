@@ -19,7 +19,6 @@ import {
     ApiResponseError,
     Constants,
     KnoraApiConnection,
-    ReadProject,
     ReadUser,
     StringLiteral,
     UpdateUserRequest,
@@ -349,7 +348,7 @@ export class UserFormComponent implements OnInit, OnChanges {
             // 'group': null
         });
 
-        this.userForm.valueChanges.subscribe((data) => this.onValueChanged());
+        this.userForm.valueChanges.subscribe(() => this.onValueChanged());
         return true;
     }
 
@@ -379,10 +378,6 @@ export class UserFormComponent implements OnInit, OnChanges {
 
     submitData(): void {
         this.loading = true;
-
-        const returnUrl: string =
-            this._route.snapshot.queryParams['returnUrl'] ||
-            '/user/' + this.userForm.controls['username'].value;
 
         if (this.username) {
             // edit mode: update user data

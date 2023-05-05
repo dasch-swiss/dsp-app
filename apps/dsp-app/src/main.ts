@@ -20,7 +20,7 @@ function configListener() {
     }
 }
 
-function configFailed(evt) {
+function configFailed() {
     console.error('Error: retrieving config.json');
 }
 

@@ -346,8 +346,7 @@ describe('ValueService', () => {
             expect(
                 service.convertHistoricalYearToAstronomicalYear(
                     1,
-                    'BCE',
-                    'JULIAN'
+                    'BCE'
                 )
             ).toEqual(0);
         });
@@ -356,8 +355,7 @@ describe('ValueService', () => {
             expect(
                 service.convertHistoricalYearToAstronomicalYear(
                     2,
-                    'BCE',
-                    'JULIAN'
+                    'BCE'
                 )
             ).toEqual(-1);
         });
@@ -366,8 +364,7 @@ describe('ValueService', () => {
             expect(
                 service.convertHistoricalYearToAstronomicalYear(
                     1,
-                    'CE',
-                    'JULIAN'
+                    'CE'
                 )
             ).toEqual(1);
         });
@@ -376,8 +373,7 @@ describe('ValueService', () => {
             expect(
                 service.convertHistoricalYearToAstronomicalYear(
                     1,
-                    'noEra',
-                    'ISLAMIC'
+                    'noEra'
                 )
             ).toEqual(1);
         });

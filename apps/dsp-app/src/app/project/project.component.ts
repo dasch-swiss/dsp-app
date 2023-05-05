@@ -10,7 +10,7 @@ import {
     ProjectResponse,
     ReadOntology,
     ReadProject,
-    UserResponse
+    UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { AppInitService } from '../app-init.service';
@@ -212,7 +212,7 @@ export class ProjectComponent implements OnInit {
                     );
 
                 },
-                (error: ApiResponseError) => {
+                () => {
                     this.error = true;
                     this.loading = false;
                 }

@@ -60,6 +60,7 @@ class TestColorPickerComponent
     focused = false;
     id = 'testid';
     ngControl: NgControl | null;
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     onChange = (_: any) => {};
 
     writeValue(colorValue: string | null): void {
@@ -75,6 +76,7 @@ class TestColorPickerComponent
     onContainerClick(event: MouseEvent): void {}
 
     setDescribedByIds(ids: string[]): void {}
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     _handleInput(): void {
         this.onChange(this.value);
@@ -103,12 +105,10 @@ class TestHostDisplayValueComponent implements OnInit {
 
     ngOnInit() {
         MockResource.getTestThing().subscribe((res) => {
-            const colorVal: ReadColorValue = res.getValuesAs(
+            this.displayColorVal = res.getValuesAs(
                 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasColor',
                 ReadColorValue
             )[0];
-
-            this.displayColorVal = colorVal;
 
             this.mode = 'read';
         });
@@ -296,9 +296,6 @@ describe('ColorValueComponent', () => {
         });
 
         it('should not return an invalid update value', () => {
-            // simulate user input
-            const newColor = '54iu45po';
-
             testHostComponent.mode = 'update';
 
             testHostFixture.detectChanges();
@@ -451,8 +448,6 @@ describe('ColorValueComponent', () => {
         let testHostComponent: TestHostCreateValueComponent;
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
 
-        let valueComponentDe: DebugElement;
-
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(
                 TestHostCreateValueComponent
@@ -462,12 +457,6 @@ describe('ColorValueComponent', () => {
 
             expect(testHostComponent).toBeTruthy();
             expect(testHostComponent.colorValueComponent).toBeTruthy();
-
-            const hostCompDe = testHostFixture.debugElement;
-
-            valueComponentDe = hostCompDe.query(
-                By.directive(ColorValueComponent)
-            );
         });
 
         it('should create a value', () => {

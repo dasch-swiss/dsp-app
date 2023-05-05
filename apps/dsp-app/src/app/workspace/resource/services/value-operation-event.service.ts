@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DeleteValue, ReadFileValue, ReadValue } from '@dasch-swiss/dsp-js';
+import { DeleteValue, ReadValue } from '@dasch-swiss/dsp-js';
 import { Subject, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 

@@ -16,7 +16,6 @@ import {
     ApiResponseData,
     ApiResponseError,
     KnoraApiConnection,
-    LoginResponse,
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
@@ -154,8 +153,8 @@ export class PasswordFormComponent implements OnInit {
             ),
         });
 
-        this.confirmForm.valueChanges.subscribe((data) => {
-            this.onValueChanged(this.confirmForm, data);
+        this.confirmForm.valueChanges.subscribe(() => {
+            this.onValueChanged(this.confirmForm);
         });
 
         this.onValueChanged(this.confirmForm); // (re)set validation messages now
@@ -203,8 +202,8 @@ export class PasswordFormComponent implements OnInit {
             ),
         });
 
-        this.form.valueChanges.subscribe((data) => {
-            this.onValueChanged(this.form, data);
+        this.form.valueChanges.subscribe(() => {
+            this.onValueChanged(this.form);
 
             // compare passwords here
             if (
@@ -236,7 +235,7 @@ export class PasswordFormComponent implements OnInit {
         this.loading = false;
     }
 
-    onValueChanged(form: UntypedFormGroup, data?: any) {
+    onValueChanged(form: UntypedFormGroup) {
         // const form = this.userPasswordForm;
 
         Object.keys(this.formErrors).map((field) => {
@@ -263,7 +262,7 @@ export class PasswordFormComponent implements OnInit {
                 this.confirmForm.controls.requesterPassword.value
             )
             .subscribe(
-                (response: ApiResponseData<LoginResponse>) => {
+                () => {
                     // go to next step with password form
                     this.showPasswordForm = !this.showPasswordForm;
                     // this.requesterPass = this.confirmForm.controls.requesterPassword.value;
@@ -292,7 +291,7 @@ export class PasswordFormComponent implements OnInit {
                 this.form.controls.password.value
             )
             .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
+                () => {
                     const successResponse =
                         'You have successfully updated ' +
                         (this.updateOwn ? 'your' : "user's") +

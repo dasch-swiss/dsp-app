@@ -8,7 +8,6 @@ import { MatLegacyAutocompleteHarness as MatAutocompleteHarness } from '@angular
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-    ILabelSearchParams,
     ReadResource,
     ReadResourceSequence,
     SearchEndpointV2,
@@ -102,11 +101,7 @@ describe('SearchLinkValueComponent', () => {
         (
             searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
         ).doSearchByLabel.and.callFake(
-            (
-                searchTerm: string,
-                offset?: number,
-                params?: ILabelSearchParams
-            ) => {
+            () => {
                 const res = new ReadResource();
                 res.id = 'http://testIri';
                 res.label = 'testres';

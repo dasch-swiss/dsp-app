@@ -9,13 +9,11 @@ import {
 } from '@angular/core';
 import {
     UntypedFormBuilder,
-    FormControl,
     UntypedFormGroup,
 } from '@angular/forms';
 import {
     ApiResponseData,
     ProjectResponse,
-    ReadProject,
 } from '@dasch-swiss/dsp-js';
 import {
     ApiResponseError,

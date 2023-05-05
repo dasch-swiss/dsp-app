@@ -65,8 +65,6 @@ describe('StatusComponent', () => {
     let teapotTestHostComponent: TeapotTestHostComponent;
     let teapotTestHostFixture: ComponentFixture<TeapotTestHostComponent>;
 
-    let status: HttpStatusMsg;
-
     const apiEndpointSpyObj = {
         system: {
             healthEndpoint: jasmine.createSpyObj('healthEndpoint', [
@@ -100,8 +98,6 @@ describe('StatusComponent', () => {
                 },
             ],
         }).compileComponents();
-
-        status = TestBed.inject(HttpStatusMsg);
     }));
 
     beforeEach(() => {

@@ -187,9 +187,8 @@ export class VideoComponent implements OnInit, AfterViewInit {
 
     /**
      * update current time info and buffer size
-     * @param ev Event
      */
-    timeUpdate(ev: Event) {
+    timeUpdate() {
         // current time
         this.currentTime = this.videoEle.nativeElement.currentTime;
 

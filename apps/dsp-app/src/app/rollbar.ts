@@ -11,20 +11,6 @@ import { AppInitService } from './app-init.service';
 
 export const RollbarService = new InjectionToken<Rollbar>('rollbar');
 
-const rollbarConfig: Rollbar.Configuration = {
-    accessToken: 'POST_CLIENT_ITEM_TOKEN',
-    enabled: false,
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-    nodeSourceMaps: false,
-    inspectAnonymousErrors: true,
-    ignoreDuplicateErrors: true,
-    wrapGlobalEventHandlers: false,
-    scrubRequestBody: true,
-    exitOnUncaughtException: false,
-    stackTraceLimit: 20,
-};
-
 @Injectable()
 export class RollbarErrorHandler implements ErrorHandler {
     public rollbar: Rollbar;

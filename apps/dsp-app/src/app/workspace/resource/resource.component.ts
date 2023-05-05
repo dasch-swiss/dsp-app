@@ -6,7 +6,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    SimpleChange,
     ViewChild,
 } from '@angular/core';
 import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
@@ -189,7 +188,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     ngOnInit() {}
 
-    ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+    ngOnChanges() {
         // do not reload the whole resource when the iri did not change
         if (this.oldResourceIri === this.resourceIri) {
             return;
@@ -264,7 +263,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
      *
      * @param iri resourceIri
      */
-    getResource(iri: string, incoming: boolean = false): void {
+    getResource(iri: string): void {
         if (!iri) {
             return;
         }
@@ -506,7 +505,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
             .sort((a, b) => (a.guiDef.guiOrder > b.guiDef.guiOrder ? 1 : -1))
             // to get equal results on all browser engines which implements sorting in different way
             // properties list has to be sorted again, pushing all "has..." properties to the bottom
-            .sort((a, b) => {
+            .sort((a) => {
                 if (a.guiDef.guiOrder === undefined) {
                     return 1;
                 }

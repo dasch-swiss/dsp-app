@@ -3,7 +3,6 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import {
     OntologiesMetadata,
-    OntologyMetadata,
     MockOntology,
 } from '@dasch-swiss/dsp-js';
 import {

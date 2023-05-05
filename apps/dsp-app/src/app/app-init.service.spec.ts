@@ -6,7 +6,6 @@ import {
     DspInstrumentationToken,
 } from './main/declarations/dsp-api-tokens';
 import {
-    DspDataDogConfig,
     DspInstrumentationConfig,
 } from './main/declarations/dsp-instrumentation-config';
 
@@ -44,7 +43,6 @@ describe('AppInitService (dev)', () => {
             },
         },
     };
-    const dspDatadogSpy = new DspDataDogConfig(false, '', '', '', '');
 
     const instrumentationConfig: DspInstrumentationConfig = {
         environment: 'dev',
@@ -118,7 +116,7 @@ describe('AppInitService (dev)', () => {
     });
 
     xit('should fetch the minimally specified config file when method Init is called', async () => {
-        const fetchSpy = spyOn(window, 'fetch').and.callFake((path) =>
+        const fetchSpy = spyOn(window, 'fetch').and.callFake(() =>
             Promise.resolve(
                 new Response(
                     JSON.stringify({
@@ -158,7 +156,7 @@ describe('AppInitService (dev)', () => {
     });
 
     xit('should fetch the config file with additional options when method Init is called', async () => {
-        const fetchSpy = spyOn(window, 'fetch').and.callFake((path) =>
+        const fetchSpy = spyOn(window, 'fetch').and.callFake(() =>
             Promise.resolve(
                 new Response(
                     JSON.stringify({
@@ -195,7 +193,7 @@ describe('AppInitService (dev)', () => {
     });
 
     xit('should throw an error if required members are missing on the config object', async () => {
-        const fetchSpy = spyOn(window, 'fetch').and.callFake((path) =>
+        const fetchSpy = spyOn(window, 'fetch').and.callFake(() =>
             Promise.resolve(new Response(JSON.stringify({})))
         );
 
@@ -210,7 +208,7 @@ describe('AppInitService (dev)', () => {
     });
 
     xit('should throw an error if "apiProtocol" is missing on the config object', async () => {
-        const fetchSpy = spyOn(window, 'fetch').and.callFake((path) =>
+        const fetchSpy = spyOn(window, 'fetch').and.callFake(() =>
             Promise.resolve(
                 new Response(
                     JSON.stringify({
@@ -231,7 +229,7 @@ describe('AppInitService (dev)', () => {
     });
 
     xit('should throw an error if "apiHost" is missing on the config object', async () => {
-        const fetchSpy = spyOn(window, 'fetch').and.callFake((path) =>
+        const fetchSpy = spyOn(window, 'fetch').and.callFake(() =>
             Promise.resolve(
                 new Response(
                     JSON.stringify({

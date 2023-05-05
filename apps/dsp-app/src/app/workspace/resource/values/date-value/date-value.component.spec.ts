@@ -1,5 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
     Component,
     DebugElement,
@@ -62,6 +60,7 @@ class TestDateInputComponent
     focused = false;
     id = 'testid';
     ngControl: NgControl | null;
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     onChange = (_: any) => {};
 
     writeValue(date: KnoraDate | KnoraPeriod | null): void {
@@ -77,6 +76,7 @@ class TestDateInputComponent
     onContainerClick(event: MouseEvent): void {}
 
     setDescribedByIds(ids: string[]): void {}
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     handleInput(): void {
         this.onChange(this.value);
@@ -151,9 +151,6 @@ class TestHostCreateValueNoValueRequiredComponent implements OnInit {
 }
 
 describe('DateValueComponent', () => {
-    let component: DateValueComponent;
-    let fixture: ComponentFixture<DateValueComponent>;
-
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
@@ -176,7 +173,6 @@ describe('DateValueComponent', () => {
     describe('display and edit a date value', () => {
         let testHostComponent: TestHostDisplayValueComponent;
         let testHostFixture: ComponentFixture<TestHostDisplayValueComponent>;
-        let loader: HarnessLoader;
 
         let valueComponentDe: DebugElement;
         let valueReadModeDebugElement: DebugElement;
@@ -187,7 +183,6 @@ describe('DateValueComponent', () => {
                 TestHostDisplayValueComponent
             );
             testHostComponent = testHostFixture.componentInstance;
-            loader = TestbedHarnessEnvironment.loader(testHostFixture);
             testHostFixture.detectChanges();
 
             expect(testHostComponent).toBeTruthy();
@@ -388,10 +383,8 @@ describe('DateValueComponent', () => {
             ).toBeFalsy();
 
             // simulate user input
-            const newKnoraDate = new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13);
+            testHostComponent.inputValueComponent.datePickerComponent.value = new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.datePickerComponent.value =
-                newKnoraDate;
             testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
@@ -622,26 +615,16 @@ describe('DateValueComponent', () => {
     describe('create a date value', () => {
         let testHostComponent: TestHostCreateValueComponent;
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
-        let loader: HarnessLoader;
-
-        let valueComponentDe: DebugElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(
                 TestHostCreateValueComponent
             );
             testHostComponent = testHostFixture.componentInstance;
-            loader = TestbedHarnessEnvironment.loader(testHostFixture);
             testHostFixture.detectChanges();
 
             expect(testHostComponent).toBeTruthy();
             expect(testHostComponent.inputValueComponent).toBeTruthy();
-
-            const hostCompDe = testHostFixture.debugElement;
-
-            valueComponentDe = hostCompDe.query(
-                By.directive(DateValueComponent)
-            );
         });
 
         it('should create a value', () => {
@@ -650,10 +633,8 @@ describe('DateValueComponent', () => {
             ).toEqual(null);
 
             // simulate user input
-            const newKnoraDate = new KnoraDate('JULIAN', 'CE', 2019, 5, 13);
+            testHostComponent.inputValueComponent.datePickerComponent.value = new KnoraDate('JULIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.datePickerComponent.value =
-                newKnoraDate;
             testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();
@@ -683,10 +664,8 @@ describe('DateValueComponent', () => {
 
         it('should reset form after cancellation', async () => {
             // simulate user input
-            const newKnoraDate = new KnoraDate('JULIAN', 'CE', 2019, 5, 13);
+            testHostComponent.inputValueComponent.datePickerComponent.value = new KnoraDate('JULIAN', 'CE', 2019, 5, 13);
 
-            testHostComponent.inputValueComponent.datePickerComponent.value =
-                newKnoraDate;
             testHostComponent.inputValueComponent.datePickerComponent.handleInput();
 
             testHostFixture.detectChanges();

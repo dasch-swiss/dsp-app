@@ -20,7 +20,6 @@ import {
     ApiResponseError,
     KnoraApiConnection,
     MembersResponse,
-    ReadProject,
     ReadUser,
     UserResponse,
     UsersResponse,
@@ -291,8 +290,8 @@ export class AddUserComponent implements OnInit {
             )
         );
 
-        this.selectUserForm.valueChanges.subscribe((data) =>
-            this.onValueChanged(data)
+        this.selectUserForm.valueChanges.subscribe(() =>
+            this.onValueChanged()
         );
 
         this.onValueChanged(); // (re)set validation messages now
@@ -312,10 +311,8 @@ export class AddUserComponent implements OnInit {
 
     /**
      * set the error messages on value changed
-     *
-     * @param (data)
      */
-    onValueChanged(data?: any) {
+    onValueChanged() {
         if (!this.selectUserForm) {
             return;
         }
@@ -427,7 +424,7 @@ export class AddUserComponent implements OnInit {
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((response) => {
+        dialogRef.afterClosed().subscribe(() => {
             // update the view
             this.refreshParent.emit();
         });

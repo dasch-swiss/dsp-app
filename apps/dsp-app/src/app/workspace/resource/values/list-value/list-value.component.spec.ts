@@ -126,14 +126,12 @@ describe('ListValueComponent', () => {
         let valueComponentDe: DebugElement;
         let valueReadModeDebugElement: DebugElement;
         let valueReadModeNativeElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             const valuesSpy = TestBed.inject(DspApiConnectionToken);
             (
                 valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-            ).getList.and.callFake((rootNodeIri: string) => {
+            ).getList.and.callFake(() => {
                 const res = new ListNodeV2();
                 res.id = 'http://rdfh.ch/lists/0001/treeList01';
                 res.label = 'Tree list node 01';
@@ -186,7 +184,7 @@ describe('ListValueComponent', () => {
             const valuesSpy = TestBed.inject(DspApiConnectionToken);
             (
                 valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-            ).getList.and.callFake((rootNodeIri: string) => {
+            ).getList.and.callFake(() => {
                 const res = new ListNodeV2();
                 res.id = 'http://rdfh.ch/lists/0001/treeList';
                 res.label = 'Listenwurzel';
@@ -231,7 +229,7 @@ describe('ListValueComponent', () => {
             const valuesSpy = TestBed.inject(DspApiConnectionToken);
             (
                 valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-            ).getList.and.callFake((rootNodeIri) => {
+            ).getList.and.callFake(() => {
                 const res = new ListNodeV2();
                 res.id = 'http://rdfh.ch/lists/0001/treeList';
                 res.label = 'Listenwurzel';
@@ -271,15 +269,13 @@ describe('ListValueComponent', () => {
     describe('create a list value', () => {
         let testHostComponent: TestHostCreateValueComponent;
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
-        let valueComponentDe: DebugElement;
-        let commentInputDebugElement: DebugElement;
-        let commentInputNativeElement;
+
         beforeEach(() => {
             const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
             (
                 valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-            ).getList.and.callFake((rootNodeIri: string) => {
+            ).getList.and.callFake(() => {
                 const res = new ListNodeV2();
                 res.id = 'http://rdfh.ch/lists/0001/treeList';
                 res.label = 'Listenwurzel';
@@ -301,12 +297,8 @@ describe('ListValueComponent', () => {
                 'create'
             );
             expect(valuesSpy.v2.list.getList).toHaveBeenCalledTimes(1);
-            const hostCompDe = testHostFixture.debugElement;
-
-            valueComponentDe = hostCompDe.query(
-                By.directive(ListValueComponent)
-            );
         });
+
         it('should create a value', () => {
             expect(
                 testHostComponent.inputValueComponent.form.valid

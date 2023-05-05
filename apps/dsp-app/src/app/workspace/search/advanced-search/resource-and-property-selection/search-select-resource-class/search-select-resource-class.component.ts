@@ -7,7 +7,6 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ResourceClassDefinition } from '@dasch-swiss/dsp-js';
@@ -57,7 +56,7 @@ export class SearchSelectResourceClassComponent
         this.formGroup.addControl('resourceClass', this.form);
     }
 
-    ngOnChanges(changes: SimpleChanges) {
+    ngOnChanges() {
         if (this.form !== undefined) {
             // resource classes have been reinitialized
             // reset form

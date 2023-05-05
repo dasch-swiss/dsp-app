@@ -20,7 +20,7 @@ import { ResourceService } from '../../../resource/services/resource.service';
  */
 @Pipe({ name: 'appTruncate' })
 class MockPipe implements PipeTransform {
-    transform(value: string, limit?: number, trail?: string): string {
+    transform(value: string): string {
         // do stuff here, if you want
         return value;
     }
@@ -59,7 +59,7 @@ class TestParentComponent implements OnInit {
 
 // used to replace the service used by the component to test
 class TestResourceService {
-    getResourcePath(iri: string): string {
+    getResourcePath(): string {
         return 'ThisisAFakeIri';
     }
 }

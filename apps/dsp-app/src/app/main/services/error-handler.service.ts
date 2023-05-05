@@ -9,7 +9,6 @@ import {
     ApiResponseError,
     HealthResponse,
     KnoraApiConnection,
-    LogoutResponse,
 } from '@dasch-swiss/dsp-js';
 import { HttpStatusMsg } from '../../../assets/http/statusMsg';
 import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
@@ -101,7 +100,7 @@ export class ErrorHandlerService {
         } else if (error.status === 401 && typeof error.error !== 'string') {
             // logout if error status is a 401 error and comes from a DSP-JS request
             this._dspApiConnection.v2.auth.logout().subscribe(
-                (logoutResponse: ApiResponseData<LogoutResponse>) => {
+                () => {
                     // destroy session
                     this._session.destroySession();
 

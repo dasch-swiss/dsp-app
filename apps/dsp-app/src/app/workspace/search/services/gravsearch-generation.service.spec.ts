@@ -1,9 +1,6 @@
 /* eslint-disable max-len */
 import { GravsearchGenerationService } from './gravsearch-generation.service';
-import {
-    AdvancedSearchParams,
-    AdvancedSearchParamsService,
-} from './advanced-search-params.service';
+import { AdvancedSearchParamsService } from './advanced-search-params.service';
 import { TestBed } from '@angular/core/testing';
 import { MockOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import {
@@ -27,7 +24,6 @@ import {
 describe('GravsearchGenerationService', () => {
     let gravSearchGenerationServ: GravsearchGenerationService;
     let searchParamsServiceSpy: jasmine.SpyObj<AdvancedSearchParamsService>; // see https://angular.io/guide/testing#angular-testbed
-    let advancedSearchParams: AdvancedSearchParams;
 
     beforeEach(() => {
         const spy = jasmine.createSpyObj('SearchParamsService', [
@@ -44,11 +40,7 @@ describe('GravsearchGenerationService', () => {
         searchParamsServiceSpy = TestBed.inject(
             AdvancedSearchParamsService
         ) as jasmine.SpyObj<AdvancedSearchParamsService>;
-        searchParamsServiceSpy.changeSearchParamsMsg.and.callFake(
-            (searchParams: AdvancedSearchParams) => {
-                advancedSearchParams = searchParams;
-            }
-        );
+        searchParamsServiceSpy.changeSearchParamsMsg.and.callFake(() => {});
     });
 
     it('should be created', () => {

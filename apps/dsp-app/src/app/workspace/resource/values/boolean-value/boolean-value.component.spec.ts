@@ -95,7 +95,6 @@ describe('BooleanValueComponent', () => {
         let testHostFixture: ComponentFixture<TestHostDisplayValueComponent>;
         let valueComponentDe: DebugElement;
         let valueBooleanDebugElement: DebugElement;
-        let valueBooleanNativeElement;
         let valueReadModeDebugElement: DebugElement;
         let valueReadModeNativeElement;
         let checkboxEl;
@@ -145,7 +144,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanDebugElement = valueComponentDe.query(
                 By.css('mat-checkbox')
             );
-            valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
 
             checkboxEl = valueBooleanDebugElement.query(
                 By.css('input[type="checkbox"]')
@@ -191,7 +189,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanDebugElement = valueComponentDe.query(
                 By.css('mat-checkbox')
             );
-            valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
 
             checkboxEl = valueBooleanDebugElement.query(
                 By.css('input[type="checkbox"]')
@@ -233,7 +230,6 @@ describe('BooleanValueComponent', () => {
             valueBooleanDebugElement = valueComponentDe.query(
                 By.css('mat-checkbox')
             );
-            valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
 
             checkboxEl = valueBooleanDebugElement.query(
                 By.css('input[type="checkbox"]')
@@ -293,7 +289,6 @@ describe('BooleanValueComponent', () => {
         let testHostFixture: ComponentFixture<TestHostCreateValueComponent>;
         let valueComponentDe: DebugElement;
         let valueBooleanDebugElement: DebugElement;
-        let valueBooleanNativeElement;
         let checkboxEl;
 
         beforeEach(() => {
@@ -314,7 +309,7 @@ describe('BooleanValueComponent', () => {
             valueBooleanDebugElement = valueComponentDe.query(
                 By.css('mat-checkbox')
             );
-            valueBooleanNativeElement = valueBooleanDebugElement.nativeElement;
+
             checkboxEl = valueBooleanDebugElement.query(
                 By.css('input[type="checkbox"]')
             ).nativeElement;

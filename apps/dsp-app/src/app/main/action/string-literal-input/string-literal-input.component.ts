@@ -138,7 +138,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
             }),
         });
         // update values on form change
-        this.form.valueChanges.subscribe((data) => this.onValueChanged());
+        this.form.valueChanges.subscribe(() => this.onValueChanged());
 
         // get value from stringLiterals
         const val = this.getValueFromStringLiteral(this.language);

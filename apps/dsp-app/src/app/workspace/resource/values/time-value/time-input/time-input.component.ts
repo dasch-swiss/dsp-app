@@ -113,6 +113,7 @@ export class TimeInputComponent
     errorState = false;
     controlType = 'app-time-input';
     matcher = new ValueErrorStateMatcher();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onChange = (_: any) => {};
     onTouched = () => {};
 

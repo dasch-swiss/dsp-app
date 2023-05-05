@@ -537,7 +537,6 @@ describe('TextValueAsStringComponent', () => {
         let valueComponentDe: DebugElement;
         let valueInputDebugElement: DebugElement;
         let valueInputNativeElement;
-        let commentInputNativeElement;
 
         beforeEach(() => {
             testHostFixture = TestBed.createComponent(

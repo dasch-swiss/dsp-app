@@ -205,7 +205,7 @@ describe('OverviewComponent', () => {
 
             (
                 projectServiceSpy as jasmine.SpyObj<ProjectService>
-            ).iriToUuid.and.callFake((iri: string) => '0123');
+            ).iriToUuid.and.callFake(() => '0123');
 
             expect(testHostComponent).toBeTruthy();
         });

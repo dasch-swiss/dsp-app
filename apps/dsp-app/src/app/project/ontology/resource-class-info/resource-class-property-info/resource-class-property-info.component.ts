@@ -7,8 +7,6 @@ import {
     OnChanges,
     Output,
 } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
-
 import {
     ApiResponseError,
     CanDoResponse,
@@ -24,9 +22,7 @@ import {
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import {
-    DefaultProperty
-} from '../../default-data/default-properties';
+import { DefaultProperty } from '../../default-data/default-properties';
 import { DefaultClass } from '../../default-data/default-resource-classes';
 import { OntologyService } from '../../ontology.service';
 

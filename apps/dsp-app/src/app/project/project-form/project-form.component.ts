@@ -1,6 +1,18 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+    Component,
+    EventEmitter,
+    Inject,
+    Input,
+    OnInit,
+    Output,
+} from '@angular/core';
+import {
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
+    Validators,
+} from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Router } from '@angular/router';
 import {
@@ -270,15 +282,13 @@ export class ProjectFormComponent implements OnInit {
         }
 
         this.form.valueChanges
-            .subscribe(data => this.onValueChanged(data));
+            .subscribe(() => this.onValueChanged());
     }
 
     /**
      * this method is for the form error handling
-     *
-     * @param data Data which changed.
      */
-    onValueChanged(data?: any) {
+    onValueChanged() {
 
         if (!this.form) {
             return;
@@ -413,7 +423,7 @@ export class ProjectFormComponent implements OnInit {
                     this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this._session.getSession().user.name).subscribe(
                         (userResponse: ApiResponseData<UserResponse>) => {
                             this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userResponse.body.user.id, projectResponse.body.project.id).subscribe(
-                                (response: ApiResponseData<UserResponse>) => {
+                                () => {
                                     const uuid = this._projectService.iriToUuid(projectResponse.body.project.id);
                                     this.loading = false;
                                     this.closeDialog.emit();
@@ -447,7 +457,7 @@ export class ProjectFormComponent implements OnInit {
      */
     delete(id: string) {
         this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
+            () => {
                 // reload page
                 this.loading = true;
                 this.refresh();
@@ -469,7 +479,7 @@ export class ProjectFormComponent implements OnInit {
         data.status = true;
 
         this._dspApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
+            () => {
                 // reload page
                 this.loading = true;
                 this.refresh();

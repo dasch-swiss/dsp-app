@@ -28,7 +28,7 @@ export class AdvancedSearchParamsService {
         // init with a dummy function that returns false
         // if the application is reloaded, this will be returned
         this._currentSearchParams = new BehaviorSubject<AdvancedSearchParams>(
-            new AdvancedSearchParams((offset: number) => false)
+            new AdvancedSearchParams(() => false)
         );
     }
 

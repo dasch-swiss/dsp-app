@@ -125,7 +125,7 @@ describe('SearchListValueComponent', () => {
 
         (
             listSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-        ).getList.and.callFake((rootListNodeIri) =>
+        ).getList.and.callFake(() =>
             of(MockList.mockList('http://rdfh.ch/lists/0001/treeList'))
         );
 

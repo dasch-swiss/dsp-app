@@ -3,7 +3,6 @@ import {
     MatLegacyDialog as MatDialog,
     MatLegacyDialogConfig as MatDialogConfig,
 } from '@angular/material/legacy-dialog';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ApiResponseError, ReadProject } from '@dasch-swiss/dsp-js';
@@ -111,7 +110,7 @@ export class BoardComponent implements OnInit {
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((response) => {
+        dialogRef.afterClosed().subscribe(() => {
             // update the view
             this.getProject();
         });

@@ -56,7 +56,7 @@ export class IntermediateComponent implements OnInit {
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((resId: string) => {
+        dialogRef.afterClosed().subscribe(() => {
             // do something with the intermediate view... but what should we do / display? Maybe the new resource...
         });
     }

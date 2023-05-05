@@ -1,5 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
@@ -116,6 +114,7 @@ class TestDatePickerComponent
     focused = false;
     id = 'testid';
     ngControl: NgControl | null;
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     onChange = (_: any) => {};
 
     writeValue(date: KnoraDate | null): void {
@@ -131,6 +130,7 @@ class TestDatePickerComponent
     onContainerClick(event: MouseEvent): void {}
 
     setDescribedByIds(ids: string[]): void {}
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     _handleInput(): void {
         this.onChange(this.value);
@@ -140,7 +140,6 @@ class TestDatePickerComponent
 describe('DateValueHandlerComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let loader: HarnessLoader;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -164,7 +163,6 @@ describe('DateValueHandlerComponent', () => {
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
-        loader = TestbedHarnessEnvironment.loader(testHostFixture);
         testHostFixture.detectChanges();
 
         expect(testHostComponent).toBeTruthy();
@@ -481,7 +479,6 @@ describe('DateValueHandlerComponent', () => {
 describe('DateValueHandlerComponent (no validator required)', () => {
     let testHostComponent: NoValueRequiredTestHostComponent;
     let testHostFixture: ComponentFixture<NoValueRequiredTestHostComponent>;
-    let loader: HarnessLoader;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -509,7 +506,6 @@ describe('DateValueHandlerComponent (no validator required)', () => {
             NoValueRequiredTestHostComponent
         );
         testHostComponent = testHostFixture.componentInstance;
-        loader = TestbedHarnessEnvironment.loader(testHostFixture);
         testHostFixture.detectChanges();
 
         expect(testHostComponent).toBeTruthy();

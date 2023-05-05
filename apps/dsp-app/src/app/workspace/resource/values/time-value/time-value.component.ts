@@ -6,7 +6,6 @@ import {
     ViewChild,
     Input,
     Inject,
-    SimpleChanges,
 } from '@angular/core';
 import { TimeInputComponent } from './time-input/time-input.component';
 import {
@@ -51,7 +50,7 @@ export class TimeValueComponent
         super.ngOnInit();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resetFormControl();
     }
 

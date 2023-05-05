@@ -91,15 +91,13 @@ export class ResourceLinkFormComponent implements OnInit {
             project: new UntypedFormControl(),
         });
 
-        this.form.valueChanges.subscribe((data) => this.onValueChanged(data));
+        this.form.valueChanges.subscribe(() => this.onValueChanged());
     }
 
     /**
      * this method is for the form error handling
-     *
-     * @param data Data which changed.
      */
-    onValueChanged(data?: any) {
+    onValueChanged() {
         if (!this.form) {
             return;
         }
@@ -163,7 +161,7 @@ export class ResourceLinkFormComponent implements OnInit {
                 const goto = '/resource' + path;
                 this._router
                     .navigate([])
-                    .then((result) => window.open(goto, '_blank'));
+                    .then(() => window.open(goto, '_blank'));
                 this.closeDialog.emit();
                 this.loading = false;
             },

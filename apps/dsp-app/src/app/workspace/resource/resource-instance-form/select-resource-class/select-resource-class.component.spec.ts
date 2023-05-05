@@ -38,12 +38,6 @@ class TestHostComponent implements OnInit {
     constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {}
 
     ngOnInit() {
-        const resClasses = MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        ).classes;
-
-        const resClassIris = Object.keys(resClasses);
-
         // get resource class definitions
         this.resourceClasses = MockOntology.mockReadOntology(
             'http://0.0.0.0:3333/ontology/0001/anything/v2'

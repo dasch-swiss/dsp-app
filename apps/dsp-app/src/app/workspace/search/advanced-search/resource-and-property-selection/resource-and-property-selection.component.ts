@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnInit,
     QueryList,
-    SimpleChanges,
     ViewChild,
     ViewChildren,
 } from '@angular/core';
@@ -72,7 +71,7 @@ export class ResourceAndPropertySelectionComponent
         this.formGroup.addControl('resourceAndPropertySelection', this.form);
     }
 
-    ngOnChanges(changes: SimpleChanges) {
+    ngOnChanges() {
         this.getResourceClassesAndPropertiesForOntology(this.activeOntology);
     }
 

@@ -192,7 +192,7 @@ export class ColorPickerComponent
 
         this.placeholder = 'Click to select a color';
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onChange = (_: any) => {};
 
     onTouched = () => {};

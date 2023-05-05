@@ -9,7 +9,6 @@ import {
     CreateTextValueAsString,
     CreateValue,
     KnoraApiConnection,
-    ReadOntology,
     ReadResource,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
@@ -107,7 +106,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
         this.preparing = true;
         this.loading = true;
         this._dspApiConnection.v2.ontologyCache.reloadCachedItem(this.ontologyIri).subscribe(
-            (res: ReadOntology) => {
+            () => {
                 this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
                     (onto: ResourceClassAndPropertyDefinitions) => {
                         this.ontologyInfo = onto;
@@ -170,7 +169,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
     }
 
     submitData() {
-        
+
         this.loading = true;
 
         if (this.propertiesParentForm.valid) {
@@ -185,7 +184,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
             createResource.attachedToProject = this.projectIri;
 
             this.propertiesObj = {};
-            
+
             this.selectPropertiesComponent.switchPropertiesComponent.forEach((child) => {
                 const createVal = child.createValueComponent.getNewValue();
                 const iri = child.property.id;
@@ -241,7 +240,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
                         this._notification.openSnackBar("Bad request(400): There was an issue with your request. Often this is due to duplicate values in one of your properties.", "error");
                     } else {
                         this._errorHandler.showMessage(error);
-                    } 
+                    }
                 }
             );
 

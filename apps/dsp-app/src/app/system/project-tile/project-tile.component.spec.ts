@@ -9,7 +9,6 @@ import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StoredProject } from '@dasch-swiss/dsp-js';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-
 import { ProjectTileComponent } from './project-tile.component';
 
 /**
@@ -95,7 +94,7 @@ describe('ProjectTileComponent', () => {
 
         (
             projectServiceSpy as jasmine.SpyObj<ProjectService>
-        ).iriToUuid.and.callFake((iri: string) => '0123');
+        ).iriToUuid.and.callFake(() => '0123');
     });
 
     it('should show correct project status', () => {

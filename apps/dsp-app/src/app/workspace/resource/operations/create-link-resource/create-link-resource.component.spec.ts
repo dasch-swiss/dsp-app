@@ -278,7 +278,7 @@ describe('CreateLinkResourceComponent', () => {
 
         (
             dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-        ).getResourceClassDefinition.and.callFake((resClassIri: string) =>
+        ).getResourceClassDefinition.and.callFake(() =>
             of(
                 MockOntology.mockIResourceClassAndPropertyDefinitions(
                     'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
@@ -334,15 +334,6 @@ describe('CreateLinkResourceComponent', () => {
 
             return of(resource);
         });
-
-        const anythingOnto = MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-
-        // get resource class definitions
-        const resourceClasses = anythingOnto.getClassDefinitionsByType(
-            ResourceClassDefinition
-        );
 
         testHostComponent.createLinkResourceComponent.properties =
             new Array<ResourcePropertyDefinition>();

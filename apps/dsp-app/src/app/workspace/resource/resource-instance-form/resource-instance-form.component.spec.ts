@@ -1,4 +1,4 @@
-import { Component, DebugElement, Inject, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, DebugElement, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
     UntypedFormBuilder,
@@ -51,8 +51,6 @@ import { IntValueComponent } from '../values/int-value/int-value.component';
 import { TextValueAsStringComponent } from '../values/text-value/text-value-as-string/text-value-as-string.component';
 import { ResourceInstanceFormComponent } from './resource-instance-form.component';
 import { SwitchPropertiesComponent } from './select-properties/switch-properties/switch-properties.component';
-
-const resolvedPromise = Promise.resolve(null);
 
 /**
  * test host component to simulate parent component.
@@ -371,11 +369,11 @@ describe('ResourceInstanceFormComponent', () => {
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
         (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(
-            (resClassIri: string) => of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
+            () => of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
         );
 
         (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).reloadCachedItem.and.callFake(
-            (key: string) => {
+            () => {
                 const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
                 return of(response);
             }

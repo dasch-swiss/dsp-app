@@ -12,11 +12,9 @@ import {
 } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 import {
-    ApiResponseData,
     ApiResponseError,
     Constants,
     KnoraApiConnection,
-    ProjectResponse,
     StoredProject,
     UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
@@ -142,8 +140,7 @@ export class ProjectsListComponent implements OnInit {
     /**
      * navigate to the project pages (e.g. board, collaboration or ontology)
      *
-     * @param code
-     * @param page
+     * @param iri
      */
     openProjectPage(iri: string) {
         const uuid = this._projectService.iriToUuid(iri);
@@ -202,7 +199,7 @@ export class ProjectsListComponent implements OnInit {
         this._dspApiConnection.admin.projectsEndpoint
             .deleteProject(id)
             .subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
+                () => {
                     this.refreshParent.emit();
                     // update project cache
                     this._cache.del(uuid);
@@ -229,7 +226,7 @@ export class ProjectsListComponent implements OnInit {
         this._dspApiConnection.admin.projectsEndpoint
             .updateProject(id, data)
             .subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
+                () => {
                     this.refreshParent.emit();
                     // update project cache
                     this._cache.del(uuid);

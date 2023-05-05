@@ -33,7 +33,7 @@ export class SearchDateValueComponent
             dateValue: [null, Validators.compose([Validators.required])],
         });
 
-        this.form.valueChanges.subscribe((data) => {
+        this.form.valueChanges.subscribe(() => {
             // console.log(data.dateValue);
         });
 

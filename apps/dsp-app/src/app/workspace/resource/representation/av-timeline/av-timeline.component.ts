@@ -69,8 +69,8 @@ export class AvTimelineComponent implements OnChanges {
 
     constructor() {}
 
-    @HostListener('mouseenter', ['$event']) onEnter(e: MouseEvent) {
-        this._onMouseenter(e);
+    @HostListener('mouseenter', ['$event']) onEnter() {
+        this._onMouseenter();
     }
 
     @HostListener('mousemove', ['$event']) onMousemove(e: MouseEvent) {
@@ -81,8 +81,8 @@ export class AvTimelineComponent implements OnChanges {
         this._onMouseup(e);
     }
 
-    @HostListener('window:resize', ['$event']) onWindowResize(e: Event) {
-        this._onWindowResize(e);
+    @HostListener('window:resize', ['$event']) onWindowResize() {
+        this._onWindowResize();
     }
 
     ngOnChanges(changes: { [propName: string]: SimpleChange }) {
@@ -168,7 +168,7 @@ export class AvTimelineComponent implements OnChanges {
     /**
      * mouse enters timeline
      */
-    private _onMouseenter(ev: MouseEvent) {
+    private _onMouseenter() {
         this.timelineDimension = this._getTimelineDimensions();
     }
 
@@ -213,7 +213,7 @@ export class AvTimelineComponent implements OnChanges {
     /**
      * event listener on window resize
      */
-    private _onWindowResize(ev: Event) {
+    private _onWindowResize() {
         this.timelineDimension = this._getResizedTimelineDimensions();
         this.updatePositionFromTime(this.value);
         this.dimension.emit(this.timelineDimension);

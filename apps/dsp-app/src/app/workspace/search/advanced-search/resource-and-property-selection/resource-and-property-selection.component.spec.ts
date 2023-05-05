@@ -141,7 +141,7 @@ describe('ResourceAndPropertySelectionComponent', () => {
 
         (
             dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-        ).getOntology.and.callFake((ontoIri: string) => {
+        ).getOntology.and.callFake(() => {
             const anythingOnto = MockOntology.mockReadOntology(
                 'http://0.0.0.0:3333/ontology/0001/anything/v2'
             );
@@ -220,7 +220,7 @@ describe('ResourceAndPropertySelectionComponent', () => {
 
         (
             dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-        ).getResourceClassDefinition.and.callFake((resClassIri: string) =>
+        ).getResourceClassDefinition.and.callFake(() =>
             of(
                 MockOntology.mockIResourceClassAndPropertyDefinitions(
                     'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'

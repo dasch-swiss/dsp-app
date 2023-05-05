@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 import { FileRepresentation } from '../../file-representation';
 
 export interface MovingImageSidecar {
@@ -98,11 +97,11 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
 
     constructor(private _host: ElementRef, private _http: HttpClient) {}
 
-    @HostListener('mouseenter', ['$event']) onEnter(e: MouseEvent) {
+    @HostListener('mouseenter', ['$event']) onEnter() {
         this.toggleFlipbook(true);
     }
 
-    @HostListener('mouseleave', ['$event']) onLeave(e: MouseEvent) {
+    @HostListener('mouseleave', ['$event']) onLeave() {
         this.toggleFlipbook(false);
     }
 
@@ -110,7 +109,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
         this.updatePreviewByPosition(e);
     }
 
-    @HostListener('click', ['$event']) onClick(e: MouseEvent) {
+    @HostListener('click', ['$event']) onClick() {
         this.openVideo();
     }
 
@@ -150,15 +149,10 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
     toggleFlipbook(active: boolean) {
         this.focusOnPreview = active;
 
-        let i = 0;
-        const j = 0;
-
         if (this.focusOnPreview) {
             // automatic playback of individual frames from first matrix
             // --> TODO: activate this later with an additional parameter (@Input) to switch between mousemove and automatic preview
             // this.autoPlay(i, j);
-        } else {
-            i = 0;
         }
     }
 
@@ -198,6 +192,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
      * - always depends on aspect ration of the video
      * - with of the matrix file is always the same (960px)
      * @param image
+     * @param fileNumber
      */
     calculateSizes(image: string, fileNumber: number) {
         // host dimension
@@ -271,7 +266,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
                     this.frameHeight + 'px';
                 this.loaded.emit(true);
             },
-            (error: Error) => {
+            () => {
                 // preview file is not available: show default error image
                 this.frame.nativeElement.style['background-image'] =
                     'url(assets/images/preview-not-available.png)';
@@ -404,7 +399,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
             map(mapLoadedImage)
         );
         const imageError = fromEvent(image, 'error').pipe(
-            tap((x) => {
+            tap(() => {
                 this.previewError = true;
                 const error: Error = new Error();
                 error.message = 'Preview not available';

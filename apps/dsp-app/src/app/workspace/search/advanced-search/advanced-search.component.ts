@@ -82,7 +82,7 @@ export class AdvancedSearchComponent
     ngAfterViewChecked() {
         // if form status changes, re-run validation
         this.formChangesSubscription = this.form.statusChanges.subscribe(
-            (data) => {
+            () => {
                 this.formValid = this._validateForm();
             }
         );

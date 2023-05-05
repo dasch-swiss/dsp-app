@@ -2,9 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, DebugElement, ViewChild, Input } from '@angular/core';
 import {
     ComponentFixture,
-    fakeAsync,
     TestBed,
-    tick,
     waitForAsync,
 } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -157,7 +155,7 @@ class LinkHostComponent {
 class DspApiConnectionMock {
     v2 = {
         onto: {
-            canReplaceCardinalityOfResourceClass: (resClassIri: string) =>
+            canReplaceCardinalityOfResourceClass: () =>
                 of({ canDo: true }),
         },
     };
@@ -440,8 +438,6 @@ describe('PropertyFormComponent', () => {
         expect(
             simpleTextHostComponent.propertyFormComponent.propertyInfo.propType
         ).toBeDefined();
-
-        const form = linkHostComponent.propertyFormComponent.propertyForm;
 
         expect(simpleTextHostComponent.propertyFormComponent.labels).toEqual([
             {

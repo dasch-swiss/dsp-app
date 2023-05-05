@@ -1,9 +1,6 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
     Component,
     forwardRef,
-    Inject,
     Input,
     OnInit,
     ViewChild,
@@ -25,9 +22,7 @@ import {
 } from '@angular/material/legacy-form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import { MatLegacyInputHarness as MatInputHarness } from '@angular/material/legacy-input/testing';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
-import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { Subject } from 'rxjs';
@@ -89,7 +84,7 @@ class TestDatePickerComponent
     focused = false;
     id = 'testid';
     ngControl: NgControl | null;
-    onChange = (_: any) => {};
+    onChange = () => {};
 
     writeValue(date: KnoraDate | null): void {
         this.value = date;
@@ -99,21 +94,20 @@ class TestDatePickerComponent
         this.onChange = fn;
     }
 
-    registerOnTouched(fn: any): void {}
+    registerOnTouched(): void {}
 
-    onContainerClick(event: MouseEvent): void {}
+    onContainerClick(): void {}
 
-    setDescribedByIds(ids: string[]): void {}
+    setDescribedByIds(): void {}
 
     _handleInput(): void {
-        this.onChange(this.value);
+        this.onChange();
     }
 }
 
 describe('SearchDateValueComponent', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
-    let loader: HarnessLoader;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -137,7 +131,6 @@ describe('SearchDateValueComponent', () => {
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
-        loader = TestbedHarnessEnvironment.loader(testHostFixture);
         testHostFixture.detectChanges();
 
         expect(testHostComponent).toBeTruthy();

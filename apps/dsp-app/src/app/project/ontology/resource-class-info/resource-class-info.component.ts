@@ -20,7 +20,6 @@ import {
     KnoraApiConnection,
     PropertyDefinition,
     ReadOntology,
-    ReadProject,
     ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages,
     UpdateOntology,
@@ -511,7 +510,7 @@ export class ResourceClassInfoComponent implements OnInit {
     openEditDialog(dialogConfig: MatDialogConfig) {
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe(() => {
             // update the view: list of properties in resource class
             this.updatePropertyAssignment.emit(this.ontology.id);
         });
