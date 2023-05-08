@@ -10,7 +10,7 @@
 
     <pdf-viewer
         class="pdf-viewer"
-        [src]="src.fileValue.fileUrl"
+        [src]= "{ url: src.fileValue.fileUrl, withCredentials: true }"
         [original-size]="false"
         [autoresize]="true"
         [show-all]="true"

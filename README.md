@@ -46,6 +46,7 @@ The most common commands are defined in `package.json`.
 | `nx run dsp-app:test`                                         | `npm run test-local`                |
 | `nx run dsp-app:test --watch=false --browsers=ChromeHeadless` | `npm run test-ci`                   |
 | `nx run dsp-app:serve:test-server`                            | `npm run start-with-test-server`    |
+| `nx run dsp-app:serve:dev-server`                             | `npm run start-with-dev-server`     |
 | `nx run dsp-app:serve:ls-test-server`                         | `npm run start-with-ls-test-server` |
 | `nx run dsp-app:serve:staging-server`                         | `npm run start-with-staging-server` |
 | `nx run dsp-app:lint`                                         | `npm run lint-ci`                   |
