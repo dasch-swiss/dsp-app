@@ -320,11 +320,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                             ).fileUrl;
                         }
 
-                        this.selectedTabLabel =
-                            this.resource.res.entityInfo?.classes[
-                                this.resource.res.type
-                            ].label;
-
                         // get information about the logged-in user, if one is logged-in
                         if (this._session.getSession()) {
                             this.session = this._session.getSession();
@@ -444,7 +439,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         } else {
             this.stillImageComponent.removeOverlays();
         }
-
         this.selectedTabLabel = e.tab.textLabel;
     }
 
