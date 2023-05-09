@@ -104,7 +104,6 @@ function makeRegion(geomString: string[], iri: string): ReadResource {
     template: ` <app-still-image
         [images]="stillImageFileRepresentations"
         [imageCaption]="caption"
-        [iiifUrl]="iiifUrl"
         [activateRegion]="inputActivateRegion"
         [currentTab]="'annotations'"
         [parentResource]="readresource"
@@ -118,8 +117,6 @@ class TestHostComponent implements OnInit {
     readResource: ReadResource;
     stillImageFileRepresentations: FileRepresentation[] = [];
     caption = 'test image';
-    iiifUrl =
-        'https://iiif.test.dasch.swiss:443/0803/incunabula_0000003840.jp2/full/3210,5144/0/default.jpg';
     inputActivateRegion: string;
 
     activeRegion: string;

@@ -11,40 +11,42 @@
         "
     >
         <mat-list-item>
-            <mat-icon matListIcon>{{ getIcon(resource) }}</mat-icon>
-            <div
-                matLine
-                (click)="
-                    selectResource({
-                        checked: true,
-                        resIndex: i,
-                        resId: resource.id,
-                        resLabel: resource.label,
-                        isCheckbox: false
-                    })
-                "
-            >
-                <p matLine class="res-class-label">
-                    {{ resource.entityInfo.classes[resource.type].label }}
-                </p>
-                <h3 matLine class="res-class-value">{{ resource.label }}</h3>
-                <div
-                    matLine
-                    *ngFor="let prop of resource.properties | keyvalue"
+            <div class='res-list-item-container' (click)="
+                        selectResource({
+                            checked: true,
+                            resIndex: i,
+                            resId: resource.id,
+                            resLabel: resource.label,
+                            isCheckbox: false
+                        })
+                    ">
+                <mat-icon matListIcon>{{ getIcon(resource) }}</mat-icon>
+                <div matLine
+                     class='res-list-item-text'
+
                 >
-                    <div matLine *ngFor="let val of prop.value">
-                        <span class="res-prop-label">
-                            {{
-                                resource.entityInfo.properties[val.property]
-                                    .label
-                            }}
-                        </span>
-                        <div
-                            appHtmlLink
-                            class="res-prop-value shorten-long-text"
-                            [innerHtml]="val.strval"
-                            (internalLinkClicked)="openResource($event)"
-                        ></div>
+                    <p matLine class="res-class-label">
+                        {{ resource.entityInfo.classes[resource.type].label }}
+                    </p>
+                    <h3 matLine class="res-class-value">{{ resource.label }}</h3>
+                    <div
+                        matLine
+                        *ngFor="let prop of resource.properties | keyvalue"
+                    >
+                        <div matLine *ngFor="let val of prop.value">
+                            <span class="res-prop-label">
+                                {{
+                                    resource.entityInfo.properties[val.property]
+                                        .label
+                                }}
+                            </span>
+                            <div
+                                appHtmlLink
+                                class="res-prop-value shorten-long-text"
+                                [innerHtml]="val.strval"
+                                (internalLinkClicked)="openResource($event)"
+                            ></div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@
     <!-- in case of an error -->
     <app-status
         [status]="404"
-        [url]="iiifUrl"
+        [url]="images[0].fileValue.fileUrl"
         [representation]="'still-image'"
         *ngIf="failedToLoad"
     ></app-status>
@@ -59,14 +59,14 @@
             <button
                 class="menu-content"
                 mat-menu-item
-                (click)="openImageInNewTab(iiifUrl)"
+                (click)="openImageInNewTab(images[0].fileValue.fileUrl)"
             >
                 Open IIIF URL in new tab
             </button>
             <button
                 class="menu-content"
                 mat-menu-item
-                [cdkCopyToClipboard]="iiifUrl"
+                [cdkCopyToClipboard]="images[0].fileValue.fileUrl"
                 (click)="openSnackBar('IIIF URL copied to clipboard!')"
             >
                 Copy IIIF URL to clipboard

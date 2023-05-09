@@ -13,7 +13,6 @@
             <app-still-image #stillImage class="dsp-representation stillimage" *ngSwitchCase="representationConstants.stillImage"
                 [images]="representationsToDisplay"
                 [imageCaption]="(incomingResource ? resource.res.label + ': ' + incomingResource.res.label : resource.res.label)"
-                [iiifUrl]="iiifUrl"
                 [compoundNavigation]="compoundPosition"
                 [resourceIri]="incomingResource ? incomingResource.res.id : resource.res.id"
                 [project]="resource.res.attachedToProject"

@@ -1,7 +1,8 @@
 import {
+    Constants,
     ReadResource,
     ReadValue,
-    SystemPropertyDefinition,
+    SystemPropertyDefinition
 } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from './properties/properties.component';
 
@@ -20,6 +21,15 @@ export class DspResource {
 
     constructor(resource: ReadResource) {
         this.res = resource;
+    }
+
+    // return whether the main resource is a region;
+    get isRegion() {
+        return this.res.entityInfo.classes[Constants.Region]
+    }
+
+    get hasOutgoingReferences() {
+        return this.res.outgoingReferences.length > 0;
     }
 }
 

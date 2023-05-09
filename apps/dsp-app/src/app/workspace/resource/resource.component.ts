@@ -5,7 +5,7 @@ import {
     Input,
     OnChanges,
     OnDestroy,
-    OnInit,
+    SimpleChange,
     ViewChild,
 } from '@angular/core';
 import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
@@ -14,7 +14,6 @@ import {
     ActivatedRoute,
     NavigationEnd,
     NavigationError,
-    NavigationStart,
     Router,
 } from '@angular/router';
 import {
@@ -34,7 +33,8 @@ import {
     ReadTextFileValue,
     SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
@@ -64,7 +64,7 @@ import {
     styleUrls: ['./resource.component.scss'],
     providers: [ValueOperationEventService], // provide service on the component level so that each implementation of this component has its own instance.
 })
-export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
+export class ResourceComponent implements OnChanges, OnDestroy {
     @ViewChild('stillImage') stillImageComponent: StillImageComponent;
 
     @Input() resourceIri: string;
@@ -94,8 +94,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
     selectedTab = 0;
 
     selectedTabLabel: string;
-
-    iiifUrl: string;
 
     resourceIsAnnotation: 'region' | 'sequence';
 
@@ -149,24 +147,12 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                     this.resourceUuid
                 );
                 this.oldResourceIri = this.resourceIri;
+                this.initResource(this.resourceIri);
             }
-            this.getResource(this.resourceIri);
         });
 
         this._router.events.subscribe((event) => {
             this._titleService.setTitle('Resource view');
-
-            if (event instanceof NavigationStart) {
-                // show loading indicator
-                // console.log('NavigationStart', this.resourceIri);
-            }
-
-            if (event instanceof NavigationEnd) {
-                // hide loading indicator
-                this.refresh = true;
-                // console.log('NavigationEnd', this.resourceIri);
-                this.refresh = false;
-            }
 
             if (event instanceof NavigationError) {
                 // present error to user
@@ -179,14 +165,14 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 Events.FileValueUpdated,
                 (newFileValue: UpdatedFileEventValue) => {
                     if (newFileValue) {
-                        this.getResource(this.resourceIri);
+                        if (this.resourceIri) {
+                            this.initResource(this.resourceIri);
+                        }
                     }
                 }
             )
         );
     }
-
-    ngOnInit() {}
 
     ngOnChanges() {
         // do not reload the whole resource when the iri did not change
@@ -198,15 +184,13 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         // reset all resources
         this.resource = undefined;
         this.incomingResource = undefined;
-        this.representationsToDisplay = [];
         this.compoundPosition = undefined;
         this.showRestrictedMessage = true;
         // get resource with all necessary information
         // incl. incoming resources and annotations
         if (this.resourceIri) {
-            this.getResource(this.resourceIri);
+            this.initResource(this.resourceIri);
         }
-        this.oldResourceIri = this.resourceIri;
     }
 
     ngOnDestroy() {
@@ -229,7 +213,6 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
 
     compoundNavigation(page: number) {
         this.selectedRegion = undefined;
-
         this.representationsToDisplay = [];
 
         // set current compound object position:
@@ -250,145 +233,168 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         this.compoundPosition.position = position;
         this.compoundPosition.page = page;
         this.representationsToDisplay =
-            this.collectRepresentationsAndAnnotations(this.incomingResource);
+                this.collectRepresentationsAndAnnotations(this.incomingResource);
+    }
+
+    setPermissionsOnResource(project: string) {
+        // get information about the logged-in user, if one is logged-in
+        if (this._session.getSession()) {
+            this.session = this._session.getSession();
+            // is the logged-in user project member?
+            // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
+            this.editPermissions = true;
+            // is the logged-in user system admin or project admin?
+            this.adminPermissions = this.session.user.sysAdmin
+                ? this.session.user.sysAdmin
+                : this.session.user.projectAdmin.some(
+                    (e) => e === project // this.resource.res.attachedToProject
+                );
+        }
     }
 
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
     // get and display resource
     // ------------------------------------------------------------------------
+    initResource(iri) {
+        this.oldResourceIri = this.resourceIri;
+        this.getResource(iri).subscribe(dspResource => {
+            this.renderResource(dspResource);
+        });
+    }
 
-    /**
-     * get a read resource sequence with ontology information and incoming resources.
-     *
-     * @param iri resourceIri
-     */
-    getResource(iri: string): void {
-        if (!iri) {
+    getResource(iri: string): Observable<DspResource> {
+        return this._dspApiConnection.v2.res.getResource(iri).pipe(
+            map((response: ReadResource) => {
+                return new DspResource(response);
+            })
+        );
+    }
+
+    renderResource(resource: DspResource) {
+        if (resource.res.isDeleted) { // guard; not yet implemented
             return;
         }
+        if (resource.res.id !== this.resourceIri) {
+            // ensure that only the latest requested resource is rendered
+            return; // guard for there is already another resource requested
+        }
+        if (resource.isRegion) {
+            // render the image onto which the region is pointing; a region
+            // itself can not be displayed without an image it is annotating
+            this.renderAsRegion(resource);
+        } else {
+            this.renderAsMainResource(resource);
+        }
+        this.setPermissionsOnResource(resource.res.attachedToProject);
+    }
 
-        this._dspApiConnection.v2.res.getResource(iri).subscribe(
-            (response: ReadResource) => {
-                const res = new DspResource(response);
-                this.resource = res;
+    renderAsMainResource(resource: DspResource) {
+        this.resource = resource;
+        this.oldResourceIri = this.resourceIri;
 
-                // --> TODO: here we have to add also sequenceOf similar to regionOf (DEV-744)
-                if (
-                    this.resource.res.outgoingReferences.length &&
-                    this.resource.res.entityInfo.classes[Constants.Region] &&
-                    this.resource.res.id === this.resourceIri
-                ) {
-                    // the main resource (resourceIri) is a region;
-                    // display the corresponding still-image resource instance
-                    // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
-                    const annotationOfIri = (
-                        this.resource.res.properties[
-                            Constants.IsRegionOfValue
-                        ] as ReadLinkValue[]
-                    )[0].linkedResourceIri;
+        this.representationsToDisplay =
+            this.collectRepresentationsAndAnnotations(
+                resource
+            );
 
-                    // get the parent resource to display
-                    this.getResource(annotationOfIri);
-
-                    // open annotation`s tab and highlight region
-                    this.selectedTabLabel = 'annotations';
-                    this.openRegion(iri);
-
-                    this.selectedRegion = iri;
-                    // define resource as annotation of type region
-                    this.resourceIsAnnotation = this.resource.res.entityInfo
-                        .classes[Constants.Region]
-                        ? 'region'
-                        : 'sequence';
-                } else {
-                    if (response.isDeleted) {
-                        // deleted resource; no further infos needed
-                        // --> TODO: as soon as we know how to display deleted/archived resources, we can handle it here.
-                    } else {
-                        // if there is no incomingResource and the resource has a still image property, assign the iiiUrl to be passed as an input to the still-image component
-                        if (
-                            !this.incomingResource &&
-                            this.resource.res.properties[
-                                Constants.HasStillImageFileValue
-                            ]
-                        ) {
-                            this.iiifUrl = (
-                                this.resource.res.properties[
-                                    Constants.HasStillImageFileValue
-                                ][0] as ReadStillImageFileValue
-                            ).fileUrl;
-                        }
-
-                        // get information about the logged-in user, if one is logged-in
-                        if (this._session.getSession()) {
-                            this.session = this._session.getSession();
-                            // is the logged-in user project member?
-                            // --> TODO: as soon as we know how to handle the permissions, set this value the correct way
-                            this.editPermissions = true;
-                            // is the logged-in user system admin or project admin?
-                            this.adminPermissions = this.session.user.sysAdmin
-                                ? this.session.user.sysAdmin
-                                : this.session.user.projectAdmin.some(
-                                      (e) => e === res.res.attachedToProject
-                                  );
-                        }
-
-                        this.representationsToDisplay =
-                            this.collectRepresentationsAndAnnotations(
-                                this.resource
-                            );
-
-                        if (
-                            !this.representationsToDisplay.length &&
-                            !this.compoundPosition
-                        ) {
-                            // the resource could be a compound object
-                            this._incomingService
-                                .getStillImageRepresentationsForCompoundResource(
-                                    this.resource.res.id,
-                                    0,
-                                    true
-                                )
-                                .subscribe(
-                                    (countQuery: CountQueryResponse) => {
-                                        if (countQuery.numberOfResults > 0) {
-                                            this.compoundPosition =
-                                                new DspCompoundPosition(
-                                                    countQuery.numberOfResults
-                                                );
-                                            this.compoundNavigation(1);
-                                        } else {
-                                            // not a compound object
-                                            this.loading = false;
-                                        }
-                                    },
-                                    (error: ApiResponseError) => {
-                                        this.loading = false;
-                                        this._errorHandler.showMessage(error);
-                                    }
+        if (
+            !this.representationsToDisplay.length &&
+            !this.compoundPosition
+        ) {
+            // the resource could be a compound object
+            this._incomingService
+                .getStillImageRepresentationsForCompoundResource(
+                    resource.res.id,
+                    0,
+                    true
+                )
+                .subscribe(
+                    (countQuery: CountQueryResponse) => {
+                        if (countQuery.numberOfResults > 0) {
+                            this.compoundPosition =
+                                new DspCompoundPosition(
+                                    countQuery.numberOfResults
                                 );
+                            this.compoundNavigation(1);
                         } else {
-                            this.requestIncomingResources(this.resource);
+                            // not a compound object
+                            this.loading = false;
                         }
-
-                        // gather resource property information
-                        res.resProps = this.initProps(response);
-
-                        // gather system property information
-                        res.systemProps =
-                            this.resource.res.entityInfo.getPropertyDefinitionsByType(
-                                SystemPropertyDefinition
-                            );
+                    },
+                    (error: ApiResponseError) => {
+                        this.loading = false;
+                        this._errorHandler.showMessage(error);
                     }
-                }
-            },
-            (error: ApiResponseError) => {
-                this.resource = undefined;
-                this.loading = false;
-                this._errorHandler.showMessage(error);
-            }
-        );
+                );
+        } else {
+            this.requestIncomingResources(resource);
+        }
+
+        // gather resource property information
+        this.resource.resProps = this.initProps(this.resource.res);
+
+        // gather system property information
+        this.resource.systemProps =
+            this.resource.res.entityInfo.getPropertyDefinitionsByType(
+                SystemPropertyDefinition
+            );
+    }
+
+
+    renderAsRegion(region: DspResource) {
+        // display the corresponding still-image resource instance
+        // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
+        const annotatedRepresentationIri = (
+            region.res.properties[
+                Constants.IsRegionOfValue
+                ] as ReadLinkValue[]
+        )[0].linkedResourceIri;
+        // get the annotated main resource
+        this.getResource(annotatedRepresentationIri).subscribe(dspResource => {
+            this.resource = dspResource;
+            this.renderAsMainResource(dspResource);
+
+            // open annotation`s tab and highlight region
+            this.selectedTabLabel = 'annotations';
+            this.openRegion(region.res.id);
+
+            this.selectedRegion = region.res.id;
+            // define resource as annotation of type region
+            this.resourceIsAnnotation = this.resource.res.entityInfo
+                .classes[Constants.Region]
+                ? 'region'
+                : 'sequence';
+        });
+    }
+
+    // return whether the main resource
+    get isMainResourceToDisplay() {
+        return this.resource.res.id === this.resourceIri;
+    }
+
+    renderRegion(iri) {
+        // display the corresponding still-image resource instance
+        // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
+        const annotationOfIri = (
+            this.resource.res.properties[
+                Constants.IsRegionOfValue
+                ] as ReadLinkValue[]
+        )[0].linkedResourceIri;
+
+        // get the parent resource to display
+        this.getResource(annotationOfIri);
+
+        // open annotation`s tab and highlight region
+        this.selectedTabLabel = 'annotations';
+        this.openRegion(iri);
+
+        this.selectedRegion = iri;
+        // define resource as annotation of type region
+        this.resourceIsAnnotation = this.resource.res.entityInfo
+            .classes[Constants.Region]
+            ? 'region'
+            : 'sequence';
     }
 
     getIncomingResource(iri: string) {
@@ -397,20 +403,8 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
                 const res = new DspResource(response);
 
                 this.incomingResource = res;
-                // if the resource is a still image, assign the iiiUrl to be passed as an input to the still-image component
-                if (
-                    this.incomingResource.res.properties[
-                        Constants.HasStillImageFileValue
-                    ]
-                ) {
-                    this.iiifUrl = (
-                        this.incomingResource.res.properties[
-                            Constants.HasStillImageFileValue
-                        ][0] as ReadStillImageFileValue
-                    ).fileUrl;
-                }
-                res.resProps = this.initProps(response);
-                res.systemProps =
+                this.incomingResource.resProps = this.initProps(response);
+                this.incomingResource.systemProps =
                     this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(
                         SystemPropertyDefinition
                     );
@@ -525,7 +519,7 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         // general object for all kind of representations
         const representations: FileRepresentation[] = [];
 
-        // --> TODO: use a switch here to go through the different representation types
+        // --> TODO: use proper classes and a factory
         if (resource.res.properties[Constants.HasStillImageFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // resource has StillImageFileValues that are directly attached to it (properties)
@@ -667,19 +661,12 @@ export class ResourceComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // request incoming regions --> TODO: add case to get incoming sequences in case of video and audio
-        if (
-            resource.res.properties[Constants.HasStillImageFileValue] ||
-            resource.res.properties[Constants.HasDocumentFileValue] ||
-            resource.res.properties[Constants.HasAudioFileValue] ||
-            resource.res.properties[Constants.HasMovingImageFileValue] ||
-            resource.res.properties[Constants.HasArchiveFileValue] ||
-            resource.res.properties[Constants.HasTextFileValue]
-        ) {
+        if (resource.res.properties[Constants.HasStillImageFileValue]) {
             // --> TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
             // the resource is a StillImageRepresentation, check if there are regions pointing to it
 
             this.getIncomingRegions(resource, 0);
-        } else {
+        } else if (this.compoundPosition) {
             // this resource is not a StillImageRepresentation
             // check if there are StillImageRepresentations pointing to this resource
 

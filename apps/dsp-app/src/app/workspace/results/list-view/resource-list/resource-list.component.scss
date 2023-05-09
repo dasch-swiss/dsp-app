@@ -1,10 +1,11 @@
 @use "../../../../../styles/config" as *;
 
 .resource-list {
+  cursor: default;
   .mat-list-item {
+    cursor: default;
     height: auto;
     min-height: 40px;
-    padding: 8px 0;
 
     &.border-bottom {
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -16,8 +17,31 @@
   }
 }
 
+.mat-list-item-content {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.res-list-item-container {
+  display: flex;
+  flex-grow: 1; /* grow to fill remaining space */
+  align-items: center;
+  cursor: pointer;
+}
+
+.res-list-item-text{
+  padding-left: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+
 .res-checkbox {
-  margin: 0 15px;
+  margin-left: auto;
+  cursor: default;
 }
 
 .res-class-label,
