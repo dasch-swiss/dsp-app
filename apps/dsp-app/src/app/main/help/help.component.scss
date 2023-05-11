@@ -30,3 +30,9 @@ a.middle {
   display: block;
   max-width: 200px;
 }
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

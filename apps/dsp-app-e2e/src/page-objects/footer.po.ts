@@ -18,7 +18,7 @@ export class FooterPage {
     }
 
     getKnoraLink() {
-        return element(by.css('a[href*="https://www.knora.org"]'));
+        return element(by.css('a[href*="https://github.com/dasch-swiss/dsp-api/"]'));
     }
 
     getSipiLink() {
