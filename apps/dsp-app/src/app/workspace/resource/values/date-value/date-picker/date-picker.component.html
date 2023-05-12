@@ -33,7 +33,7 @@
     <mat-icon matSuffix class="link">event</mat-icon>
 </mat-form-field> -->
 <!-- <button mat-button [matMenuTriggerFor]="menu">Menu</button> -->
-<mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker">
+<mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker" (closed)="closed.emit()">
     <div
         class="date-picker-content"
         (click)="$event.stopPropagation()"

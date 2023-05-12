@@ -4,6 +4,7 @@
             <app-date-picker
                 class="start-date"
                 [formControlName]="'startDate'"
+                (closed)="handlePickerClose()"
             ></app-date-picker>
         </div>
 
@@ -36,12 +37,12 @@
     </div>
 
     <div class="date-form-error">
-        <mat-error *ngIf="startDate.hasError('required')">
+        <mat-error *ngIf="startDate.hasError('required') && pickerClosed">
             <span class="custom-error-message"
                 >One date is <strong>required</strong></span
             >
         </mat-error>
-        <mat-error *ngIf="endDate.hasError('required')">
+        <mat-error *ngIf="endDate.hasError('required') && pickerClosed">
             <span class="custom-error-message"
                 >End date is <strong>required</strong></span
             >

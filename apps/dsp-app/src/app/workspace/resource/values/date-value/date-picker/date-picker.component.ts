@@ -4,11 +4,13 @@ import {
     Component,
     DoCheck,
     ElementRef,
+    EventEmitter,
     HostBinding,
     Input,
     OnChanges,
     OnDestroy,
     Optional,
+    Output,
     Self,
     SimpleChanges,
     ViewChild,
@@ -90,7 +92,7 @@ export class DatePickerComponent
     static nextId = 0;
 
     @ViewChild(MatMenuTrigger) popover: MatMenuTrigger;
-
+    @Output() closed: EventEmitter<void> = new EventEmitter();
     @Input() errorStateMatcher: ErrorStateMatcher;
 
     // disable calendar selector in case of end date in a period date value
@@ -624,4 +626,5 @@ export class DatePickerComponent
         }
         this.weeks = weeks;
     }
+
 }
