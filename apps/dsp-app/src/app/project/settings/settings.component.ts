@@ -12,8 +12,6 @@ export class SettingsComponent implements OnInit {
 
     loading = false;
 
-    constructor() {}
-
     ngOnInit(): void {
         // collaboration
         this.navigation.push(AppGlobal.projectNav[1]);

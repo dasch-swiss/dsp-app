@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 export interface GridItem {
     icon?: string;
@@ -13,10 +13,6 @@ export interface GridItem {
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.scss'],
 })
-export class GridComponent implements OnInit {
+export class GridComponent {
     @Input() list: GridItem[];
-
-    constructor() {}
-
-    ngOnInit() {}
 }

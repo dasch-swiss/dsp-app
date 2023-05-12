@@ -33,8 +33,6 @@ export class ProgressIndicatorComponent implements OnInit {
 
     widthAndHeight: string;
 
-    constructor() {}
-
     ngOnInit() {
         this.widthAndHeight = this.size === 'small' ? '48px' : '128px';
     }

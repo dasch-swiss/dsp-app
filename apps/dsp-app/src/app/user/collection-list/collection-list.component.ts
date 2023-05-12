@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -6,13 +6,11 @@ import { Title } from '@angular/platform-browser';
     templateUrl: './collection-list.component.html',
     styleUrls: ['./collection-list.component.scss'],
 })
-export class CollectionListComponent implements OnInit {
+export class CollectionListComponent {
     loading = false;
 
     constructor(private _titleService: Title) {
         // set the page title
         this._titleService.setTitle('Your collections');
     }
-
-    ngOnInit() {}
 }

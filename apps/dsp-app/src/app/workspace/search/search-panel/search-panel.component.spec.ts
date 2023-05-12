@@ -3,7 +3,6 @@ import {
     Component,
     EventEmitter,
     Input,
-    OnInit,
     Output,
     ViewChild,
 } from '@angular/core';
@@ -18,13 +17,11 @@ import { SearchPanelComponent } from './search-panel.component';
 @Component({
     selector: 'app-fulltext-search',
 })
-class TestFulltextSearchComponent implements OnInit {
+class TestFulltextSearchComponent {
     @Input() projectfilter?: boolean = false;
     @Input() limitToProject?: string;
     @Input() show: boolean;
     @Output() showState = new EventEmitter();
-
-    ngOnInit() {}
 }
 
 /**

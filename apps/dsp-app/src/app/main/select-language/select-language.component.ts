@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from './language.service';
@@ -8,7 +8,7 @@ import { LanguageService } from './language.service';
     templateUrl: './select-language.component.html',
     styleUrls: ['./select-language.component.scss'],
 })
-export class SelectLanguageComponent implements OnInit, OnDestroy {
+export class SelectLanguageComponent implements OnDestroy {
     selectedLang: string;
     lang: Array<any>;
     subscription: Subscription;
@@ -41,8 +41,6 @@ export class SelectLanguageComponent implements OnInit, OnDestroy {
         this._langService.setLanguage(language);
         // console.log('langSelect, i18n: ' + langSelect);
     }
-
-    ngOnInit() {}
 
     ngOnDestroy() {
         // unsubscribe to ensure no memory leaks

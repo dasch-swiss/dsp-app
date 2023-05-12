@@ -1,17 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-dialog-header',
     templateUrl: './dialog-header.component.html',
     styleUrls: ['./dialog-header.component.scss'],
 })
-export class DialogHeaderComponent implements OnInit {
+export class DialogHeaderComponent {
     @Input() title: string;
     @Input() subtitle: string;
 
     @Output() close: EventEmitter<any> = new EventEmitter<any>();
-
-    constructor() {}
-
-    ngOnInit() {}
 }

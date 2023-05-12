@@ -54,8 +54,6 @@ export class SortButtonComponent implements OnInit {
 
     menuXPos: 'before' | 'after' = 'after';
 
-    constructor() {}
-
     ngOnInit() {
         if (this.position === 'right') {
             this.menuXPos = 'before';

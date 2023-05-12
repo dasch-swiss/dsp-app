@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
     MatLegacyDialogRef as MatDialogRef,
     MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
@@ -47,7 +47,7 @@ export enum DialogEvent {
     templateUrl: './dialog.component.html',
     styleUrls: ['./dialog.component.scss'],
 })
-export class DialogComponent implements OnInit {
+export class DialogComponent {
     notYetImplemented = `The component <strong>${this.data.mode}</strong> is not implemented yet.`;
 
     comment?: string;
@@ -61,8 +61,6 @@ export class DialogComponent implements OnInit {
             this.dialogRef.addPanelClass('full-size-dialog');
         }
     }
-
-    ngOnInit() {}
 
     closeDialog(): void {
         this.dialogRef.close();

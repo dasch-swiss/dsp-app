@@ -11,7 +11,6 @@ import {
     ElementRef,
     EventEmitter,
     Input,
-    OnInit,
     Output,
     TemplateRef,
     ViewChild,
@@ -24,7 +23,7 @@ import { SearchParams } from '../../results/list-view/list-view.component';
     templateUrl: './search-panel.component.html',
     styleUrls: ['./search-panel.component.scss'],
 })
-export class SearchPanelComponent implements OnInit {
+export class SearchPanelComponent {
     /**
      * @param [projectfilter] If true it shows the selection of projects to filter by one of them
      * Default value: false
@@ -73,8 +72,6 @@ export class SearchPanelComponent implements OnInit {
         private _overlay: Overlay,
         private _viewContainerRef: ViewContainerRef
     ) {}
-
-    ngOnInit() {}
 
     openPanelWithBackdrop(type: string) {
         this.showAdvanced = type === 'advanced';
