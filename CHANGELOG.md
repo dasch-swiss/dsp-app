@@ -1,5 +1,28 @@
 # Changelog
 
+## [10.19.2](https://github.com/dasch-swiss/dsp-das/compare/v10.19.1...v10.19.2) (2023-05-15)
+
+
+### Bug Fixes
+
+* **app/resource:** show region on first load ([#1040](https://github.com/dasch-swiss/dsp-das/issues/1040)) ([a7e1975](https://github.com/dasch-swiss/dsp-das/commit/a7e197562f7f4a0162682b9425d49d22626fdc5e))
+* **app:** top-level-domain with 63 chars ([#1045](https://github.com/dasch-swiss/dsp-das/issues/1045)) ([19dc886](https://github.com/dasch-swiss/dsp-das/commit/19dc8864d7406eed0d6b276ca936e1b14c647627))
+* **date-picker:** don't display error message without input ([#1038](https://github.com/dasch-swiss/dsp-das/issues/1038)) ([0be2229](https://github.com/dasch-swiss/dsp-das/commit/0be2229cff192de444222588313439fda35c2883))
+* **pdf-viewer:** pdf viewer not sending cookie (dev-2136) ([#1039](https://github.com/dasch-swiss/dsp-das/issues/1039)) ([f51479b](https://github.com/dasch-swiss/dsp-das/commit/f51479be94ddc544c1a4bd9e6b0ce9640e78d0b9))
+* **pdf-viewer:** pdf viewer not sending cookie (dev-2136) ([#1039](https://github.com/dasch-swiss/dsp-das/issues/1039)) ([5f884f4](https://github.com/dasch-swiss/dsp-das/commit/5f884f4c8f216c86643f9343d062971b0405ad4c))
+* **pdf-viewer:** pdf viewer not sending cookie (Dev-2136) ([#1039](https://github.com/dasch-swiss/dsp-das/issues/1039)) ([c990c4f](https://github.com/dasch-swiss/dsp-das/commit/c990c4faef911061cc1f817fd86b60ecf24da117))
+* **pdf-viewer:** pdf viewer not sending cookie (Dev-2136) ([#1039](https://github.com/dasch-swiss/dsp-das/issues/1039)) ([6e3453d](https://github.com/dasch-swiss/dsp-das/commit/6e3453d8265084534f19d1926b447ffba64606bd))
+* **resource viewer:** images flickering or not loading ([#1033](https://github.com/dasch-swiss/dsp-das/issues/1033)) ([6fdb14b](https://github.com/dasch-swiss/dsp-das/commit/6fdb14b820c15b21deeeec165724b21dfcc6c465))
+
+
+### Maintenance
+
+* **app/footer:** update link and center content ([#1041](https://github.com/dasch-swiss/dsp-das/issues/1041)) ([1f4c16e](https://github.com/dasch-swiss/dsp-das/commit/1f4c16e8c45cd7cd05b2995f4fb85b83628eca51))
+* eliminate eslint unused vars ([#1037](https://github.com/dasch-swiss/dsp-das/issues/1037)) ([0076d1d](https://github.com/dasch-swiss/dsp-das/commit/0076d1dfeffb0198267370aff9ae033330b659b4))
+* overview and project tile refactor ([#1031](https://github.com/dasch-swiss/dsp-das/issues/1031)) ([1fabbd0](https://github.com/dasch-swiss/dsp-das/commit/1fabbd056049920c003459c2c494f67fdd08478e))
+* **unused lifecycle hooks:** remove unused lifecycle hooks ([#1043](https://github.com/dasch-swiss/dsp-das/issues/1043)) ([1c79877](https://github.com/dasch-swiss/dsp-das/commit/1c79877a19b6e40213e7d43830e50f4fb01c216e))
+* update dsp-js-lib to 8.2.3 ([#1046](https://github.com/dasch-swiss/dsp-das/issues/1046)) ([508cf48](https://github.com/dasch-swiss/dsp-das/commit/508cf480e077214a00b9d5772b4a383797828046))
+
 ## [10.19.1](https://github.com/dasch-swiss/dsp-das/compare/v10.19.0...v10.19.1) (2023-04-28)
 
 
