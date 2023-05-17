@@ -9,13 +9,39 @@
     }}</span>
 </span>
 <ng-template #showForm>
-    <span [formGroup]="form">
-        <mat-checkbox
-            [formControlName]="'value'"
-            class="value boolValue child-value-component"
-            [class.more-space]="moreSpace"
-        >
-        </mat-checkbox>
+    <span *ngIf="mode === 'create'">
+         <span *ngIf="boolValIsUnset">
+            <button
+                mat-icon-button
+                type="button"
+                class="value-action create"
+                title="Add a new value"
+                (click)="boolValIsUnset = false"
+            >
+                <mat-icon>add_box</mat-icon>
+            </button>
+             (boolean value is not yet set)
+        </span>
+    </span>
+    <span  [formGroup]="form" *ngIf='!boolValIsUnset'>
+        <span class="checkbox-container">
+            <mat-checkbox
+                [formControlName]="'value'"
+                class="value boolValue child-value-component"
+                [class.more-space]="moreSpace"
+            >
+            </mat-checkbox>
+            <span class="right-align" *ngIf="!boolValIsUnset && newResource && !valueRequiredValidator">
+                <button
+                    mat-icon-button
+                    class="value-action cancel"
+                    title="cancel"
+                    (click)="boolValIsUnset = true"
+                >
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </span>
+        </span>
         <mat-error
             *ngIf="
                 valueFormControl.hasError('valueNotChanged') &&

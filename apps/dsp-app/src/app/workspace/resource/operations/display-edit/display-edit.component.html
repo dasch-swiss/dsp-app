@@ -168,7 +168,7 @@
                 </button>
                 <span
                     [matTooltip]="
-                        canDelete && valueTypeOrClass !== constants.BooleanValue
+                        canDelete
                             ? 'delete'
                             : 'This value cannot be deleted because at least one value is required'
                     "
@@ -183,8 +183,7 @@
                             projectStatus
                         "
                         [disabled]="
-                            !canDelete ||
-                            valueTypeOrClass === constants.BooleanValue
+                            !canDelete
                         "
                         (click)="openDialog()"
                     >
