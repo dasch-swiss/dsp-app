@@ -140,7 +140,7 @@ describe('BooleanValueComponent', () => {
                 'read'
             );
 
-            expect(valueReadModeNativeElement.innerText).toEqual('check_box');
+            expect(valueReadModeNativeElement.innerText).toEqual('toggle_on');
         });
 
         it('should make an existing value editable', () => {
@@ -256,7 +256,7 @@ describe('BooleanValueComponent', () => {
             testHostFixture.detectChanges();
 
             expect(valueReadModeNativeElement.innerText).toEqual(
-                'check_box_outline_blank'
+                'toggle_off'
             );
 
             expect(

@@ -1,7 +1,7 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
     <span class="rm-value">
-        <mat-icon>{{
-            valueFormControl.value ? 'check_box' : 'check_box_outline_blank'
+        <mat-icon [ngClass]= "valueFormControl.value ? 'toggle-icon-on': 'toggle-icon-off'">{{
+            valueFormControl.value? 'toggle_on' : 'toggle_off'
         }}</mat-icon>
     </span>
     <span class="rm-comment" *ngIf="shouldShowComment">{{
@@ -20,11 +20,10 @@
             >
                 <mat-icon>add_box</mat-icon>
             </button>
-             (boolean value is not yet set)
         </span>
     </span>
     <span  [formGroup]="form" *ngIf='!boolValIsUnset'>
-        <span class="checkbox-container">
+        <span class='toggle-container'>
             <mat-slide-toggle
                 [formControlName]="'value'"
                 class="value boolValue child-value-component"

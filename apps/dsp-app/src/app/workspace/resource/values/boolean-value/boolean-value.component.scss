@@ -1,29 +1,39 @@
 @use "../../../../../styles/config" as *;
 
-.read-mode-view .mat-icon,
-.boolValue {
-  display: block;
-  color: $primary;
-
-  &.more-space {
-    margin-top: 16px;
-  }
-}
-
 .boolValue {
   margin-top: 4px;
 }
 
-.read-mode-view .mat-icon {
-  margin-top: 13px;
-  margin-left: 4px;
+.read-mode-view {
+  .mat-icon {
+    align-self: center;
+    font-size: 26pt;
+    min-width: 50px;
+
+    .boolValue {
+      display: block;
+      color: $primary;
+
+      &.more-space {
+        margin-top: 16px;
+      }
+    }
+  }
 }
 
-.checkbox-container {
+.toggle-container {
   display: flex;
   align-items: center;
 }
 
 .right-align {
   margin-left: auto;
+}
+
+.toggle-icon-off {
+  color: grey !important;
+}
+
+.toggle-icon-on {
+  color: $secondary !important;
 }
