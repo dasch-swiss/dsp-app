@@ -74,7 +74,7 @@
     "@nrwl/nx-cloud": "16.0.5",
     "@nrwl/workspace": "15.8.9",
     "@schematics/angular": "^15.2.4",
-    "@types/jasmine": "~3.8.0",
+    "@types/jasmine": "~4.3.1",
     "@types/jasminewd2": "~2.0.3",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.11.18",
