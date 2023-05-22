@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import {
-    MatLegacyDialogRef as MatDialogRef,
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-} from '@angular/material/legacy-dialog';
+    MatDialogRef,
+    MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { Cardinality, ReadResource } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from '@dsp-app/src/app/project/ontology/default-data/default-properties';
 import { FilteredResources } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';

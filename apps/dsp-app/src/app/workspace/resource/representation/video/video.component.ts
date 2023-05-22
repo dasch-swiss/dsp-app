@@ -11,9 +11,9 @@ import {
     ViewChild,
 } from '@angular/core';
 import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogConfig as MatDialogConfig,
-} from '@angular/material/legacy-dialog';
+    MatDialog,
+    MatDialogConfig,
+} from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogConfig as MatDialogConfig,
-} from '@angular/material/legacy-dialog';
+    MatDialog,
+    MatDialogConfig,
+} from '@angular/material/dialog';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { FilteredResources } from '../results/list-view/list-view.component';

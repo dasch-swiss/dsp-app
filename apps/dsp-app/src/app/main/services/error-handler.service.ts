@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogConfig as MatDialogConfig,
-    MatLegacyDialogRef as MatDialogRef,
-} from '@angular/material/legacy-dialog';
+    MatDialog,
+    MatDialogConfig,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import {
     ApiResponseData,
     ApiResponseError,

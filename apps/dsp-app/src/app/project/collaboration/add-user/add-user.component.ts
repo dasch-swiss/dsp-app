@@ -12,9 +12,9 @@ import {
     UntypedFormGroup,
 } from '@angular/forms';
 import {
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogConfig as MatDialogConfig,
-} from '@angular/material/legacy-dialog';
+    MatDialog,
+    MatDialogConfig,
+} from '@angular/material/dialog';
 import {
     ApiResponseData,
     ApiResponseError,

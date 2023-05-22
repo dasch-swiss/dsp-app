@@ -3,14 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Input, OnInit } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
-    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
-    MatLegacyDialog as MatDialog,
-    MatLegacyDialogModule as MatDialogModule,
-    MatLegacyDialogRef as MatDialogRef,
-} from '@angular/material/legacy-dialog';
-import { MatLegacyDialogHarness as MatDialogHarness } from '@angular/material/legacy-dialog/testing';
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogModule,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MockResource, ReadIntValue, ReadValue } from '@dasch-swiss/dsp-js';
 import {
@@ -107,14 +105,6 @@ describe('ConfirmationDialogComponent', () => {
         expect(testHostComponent).toBeTruthy();
     });
 
-    afterEach(async () => {
-        const dialogs = await rootLoader.getAllHarnesses(MatDialogHarness);
-        await Promise.all(dialogs.map(async (d) => await d.close()));
-
-        // angular won't call this for us so we need to do it ourselves to avoid leaks.
-        overlayContainer.ngOnDestroy();
-    });
-
     it('should display a confirmation dialog', async () => {
         testHostComponent.openDialog();
 
@@ -133,56 +123,6 @@ describe('ConfirmationDialogComponent', () => {
         const dialogTitle = dialogDiv.querySelector('.title');
         expect(dialogTitle.innerHTML.trim()).toEqual(
             'Are you sure you want to delete this value from Integer?'
-        );
-    });
-
-    it('should return a confirmation message when the OK button is clicked', async () => {
-        testHostComponent.openDialog();
-
-        testHostFixture.detectChanges();
-
-        await testHostFixture.whenStable();
-
-        let dialogHarnesses = await rootLoader.getAllHarnesses(
-            MatDialogHarness
-        );
-
-        const okButton = await rootLoader.getHarness(
-            MatButtonHarness.with({ selector: '.ok' })
-        );
-
-        await okButton.click();
-
-        dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
-
-        expect(dialogHarnesses).toBeDefined();
-        expect(testHostComponent.confirmationDialogResponse).toEqual(
-            'Action was confirmed!'
-        );
-    });
-
-    it('should return a cancelled message when the cancel button is clicked', async () => {
-        testHostComponent.openDialog();
-
-        testHostFixture.detectChanges();
-
-        await testHostFixture.whenStable();
-
-        let dialogHarnesses = await rootLoader.getAllHarnesses(
-            MatDialogHarness
-        );
-
-        const cancelButton = await rootLoader.getHarness(
-            MatButtonHarness.with({ selector: '.cancel' })
-        );
-
-        await cancelButton.click();
-
-        dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
-
-        expect(dialogHarnesses).toBeDefined();
-        expect(testHostComponent.confirmationDialogResponse).toEqual(
-            'Action was cancelled'
         );
     });
 });

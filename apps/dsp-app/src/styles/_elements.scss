@@ -506,7 +506,6 @@ $gc-small: $form-width - $gc-large - 4;
 
   .form-panel {
     display: inline-flex;
-    width: $form-width;
 
     &.form-action {
       display: flex;
@@ -661,8 +660,12 @@ $gc-small: $form-width - $gc-large - 4;
 // dialog box / material overlay
 
 .cdk-overlay-pane {
-  .mat-dialog-container {
+  .mat-mdc-dialog-container {
     overflow-y: auto;
+
+    .dialog-content {
+      padding: 24px;
+    }
   }
 }
 

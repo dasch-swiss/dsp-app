@@ -238,7 +238,7 @@ button.space-reducer {
 .full-size-dialog {
   transition: unset !important;
 
-  .mat-dialog-container {
+  .mat-mdc-dialog-container {
     transition: none !important;
     border-radius: 0 !important;
   }
