@@ -85,3 +85,16 @@
     }
   }
 }
+
+.reset-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mat-icon {
+  font-size: 16px; /* Adjust the font size to make the icon smaller */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
