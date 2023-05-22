@@ -25,12 +25,12 @@
     </span>
     <span  [formGroup]="form" *ngIf='!boolValIsUnset'>
         <span class="checkbox-container">
-            <mat-checkbox
+            <mat-slide-toggle
                 [formControlName]="'value'"
                 class="value boolValue child-value-component"
                 [class.more-space]="moreSpace"
             >
-            </mat-checkbox>
+            </mat-slide-toggle>
             <span class="right-align" *ngIf="!boolValIsUnset && newResource && !valueRequiredValidator">
                 <button
                     mat-icon-button

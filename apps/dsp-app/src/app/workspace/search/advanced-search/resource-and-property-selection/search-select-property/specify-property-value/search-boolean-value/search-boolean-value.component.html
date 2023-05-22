@@ -1,8 +1,8 @@
 <span [formGroup]="form">
-    <mat-checkbox [formControlName]="'booleanValue'"
+    <mat-slide-toggle [formControlName]="'booleanValue'"
         >{{
-            form.controls.booleanValue.value ? '' : 'not '
+            form.controls.booleanValue.value ? 'true' : 'false '
         }}
-        checked</mat-checkbox
+        </mat-slide-toggle
     >
 </span>

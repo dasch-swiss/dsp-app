@@ -5,9 +5,11 @@ import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ValueLiteral } from '../operator';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /**
  * test host component to simulate parent component.
@@ -15,19 +17,19 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 @Component({
     template: ` <app-search-boolean-value
         #boolVal
-        [formGroup]="form"
+        [formGroup]="fg"
     ></app-search-boolean-value>`,
 })
 class TestHostComponent implements OnInit {
     @ViewChild('boolVal', { static: false })
     booleanValue: SearchBooleanValueComponent;
 
-    form;
+    fg;
 
     constructor(@Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder) {}
 
     ngOnInit() {
-        this.form = this._fb.group({});
+        this.fg = this._fb.group({});
     }
 }
 
@@ -42,7 +44,9 @@ describe('SearchBooleanValueComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 ReactiveFormsModule,
+                MatTooltipModule,
                 MatCheckboxModule,
+                MatSlideToggleModule,
             ],
             declarations: [SearchBooleanValueComponent, TestHostComponent],
         }).compileComponents();
@@ -62,17 +66,19 @@ describe('SearchBooleanValueComponent', () => {
     });
 
     it('should get a boolean literal true', async () => {
-        const matCheckbox = await loader.getHarness(MatCheckboxHarness);
+        const slideToggle = await loader.getHarness(MatSlideToggleHarness);
 
-        await matCheckbox.check();
+        await slideToggle.check();
 
         const expectedIntLiteralVal = new ValueLiteral(
             'true',
             'http://www.w3.org/2001/XMLSchema#boolean'
         );
 
+
         expect(testHostComponent.booleanValue.getValue()).toEqual(
             expectedIntLiteralVal
         );
+
     });
 });
