@@ -13,7 +13,7 @@ export class TextValueHtmlLinkDirective {
      *
      * @param targetElement the element that was clicked.
      */
-    @HostListener('click', ['$event.target'])
+    @HostListener('mousedown', ['$event.target'])
     onClick(targetElement) {
         if (
             targetElement.nodeName.toLowerCase() === 'a' &&

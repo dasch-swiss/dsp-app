@@ -37,28 +37,38 @@ class TestHostComponent {
 describe('TextValueHtmlLinkDirective', () => {
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
+    let directive: TextValueHtmlLinkDirective;
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [BrowserAnimationsModule],
             declarations: [TextValueHtmlLinkDirective, TestHostComponent],
         }).compileComponents();
+
     }));
 
     beforeEach(() => {
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
+        directive = testHostFixture.debugElement.query(By.directive(TextValueHtmlLinkDirective)).injector.get(TextValueHtmlLinkDirective);
+
         testHostFixture.detectChanges();
 
         expect(testHostComponent).toBeTruthy();
+        expect(directive).toBeTruthy();
+
+        // resetting the internalLinkClickedIri
+        testHostComponent.internalLinkClickedIri = undefined;
     });
 
     it('should create an instance', () => {
         expect(testHostComponent).toBeTruthy();
     });
 
-    it('should react to clicking on an internal link', () => {
+    it('should emit a left mouse button click on an internal link', () => {
+
         expect(testHostComponent).toBeTruthy();
+        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
 
         const hostCompDe = testHostFixture.debugElement;
         const directiveDe = hostCompDe.query(
@@ -67,7 +77,56 @@ describe('TextValueHtmlLinkDirective', () => {
 
         const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
 
-        internalLinkDe.nativeElement.click();
+        // left mouse event
+        internalLinkDe.nativeElement.dispatchEvent(
+            new MouseEvent('mousedown', { bubbles: true, button: 0 })
+    );
+
+        testHostFixture.detectChanges();
+
+        expect(testHostComponent.internalLinkClickedIri).toEqual(
+            'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
+        );
+    });
+
+    it('should emit a right mouse button click on an internal link', () => {
+        expect(testHostComponent).toBeTruthy();
+        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
+
+        const hostCompDe = testHostFixture.debugElement;
+        const directiveDe = hostCompDe.query(
+            By.directive(TextValueHtmlLinkDirective)
+        );
+
+        const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
+
+        // left mouse event
+        internalLinkDe.nativeElement.dispatchEvent(
+            new MouseEvent('mousedown', { bubbles: true, button: 2 })
+        );
+
+        testHostFixture.detectChanges();
+
+        expect(testHostComponent.internalLinkClickedIri).toEqual(
+            'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
+        );
+    });
+
+    it('should emit a middle mouse button click on an internal link', () => {
+        expect(testHostComponent).toBeTruthy();
+        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
+
+        const hostCompDe = testHostFixture.debugElement;
+        const directiveDe = hostCompDe.query(
+            By.directive(TextValueHtmlLinkDirective)
+        );
+
+        const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
+
+        // left mouse event
+        internalLinkDe.nativeElement.dispatchEvent(
+            new MouseEvent('mousedown', { bubbles: true, button: 1 })
+        );
 
         testHostFixture.detectChanges();
 
