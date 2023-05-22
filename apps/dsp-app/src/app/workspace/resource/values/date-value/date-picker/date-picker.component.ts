@@ -284,8 +284,8 @@ export class DatePickerComponent
 
         this.dateForm.valueChanges.subscribe(() => this.handleInput());
     }
-
-    onChange = () => {};
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onChange = (_: any) => {};
 
     onTouched = () => {};
 
@@ -330,7 +330,7 @@ export class DatePickerComponent
     }
 
     handleInput() {
-        this.onChange();
+        this.onChange(this.value);
     }
 
     buildForm() {
