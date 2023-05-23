@@ -26,9 +26,9 @@
 
 
 .res-list-item-container {
+  width: 95%;
   display: flex;
   flex-grow: 1; /* grow to fill remaining space */
-  align-items: center;
   cursor: pointer;
 }
 
@@ -40,6 +40,8 @@
 
 
 .res-checkbox {
+  align-items: flex-end;
+  width: 5%;
   margin-left: auto;
   cursor: default;
 }

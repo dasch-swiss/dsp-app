@@ -51,11 +51,12 @@
                 </div>
             </div>
             <!-- if withMultipleSelection is true, we display checkbox -->
-            <mat-checkbox
-                #ckbox
-                *ngIf="withMultipleSelection"
-                id="{{ i }}"
-                (change)="
+            <div class="res-checkbox">
+                <mat-checkbox
+                    #ckbox
+                    *ngIf="withMultipleSelection"
+                    id="{{ i }}"
+                    (change)="
                     selectResource({
                         checked: $event.checked,
                         resIndex: i,
@@ -64,9 +65,9 @@
                         isCheckbox: true
                     })
                 "
-                class="res-checkbox"
-            >
-            </mat-checkbox>
+                >
+                </mat-checkbox>
+            </div>
         </mat-list-item>
     </div>
 </mat-list>
