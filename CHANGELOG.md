@@ -1,5 +1,34 @@
 # Changelog
 
+## [10.20.0](https://github.com/dasch-swiss/dsp-das/compare/v10.19.2...v10.20.0) (2023-05-23)
+
+
+### Bug Fixes
+
+* **add-user:** resize and center cancel button (DEV-2073) ([#1050](https://github.com/dasch-swiss/dsp-das/issues/1050)) ([7ef68f0](https://github.com/dasch-swiss/dsp-das/commit/7ef68f008db27752fca2f5d5dfc63cb52855700d))
+* **app:** button activated for date search ([#1051](https://github.com/dasch-swiss/dsp-das/issues/1051)) ([42fe1d1](https://github.com/dasch-swiss/dsp-das/commit/42fe1d1f3cefe21936ab76068b952300ad1b95fd))
+* **app:** Full text search shows next 25 results ([#1047](https://github.com/dasch-swiss/dsp-das/issues/1047)) ([b3f60c6](https://github.com/dasch-swiss/dsp-das/commit/b3f60c640e1a5b36dc72880b7353a32ae6db3b0e))
+* **boolean property comment:** Comment field is always enabled ([#1053](https://github.com/dasch-swiss/dsp-das/issues/1053)) ([e3ab3e1](https://github.com/dasch-swiss/dsp-das/commit/e3ab3e152abf01ab37638d3d2ec75684d0ebc402))
+* **resource-list:** set a fix width within mat-list-item ([#1057](https://github.com/dasch-swiss/dsp-das/issues/1057)) ([b6b3672](https://github.com/dasch-swiss/dsp-das/commit/b6b36724ddcc6130192d3d638419fc15c10e14ae))
+* **standoff html links:** every mouse button opens the resource (DEV-2092) ([#1042](https://github.com/dasch-swiss/dsp-das/issues/1042)) ([2f63340](https://github.com/dasch-swiss/dsp-das/commit/2f63340a3ad3fb90dc475b3ddd8d1a88459bd735))
+
+
+### Enhancements
+
+* **boolean icon:** change checkbox into toggle in read mode (DEV-2178) ([#1052](https://github.com/dasch-swiss/dsp-das/issues/1052)) ([55b276b](https://github.com/dasch-swiss/dsp-das/commit/55b276b184a3753333f82e151ba6d6a790c1e3ca))
+* **boolean properties:** change checkboxes into toggles ([#1049](https://github.com/dasch-swiss/dsp-das/issues/1049)) ([80c0305](https://github.com/dasch-swiss/dsp-das/commit/80c03059b03c3813197c5e53d4bb7fde1f693711))
+* **boolean values:** implement removal of boolean values ([#1034](https://github.com/dasch-swiss/dsp-das/issues/1034)) ([da423be](https://github.com/dasch-swiss/dsp-das/commit/da423bea5bf85086669d0b96d8d66ef432aa0b62))
+
+
+### Maintenance
+
+* angular mdc migration - dialog ([#1004](https://github.com/dasch-swiss/dsp-das/issues/1004)) ([5e0204f](https://github.com/dasch-swiss/dsp-das/commit/5e0204fd1f9abc20439e5dc238dac790d7041c8b))
+* **deps-dev:** bump @nrwl/eslint-plugin-nx from 15.8.9 to 16.2.1 ([#1055](https://github.com/dasch-swiss/dsp-das/issues/1055)) ([5c6d2d5](https://github.com/dasch-swiss/dsp-das/commit/5c6d2d5f0600ee511354468951b10cc7ca5ccbb9))
+* **deps-dev:** bump @nrwl/nx-cloud from 15.3.2 to 16.0.5 ([#1030](https://github.com/dasch-swiss/dsp-das/issues/1030)) ([162a1bb](https://github.com/dasch-swiss/dsp-das/commit/162a1bb1008c9e1b318caf6bb52feb59e90eeaf5))
+* **deps-dev:** bump @types/jasmine from 3.8.2 to 4.3.1 ([#1006](https://github.com/dasch-swiss/dsp-das/issues/1006)) ([9ea23e5](https://github.com/dasch-swiss/dsp-das/commit/9ea23e5804fe67abd69c7b5af58708a79e1732f3))
+* **deps-dev:** bump postcss-preset-env from 7.5.0 to 8.3.2 ([#1010](https://github.com/dasch-swiss/dsp-das/issues/1010)) ([97fefa7](https://github.com/dasch-swiss/dsp-das/commit/97fefa7268ab06779ba9821e1ad78efcbbd1b48d))
+* **deps:** bump engine.io from 6.4.1 to 6.4.2 ([#1035](https://github.com/dasch-swiss/dsp-das/issues/1035)) ([72fb3ce](https://github.com/dasch-swiss/dsp-das/commit/72fb3ce3f150f0772b89d4719bbbde9f0f480def))
+
 ## [10.19.2](https://github.com/dasch-swiss/dsp-das/compare/v10.19.1...v10.19.2) (2023-05-15)
 
 
