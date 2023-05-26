@@ -72,12 +72,16 @@ export class ListItemComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
 
-        if(this.session){
+        if (this.session) {
             // get the project data from cache
             this._cache.get(this.projectUuid).subscribe(
                 (response: ReadProject) => {
                     // is logged-in user projectAdmin?
-                    this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);
+                    this.projectAdmin = this.sysAdmin
+                        ? this.sysAdmin
+                        : this.session.user.projectAdmin.some(
+                              (e) => e === response.id
+                          );
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
@@ -129,7 +133,7 @@ export class ListItemComponent implements OnInit {
      * @param data info about the operation that was performed on the node and should be reflected in the UI.
      * @param firstNode states whether the node is a new child node; defaults to false.
      */
-    updateView(data: ListNodeOperation, firstNode: boolean = false) {
+    updateView(data: ListNodeOperation, firstNode = false) {
         // update the view by updating the existing list
         if (data instanceof ListNodeOperation) {
             switch (data.operation) {

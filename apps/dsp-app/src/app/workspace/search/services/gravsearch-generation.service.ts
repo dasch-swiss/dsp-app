@@ -48,7 +48,7 @@ export class GravsearchGenerationService {
     createGravsearchQuery(
         properties: PropertyWithValue[],
         mainResourceClassOption?: string,
-        offset: number = 0
+        offset = 0
     ): string {
         // reinit for each Gravsearch query since this service is a singleton
         this._orderByCriteria = [];
@@ -221,8 +221,10 @@ ${statement}
                 }
 
                 // add filter not exists if comparison operator is 'not exists'
-                if (propWithVal.valueLiteral.comparisonOperator.getClassName() ===
-                    'NotExists') {
+                if (
+                    propWithVal.valueLiteral.comparisonOperator.getClassName() ===
+                    'NotExists'
+                ) {
                     statement = `FILTER NOT EXISTS {
 ${statement}
 

@@ -7,10 +7,20 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import { ApiResponseError, CountQueryResponse, IFulltextSearchParams, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseError,
+    CountQueryResponse,
+    IFulltextSearchParams,
+    KnoraApiConnection,
+    ReadResourceSequence,
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { ComponentCommunicationEventService, EmitEvent, Events } from '@dsp-app/src/app/main/services/component-communication-event.service';
+import {
+    ComponentCommunicationEventService,
+    EmitEvent,
+    Events,
+} from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -115,7 +125,7 @@ export class ListViewComponent implements OnChanges, OnInit {
         private _dspApiConnection: KnoraApiConnection,
         private _componentCommsService: ComponentCommunicationEventService,
         private _errorHandler: ErrorHandlerService,
-        private _notification: NotificationService,
+        private _notification: NotificationService
     ) {}
 
     ngOnInit(): void {
@@ -156,19 +166,21 @@ export class ListViewComponent implements OnChanges, OnInit {
         }
     }
 
-    goToPage(direction: 'previous' | 'next'){
+    goToPage(direction: 'previous' | 'next') {
         if (direction === 'previous') {
-            if(this.currentIndex > 0) {
+            if (this.currentIndex > 0) {
                 this.nextDisabled = false;
                 this.currentIndex -= 1;
-
             }
         }
         if (direction === 'next') {
             this.currentIndex += 1;
 
             // if end range for the next page of results is greater than the total number of results
-            if(this.pageSize * (this.currentIndex + 1) >= this.numberOfAllResults) {
+            if (
+                this.pageSize * (this.currentIndex + 1) >=
+                this.numberOfAllResults
+            ) {
                 this.nextDisabled = true;
             }
         }
@@ -185,7 +197,7 @@ export class ListViewComponent implements OnChanges, OnInit {
     private _calculateRange(index: number) {
         this.currentRangeStart = this.pageSize * index + 1;
 
-        if(this.pageSize * (index + 1) > this.numberOfAllResults){
+        if (this.pageSize * (index + 1) > this.numberOfAllResults) {
             this.currentRangeEnd = this.numberOfAllResults;
         } else {
             this.currentRangeEnd = this.pageSize * (index + 1);
@@ -197,8 +209,7 @@ export class ListViewComponent implements OnChanges, OnInit {
      * like resource-list, resource-grid or resource-table
      * @param index offset of gravsearch query
      */
-    private _doSearch(index: number = 0) {
-
+    private _doSearch(index = 0) {
         this.loading = true;
 
         if (this.search.mode === 'fulltext') {
@@ -206,10 +217,19 @@ export class ListViewComponent implements OnChanges, OnInit {
 
             if (index === 0) {
                 // perform count query
-                this._dspApiConnection.v2.search.doFulltextSearchCountQuery(this.search.query, index, this.search.filter).subscribe(
-                    (count: CountQueryResponse) => {
-                        this.numberOfAllResults = count.numberOfResults;
-                        this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
+                this._dspApiConnection.v2.search
+                    .doFulltextSearchCountQuery(
+                        this.search.query,
+                        index,
+                        this.search.filter
+                    )
+                    .subscribe(
+                        (count: CountQueryResponse) => {
+                            this.numberOfAllResults = count.numberOfResults;
+                            this.currentRangeEnd =
+                                this.numberOfAllResults > 25
+                                    ? 25
+                                    : this.numberOfAllResults;
 
                             if (this.numberOfAllResults === 0) {
                                 this.emitSelectedResources();
@@ -228,23 +248,24 @@ export class ListViewComponent implements OnChanges, OnInit {
             }
 
             // perform full text search
-            this._dspApiConnection.v2.search.doFulltextSearch(this.search.query, index, this.search.filter).subscribe(
-                (response: ReadResourceSequence) => {
-                    // if the response does not contain any resources even though the search count is greater than 0,
-                    // it means that the user does not have the permissions to see anything: emit an empty result
-                    if (response.resources.length === 0) {
-                        this.emitSelectedResources();
+            this._dspApiConnection.v2.search
+                .doFulltextSearch(this.search.query, index, this.search.filter)
+                .subscribe(
+                    (response: ReadResourceSequence) => {
+                        // if the response does not contain any resources even though the search count is greater than 0,
+                        // it means that the user does not have the permissions to see anything: emit an empty result
+                        if (response.resources.length === 0) {
+                            this.emitSelectedResources();
+                        }
+                        this.resources = response;
+                        this.loading = false;
+                    },
+                    (error: ApiResponseError) => {
+                        this.loading = false;
+                        this.resources = undefined;
+                        this._errorHandler.showMessage(error);
                     }
-                    this.resources = response;
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this.loading = false;
-                    this.resources = undefined;
-                    this._errorHandler.showMessage(error);
-                }
-            );
-
+                );
         } else if (this.search.mode === 'gravsearch') {
             // emit 'gravSearchExecuted' event to the fulltext-search component in order to clear the input field
             this._componentCommsService.emit(
@@ -252,51 +273,76 @@ export class ListViewComponent implements OnChanges, OnInit {
             );
 
             // request the count query if the page index is zero otherwise it is already stored in the numberOfAllResults
-            const numberOfAllResults$ = index !== 0 ? of(this.numberOfAllResults) :
-                this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.search.query).pipe(
-                    map((count: CountQueryResponse) => {
-                        this.numberOfAllResults = count.numberOfResults;
-                        this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
-                        if (this.numberOfAllResults === 0) {
-                            this._notification.openSnackBar('No resources to display.');
-                            this.emitSelectedResources();
-                            this.resources = undefined;
-                            this.loading = false;
-                        }
+            const numberOfAllResults$ =
+                index !== 0
+                    ? of(this.numberOfAllResults)
+                    : this._dspApiConnection.v2.search
+                          .doExtendedSearchCountQuery(this.search.query)
+                          .pipe(
+                              map((count: CountQueryResponse) => {
+                                  this.numberOfAllResults =
+                                      count.numberOfResults;
+                                  this.currentRangeEnd =
+                                      this.numberOfAllResults > 25
+                                          ? 25
+                                          : this.numberOfAllResults;
+                                  if (this.numberOfAllResults === 0) {
+                                      this._notification.openSnackBar(
+                                          'No resources to display.'
+                                      );
+                                      this.emitSelectedResources();
+                                      this.resources = undefined;
+                                      this.loading = false;
+                                  }
 
-                        return count.numberOfResults;
-                    })
-                );
+                                  return count.numberOfResults;
+                              })
+                          );
 
             numberOfAllResults$.subscribe(
                 (numberOfAllResults: number) => {
                     if (this.search.query !== undefined) {
                         // build the gravsearch query
                         let gravsearch = this.search.query;
-                        gravsearch = gravsearch.substring(0, gravsearch.search('OFFSET'));
+                        gravsearch = gravsearch.substring(
+                            0,
+                            gravsearch.search('OFFSET')
+                        );
                         gravsearch = gravsearch + 'OFFSET ' + index;
 
-                        this._dspApiConnection.v2.search.doExtendedSearch(gravsearch).subscribe(
-                            (response: ReadResourceSequence) => {
-                                // if the response does not contain any resources even the search count is greater than 0,
-                                // it means that the user does not have the permissions to see anything: emit an empty result
-                                if (response.resources.length === 0 && this.numberOfAllResults > 0) {
-                                    this._notification.openSnackBar('No permission to display the resources.');
-                                    this.emitSelectedResources();
-                                }
+                        this._dspApiConnection.v2.search
+                            .doExtendedSearch(gravsearch)
+                            .subscribe(
+                                (response: ReadResourceSequence) => {
+                                    // if the response does not contain any resources even the search count is greater than 0,
+                                    // it means that the user does not have the permissions to see anything: emit an empty result
+                                    if (
+                                        response.resources.length === 0 &&
+                                        this.numberOfAllResults > 0
+                                    ) {
+                                        this._notification.openSnackBar(
+                                            'No permission to display the resources.'
+                                        );
+                                        this.emitSelectedResources();
+                                    }
 
-                                this.resources = response;
-                                this.hasPermission = !(numberOfAllResults > 0 && this.resources.resources.length === 0);
-                                this.loading = false;
-                            },
-                            (error: ApiResponseError) => {
-                                this.loading = false;
-                                this.resources = undefined;
-                                this._errorHandler.showMessage(error);
-                            }
-                        );
+                                    this.resources = response;
+                                    this.hasPermission = !(
+                                        numberOfAllResults > 0 &&
+                                        this.resources.resources.length === 0
+                                    );
+                                    this.loading = false;
+                                },
+                                (error: ApiResponseError) => {
+                                    this.loading = false;
+                                    this.resources = undefined;
+                                    this._errorHandler.showMessage(error);
+                                }
+                            );
                     } else {
-                        this._notification.openSnackBar('The gravsearch query is not set correctly');
+                        this._notification.openSnackBar(
+                            'The gravsearch query is not set correctly'
+                        );
                         this.resources = undefined;
                         this.loading = false;
                     }
@@ -307,8 +353,6 @@ export class ListViewComponent implements OnChanges, OnInit {
                     this._errorHandler.showMessage(countError);
                 }
             );
-
         }
-
     }
 }

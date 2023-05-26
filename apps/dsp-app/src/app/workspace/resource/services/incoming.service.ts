@@ -93,7 +93,7 @@ knora-api:hasColor knora-api:objectType knora-api:Color .
     getStillImageRepresentationsForCompoundResource(
         resourceIri: string,
         offset: number,
-        countQuery: boolean = false
+        countQuery = false
     ): Observable<
         ReadResourceSequence | CountQueryResponse | ApiResponseError
     > {
@@ -204,7 +204,7 @@ FILTER NOT EXISTS {
     getIncomingLinks(
         resourceIri: string,
         offset: number,
-        countQuery: boolean = false
+        countQuery = false
     ): Observable<
         ReadResourceSequence | CountQueryResponse | ApiResponseError
     > {

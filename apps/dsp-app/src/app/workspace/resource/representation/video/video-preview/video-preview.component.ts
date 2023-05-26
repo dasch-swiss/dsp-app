@@ -162,7 +162,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
      * @param j
      * @param [delay]
      */
-    autoPlay(i: number, j: number, delay: number = 250) {
+    autoPlay(i: number, j: number, delay = 250) {
         let cssParams: string;
         let x = 0;
         let y = 0;

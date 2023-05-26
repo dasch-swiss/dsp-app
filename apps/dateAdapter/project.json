@@ -20,7 +20,7 @@
           "apps/dateAdapter/src/assets"
         ],
         "styles": ["apps/dateAdapter/src/styles.scss"],
-        "scripts": [],
+        "scripts": []
       },
       "configurations": {
         "production": {
@@ -70,7 +70,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
