@@ -3,6 +3,10 @@ name: CI
 on:
   push:
 
+env:
+  # use the read-write access token so that build cache in nx-cloud can be updated
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
 jobs:
 
   dsp-app-tests:
@@ -65,6 +69,20 @@ jobs:
       - run: npm install
       - run: npx nx run jdnconvertiblecalendardateadapter:lint
       - run: npx nx run jdnconvertiblecalendardateadapter:test:ci
+
+  vre-shared-app-config-tests:
+    name: vre-shared-app-config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npx nx run vre-shared-app-config:lint
+      - run: npx nx run vre-shared-app-config:test:ci
 
   # publish on commit to main or tag
   publish:

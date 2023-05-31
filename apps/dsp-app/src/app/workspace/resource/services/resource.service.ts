@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 
 @Injectable({
     providedIn: 'root',
@@ -7,9 +7,9 @@ import { AppInitService } from '@dsp-app/src/app/app-init.service';
 export class ResourceService {
     iriBase: string;
 
-    constructor(private _ais: AppInitService) {
+    constructor(private _acs: AppConfigService) {
         this.iriBase = this._getIriBaseWithoutTrailingSlash(
-            this._ais.dspAppConfig.iriBase
+            this._acs.dspAppConfig.iriBase
         );
     }
 

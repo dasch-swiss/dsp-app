@@ -3,15 +3,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { FileRepresentation } from '../file-representation';
 
 import { ArchiveComponent } from './archive.component';
 import { RepresentationService } from '../representation.service';
 import { of } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
-import { map } from "rxjs/operators";
+import { map } from 'rxjs/operators';
 
 const archiveFileValue = {
     arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/0123/6c=f69h6Ss6GXPME565EqAS/dDHcFHlwQ9K46255QfUGrQ8',
@@ -105,7 +105,7 @@ describe('ArchiveComponent', () => {
                 MatIconModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: appInitSpy,
@@ -122,7 +122,9 @@ describe('ArchiveComponent', () => {
         const representationServiceSpy = TestBed.inject(RepresentationService);
         (
             representationServiceSpy as jasmine.SpyObj<RepresentationService>
-        ).getFileInfo.and.callFake(() => of(knoraJson).pipe(map((response: any) => response as object)));
+        ).getFileInfo.and.callFake(() =>
+            of(knoraJson).pipe(map((response: any) => response as object))
+        );
 
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;

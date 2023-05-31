@@ -32,7 +32,7 @@ import {
     WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { mergeMap } from 'rxjs/operators';
-import { DspApiConnectionToken } from '../../../../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import {
     ConfirmationDialogComponent,

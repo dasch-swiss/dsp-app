@@ -19,7 +19,7 @@ import {
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 import { SessionService } from '@dsp-app/src/app/main/services/session.service';
@@ -121,13 +121,16 @@ export class PasswordFormComponent implements OnInit {
             }
             this.showPasswordForm = this.updateOwn;
 
-            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
-                },
+            this._dspApiConnection.admin.usersEndpoint
+                .getUserByUsername(this.username)
+                .subscribe(
+                    (response: ApiResponseData<UserResponse>) => {
+                        this.user = response.body.user;
+                    },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);
-            });
+                    }
+                );
 
             if (!this.updateOwn) {
                 this.buildConfirmForm();

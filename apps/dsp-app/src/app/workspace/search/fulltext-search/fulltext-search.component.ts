@@ -31,7 +31,7 @@ import {
     ReadProject,
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     ComponentCommunicationEventService,
     Events,
@@ -211,7 +211,10 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
             (response: ApiResponseData<ProjectsResponse>) => {
                 // filter out deactivated projects and system projects
-                this.projects = response.body.projects.filter(p => p.status === true && !this.hiddenProjects.includes(p.id));
+                this.projects = response.body.projects.filter(
+                    (p) =>
+                        p.status === true && !this.hiddenProjects.includes(p.id)
+                );
 
                 if (localStorage.getItem('currentProject') !== null) {
                     this.project = JSON.parse(

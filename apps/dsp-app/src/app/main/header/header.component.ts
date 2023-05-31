@@ -1,22 +1,21 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import {
     ComponentCommunicationEventService,
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
-import { DspConfig } from '../declarations/dsp-config';
+import {
+    DspApiConnectionToken,
+    DspConfig,
+} from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '../services/notification.service';
 import { SessionService } from '../services/session.service';
 
@@ -37,7 +36,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _appInitService: AppInitService,
+        private _appConfigService: AppConfigService,
         private _componentCommsService: ComponentCommunicationEventService,
         private _dialog: MatDialog,
         private _domSanitizer: DomSanitizer,
@@ -65,7 +64,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.dsp = this._appInitService.dspConfig;
+        this.dsp = this._appConfigService.dspConfig;
     }
 
     ngOnInit() {
@@ -135,5 +134,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
             // do something
         });
     }
-
 }

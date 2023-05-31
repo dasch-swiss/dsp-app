@@ -6,10 +6,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import {
     ApiResponseData,
@@ -18,7 +15,7 @@ import {
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SessionService } from '@dsp-app/src/app/main/services/session.service';
 import { DialogComponent } from '../../main/dialog/dialog.component';
@@ -63,26 +60,29 @@ export class ProfileComponent implements OnInit {
     getUser() {
         this.loading = true;
 
-        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
-                this.user = response.body.user;
+        this._dspApiConnection.admin.usersEndpoint
+            .getUserByUsername(this.username)
+            .subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
 
-                // set the page title
-                this._titleService.setTitle(
-                    this.user.username +
-                        ' (' +
-                        this.user.givenName +
-                        ' ' +
-                        this.user.familyName +
-                        ')'
-                );
+                    // set the page title
+                    this._titleService.setTitle(
+                        this.user.username +
+                            ' (' +
+                            this.user.givenName +
+                            ' ' +
+                            this.user.familyName +
+                            ')'
+                    );
 
-                this.loading = false;
-            },
+                    this.loading = false;
+                },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                     this.loading = false;
-            });
+                }
+            );
     }
 
     openDialog(mode: string, name: string): void {

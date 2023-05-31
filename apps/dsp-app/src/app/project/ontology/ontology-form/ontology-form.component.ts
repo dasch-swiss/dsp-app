@@ -23,7 +23,7 @@ import {
     UpdateOntologyMetadata,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
@@ -241,9 +241,7 @@ export class OntologyFormComponent implements OnInit {
             }),
         });
 
-        this.ontologyForm.valueChanges.subscribe(() =>
-            this.onValueChanged()
-        );
+        this.ontologyForm.valueChanges.subscribe(() => this.onValueChanged());
 
         if (!this.iri) {
             this.ontologyForm.get('name').valueChanges.subscribe((val) => {
@@ -282,19 +280,21 @@ export class OntologyFormComponent implements OnInit {
             ontologyData.label = this.ontologyForm.controls['label'].value;
             ontologyData.comment = this.ontologyForm.controls['comment'].value;
 
-            this._dspApiConnection.v2.onto.updateOntology(ontologyData).subscribe(
-                (response: OntologyMetadata) => {
-                    this.updateParent.emit(response.id);
-                    this.loading = false;
-                    this.closeDialog.emit(response.id);
-                    // go to the new ontology page
-                    // refresh whole page; todo: would be better to use an event emitter
-                    window.location.reload();
-                },
-                (error: ApiResponseError) => {
-                    // in case of an error
-                    this.loading = false;
-                    this.error = true;
+            this._dspApiConnection.v2.onto
+                .updateOntology(ontologyData)
+                .subscribe(
+                    (response: OntologyMetadata) => {
+                        this.updateParent.emit(response.id);
+                        this.loading = false;
+                        this.closeDialog.emit(response.id);
+                        // go to the new ontology page
+                        // refresh whole page; todo: would be better to use an event emitter
+                        window.location.reload();
+                    },
+                    (error: ApiResponseError) => {
+                        // in case of an error
+                        this.loading = false;
+                        this.error = true;
 
                         this._errorHandler.showMessage(error);
                     }
@@ -311,18 +311,26 @@ export class OntologyFormComponent implements OnInit {
             ontologyData.comment = this.ontologyForm.controls['comment'].value;
             ontologyData.attachedToProject = this.project.id;
 
-            this._dspApiConnection.v2.onto.createOntology(ontologyData).subscribe(
-                (response: OntologyMetadata) => {
-                    this.updateParent.emit(response.id);
-                    this.loading = false;
-                    // go to the new ontology page
-                    const name = this._ontologyService.getOntologyName(response.id);
-                    this._router.navigate(['ontology', name], { relativeTo: this._route.parent });
-                },
-                (error: ApiResponseError) => {
-                    // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
-                    this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
-                    this.loading = false;
+            this._dspApiConnection.v2.onto
+                .createOntology(ontologyData)
+                .subscribe(
+                    (response: OntologyMetadata) => {
+                        this.updateParent.emit(response.id);
+                        this.loading = false;
+                        // go to the new ontology page
+                        const name = this._ontologyService.getOntologyName(
+                            response.id
+                        );
+                        this._router.navigate(['ontology', name], {
+                            relativeTo: this._route.parent,
+                        });
+                    },
+                    (error: ApiResponseError) => {
+                        // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
+                        this.formErrors['name'] +=
+                            this.validationMessages['name']['existingName'] +
+                            ' ';
+                        this.loading = false;
 
                         this._errorHandler.showMessage(error);
                     }

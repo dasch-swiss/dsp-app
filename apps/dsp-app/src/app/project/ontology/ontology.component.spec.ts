@@ -33,13 +33,16 @@ import {
     ProjectsEndpointAdmin,
     ReadOntology,
     ResourcePropertyDefinitionWithAllLanguages,
-    UsersEndpointAdmin
+    UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConfigToken, DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import {
+    DspApiConfigToken,
+    DspApiConnectionToken,
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/truncate.pipe';
@@ -52,7 +55,7 @@ import { OntologyComponent } from './ontology.component';
  * mock ResourceClassInfo.
  */
 @Component({
-    selector: 'app-resource-class-info'
+    selector: 'app-resource-class-info',
 })
 class MockResourceClassInfoComponent {
     @Input() expanded = false;
@@ -74,7 +77,7 @@ class MockResourceClassInfoComponent {
  * mock PropertyInfo.
  */
 @Component({
-    selector: 'app-property-info'
+    selector: 'app-property-info',
 })
 class MockPropertyInfoComponent {
     @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
@@ -93,7 +96,7 @@ class MockPropertyInfoComponent {
 }
 
 @Component({
-    template: '<app-ontology></app-ontology>'
+    template: '<app-ontology></app-ontology>',
 })
 class TestHostComponent {}
 
@@ -110,9 +113,15 @@ describe('OntologyComponent', () => {
     beforeEach(waitForAsync(() => {
         const apiSpyObj = {
             admin: {
-                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject']),
-                usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername']),
-                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri'])
+                listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
+                    'getListsInProject',
+                ]),
+                usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
+                    'getUserByUsername',
+                ]),
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
+                    'getProjectByIri',
+                ]),
             },
             v2: {
                 onto: jasmine.createSpyObj('onto', [
@@ -144,7 +153,7 @@ describe('OntologyComponent', () => {
                 MockPropertyInfoComponent,
                 MockResourceClassInfoComponent,
                 TruncatePipe,
-                SplitPipe
+                SplitPipe,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -165,7 +174,7 @@ describe('OntologyComponent', () => {
             ],
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 {
@@ -236,75 +245,101 @@ describe('OntologyComponent', () => {
 
         // mock cache service for currentOntology
         const cacheSpyOnto = TestBed.inject(CacheService);
-        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentOntology').and.callFake(
-            () => {
-                const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get
+            .withArgs('currentOntology')
+            .and.callFake(() => {
+                const response: ReadOntology = MockOntology.mockReadOntology(
+                    'http://0.0.0.0:3333/ontology/0001/anything/v2'
+                );
                 return of(response);
-            }
-        );
+            });
 
         // mock cache service for currentProjectOntologies
         const cacheSpyProjOnto = TestBed.inject(CacheService);
-        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get.withArgs('currentProjectOntologies').and.callFake(
-            () => {
+        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get
+            .withArgs('currentProjectOntologies')
+            .and.callFake(() => {
                 const ontologies: ReadOntology[] = [];
-                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
-                ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
+                ontologies.push(
+                    MockOntology.mockReadOntology(
+                        'http://0.0.0.0:3333/ontology/0001/anything/v2'
+                    )
+                );
+                ontologies.push(
+                    MockOntology.mockReadOntology(
+                        'http://0.0.0.0:3333/ontology/0001/minimal/v2'
+                    )
+                );
                 const response: ReadOntology[] = ontologies;
                 return of(response);
-            }
-        );
+            });
 
         // mock cache service for currentOntologyLists
         const cacheSpyOntoLists = TestBed.inject(CacheService);
 
-        (cacheSpyOntoLists as jasmine.SpyObj<CacheService>).get.withArgs('currentOntologyLists').and.callFake(
-            () => {
-                const response: ListNodeInfo[] = [{
-                    'comments': [],
-                    'id': 'http://rdfh.ch/lists/0001/otherTreeList',
-                    'isRootNode': true,
-                    'labels': [{
-                        'language': 'en',
-                        'value': 'Tree list root'
-                    }],
-                    'projectIri': 'http://rdfh.ch/projects/0001'
-                }, {
-                    'comments': [{
-                        'language': 'en',
-                        'value': 'a list that is not in used in ontology or data'
-                    }],
-                    'id': 'http://rdfh.ch/lists/0001/notUsedList',
-                    'isRootNode': true,
-                    'labels': [{
-                        'language': 'de',
-                        'value': 'unbenutzte Liste'
-                    }, {
-                        'language': 'en',
-                        'value': 'a list that is not used'
-                    }],
-                    'name': 'notUsedList',
-                    'projectIri': 'http://rdfh.ch/projects/0001'
-                }, {
-                    'comments': [{
-                        'language': 'en',
-                        'value': 'Anything Tree List'
-                    }],
-                    'id': 'http://rdfh.ch/lists/0001/treeList',
-                    'isRootNode': true,
-                    'labels': [{
-                        'language': 'de',
-                        'value': 'Listenwurzel'
-                    }, {
-                        'language': 'en',
-                        'value': 'Tree list root'
-                    }],
-                    'name': 'treelistroot',
-                    'projectIri': 'http://rdfh.ch/projects/0001'
-                }];
+        (cacheSpyOntoLists as jasmine.SpyObj<CacheService>).get
+            .withArgs('currentOntologyLists')
+            .and.callFake(() => {
+                const response: ListNodeInfo[] = [
+                    {
+                        comments: [],
+                        id: 'http://rdfh.ch/lists/0001/otherTreeList',
+                        isRootNode: true,
+                        labels: [
+                            {
+                                language: 'en',
+                                value: 'Tree list root',
+                            },
+                        ],
+                        projectIri: 'http://rdfh.ch/projects/0001',
+                    },
+                    {
+                        comments: [
+                            {
+                                language: 'en',
+                                value: 'a list that is not in used in ontology or data',
+                            },
+                        ],
+                        id: 'http://rdfh.ch/lists/0001/notUsedList',
+                        isRootNode: true,
+                        labels: [
+                            {
+                                language: 'de',
+                                value: 'unbenutzte Liste',
+                            },
+                            {
+                                language: 'en',
+                                value: 'a list that is not used',
+                            },
+                        ],
+                        name: 'notUsedList',
+                        projectIri: 'http://rdfh.ch/projects/0001',
+                    },
+                    {
+                        comments: [
+                            {
+                                language: 'en',
+                                value: 'Anything Tree List',
+                            },
+                        ],
+                        id: 'http://rdfh.ch/lists/0001/treeList',
+                        isRootNode: true,
+                        labels: [
+                            {
+                                language: 'de',
+                                value: 'Listenwurzel',
+                            },
+                            {
+                                language: 'en',
+                                value: 'Tree list root',
+                            },
+                        ],
+                        name: 'treelistroot',
+                        projectIri: 'http://rdfh.ch/projects/0001',
+                    },
+                ];
                 return of(response);
-            }
-        );
+            });
 
         // can delete ontology request
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
@@ -363,25 +398,28 @@ describe('OntologyComponent', () => {
             );
         });
 
-        (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(
-            () => {
-                const loggedInUser = MockUsers.mockUser();
-                return of(loggedInUser);
-            }
-        );
+        (
+            dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
+        ).getUserByUsername.and.callFake(() => {
+            const loggedInUser = MockUsers.mockUser();
+            return of(loggedInUser);
+        });
 
         // mock projects endpoint
-        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
-            () => {
-                const response = new ProjectResponse();
+        (
+            dspConnSpy.admin
+                .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
+        ).getProjectByIri.and.callFake(() => {
+            const response = new ProjectResponse();
 
-                const mockProjects = MockProjects.mockProjects();
+            const mockProjects = MockProjects.mockProjects();
 
-                response.project = mockProjects.body.projects[0];
+            response.project = mockProjects.body.projects[0];
 
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-            }
-        );
+            return of(
+                ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+            );
+        });
 
         fixture = TestBed.createComponent(TestHostComponent);
         component = fixture.componentInstance;

@@ -20,12 +20,12 @@ import {
     ReadValue,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
 import { Region, StillImageComponent } from './still-image.component';
-import { map } from "rxjs/operators";
+import { map } from 'rxjs/operators';
 
 // --> TODO: get test data from dsp-js
 // --> TODO: get this from dsp-js: https://dasch.myjetbrains.com/youtrack/issue/DSP-506
@@ -170,7 +170,7 @@ describe('StillImageComponent', () => {
                 MatToolbarModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: adminSpyObj,
@@ -195,7 +195,9 @@ describe('StillImageComponent', () => {
         const representationServiceSpy = TestBed.inject(RepresentationService);
         (
             representationServiceSpy as jasmine.SpyObj<RepresentationService>
-        ).getFileInfo.and.callFake(() => of(knoraJson).pipe(map((response: any) => response as object)));
+        ).getFileInfo.and.callFake(() =>
+            of(knoraJson).pipe(map((response: any) => response as object))
+        );
 
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
@@ -221,17 +223,12 @@ describe('StillImageComponent', () => {
     });
 
     it('should have 1 image loaded after resources change with 1 full size image', (done) => {
-        testHostComponent.osdViewerComp['_viewer'].addHandler(
-            'open',
-            () => {
-                expect(
-                    testHostComponent.osdViewerComp[
-                        '_viewer'
-                    ].world.getItemCount()
-                ).toEqual(1);
-                done();
-            }
-        );
+        testHostComponent.osdViewerComp['_viewer'].addHandler('open', () => {
+            expect(
+                testHostComponent.osdViewerComp['_viewer'].world.getItemCount()
+            ).toEqual(1);
+            done();
+        });
     });
 
     it('should have 1 test region loaded (rectangle)', () => {

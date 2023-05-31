@@ -9,7 +9,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
 /**
  * information about the current user

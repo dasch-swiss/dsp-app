@@ -7,7 +7,7 @@ import {
     KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
 import { HttpStatusMsg } from '@dsp-app/src/assets/http/statusMsg';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
 export interface StatusMsg {
     status: number;

@@ -8,10 +8,7 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseError,
     Constants,
@@ -25,7 +22,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {

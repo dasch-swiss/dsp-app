@@ -5,7 +5,11 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+    MatDialogModule,
+    MatDialogRef,
+    MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
@@ -14,18 +18,30 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiResponseData, ListNodeInfo, ListsEndpointAdmin, ListsResponse, MockProjects, ProjectResponse, ProjectsEndpointAdmin, ReadProject } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ListNodeInfo,
+    ListsEndpointAdmin,
+    ListsResponse,
+    MockProjects,
+    ProjectResponse,
+    ProjectsEndpointAdmin,
+    ReadProject,
+} from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/truncate.pipe';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ListComponent } from './list.component';
 
@@ -33,7 +49,7 @@ import { ListComponent } from './list.component';
  * test Host Component
  */
 @Component({
-    template: '<app-list #listComponent></app-list>'
+    template: '<app-list #listComponent></app-list>',
 })
 class TestHostComponent {
     @ViewChild('listComponent') listComponent: ListComponent;
@@ -43,17 +59,17 @@ class TestHostComponent {
  * mock ListItem.
  */
 @Component({
-    template: '<app-list-item></app-list-item>'
+    template: '<app-list-item></app-list-item>',
 })
-class MockListItemComponent { }
+class MockListItemComponent {}
 
 /**
  * mock ListItemForm.
  */
 @Component({
-    template: '<app-list-item-form></app-list-item-form>'
+    template: '<app-list-item-form></app-list-item-form>',
 })
-class MockListItemFormComponent { }
+class MockListItemFormComponent {}
 
 describe('ListComponent', () => {
     let testHostComponent: TestHostComponent;
@@ -63,24 +79,33 @@ describe('ListComponent', () => {
 
     const appInitSpy = {
         dspAppConfig: {
-            iriBase: 'http://rdfh.ch'
-        }
+            iriBase: 'http://rdfh.ch',
+        },
     };
 
     beforeEach(waitForAsync(() => {
-
         const dspConnSpyObj = {
             admin: {
-                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject', 'deleteListNode']),
-                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri'])
-            }
+                listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
+                    'getListsInProject',
+                    'deleteListNode',
+                ]),
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
+                    'getProjectByIri',
+                ]),
+            },
         };
 
-        const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
+        const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
+            'getSession',
+        ]);
 
         const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
 
-        const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
+        const routerSpy = jasmine.createSpyObj('Router', [
+            'navigate',
+            'navigateByUrl',
+        ]);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -91,7 +116,7 @@ describe('ListComponent', () => {
                 DialogComponent,
                 DialogHeaderComponent,
                 StringifyStringLiteralPipe,
-                TruncatePipe
+                TruncatePipe,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -103,7 +128,7 @@ describe('ListComponent', () => {
                 MatToolbarModule,
                 MatTooltipModule,
                 ReactiveFormsModule,
-                TranslateModule.forRoot()
+                TranslateModule.forRoot(),
             ],
             providers: [
                 {
@@ -115,60 +140,56 @@ describe('ListComponent', () => {
                                     if (param === 'uuid') {
                                         return TestConfig.ProjectUuid;
                                     }
-                                }
+                                },
                             }),
                             snapshot: {
-                                url: [
-                                    { path: 'project' }
-                                ]
-                            }
+                                url: [{ path: 'project' }],
+                            },
                         },
-                        params: of(
-                            { list: 'mockList01' },
-                        ),
+                        params: of({ list: 'mockList01' }),
                         snapshot: {
                             params: [
-                                { id: 'http://rdfh.ch/lists/0001/mockList01' }
-                            ]
-                        }
-                    }
+                                { id: 'http://rdfh.ch/lists/0001/mockList01' },
+                            ],
+                        },
+                    },
                 },
                 {
-                    provide: AppInitService,
-                    useValue: appInitSpy
+                    provide: AppConfigService,
+                    useValue: appInitSpy,
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: dspConnSpyObj
+                    useValue: dspConnSpyObj,
                 },
                 {
                     provide: SessionService,
-                    useValue: sessionServiceSpy
+                    useValue: sessionServiceSpy,
                 },
                 {
                     provide: CacheService,
-                    useValue: cacheServiceSpy
+                    useValue: cacheServiceSpy,
                 },
                 {
                     provide: Router,
-                    useValue: routerSpy
+                    useValue: routerSpy,
                 },
                 {
                     provide: MAT_DIALOG_DATA,
-                    useValue: {}
+                    useValue: {},
                 },
                 {
                     provide: MatDialogRef,
-                    useValue: {}
-                }
+                    useValue: {},
+                },
             ],
-            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
     afterEach(async () => {
         const dialogs = await rootLoader.getAllHarnesses(MatDialogHarness);
-        await Promise.all(dialogs.map(async d => await d.close()));
+        await Promise.all(dialogs.map(async (d) => await d.close()));
 
         // angular won't call this for us so we need to do it ourselves to avoid leaks.
         overlayContainer.ngOnDestroy();
@@ -176,41 +197,38 @@ describe('ListComponent', () => {
 
     describe('Displaying lists', () => {
         beforeEach(() => {
-
             // mock session service
             const sessionSpy = TestBed.inject(SessionService);
 
-            (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-                () => {
-                    const session: Session = {
-                        id: 12345,
-                        user: {
-                            name: 'username',
-                            jwt: 'myToken',
-                            lang: 'en',
-                            sysAdmin: true,
-                            projectAdmin: []
-                        }
-                    };
+            (
+                sessionSpy as jasmine.SpyObj<SessionService>
+            ).getSession.and.callFake(() => {
+                const session: Session = {
+                    id: 12345,
+                    user: {
+                        name: 'username',
+                        jwt: 'myToken',
+                        lang: 'en',
+                        sysAdmin: true,
+                        projectAdmin: [],
+                    },
+                };
 
-                    return session;
-                }
-            );
+                return session;
+            });
 
             // mock cache service
             const cacheSpy = TestBed.inject(CacheService);
 
-            (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
-                () => {
-                    const response: ProjectResponse = new ProjectResponse();
+            (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+                const response: ProjectResponse = new ProjectResponse();
 
-                    const mockProjects = MockProjects.mockProjects();
+                const mockProjects = MockProjects.mockProjects();
 
-                    response.project = mockProjects.body.projects[0];
+                response.project = mockProjects.body.projects[0];
 
-                    return of(response.project as ReadProject);
-                }
-            );
+                return of(response.project as ReadProject);
+            });
 
             // mock router
             const routerSpy = TestBed.inject(Router);
@@ -221,51 +239,62 @@ describe('ListComponent', () => {
             // mock lists endpoint
             const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-            (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
-                () => {
-                    const response = new ListsResponse();
+            (
+                dspConnSpy.admin
+                    .listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
+            ).getListsInProject.and.callFake(() => {
+                const response = new ListsResponse();
 
-                    response.lists = new Array<ListNodeInfo>();
+                response.lists = new Array<ListNodeInfo>();
 
-                    const mockList1 = new ListNodeInfo();
-                    mockList1.comments = [];
-                    mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
-                    mockList1.isRootNode = true;
-                    mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
-                    mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+                const mockList1 = new ListNodeInfo();
+                mockList1.comments = [];
+                mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
+                mockList1.isRootNode = true;
+                mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
+                mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-                    const mockList2 = new ListNodeInfo();
-                    mockList2.comments = [];
-                    mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
-                    mockList2.isRootNode = true;
-                    mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
-                    mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+                const mockList2 = new ListNodeInfo();
+                mockList2.comments = [];
+                mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
+                mockList2.isRootNode = true;
+                mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
+                mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-                    response.lists.push(mockList1, mockList2);
+                response.lists.push(mockList1, mockList2);
 
-                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-                }
-            );
+                return of(
+                    ApiResponseData.fromAjaxResponse({
+                        response,
+                    } as AjaxResponse)
+                );
+            });
 
             // mock projects endpoint
-            (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
-                () => {
-                    const response = new ProjectResponse();
+            (
+                dspConnSpy.admin
+                    .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
+            ).getProjectByIri.and.callFake(() => {
+                const response = new ProjectResponse();
 
-                    const mockProjects = MockProjects.mockProjects();
+                const mockProjects = MockProjects.mockProjects();
 
-                    response.project = mockProjects.body.projects[0];
+                response.project = mockProjects.body.projects[0];
 
-                    return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-                }
-            );
+                return of(
+                    ApiResponseData.fromAjaxResponse({
+                        response,
+                    } as AjaxResponse)
+                );
+            });
 
             testHostFixture = TestBed.createComponent(TestHostComponent);
             testHostComponent = testHostFixture.componentInstance;
             testHostFixture.detectChanges();
 
             overlayContainer = TestBed.inject(OverlayContainer);
-            rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+            rootLoader =
+                TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
 
             expect(testHostComponent.listComponent.session).toBeTruthy();
             expect(testHostComponent).toBeTruthy();
@@ -274,7 +303,9 @@ describe('ListComponent', () => {
         it('should get the project', () => {
             const mockProject = MockProjects.mockProjects().body.projects[0];
 
-            expect(testHostComponent.listComponent.project).toEqual(mockProject);
+            expect(testHostComponent.listComponent.project).toEqual(
+                mockProject
+            );
         });
 
         it('should initialize the list of lists', () => {
@@ -298,7 +329,5 @@ describe('ListComponent', () => {
 
             expect(testHostComponent.listComponent.lists).toEqual(listOfLists);
         });
-
     });
-
 });

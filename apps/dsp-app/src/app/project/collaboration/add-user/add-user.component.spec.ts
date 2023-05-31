@@ -9,11 +9,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
@@ -50,7 +50,7 @@ describe('AddUserComponent', () => {
             ],
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 {

@@ -29,7 +29,7 @@ import {
     ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { IRI } from '../operator';
 import { SearchListValueComponent } from './search-list-value.component';
 

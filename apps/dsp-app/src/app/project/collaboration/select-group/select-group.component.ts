@@ -14,7 +14,7 @@ import {
     KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 

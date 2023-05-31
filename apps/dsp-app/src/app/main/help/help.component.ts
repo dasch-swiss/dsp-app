@@ -6,9 +6,11 @@ import {
     KnoraApiConnection,
     VersionResponse,
 } from '@dasch-swiss/dsp-js';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
-import { DspConfig } from '../declarations/dsp-config';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import {
+    DspApiConnectionToken,
+    DspConfig,
+} from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '../services/error-handler.service';
 import { GridItem } from '../grid/grid.component';
 import packageJson from '../../../../../../package.json';
@@ -97,12 +99,12 @@ export class HelpComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _appInitService: AppInitService,
+        private _appConfigService: AppConfigService,
         private _errorHandler: ErrorHandlerService
     ) {}
 
     ngOnInit() {
-        this.dsp = this._appInitService.dspConfig;
+        this.dsp = this._appConfigService.dspConfig;
 
         this.support[0].url += this.dsp.environment + ': ' + this.dsp.release;
 

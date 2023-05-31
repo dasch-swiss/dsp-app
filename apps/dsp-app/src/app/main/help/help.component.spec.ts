@@ -7,12 +7,12 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '../declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../dialog/dialog.component';
 import { StatusComponent } from '../status/status.component';
 import { FooterComponent } from '../footer/footer.component';
@@ -48,7 +48,7 @@ describe('HelpComponent', () => {
                 RouterTestingModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -58,7 +58,7 @@ describe('HelpComponent', () => {
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
             ],

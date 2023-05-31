@@ -3,11 +3,11 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AngularSplitModule } from 'angular-split';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ResourceComponent } from '../resource/resource.component';
 import { SearchParams } from './list-view/list-view.component';
@@ -36,7 +36,7 @@ describe('ResultsComponent', () => {
             ],
             imports: [AngularSplitModule, RouterTestingModule],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

@@ -1,10 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, DebugElement, ViewChild, Input } from '@angular/core';
-import {
-    ComponentFixture,
-    TestBed,
-    waitForAsync,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,12 +22,12 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { PropertyInfoObject } from '../default-data/default-properties';
 import { PropertyFormComponent } from './property-form.component';
@@ -155,8 +151,7 @@ class LinkHostComponent {
 class DspApiConnectionMock {
     v2 = {
         onto: {
-            canReplaceCardinalityOfResourceClass: () =>
-                of({ canDo: true }),
+            canReplaceCardinalityOfResourceClass: () => of({ canDo: true }),
         },
     };
 }
@@ -344,7 +339,7 @@ describe('PropertyFormComponent', () => {
                 TranslateModule.forRoot(),
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

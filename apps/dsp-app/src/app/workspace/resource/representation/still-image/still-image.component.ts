@@ -11,10 +11,7 @@ import {
     Renderer2,
     SimpleChanges,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
@@ -41,7 +38,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import * as OpenSeadragon from 'openseadragon';
 import { mergeMap } from 'rxjs/operators';
-import { DspApiConnectionToken } from '../../../../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
 import { ErrorHandlerService } from '../../../../main/services/error-handler.service';
 import { NotificationService } from '../../../../main/services/notification.service';
@@ -202,7 +199,12 @@ export class StillImageComponent
             this.loadImages();
         }
         // only if the image changed
-        if (changes['images'] && changes['images'].previousValue && changes['images'].currentValue[0].fileValue.fileUrl !== changes['images'].previousValue[0].fileValue.fileUrl) {
+        if (
+            changes['images'] &&
+            changes['images'].previousValue &&
+            changes['images'].currentValue[0].fileValue.fileUrl !==
+                changes['images'].previousValue[0].fileValue.fileUrl
+        ) {
             this.loadImages();
         }
         if (this.currentTab === 'annotations') {

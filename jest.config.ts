@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { getJestProjects } from '@nx/jest';
 
 export default {

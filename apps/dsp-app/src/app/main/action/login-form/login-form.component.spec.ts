@@ -16,12 +16,12 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '../../declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DatadogRumService } from '../../services/datadog-rum.service';
 import { Session, SessionService } from '../../services/session.service';
 import { LoginFormComponent } from './login-form.component';
@@ -87,7 +87,7 @@ xdescribe('LoginFormComponent', () => {
                 RouterTestingModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 DatadogRumService,
                 SessionService,
                 {

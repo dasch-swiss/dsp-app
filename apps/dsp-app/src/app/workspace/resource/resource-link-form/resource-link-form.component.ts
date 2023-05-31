@@ -23,7 +23,7 @@ import {
     ReadResource,
     StoredProject,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { FilteredResources } from '../../results/list-view/list-view.component';
 import { ProjectService } from '../services/project.service';

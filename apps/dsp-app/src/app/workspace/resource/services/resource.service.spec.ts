@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ResourceService } from './resource.service';
 
 describe('ResourceService with iriBase = http://rdfh.ch', () => {
@@ -15,7 +15,7 @@ describe('ResourceService with iriBase = http://rdfh.ch', () => {
         TestBed.configureTestingModule({
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
             ],
@@ -51,7 +51,7 @@ describe('ResourceService with iriBase = http://rdfh.ch/', () => {
         TestBed.configureTestingModule({
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
             ],

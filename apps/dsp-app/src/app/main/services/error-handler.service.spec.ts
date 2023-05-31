@@ -15,7 +15,7 @@ import {
 } from '@angular/platform-browser/animations';
 import { HealthEndpointSystem, MockHealth } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../dialog/dialog.component';
 import { ErrorHandlerService } from './error-handler.service';
 

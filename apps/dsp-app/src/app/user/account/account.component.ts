@@ -6,10 +6,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import {
     ApiResponseData,
@@ -18,7 +15,7 @@ import {
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SessionService } from '@dsp-app/src/app/main/services/session.service';
@@ -55,14 +52,17 @@ export class AccountComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
 
-        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
-                this.user = response.body.user;
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-        });
+        this._dspApiConnection.admin.usersEndpoint
+            .getUserByUsername(this.username)
+            .subscribe(
+                (response: ApiResponseData<UserResponse>) => {
+                    this.user = response.body.user;
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
     }
 
     openDialog(mode: string, name: string, id?: string): void {

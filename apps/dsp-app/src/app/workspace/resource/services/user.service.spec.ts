@@ -2,7 +2,7 @@ import { waitForAsync, TestBed } from '@angular/core/testing';
 import { MockUsers } from '@dasch-swiss/dsp-js';
 import { UserService } from './user.service';
 import { of } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
 describe('UserService', () => {
     let service: UserService;

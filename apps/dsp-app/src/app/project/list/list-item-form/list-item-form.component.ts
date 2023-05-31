@@ -13,10 +13,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseData,
     ApiResponseError,
@@ -30,7 +27,7 @@ import {
     ReadProject,
     StringLiteral,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '../../../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 import { ErrorHandlerService } from '../../../main/services/error-handler.service';
 import {
@@ -142,18 +139,21 @@ export class ListItemFormComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
 
-        if(this.session){
+        if (this.session) {
             // get the project data from cache
-                    this._cache.get(this.projectUuid).subscribe(
-                        (response: ReadProject) => {
-
-                            // is logged-in user projectAdmin?
-                            this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === response.id);
-                        },
-                        (error: ApiResponseError) => {
-                            this._errorHandler.showMessage(error);
-                        }
-                    );
+            this._cache.get(this.projectUuid).subscribe(
+                (response: ReadProject) => {
+                    // is logged-in user projectAdmin?
+                    this.projectAdmin = this.sysAdmin
+                        ? this.sysAdmin
+                        : this.session.user.projectAdmin.some(
+                              (e) => e === response.id
+                          );
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
         }
 
         this.initComponent = true;

@@ -14,12 +14,12 @@ import {
     ReadProject,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { GroupsListComponent } from '@dsp-app/src/app/system/groups/groups-list/groups-list.component';
@@ -76,7 +76,7 @@ describe('PermissionComponent', () => {
                                         if (param === 'uuid') {
                                             return TestConfig.ProjectUuid;
                                         }
-                                    }
+                                    },
                                 }),
                                 snapshot: {
                                     url: [],
@@ -85,7 +85,7 @@ describe('PermissionComponent', () => {
                         },
                     },
                 },
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

@@ -35,10 +35,13 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { SplitSize } from '../results/results.component';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { PropertyInfoValues } from './properties/properties.component';
@@ -233,7 +236,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         this.compoundPosition.position = position;
         this.compoundPosition.page = page;
         this.representationsToDisplay =
-                this.collectRepresentationsAndAnnotations(this.incomingResource);
+            this.collectRepresentationsAndAnnotations(this.incomingResource);
     }
 
     setPermissionsOnResource(project: string) {
@@ -247,8 +250,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
             this.adminPermissions = this.session.user.sysAdmin
                 ? this.session.user.sysAdmin
                 : this.session.user.projectAdmin.some(
-                    (e) => e === project // this.resource.res.attachedToProject
-                );
+                      (e) => e === project // this.resource.res.attachedToProject
+                  );
         }
     }
 
@@ -258,7 +261,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     // ------------------------------------------------------------------------
     initResource(iri) {
         this.oldResourceIri = this.resourceIri;
-        this.getResource(iri).subscribe(dspResource => {
+        this.getResource(iri).subscribe((dspResource) => {
             this.renderResource(dspResource);
         });
     }
@@ -272,7 +275,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     }
 
     renderResource(resource: DspResource) {
-        if (resource.res.isDeleted) { // guard; not yet implemented
+        if (resource.res.isDeleted) {
+            // guard; not yet implemented
             return;
         }
         if (resource.res.id !== this.resourceIri) {
@@ -294,14 +298,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         this.oldResourceIri = this.resourceIri;
 
         this.representationsToDisplay =
-            this.collectRepresentationsAndAnnotations(
-                resource
-            );
+            this.collectRepresentationsAndAnnotations(resource);
 
-        if (
-            !this.representationsToDisplay.length &&
-            !this.compoundPosition
-        ) {
+        if (!this.representationsToDisplay.length && !this.compoundPosition) {
             // the resource could be a compound object
             this._incomingService
                 .getStillImageRepresentationsForCompoundResource(
@@ -312,10 +311,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                 .subscribe(
                     (countQuery: CountQueryResponse) => {
                         if (countQuery.numberOfResults > 0) {
-                            this.compoundPosition =
-                                new DspCompoundPosition(
-                                    countQuery.numberOfResults
-                                );
+                            this.compoundPosition = new DspCompoundPosition(
+                                countQuery.numberOfResults
+                            );
                             this.compoundNavigation(1);
                         } else {
                             // not a compound object
@@ -341,31 +339,30 @@ export class ResourceComponent implements OnChanges, OnDestroy {
             );
     }
 
-
     renderAsRegion(region: DspResource) {
         // display the corresponding still-image resource instance
         // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
         const annotatedRepresentationIri = (
-            region.res.properties[
-                Constants.IsRegionOfValue
-                ] as ReadLinkValue[]
+            region.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[]
         )[0].linkedResourceIri;
         // get the annotated main resource
-        this.getResource(annotatedRepresentationIri).subscribe(dspResource => {
-            this.resource = dspResource;
-            this.renderAsMainResource(dspResource);
+        this.getResource(annotatedRepresentationIri).subscribe(
+            (dspResource) => {
+                this.resource = dspResource;
+                this.renderAsMainResource(dspResource);
 
-            // open annotation`s tab and highlight region
-            this.selectedTabLabel = 'annotations';
-            this.openRegion(region.res.id);
+                // open annotation`s tab and highlight region
+                this.selectedTabLabel = 'annotations';
+                this.openRegion(region.res.id);
 
-            this.selectedRegion = region.res.id;
-            // define resource as annotation of type region
-            this.resourceIsAnnotation = this.resource.res.entityInfo
-                .classes[Constants.Region]
-                ? 'region'
-                : 'sequence';
-        });
+                this.selectedRegion = region.res.id;
+                // define resource as annotation of type region
+                this.resourceIsAnnotation = this.resource.res.entityInfo
+                    .classes[Constants.Region]
+                    ? 'region'
+                    : 'sequence';
+            }
+        );
     }
 
     // return whether the main resource
@@ -379,7 +376,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         const annotationOfIri = (
             this.resource.res.properties[
                 Constants.IsRegionOfValue
-                ] as ReadLinkValue[]
+            ] as ReadLinkValue[]
         )[0].linkedResourceIri;
 
         // get the parent resource to display
@@ -391,8 +388,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
         this.selectedRegion = iri;
         // define resource as annotation of type region
-        this.resourceIsAnnotation = this.resource.res.entityInfo
-            .classes[Constants.Region]
+        this.resourceIsAnnotation = this.resource.res.entityInfo.classes[
+            Constants.Region
+        ]
             ? 'region'
             : 'sequence';
     }

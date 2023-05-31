@@ -18,7 +18,7 @@ import {
     OntologyMetadata,
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import { GravsearchGenerationService } from '../services/gravsearch-generation.service';
@@ -81,11 +81,9 @@ export class AdvancedSearchComponent
 
     ngAfterViewChecked() {
         // if form status changes, re-run validation
-        this.formChangesSubscription = this.form.statusChanges.subscribe(
-            () => {
-                this.formValid = this._validateForm();
-            }
-        );
+        this.formChangesSubscription = this.form.statusChanges.subscribe(() => {
+            this.formValid = this._validateForm();
+        });
     }
 
     ngOnDestroy() {

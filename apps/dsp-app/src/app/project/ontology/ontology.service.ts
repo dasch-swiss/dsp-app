@@ -8,7 +8,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConfigToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConfigToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     DefaultProperties,
     DefaultProperty,

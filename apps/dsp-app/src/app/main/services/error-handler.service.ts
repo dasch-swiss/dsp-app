@@ -11,7 +11,7 @@ import {
     KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
 import { HttpStatusMsg } from '../../../assets/http/statusMsg';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../dialog/dialog.component';
 import { NotificationService } from '../services/notification.service';
 import { SessionService } from '../services/session.service';
@@ -29,7 +29,7 @@ export class ErrorHandlerService {
         private _dialog: MatDialog,
         private _session: SessionService,
         private _statusMsg: HttpStatusMsg
-    ) { }
+    ) {}
 
     showMessage(error: ApiResponseError) {
         // in case of (internal) server error
@@ -125,9 +125,11 @@ export class ErrorHandlerService {
                     throw new Error(error.error['message']);
                 } else {
                     const defaultStatusMsg = this._statusMsg.default;
-                    const message = `${defaultStatusMsg[error.status].message
-                        } (${error.status}): ${defaultStatusMsg[error.status].description
-                        }`;
+                    const message = `${
+                        defaultStatusMsg[error.status].message
+                    } (${error.status}): ${
+                        defaultStatusMsg[error.status].description
+                    }`;
                     throw new Error(message);
                 }
             } else {

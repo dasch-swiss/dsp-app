@@ -25,9 +25,9 @@ import {
     ReadProject,
     StringLiteral,
     UpdateProjectRequest,
-    UserResponse
+    UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
@@ -38,10 +38,9 @@ import { CacheService } from '../../main/cache/cache.service';
 @Component({
     selector: 'app-project-form',
     templateUrl: './project-form.component.html',
-    styleUrls: ['./project-form.component.scss']
+    styleUrls: ['./project-form.component.scss'],
 })
 export class ProjectFormComponent implements OnInit {
-
     /**
      * param of project form component:
      * Optional projectIri; if exists we are in edit mode
@@ -67,12 +66,12 @@ export class ProjectFormComponent implements OnInit {
      * shortcode and shortname must be unique
      */
     existingShortNames: [RegExp] = [
-        new RegExp('anEmptyRegularExpressionWasntPossible')
+        new RegExp('anEmptyRegularExpressionWasntPossible'),
     ];
     shortnameRegex = /^[a-zA-Z]+\S*$/;
 
     existingShortcodes: [RegExp] = [
-        new RegExp('anEmptyRegularExpressionWasntPossible')
+        new RegExp('anEmptyRegularExpressionWasntPossible'),
     ];
     shortcodeRegex = /^[0-9A-Fa-f]+$/;
 
@@ -106,7 +105,7 @@ export class ProjectFormComponent implements OnInit {
      */
     successMessage: any = {
         status: 200,
-        statusText: 'You have successfully updated the project data.'
+        statusText: 'You have successfully updated the project data.',
     };
 
     /**
@@ -115,44 +114,61 @@ export class ProjectFormComponent implements OnInit {
     form: UntypedFormGroup;
 
     formErrors = {
-        'shortname': '',
-        'longname': '',
-        'shortcode': '',
-        'description': '',
-        'keywords': ''
+        shortname: '',
+        longname: '',
+        shortcode: '',
+        description: '',
+        keywords: '',
         // 'institution': ''
     };
 
     validationMessages = {
-        'shortname': {
-            'required': 'Short name is required.',
-            'minlength': 'Short name must be at least ' + this.shortnameMinLength + ' characters long.',
-            'maxlength': 'Short name cannot be more than ' + this.shortnameMaxLength + ' characters long.',
-            'pattern': 'Short name shouldn\'t start with a number; Spaces are not allowed.',
-            'existingName': 'This short name is already taken.'
+        shortname: {
+            required: 'Short name is required.',
+            minlength:
+                'Short name must be at least ' +
+                this.shortnameMinLength +
+                ' characters long.',
+            maxlength:
+                'Short name cannot be more than ' +
+                this.shortnameMaxLength +
+                ' characters long.',
+            pattern:
+                "Short name shouldn't start with a number; Spaces are not allowed.",
+            existingName: 'This short name is already taken.',
         },
-        'longname': {
-            'required': 'Project (long) name is required.'
+        longname: {
+            required: 'Project (long) name is required.',
         },
-        'shortcode': {
-            'required': 'Shortcode is required',
-            'maxlength': 'Shortcode cannot be more than ' + this.shortcodeMaxLength + ' characters long.',
-            'minlength': 'Shortcode cannot be less than ' + this.shortcodeMinLength + ' characters long.',
-            'pattern': 'This is not a hexadecimal value!',
-            'existingName': 'This shortcode is already taken.'
+        shortcode: {
+            required: 'Shortcode is required',
+            maxlength:
+                'Shortcode cannot be more than ' +
+                this.shortcodeMaxLength +
+                ' characters long.',
+            minlength:
+                'Shortcode cannot be less than ' +
+                this.shortcodeMinLength +
+                ' characters long.',
+            pattern: 'This is not a hexadecimal value!',
+            existingName: 'This shortcode is already taken.',
         },
-        'description': {
-            'required': 'A description is required.',
-            'maxlength': 'Description cannot be more than ' + this.descriptionMaxLength + ' characters long.'
+        description: {
+            required: 'A description is required.',
+            maxlength:
+                'Description cannot be more than ' +
+                this.descriptionMaxLength +
+                ' characters long.',
         },
-        'keywords': {
-            'required': 'At least one keyword is required.'
-        }
+        keywords: {
+            required: 'At least one keyword is required.',
+        },
         // 'institution': {}
     };
 
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken)
+        private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
@@ -160,51 +176,62 @@ export class ProjectFormComponent implements OnInit {
         private _router: Router,
         private _session: SessionService,
         private _projectService: ProjectService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
-
         // if projectIri exists, we are in edit mode
         // otherwise create new project
         if (this.projectIri) {
             // edit existing project
             // get origin project data first
-            this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
-                    // save the origin project data in case of reset
-                    this.project = response.body.project;
+            this._dspApiConnection.admin.projectsEndpoint
+                .getProjectByIri(this.projectIri)
+                .subscribe(
+                    (response: ApiResponseData<ProjectResponse>) => {
+                        // save the origin project data in case of reset
+                        this.project = response.body.project;
 
-                    this.buildForm(this.project);
+                        this.buildForm(this.project);
 
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-
+                        this.loading = false;
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                    }
+                );
         } else {
             // create new project
 
             // to avoid duplicate shortcodes or shortnames
             // we have to create a list of already exisiting short codes and names
-            this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
-                (response: ApiResponseData<ProjectsResponse>) => {
+            this._dspApiConnection.admin.projectsEndpoint
+                .getProjects()
+                .subscribe(
+                    (response: ApiResponseData<ProjectsResponse>) => {
+                        for (const project of response.body.projects) {
+                            this.existingShortNames.push(
+                                new RegExp(
+                                    '(?:^|W)' +
+                                        project.shortname.toLowerCase() +
+                                        '(?:$|W)'
+                                )
+                            );
 
-                    for (const project of response.body.projects) {
-
-                        this.existingShortNames.push(new RegExp('(?:^|W)' + project.shortname.toLowerCase() + '(?:$|W)'));
-
-                        if (project.shortcode !== null) {
-                            this.existingShortcodes.push(new RegExp('(?:^|W)' + project.shortcode.toLowerCase() + '(?:$|W)'));
+                            if (project.shortcode !== null) {
+                                this.existingShortcodes.push(
+                                    new RegExp(
+                                        '(?:^|W)' +
+                                            project.shortcode.toLowerCase() +
+                                            '(?:$|W)'
+                                    )
+                                );
+                            }
                         }
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
                     }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
+                );
 
             this.project = new ReadProject();
             this.project.status = true;
@@ -212,7 +239,6 @@ export class ProjectFormComponent implements OnInit {
             this.buildForm(this.project);
 
             this.loading = false;
-
         }
     }
 
@@ -229,7 +255,7 @@ export class ProjectFormComponent implements OnInit {
         // edit mode is true, when a projectIri exists
 
         // disabled is true, if project status is false (= archived);
-        const disabled = (!project.status);
+        const disabled = !project.status;
 
         // separate description
         if (!this.projectIri) {
@@ -241,38 +267,50 @@ export class ProjectFormComponent implements OnInit {
         this.keywords = project.keywords;
 
         this.form = this._fb.group({
-            'shortname': new UntypedFormControl({
-                value: project.shortname, disabled: (this.projectIri)
-            }, [
-                Validators.required,
-                Validators.minLength(this.shortnameMinLength),
-                Validators.maxLength(this.shortnameMaxLength),
-                existingNamesValidator(this.existingShortNames),
-                Validators.pattern(this.shortnameRegex)
-            ]),
-            'longname': new UntypedFormControl({
-                value: project.longname, disabled: disabled
-            }, [
-                Validators.required
-            ]),
-            'shortcode': new UntypedFormControl({
-                value: project.shortcode, disabled: ((this.projectIri) && project.shortcode !== null)
-            }, [
-                Validators.required,
-                Validators.minLength(this.shortcodeMinLength),
-                Validators.maxLength(this.shortcodeMaxLength),
-                existingNamesValidator(this.existingShortcodes),
-                Validators.pattern(this.shortcodeRegex)
-            ]),
-            'logo': new UntypedFormControl({
-                value: project.logo, disabled: disabled
+            shortname: new UntypedFormControl(
+                {
+                    value: project.shortname,
+                    disabled: this.projectIri,
+                },
+                [
+                    Validators.required,
+                    Validators.minLength(this.shortnameMinLength),
+                    Validators.maxLength(this.shortnameMaxLength),
+                    existingNamesValidator(this.existingShortNames),
+                    Validators.pattern(this.shortnameRegex),
+                ]
+            ),
+            longname: new UntypedFormControl(
+                {
+                    value: project.longname,
+                    disabled: disabled,
+                },
+                [Validators.required]
+            ),
+            shortcode: new UntypedFormControl(
+                {
+                    value: project.shortcode,
+                    disabled: this.projectIri && project.shortcode !== null,
+                },
+                [
+                    Validators.required,
+                    Validators.minLength(this.shortcodeMinLength),
+                    Validators.maxLength(this.shortcodeMaxLength),
+                    existingNamesValidator(this.existingShortcodes),
+                    Validators.pattern(this.shortcodeRegex),
+                ]
+            ),
+            logo: new UntypedFormControl({
+                value: project.logo,
+                disabled: disabled,
             }),
-            'status': [true],
-            'selfjoin': [false],
-            'keywords': new UntypedFormControl({
+            status: [true],
+            selfjoin: [false],
+            keywords: new UntypedFormControl({
                 // must be empty (even in edit mode), because of the mat-chip-list
-                value: [], disabled: disabled
-            })
+                value: [],
+                disabled: disabled,
+            }),
         });
 
         if (!this.projectIri) {
@@ -281,30 +319,27 @@ export class ProjectFormComponent implements OnInit {
             this.form.controls['keywords'].setValidators(Validators.required);
         }
 
-        this.form.valueChanges
-            .subscribe(() => this.onValueChanged());
+        this.form.valueChanges.subscribe(() => this.onValueChanged());
     }
 
     /**
      * this method is for the form error handling
      */
     onValueChanged() {
-
         if (!this.form) {
             return;
         }
 
         const form = this.form;
 
-        Object.keys(this.formErrors).map(field => {
+        Object.keys(this.formErrors).map((field) => {
             this.formErrors[field] = '';
             const control = form.get(field);
             if (control && control.dirty && !control.valid) {
                 const messages = this.validationMessages[field];
-                Object.keys(control.errors).map(key => {
+                Object.keys(control.errors).map((key) => {
                     this.formErrors[field] += messages[key] + ' ';
                 });
-
             }
         });
     }
@@ -316,7 +351,8 @@ export class ProjectFormComponent implements OnInit {
     getStringLiteral(data: StringLiteral[]) {
         this.description = data;
         if (!this.description.length) {
-            this.formErrors['description'] = this.validationMessages['description'].required;
+            this.formErrors['description'] =
+                this.validationMessages['description'].required;
         } else {
             this.formErrors['description'] = '';
         }
@@ -359,7 +395,8 @@ export class ProjectFormComponent implements OnInit {
         this.form.controls['keywords'].setValue(this.keywords);
 
         if (this.projectIri) {
-            const projectData: UpdateProjectRequest = new UpdateProjectRequest();
+            const projectData: UpdateProjectRequest =
+                new UpdateProjectRequest();
             projectData.description = [new StringLiteral()];
             projectData.keywords = this.form.value.keywords;
             projectData.longname = this.form.value.longname;
@@ -374,25 +411,30 @@ export class ProjectFormComponent implements OnInit {
             }
 
             // edit / update project data
-            this._dspApiConnection.admin.projectsEndpoint.updateProject(this.project.id, projectData).subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
+            this._dspApiConnection.admin.projectsEndpoint
+                .updateProject(this.project.id, projectData)
+                .subscribe(
+                    (response: ApiResponseData<ProjectResponse>) => {
+                        this.success = true;
+                        this.project = response.body.project;
 
-                    this.success = true;
-                    this.project = response.body.project;
+                        // update cache
+                        this._cache.set(
+                            this._projectService.iriToUuid(this.projectIri),
+                            this.project
+                        );
 
-                    // update cache
-                    this._cache.set(this._projectService.iriToUuid(this.projectIri), this.project);
+                        this._notification.openSnackBar(
+                            'You have successfully updated the project information.'
+                        );
 
-                    this._notification.openSnackBar('You have successfully updated the project information.');
-
-                    this.closeDialog.emit(this.project);
-
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
+                        this.closeDialog.emit(this.project);
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                        this.loading = false;
+                    }
+                );
         } else {
             // create new project
             const projectData: Project = new Project();
@@ -413,41 +455,66 @@ export class ProjectFormComponent implements OnInit {
                 i++;
             }
 
-            this._dspApiConnection.admin.projectsEndpoint.createProject(projectData).subscribe(
-                (projectResponse: ApiResponseData<ProjectResponse>) => {
-                    this.project = projectResponse.body.project;
-                    this.buildForm(this.project);
+            this._dspApiConnection.admin.projectsEndpoint
+                .createProject(projectData)
+                .subscribe(
+                    (projectResponse: ApiResponseData<ProjectResponse>) => {
+                        this.project = projectResponse.body.project;
+                        this.buildForm(this.project);
 
-                    // add logged-in user to the project
-                    // who am I?
-                    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this._session.getSession().user.name).subscribe(
-                        (userResponse: ApiResponseData<UserResponse>) => {
-                            this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userResponse.body.user.id, projectResponse.body.project.id).subscribe(
-                                () => {
-                                    const uuid = this._projectService.iriToUuid(projectResponse.body.project.id);
-                                    this.loading = false;
-                                    this.closeDialog.emit();
-                                    // redirect to project page
-                                    this._router.navigateByUrl('/project', { skipLocationChange: true }).then(() =>
-                                        this._router.navigate(['/project/' + uuid])
-                                    );
+                        // add logged-in user to the project
+                        // who am I?
+                        this._dspApiConnection.admin.usersEndpoint
+                            .getUserByUsername(
+                                this._session.getSession().user.name
+                            )
+                            .subscribe(
+                                (
+                                    userResponse: ApiResponseData<UserResponse>
+                                ) => {
+                                    this._dspApiConnection.admin.usersEndpoint
+                                        .addUserToProjectMembership(
+                                            userResponse.body.user.id,
+                                            projectResponse.body.project.id
+                                        )
+                                        .subscribe(
+                                            () => {
+                                                const uuid =
+                                                    this._projectService.iriToUuid(
+                                                        projectResponse.body
+                                                            .project.id
+                                                    );
+                                                this.loading = false;
+                                                this.closeDialog.emit();
+                                                // redirect to project page
+                                                this._router
+                                                    .navigateByUrl('/project', {
+                                                        skipLocationChange:
+                                                            true,
+                                                    })
+                                                    .then(() =>
+                                                        this._router.navigate([
+                                                            '/project/' + uuid,
+                                                        ])
+                                                    );
+                                            },
+                                            (error: ApiResponseError) => {
+                                                this._errorHandler.showMessage(
+                                                    error
+                                                );
+                                            }
+                                        );
                                 },
                                 (error: ApiResponseError) => {
                                     this._errorHandler.showMessage(error);
                                 }
                             );
-                        },
-                        (error: ApiResponseError) => {
-                            this._errorHandler.showMessage(error);
-                        }
-                    );
-
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                        this.loading = false;
+                    }
+                );
         }
     }
 
@@ -456,16 +523,18 @@ export class ProjectFormComponent implements OnInit {
      * @param id Project Iri
      */
     delete(id: string) {
-        this._dspApiConnection.admin.projectsEndpoint.deleteProject(id).subscribe(
-            () => {
-                // reload page
-                this.loading = true;
-                this.refresh();
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+        this._dspApiConnection.admin.projectsEndpoint
+            .deleteProject(id)
+            .subscribe(
+                () => {
+                    // reload page
+                    this.loading = true;
+                    this.refresh();
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
     }
 
     /**
@@ -478,16 +547,18 @@ export class ProjectFormComponent implements OnInit {
         const data: UpdateProjectRequest = new UpdateProjectRequest();
         data.status = true;
 
-        this._dspApiConnection.admin.projectsEndpoint.updateProject(id, data).subscribe(
-            () => {
-                // reload page
-                this.loading = true;
-                this.refresh();
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+        this._dspApiConnection.admin.projectsEndpoint
+            .updateProject(id, data)
+            .subscribe(
+                () => {
+                    // reload page
+                    this.loading = true;
+                    this.refresh();
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                }
+            );
     }
 
     /**
@@ -498,21 +569,25 @@ export class ProjectFormComponent implements OnInit {
         this.loading = true;
         // update the cache
         this._cache.del(this._projectService.iriToUuid(this.projectIri));
-        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(this.projectIri).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
-                this.project = response.body.project;
+        this._dspApiConnection.admin.projectsEndpoint
+            .getProjectByIri(this.projectIri)
+            .subscribe(
+                (response: ApiResponseData<ProjectResponse>) => {
+                    this.project = response.body.project;
 
-                this._cache.set(this._projectService.iriToUuid(this.projectIri), this.project);
+                    this._cache.set(
+                        this._projectService.iriToUuid(this.projectIri),
+                        this.project
+                    );
 
-                this.buildForm(this.project);
-                window.location.reload();
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loading = false;
-            }
-        );
+                    this.buildForm(this.project);
+                    window.location.reload();
+                    this.loading = false;
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                    this.loading = false;
+                }
+            );
     }
-
 }

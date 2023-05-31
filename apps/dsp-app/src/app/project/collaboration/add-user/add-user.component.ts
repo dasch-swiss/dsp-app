@@ -11,10 +11,7 @@ import {
     UntypedFormControl,
     UntypedFormGroup,
 } from '@angular/forms';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     ApiResponseData,
     ApiResponseError,
@@ -27,7 +24,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -290,9 +287,7 @@ export class AddUserComponent implements OnInit {
             )
         );
 
-        this.selectUserForm.valueChanges.subscribe(() =>
-            this.onValueChanged()
-        );
+        this.selectUserForm.valueChanges.subscribe(() => this.onValueChanged());
 
         this.onValueChanged(); // (re)set validation messages now
     }

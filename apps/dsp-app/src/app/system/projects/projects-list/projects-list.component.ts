@@ -6,10 +6,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
     ApiResponseError,
@@ -19,7 +16,7 @@ import {
     UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
@@ -27,7 +24,10 @@ import {
     EmitEvent,
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 
@@ -145,9 +145,9 @@ export class ProjectsListComponent implements OnInit {
     openProjectPage(iri: string) {
         const uuid = this._projectService.iriToUuid(iri);
 
-        this._router.navigateByUrl('/refresh', { skipLocationChange: true }).then(
-            () => this._router.navigate(['project/' + uuid])
-        );
+        this._router
+            .navigateByUrl('/refresh', { skipLocationChange: true })
+            .then(() => this._router.navigate(['project/' + uuid]));
     }
 
     openDialog(mode: string, name?: string, id?: string): void {

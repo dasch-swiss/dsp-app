@@ -18,7 +18,7 @@ import {
     ResourcePropertyDefinition,
     UpdateListValue,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 

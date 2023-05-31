@@ -1,8 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import {
@@ -14,10 +11,13 @@ import {
     ProjectsResponse,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 
 // should only be used by this component and child components
@@ -25,8 +25,8 @@ export type TileLinks = 'workspace' | 'settings';
 
 // should only be used by this component and child components
 export interface routeParams {
-    id: string,
-    path: TileLinks
+    id: string;
+    path: TileLinks;
 }
 
 @Component({
@@ -186,7 +186,9 @@ export class OverviewComponent implements OnInit {
                 break;
 
             case 'settings':
-                this._router.navigate(['/project/' + uuid + '/settings/collaboration']);
+                this._router.navigate([
+                    '/project/' + uuid + '/settings/collaboration',
+                ]);
                 break;
 
             default:

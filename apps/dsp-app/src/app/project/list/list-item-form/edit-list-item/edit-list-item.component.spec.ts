@@ -20,10 +20,10 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ProgressIndicatorComponent } from '@dsp-app/src/app/main/action/progress-indicator/progress-indicator.component';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { EditListItemComponent } from './edit-list-item.component';
 
@@ -130,7 +130,7 @@ describe('EditListItemComponent', () => {
             ],
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 {

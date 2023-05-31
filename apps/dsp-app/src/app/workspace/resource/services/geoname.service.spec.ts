@@ -3,7 +3,7 @@ import {
     HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DisplayPlace, GeonameService } from './geoname.service';
 
 const geonamesGetResponse = {
@@ -319,7 +319,7 @@ describe('GeonameService', () => {
             imports: [HttpClientTestingModule],
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
             ],

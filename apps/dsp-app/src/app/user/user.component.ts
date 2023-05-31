@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
-import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
 import { Session, SessionService } from '../main/services/session.service';
 

@@ -9,11 +9,14 @@ import {
     ResourceClassDefinition,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import {
@@ -57,14 +60,14 @@ export class OntologyClassInstanceComponent implements OnChanges {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _ais: AppInitService,
+        private _acs: AppConfigService,
         private _cache: CacheService,
         private _route: ActivatedRoute,
         private _ontologyService: OntologyService,
         private _projectService: ProjectService,
         private _sessionService: SessionService,
         private _router: Router,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: ErrorHandlerService
     ) {
         // parameters from the url
         const uuid = this._route.parent.snapshot.params.uuid;
@@ -92,30 +95,44 @@ export class OntologyClassInstanceComponent implements OnChanges {
                         // single instance view
 
                         if (this.instanceId === 'add') {
-                            if(!this.session) { // user isn't signed in, redirect to project description
-                                this._router.navigateByUrl("/project/" + uuid);
+                            if (!this.session) {
+                                // user isn't signed in, redirect to project description
+                                this._router.navigateByUrl('/project/' + uuid);
                             } else {
-                                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
-                                    (res: ApiResponseData<UserResponse>) => {
-                                        const usersProjects = res.body.user.projects;
-                                        if (usersProjects?.some(p => p.id === this.projectIri) || // project member
-                                            this.session.user.sysAdmin // system admin
-                                        ) {
-                                            // user has permission, display create resource instance form
-                                            this.ngOnChanges();
-                                        } else {
-                                            // user is not a member of the project or a systemAdmin, redirect to project description
-                                            this._router.navigateByUrl("/project/" + uuid);
+                                this._dspApiConnection.admin.usersEndpoint
+                                    .getUserByUsername(this.session.user.name)
+                                    .subscribe(
+                                        (
+                                            res: ApiResponseData<UserResponse>
+                                        ) => {
+                                            const usersProjects =
+                                                res.body.user.projects;
+                                            if (
+                                                usersProjects?.some(
+                                                    (p) =>
+                                                        p.id === this.projectIri
+                                                ) || // project member
+                                                this.session.user.sysAdmin // system admin
+                                            ) {
+                                                // user has permission, display create resource instance form
+                                                this.ngOnChanges();
+                                            } else {
+                                                // user is not a member of the project or a systemAdmin, redirect to project description
+                                                this._router.navigateByUrl(
+                                                    '/project/' + uuid
+                                                );
+                                            }
+                                        },
+                                        (error: ApiResponseError) => {
+                                            this._errorHandler.showMessage(
+                                                error
+                                            );
                                         }
-                                    },
-                                    (error: ApiResponseError) => {
-                                        this._errorHandler.showMessage(error);
-                                    }
-                                );
+                                    );
                             }
                         } else {
                             // get the single resource instance
-                            this.resourceIri = `${this._ais.dspAppConfig.iriBase}/${shortcode}/${this.instanceId}`;
+                            this.resourceIri = `${this._acs.dspAppConfig.iriBase}/${shortcode}/${this.instanceId}`;
                         }
                     } else {
                         // display all resource instances of this resource class

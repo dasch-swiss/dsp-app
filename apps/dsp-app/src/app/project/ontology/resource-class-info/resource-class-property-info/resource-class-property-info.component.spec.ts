@@ -28,20 +28,18 @@ import {
     ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
-import {
-    ResourceClassPropertyInfoComponent
-} from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
+import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 
 /**
  * test host component to simulate parent component
@@ -52,7 +50,8 @@ import {
         '<app-resource-class-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-resource-class-property-info>',
 })
 class SimpleTextHostComponent {
-    @ViewChild('propertyInfo') propertyInfoComponent: ResourceClassPropertyInfoComponent;
+    @ViewChild('propertyInfo')
+    propertyInfoComponent: ResourceClassPropertyInfoComponent;
 
     propertyCardinality: IHasProperty = {
         propertyIndex:
@@ -96,7 +95,8 @@ class SimpleTextHostComponent {
         '<app-resource-class-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-resource-class-property-info>',
 })
 class LinkHostComponent {
-    @ViewChild('propertyInfo') propertyInfoComponent: ResourceClassPropertyInfoComponent;
+    @ViewChild('propertyInfo')
+    propertyInfoComponent: ResourceClassPropertyInfoComponent;
 
     propertyCardinality: IHasProperty = {
         propertyIndex:
@@ -147,7 +147,8 @@ class LinkHostComponent {
         '<app-resource-class-property-info #propertyInfo [propCard]="propertyCardinality" [propDef]="propertyDefinition"></app-resource-class-property-info>',
 })
 class ListHostComponent {
-    @ViewChild('propertyInfo') propertyInfoComponent: ResourceClassPropertyInfoComponent;
+    @ViewChild('propertyInfo')
+    propertyInfoComponent: ResourceClassPropertyInfoComponent;
 
     propertyCardinality: IHasProperty = {
         propertyIndex:
@@ -221,7 +222,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
                 ListHostComponent,
                 SimpleTextHostComponent,
                 SplitPipe,
-                ResourceClassPropertyInfoComponent
+                ResourceClassPropertyInfoComponent,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -235,7 +236,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
                 MatTooltipModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

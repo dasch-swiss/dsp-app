@@ -14,12 +14,12 @@ import {
     StoredProject,
     UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
-import { AppInitService } from '../../app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '../../main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '../../main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '../../../test.config';
 import { of } from 'rxjs';
 import { OverviewComponent } from './overview.component';
@@ -66,7 +66,7 @@ class TestProjectTileComponent {
     selector: 'app-project-form',
     template: '',
 })
-class TestProjectFormComponent { }
+class TestProjectFormComponent {}
 
 describe('OverviewComponent', () => {
     beforeEach(async () => {
@@ -109,7 +109,7 @@ describe('OverviewComponent', () => {
                 TranslateModule.forRoot(),
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -340,8 +340,12 @@ describe('OverviewComponent', () => {
         });
 
         it('should populate project lists correctly', () => {
-            expect(testHostComponent.overviewComp.userProjects.length).toEqual(0);
-            expect(testHostComponent.overviewComp.otherProjects.length).toEqual(5);
+            expect(testHostComponent.overviewComp.userProjects.length).toEqual(
+                0
+            );
+            expect(testHostComponent.overviewComp.otherProjects.length).toEqual(
+                5
+            );
         });
 
         it('should NOT show the "Create new project" button', async () => {

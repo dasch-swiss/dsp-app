@@ -1,13 +1,8 @@
 import * as Rollbar from 'rollbar';
 
-import {
-    Injectable,
-    Inject,
-    InjectionToken,
-    ErrorHandler,
-} from '@angular/core';
+import { Injectable, InjectionToken, ErrorHandler } from '@angular/core';
 
-import { AppInitService } from './app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 
 export const RollbarService = new InjectionToken<Rollbar>('rollbar');
 
@@ -15,9 +10,7 @@ export const RollbarService = new InjectionToken<Rollbar>('rollbar');
 export class RollbarErrorHandler implements ErrorHandler {
     public rollbar: Rollbar;
 
-    constructor(
-        @Inject(AppInitService) private _appInitService: AppInitService
-    ) {
+    constructor(private _appInitService: AppConfigService) {
         this.rollbar = new Rollbar({
             accessToken:
                 this._appInitService.dspInstrumentationConfig.rollbar

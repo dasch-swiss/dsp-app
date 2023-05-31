@@ -10,9 +10,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SessionService } from '@dsp-app/src/app/main/services/session.service';
 
@@ -26,7 +26,7 @@ export class ProjectService {
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
-        private _ais: AppInitService
+        private _acs: AppConfigService
     ) {}
 
     /**
@@ -101,7 +101,7 @@ export class ProjectService {
 
     uuidToIri(uuid: string): string {
         if (uuid) {
-            return `${this._ais.dspAppConfig.iriBase}/projects/${uuid}`;
+            return `${this._acs.dspAppConfig.iriBase}/projects/${uuid}`;
         }
 
         return '';

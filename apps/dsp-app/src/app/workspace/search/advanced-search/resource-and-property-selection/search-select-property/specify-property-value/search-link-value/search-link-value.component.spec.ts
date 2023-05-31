@@ -13,7 +13,7 @@ import {
     SearchEndpointV2,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { IRI } from '../operator';
 import { SearchLinkValueComponent } from './search-link-value.component';
 
@@ -100,17 +100,15 @@ describe('SearchLinkValueComponent', () => {
 
         (
             searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doSearchByLabel.and.callFake(
-            () => {
-                const res = new ReadResource();
-                res.id = 'http://testIri';
-                res.label = 'testres';
+        ).doSearchByLabel.and.callFake(() => {
+            const res = new ReadResource();
+            res.id = 'http://testIri';
+            res.label = 'testres';
 
-                const response = new ReadResourceSequence([res]);
+            const response = new ReadResourceSequence([res]);
 
-                return of(response);
-            }
-        );
+            return of(response);
+        });
 
         const autoCompleteHarness = await loader.getHarness(
             MatAutocompleteHarness

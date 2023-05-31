@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay } from 'rxjs/operators';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 
 export interface GIS {
     longitude: number;
@@ -33,7 +33,7 @@ export interface SearchPlace {
 export class GeonameService {
     constructor(
         private readonly _http: HttpClient,
-        private _appInitService: AppInitService
+        private _appConfigService: AppConfigService
     ) {}
 
     /**
@@ -47,7 +47,7 @@ export class GeonameService {
                 'https://ws.geonames.net/getJSON?geonameId=' +
                     id +
                     '&username=' +
-                    this._appInitService.dspAppConfig.geonameToken +
+                    this._appConfigService.dspAppConfig.geonameToken +
                     '&style=short'
             )
             .pipe(
@@ -112,7 +112,7 @@ export class GeonameService {
         return this._http
             .get<object>(
                 'https://ws.geonames.net/searchJSON?userName=' +
-                    this._appInitService.dspAppConfig.geonameToken +
+                    this._appConfigService.dspAppConfig.geonameToken +
                     '&lang=en&style=full&maxRows=12&name_startsWith=' +
                     encodeURIComponent(searchString)
             )

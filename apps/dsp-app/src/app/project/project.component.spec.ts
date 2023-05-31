@@ -12,12 +12,22 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, ClassDefinition, MockOntology, MockProjects, OntologiesEndpointV2, ProjectResponse, ProjectsEndpointAdmin, ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    ClassDefinition,
+    MockOntology,
+    MockProjects,
+    OntologiesEndpointV2,
+    ProjectResponse,
+    ProjectsEndpointAdmin,
+    ReadOntology,
+    ReadProject,
+} from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '../app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '../main/cache/cache.service';
-import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../main/dialog/dialog.component';
 import { Session, SessionService } from '../main/services/session.service';
 import { StatusComponent } from '../main/status/status.component';
@@ -25,7 +35,7 @@ import { OntologyService } from './ontology/ontology.service';
 import { ProjectComponent } from './project.component';
 
 @Component({
-    selector: 'app-ontology-classes'
+    selector: 'app-ontology-classes',
 })
 class MockOntologyClassesComponent {
     @Input() resClasses: ClassDefinition[];
@@ -34,12 +44,12 @@ class MockOntologyClassesComponent {
 
 @Component({
     selector: 'app-progress-indicator',
-    template: ''
+    template: '',
 })
 class MockProgressIndicatorComponent {}
 
-@Component ({
-    template: '<app-project #project></app-project>'
+@Component({
+    template: '<app-project #project></app-project>',
 })
 class TestHostProjectComponent {
     @ViewChild('project') projectComp: ProjectComponent;
@@ -56,26 +66,40 @@ describe('ProjectComponent', () => {
     };
 
     beforeEach(waitForAsync(() => {
-
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set', 'has']);
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
+            'get',
+            'set',
+            'has',
+        ]);
 
         // getProjectMembersByIri and getGroups currently have no mock implementation because
         // their results are stored in the cache but never actually used in the component
         // so they're irrevelant for this unit test but need to be defined at least
         const dspConnSpyObj = {
             admin: {
-                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri', 'getProjectMembersByIri']),
-                groupsEndpoint: jasmine.createSpyObj('groupsEndpoint',['getGroups'])
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
+                    'getProjectByIri',
+                    'getProjectMembersByIri',
+                ]),
+                groupsEndpoint: jasmine.createSpyObj('groupsEndpoint', [
+                    'getGroups',
+                ]),
             },
             v2: {
-                onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri', 'getOntology']),
-            }
+                onto: jasmine.createSpyObj('onto', [
+                    'getOntologiesByProjectIri',
+                    'getOntology',
+                ]),
+            },
         };
         const ontoServiceSpy = jasmine.createSpyObj('OntologyService', [
             'getOntologyName',
         ]);
 
-        const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession', 'setSession']);
+        const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
+            'getSession',
+            'setSession',
+        ]);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -84,7 +108,7 @@ describe('ProjectComponent', () => {
                 DialogComponent,
                 StatusComponent,
                 MockOntologyClassesComponent,
-                MockProgressIndicatorComponent
+                MockProgressIndicatorComponent,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -97,11 +121,11 @@ describe('ProjectComponent', () => {
                 MatSnackBarModule,
                 MatTabsModule,
                 MatTooltipModule,
-                RouterTestingModule
+                RouterTestingModule,
             ],
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 {
@@ -120,20 +144,16 @@ describe('ProjectComponent', () => {
                     provide: ActivatedRoute,
                     useValue: {
                         snapshot: {
-                            url: [
-                                { path: 'project' }
-                            ],
-                            params: [
-                                { uuid: '00123001' }
-                            ]
-                        }
-                    }
+                            url: [{ path: 'project' }],
+                            params: [{ uuid: '00123001' }],
+                        },
+                    },
                 },
                 {
                     provide: SessionService,
-                    useValue: sessionServiceSpy
-                }
-            ]
+                    useValue: sessionServiceSpy,
+                },
+            ],
         }).compileComponents();
     }));
 
@@ -177,12 +197,14 @@ describe('ProjectComponent', () => {
             return of(anythingOnto);
         });
 
-        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntology.and.callFake(
-            () => {
-                const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
-                return of(response);
-            }
-        );
+        (
+            dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
+        ).getOntology.and.callFake(() => {
+            const response: ReadOntology = MockOntology.mockReadOntology(
+                'http://0.0.0.0:3333/ontology/0001/anything/v2'
+            );
+            return of(response);
+        });
 
         // mock session service
         const sessionSpy = TestBed.inject(SessionService);
@@ -196,8 +218,8 @@ describe('ProjectComponent', () => {
                         jwt: 'myToken',
                         lang: 'en',
                         sysAdmin: true,
-                        projectAdmin: []
-                    }
+                        projectAdmin: [],
+                    },
                 };
 
                 return session;

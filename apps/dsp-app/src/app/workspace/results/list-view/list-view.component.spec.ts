@@ -14,7 +14,7 @@ import {
     SearchEndpointV2,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ListViewComponent, SearchParams } from './list-view.component';
 
 /**
@@ -148,18 +148,16 @@ describe('ListViewComponent', () => {
 
         (
             searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doFulltextSearch.and.callFake(
-            () => {
-                let resources: ReadResourceSequence;
-                // mock list of resourcses to simulate full-text search response
-                MockResource.getTestThings(5).subscribe((res) => {
-                    resources = res;
-                });
-                if (resources.resources.length) {
-                    return of(resources);
-                }
+        ).doFulltextSearch.and.callFake(() => {
+            let resources: ReadResourceSequence;
+            // mock list of resourcses to simulate full-text search response
+            MockResource.getTestThings(5).subscribe((res) => {
+                resources = res;
+            });
+            if (resources.resources.length) {
+                return of(resources);
             }
-        );
+        });
 
         (
             searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>

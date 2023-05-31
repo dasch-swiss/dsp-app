@@ -13,11 +13,20 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection, MockProjects, ProjectResponse, ReadProject, StringLiteral } from '@dasch-swiss/dsp-js';
+import {
+    KnoraApiConnection,
+    MockProjects,
+    ProjectResponse,
+    ReadProject,
+    StringLiteral,
+} from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConfigToken, DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import {
+    DspApiConfigToken,
+    DspApiConnectionToken,
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
@@ -28,8 +37,8 @@ import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { MatButtonHarness } from '@angular/material/button/testing';
 
-@Component ({
-    template: '<app-description #description></app-description>'
+@Component({
+    template: '<app-description #description></app-description>',
 })
 class TestHostDescriptionComponent {
     @ViewChild('description') descriptionComp: DescriptionComponent;
@@ -46,7 +55,7 @@ class MockStringLiteralInputComponent {
     @Input() value: StringLiteral[] = [];
     @Input() disabled: boolean;
     @Input() readonly: boolean;
-    constructor() { }
+    constructor() {}
 }
 
 describe('DescriptionComponent', () => {
@@ -56,10 +65,13 @@ describe('DescriptionComponent', () => {
     let rootLoader: HarnessLoader;
 
     beforeEach(waitForAsync(() => {
-
-
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get', 'set']);
-        const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
+        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
+            'get',
+            'set',
+        ]);
+        const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
+            'iriToUuid',
+        ]);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -67,7 +79,7 @@ describe('DescriptionComponent', () => {
                 TestHostDescriptionComponent,
                 MockStringLiteralInputComponent,
                 DialogComponent,
-                StatusComponent
+                StatusComponent,
             ],
             imports: [
                 FormsModule,
@@ -82,7 +94,7 @@ describe('DescriptionComponent', () => {
                 MatSnackBarModule,
                 ReactiveFormsModule,
                 RouterTestingModule,
-                TranslateModule.forRoot()
+                TranslateModule.forRoot(),
             ],
             providers: [
                 {
@@ -102,7 +114,7 @@ describe('DescriptionComponent', () => {
                         },
                     },
                 },
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -113,13 +125,13 @@ describe('DescriptionComponent', () => {
                 },
                 {
                     provide: CacheService,
-                    useValue: cacheServiceSpy
+                    useValue: cacheServiceSpy,
                 },
                 {
                     provide: ProjectService,
-                    useValue: projectServiceSpy
+                    useValue: projectServiceSpy,
                 },
-            ]
+            ],
         }).compileComponents();
     }));
 
@@ -164,13 +176,16 @@ describe('DescriptionComponent', () => {
 
         testHostFixture = TestBed.createComponent(TestHostDescriptionComponent);
         testHostComponent = testHostFixture.componentInstance;
-        rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+        rootLoader =
+            TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
         testHostFixture.detectChanges();
 
         expect(testHostComponent).toBeTruthy();
 
         const hostCompDe = testHostFixture.debugElement;
-        descriptionComponentDe = hostCompDe.query(By.directive(DescriptionComponent));
+        descriptionComponentDe = hostCompDe.query(
+            By.directive(DescriptionComponent)
+        );
         expect(descriptionComponentDe).toBeTruthy();
     });
 
@@ -191,7 +206,9 @@ describe('DescriptionComponent', () => {
 
         testHostFixture.detectChanges();
 
-        const editBtn = await rootLoader.getAllHarnesses(MatButtonHarness.with({ selector: '.app-toolbar-action button' }));
+        const editBtn = await rootLoader.getAllHarnesses(
+            MatButtonHarness.with({ selector: '.app-toolbar-action button' })
+        );
 
         expect(editBtn.length).toEqual(0);
     });
@@ -202,7 +219,9 @@ describe('DescriptionComponent', () => {
 
         testHostFixture.detectChanges();
 
-        const editBtn = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.app-toolbar-action button' }));
+        const editBtn = await rootLoader.getHarness(
+            MatButtonHarness.with({ selector: '.app-toolbar-action button' })
+        );
 
         await editBtn.click();
 

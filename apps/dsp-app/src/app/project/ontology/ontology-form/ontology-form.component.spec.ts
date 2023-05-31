@@ -7,12 +7,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection, MockProjects } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { MaterialModule } from '@dsp-app/src/app/material-module';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { OntologyFormComponent } from './ontology-form.component';
@@ -39,7 +39,7 @@ describe('OntologyFormComponent', () => {
             providers: [
                 // reference the new instance of formBuilder from above
                 { provide: UntypedFormBuilder, useValue: formBuilder },
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

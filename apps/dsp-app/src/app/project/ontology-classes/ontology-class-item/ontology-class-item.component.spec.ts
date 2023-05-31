@@ -4,11 +4,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ClassDefinition, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { OntologyClassItemComponent } from './ontology-class-item.component';
 
@@ -55,7 +55,7 @@ describe('OntologyClassItemComponent', () => {
             declarations: [OntologyClassItemComponent],
             imports: [MatSnackBarModule, MatDialogModule, RouterTestingModule],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

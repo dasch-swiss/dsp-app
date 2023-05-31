@@ -4,7 +4,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TestConfig } from '@dsp-app/src/test.config';
-import { DspApiConnectionToken } from '../main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { StatusComponent } from '../main/status/status.component';
 import { SessionService } from '../main/services/session.service';
 import { SystemComponent } from './system.component';

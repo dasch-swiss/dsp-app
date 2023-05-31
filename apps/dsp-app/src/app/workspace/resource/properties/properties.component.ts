@@ -8,10 +8,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    MatDialog,
-    MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import {
     ApiResponseData,
@@ -40,7 +37,7 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     ConfirmationWithComment,
     DialogComponent,

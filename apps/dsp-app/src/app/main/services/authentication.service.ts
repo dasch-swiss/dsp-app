@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-    ApiResponseError,
-    KnoraApiConnection,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { CacheService } from '../cache/cache.service';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '../services/error-handler.service';
 import { DatadogRumService } from './datadog-rum.service';
 import { SessionService } from './session.service';

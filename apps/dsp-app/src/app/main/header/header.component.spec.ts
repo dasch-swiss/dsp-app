@@ -13,7 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
     ComponentCommunicationEventService,
     EmitEvent,
@@ -23,7 +23,7 @@ import { TestConfig } from '@dsp-app/src/test.config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '../declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { HeaderComponent } from './header.component';
 
@@ -97,7 +97,7 @@ describe('HeaderComponent', () => {
                 TranslateModule.forRoot(),
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -107,7 +107,7 @@ describe('HeaderComponent', () => {
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 ComponentCommunicationEventService,

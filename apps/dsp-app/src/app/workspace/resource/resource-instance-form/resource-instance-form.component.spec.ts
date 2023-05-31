@@ -1,4 +1,13 @@
-import { Component, DebugElement, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+    Component,
+    DebugElement,
+    Inject,
+    Input,
+    OnInit,
+    QueryList,
+    ViewChild,
+    ViewChildren,
+} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
     UntypedFormBuilder,
@@ -41,11 +50,14 @@ import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/Onto
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { ValueService } from '../services/value.service';
 import { IntValueComponent } from '../values/int-value/int-value.component';
 import { TextValueAsStringComponent } from '../values/text-value/text-value-as-string/text-value-as-string.component';
@@ -56,15 +68,17 @@ import { SwitchPropertiesComponent } from './select-properties/switch-properties
  * test host component to simulate parent component.
  */
 @Component({
-    template: `
-        <app-resource-instance-form #resourceInstanceFormComp [resourceClassIri]="resourceClassIri" [projectIri]="projectIri"></app-resource-instance-form>`
+    template: ` <app-resource-instance-form
+        #resourceInstanceFormComp
+        [resourceClassIri]="resourceClassIri"
+        [projectIri]="projectIri"
+    ></app-resource-instance-form>`,
 })
 class TestHostComponent {
-
-    @ViewChild('resourceInstanceFormComp') resourceInstanceFormComponent: ResourceInstanceFormComponent;
+    @ViewChild('resourceInstanceFormComp')
+    resourceInstanceFormComponent: ResourceInstanceFormComponent;
     resourceClassIri = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
     projectIri = 'http://rdfh.ch/projects/0001';
-
 }
 
 /**
@@ -213,11 +227,9 @@ class MockCreateTextValueComponent implements OnInit {
 
 @Component({
     selector: 'app-progress-indicator',
-    template: ''
+    template: '',
 })
-class MockProgressIndicatorComponent {
-
-}
+class MockProgressIndicatorComponent {}
 
 describe('ResourceInstanceFormComponent', () => {
     let testHostComponent: TestHostComponent;
@@ -268,7 +280,7 @@ describe('ResourceInstanceFormComponent', () => {
                 MockSwitchPropertiesComponent,
                 MockCreateIntValueComponent,
                 MockCreateTextValueComponent,
-                MockProgressIndicatorComponent
+                MockProgressIndicatorComponent,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -296,7 +308,7 @@ describe('ResourceInstanceFormComponent', () => {
                     useValue: cacheServiceSpy,
                 },
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 {
@@ -304,30 +316,26 @@ describe('ResourceInstanceFormComponent', () => {
                     useValue: {
                         parent: {
                             snapshot: {
-                                url: [
-                                    { path: 'project' }
-                                ]
-                            }
+                                url: [{ path: 'project' }],
+                            },
                         },
                         snapshot: {
                             url: [
                                 { path: 'ontology' },
                                 { path: 'anything' },
                                 { path: 'thing' },
-                                { path: 'add' }
+                                { path: 'add' },
                             ],
-                        }
-                    }
+                        },
+                    },
                 },
                 {
                     provide: Router,
-                    useValue: routerSpy
+                    useValue: routerSpy,
                 },
-                ValueService
-            ]
-        })
-            .compileComponents();
-
+                ValueService,
+            ],
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -368,33 +376,42 @@ describe('ResourceInstanceFormComponent', () => {
 
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-        (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(
-            () => of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
+        (
+            dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
+        ).getResourceClassDefinition.and.callFake(() =>
+            of(
+                MockOntology.mockIResourceClassAndPropertyDefinitions(
+                    'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
+                )
+            )
         );
 
-        (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).reloadCachedItem.and.callFake(
-            () => {
-                const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
-                return of(response);
-            }
-        );
+        (
+            dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
+        ).reloadCachedItem.and.callFake(() => {
+            const response: ReadOntology = MockOntology.mockReadOntology(
+                'http://0.0.0.0:3333/ontology/0001/anything/v2'
+            );
+            return of(response);
+        });
 
         // mock router
         const routerSpy = TestBed.inject(Router);
 
-        (routerSpy as jasmine.SpyObj<Router>).navigate.and.returnValue(Promise.resolve(true));
+        (routerSpy as jasmine.SpyObj<Router>).navigate.and.returnValue(
+            Promise.resolve(true)
+        );
 
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;
         testHostFixture.detectChanges();
 
-        (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(
-            () => {
-                const loggedInUser = MockUsers.mockUser();
-                return of(loggedInUser);
-            }
-        );
-
+        (
+            dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
+        ).getUserByUsername.and.callFake(() => {
+            const loggedInUser = MockUsers.mockUser();
+            return of(loggedInUser);
+        });
 
         const hostCompDe = testHostFixture.debugElement;
 
@@ -404,7 +421,6 @@ describe('ResourceInstanceFormComponent', () => {
     });
 
     it('should show the select-properties component', () => {
-
         const selectPropertiesComp = resourceInstanceFormComponentDe.query(
             By.directive(MockSelectPropertiesComponent)
         );
@@ -436,12 +452,14 @@ describe('ResourceInstanceFormComponent', () => {
             ResourceClassDefinition
         );
 
-        testHostComponent.resourceInstanceFormComponent.resourceClass = resourceClasses[1];
+        testHostComponent.resourceInstanceFormComponent.resourceClass =
+            resourceClasses[1];
 
         testHostComponent.resourceInstanceFormComponent.resourceLabel =
             'My Label';
 
-        testHostComponent.resourceInstanceFormComponent.properties = new Array<ResourcePropertyDefinition>();
+        testHostComponent.resourceInstanceFormComponent.properties =
+            new Array<ResourcePropertyDefinition>();
 
         MockResource.getTestThing().subscribe((res) => {
             const resourcePropDef = (

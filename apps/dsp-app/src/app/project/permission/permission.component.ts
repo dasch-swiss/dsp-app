@@ -8,9 +8,12 @@ import {
     ReadProject,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { AddGroupComponent } from './add-group/add-group.component';
 
 @Component({
@@ -45,8 +48,8 @@ export class PermissionComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
         private _session: SessionService,
-        private _titleService: Title) {
-
+        private _titleService: Title
+    ) {
         this._route.parent.parent.paramMap.subscribe((params: Params) => {
             this.projectUuid = params.get('uuid');
         });

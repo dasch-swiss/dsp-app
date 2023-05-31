@@ -14,7 +14,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HealthEndpointSystem, MockHealth } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { HttpStatusMsg } from '@dsp-app/src/assets/http/statusMsg';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { StatusComponent } from './status.component';
 
 /**

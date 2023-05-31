@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AppInitService } from '../../../../app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { SessionService } from '../../../../main/services/session.service';
 
 export interface UploadedFile {
@@ -20,7 +20,7 @@ export interface UploadedFileResponse {
 })
 export class UploadFileService {
     constructor(
-        private readonly _init: AppInitService,
+        private readonly _acs: AppConfigService,
         private readonly _http: HttpClient,
         private readonly _session: SessionService
     ) {}
@@ -30,7 +30,7 @@ export class UploadFileService {
      * @param (file)
      */
     upload(file: FormData): Observable<UploadedFileResponse> {
-        const uploadUrl = `${this._init.dspIiifConfig.iiifUrl}/upload`;
+        const uploadUrl = `${this._acs.dspIiifConfig.iiifUrl}/upload`;
 
         // checks if user is logged in
         const jwt = this._session.getSession()?.user.jwt;

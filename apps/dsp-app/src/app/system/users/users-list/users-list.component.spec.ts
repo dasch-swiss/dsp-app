@@ -10,11 +10,15 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockProjects, ProjectResponse, ReadProject } from '@dasch-swiss/dsp-js';
+import {
+    MockProjects,
+    ProjectResponse,
+    ReadProject,
+} from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { SelectGroupComponent } from '@dsp-app/src/app/project/collaboration/select-group/select-group.component';
@@ -73,7 +77,7 @@ describe('UsersListComponent', () => {
                                         if (param === 'uuid') {
                                             return TestConfig.ProjectUuid;
                                         }
-                                    }
+                                    },
                                 }),
                                 snapshot: {
                                     url: [],
@@ -82,7 +86,7 @@ describe('UsersListComponent', () => {
                         },
                     },
                 },
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: apiSpyObj,

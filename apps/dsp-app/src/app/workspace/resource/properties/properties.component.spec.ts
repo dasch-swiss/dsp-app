@@ -33,8 +33,8 @@ import {
     SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { of, Subscription } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DspResource } from '../dsp-resource';
 import { IncomingService } from '../services/incoming.service';
 import { UserService } from '../services/user.service';
@@ -223,7 +223,7 @@ describe('PropertiesComponent', () => {
             ],
             providers: [
                 ValueOperationEventService,
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: adminSpyObj,
@@ -237,7 +237,7 @@ describe('PropertiesComponent', () => {
                     useValue: incomingServiceSpy,
                 },
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
             ],

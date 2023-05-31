@@ -14,7 +14,7 @@ import { AngularSplitModule } from 'angular-split';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { AppInitService } from './app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
@@ -30,7 +30,7 @@ import {
     DspApiConnectionToken,
     DspAppConfigToken,
     DspInstrumentationToken,
-} from './main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
@@ -170,9 +170,7 @@ import { OverviewComponent } from './user/overview/overview.component';
 import { ProjectTileComponent } from './system/project-tile/project-tile.component';
 import { CommentFormComponent } from './workspace/resource/values/comment-form/comment-form.component';
 import { DataModelsComponent } from './project/data-models/data-models.component';
-import {
-    ResourceClassPropertyInfoComponent
-} from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
+import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -352,36 +350,36 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         }),
     ],
     providers: [
-        AppInitService,
+        AppConfigService,
         DatadogRumService,
         {
             provide: DspApiConfigToken,
-            useFactory: (appInitService: AppInitService) =>
-                appInitService.dspApiConfig,
-            deps: [AppInitService],
+            useFactory: (appConfigService: AppConfigService) =>
+                appConfigService.dspApiConfig,
+            deps: [AppConfigService],
         },
         {
             provide: DspApiConnectionToken,
-            useFactory: (appInitService: AppInitService) =>
-                new KnoraApiConnection(appInitService.dspApiConfig),
-            deps: [AppInitService],
+            useFactory: (appConfigService: AppConfigService) =>
+                new KnoraApiConnection(appConfigService.dspApiConfig),
+            deps: [AppConfigService],
         },
         {
             provide: DspAppConfigToken,
-            useFactory: (appInitService: AppInitService) =>
-                appInitService.dspAppConfig,
-            deps: [AppInitService],
+            useFactory: (appConfigService: AppConfigService) =>
+                appConfigService.dspAppConfig,
+            deps: [AppConfigService],
         },
         {
             provide: DspInstrumentationToken,
-            useFactory: (appInitService: AppInitService) =>
-                appInitService.dspInstrumentationConfig,
-            deps: [AppInitService],
+            useFactory: (appConfigService: AppConfigService) =>
+                appConfigService.dspInstrumentationConfig,
+            deps: [AppConfigService],
         },
         {
             provide: ErrorHandler,
             useClass: RollbarErrorHandler,
-            deps: [AppInitService],
+            deps: [AppConfigService],
         },
     ],
     bootstrap: [AppComponent],

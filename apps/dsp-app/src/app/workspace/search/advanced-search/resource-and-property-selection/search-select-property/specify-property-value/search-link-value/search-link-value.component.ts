@@ -12,11 +12,8 @@ import {
     ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import {
-    debounceTime,
-    distinctUntilChanged,
-} from 'rxjs/operators';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { IRI, PropertyValue, Value } from '../operator';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror

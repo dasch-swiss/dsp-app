@@ -7,14 +7,8 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
-import {
-    UntypedFormBuilder,
-    UntypedFormGroup,
-} from '@angular/forms';
-import {
-    ApiResponseData,
-    ProjectResponse,
-} from '@dasch-swiss/dsp-js';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { ApiResponseData, ProjectResponse } from '@dasch-swiss/dsp-js';
 import {
     ApiResponseError,
     Constants,
@@ -28,7 +22,7 @@ import {
     ResourceClassDefinition,
     ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SelectPropertiesComponent } from '../../resource-instance-form/select-properties/select-properties.component';

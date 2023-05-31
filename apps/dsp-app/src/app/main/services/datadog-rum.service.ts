@@ -3,8 +3,8 @@ import {
     datadogRum,
     RumFetchResourceEventDomainContext,
 } from '@datadog/browser-rum';
-import { DspInstrumentationToken } from '../declarations/dsp-api-tokens';
-import { DspInstrumentationConfig } from '../declarations/dsp-instrumentation-config';
+import { DspInstrumentationToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspInstrumentationConfig } from '@dasch-swiss/vre/shared/app-config';
 import { Session, SessionService } from './session.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

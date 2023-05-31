@@ -1,18 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { AppInitService } from './app-init.service';
-import { IConfig } from './main/declarations/app-config';
-import {
-    APP_CONFIG,
-    DspInstrumentationToken,
-} from './main/declarations/dsp-api-tokens';
-import {
-    DspInstrumentationConfig,
-} from './main/declarations/dsp-instrumentation-config';
+import { AppConfigService } from './app-config.service';
+import { AppConfig } from './app-config';
+import { AppConfigToken, DspInstrumentationToken } from './dsp-api-tokens';
+import { DspInstrumentationConfig } from './dsp-instrumentation-config';
 
-describe('AppInitService (dev)', () => {
-    let service: AppInitService;
+describe('AppConfigService (dev)', () => {
+    let service: AppConfigService;
 
-    const devConfig: IConfig = {
+    const devConfig: AppConfig = {
         dspRelease: '2022.01.01',
         apiProtocol: 'http',
         apiHost: '0.0.0.0',
@@ -63,7 +58,7 @@ describe('AppInitService (dev)', () => {
         TestBed.configureTestingModule({
             providers: [
                 {
-                    provide: APP_CONFIG,
+                    provide: AppConfigToken,
                     useValue: devConfig,
                 },
                 {
@@ -72,7 +67,7 @@ describe('AppInitService (dev)', () => {
                 },
             ],
         });
-        service = TestBed.inject(AppInitService);
+        service = TestBed.inject(AppConfigService);
     });
 
     it('should be created', () => {
@@ -145,7 +140,7 @@ describe('AppInitService (dev)', () => {
 
         expect(service.dspApiConfig.apiProtocol).toEqual('http');
         expect(service.dspApiConfig.apiHost).toEqual('0.0.0.0');
-        expect(service.dspApiConfig.apiPort).toEqual(null);
+        expect(service.dspApiConfig.apiPort).toEqual(3333);
         expect(service.dspApiConfig.zioPrefix).toEqual(':5555');
         expect(service.dspApiConfig.apiPath).toEqual('');
         expect(service.dspApiConfig.jsonWebToken).toEqual('');
@@ -250,22 +245,22 @@ describe('AppInitService (dev)', () => {
     });
 });
 
-describe('AppInitService (prod)', () => {
-    let service: AppInitService;
+describe('AppConfigService (prod)', () => {
+    let service: AppConfigService;
 
-    const prodConfig: IConfig = {
+    const prodConfig: AppConfig = {
         dspRelease: '2023.04.02',
         apiProtocol: 'https',
         apiHost: '0.0.0.0',
-        apiPort: undefined,
+        apiPort: 3333,
         apiPath: '',
         iiifProtocol: 'https',
         iiifHost: '0.0.0.0',
-        iiifPort: undefined,
+        iiifPort: 1024,
         iiifPath: '',
         jsonWebToken: 'mytoken',
         logErrors: true,
-        zioPrefix: undefined,
+        zioPrefix: '/zio',
         zioEndpoints: [],
         geonameToken: 'geoname_token',
         iriBase: 'https://rdfh.ch',
@@ -306,7 +301,7 @@ describe('AppInitService (prod)', () => {
         TestBed.configureTestingModule({
             providers: [
                 {
-                    provide: APP_CONFIG,
+                    provide: AppConfigToken,
                     useValue: prodConfig,
                 },
                 {
@@ -315,7 +310,7 @@ describe('AppInitService (prod)', () => {
                 },
             ],
         });
-        service = TestBed.inject(AppInitService);
+        service = TestBed.inject(AppConfigService);
     });
 
     it('should be created', () => {
@@ -329,13 +324,13 @@ describe('AppInitService (prod)', () => {
         expect(service.dspConfig.production).toEqual(true);
         expect(service.dspApiConfig.apiProtocol).toEqual('https');
         expect(service.dspApiConfig.apiHost).toEqual('0.0.0.0');
-        expect(service.dspApiConfig.apiPort).toEqual(null);
+        expect(service.dspApiConfig.apiPort).toEqual(3333);
         expect(service.dspApiConfig.apiPath).toEqual('');
         expect(service.dspApiConfig.zioPrefix).toEqual('/zio');
         expect(service.dspApiConfig.zioEndpoints).toEqual([]);
         expect(service.dspIiifConfig.iiifProtocol).toEqual('https');
         expect(service.dspIiifConfig.iiifHost).toEqual('0.0.0.0');
-        expect(service.dspIiifConfig.iiifPort).toEqual(null);
+        expect(service.dspIiifConfig.iiifPort).toEqual(1024);
         expect(service.dspIiifConfig.iiifPath).toEqual('');
         expect(service.dspApiConfig.jsonWebToken).toEqual('mytoken');
         expect(service.dspApiConfig.logErrors).toEqual(true);

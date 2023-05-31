@@ -15,12 +15,12 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { By } from '@angular/platform-browser';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
 import { DocumentComponent } from './document.component';
-import { map } from "rxjs/operators";
+import { map } from 'rxjs/operators';
 
 const documentPdfFileValue = {
     type: 'http://api.knora.org/ontology/knora-api/v2#DocumentFileValue',
@@ -173,7 +173,7 @@ describe('DocumentComponent', () => {
                 PdfViewerModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: appInitSpy,
@@ -197,7 +197,11 @@ describe('DocumentComponent', () => {
             );
             (
                 representationServiceSpy as jasmine.SpyObj<RepresentationService>
-            ).getFileInfo.and.callFake(() => of(knoraJsonPdf).pipe(map((response: any) => response as object)));
+            ).getFileInfo.and.callFake(() =>
+                of(knoraJsonPdf).pipe(
+                    map((response: any) => response as object)
+                )
+            );
 
             testHostFixture = TestBed.createComponent(
                 TestPdfDocumentHostComponent
@@ -238,7 +242,11 @@ describe('DocumentComponent', () => {
             );
             (
                 representationServiceSpy as jasmine.SpyObj<RepresentationService>
-            ).getFileInfo.and.callFake(() => of(knoraJsonPpt).pipe(map((response: any) => response as object)));
+            ).getFileInfo.and.callFake(() =>
+                of(knoraJsonPpt).pipe(
+                    map((response: any) => response as object)
+                )
+            );
 
             testHostFixture = TestBed.createComponent(
                 TestPptDocumentHostComponent

@@ -1,6 +1,11 @@
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    Validators,
+} from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
@@ -10,23 +15,24 @@ import {
     ProjectResponse,
     ReadProject,
     StringLiteral,
-    UpdateProjectRequest
+    UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { CacheService } from '../../main/cache/cache.service';
 
 @Component({
     selector: 'app-description',
     templateUrl: './description.component.html',
-    styleUrls: ['./description.component.scss']
+    styleUrls: ['./description.component.scss'],
 })
-
 export class DescriptionComponent implements OnInit {
-
     // loading for progress indicator
     loading: boolean;
 
@@ -54,26 +60,30 @@ export class DescriptionComponent implements OnInit {
     formOpen = false;
 
     formErrors = {
-        'longname': '',
-        'description': '',
-        'keywords': ''
+        longname: '',
+        description: '',
+        keywords: '',
     };
 
     validationMessages = {
-        'longname': {
-            'required': 'Project (long) name is required.'
+        longname: {
+            required: 'Project (long) name is required.',
         },
-        'description': {
-            'required': 'A description is required.',
-            'maxlength': 'Description cannot be more than ' + this.descriptionMaxLength + ' characters long.'
+        description: {
+            required: 'A description is required.',
+            maxlength:
+                'Description cannot be more than ' +
+                this.descriptionMaxLength +
+                ' characters long.',
         },
-        'keywords': {
-            'required': 'At least one keyword is required.'
-        }
+        keywords: {
+            required: 'At least one keyword is required.',
+        },
     };
 
     constructor(
-        @Inject(DspApiConnectionToken) private _dspApiConnection: KnoraApiConnection,
+        @Inject(DspApiConnectionToken)
+        private _dspApiConnection: KnoraApiConnection,
         private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
@@ -81,13 +91,12 @@ export class DescriptionComponent implements OnInit {
         private _router: Router,
         private _fb: FormBuilder,
         private _projectService: ProjectService,
-        private _notification: NotificationService,
+        private _notification: NotificationService
     ) {
         // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
             this.projectUuid = params.get('uuid');
         });
-
     }
 
     ngOnInit() {
@@ -102,7 +111,6 @@ export class DescriptionComponent implements OnInit {
 
         // get project info from backend
         this.getProject();
-
     }
 
     /**
@@ -111,22 +119,20 @@ export class DescriptionComponent implements OnInit {
      * @param data Data which changed.
      */
     onValueChanged() {
-
         if (!this.form) {
             return;
         }
 
         const form = this.form;
 
-        Object.keys(this.formErrors).map(field => {
+        Object.keys(this.formErrors).map((field) => {
             this.formErrors[field] = '';
             const control = form.get(field);
             if (control && control.dirty && !control.valid) {
                 const messages = this.validationMessages[field];
-                Object.keys(control.errors).map(key => {
+                Object.keys(control.errors).map((key) => {
                     this.formErrors[field] += messages[key] + ' ';
                 });
-
             }
         });
     }
@@ -139,7 +145,11 @@ export class DescriptionComponent implements OnInit {
 
                 // is logged-in user projectAdmin?
                 if (this._session.getSession()) {
-                    this.projectAdmin = this.sysAdmin ? this.sysAdmin : this.session.user.projectAdmin.some(e => e === this.project.id);
+                    this.projectAdmin = this.sysAdmin
+                        ? this.sysAdmin
+                        : this.session.user.projectAdmin.some(
+                              (e) => e === this.project.id
+                          );
                 }
 
                 this.buildForm();
@@ -161,17 +171,21 @@ export class DescriptionComponent implements OnInit {
         this.keywords = this.project.keywords.slice();
 
         this.form = this._fb.group({
-            'longname': new FormControl({
-                value: this.project.longname, disabled: false
-            }, [ Validators.required ]),
-            'keywords': new FormControl({
+            longname: new FormControl(
+                {
+                    value: this.project.longname,
+                    disabled: false,
+                },
+                [Validators.required]
+            ),
+            keywords: new FormControl({
                 // must be empty (even in edit mode), because of the mat-chip-list
-                value: [], disabled: false
-            })
+                value: [],
+                disabled: false,
+            }),
         });
 
-        this.form.valueChanges
-            .subscribe(() => this.onValueChanged());
+        this.form.valueChanges.subscribe(() => this.onValueChanged());
     }
 
     /**
@@ -181,7 +195,8 @@ export class DescriptionComponent implements OnInit {
     getStringLiteral(data: StringLiteral[]) {
         this.description = data;
         if (!this.description.length) {
-            this.formErrors['description'] = this.validationMessages['description'].required;
+            this.formErrors['description'] =
+                this.validationMessages['description'].required;
         } else {
             this.formErrors['description'] = '';
         }
@@ -217,7 +232,7 @@ export class DescriptionComponent implements OnInit {
     toggleForm() {
         this.formOpen = !this.formOpen;
 
-        if(this.formOpen) {
+        if (this.formOpen) {
             this.buildForm();
         }
     }
@@ -242,24 +257,29 @@ export class DescriptionComponent implements OnInit {
         }
 
         // edit / update project data
-        this._dspApiConnection.admin.projectsEndpoint.updateProject(this.project.id, projectData).subscribe(
-            (response: ApiResponseData<ProjectResponse>) => {
+        this._dspApiConnection.admin.projectsEndpoint
+            .updateProject(this.project.id, projectData)
+            .subscribe(
+                (response: ApiResponseData<ProjectResponse>) => {
+                    this.project = response.body.project;
 
-                this.project = response.body.project;
+                    // update cache
+                    this._cache.set(
+                        this._projectService.iriToUuid(this.project.id),
+                        this.project
+                    );
 
-                // update cache
-                this._cache.set(this._projectService.iriToUuid(this.project.id), this.project);
+                    this._notification.openSnackBar(
+                        'You have successfully updated the project information.'
+                    );
 
-                this._notification.openSnackBar('You have successfully updated the project information.');
-
-                this.loading = false;
-                this.formOpen = false;
-
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loading = false;
-            }
-        );
+                    this.loading = false;
+                    this.formOpen = false;
+                },
+                (error: ApiResponseError) => {
+                    this._errorHandler.showMessage(error);
+                    this.loading = false;
+                }
+            );
     }
 }

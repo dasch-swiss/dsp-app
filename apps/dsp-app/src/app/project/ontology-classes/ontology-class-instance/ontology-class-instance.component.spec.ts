@@ -13,8 +13,8 @@ import {
 import { SplitAreaDirective, SplitComponent } from 'angular-split';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { OntologyClassInstanceComponent } from './ontology-class-instance.component';
@@ -62,7 +62,7 @@ describe('OntologyClassInstanceComponent', () => {
             imports: [MatSnackBarModule, MatDialogModule, RouterTestingModule],
             providers: [
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
                 {

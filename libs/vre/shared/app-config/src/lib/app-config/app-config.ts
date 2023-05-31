@@ -1,4 +1,4 @@
-export interface IConfig {
+export interface AppConfig {
     dspRelease: string;
     apiProtocol: 'http' | 'https';
     apiHost: string;

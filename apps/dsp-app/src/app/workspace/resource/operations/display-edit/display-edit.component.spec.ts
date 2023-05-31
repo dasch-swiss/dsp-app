@@ -62,7 +62,7 @@ import {
 import { of, throwError } from 'rxjs';
 import { AjaxError } from 'rxjs/ajax';
 import { ConfirmationDialogComponent } from '@dsp-app/src/app/main/action/confirmation-dialog/confirmation-dialog.component';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { PropertyInfoValues } from '../../properties/properties.component';
 import { UserService } from '../../services/user.service';
 import {

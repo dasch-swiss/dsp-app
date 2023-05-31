@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
-import { AppInitService } from './../../app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from './../../../test.config';
 import { CacheService } from '../cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '../declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { AuthenticationService } from './authentication.service';
 import { DatadogRumService } from './datadog-rum.service';
 import { SessionService } from './session.service';
@@ -32,7 +32,7 @@ describe('AuthenticationService', () => {
         TestBed.configureTestingModule({
             imports: [MatDialogModule, MatSnackBarModule],
             providers: [
-                AppInitService,
+                AppConfigService,
                 SessionService,
                 {
                     provide: DspApiConfigToken,

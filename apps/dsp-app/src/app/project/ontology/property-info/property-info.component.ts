@@ -25,7 +25,7 @@ import {
     ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
     DefaultProperties,
@@ -68,7 +68,6 @@ export interface ShortInfo {
     comment: string;
 }
 
-
 @Component({
     selector: 'app-property-info',
     templateUrl: './property-info.component.html',
@@ -97,7 +96,6 @@ export interface ShortInfo {
         ]),
     ],
 })
-
 export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
@@ -158,7 +156,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     }
 
     ngOnChanges(): void {
-
         // get info about subproperties, if they are not a subproperty of knora base ontology
         // in this case add it to the list of subproperty iris
         const superProp = this._ontoService.getSuperProperty(this.propDef);
@@ -233,14 +230,15 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         this.resClasses = [];
         this._cache.get('currentProjectOntologies').subscribe(
             (ontologies: ReadOntology[]) => {
-                if (!ontologies) {return;}
+                if (!ontologies) {
+                    return;
+                }
                 ontologies.forEach((onto) => {
                     const classes = onto.getAllClassDefinitions();
                     classes.forEach((resClass) => {
                         if (
                             resClass.propertiesList.find(
-                                (prop) =>
-                                    prop.propertyIndex === this.propDef.id
+                                (prop) => prop.propertyIndex === this.propDef.id
                             )
                         ) {
                             // build own resClass object with id, label and comment

@@ -7,7 +7,7 @@ import {
     UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { DspApiConnectionToken } from '../declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Session, SessionService } from './session.service';
 
 describe('SessionService', () => {

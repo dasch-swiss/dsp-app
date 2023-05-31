@@ -8,7 +8,7 @@ import {
     Constants,
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     ComponentCommunicationEventService,
     EmitEvent,
@@ -22,7 +22,6 @@ import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.serv
     templateUrl: './ontology-class-item.component.html',
     styleUrls: ['./ontology-class-item.component.scss'],
 })
-
 export class OntologyClassItemComponent implements OnInit, OnDestroy {
     @Input() resClass: ClassDefinition;
 
@@ -75,28 +74,30 @@ export class OntologyClassItemComponent implements OnInit, OnDestroy {
         this.componentCommsSubscriptions.push(
             this._componentCommsService.on(Events.resourceDeleted, () => {
                 this._getSearchCount();
+            })
+        );
 
-            }
-        ));
-
-        this.componentCommsSubscriptions.push(this._componentCommsService.on(
-            Events.resourceCreated, () => {
+        this.componentCommsSubscriptions.push(
+            this._componentCommsService.on(Events.resourceCreated, () => {
                 this._getSearchCount();
-            }
-        ));
+            })
+        );
     }
 
     ngOnDestroy(): void {
-        this.componentCommsSubscriptions.forEach(sub => sub.unsubscribe());
+        this.componentCommsSubscriptions.forEach((sub) => sub.unsubscribe());
     }
 
     selectItem() {
-        this._componentCommsService.emit(new EmitEvent(Events.unselectedListItem));
+        this._componentCommsService.emit(
+            new EmitEvent(Events.unselectedListItem)
+        );
     }
 
-
     trimLabel(fullString: string) {
-        return fullString.length > this.MAX_LABEL_CHAR ? `${fullString.slice(0, this.MAX_LABEL_CHAR)}...`: fullString;
+        return fullString.length > this.MAX_LABEL_CHAR
+            ? `${fullString.slice(0, this.MAX_LABEL_CHAR)}...`
+            : fullString;
     }
 
     private _setGravsearch(iri: string): string {

@@ -43,10 +43,13 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { FilteredResources } from '../../results/list-view/list-view.component';
 import { ResourceLinkFormComponent } from './resource-link-form.component';
 
@@ -174,7 +177,7 @@ describe('ResourceLinkFormComponent', () => {
                 TranslateModule.forRoot(),
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpy,
@@ -188,7 +191,7 @@ describe('ResourceLinkFormComponent', () => {
                     useValue: cacheServiceSpy,
                 },
                 {
-                    provide: AppInitService,
+                    provide: AppConfigService,
                     useValue: appInitSpy,
                 },
             ],

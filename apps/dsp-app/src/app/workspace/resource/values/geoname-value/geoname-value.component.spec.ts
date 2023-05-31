@@ -18,7 +18,7 @@ import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/m
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatLegacyAutocompleteHarness as MatAutocompleteHarness } from '@angular/material/legacy-autocomplete/testing';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 /**
@@ -93,7 +93,7 @@ describe('GeonameValueComponent', () => {
                 MatAutocompleteModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: GeonameService,
                     useValue: mockGeonameService,

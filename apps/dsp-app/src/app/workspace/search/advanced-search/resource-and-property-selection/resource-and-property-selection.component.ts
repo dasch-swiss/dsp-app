@@ -16,7 +16,7 @@ import {
     ResourceClassDefinition,
     ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { SearchSelectPropertyComponent } from './search-select-property/search-select-property.component';

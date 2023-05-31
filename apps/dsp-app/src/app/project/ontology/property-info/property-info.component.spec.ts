@@ -19,12 +19,12 @@ import {
     ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
@@ -32,9 +32,7 @@ import { TestConfig } from '@dsp-app/src/test.config';
 import { PropertyFormComponent } from '../property-form/property-form.component';
 import { PropertyInfoComponent } from './property-info.component';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
-import {
-    StringifyStringLiteralPipe
-} from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
+import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
 
 // mock property definition
 const mockPropertyDefinition: ResourcePropertyDefinitionWithAllLanguages = {
@@ -139,7 +137,7 @@ describe('Property info component', () => {
             v2: {
                 onto: jasmine.createSpyObj('onto', [
                     'canDeleteResourceProperty',
-                    'getAllClassDefinitions'
+                    'getAllClassDefinitions',
                 ]),
             },
         };
@@ -151,7 +149,7 @@ describe('Property info component', () => {
                 PropertyFormComponent,
                 PropertyInfoComponent,
                 SplitPipe,
-                StringifyStringLiteralPipe
+                StringifyStringLiteralPipe,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -164,7 +162,7 @@ describe('Property info component', () => {
                 MatTooltipModule,
             ],
             providers: [
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -193,21 +191,23 @@ describe('Property info component', () => {
         // mock cache service get requests
         const cacheSpy = TestBed.inject(CacheService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake((key: string) => {
-            if (key === 'currentOntologyLists') {
-                const response: ListNodeInfo[] = mockOntologyResponse;
-                return of(response);
-            } else if (key === 'currentProjectOntologies') {
-                const response: ReadOntology[] = [];
-                return of(response);
-            } else if (key === 'currentOntology') {
-                const response: ReadOntology = undefined;
-                return of(response);
-            }else {
-                // Handle any other keys as needed
-                return of(null);
+        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+            (key: string) => {
+                if (key === 'currentOntologyLists') {
+                    const response: ListNodeInfo[] = mockOntologyResponse;
+                    return of(response);
+                } else if (key === 'currentProjectOntologies') {
+                    const response: ReadOntology[] = [];
+                    return of(response);
+                } else if (key === 'currentOntology') {
+                    const response: ReadOntology = undefined;
+                    return of(response);
+                } else {
+                    // Handle any other keys as needed
+                    return of(null);
+                }
             }
-        });
+        );
 
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
         (

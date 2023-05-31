@@ -35,7 +35,7 @@ import {
     UpdateResourcePropertyLabel,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
@@ -182,7 +182,7 @@ export class PropertyFormComponent implements OnInit {
         private _fb: UntypedFormBuilder,
         private _os: OntologyService,
         private _sortingService: SortingService,
-        private _notification: NotificationService,
+        private _notification: NotificationService
     ) {}
 
     ngOnInit() {
@@ -357,9 +357,7 @@ export class PropertyFormComponent implements OnInit {
 
         this.updateAttributeField(this.propertyInfo.propType);
 
-        this.propertyForm.valueChanges.subscribe(() =>
-            this.onValueChanged()
-        );
+        this.propertyForm.valueChanges.subscribe(() => this.onValueChanged());
     }
 
     /**
@@ -829,7 +827,7 @@ export class PropertyFormComponent implements OnInit {
                 (error: ApiResponseError) => {
                     this.onError(error);
                     this.closeDialog.emit();
-                },
+                }
             );
     }
 

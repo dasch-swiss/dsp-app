@@ -17,11 +17,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestConfig } from '@dsp-app/src/test.config';
-import { AppInitService } from '../app-init.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
-} from '../main/declarations/dsp-api-tokens';
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../main/dialog/dialog.component';
 import { StatusComponent } from '../main/status/status.component';
 import { ProjectsListComponent } from '../system/projects/projects-list/projects-list.component';
@@ -99,7 +99,7 @@ describe('UserComponent', () => {
                         ],
                     },
                 },
-                AppInitService,
+                AppConfigService,
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

@@ -23,7 +23,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of, throwError } from 'rxjs';
 import { AjaxError } from 'rxjs/ajax';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     AddedEventValue,
     EmitEvent,

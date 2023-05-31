@@ -3,8 +3,11 @@ import {
     HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
 
 describe('UploadFileService', () => {
@@ -29,7 +32,7 @@ describe('UploadFileService', () => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
-                { provide: AppInitService, useValue: appInitSpy },
+                { provide: AppConfigService, useValue: appInitSpy },
                 { provide: SessionService, useValue: sessionSpy },
             ],
         });

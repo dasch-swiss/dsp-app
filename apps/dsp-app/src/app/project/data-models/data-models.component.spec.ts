@@ -7,19 +7,29 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { OntologiesEndpointV2, MockOntology, ApiResponseData, ListNodeInfo, ListsEndpointAdmin, ListsResponse } from '@dasch-swiss/dsp-js';
+import {
+    OntologiesEndpointV2,
+    MockOntology,
+    ApiResponseData,
+    ListNodeInfo,
+    ListsEndpointAdmin,
+    ListsResponse,
+} from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { AppInitService } from '@dsp-app/src/app/app-init.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
-import { Session, SessionService } from '@dsp-app/src/app/main/services/session.service';
+import {
+    Session,
+    SessionService,
+} from '@dsp-app/src/app/main/services/session.service';
 import { OntologyService } from '../ontology/ontology.service';
 
 import { DataModelsComponent } from './data-models.component';
 
 @Component({
-    template: '<app-data-models #dataModels></app-data-models>'
+    template: '<app-data-models #dataModels></app-data-models>',
 })
 class DataModelsTestHostComponent {
     @ViewChild('dataModels') dataModelsComp: DataModelsComponent;
@@ -31,107 +41,113 @@ describe('DataModelsComponent', () => {
 
     const appInitSpy = {
         dspAppConfig: {
-            iriBase: 'http://rdfh.ch'
-        }
+            iriBase: 'http://rdfh.ch',
+        },
     };
 
     beforeEach(async () => {
         const dspConnSpyObj = {
             admin: {
-                listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject'])
+                listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
+                    'getListsInProject',
+                ]),
             },
             v2: {
-                onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri']),
-            }
+                onto: jasmine.createSpyObj('onto', [
+                    'getOntologiesByProjectIri',
+                ]),
+            },
         };
 
-        const ontoServiceSpy = jasmine.createSpyObj('OntologyService', ['getOntologyName']);
+        const ontoServiceSpy = jasmine.createSpyObj('OntologyService', [
+            'getOntologyName',
+        ]);
 
-        const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
+        const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
+            'getSession',
+        ]);
 
         await TestBed.configureTestingModule({
             declarations: [
                 DataModelsTestHostComponent,
                 DataModelsComponent,
-                StringifyStringLiteralPipe
+                StringifyStringLiteralPipe,
             ],
             imports: [
                 MatDialogModule,
                 MatIconModule,
                 MatSnackBarModule,
                 MatTooltipModule,
-                RouterTestingModule
+                RouterTestingModule,
             ],
             providers: [
                 {
-                    provide: AppInitService,
-                    useValue: appInitSpy
+                    provide: AppConfigService,
+                    useValue: appInitSpy,
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: dspConnSpyObj
+                    useValue: dspConnSpyObj,
                 },
                 {
                     provide: OntologyService,
-                    useValue: ontoServiceSpy
+                    useValue: ontoServiceSpy,
                 },
                 {
                     provide: ActivatedRoute,
                     useValue: {
                         parent: {
                             snapshot: {
-                                url: [
-                                    { path: 'project' }
-                                ],
-                                params: [
-                                    { uuid: '0123' }
-                                ]
-                            }
-                        }
-                    }
+                                url: [{ path: 'project' }],
+                                params: [{ uuid: '0123' }],
+                            },
+                        },
+                    },
                 },
                 {
                     provide: SessionService,
-                    useValue: sessionServiceSpy
-                }
-            ]
+                    useValue: sessionServiceSpy,
+                },
+            ],
         }).compileComponents();
 
         // mock API
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-        (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntologiesByProjectIri.and.callFake(
-            () => {
-                const anythingOnto = MockOntology.mockOntologiesMetadata();
-                return of(anythingOnto);
-            }
-        );
+        (
+            dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
+        ).getOntologiesByProjectIri.and.callFake(() => {
+            const anythingOnto = MockOntology.mockOntologiesMetadata();
+            return of(anythingOnto);
+        });
 
-        (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(
-            () => {
-                const response = new ListsResponse();
+        (
+            dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
+        ).getListsInProject.and.callFake(() => {
+            const response = new ListsResponse();
 
-                response.lists = new Array<ListNodeInfo>();
+            response.lists = new Array<ListNodeInfo>();
 
-                const mockList1 = new ListNodeInfo();
-                mockList1.comments = [];
-                mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
-                mockList1.isRootNode = true;
-                mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
-                mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+            const mockList1 = new ListNodeInfo();
+            mockList1.comments = [];
+            mockList1.id = 'http://rdfh.ch/lists/0001/mockList01';
+            mockList1.isRootNode = true;
+            mockList1.labels = [{ language: 'en', value: 'Mock List 01' }];
+            mockList1.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-                const mockList2 = new ListNodeInfo();
-                mockList2.comments = [];
-                mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
-                mockList2.isRootNode = true;
-                mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
-                mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
+            const mockList2 = new ListNodeInfo();
+            mockList2.comments = [];
+            mockList2.id = 'http://rdfh.ch/lists/0001/mockList02';
+            mockList2.isRootNode = true;
+            mockList2.labels = [{ language: 'en', value: 'Mock List 02' }];
+            mockList2.projectIri = 'http://rdfh.ch/projects/myProjectIri';
 
-                response.lists.push(mockList1, mockList2);
+            response.lists.push(mockList1, mockList2);
 
-                return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-            }
-        );
+            return of(
+                ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+            );
+        });
 
         // mock session service
         const sessionSpy = TestBed.inject(SessionService);
@@ -145,8 +161,8 @@ describe('DataModelsComponent', () => {
                         jwt: 'myToken',
                         lang: 'en',
                         sysAdmin: true,
-                        projectAdmin: []
-                    }
+                        projectAdmin: [],
+                    },
                 };
 
                 return session;
@@ -161,12 +177,16 @@ describe('DataModelsComponent', () => {
     });
 
     it('should list the projects data models', () => {
-        const dataModels = fixture.debugElement.queryAll(By.css('.projectOntos .list .list-item'));
+        const dataModels = fixture.debugElement.queryAll(
+            By.css('.projectOntos .list .list-item')
+        );
         expect(dataModels.length).toEqual(15);
     });
 
     it('should list the projects lists', () => {
-        const dataModels = fixture.debugElement.queryAll(By.css('.projectLists .list .list-item'));
+        const dataModels = fixture.debugElement.queryAll(
+            By.css('.projectLists .list .list-item')
+        );
         expect(dataModels.length).toEqual(2);
     });
 });

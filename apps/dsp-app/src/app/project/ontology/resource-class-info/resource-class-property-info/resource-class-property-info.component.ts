@@ -20,7 +20,7 @@ import {
     UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
-import { DspApiConnectionToken } from '@dsp-app/src/app/main/declarations/dsp-api-tokens';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { DefaultProperty } from '../../default-data/default-properties';
 import { DefaultClass } from '../../default-data/default-resource-classes';
@@ -64,7 +64,9 @@ type CardinalityKey = 'multiple' | 'required';
     templateUrl: './resource-class-property-info.component.html',
     styleUrls: ['./resource-class-property-info.component.scss'],
 })
-export class ResourceClassPropertyInfoComponent implements OnChanges, AfterContentInit {
+export class ResourceClassPropertyInfoComponent
+    implements OnChanges, AfterContentInit
+{
     @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
     @Input() propCard: IHasProperty;
