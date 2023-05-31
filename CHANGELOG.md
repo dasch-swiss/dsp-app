@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.20.1](https://github.com/dasch-swiss/dsp-das/compare/v10.20.0...v10.20.1) (2023-05-31)
+
+
+### Maintenance
+
+* bump NX version ([#1064](https://github.com/dasch-swiss/dsp-das/issues/1064)) ([d321060](https://github.com/dasch-swiss/dsp-das/commit/d3210607ffbd4b3aa7f1f2c974948b3389cb4a6a))
+* **deploy:** rename admin to app (INFRA-285) ([#1063](https://github.com/dasch-swiss/dsp-das/issues/1063)) ([bb4dc48](https://github.com/dasch-swiss/dsp-das/commit/bb4dc483484cc0c48e42ee2abf03ba71489905b5))
+* **deps:** bump JS-LIB to 8.2.4 ([#1069](https://github.com/dasch-swiss/dsp-das/issues/1069)) ([dcb9683](https://github.com/dasch-swiss/dsp-das/commit/dcb9683cb08fd4c85c9e199dc85da37dd0e80939))
+
 ## [10.20.0](https://github.com/dasch-swiss/dsp-das/compare/v10.19.2...v10.20.0) (2023-05-23)
 
 
