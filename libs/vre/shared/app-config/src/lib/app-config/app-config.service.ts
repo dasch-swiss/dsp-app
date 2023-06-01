@@ -21,6 +21,10 @@ export class AppConfigService {
     private readonly _dspAppConfig: DspAppConfig;
     private readonly _dspInstrumentationConfig: DspInstrumentationConfig;
 
+    /**
+     * Watch out for AppConfig. The config.json is simply pressed into
+     * this type without type checking!!!
+     */
     constructor(@Inject(AppConfigToken) private _appConfig: AppConfig) {
         // check for presence of apiProtocol and apiHost
         if (
@@ -54,8 +58,14 @@ export class AppConfigService {
             color
         );
 
-        // make input type safe
-        const apiPort = this._appConfig.apiPort;
+        /**
+         * make input type safe, as AppConfig can contain basically anything as
+         * config.json is simply pressed into this type without type checking!!!
+         */
+        const apiPort =
+          typeof this._appConfig.apiPort === 'number'
+            ? this._appConfig.apiPort
+            : null;
 
         const apiPath = this._appConfig.apiPath;
 
@@ -83,7 +93,14 @@ export class AppConfigService {
             zioEndpoints
         );
 
-        const iiifPort = this._appConfig.iiifPort;
+        /**
+         * make input type safe, as AppConfig can contain basically anything as
+         * config.json is simply pressed into this type without type checking!!!
+         */
+        const iiifPort =
+          typeof this._appConfig.iiifPort === 'number'
+            ? this._appConfig.iiifPort
+            : null;
 
         const iiifPath = this._appConfig.iiifPath;
 
