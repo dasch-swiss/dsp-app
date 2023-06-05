@@ -17,8 +17,10 @@
     "build": "nx run dsp-app:build",
     "build-prod": "nx run dsp-app:build:production",
     "test-ci": "nx run dsp-app:test:ci",
+    "test-ci-all": "nx run-many --all --target=test --configuration=ci",
     "test-local": "nx run dsp-app:test",
     "lint-ci": "nx run dsp-app:lint",
+    "lint-ci-all": "nx run-many --all --target=lint",
     "lint-local": "nx run dsp-app:lint --fix",
     "webdriver-update": "webdriver-manager update --standalone false --gecko",
     "yalc-add-lib": "rm -rf .yalc/@dasch-swiss && yalc add @dasch-swiss/dsp-js && npm install"
@@ -54,6 +56,7 @@
     "rxjs": "~6.6.7",
     "ts-md5": "^1.3.1",
     "tslib": "^2.4.0",
+    "zod": "^3.21.4",
     "zone.js": "~0.11.8"
   },
   "devDependencies": {

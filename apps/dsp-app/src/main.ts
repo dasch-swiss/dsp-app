@@ -11,7 +11,7 @@ function configListener() {
 
         // pass config to bootstrap process using an injection token
         // which will make the encapsulated value available inside
-        // services tha inject this token
+        // services that inject this token
         platformBrowserDynamic([
             { provide: AppConfigToken, useValue: configuration },
         ])

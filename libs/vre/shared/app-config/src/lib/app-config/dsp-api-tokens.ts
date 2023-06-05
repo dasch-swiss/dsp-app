@@ -1,14 +1,14 @@
 import { InjectionToken } from '@angular/core';
 import { KnoraApiConfig, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { AppConfig } from './app-config';
 import { DspAppConfig } from './dsp-app-config';
 import { DspInstrumentationConfig } from './dsp-instrumentation-config';
 
 /**
  * The AppConfigToken is used to encapsulate the application configuration
  * loaded from 'config/config.prod.json' loaded in main.ts before bootstrap.
+ * As such, the structure of the loaded JSON is at this point no checked.
  */
-export const AppConfigToken = new InjectionToken<AppConfig>('app-config');
+export const AppConfigToken = new InjectionToken<undefined>('app-config');
 
 // config for dsp-js-lib (@dasch-swiss/dsp-js) config object
 export const DspApiConfigToken = new InjectionToken<KnoraApiConfig>(
