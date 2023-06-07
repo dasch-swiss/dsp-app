@@ -21,6 +21,7 @@ export class AppLoggingService {
                 env: c.environment,
                 forwardErrorsToLogs: true, // forwards console.error logs, uncaught exceptions and network errors to Datadog
                 forwardConsoleLogs: [], // don't forward any logs (besides console.error - in previous setting) to Datadog
+                useSecureSessionCookie: true,
             });
             datadogLogs.logger.setHandler(['console', 'http']);
             this.logger = datadogLogs.logger;

@@ -53,9 +53,9 @@ docker-publish-app: app-build-prod ## publish DSP-APP Docker image to Docker-Hub
 	# publish source maps to DataDog
 	datadog-ci sourcemaps upload ${CURRENT_DIR}/dist/apps/dsp-app \
       --service=dsp-app \
-      --release-version=${BUILD_TAG} \
+      --release-version=${DSP_APP_VERSION} \
       --minified-path-prefix=/
-	docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) --push .
+	# docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) --push .
 
 .PHONY: docker-publish
 docker-publish: docker-publish-app ## publish all Docker images in the monorepo.
