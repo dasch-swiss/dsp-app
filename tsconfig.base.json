@@ -30,8 +30,8 @@
       "@dasch-swiss/vre/shared/app-error-handler": [
         "libs/vre/shared/app-error-handler/src/index.ts"
       ],
-      "@dasch-swiss/vre/shared/app-logs": [
-        "libs/vre/shared/app-logs/src/index.ts"
+      "@dasch-swiss/vre/shared/app-logging": [
+        "libs/vre/shared/app-logging/src/index.ts"
       ],
       "@dsp-app/*": ["apps/dsp-app/*"]
     }

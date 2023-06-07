@@ -102,7 +102,7 @@ export class SearchListValueComponent
             const listNodeIri = guiAttr[0].substring(7, guiAttr[0].length - 1); // hlist=<>, get also rid of <>
             return listNodeIri;
         } else {
-            console.log('No root node Iri given for property');
+            console.error('No root node Iri given for property', guiAttr);
         }
     }
 }
