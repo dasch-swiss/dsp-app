@@ -61,7 +61,9 @@
               "maximumWarning": "9kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "optimization": true,
+          "sourceMap": true
         },
         "development": {
           "buildOptimizer": false,

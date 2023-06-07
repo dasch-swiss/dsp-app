@@ -4,9 +4,12 @@
  * The list of file replacements can be found in `angular.json`.
  */
 
+import packageJson from '../../../../package.json';
+
 export const environment = {
     name: 'dev',
     production: false,
+    version: packageJson.version,
 };
 
 /*

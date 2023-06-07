@@ -114,7 +114,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
       - run: make docker-publish
+        with:
+          DATADOG_API_KEY: ${{secrets.DATADOG_API_KEY}}
 
   trigger-dev-deployment:
     name: Trigger deployment to DEV

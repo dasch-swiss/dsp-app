@@ -13,7 +13,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '../services/error-handler.service';
 import { GridItem } from '../grid/grid.component';
-import packageJson from '../../../../../../package.json';
+import { environment } from '@dsp-app/src/environments/environment';
 
 @Component({
     selector: 'app-help',
@@ -26,7 +26,7 @@ export class HelpComponent implements OnInit {
     dsp: DspConfig;
     releaseNotesUrl: string;
 
-    appVersion: string = packageJson.version;
+    appVersion: string = environment.version;
     apiStatus: HealthResponse;
     apiVersion: VersionResponse;
 
