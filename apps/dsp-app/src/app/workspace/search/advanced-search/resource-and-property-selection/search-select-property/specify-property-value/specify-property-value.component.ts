@@ -176,18 +176,18 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
             case Constants.Resource: // tODO: Match is only available on top level
                 this.comparisonOperators = this.topLevel
                     ? [
-                        new Equals(),
-                        new NotEquals(),
-                        new Exists(),
-                        new NotExists(),
-                        new Match(),
-                    ]
+                          new Equals(),
+                          new NotEquals(),
+                          new Exists(),
+                          new NotExists(),
+                          new Match(),
+                      ]
                     : [
-                        new Equals(),
-                        new NotEquals(),
-                        new Exists(),
-                        new NotExists(),
-                    ];
+                          new Equals(),
+                          new NotEquals(),
+                          new Exists(),
+                          new NotExists(),
+                      ];
                 break;
 
             case Constants.IntValue:
@@ -225,10 +225,7 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
             case Constants.IntervalValue:
             case Constants.GeonameValue:
             case Constants.TimeValue:
-                this.comparisonOperators = [
-                    new Exists(),
-                    new NotExists(),
-                ];
+                this.comparisonOperators = [new Exists(), new NotExists()];
                 break;
 
             default:
@@ -249,8 +246,10 @@ export class SpecifyPropertyValueComponent implements OnChanges, OnDestroy {
         let value: Value;
 
         // comparison operator 'Exists' does not require a value
-        if (this.comparisonOperatorSelected.getClassName() !== 'Exists' &&
-            this.comparisonOperatorSelected.getClassName() !== 'NotExists') {
+        if (
+            this.comparisonOperatorSelected.getClassName() !== 'Exists' &&
+            this.comparisonOperatorSelected.getClassName() !== 'NotExists'
+        ) {
             value = this.propertyValueComponent.getValue();
         }
 

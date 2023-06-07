@@ -174,7 +174,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
                                     );
                                     break;
                                 default:
-                                    console.log(
+                                    console.error(
                                         'There was an error processing your request. Details: ',
                                         error
                                     );

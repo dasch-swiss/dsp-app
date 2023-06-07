@@ -27,7 +27,6 @@ import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/mat
 import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { MatSortModule } from '@angular/material/sort';
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
@@ -61,7 +60,6 @@ const matModules = [
     MatSlideToggleModule,
     MatSnackBarModule,
     MatSortModule,
-    MatTableModule,
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
