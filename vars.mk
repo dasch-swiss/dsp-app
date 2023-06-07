@@ -7,7 +7,3 @@ endif
 ifeq ($(DSP_APP_IMAGE),)
 	DSP_APP_IMAGE := $(DSP_APP_REPO):$(BUILD_TAG)
 endif
-
-ifeq ($(DSP_APP_VERSION),)
-	DSP_APP_VERSION := $(shell jq .version package.json)
-endif

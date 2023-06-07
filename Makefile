@@ -50,12 +50,13 @@ docker-image-tag: ## prints the docker image tag
 
 .PHONY: docker-publish-app
 docker-publish-app: app-build-prod ## publish DSP-APP Docker image to Docker-Hub for AMD64 and ARM64
+	docker buildx build --platform linux/amd64,linux/arm64/v8 --build-arg build_tag=$(BUILD_TAG) -t $(DSP_APP_IMAGE) --push .
 	# publish source maps to DataDog
 	datadog-ci sourcemaps upload ${CURRENT_DIR}/dist/apps/dsp-app \
       --service=dsp-app \
-      --release-version=${DSP_APP_VERSION} \
+      --release-version=${BUILD_TAG} \
       --minified-path-prefix=/
-	# docker buildx build --platform linux/amd64,linux/arm64/v8 -t $(DSP_APP_IMAGE) --push .
+
 
 .PHONY: docker-publish
 docker-publish: docker-publish-app ## publish all Docker images in the monorepo.
