@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReadMovingImageFileValue } from '@dasch-swiss/dsp-js';
 import { TimePipe } from '@dsp-app/src/app/main/pipes/time.pipe';
 import { AvTimelineComponent } from '../av-timeline/av-timeline.component';
