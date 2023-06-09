@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.20.3](https://github.com/dasch-swiss/dsp-das/compare/v10.20.2...v10.20.3) (2023-06-09)
+
+
+### Maintenance
+
+* improve logging ([#1093](https://github.com/dasch-swiss/dsp-das/issues/1093)) ([7fb9dc2](https://github.com/dasch-swiss/dsp-das/commit/7fb9dc2621327303a639221ebd80e887da755448))
+
 ## [10.20.2](https://github.com/dasch-swiss/dsp-das/compare/v10.20.1...v10.20.2) (2023-06-09)
 
 
