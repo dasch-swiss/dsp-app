@@ -4,6 +4,7 @@
         mat-align-tabs="center"
         class="navigation tab-bar margin-from-top"
         animationDuration="0ms"
+        [tabPanel]="tabPanel"
     >
         <a
             mat-tab-link
@@ -31,9 +32,9 @@
         </a>
     </nav>
 
-    <div class="content large middle">
+    <mat-tab-nav-panel class="content large middle" #tabPanel>
         <router-outlet></router-outlet>
-    </div>
+    </mat-tab-nav-panel>
 </div>
 
 <ng-template #notAllowed>

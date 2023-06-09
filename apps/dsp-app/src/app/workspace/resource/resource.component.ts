@@ -8,7 +8,7 @@ import {
     SimpleChange,
     ViewChild,
 } from '@angular/core';
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
 import {
     ActivatedRoute,
