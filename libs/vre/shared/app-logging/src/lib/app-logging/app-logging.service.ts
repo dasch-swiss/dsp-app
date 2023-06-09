@@ -1,31 +1,45 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { datadogLogs, Logger } from '@datadog/browser-logs';
 import {
+    BuildTag,
+    BuildTagToken,
     DspInstrumentationConfig,
     DspInstrumentationToken,
 } from '@dasch-swiss/vre/shared/app-config';
+import { Observable } from 'rxjs';
+
+import { first } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AppLoggingService {
     private logger: Logger | undefined;
-    constructor(
-        @Inject(DspInstrumentationToken) private c: DspInstrumentationConfig
-    ) {
-        if (c.dataDog.enabled && typeof c.dataDog.clientToken == 'string') {
-            datadogLogs.init({
-                clientToken: c.dataDog.clientToken,
-                site: c.dataDog.site,
-                service: c.dataDog.service,
-                env: c.environment,
-                forwardErrorsToLogs: true, // forwards console.error logs, uncaught exceptions and network errors to Datadog
-                forwardConsoleLogs: [], // don't forward any logs (besides console.error - in previous setting) to Datadog
-                useSecureSessionCookie: true,
-            });
-            datadogLogs.logger.setHandler(['console', 'http']);
-            this.logger = datadogLogs.logger;
-        }
+    private buildTag$: Observable<BuildTag> = inject(BuildTagToken);
+    private config: DspInstrumentationConfig = inject(DspInstrumentationToken);
+
+    constructor() {
+        this.buildTag$.pipe(first()).subscribe((tag) => {
+            if (
+                this.config.dataDog.enabled &&
+                typeof this.config.dataDog.clientToken == 'string'
+            ) {
+                datadogLogs.init({
+                    clientToken: this.config.dataDog.clientToken,
+                    site: this.config.dataDog.site,
+                    service: this.config.dataDog.service,
+                    env: this.config.environment,
+                    version: tag.build_tag,
+                    forwardErrorsToLogs: true, // forwards console.error logs, uncaught exceptions and network errors to Datadog
+                    forwardConsoleLogs: [], // don't forward any logs (besides console.error - in previous setting) to Datadog
+                    useSecureSessionCookie: true,
+                });
+                datadogLogs.logger.setHandler(['console', 'http']);
+                this.logger = datadogLogs.logger;
+            }
+            this.info('config', this.config);
+            this.info('build_tag', tag);
+        });
     }
 
     debug(message: string, messageContext?: object, error?: Error) {

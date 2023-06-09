@@ -30,8 +30,8 @@ if (environment.production) {
     enableProdMode();
 }
 
-const request = new XMLHttpRequest();
-request.addEventListener('load', configListener);
-request.addEventListener('error', configFailed);
-request.open('GET', `./config/config.${environment.name}.json`);
-request.send();
+const getConfigRequest = new XMLHttpRequest();
+getConfigRequest.addEventListener('load', configListener);
+getConfigRequest.addEventListener('error', configFailed);
+getConfigRequest.open('GET', `./config/config.${environment.name}.json`);
+getConfigRequest.send();

@@ -1,29 +1,31 @@
-import { ErrorHandler, Injector } from '@angular/core';
+/*
+ * Copyright © 2021 - 2023 Swiss National Data and Service Center for the Humanities and/or DaSCH Service Platform contributors.
+ *  SPDX-License-Identifier: Apache-2.0
+ */
+
+import { ErrorHandler, inject } from '@angular/core';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export class AppErrorHandler implements ErrorHandler {
-    constructor(private _injector: Injector) {}
-
+    logger = inject(AppLoggingService);
     /**
      * Logs out the error using the logging service.
      * @param error the error to log.
      */
     handleError(error: Error): void {
-        const logger = this._injector.get(AppLoggingService);
-
         if (error instanceof HttpErrorResponse) {
             // HTTP related error
-            logger.error('Caught HttpErrorResponse error', error);
+            this.logger.error('Caught HttpErrorResponse error', error);
         } else if (
             error instanceof TypeError ||
             error instanceof ReferenceError
         ) {
             // Runtime exceptions mostly induced by Developer's code
-            logger.error('Caught Type or Reference error', error);
+            this.logger.error('Caught Type or Reference error', error);
         } else {
             // catch-all: catch rest of errors
-            logger.error('Caught error', error);
+            this.logger.error('Caught error', error);
         }
     }
 }
