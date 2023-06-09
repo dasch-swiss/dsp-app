@@ -37,8 +37,6 @@ export class AppLoggingService {
                 datadogLogs.logger.setHandler(['console', 'http']);
                 this.logger = datadogLogs.logger;
             }
-            this.info('config', this.config);
-            this.info('build_tag', tag);
         });
     }
 

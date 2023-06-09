@@ -18,7 +18,7 @@ COPY ./nginx/nginx-security-headers.conf /etc/nginx/security-headers.conf
 COPY ./dist/apps/dsp-app /public
 
 # Write build tag
-RUN echo '{"build_tag": "$build_tag"}' > /public/config/build.json
+RUN echo "{\"build_tag\": \""$build_tag"\"}" > /public/config/build.json
 
 # start nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
