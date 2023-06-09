@@ -160,12 +160,12 @@
   color: $cool_gray_500;
 }
 
-:host::ng-deep .mat-paginator-container {
+:host::ng-deep .mat-mdc-paginator-container {
   justify-content: start;
   padding: 0;
 }
 
-:host::ng-deep .mat-paginator-range-label {
+:host::ng-deep .mat-mdc-paginator-range-label {
   margin: 0;
 }
 
