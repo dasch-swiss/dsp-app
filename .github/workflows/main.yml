@@ -8,6 +8,7 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   # use during publishing to upload src maps to datadog
   DATADOG_API_KEY: ${{secrets.DATADOG_API_KEY}}
+  DATADOG_SITE: ${{env.DATADOG_SITE}}
 
 jobs:
 
