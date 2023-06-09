@@ -1,5 +1,31 @@
 # Changelog
 
+## [10.20.2](https://github.com/dasch-swiss/dsp-das/compare/v10.20.1...v10.20.2) (2023-06-09)
+
+
+### Bug Fixes
+
+* **app-config:** add type safety checks ([#1072](https://github.com/dasch-swiss/dsp-das/issues/1072)) ([a4d451c](https://github.com/dasch-swiss/dsp-das/commit/a4d451c4b8f53e82cc2a44e66c802d80174305f7))
+
+
+### Maintenance
+
+* angular mdc migration tooltip ([#1085](https://github.com/dasch-swiss/dsp-das/issues/1085)) ([65159ae](https://github.com/dasch-swiss/dsp-das/commit/65159ae9dde34b6cc7cd1bc3648053826e895e35))
+* **app-config:** improve type-safety of parsed configuration ([#1074](https://github.com/dasch-swiss/dsp-das/issues/1074)) ([01662fd](https://github.com/dasch-swiss/dsp-das/commit/01662fd02f0e4b69a1dbe69927e7679473ef6d62))
+* **app-config:** move out into a library ([#1068](https://github.com/dasch-swiss/dsp-das/issues/1068)) ([62d68d1](https://github.com/dasch-swiss/dsp-das/commit/62d68d13683a0b1e77d416ecf50e325e8b498aaa))
+* **app-logs:** add datadog application logging ([#1080](https://github.com/dasch-swiss/dsp-das/issues/1080)) ([e5046d4](https://github.com/dasch-swiss/dsp-das/commit/e5046d48697122c277226532f6cfdfa6d0cd8ebc))
+* **app:** delete unused MatTable module ([#1083](https://github.com/dasch-swiss/dsp-das/issues/1083)) ([0df731f](https://github.com/dasch-swiss/dsp-das/commit/0df731f2cf30f871a34c50bbb1c36a4d65fbf638))
+* **app:** delete unused module ([#1077](https://github.com/dasch-swiss/dsp-das/issues/1077)) ([70d8bdc](https://github.com/dasch-swiss/dsp-das/commit/70d8bdce4366c053ea05038ec2212c370e45ddec))
+* **CI:** fix configuration ([fca6722](https://github.com/dasch-swiss/dsp-das/commit/fca67227efa9c21f7cac6f44293355954b7fa156))
+* **CI:** fix configuration ([1dfaf6c](https://github.com/dasch-swiss/dsp-das/commit/1dfaf6c8ecf209b708114818f87ba279cee0d2c4))
+* fix ci ([#1087](https://github.com/dasch-swiss/dsp-das/issues/1087)) ([626be72](https://github.com/dasch-swiss/dsp-das/commit/626be721f3e9f046c92715b089c1d76dd7e0763f))
+* improve logging ([895e3fa](https://github.com/dasch-swiss/dsp-das/commit/895e3fa184f1af41488422050108f795a1ef7d82))
+* improve logging ([3e2d884](https://github.com/dasch-swiss/dsp-das/commit/3e2d884280d35a309bdcc9d512f99f555a20ddf7))
+* improve logging ([#1081](https://github.com/dasch-swiss/dsp-das/issues/1081)) ([da08b54](https://github.com/dasch-swiss/dsp-das/commit/da08b54754a235b9f89a9b64e0b600c262beb379))
+* improve logging ([#1086](https://github.com/dasch-swiss/dsp-das/issues/1086)) ([d6b9ad0](https://github.com/dasch-swiss/dsp-das/commit/d6b9ad0256697a27a3b02b4fe38ef1e7456a0e6a))
+* improve logging ([#1088](https://github.com/dasch-swiss/dsp-das/issues/1088)) ([27111c2](https://github.com/dasch-swiss/dsp-das/commit/27111c2147ec91e871288fe16b7fb3ebbfbde4b2))
+* update dsp-js to v8.3.5 ([#1090](https://github.com/dasch-swiss/dsp-das/issues/1090)) ([cc1ed2b](https://github.com/dasch-swiss/dsp-das/commit/cc1ed2bd611e542a5a694364201f32bfcd0feec5))
+
 ## [10.20.1](https://github.com/dasch-swiss/dsp-das/compare/v10.20.0...v10.20.1) (2023-05-31)
 
 
