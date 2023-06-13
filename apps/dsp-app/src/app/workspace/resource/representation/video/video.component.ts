@@ -24,7 +24,7 @@ import {
     UpdateValue,
     WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
-import { mergeMap } from 'rxjs/operators';
+import { catchError, mergeMap, observeOn, subscribeOn } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -39,6 +39,7 @@ import { PointerValue } from '../av-timeline/av-timeline.component';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
 import { NotificationService } from '../../../../main/services/notification.service';
+import { asyncScheduler, Observable, of } from 'rxjs';
 
 @Component({
     selector: 'app-video',
@@ -138,12 +139,38 @@ export class VideoComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+        // make sure there is a src, avoid any misbehaviour like freeze
+        if (!this.src || !this.src.fileValue.fileUrl) {
+            return;
+        }
+
         this.video = this._sanitizer.bypassSecurityTrustUrl(
             this.src.fileValue.fileUrl
         );
-        this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
-        this.fileHasChanged = false;
-        this._getOriginalFilename();
+
+        /** get the knora json for the original file name. For not freezing
+         *  the app at low resources there are subscribeOn and observeOn().
+         *  The subscribeOn() operator specifies the asyncScheduler that will
+         *  execute the work in a separate context. The observeOn() operator
+         *  ensures that the emitted values are handled on the same scheduler.
+         *  This allows the main thread to continue executing other tasks
+         *  without freezing.
+         */
+        this._getKnoraJson()
+            .pipe(
+                subscribeOn(asyncScheduler), // Offload work to asyncScheduler
+                observeOn(asyncScheduler), // Handle emissions on asyncScheduler
+                catchError((error) => {
+                    console.error(error);
+                    return of(null); // Return null
+                })
+            )
+            .subscribe((res) => {
+                if (res) {
+                    this.fileHasChanged = false;
+                    this.originalFilename = res['originalFilename'];
+                }
+            });
     }
 
     ngAfterViewInit() {
@@ -416,7 +443,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
         this.previewTime = this.previewTime < 0 ? 0 : this.previewTime;
     }
 
-    private _getOriginalFilename() {
+    private _getKnoraJson(): Observable<any> {
         const requestOptions = {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -431,10 +458,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
                 0,
                 index + this.src.fileValue.filename.length
             ) + '/knora.json';
-
-        this._http.get(pathToJson, requestOptions).subscribe((res) => {
-            this.originalFilename = res['originalFilename'];
-        });
+        return this._http.get(pathToJson, requestOptions);
     }
 
     /**
