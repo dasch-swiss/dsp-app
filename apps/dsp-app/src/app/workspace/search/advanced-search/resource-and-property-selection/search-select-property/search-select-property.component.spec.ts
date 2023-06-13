@@ -19,7 +19,7 @@ import {
     ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
-import { MatLegacySlideToggleHarness as MatSlideToggleHarness } from '@angular/material/legacy-slide-toggle/testing';
+import { MatSlideToggleHarness as MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
     ComparisonOperatorAndValue,
@@ -27,7 +27,7 @@ import {
     ValueLiteral,
 } from './specify-property-value/operator';
 import { SearchSelectPropertyComponent } from './search-select-property.component';
-import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /**
  * test host component to simulate parent component.

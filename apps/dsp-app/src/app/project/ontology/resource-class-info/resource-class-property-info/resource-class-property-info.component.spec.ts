@@ -12,7 +12,7 @@ import {
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
-import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
