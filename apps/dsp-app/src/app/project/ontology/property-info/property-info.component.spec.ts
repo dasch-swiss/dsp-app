@@ -31,7 +31,7 @@ import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { PropertyFormComponent } from '../property-form/property-form.component';
 import { PropertyInfoComponent } from './property-info.component';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
 
 // mock property definition

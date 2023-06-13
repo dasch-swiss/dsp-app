@@ -38,7 +38,7 @@ import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-heade
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TestConfig } from '@dsp-app/src/test.config';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 
 /**

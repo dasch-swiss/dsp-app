@@ -13,7 +13,7 @@ import {
     UntypedFormControl,
     UntypedFormGroup,
 } from '@angular/forms';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { SessionService } from '../../services/session.service';
 

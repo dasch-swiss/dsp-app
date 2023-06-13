@@ -8,7 +8,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { FileRepresentation } from '../file-representation';
 
 import { TextComponent } from './text.component';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RepresentationService } from '../representation.service';

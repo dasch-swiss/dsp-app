@@ -2,9 +2,9 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
 import {
-    MatLegacyMenuModule as MatMenuModule,
-    MatLegacyMenuTrigger as MatMenuTrigger,
-} from '@angular/material/legacy-menu';
+    MatMenuModule,
+    MatMenuTrigger,
+} from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -170,7 +170,7 @@ describe('SublistValueComponent', () => {
 
         testHostFixture.detectChanges();
 
-        const listNodeEle = ele.query(By.css('.mat-menu-content button'));
+        const listNodeEle = ele.query(By.css('.mat-mdc-menu-content button'));
 
         // select root node
         listNodeEle.nativeElement.click();

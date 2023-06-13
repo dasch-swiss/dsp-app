@@ -15,9 +15,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import {
-    MatLegacyMenu as MatMenu,
-    MatLegacyMenuModule as MatMenuModule,
-} from '@angular/material/legacy-menu';
+    MatMenu,
+    MatMenuModule,
+} from '@angular/material/menu';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

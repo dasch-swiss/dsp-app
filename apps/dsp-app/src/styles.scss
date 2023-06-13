@@ -133,7 +133,7 @@ app-color-value {
   }
 }
 
-.mat-menu-panel.res-share-menu {
+.mat-mdc-menu-panel.res-share-menu {
   max-width: 360px !important;
   padding: 6px !important;
 }
@@ -143,7 +143,7 @@ app-color-value {
 }
 
 // date picker adaption
-.mat-menu-panel.date-picker {
+.mat-mdc-menu-panel.date-picker {
   max-width: 312px !important;
 }
 
@@ -225,13 +225,13 @@ button.space-reducer {
 
 // mat-menu with form element
 .form-menu {
-  &.mat-menu-panel {
+  &.mat-mdc-menu-panel {
     min-width: 320px !important;
     max-width: 320px !important;
   }
 }
 
-.mat-menu-panel {
+.mat-mdc-menu-panel {
   min-height: 48px !important;
 }
 

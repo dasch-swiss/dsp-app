@@ -148,7 +148,7 @@
 
 .app-project-filter-menu {
   width: $project-filter-width;
-  .mat-menu-item {
+  .mat-mdc-menu-item {
     text-transform: capitalize;
   }
 }
@@ -264,7 +264,7 @@
 
   // TODO: do not use ng-deep anymore!!!
   ::ng-deep .cdk-overlay-pane {
-    .mat-menu-panel {
+    .mat-mdc-menu-panel {
       box-shadow: none;
       max-width: 100% !important;
     }

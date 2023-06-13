@@ -6,9 +6,9 @@ import { ListNodeV2, MockList } from '@dasch-swiss/dsp-js';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatLegacyMenuItemHarness as MatMenuItemHarness } from '@angular/material/legacy-menu/testing';
+import { MatMenuItemHarness as MatMenuItemHarness } from '@angular/material/menu/testing';
 
 /**
  * test host component to simulate parent component.
