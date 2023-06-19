@@ -14,7 +14,7 @@ import { HttpStatusMsg } from '../../../assets/http/statusMsg';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../dialog/dialog.component';
 import { NotificationService } from '../services/notification.service';
-import { SessionService } from '../services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Injectable({
     providedIn: 'root',

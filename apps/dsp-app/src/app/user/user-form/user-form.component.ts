@@ -34,7 +34,7 @@ import { NotificationService } from '@dsp-app/src/app/main/services/notification
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import { CacheService } from '../../main/cache/cache.service';

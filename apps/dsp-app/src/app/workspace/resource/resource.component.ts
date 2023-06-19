@@ -41,7 +41,7 @@ import { NotificationService } from '@dsp-app/src/app/main/services/notification
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { SplitSize } from '../results/results.component';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { PropertyInfoValues } from './properties/properties.component';

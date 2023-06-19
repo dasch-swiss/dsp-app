@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { SessionService } from '../../../../main/services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 export interface UploadedFile {
     fileType: string;

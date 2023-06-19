@@ -14,7 +14,7 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { SessionService } from '../../services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { StringLiteralInputComponent } from './string-literal-input.component';
 
 /**

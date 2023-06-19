@@ -41,7 +41,7 @@ import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ListComponent } from './list.component';
 

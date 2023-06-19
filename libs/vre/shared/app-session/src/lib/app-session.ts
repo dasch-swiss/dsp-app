@@ -59,7 +59,8 @@ export class SessionService {
      * get session information from localstorage
      */
     getSession(): Session | null {
-        return JSON.parse(localStorage.getItem('session'));
+        const sessionData = localStorage.getItem('session');
+        return sessionData ? JSON.parse(sessionData) : null;
     }
 
     /**
@@ -102,11 +103,11 @@ export class SessionService {
      */
     isSessionValid(): Observable<boolean> {
         // mix of checks with session.validation and this.authenticate
-        const session = JSON.parse(localStorage.getItem('session'));
+        const sessionData = localStorage.getItem('session');
 
-        const tsNow: number = this._setTimestamp();
-
-        if (session) {
+        if (sessionData) {
+            const session = JSON.parse(sessionData);
+            const tsNow: number = this._setTimestamp();
             this._dspApiConnection.v2.jsonWebToken = session.user.jwt;
 
             // check if the session is still valid:
@@ -162,7 +163,10 @@ export class SessionService {
      * @param response response from getUser method call
      * @param jwt JSON web token string
      */
-    private _storeSessionInLocalStorage(response: any, jwt: string) {
+    private _storeSessionInLocalStorage(
+        response: ApiResponseData<UserResponse> | ApiResponseError,
+        jwt: string
+    ) {
         let session: Session;
 
         if (response instanceof ApiResponseData) {
@@ -170,31 +174,32 @@ export class SessionService {
             const projectAdmin: string[] = [];
 
             // get permission information: a) is user sysadmin? b) get list of project iri's where user is project admin
-            const groupsPerProjectKeys: string[] = Object.keys(
-                response.body.user.permissions.groupsPerProject
-            );
+            const groupsPerProject =
+                response.body.user.permissions.groupsPerProject;
 
-            for (const key of groupsPerProjectKeys) {
-                if (key === Constants.SystemProjectIRI) {
-                    sysAdmin =
-                        response.body.user.permissions.groupsPerProject[
-                            key
-                        ].indexOf(Constants.SystemAdminGroupIRI) > -1;
-                }
+            if (groupsPerProject) {
+                const groupsPerProjectKeys: string[] =
+                    Object.keys(groupsPerProject);
 
-                if (
-                    response.body.user.permissions.groupsPerProject[
-                        key
-                    ].indexOf(Constants.ProjectAdminGroupIRI) > -1
-                ) {
-                    projectAdmin.push(key);
+                for (const key of groupsPerProjectKeys) {
+                    if (key === Constants.SystemProjectIRI) {
+                        sysAdmin =
+                            groupsPerProject[key].indexOf(
+                                Constants.SystemAdminGroupIRI
+                            ) > -1;
+                    }
+
+                    if (
+                        groupsPerProject[key].indexOf(
+                            Constants.ProjectAdminGroupIRI
+                        ) > -1
+                    ) {
+                        projectAdmin.push(key);
+                    }
                 }
             }
 
             // store session information in browser's localstorage
-            // todo: jwt will be removed, when we have a better cookie solution (DSP-261)
-            // --> no it can't be removed because the token is needed in sipi upload:
-            // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/editing-values/#upload-files-to-sipi
             session = {
                 id: this._setTimestamp(),
                 user: {
@@ -221,12 +226,12 @@ export class SessionService {
      * @param timestamp timestamp in form of a number
      */
     private _updateSessionId(
-        credentials: any,
+        credentials: ApiResponseData<CredentialsResponse> | ApiResponseError,
         session: Session,
         timestamp: number
     ): boolean {
         if (credentials instanceof ApiResponseData) {
-            // the knora api credentials are still valid
+            // the dsp api credentials are still valid
             // update the session.id
             session.id = timestamp;
             localStorage.setItem('session', JSON.stringify(session));

@@ -6,7 +6,7 @@ import {
     RouterStateSnapshot,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { SessionService } from '../services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Injectable({
     providedIn: 'root',

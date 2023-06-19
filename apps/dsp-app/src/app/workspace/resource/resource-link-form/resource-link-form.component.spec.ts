@@ -49,7 +49,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { FilteredResources } from '../../results/list-view/list-view.component';
 import { ResourceLinkFormComponent } from './resource-link-form.component';
 

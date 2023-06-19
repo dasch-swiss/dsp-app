@@ -33,6 +33,9 @@
       "@dasch-swiss/vre/shared/app-logging": [
         "libs/vre/shared/app-logging/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-session": [
+        "libs/vre/shared/app-session/src/index.ts"
+      ],
       "@dsp-app/*": ["apps/dsp-app/*"]
     }
   },

@@ -17,7 +17,7 @@ import {
     DspConfig,
 } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '../services/notification.service';
-import { SessionService } from '../services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
     selector: 'app-header',

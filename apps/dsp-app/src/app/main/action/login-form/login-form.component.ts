@@ -29,9 +29,9 @@ import {
     Events,
 } from '../../services/component-communication-event.service';
 import { DatadogRumService } from '../../services/datadog-rum.service';
-import { Session, SessionService } from '../../services/session.service';
 import { Location } from '@angular/common';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
     selector: 'app-login-form',
@@ -169,8 +169,8 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         this.isError = false;
 
         // grab values from form
-        const identifier = this.form.get('username').value;
-        const password = this.form.get('password').value;
+        const identifier: string = this.form.get('username').value;
+        const password: string = this.form.get('password').value;
 
         const identifierType: 'iri' | 'email' | 'username' =
             identifier.indexOf('@') > -1 ? 'email' : 'username';

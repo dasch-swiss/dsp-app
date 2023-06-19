@@ -29,7 +29,7 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '../main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../main/dialog/dialog.component';
-import { Session, SessionService } from '../main/services/session.service';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { StatusComponent } from '../main/status/status.component';
 import { OntologyService } from './ontology/ontology.service';
 import { ProjectComponent } from './project.component';

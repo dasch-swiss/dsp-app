@@ -7,7 +7,7 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
 
 describe('UploadFileService', () => {

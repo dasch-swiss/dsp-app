@@ -10,7 +10,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-config';
 import { AuthenticationService } from './authentication.service';
 import { DatadogRumService } from './datadog-rum.service';
-import { SessionService } from './session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 describe('AuthenticationService', () => {
     let service: AuthenticationService;

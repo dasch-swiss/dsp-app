@@ -23,7 +23,7 @@ import { ListNodeOperation } from '../list-item-form/list-item-form.component';
 import {
     Session,
     SessionService,
-} from '../../../main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { CacheService } from '../../../main/cache/cache.service';
 
 @Component({

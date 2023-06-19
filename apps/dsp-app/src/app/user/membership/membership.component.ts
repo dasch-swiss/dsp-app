@@ -21,7 +21,7 @@ import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permission
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { Session } from '@dsp-app/src/app/main/services/session.service';
+import { Session } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
 

@@ -27,7 +27,7 @@ import {
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 

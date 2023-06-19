@@ -6,7 +6,7 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { StatusComponent } from '../main/status/status.component';
-import { SessionService } from '../main/services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { SystemComponent } from './system.component';
 
 describe('SystemComponent', () => {

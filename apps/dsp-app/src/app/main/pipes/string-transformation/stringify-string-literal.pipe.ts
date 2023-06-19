@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { SessionService } from '../../services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 /**
  * this pipe stringifies an array of StringLiterals.

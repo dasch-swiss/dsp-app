@@ -1,7 +1,7 @@
 import { waitForAsync, TestBed } from '@angular/core/testing';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { Session, SessionService } from '../../services/session.service';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { StringifyStringLiteralPipe } from './stringify-string-literal.pipe';
 
 describe('StringifyStringLiteralPipe', () => {

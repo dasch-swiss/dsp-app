@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DatadogRumService } from './datadog-rum.service';
-import { SessionService } from './session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 describe('DatadogRumService', () => {
     let service: DatadogRumService;

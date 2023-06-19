@@ -13,7 +13,7 @@ import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handle
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { AddGroupComponent } from './add-group/add-group.component';
 
 @Component({

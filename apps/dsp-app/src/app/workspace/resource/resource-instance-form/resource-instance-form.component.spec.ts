@@ -57,7 +57,7 @@ import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.d
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { ValueService } from '../services/value.service';
 import { IntValueComponent } from '../values/int-value/int-value.component';
 import { TextValueAsStringComponent } from '../values/text-value/text-value-as-string/text-value-as-string.component';

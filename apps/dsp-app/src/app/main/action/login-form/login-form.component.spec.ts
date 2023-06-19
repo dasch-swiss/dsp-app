@@ -23,7 +23,7 @@ import {
     DspApiConnectionToken,
 } from '@dasch-swiss/vre/shared/app-config';
 import { DatadogRumService } from '../../services/datadog-rum.service';
-import { Session, SessionService } from '../../services/session.service';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { LoginFormComponent } from './login-form.component';
 
 /**

@@ -22,7 +22,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
-import { SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 
 @Component({

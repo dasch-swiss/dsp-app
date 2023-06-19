@@ -23,7 +23,7 @@ import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-t
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { OntologyService } from '../ontology/ontology.service';
 
 import { DataModelsComponent } from './data-models.component';

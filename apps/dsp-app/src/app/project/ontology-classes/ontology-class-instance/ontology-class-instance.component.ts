@@ -16,7 +16,7 @@ import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handle
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import {

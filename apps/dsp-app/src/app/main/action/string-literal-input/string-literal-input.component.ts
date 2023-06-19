@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { SessionService } from '../../services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
     selector: 'app-string-literal-input',

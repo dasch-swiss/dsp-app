@@ -15,7 +15,7 @@ import {
     DspApiConnectionToken,
 } from '@dasch-swiss/vre/shared/app-config';
 import { DatadogRumService } from '@dsp-app/src/app/main/services/datadog-rum.service';
-import { SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { UserMenuComponent } from './user-menu.component';
 

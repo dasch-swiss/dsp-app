@@ -64,10 +64,7 @@
 
 <!-- a user is already logged in; show who it is and a logout button -->
 <div class="logout-container" *ngIf="session">
-    <p>A user is already logged in:</p>
-    <p>
-        Username: <strong>{{ session.user.name }}</strong>
-    </p>
+    <p>You are already logged in as: <strong>{{ session.user.name }}</strong></p>
     <br />
     <p>Please log out if it's not you.</p>
     <button

@@ -6,7 +6,7 @@ import { AppGlobal } from '../app-global';
 import { CacheService } from '../main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
-import { Session, SessionService } from '../main/services/session.service';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
     selector: 'app-user',

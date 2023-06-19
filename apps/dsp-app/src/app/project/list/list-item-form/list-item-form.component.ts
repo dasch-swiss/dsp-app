@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '../../../main/services/error-handler.servic
 import {
     Session,
     SessionService,
-} from '../../../main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { CacheService } from '../../../main/cache/cache.service';
 
 export class ListNodeOperation {

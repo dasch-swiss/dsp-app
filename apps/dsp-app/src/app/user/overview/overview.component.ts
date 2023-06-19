@@ -17,7 +17,7 @@ import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handle
 import {
     Session,
     SessionService,
-} from '@dsp-app/src/app/main/services/session.service';
+} from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 
 // should only be used by this component and child components

@@ -28,7 +28,7 @@ import {
     ComponentCommunicationEventService,
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { Session, SessionService } from '../main/services/session.service';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { Subscription } from 'rxjs';
 
 @Component({

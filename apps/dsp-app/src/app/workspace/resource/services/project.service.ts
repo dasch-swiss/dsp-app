@@ -14,7 +14,7 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Injectable({
     providedIn: 'root',

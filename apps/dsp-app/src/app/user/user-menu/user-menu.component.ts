@@ -11,7 +11,7 @@ import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { AuthenticationService } from '@dsp-app/src/app/main/services/authentication.service';
-import { SessionService } from '@dsp-app/src/app/main/services/session.service';
+import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { MenuItem } from '../../main/declarations/menu-item';
 
 @Component({
