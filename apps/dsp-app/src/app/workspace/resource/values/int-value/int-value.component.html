@@ -32,9 +32,14 @@
                     >New value must be an integer.</span
                 >
             </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('required')">
+            <mat-error *ngIf="valueFormControl.hasError('required') && mode !== 'update'">
                 <span class="custom-error-message"
                     >An integer value is <strong>required</strong>.</span
+                >
+            </mat-error>
+            <mat-error *ngIf="valueFormControl.hasError('required') && mode === 'update'">
+                <span class="custom-error-message"
+                    >Empty values are not supported when updating a value. Consider using the delete button instead.</span
                 >
             </mat-error>
             <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">

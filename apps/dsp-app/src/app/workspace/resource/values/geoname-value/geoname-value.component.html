@@ -48,8 +48,11 @@
                     >New value must be different than the current value.</span
                 >
             </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('required')">
-                A GeoName value is <strong>required</strong>.
+            <mat-error *ngIf="valueFormControl.hasError('required')  && mode !== 'update'">
+                A GeoName value is <strong>required</strong> {{mode}}.
+            </mat-error>
+            <mat-error *ngIf="valueFormControl.hasError('required')  && mode === 'update'">
+                Empty values are not supported when updating a value. Consider using the delete button instead.
             </mat-error>
             <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
                 <span class="custom-error-message"
