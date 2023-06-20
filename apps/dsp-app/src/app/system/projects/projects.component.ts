@@ -16,7 +16,6 @@ import {
     Session,
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
-import { CacheService } from '../../main/cache/cache.service';
 
 /**
  * projects component handles the list of projects
@@ -63,7 +62,6 @@ export class ProjectsComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,

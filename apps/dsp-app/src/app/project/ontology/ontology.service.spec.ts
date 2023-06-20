@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -12,7 +12,7 @@ import { OntologyService } from './ontology.service';
 describe('OntologyService', () => {
     let service: OntologyService;
 
-    const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -27,8 +27,8 @@ describe('OntologyService', () => {
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         });

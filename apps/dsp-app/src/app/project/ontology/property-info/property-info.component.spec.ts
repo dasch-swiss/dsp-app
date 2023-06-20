@@ -20,7 +20,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -131,7 +131,7 @@ describe('Property info component', () => {
     let fixture: ComponentFixture<PropertyInfoComponent>;
 
     beforeEach(async () => {
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
         const ontologyEndpointSpyObj = {
             v2: {
@@ -172,8 +172,8 @@ describe('Property info component', () => {
                     useValue: ontologyEndpointSpyObj,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
                 {
                     provide: MAT_DIALOG_DATA,
@@ -188,10 +188,10 @@ describe('Property info component', () => {
     });
 
     beforeEach(() => {
-        // mock cache service get requests
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service get requests
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(
             (key: string) => {
                 if (key === 'currentOntologyLists') {
                     const response: ListNodeInfo[] = mockOntologyResponse;

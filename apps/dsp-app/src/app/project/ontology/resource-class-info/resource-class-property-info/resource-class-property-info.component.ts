@@ -19,7 +19,7 @@ import {
     UpdateOntology,
     UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { DefaultProperty } from '../../default-data/default-properties';
@@ -106,11 +106,11 @@ export class ResourceClassPropertyInfoComponent
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _ontoService: OntologyService
     ) {
-        this._cache
+        this._applicationStateService
             .get('currentOntology')
             .subscribe((response: ReadOntology) => {
                 this.ontology = response;
@@ -150,7 +150,7 @@ export class ResourceClassPropertyInfoComponent
             const baseOnto = this.propDef.objectType.split('#')[0];
             if (baseOnto !== this.ontology.id) {
                 // get class info from another ontology
-                this._cache.get('currentProjectOntologies').subscribe(
+                this._applicationStateService.get('currentProjectOntologies').subscribe(
                     (ontologies: ReadOntology[]) => {
                         const onto = ontologies.find((i) => i.id === baseOnto);
                         if (
@@ -165,7 +165,7 @@ export class ResourceClassPropertyInfoComponent
                                 onto.classes[this.propDef.objectType].comment;
                         }
                     },
-                    () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+                    () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
                 );
             } else {
                 this.propAttribute =
@@ -178,7 +178,7 @@ export class ResourceClassPropertyInfoComponent
         if (this.propDef.objectType === Constants.ListValue) {
             // this property is a list property
             // get current ontology lists to get linked list information
-            this._cache
+            this._applicationStateService
                 .get('currentOntologyLists')
                 .subscribe((response: ListNodeInfo[]) => {
                     const re = /\<([^)]+)\>/;

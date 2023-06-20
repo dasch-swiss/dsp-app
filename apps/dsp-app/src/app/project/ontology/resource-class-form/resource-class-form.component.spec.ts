@@ -25,7 +25,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -58,7 +58,7 @@ describe('ResourceClassFormComponent', () => {
     let component: TestHostResourceClassFormComponent;
     let fixture: ComponentFixture<TestHostResourceClassFormComponent>;
 
-    const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -100,18 +100,18 @@ describe('ResourceClassFormComponent', () => {
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        // mock cache service for currentOntology
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service for currentOntology
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: ReadOntology = MockOntology.mockReadOntology(
                 'http://0.0.0.0:3333/ontology/0001/anything/v2'
             );

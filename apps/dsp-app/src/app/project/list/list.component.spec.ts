@@ -32,7 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
@@ -100,7 +100,7 @@ describe('ListComponent', () => {
             'getSession',
         ]);
 
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
         const routerSpy = jasmine.createSpyObj('Router', [
             'navigate',
@@ -167,8 +167,8 @@ describe('ListComponent', () => {
                     useValue: sessionServiceSpy,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
                 {
                     provide: Router,
@@ -217,10 +217,10 @@ describe('ListComponent', () => {
                 return session;
             });
 
-            // mock cache service
-            const cacheSpy = TestBed.inject(CacheService);
+            // mock application state service
+            const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-            (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+            (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
                 const response: ProjectResponse = new ProjectResponse();
 
                 const mockProjects = MockProjects.mockProjects();

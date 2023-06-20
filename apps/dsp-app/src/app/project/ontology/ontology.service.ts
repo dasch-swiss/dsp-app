@@ -7,7 +7,7 @@ import {
     ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConfigToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     DefaultProperties,
@@ -27,7 +27,7 @@ export class OntologyService {
 
     constructor(
         @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
-        private _cache: CacheService
+        private _applicationStateService: ApplicationStateService
     ) {}
 
     /**
@@ -143,7 +143,7 @@ export class OntologyService {
                 if (baseOntoIri !== Constants.KnoraApiV2) {
                     // the property is not a subproperty of knora base ontology
                     // get property iri from another ontology
-                    this._cache.get('currentProjectOntologies').subscribe(
+                    this._applicationStateService.get('currentProjectOntologies').subscribe(
                         (ontologies: ReadOntology[]) => {
                             const onto = ontologies.find(
                                 (i) => i.id === baseOntoIri
@@ -151,7 +151,7 @@ export class OntologyService {
                             superPropIri =
                                 onto.properties[subProp].subPropertyOf[0];
                         },
-                        () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+                        () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
                     );
                 }
 

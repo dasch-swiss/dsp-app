@@ -34,7 +34,7 @@ import {
     Session,
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
-import { CacheService } from '../../../main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 
 export class ListNodeOperation {
     operation: 'create' | 'insert' | 'update' | 'delete' | 'reposition';
@@ -129,7 +129,7 @@ export class ListItemFormComponent implements OnInit {
         private _errorHandler: ErrorHandlerService,
         private _dialog: MatDialog,
         private _session: SessionService,
-        private _cache: CacheService
+        private _applicationStateService: ApplicationStateService
     ) {}
 
     ngOnInit() {
@@ -140,8 +140,8 @@ export class ListItemFormComponent implements OnInit {
         this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
 
         if (this.session) {
-            // get the project data from cache
-            this._cache.get(this.projectUuid).subscribe(
+            // get the project data from application state service
+            this._applicationStateService.get(this.projectUuid).subscribe(
                 (response: ReadProject) => {
                     // is logged-in user projectAdmin?
                     this.projectAdmin = this.sysAdmin

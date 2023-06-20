@@ -39,7 +39,7 @@ import {
     Session,
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
-import { CacheService } from '../../../main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 
 /**
  * test host component to simulate parent component.
@@ -115,7 +115,7 @@ describe('ListItemFormComponent', () => {
             'getSession',
         ]);
 
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -153,8 +153,8 @@ describe('ListItemFormComponent', () => {
                     useValue: sessionServiceSpy,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         }).compileComponents();
@@ -181,10 +181,10 @@ describe('ListItemFormComponent', () => {
             }
         );
 
-        // mock cache service
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: ProjectResponse = new ProjectResponse();
 
             const mockProjects = MockProjects.mockProjects();

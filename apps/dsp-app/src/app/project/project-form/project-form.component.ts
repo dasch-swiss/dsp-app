@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handle
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-import { CacheService } from '../../main/cache/cache.service';
+import { ApplicationStateService } from '../../main/cache/application-state.service';
 
 @Component({
     selector: 'app-project-form',
@@ -169,7 +169,7 @@ export class ProjectFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
         private _fb: UntypedFormBuilder,
@@ -418,8 +418,8 @@ export class ProjectFormComponent implements OnInit {
                         this.success = true;
                         this.project = response.body.project;
 
-                        // update cache
-                        this._cache.set(
+                        // update application state
+                        this._applicationStateService.set(
                             this._projectService.iriToUuid(this.projectIri),
                             this.project
                         );
@@ -567,15 +567,15 @@ export class ProjectFormComponent implements OnInit {
     refresh(): void {
         // refresh the component
         this.loading = true;
-        // update the cache
-        this._cache.del(this._projectService.iriToUuid(this.projectIri));
+        // update the application state
+        this._applicationStateService.del(this._projectService.iriToUuid(this.projectIri));
         this._dspApiConnection.admin.projectsEndpoint
             .getProjectByIri(this.projectIri)
             .subscribe(
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 
-                    this._cache.set(
+                    this._applicationStateService.set(
                         this._projectService.iriToUuid(this.projectIri),
                         this.project
                     );

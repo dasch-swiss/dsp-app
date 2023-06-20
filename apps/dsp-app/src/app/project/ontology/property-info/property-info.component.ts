@@ -24,7 +24,7 @@ import {
     ReadProject,
     ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
@@ -144,11 +144,11 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _ontoService: OntologyService
     ) {
-        this._cache
+        this._applicationStateService
             .get('currentOntology')
             .subscribe((response: ReadOntology) => {
                 this.ontology = response;
@@ -182,7 +182,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
             const baseOnto = this.propDef.objectType.split('#')[0];
             if (baseOnto !== this.ontology.id) {
                 // get class info from another ontology
-                this._cache.get('currentProjectOntologies').subscribe(
+                this._applicationStateService.get('currentProjectOntologies').subscribe(
                     (ontologies: ReadOntology[]) => {
                         const onto = ontologies.find((i) => i.id === baseOnto);
                         if (
@@ -197,7 +197,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                                 onto.classes[this.propDef.objectType].comment;
                         }
                     },
-                    () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+                    () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
                 );
             } else {
                 this.propAttribute =
@@ -210,7 +210,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         if (this.propDef.objectType === Constants.ListValue) {
             // this property is a list property
             // get current ontology lists to get linked list information
-            this._cache
+            this._applicationStateService
                 .get('currentOntologyLists')
                 .subscribe((response: ListNodeInfo[]) => {
                     const re = /\<([^)]+)\>/;
@@ -228,7 +228,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
 
         // get all classes where the property is used
         this.resClasses = [];
-        this._cache.get('currentProjectOntologies').subscribe(
+        this._applicationStateService.get('currentProjectOntologies').subscribe(
             (ontologies: ReadOntology[]) => {
                 if (!ontologies) {
                     return;
@@ -256,7 +256,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
                     });
                 });
             },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
         );
     }
 

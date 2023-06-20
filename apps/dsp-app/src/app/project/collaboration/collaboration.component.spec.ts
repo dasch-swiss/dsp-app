@@ -12,16 +12,10 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-    KnoraApiConnection,
-    MockProjects,
-    ProjectResponse,
-    ReadProject,
-} from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -34,6 +28,16 @@ import { TestConfig } from '@dsp-app/src/test.config';
 import { AddUserComponent } from './add-user/add-user.component';
 import { CollaborationComponent } from './collaboration.component';
 import { SelectGroupComponent } from './select-group/select-group.component';
+import { Component } from '@angular/core';
+
+/**
+ * test component to simulate child component, here progress-indicator from action module.
+ */
+@Component({
+    selector: 'app-progress-indicator',
+    template: '',
+})
+class TestProgressIndicatorComponent {}
 
 describe('CollaborationComponent', () => {
     let component: CollaborationComponent;
@@ -46,11 +50,6 @@ describe('CollaborationComponent', () => {
     };
 
     beforeEach(waitForAsync(() => {
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
-            'get',
-            'set',
-            'del',
-        ]);
 
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'uuidToIri',
@@ -64,6 +63,7 @@ describe('CollaborationComponent', () => {
                 SelectGroupComponent,
                 DialogComponent,
                 StatusComponent,
+                TestProgressIndicatorComponent
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -116,46 +116,9 @@ describe('CollaborationComponent', () => {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
-                {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
-                },
             ],
         }).compileComponents();
     }));
-
-    beforeEach(() => {
-        // mock cache service
-        const cacheSpy = TestBed.inject(CacheService);
-
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
-            const response: ProjectResponse = new ProjectResponse();
-
-            const mockProjects = MockProjects.mockProjects();
-
-            response.project = mockProjects.body.projects[0];
-
-            return of(response.project as ReadProject);
-        });
-    });
-
-    // mock localStorage
-    beforeEach(() => {
-        let store = {};
-
-        spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): string => store[key] || null
-        );
-        spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
-            delete store[key];
-        });
-        spyOn(localStorage, 'setItem').and.callFake(
-            (key: string, value: string): string => (store[key] = <any>value)
-        );
-        spyOn(localStorage, 'clear').and.callFake(() => {
-            store = {};
-        });
-    });
 
     beforeEach(() => {
         localStorage.setItem(

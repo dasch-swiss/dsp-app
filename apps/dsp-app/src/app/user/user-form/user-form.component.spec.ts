@@ -21,7 +21,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
@@ -41,9 +41,9 @@ describe('UserFormComponent', () => {
         },
     };
 
-    const cacheServiceSpyAllUsers = jasmine.createSpyObj(
-        'CacheServiceAllUsers',
-        ['get']
+    const applicationStateServiceSpyAllUsers = jasmine.createSpyObj(
+        'ApplicationStateServiceAllUsers',
+        ['get', 'set']
     );
 
     const apiSpyObj = {
@@ -93,8 +93,8 @@ describe('UserFormComponent', () => {
                     useValue: apiSpyObj,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpyAllUsers,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpyAllUsers,
                 },
                 {
                     provide: UntypedFormBuilder,
@@ -119,12 +119,12 @@ describe('UserFormComponent', () => {
             return of(allUsers);
         });
 
-        const cacheSpyAllUsers = TestBed.inject(CacheService);
-        (cacheSpyAllUsers as jasmine.SpyObj<CacheService>).get.and.callFake(
+        const cacheSpyAllUsers = TestBed.inject(ApplicationStateService);
+        (cacheSpyAllUsers as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(
             () => {
                 const allUsers: ApiResponseData<UsersResponse> =
                     MockUsers.mockUsers();
-                return of(allUsers);
+                return of(allUsers.body.users);
             }
         );
 

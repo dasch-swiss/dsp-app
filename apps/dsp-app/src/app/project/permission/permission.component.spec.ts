@@ -15,7 +15,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -43,7 +43,7 @@ describe('PermissionComponent', () => {
     let fixture: ComponentFixture<PermissionComponent>;
 
     beforeEach(waitForAsync(() => {
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
             'get',
             'set',
         ]);
@@ -95,18 +95,18 @@ describe('PermissionComponent', () => {
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        // mock cache service
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: ProjectResponse = new ProjectResponse();
 
             const mockProjects = MockProjects.mockProjects();

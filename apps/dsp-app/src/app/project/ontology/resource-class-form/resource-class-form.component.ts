@@ -30,7 +30,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-literal-v2';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -83,7 +83,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     // store name as resourceClassTitle on init; in this case it can't be overwritten in the next / prev navigation
     resourceClassTitle: string;
 
-    // current ontology; will get it from cache by key 'currentOntology'
+    // current ontology; will get it from application state service by key 'currentOntology'
     ontology: ReadOntology;
 
     // success of sending data
@@ -145,7 +145,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _cdr: ChangeDetectorRef,
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,
@@ -156,7 +156,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         // set file representation or default resource class as title
         this.resourceClassTitle = this.name;
 
-        this._cache.get('currentOntology').subscribe(
+        this._applicationStateService.get('currentOntology').subscribe(
             (response: ReadOntology) => {
                 this.ontology = response;
 

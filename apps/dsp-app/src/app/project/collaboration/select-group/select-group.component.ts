@@ -13,7 +13,7 @@ import {
     GroupsResponse,
     KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
@@ -50,7 +50,7 @@ export class SelectGroupComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService
     ) {}
 
@@ -62,33 +62,23 @@ export class SelectGroupComponent implements OnInit {
     }
 
     setList() {
-        // set cache for groups
-        this._cache.get(
-            'groups_of_' + this.projectCode,
-            this._dspApiConnection.admin.groupsEndpoint.getGroups()
-        );
-
         // update list of groups with the project specific groups
-        this._cache
-            .get(
-                'groups_of_' + this.projectCode,
-                this._dspApiConnection.admin.groupsEndpoint.getGroups()
-            )
-            .subscribe(
-                (response: ApiResponseData<GroupsResponse>) => {
-                    for (const group of response.body.groups) {
-                        if (group.project.id === this.projectid) {
-                            this.projectGroups.push({
-                                iri: group.id,
-                                name: group.name,
-                            });
-                        }
+        this._dspApiConnection.admin.groupsEndpoint.getGroups().subscribe(
+            (response: ApiResponseData<GroupsResponse>) => {
+                this._applicationStateService.set('groups_of_' + this.projectCode, response.body.groups);
+                for (const group of response.body.groups) {
+                    if (group.project.id === this.projectid) {
+                        this.projectGroups.push({
+                            iri: group.id,
+                            name: group.name,
+                        });
                     }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
                 }
-            );
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 
     onGroupChange() {

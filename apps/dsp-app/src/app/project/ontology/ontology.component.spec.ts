@@ -38,7 +38,7 @@ import {
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -135,7 +135,7 @@ describe('OntologyComponent', () => {
             },
         };
 
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
             'get',
             'set',
         ]);
@@ -211,8 +211,8 @@ describe('OntologyComponent', () => {
                     },
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         }).compileComponents();
@@ -243,9 +243,9 @@ describe('OntologyComponent', () => {
             JSON.stringify(TestConfig.CurrentSession)
         );
 
-        // mock cache service for currentOntology
-        const cacheSpyOnto = TestBed.inject(CacheService);
-        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get
+        // mock application state service for currentOntology
+        const cacheSpyOnto = TestBed.inject(ApplicationStateService);
+        (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get
             .withArgs('currentOntology')
             .and.callFake(() => {
                 const response: ReadOntology = MockOntology.mockReadOntology(
@@ -254,9 +254,9 @@ describe('OntologyComponent', () => {
                 return of(response);
             });
 
-        // mock cache service for currentProjectOntologies
-        const cacheSpyProjOnto = TestBed.inject(CacheService);
-        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get
+        // mock application state service for currentProjectOntologies
+        const cacheSpyProjOnto = TestBed.inject(ApplicationStateService);
+        (cacheSpyProjOnto as jasmine.SpyObj<ApplicationStateService>).get
             .withArgs('currentProjectOntologies')
             .and.callFake(() => {
                 const ontologies: ReadOntology[] = [];
@@ -274,10 +274,10 @@ describe('OntologyComponent', () => {
                 return of(response);
             });
 
-        // mock cache service for currentOntologyLists
-        const cacheSpyOntoLists = TestBed.inject(CacheService);
+        // mock application state service for currentOntologyLists
+        const cacheSpyOntoLists = TestBed.inject(ApplicationStateService);
 
-        (cacheSpyOntoLists as jasmine.SpyObj<CacheService>).get
+        (cacheSpyOntoLists as jasmine.SpyObj<ApplicationStateService>).get
             .withArgs('currentOntologyLists')
             .and.callFake(() => {
                 const response: ListNodeInfo[] = [

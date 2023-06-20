@@ -29,7 +29,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -204,7 +204,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
     let overlayContainer: OverlayContainer;
 
     beforeEach(waitForAsync(() => {
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
         const ontologyEndpointSpyObj = {
             v2: {
@@ -246,8 +246,8 @@ describe('ResourceClassPropertyInfoComponent', () => {
                     useValue: ontologyEndpointSpyObj,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
                 {
                     provide: MAT_DIALOG_DATA,
@@ -275,10 +275,10 @@ describe('ResourceClassPropertyInfoComponent', () => {
     });
 
     beforeEach(() => {
-        // mock cache service for currentOntology
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service for currentOntology
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: ReadOntology = MockOntology.mockReadOntology(
                 'http://0.0.0.0:3333/ontology/0001/anything/v2'
             );
@@ -306,10 +306,10 @@ describe('ResourceClassPropertyInfoComponent', () => {
     });
 
     beforeEach(() => {
-        // mock cache service for currentOntologyLists
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service for currentOntologyLists
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: ListNodeInfo[] = [
                 {
                     comments: [],

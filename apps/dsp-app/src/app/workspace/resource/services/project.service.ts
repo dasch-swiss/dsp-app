@@ -5,13 +5,14 @@ import {
     Constants,
     KnoraApiConnection,
     ProjectsResponse,
+    ReadUser,
     StoredProject,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
@@ -23,7 +24,7 @@ export class ProjectService {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _acs: AppConfigService
@@ -40,17 +41,12 @@ export class ProjectService {
         const session = this._session.getSession();
 
         if (session.user.sysAdmin === false) {
-            return this._cache
-                .get(
-                    session.user.name,
-                    this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                        session.user.name
-                    )
-                )
+            return this._applicationStateService
+                .get(session.user.name)
                 .pipe(
                     map(
-                        (response: ApiResponseData<UserResponse>) => {
-                            for (const project of response.body.user.projects) {
+                        (user: ReadUser) => {
+                            for (const project of user.projects) {
                                 if (project.status) {
                                     usersProjects.push(project);
                                 }

@@ -14,9 +14,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
-    KnoraApiConnection,
+    ApiResponseData,
     MockProjects,
     ProjectResponse,
+    ProjectsEndpointAdmin,
     ReadProject,
     StringLiteral,
 } from '@dasch-swiss/dsp-js';
@@ -31,11 +32,12 @@ import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { TestConfig } from '@dsp-app/src/test.config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DescriptionComponent } from './description.component';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { AjaxResponse } from 'rxjs/ajax';
+import { ApplicationStateService } from '../../main/cache/application-state.service';
 
 @Component({
     template: '<app-description #description></app-description>',
@@ -65,12 +67,20 @@ describe('DescriptionComponent', () => {
     let rootLoader: HarnessLoader;
 
     beforeEach(waitForAsync(() => {
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
-            'get',
-            'set',
-        ]);
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'iriToUuid',
+        ]);
+
+        const dspConnSpy = {
+            admin: {
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
+                    'getProjectByShortcode',
+                ]),
+            },
+        };
+
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
+            'get',
         ]);
 
         TestBed.configureTestingModule({
@@ -121,34 +131,19 @@ describe('DescriptionComponent', () => {
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig),
-                },
-                {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    useValue: dspConnSpy,
                 },
                 {
                     provide: ProjectService,
                     useValue: projectServiceSpy,
                 },
+                {
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
+                },
             ],
         }).compileComponents();
     }));
-
-    beforeEach(() => {
-        // mock cache service
-        const cacheSpy = TestBed.inject(CacheService);
-
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
-            const response: ProjectResponse = new ProjectResponse();
-
-            const mockProjects = MockProjects.mockProjects();
-
-            response.project = mockProjects.body.projects[0];
-
-            return of(response.project as ReadProject);
-        });
-    });
 
     // mock localStorage
     beforeEach(() => {
@@ -172,6 +167,35 @@ describe('DescriptionComponent', () => {
         localStorage.setItem(
             'session',
             JSON.stringify(TestConfig.CurrentSession)
+        );
+
+        // mock application state service
+        const cacheSpy = TestBed.inject(ApplicationStateService);
+
+        (cacheSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+            const response: ProjectResponse = new ProjectResponse();
+
+            const mockProjects = MockProjects.mockProjects();
+
+            response.project = mockProjects.body.projects[0];
+
+            return of(response.project as ReadProject);
+        });
+
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+            () => {
+                const response = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(
+                    ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+                );
+            }
         );
 
         testHostFixture = TestBed.createComponent(TestHostDescriptionComponent);

@@ -11,7 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
     ApiResponseData,
     ApiResponseError,
+    GroupsResponse,
     KnoraApiConnection,
+    MembersResponse,
     OntologiesMetadata,
     ProjectResponse,
     ReadOntology,
@@ -20,7 +22,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '../main/cache/cache.service';
+import { ApplicationStateService } from '../main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
 import { ErrorHandlerService } from '../main/services/error-handler.service';
@@ -50,7 +52,7 @@ export class ProjectComponent implements OnInit {
     projectAdmin = false;
     projectMember = false;
 
-    // project uuid; as identifier in project cache service
+    // project uuid; as identifier in project application state service
     projectUuid: string;
 
     // project iri; used for API requests
@@ -79,7 +81,7 @@ export class ProjectComponent implements OnInit {
         private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: ErrorHandlerService,
         private _componentCommsService: ComponentCommunicationEventService,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
@@ -133,7 +135,7 @@ export class ProjectComponent implements OnInit {
         if (!this.error) {
             this.loading = true;
             // get current project data, project members and project groups
-            // and set the project cache here
+            // and set the project state here
             this._dspApiConnection.admin.projectsEndpoint
                 .getProjectByIri(this.iri)
                 .subscribe(
@@ -143,7 +145,7 @@ export class ProjectComponent implements OnInit {
                         // set the page title
                         this._titleService.setTitle(this.project.shortname);
 
-                        this._cache.set(this.projectUuid, this.project);
+                        this._applicationStateService.set(this.projectUuid, this.project);
 
                         if (!this.project.status) {
                             this.color = 'warn';
@@ -205,18 +207,18 @@ export class ProjectComponent implements OnInit {
                             }
                         }
 
-                        // set the cache for project members and groups
+                        // set the state of project members and groups
                         if (this.projectAdmin) {
-                            this._cache.get(
-                                'members_of_' + this.projectUuid,
-                                this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(
-                                    this.iri
-                                )
-                            );
-                            this._cache.get(
-                                'groups_of_' + this.projectUuid,
-                                this._dspApiConnection.admin.groupsEndpoint.getGroups()
-                            );
+
+                            this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(this.iri).subscribe(
+                                (response: ApiResponseData<MembersResponse>) =>
+                                    this._applicationStateService.set('members_of_' + this.projectUuid,response.body.members)
+                            )
+
+                            this._dspApiConnection.admin.groupsEndpoint.getGroups().subscribe(
+                                (response: ApiResponseData<GroupsResponse>) =>
+                                    this._applicationStateService.set('groups_of_' + this.projectUuid, response.body.groups)
+                            )
                         }
 
                         // get all project ontologies
@@ -251,12 +253,12 @@ export class ProjectComponent implements OnInit {
                                                             this.ontologies
                                                                 .length
                                                         ) {
-                                                            this._cache.set(
+                                                            this._applicationStateService.set(
                                                                 'currentProjectOntologies',
                                                                 this.ontologies
                                                             );
                                                             this.loading =
-                                                                !this._cache.has(
+                                                                !this._applicationStateService.has(
                                                                     this
                                                                         .projectUuid
                                                                 );
@@ -273,7 +275,7 @@ export class ProjectComponent implements OnInit {
                                                 );
                                         });
                                     } else {
-                                        this.loading = !this._cache.has(
+                                        this.loading = !this._applicationStateService.has(
                                             this.projectUuid
                                         );
                                     }

@@ -19,6 +19,7 @@ import {
     ApiResponseError,
     Constants,
     KnoraApiConnection,
+    MembersResponse,
     ReadUser,
     StringLiteral,
     UpdateUserRequest,
@@ -37,7 +38,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
-import { CacheService } from '../../main/cache/cache.service';
+import { ApplicationStateService } from '../../main/cache/application-state.service';
 
 @Component({
     selector: 'app-user-form',
@@ -178,7 +179,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _formBuilder: UntypedFormBuilder,
         private _notification: NotificationService,
@@ -223,18 +224,10 @@ export class UserFormComponent implements OnInit, OnChanges {
              * create mode: empty form for new user
              */
 
-            // set the cache first: all users to avoid same email-address / username twice
-            this._cache.get(
-                'allUsers',
-                this._dspApiConnection.admin.usersEndpoint.getUsers()
-            );
             // get existing users to avoid same usernames and email addresses
-            this._cache
-                .get(
-                    'allUsers',
-                    this._dspApiConnection.admin.usersEndpoint.getUsers()
-                )
-                .subscribe((response: ApiResponseData<UsersResponse>) => {
+            this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe(
+                (response: ApiResponseData<UsersResponse>) => {
+                    this._applicationStateService.set('allUsers', response.body.users)
                     for (const user of response.body.users) {
                         // email address of the user should be unique.
                         // therefore we create a list of existing email addresses to avoid multiple use of user names
@@ -400,7 +393,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                     (response: ApiResponseData<UserResponse>) => {
                         this.user = response.body.user;
                         this.buildForm(this.user);
-                        // update cache
+                        // update application state
                         const session: Session = this._session.getSession();
                         if (session.user.name === this.username) {
                             // update logged in user session
@@ -412,7 +405,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                             );
                         }
 
-                        this._cache.set(this.username, response);
+                        this._applicationStateService.set(this.username, response.body.user);
 
                         this._notification.openSnackBar(
                             "You have successfully updated the user's profile data."
@@ -445,12 +438,12 @@ export class UserFormComponent implements OnInit, OnChanges {
                         this.user = response.body.user;
                         this.buildForm(this.user);
 
-                        // update cache: users list
-                        this._cache.del('allUsers');
-                        this._cache.get(
-                            'allUsers',
-                            this._dspApiConnection.admin.usersEndpoint.getUsers()
-                        );
+                        // update application state: users list
+                        this._applicationStateService.del('allUsers');
+
+                        this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe(
+                            (response: ApiResponseData<UsersResponse>) => this._applicationStateService.set('allUsers', response.body.users)
+                        )
 
                         if (this.projectUuid) {
                             // if a projectUuid exists, add the user to the project
@@ -465,13 +458,12 @@ export class UserFormComponent implements OnInit, OnChanges {
                                 )
                                 .subscribe(
                                     () => {
-                                        // update project cache and member of project cache
-                                        this._cache.get(
-                                            'members_of_' + this.projectUuid,
-                                            this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(
-                                                projectIri
-                                            )
-                                        );
+                                        // update project state and member of project state
+                                        this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri).subscribe(
+                                            (response: ApiResponseData<MembersResponse>) =>
+                                                this._applicationStateService.set('members_of_' + this.projectUuid, response.body.members)
+                                        )
+
                                         this.closeDialog.emit(this.user);
                                         this.loading = false;
                                     },

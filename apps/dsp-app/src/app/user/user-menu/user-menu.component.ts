@@ -7,7 +7,7 @@ import {
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { AuthenticationService } from '@dsp-app/src/app/main/services/authentication.service';
@@ -36,7 +36,7 @@ export class UserMenuComponent implements OnChanges {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _auth: AuthenticationService,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService
     ) {}
@@ -66,7 +66,7 @@ export class UserMenuComponent implements OnChanges {
                 .subscribe(
                     (response: ApiResponseData<UserResponse>) => {
                         this.user = response.body.user;
-                        this._cache.set(this.username, this.user);
+                        this._applicationStateService.set(this.username, this.user);
                     },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);

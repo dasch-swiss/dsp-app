@@ -9,13 +9,15 @@ import {
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
+    ApiResponseData,
     ApiResponseError,
     Constants,
     KnoraApiConnection,
+    ProjectResponse,
     StoredProject,
     UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -94,7 +96,7 @@ export class ProjectsListComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _dialog: MatDialog,
         private _router: Router,
@@ -109,7 +111,7 @@ export class ProjectsListComponent implements OnInit {
         this.session = this._session.getSession();
 
         // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
+        this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
 
         // sort list by defined key
         if (localStorage.getItem('sortProjectsBy')) {
@@ -134,7 +136,7 @@ export class ProjectsListComponent implements OnInit {
      */
     userIsProjectAdmin(id: string): boolean {
         // check if the logged-in user is project admin
-        return this.session.user.projectAdmin.some((e) => e === id);
+        return this.session?.user.projectAdmin.some((e) => e === id);
     }
 
     /**
@@ -201,14 +203,13 @@ export class ProjectsListComponent implements OnInit {
             .subscribe(
                 () => {
                     this.refreshParent.emit();
-                    // update project cache
-                    this._cache.del(uuid);
-                    this._cache.get(
-                        uuid,
-                        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(
-                            id
-                        )
-                    );
+                    // update project state
+                    this._applicationStateService.del(uuid);
+
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id).subscribe(
+                        (response: ApiResponseData<ProjectResponse>) => this._applicationStateService.set(uuid, response.body.project)
+                    )
+
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
@@ -228,14 +229,13 @@ export class ProjectsListComponent implements OnInit {
             .subscribe(
                 () => {
                     this.refreshParent.emit();
-                    // update project cache
-                    this._cache.del(uuid);
-                    this._cache.get(
-                        uuid,
-                        this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(
-                            id
-                        )
-                    );
+                    // update project state
+                    this._applicationStateService.del(uuid);
+
+                    this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id).subscribe(
+                        (response: ApiResponseData<ProjectResponse>) => this._applicationStateService.set(uuid, response.body.project)
+                    )
+
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);

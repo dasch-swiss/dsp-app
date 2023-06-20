@@ -23,7 +23,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -312,7 +312,7 @@ describe('PropertyFormComponent', () => {
     let listHostFixture: ComponentFixture<ListHostComponent>;
 
     beforeEach(waitForAsync(() => {
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
         TestBed.configureTestingModule({
             declarations: [
@@ -349,17 +349,17 @@ describe('PropertyFormComponent', () => {
                     useClass: DspApiConnectionMock,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        // mock cache service for currentOntology
-        const cacheSpyOnto = TestBed.inject(CacheService);
-        (cacheSpyOnto as jasmine.SpyObj<CacheService>).get
+        // mock application state service for currentOntology
+        const cacheSpyOnto = TestBed.inject(ApplicationStateService);
+        (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get
             .withArgs('currentOntology')
             .and.callFake(() => {
                 const response: ReadOntology = MockOntology.mockReadOntology(
@@ -368,9 +368,9 @@ describe('PropertyFormComponent', () => {
                 return of(response);
             });
 
-        // mock cache service for currentProjectOntologies
-        const cacheSpyProjOnto = TestBed.inject(CacheService);
-        (cacheSpyProjOnto as jasmine.SpyObj<CacheService>).get
+        // mock application state service for currentProjectOntologies
+        const cacheSpyProjOnto = TestBed.inject(ApplicationStateService);
+        (cacheSpyProjOnto as jasmine.SpyObj<ApplicationStateService>).get
             .withArgs('currentProjectOntologies')
             .and.callFake(() => {
                 const ontologies: ReadOntology[] = [];
@@ -388,9 +388,9 @@ describe('PropertyFormComponent', () => {
                 return of(response);
             });
 
-        // mock cache service for currentOntologyLists
-        const cacheSpyLists = TestBed.inject(CacheService);
-        (cacheSpyLists as jasmine.SpyObj<CacheService>).get
+        // mock application state service for currentOntologyLists
+        const cacheSpyLists = TestBed.inject(ApplicationStateService);
+        (cacheSpyLists as jasmine.SpyObj<ApplicationStateService>).get
             .withArgs('currentOntologyLists')
             .and.callFake(() => {
                 const response: ListNodeInfo[] = listNodeInfo;

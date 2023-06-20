@@ -32,7 +32,7 @@ import {
     UpdateOntology,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -88,7 +88,7 @@ export class OntologyComponent implements OnInit {
     projectAdmin = false;
     projectMember = false;
 
-    // project uuid; used as identifier in project cache service
+    // project uuid; used as identifier in application state service
     projectUuid: string;
 
     // project data
@@ -148,7 +148,7 @@ export class OntologyComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,
@@ -251,7 +251,7 @@ export class OntologyComponent implements OnInit {
 
     /**
      * build the list of project ontologies
-     * and cache them as ReadOntology array
+     * and set the state of currentProjectOntologies
      */
     initOntologiesList(): void {
         this.loading = true;
@@ -300,7 +300,7 @@ export class OntologyComponent implements OnInit {
                                                     'label'
                                                 );
 
-                                            this._cache.set(
+                                            this._applicationStateService.set(
                                                 'currentProjectOntologies',
                                                 this.ontologies
                                             );
@@ -427,17 +427,17 @@ export class OntologyComponent implements OnInit {
     resetOntologyView(ontology: ReadOntology) {
         this.ontology = ontology;
         this.lastModificationDate = this.ontology.lastModificationDate;
-        this._cache.set('currentOntology', ontology);
+        this._applicationStateService.set('currentOntology', ontology);
 
-        this._cache.get('currentProjectOntologies').subscribe(
+        this._applicationStateService.get('currentProjectOntologies').subscribe(
             (ontologies: ReadOntology[]) => {
                 // update current list of project ontologies
                 ontologies[
                     ontologies.findIndex((onto) => onto.id === ontology.id)
                 ] = ontology;
-                this._cache.set('currentProjectOntologies', ontologies);
+                this._applicationStateService.set('currentProjectOntologies', ontologies);
             },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
         );
 
         // grab the onto class information to display
@@ -702,7 +702,7 @@ export class OntologyComponent implements OnInit {
             .getListsInProject(this.project.id)
             .subscribe(
                 (response: ApiResponseData<ListsResponse>) => {
-                    this._cache.set(
+                    this._applicationStateService.set(
                         'currentOntologyLists',
                         response.body.lists
                     );

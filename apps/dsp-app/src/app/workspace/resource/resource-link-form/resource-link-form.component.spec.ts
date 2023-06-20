@@ -44,7 +44,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     Session,
@@ -148,7 +148,7 @@ describe('ResourceLinkFormComponent', () => {
             'getSession',
         ]);
 
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
         const appInitSpy = {
             dspAppConfig: {
@@ -187,8 +187,8 @@ describe('ResourceLinkFormComponent', () => {
                     useValue: sessionServiceSpy,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
                 {
                     provide: AppConfigService,
@@ -218,9 +218,9 @@ describe('ResourceLinkFormComponent', () => {
             }
         );
 
-        const cacheSpy = TestBed.inject(CacheService);
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: UserResponse = new UserResponse();
 
             const project = MockProjects.mockProject();
@@ -229,9 +229,7 @@ describe('ResourceLinkFormComponent', () => {
 
             response.user.projects.push(project.body.project);
 
-            return of(
-                ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
-            );
+            return of(response.user);
         });
 
         testHostFixture = TestBed.createComponent(TestHostComponent);

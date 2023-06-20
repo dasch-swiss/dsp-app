@@ -22,7 +22,7 @@ import {
     ReadProject,
     UpdateOntologyMetadata,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -124,7 +124,7 @@ export class OntologyFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,
         private _ontologyService: OntologyService,
@@ -140,7 +140,7 @@ export class OntologyFormComponent implements OnInit {
         }
 
         if (!this.existingOntologyNames.length) {
-            this._cache.get('currentProjectOntologies').subscribe(
+            this._applicationStateService.get('currentProjectOntologies').subscribe(
                 (response: ReadOntology[]) => {
                     response.forEach((onto) => {
                         const name = this._ontologyService.getOntologyName(
@@ -149,25 +149,21 @@ export class OntologyFormComponent implements OnInit {
                         this.existingOntologyNames.push(name);
                     });
                 },
-                () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+                () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
             );
         }
 
-        this._cache.get(this.projectUuid).subscribe(
+        this._applicationStateService.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
                 this.buildForm();
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
                 this.loading = false;
             }
         );
 
         if (this.iri) {
             // edit mode: get current ontology
-            this._cache.get('currentOntology').subscribe(
+            this._applicationStateService.get('currentOntology').subscribe(
                 (response: ReadOntology) => {
                     // add values to the ontology form
                     this.ontologyForm.controls['name'].disable();

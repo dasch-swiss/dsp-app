@@ -1,32 +1,36 @@
-<div *ngIf="projectAdmin" class="content large middle">
-    <!-- add user to the project -->
-    <app-add-user
-        *ngIf="project?.status && (sysAdmin || projectAdmin)"
-        [projectUuid]="projectUuid"
-        (refreshParent)="refresh()"
-        #addUserComponent
-    ></app-add-user>
+<app-progress-indicator *ngIf="loading"></app-progress-indicator>
 
-    <!-- main content: list of project members -->
-    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
-
-    <div *ngIf="!loading" class="users-list">
-        <!-- list of active users -->
-        <app-users-list
-            [list]="active"
-            [status]="true"
+<div *ngIf="!loading">
+    <div *ngIf="projectAdmin" class="content large middle">
+        <!-- add user to the project -->
+        <app-add-user
+            *ngIf="project?.status && (sysAdmin || projectAdmin)"
+            [projectUuid]="projectUuid"
             (refreshParent)="refresh()"
-        ></app-users-list>
+            #addUserComponent
+        ></app-add-user>
 
-        <!-- list of inactive users -->
-        <app-users-list
-            [list]="inactive"
-            [status]="false"
-            (refreshParent)="refresh()"
-        ></app-users-list>
+        <!-- main content: list of project members -->
+
+        <div class="users-list">
+            <!-- list of active users -->
+            <app-users-list
+                [list]="active"
+                [status]="true"
+                (refreshParent)="refresh()"
+            ></app-users-list>
+
+            <!-- list of inactive users -->
+            <app-users-list
+                [list]="inactive"
+                [status]="false"
+                (refreshParent)="refresh()"
+            ></app-users-list>
+        </div>
+    </div>
+
+    <div *ngIf="!projectAdmin" class="content large middle">
+        <app-status [status]="403"></app-status>
     </div>
 </div>
 
-<div *ngIf="!projectAdmin" class="content large middle">
-    <app-status [status]="403"></app-status>
-</div>

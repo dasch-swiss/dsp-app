@@ -15,12 +15,13 @@ import {
     GroupsResponse,
     KnoraApiConnection,
     Permissions,
+    ProjectResponse,
     ReadProject,
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
@@ -74,7 +75,7 @@ export class UsersListComponent implements OnInit {
     // dsp-js admin group iri
     adminGroupIri: string = Constants.ProjectAdminGroupIRI;
 
-    // project uuid; as identifier in project cache service
+    // project uuid; as identifier in project application state service
     projectUuid: string;
 
     // project data
@@ -107,13 +108,13 @@ export class UsersListComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
         private _router: Router,
         private _session: SessionService,
-        private _sortingService: SortingService
+        private _sortingService: SortingService,
+        private _applicationStateService: ApplicationStateService
     ) {
         // get the uuid of the current project
         this._route.parent.parent.paramMap.subscribe((params: Params) => {
@@ -129,8 +130,8 @@ export class UsersListComponent implements OnInit {
         this.sysAdmin = this.session.user.sysAdmin;
 
         if (this.projectUuid) {
-            // get the project data from cache
-            this._cache.get(this.projectUuid).subscribe(
+            // get the project data from application state
+            this._applicationStateService.get(this.projectUuid).subscribe(
                 (response: ReadProject) => {
                     this.project = response;
                     // is logged-in user projectAdmin?
@@ -297,7 +298,7 @@ export class UsersListComponent implements OnInit {
                             // the list is not available anymore;
                             // open dialog to confirm and
                             // redirect to project page
-                            // update the cache of logged-in user and the session
+                            // update the application state of logged-in user and the session
                             this._session
                                 .setSession(
                                     this.session.user.jwt,
@@ -341,7 +342,7 @@ export class UsersListComponent implements OnInit {
                             this.refreshParent.emit();
                         } else {
                             // the logged-in user (system admin) added himself as project admin
-                            // update the cache of logged-in user and the session
+                            // update the application state of logged-in user and the session
                             this._session
                                 .setSession(
                                     this.session.user.jwt,

@@ -13,12 +13,13 @@ import {
     ApiResponseError,
     Constants,
     KnoraApiConnection,
+    MembersResponse,
     ProjectsResponse,
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { Session } from '@dasch-swiss/vre/shared/app-session';
@@ -62,7 +63,7 @@ export class MembershipComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _router: Router,
         private _projectService: ProjectService
@@ -71,33 +72,18 @@ export class MembershipComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
 
-        // set the cache
-        this._cache.get(
-            this.username,
-            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                this.username
-            )
+        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
+            (response: ApiResponseData<UserResponse>) => {
+                this.user = response.body.user;
+                this._applicationStateService.set(this.username, this.user)
+                this.initNewProjects();
+                this.loading = false;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+                this.loading = false;
+            }
         );
-
-        // get from cache
-        this._cache
-            .get(
-                this.username,
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                    this.username
-                )
-            )
-            .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
-                    this.initNewProjects();
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
     }
 
     initNewProjects() {
@@ -156,13 +142,13 @@ export class MembershipComponent implements OnInit {
     updateProjectCache(iri: string) {
         const projectUuid: string = this._projectService.iriToUuid(iri);
 
-        // reset the cache of project members
-        this._cache.get(
-            'members_of_' + projectUuid,
-            this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(
-                iri
-            )
-        );
+        // reset the application state of project members
+
+        this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(iri).subscribe(
+            (response: ApiResponseData<MembersResponse>) => {
+                this._applicationStateService.set('members_of_' + projectUuid, response.body.members)
+            }
+        )
     }
 
     /**
@@ -178,13 +164,11 @@ export class MembershipComponent implements OnInit {
             .subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
-                    // set new user cache
-                    this._cache.del(this.username);
-                    this._cache.get(
+                    // set new user state
+                    this._applicationStateService.del(this.username);
+                    this._applicationStateService.set(
                         this.username,
-                        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                            this.username
-                        )
+                        this.user
                     );
                     this.initNewProjects();
                     // this.updateProjectCache(iri);
@@ -205,13 +189,11 @@ export class MembershipComponent implements OnInit {
             .subscribe(
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
-                    // set new user cache
-                    this._cache.del(this.username);
-                    this._cache.get(
+                    // set new user state
+                    this._applicationStateService.del(this.username);
+                    this._applicationStateService.set(
                         this.username,
-                        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                            this.username
-                        )
+                        this.user
                     );
                     this.initNewProjects();
                     // this.updateProjectCache(iri);

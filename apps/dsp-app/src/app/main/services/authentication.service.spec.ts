@@ -3,7 +3,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from './../../../test.config';
-import { CacheService } from '../cache/cache.service';
+import { ApplicationStateService } from '../cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -21,7 +21,7 @@ describe('AuthenticationService', () => {
         },
     };
 
-    const cacheServiceSpy = jasmine.createSpyObj('CacheService', ['destroy']);
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['destroy']);
 
     const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', [
         '',
@@ -43,8 +43,8 @@ describe('AuthenticationService', () => {
                     useValue: authEndpointSpyObj,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
                 {
                     provide: DatadogRumService,

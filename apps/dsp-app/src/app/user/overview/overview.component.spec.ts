@@ -15,7 +15,7 @@ import {
     UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '../../main/cache/cache.service';
+import { ApplicationStateService } from '../../main/cache/application-state.service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
@@ -34,6 +34,15 @@ import { DialogComponent } from '../../main/dialog/dialog.component';
 import { DialogHeaderComponent } from '../../main/dialog/dialog-header/dialog-header.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProjectService } from '../../workspace/resource/services/project.service';
+
+/**
+ * test component to simulate child component, here progress-indicator from action module.
+ */
+@Component({
+    selector: 'app-progress-indicator',
+    template: '',
+})
+class TestProgressIndicatorComponent {}
 
 /**
  * test host component to simulate parent component as a logged in user.
@@ -80,7 +89,7 @@ describe('OverviewComponent', () => {
                 ]),
             },
         };
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
             'get',
             'set',
         ]);
@@ -119,8 +128,8 @@ describe('OverviewComponent', () => {
                     useValue: dspConnSpy,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
                 {
                     provide: ProjectService,
@@ -238,6 +247,26 @@ describe('OverviewComponent', () => {
             ).getProjects.and.callFake(() => {
                 const projects = MockProjects.mockProjects();
                 return of(projects);
+            });
+
+            (
+                dspConnSpy.admin
+                    .usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
+            ).getUserByUsername.and.callFake(() => {
+                const loggedInUser = MockUsers.mockUser();
+
+                // recreate anything project
+                const anythingProj = new StoredProject();
+                anythingProj.id = 'http://rdfh.ch/projects/0001';
+                anythingProj.longname = 'Anything Project';
+                anythingProj.shortcode = '0001';
+                anythingProj.keywords = ['arbitrary test data', 'things'];
+                anythingProj.shortname = 'anything';
+                anythingProj.status = true;
+
+                // add project to list of users projects
+                loggedInUser.body.user.projects = [anythingProj];
+                return of(loggedInUser);
             });
 
             const session = TestConfig.CurrentSession;

@@ -23,7 +23,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
@@ -130,7 +129,6 @@ export class AddUserComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _formBuilder: UntypedFormBuilder,
@@ -147,121 +145,103 @@ export class AddUserComponent implements OnInit {
         // clean autocomplete list
         this.users = [];
 
-        // set the cache
-        this._cache.get(
-            'allUsers',
-            this._dspApiConnection.admin.usersEndpoint.getUsers()
-        );
+        // get all users
+        this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe(
+            (response: ApiResponseData<UsersResponse>) => {
+                // if a user is already member of the team, mark it in the list
+                const members: string[] = [];
 
-        // get all users; response from cache
-        this._cache
-            .get(
-                'allUsers',
-                this._dspApiConnection.admin.usersEndpoint.getUsers()
-            )
-            .subscribe(
-                (response: ApiResponseData<UsersResponse>) => {
-                    // if a user is already member of the team, mark it in the list
-                    const members: string[] = [];
+                // get all members of this project
+                this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(this.projectIri).subscribe(
+                    (res: ApiResponseData<MembersResponse>) => {
+                        for (const m of res.body.members) {
+                            members.push(m.id);
 
-                    // get all members of this project; response from cache
-                    this._cache
-                        .get(
-                            'members_of_' + this.projectUuid,
-                            this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(
-                                this.projectIri
-                            )
-                        )
-                        .subscribe(
-                            (res: ApiResponseData<MembersResponse>) => {
-                                for (const m of res.body.members) {
-                                    members.push(m.id);
+                            // if the user is already member of the project
+                            // add the email to the list of existing
+                            this.existingEmailInProject.push(
+                                new RegExp(
+                                    '(?:^|W)' +
+                                        m.email.toLowerCase() +
+                                        '(?:$|W)'
+                                )
+                            );
+                            // add username to the list of existing
+                            this.existingUsernameInProject.push(
+                                new RegExp(
+                                    '(?:^|W)' +
+                                        m.username.toLowerCase() +
+                                        '(?:$|W)'
+                                )
+                            );
+                        }
 
-                                    // if the user is already member of the project
-                                    // add the email to the list of existing
-                                    this.existingEmailInProject.push(
-                                        new RegExp(
-                                            '(?:^|W)' +
-                                                m.email.toLowerCase() +
-                                                '(?:$|W)'
-                                        )
-                                    );
-                                    // add username to the list of existing
-                                    this.existingUsernameInProject.push(
-                                        new RegExp(
-                                            '(?:^|W)' +
-                                                m.username.toLowerCase() +
-                                                '(?:$|W)'
-                                        )
-                                    );
-                                }
+                        let i = 0;
+                        for (const u of response.body.users) {
+                            // if the user is already member of the project
+                            // add the email to the list of existing
+                            this.existingEmails.push(
+                                new RegExp(
+                                    '(?:^|W)' +
+                                        u.email.toLowerCase() +
+                                        '(?:$|W)'
+                                )
+                            );
+                            // add username to the list of existing
+                            this.existingUsernames.push(
+                                new RegExp(
+                                    '(?:^|W)' +
+                                        u.username.toLowerCase() +
+                                        '(?:$|W)'
+                                )
+                            );
 
-                                let i = 0;
-                                for (const u of response.body.users) {
-                                    // if the user is already member of the project
-                                    // add the email to the list of existing
-                                    this.existingEmails.push(
-                                        new RegExp(
-                                            '(?:^|W)' +
-                                                u.email.toLowerCase() +
-                                                '(?:$|W)'
-                                        )
-                                    );
-                                    // add username to the list of existing
-                                    this.existingUsernames.push(
-                                        new RegExp(
-                                            '(?:^|W)' +
-                                                u.username.toLowerCase() +
-                                                '(?:$|W)'
-                                        )
-                                    );
+                            let existsInProject = '';
 
-                                    let existsInProject = '';
-
-                                    if (members && members.indexOf(u.id) > -1) {
-                                        existsInProject = '* ';
-                                    }
-
-                                    this.users[i] = {
-                                        iri: u.id,
-                                        name: u.username,
-                                        label:
-                                            existsInProject +
-                                            u.username +
-                                            ' | ' +
-                                            u.email +
-                                            ' | ' +
-                                            u.givenName +
-                                            ' ' +
-                                            u.familyName,
-                                    };
-                                    i++;
-                                }
-
-                                this.users.sort(function (
-                                    u1: AutocompleteItem,
-                                    u2: AutocompleteItem
-                                ) {
-                                    if (u1.label < u2.label) {
-                                        return -1;
-                                    } else if (u1.label > u2.label) {
-                                        return 1;
-                                    } else {
-                                        return 0;
-                                    }
-                                });
-                            },
-                            (error: ApiResponseError) => {
-                                this._errorHandler.showMessage(error);
+                            if (members && members.indexOf(u.id) > -1) {
+                                existsInProject = '* ';
                             }
-                        );
 
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
+                            this.users[i] = {
+                                iri: u.id,
+                                name: u.username,
+                                label:
+                                    existsInProject +
+                                    u.username +
+                                    ' | ' +
+                                    u.email +
+                                    ' | ' +
+                                    u.givenName +
+                                    ' ' +
+                                    u.familyName,
+                            };
+                            i++;
+                        }
+
+                        this.users.sort(function (
+                            u1: AutocompleteItem,
+                            u2: AutocompleteItem
+                        ) {
+                            if (u1.label < u2.label) {
+                                return -1;
+                            } else if (u1.label > u2.label) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        });
+                    },
+                    (error: ApiResponseError) => {
+                        this._errorHandler.showMessage(error);
+                    }
+                );
+
+                this.loading = false;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
 
         this.selectUserForm = this._formBuilder.group({
             username: new UntypedFormControl(
@@ -360,26 +340,12 @@ export class AddUserComponent implements OnInit {
                                 this.projectIri
                             )
                             .subscribe(
-                                (userAdded: ApiResponseData<UserResponse>) => {
+                                () => {
                                     // successful post
                                     // reload the component
                                     this.buildForm();
                                     this.refreshParent.emit();
 
-                                    // update own user profile, if the added user is the same as the logged-in user
-                                    // get logged-in user name
-                                    // const session: Session = JSON.parse(localStorage.getItem('session'));
-                                    // if (add.username === session.user.name) {
-                                    this._cache.del(
-                                        userAdded.body.user.username
-                                    );
-                                    this._cache.get(
-                                        userAdded.body.user.username,
-                                        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                                            userAdded.body.user.username
-                                        )
-                                    );
-                                    // }
                                     this.loading = false;
                                 },
                                 (error: ApiResponseError) => {

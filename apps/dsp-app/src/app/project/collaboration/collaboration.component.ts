@@ -6,6 +6,7 @@ import {
     ApiResponseError,
     KnoraApiConnection,
     MembersResponse,
+    ProjectResponse,
     ReadProject,
     ReadUser,
 } from '@dasch-swiss/dsp-js';
@@ -16,8 +17,8 @@ import {
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-import { CacheService } from '../../main/cache/cache.service';
 import { AddUserComponent } from './add-user/add-user.component';
+import { ApplicationStateService } from '../../main/cache/application-state.service';
 
 @Component({
     selector: 'app-collaboration',
@@ -35,7 +36,7 @@ export class CollaborationComponent implements OnInit {
     sysAdmin = false;
     projectAdmin = false;
 
-    // project uuid; as identifier in project cache service
+    // project uuid; as identifier in project application state service
     projectUuid: string;
 
     // project data
@@ -53,12 +54,12 @@ export class CollaborationComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
         private _session: SessionService,
         private _titleService: Title,
-        private _projectService: ProjectService
+        private _projectService: ProjectService,
+        private _applicationStateService: ApplicationStateService
     ) {
         // get the uuid of the current project
         if (this._route.parent.parent.snapshot.url.length) {
@@ -77,8 +78,7 @@ export class CollaborationComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        // get the project data from cache
-        this._cache.get(this.projectUuid).subscribe(
+        this._applicationStateService.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -94,7 +94,7 @@ export class CollaborationComponent implements OnInit {
                           (e) => e === this.project.id
                       );
 
-                // get from cache: list of project members and groups
+                // get list of project members and groups
                 if (this.projectAdmin) {
                     this.refresh();
                 }
@@ -105,7 +105,8 @@ export class CollaborationComponent implements OnInit {
                 this._errorHandler.showMessage(error);
                 this.loading = false;
             }
-        );
+        )
+
     }
 
     /**
@@ -114,54 +115,39 @@ export class CollaborationComponent implements OnInit {
     initList(): void {
         const projectIri = this._projectService.uuidToIri(this.projectUuid);
 
-        // set the cache
-        this._cache.get(
-            'members_of_' + this.projectUuid,
-            this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(
-                projectIri
-            )
-        );
+        // get project members
+        this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri).subscribe(
+            (response: ApiResponseData<MembersResponse>) => {
+                this.projectMembers = response.body.members;
+                // set project members state in application state service
+                this._applicationStateService.set('members_of_' + this.projectUuid, this.projectMembers);
 
-        // get the project data from cache
-        this._cache
-            .get(
-                'members_of_' + this.projectUuid,
-                this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(
-                    projectIri
-                )
-            )
-            .subscribe(
-                (response: ApiResponseData<MembersResponse>) => {
-                    this.projectMembers = response.body.members;
+                // clean up list of users
+                this.active = [];
+                this.inactive = [];
 
-                    // clean up list of users
-                    this.active = [];
-                    this.inactive = [];
-
-                    for (const u of this.projectMembers) {
-                        if (u.status === true) {
-                            this.active.push(u);
-                        } else {
-                            this.inactive.push(u);
-                        }
+                for (const u of this.projectMembers) {
+                    if (u.status === true) {
+                        this.active.push(u);
+                    } else {
+                        this.inactive.push(u);
                     }
-
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
                 }
-            );
+
+                this.loading = false;
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            }
+        );
     }
 
     /**
      * refresh list of members after adding a new user to the team
      */
     refresh(): void {
-        // referesh the component
+        // refresh the component
         this.loading = true;
-        // update the cache
-        this._cache.del('members_of_' + this.projectUuid);
 
         this.initList();
 

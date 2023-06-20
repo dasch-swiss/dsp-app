@@ -25,7 +25,7 @@ import {
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-import { CacheService } from '../../main/cache/cache.service';
+import { ApplicationStateService } from '../../main/cache/application-state.service';
 
 @Component({
     selector: 'app-description',
@@ -41,7 +41,7 @@ export class DescriptionComponent implements OnInit {
     sysAdmin = false;
     projectAdmin = false;
 
-    // project uuid; as identifier in project cache service
+    // project uuid; as identifier in project
     projectUuid: string;
 
     // project data
@@ -84,14 +84,14 @@ export class DescriptionComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _route: ActivatedRoute,
         private _router: Router,
         private _fb: FormBuilder,
         private _projectService: ProjectService,
-        private _notification: NotificationService
+        private _notification: NotificationService,
+        private _applicationStateService: ApplicationStateService
     ) {
         // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
@@ -138,8 +138,8 @@ export class DescriptionComponent implements OnInit {
     }
 
     getProject() {
-        // get the project data from cache
-        this._cache.get(this.projectUuid).subscribe(
+        // get the project data
+        this._applicationStateService.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -263,8 +263,8 @@ export class DescriptionComponent implements OnInit {
                 (response: ApiResponseData<ProjectResponse>) => {
                     this.project = response.body.project;
 
-                    // update cache
-                    this._cache.set(
+                    // update application state
+                    this._applicationStateService.set(
                         this._projectService.iriToUuid(this.project.id),
                         this.project
                     );

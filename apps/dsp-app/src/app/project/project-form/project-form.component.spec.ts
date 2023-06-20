@@ -8,18 +8,16 @@ import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection, StringLiteral } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, MockProjects, ProjectResponse, ProjectsEndpointAdmin, StringLiteral } from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-    DspApiConfigToken,
-    DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-import { TestConfig } from '@dsp-app/src/test.config';
 import { ProjectFormComponent } from './project-form.component';
+import { of } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
 
 @Component({ selector: 'app-string-literal-input', template: '' })
 class MockStringLiteralInputComponent {
@@ -46,6 +44,15 @@ describe('ProjectFormComponent', () => {
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'iriToUuid',
         ]);
+
+        const dspConnSpyObj = {
+            admin: {
+                projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
+                    'getProjectByIri',
+                    'getProjects',
+                ]),
+            },
+        };
 
         TestBed.configureTestingModule({
             declarations: [
@@ -75,18 +82,39 @@ describe('ProjectFormComponent', () => {
                     useValue: projectServiceSpy,
                 },
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig,
-                },
-                {
                     provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig),
+                    useValue: dspConnSpyObj,
                 },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
+        // mock API
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        // mock projects endpoint
+        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
+            () => {
+                const response = new ProjectResponse();
+
+                const mockProjects = MockProjects.mockProjects();
+
+                response.project = mockProjects.body.projects[0];
+
+                return of(
+                    ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+                );
+            }
+        );
+
+        ( dspConnSpy.admin .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjects.and.callFake(
+            () => {
+                const projects = MockProjects.mockProjects();
+                return of(projects);
+            }
+        );
+
         fixture = TestBed.createComponent(ProjectFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

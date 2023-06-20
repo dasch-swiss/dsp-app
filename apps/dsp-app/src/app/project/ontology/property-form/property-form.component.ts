@@ -34,7 +34,7 @@ import {
     UpdateResourcePropertyGuiElement,
     UpdateResourcePropertyLabel,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -177,7 +177,7 @@ export class PropertyFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,
         private _os: OntologyService,
@@ -190,7 +190,7 @@ export class PropertyFormComponent implements OnInit {
         this.setEditMode();
 
         // set various lists to select from
-        this._cache.get('currentOntology').subscribe(
+        this._applicationStateService.get('currentOntology').subscribe(
             (response: ReadOntology) => {
                 this.ontology = response;
                 this.lastModificationDate = response.lastModificationDate;
@@ -224,7 +224,7 @@ export class PropertyFormComponent implements OnInit {
 
         // a) in case of link value:
         // set list of resource classes from response; needed for linkValue
-        this._cache.get('currentProjectOntologies').subscribe(
+        this._applicationStateService.get('currentProjectOntologies').subscribe(
             (response: ReadOntology[]) => {
                 // reset list of ontology classes
                 this.ontologyClasses = [];
@@ -243,12 +243,12 @@ export class PropertyFormComponent implements OnInit {
                     }
                 });
             },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
         );
 
         // b) in case of list value:
         // set list of lists; needed for listValue
-        this._cache
+        this._applicationStateService
             .get('currentOntologyLists')
             .subscribe((response: ListNodeInfo[]) => {
                 this.lists = response;
@@ -687,7 +687,7 @@ export class PropertyFormComponent implements OnInit {
 
                     this.ontology.lastModificationDate =
                         this.lastModificationDate;
-                    this._cache.set('currentOntology', this.ontology);
+                    this._applicationStateService.set('currentOntology', this.ontology);
                 },
                 (error: ApiResponseError) => {
                     this.error = true;

@@ -10,7 +10,7 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
@@ -61,7 +61,7 @@ export class OntologyClassInstanceComponent implements OnChanges {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _acs: AppConfigService,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _route: ActivatedRoute,
         private _ontologyService: OntologyService,
         private _projectService: ProjectService,
@@ -146,7 +146,7 @@ export class OntologyClassInstanceComponent implements OnChanges {
     }
 
     ngOnChanges() {
-        this._cache.get('currentProjectOntologies').subscribe(
+        this._applicationStateService.get('currentProjectOntologies').subscribe(
             (ontologies: ReadOntology[]) => {
                 // find ontology of current resource class to get the class label
                 const classes =
@@ -157,7 +157,7 @@ export class OntologyClassInstanceComponent implements OnChanges {
                     classes[classes.findIndex((res) => res.id === this.classId)]
                 );
             },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
         );
     }
 

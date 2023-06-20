@@ -22,7 +22,7 @@ import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ProgressIndicatorComponent } from '@dsp-app/src/app/main/action/progress-indicator/progress-indicator.component';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { EditListItemComponent } from './edit-list-item.component';
@@ -104,7 +104,7 @@ describe('EditListItemComponent', () => {
             },
         };
 
-        const cacheServiceSpy = jasmine.createSpyObj('CacheService', [
+        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
             'get',
             'set',
         ]);
@@ -142,18 +142,18 @@ describe('EditListItemComponent', () => {
                     useValue: listsEndpointSpyObj,
                 },
                 {
-                    provide: CacheService,
-                    useValue: cacheServiceSpy,
+                    provide: ApplicationStateService,
+                    useValue: applicationStateServiceSpy,
                 },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        // mock cache service
-        const cacheSpy = TestBed.inject(CacheService);
+        // mock application state service
+        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<CacheService>).get.and.callFake(() => {
+        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
             const response: ProjectResponse = new ProjectResponse();
 
             const mockProjects = MockProjects.mockProjects();

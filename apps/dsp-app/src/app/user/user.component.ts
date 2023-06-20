@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, KnoraApiConnection, UserResponse } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
-import { CacheService } from '../main/cache/cache.service';
+import { ApplicationStateService } from '../main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
@@ -30,7 +30,7 @@ export class UserComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _session: SessionService,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _route: ActivatedRoute,
         private _titleService: Title
     ) {
@@ -51,7 +51,7 @@ export class UserComponent implements OnInit {
     initContent() {
         this.loading = true;
 
-        this._cache.del(this.session.user.name);
+        this._applicationStateService.del(this.session.user.name);
 
         // update session
         this._session.setSession(
@@ -61,14 +61,12 @@ export class UserComponent implements OnInit {
         );
 
         /**
-         * set the cache here for current/logged-in user
+         * set the application state here for current/logged-in user
          */
-        this._cache.get(
-            this.session.user.name,
-            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                this.session.user.name
-            )
-        );
+        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.session.user.name).subscribe(
+            (response: ApiResponseData<UserResponse>) => this._applicationStateService.set(this.session.user.name, response.body.user)
+        )
+
         this.loading = false;
     }
 

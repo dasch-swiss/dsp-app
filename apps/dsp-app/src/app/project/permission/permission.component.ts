@@ -7,7 +7,7 @@ import {
     ReadGroup,
     ReadProject,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
@@ -32,7 +32,7 @@ export class PermissionComponent implements OnInit {
     sysAdmin = false;
     projectAdmin = false;
 
-    // project uuid; as identifier in project cache service
+    // project uuid; as identifier in project application state service
     projectUuid: string;
 
     // project data
@@ -44,7 +44,7 @@ export class PermissionComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _route: ActivatedRoute,
         private _session: SessionService,
@@ -70,8 +70,8 @@ export class PermissionComponent implements OnInit {
         // is the logged-in user system admin?
         this.sysAdmin = this.session.user.sysAdmin;
 
-        // get the project data from cache
-        this._cache.get(this.projectUuid).subscribe(
+        // get the project data from application state
+        this._applicationStateService.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
                 this.project = response;
 
@@ -103,8 +103,8 @@ export class PermissionComponent implements OnInit {
     refresh(): void {
         // referesh the component
         this.loading = true;
-        // update the cache
-        this._cache.del('members_of_' + this.projectUuid);
+        // update the application state
+        this._applicationStateService.del('members_of_' + this.projectUuid);
 
         this.initList();
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { CacheService } from '../cache/cache.service';
+import { ApplicationStateService } from '../cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '../services/error-handler.service';
 import { DatadogRumService } from './datadog-rum.service';
@@ -13,7 +13,7 @@ export class AuthenticationService {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _datadogRumService: DatadogRumService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService
@@ -28,8 +28,8 @@ export class AuthenticationService {
                 // destroy session
                 this._session.destroySession();
 
-                // destroy cache
-                this._cache.destroy();
+                // destroy application state
+                this._applicationStateService.destroy();
 
                 // reload the page
                 window.location.reload();

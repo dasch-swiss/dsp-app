@@ -22,7 +22,7 @@ import {
     UpdateOntology,
     UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -120,7 +120,7 @@ export class ResourceClassInfoComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _notification: NotificationService,
@@ -132,7 +132,7 @@ export class ResourceClassInfoComponent implements OnInit {
         // grab the onto properties information to display
         this.ontoProperties = [];
         // get all project ontologies
-        this._cache.get('currentProjectOntologies').subscribe(
+        this._applicationStateService.get('currentProjectOntologies').subscribe(
             (ontologies: ReadOntology[]) => {
                 this.ontologies = ontologies;
                 ontologies.forEach((onto) => {
@@ -145,11 +145,11 @@ export class ResourceClassInfoComponent implements OnInit {
                     this.ontoProperties.push(prepareList);
                 });
             },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the cache
+            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
         );
 
         // get currently selected ontology
-        this._cache.get('currentOntology').subscribe(
+        this._applicationStateService.get('currentOntology').subscribe(
             (response: ReadOntology) => {
                 this.ontology = response;
                 this.lastModificationDate = this.ontology.lastModificationDate;

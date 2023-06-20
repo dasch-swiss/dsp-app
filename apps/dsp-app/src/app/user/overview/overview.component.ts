@@ -10,7 +10,7 @@ import {
     StoredProject,
     ProjectsResponse,
 } from '@dasch-swiss/dsp-js';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -50,7 +50,7 @@ export class OverviewComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _errorHandler: ErrorHandlerService,
         private _session: SessionService,
         private _dialog: MatDialog,
@@ -75,13 +75,11 @@ export class OverviewComponent implements OnInit {
         this.loading = true;
 
         if (this.username) {
-            // set the cache
-            this._cache.get(
-                this.username,
-                this._dspApiConnection.admin.usersEndpoint.getUserByUsername(
-                    this.username
-                )
-            );
+            // set user in the application state
+            this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
+                (response: ApiResponseData<UserResponse>) =>
+                    this._applicationStateService.set(this.username, response.body.user)
+            )
         }
 
         // if user is a system admin or not logged in, get all the projects

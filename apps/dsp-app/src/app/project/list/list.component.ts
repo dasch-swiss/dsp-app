@@ -20,7 +20,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from '@dsp-app/src/app/main/cache/cache.service';
+import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -46,7 +46,7 @@ export class ListComponent implements OnInit {
     projectAdmin = false;
     projectMember = undefined;
 
-    // project uuid; as identifier in project cache service
+    // project uuid; as identifier in project application state service
     projectUuid: string;
 
     // project data
@@ -85,7 +85,7 @@ export class ListComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _acs: AppConfigService,
-        private _cache: CacheService,
+        private _applicationStateService: ApplicationStateService,
         private _dialog: MatDialog,
         private _errorHandler: ErrorHandlerService,
         private _fb: UntypedFormBuilder,

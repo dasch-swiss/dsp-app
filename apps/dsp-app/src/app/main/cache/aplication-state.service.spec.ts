@@ -3,9 +3,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { CacheService } from './cache.service';
+import { ApplicationStateService } from './application-state.service';
 
-describe('CacheService', () => {
+describe('ApplicationStateService', () => {
     beforeEach(() => {
         const apiEndpointSpyObj = {
             v2: {
@@ -29,7 +29,7 @@ describe('CacheService', () => {
     });
 
     it('should be created', () => {
-        const service: CacheService = TestBed.inject(CacheService);
+        const service: ApplicationStateService = TestBed.inject(ApplicationStateService);
         expect(service).toBeTruthy();
     });
 

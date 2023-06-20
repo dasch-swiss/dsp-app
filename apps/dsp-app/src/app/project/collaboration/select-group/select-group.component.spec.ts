@@ -6,24 +6,50 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { ApiResponseData, GroupsEndpointAdmin, GroupsResponse, MockProjects, ReadGroup, StoredProject } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-    DspApiConfigToken,
-    DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
-import { TestConfig } from '@dsp-app/src/test.config';
 import { SelectGroupComponent } from './select-group.component';
+import { of } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
+import { Component, ViewChild } from '@angular/core';
+
+/**
+ * test host component to simulate parent component.
+ */
+@Component({
+    template: '<app-select-group #selectGroup projectCode="00FF" [projectid]="iri"></app-select-group>',
+})
+class TestHostHeaderComponent {
+    @ViewChild('selectGroup') selectGroupComp: SelectGroupComponent;
+    iri = 'http://rdfh.ch/projects/00FF';
+}
 
 describe('SelectGroupComponent', () => {
-    let component: SelectGroupComponent;
-    let fixture: ComponentFixture<SelectGroupComponent>;
+    let component: TestHostHeaderComponent;
+    let fixture: ComponentFixture<TestHostHeaderComponent>;
+
+    const appInitSpy = {
+        dspAppConfig: {
+            iriBase: 'http://rdfh.ch',
+        },
+    };
 
     beforeEach(waitForAsync(() => {
+
+        const dspConnSpyObj = {
+            admin: {
+                groupsEndpoint: jasmine.createSpyObj('groupsEndpoint', [
+                    'getGroups',
+                ]),
+            },
+        };
+
         TestBed.configureTestingModule({
             declarations: [
+                TestHostHeaderComponent,
                 SelectGroupComponent,
                 DialogComponent,
                 StatusComponent,
@@ -38,21 +64,46 @@ describe('SelectGroupComponent', () => {
                 RouterTestingModule,
             ],
             providers: [
-                AppConfigService,
                 {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig,
+                    provide: AppConfigService,
+                    useValue: appInitSpy,
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig),
+                    useValue: dspConnSpyObj,
                 },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(SelectGroupComponent);
+        // mock API
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (dspConnSpy.admin.groupsEndpoint as jasmine.SpyObj<GroupsEndpointAdmin>).getGroups.and.callFake(
+            () => {
+                const response = new GroupsResponse();
+
+                const projectResponse = MockProjects.mockProject();
+
+                let storedProject = new StoredProject();
+                storedProject = projectResponse.body.project
+
+                const group = new ReadGroup();
+                group.id = 'http://rdfh.ch/groups/00FF/01234';
+                group.name = 'test group';
+                group.project = storedProject;
+
+                const groups = [group];
+
+                response.groups = groups;
+
+                return of(
+                    ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+                );
+            }
+        )
+        fixture = TestBed.createComponent(TestHostHeaderComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
