@@ -5,7 +5,16 @@
                  [matTooltipDisabled]="resClass.label.length < MAX_LABEL_CHAR">{{trimLabel(resClass.label)}}</div>
             <div class="entry-container">
                 <mat-icon>{{icon}}</mat-icon>
-                <div class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
+                <ngx-skeleton-loader
+                    *ngIf="results === undefined"
+                    count="1"
+                    appearance="line"
+                    [theme]="{
+                        'margin-bottom': 0,
+                        'vertical-align': 'middle'
+                    }">
+                </ngx-skeleton-loader>
+                <div *ngIf="results !== undefined" class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
             </div>
         </div>
         <div class="icon link" *ngIf="projectMember" [routerLink]="link + '/add'">

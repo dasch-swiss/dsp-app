@@ -36,6 +36,11 @@
         align-items: center;
         gap: 5px;
 
+        ngx-skeleton-loader {
+          width: 100%;
+          margin-right: 5%;
+        }
+
         .entry {
           font-size: 20px;
         }

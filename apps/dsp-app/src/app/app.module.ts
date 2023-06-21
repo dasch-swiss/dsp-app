@@ -176,6 +176,7 @@ import {
     buildTagFactory,
     BuildTagToken,
 } from '@dasch-swiss/vre/shared/app-config';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -344,6 +345,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         HttpClientModule,
         MaterialModule,
         MatJDNConvertibleCalendarDateAdapterModule,
+        NgxSkeletonLoaderModule,
         PdfViewerModule,
         ReactiveFormsModule,
         TranslateModule.forRoot({
