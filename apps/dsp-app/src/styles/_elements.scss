@@ -354,7 +354,7 @@ a,
 .simple-list {
   padding: 16px;
 
-  .mat-list-item {
+  .mat-mdc-list-item {
     .list-icon {
       width: 36px;
       height: 36px;
@@ -363,21 +363,12 @@ a,
       position: absolute;
       left: 0;
     }
-
-    .mat-list-text {
-      position: relative;
-      left: 48px;
-    }
   }
 }
 
-.mat-list.without-padding {
-  .mat-list-item {
+.mat-mdc-list.without-padding {
+  .mat-mdc-list-item {
     padding: 0 !important;
-
-    .mat-list-item-content {
-      padding: 0 !important;
-    }
   }
 }
 

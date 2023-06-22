@@ -92,6 +92,12 @@ $width: 429px;
       text-align: left;
       display: inline-block;
     }
+
+    mat-list {
+      a {
+        cursor: pointer;
+      }
+    }
   }
 
   .ontology-editor-canvas {

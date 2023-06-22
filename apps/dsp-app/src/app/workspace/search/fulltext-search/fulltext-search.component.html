@@ -77,11 +77,7 @@
             <mat-list class="app-previous-search-list">
                 <div *ngFor="let item of prevSearch; let i = index">
                     <mat-list-item *ngIf="i < 10">
-                        <h4
-                            mat-line
-                            (click)="doPrevSearch(item)"
-                            class="app-previous-search-item"
-                        >
+                        <span (click)="doPrevSearch(item)" class="app-previous-search-item" matListItemTitle>
                             <div
                                 class="app-project-filter-label"
                                 [class.not-empty]="item.projectIri"
@@ -91,9 +87,9 @@
                                     projects?.length > 0
                                 "
                             >
-                                <span *ngIf="item.projectIri">{{
+                                <span *ngIf="item.projectIri">[{{
                                     item.projectLabel
-                                }}</span>
+                                }}]</span>
                             </div>
                             <div
                                 class="app-previous-search-query"
@@ -101,14 +97,19 @@
                             >
                                 {{ item.query }}
                             </div>
-                        </h4>
-                        <button mat-icon-button (click)="resetPrevSearch(item)">
-                            <mat-icon
-                                class="mat-list-close-icon"
-                                aria-label="close"
-                                >close</mat-icon
-                            >
-                        </button>
+                            <div>
+                                <button
+                                    mat-icon-button
+                                    (click)="resetPrevSearch(item)"
+                                >
+                                    <mat-icon
+                                        class="mat-list-close-icon"
+                                        aria-label="close"
+                                        >close</mat-icon
+                                    >
+                                </button>
+                            </div>
+                        </span>
                     </mat-list-item>
                 </div>
             </mat-list>

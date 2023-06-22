@@ -19,26 +19,21 @@
 
                     <!-- Description Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item [ngClass]="{ 'active': this.listItemSelected === '/project/' + projectUuid}" class="link section-title" (click)="open('/project/' + projectUuid)">
-                        <span class="section-label">
+                    <mat-list-item [ngClass]="{ 'active': this.listItemSelected === '/project/' + projectUuid}" class="section-title" (click)="open('/project/' + projectUuid)">
+                        <span matListItemTitle class="section-label">
                             <mat-icon class="sidenav-prefix-icon">description</mat-icon>
                             <p>Project Description</p>
+                            <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
                         </span>
-                        <span class="fill-remaining-space"></span>
-                        <span class="section-icon">
-                            <mat-icon>chevron_right</mat-icon>
-                        </span>
+
                     </mat-list-item>
 
                     <!-- Ontology Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item [ngClass]="{ 'active': listItemSelected === 'data-models'}" class="link section-title" (click)="open('data-models')">
-                        <span class="section-label">
+                    <mat-list-item [ngClass]="{ 'active': listItemSelected === 'data-models'}" class="section-title" (click)="open('data-models')">
+                        <span matListItemTitle class="section-label">
                             <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
                             <p>Data Model</p>
-                        </span>
-                        <span class="fill-remaining-space"></span>
-                        <span class="section-icon">
                             <mat-icon>chevron_right</mat-icon>
                         </span>
                     </mat-list-item>
@@ -70,14 +65,11 @@
 
                     <div class="sidenav-footer"
                         *ngIf="projectAdmin">
-                        <mat-list-item [ngClass]="{ 'active': listItemSelected === 'settings'}" class="link section-title footer"
+                        <mat-list-item [ngClass]="{ 'active': listItemSelected === 'settings'}" class="section-title footer"
                             (click)="open('settings')">
-                            <span class="section-label">
+                            <span matListItemTitle class="section-label">
                                 <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
                                 <div>Project Settings</div>
-                            </span>
-                            <span class="fill-remaining-space"></span>
-                            <span class="section-icon">
                                 <mat-icon>chevron_right</mat-icon>
                             </span>
                         </mat-list-item>

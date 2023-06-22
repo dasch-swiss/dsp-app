@@ -2,7 +2,7 @@
 
 .resource-list {
   cursor: default;
-  .mat-list-item {
+  .mat-mdc-list-item {
     cursor: default;
     height: auto;
     min-height: 40px;
@@ -17,16 +17,12 @@
   }
 }
 
-.mat-list-item-content {
-  cursor: pointer;
+.res-list-item-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
-
-.res-list-item-container {
-  width: 95%;
+.res-list-item-content {
   display: flex;
   flex-grow: 1; /* grow to fill remaining space */
   cursor: pointer;
@@ -36,14 +32,6 @@
   padding-left: 16px;
   padding-top: 8px;
   padding-bottom: 8px;
-}
-
-
-.res-checkbox {
-  align-items: flex-end;
-  width: 5%;
-  margin-left: auto;
-  cursor: default;
 }
 
 .res-class-label,

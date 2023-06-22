@@ -75,11 +75,11 @@
       }
     }
 
-    .mat-list-base {
+    .mat-mdc-list-base {
       padding-top: 0px;
     }
 
-    .mat-list.main-list {
+    .mat-mdc-list.main-list {
       margin-bottom: calc(#{$header-height} - 8px);
     }
 
@@ -89,7 +89,7 @@
       margin: 0;
     }
 
-    .mat-list-item {
+    .mat-mdc-list-item {
       height: 48px;
 
       &:hover {
@@ -105,6 +105,10 @@
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+      }
+
+      .mdc-list-item__content {
+        cursor: pointer;
       }
     }
 

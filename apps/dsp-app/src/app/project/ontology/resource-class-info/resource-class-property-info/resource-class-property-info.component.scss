@@ -13,6 +13,12 @@
 .lower-prop-container {
   color: $primary_700;
   display: flex !important;
+
+  .cardinality-toggles {
+    .toggle-label {
+      font-size: 14px;
+    }
+  }
 }
 
 .mat-line {

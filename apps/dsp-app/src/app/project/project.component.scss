@@ -21,8 +21,10 @@
   }
 
   .section-label {
+    width: 100%;
     color: $primary;
-    display: inline-flex;
+    display: inline-grid;
+    grid-template-columns: 18% 75% 7%;
     justify-content: center;
     align-items: center;
     font-size: 20px;
@@ -88,7 +90,6 @@
 }
 
 .sidenav-prefix-icon {
-  padding-right: 16px;
   font-size: 32px;
   width: 32px;
   height: 32px;

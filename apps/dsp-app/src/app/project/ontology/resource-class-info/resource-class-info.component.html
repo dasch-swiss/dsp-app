@@ -62,7 +62,7 @@
                 *ngFor="let prop of propsToDisplay; let i = index;">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
                 <mat-list-item class="property" [disabled]="loadProperty">
-                    <span cdkDragHandle mat-list-icon class="list-icon gui-order">
+                    <span cdkDragHandle matListItemIcon class="list-icon gui-order">
                         <span [class.hide-on-hover]="canChangeGuiOrder && lastModificationDate && userCanEdit">
                             {{i + 1}})
                         </span>
@@ -73,16 +73,18 @@
                     </span>
                     <!-- display only properties if they exist in list of properties;
                      objectType is not a linkValue (otherwise we have the property twice) -->
-                    <app-resource-class-property-info class="property-info"
-                                       [propDef]="propsToDisplay[i].propDef"
-                                       [propCard]="propsToDisplay[i]"
-                                       [projectUuid]="projectUuid"
-                                       [resourceIri]="resourceClass.id"
-                                       [lastModificationDate]="lastModificationDate"
-                                       [userCanEdit]="userCanEdit"
-                                       (removePropertyFromClass)="removeProperty($event)"
-                                       (changeCardinalities)="changeCardinalities($event)">
-                    </app-resource-class-property-info>
+                    <span matListItemTitle>
+                        <app-resource-class-property-info class="property-info"
+                            [propDef]="propsToDisplay[i].propDef"
+                            [propCard]="propsToDisplay[i]"
+                            [projectUuid]="projectUuid"
+                            [resourceIri]="resourceClass.id"
+                            [lastModificationDate]="lastModificationDate"
+                            [userCanEdit]="userCanEdit"
+                            (removePropertyFromClass)="removeProperty($event)"
+                            (changeCardinalities)="changeCardinalities($event)">
+                        </app-resource-class-property-info>
+                    </span>
                 </mat-list-item>
             </div>
         </mat-list>

@@ -32,19 +32,21 @@
             {{propDef.id | split: '#':1}}
         </span>
         <span class="fill-remaining-space center"></span>
-        <span>
+        <span class="cardinality-toggles">
             <mat-slide-toggle
                 data-name="multiple"
                 [checked]="propInfo.multiple"
                 [disabled]="!userCanEdit"
                 (toggleChange)="changeCardinalities.emit({ prop: propCard, propType: propType, targetCardinality: {key: 'multiple', value: !propInfo.multiple} })">
-            </mat-slide-toggle> multiple
+            </mat-slide-toggle>
+            <span class="toggle-label">multiple</span>
             <mat-slide-toggle
                 data-name="required"
                 [checked]="propInfo.required"
                 [disabled]="!userCanEdit"
                 (toggleChange)="changeCardinalities.emit({prop: propCard, propType: propType, targetCardinality: {key: 'required', value: !propInfo.required} })">
-            </mat-slide-toggle> required
+            </mat-slide-toggle>
+            <span class="toggle-label">required</span>
         </span>
     </div>
 </div>

@@ -95,10 +95,11 @@
     .app-previous-search-list {
       padding-bottom: 8px;
 
-      .mat-list-item {
+      .mat-mdc-list-item {
         .app-previous-search-item {
           cursor: pointer;
-          padding: 12px !important;
+          display: flex;
+          align-items: center;
         }
 
         &:hover {
@@ -114,31 +115,19 @@
         }
 
         .app-previous-search-item {
-          display: inherit;
 
           .app-project-filter-label {
             overflow: hidden;
             text-overflow: ellipsis;
             width: $project-filter-width;
-
-            &.not-empty {
-              &::before {
-                content: '[';
-              }
-              &::after {
-                content: ']';
-              }
-            }
           }
 
           .app-previous-search-query {
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
-
-            &.fix-width {
-              width: calc(100% - #{$project-filter-width});
-            }
+            width: 100%;
+            padding-left: 17%;
           }
         }
       }
