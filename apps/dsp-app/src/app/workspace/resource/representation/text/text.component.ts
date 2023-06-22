@@ -61,10 +61,9 @@ export class TextComponent implements OnInit, AfterViewInit {
         this._rs
             .getFileInfo(this.src.fileValue.fileUrl)
             .subscribe(
-                (res) => (this.originalFilename = res['originalFilename'])
+                res => this.originalFilename = res['originalFilename'],
+                error => this.failedToLoad = true
             );
-
-        this.failedToLoad = !this._rs.doesFileExist(this.src.fileValue.fileUrl);
     }
 
     ngAfterViewInit() {

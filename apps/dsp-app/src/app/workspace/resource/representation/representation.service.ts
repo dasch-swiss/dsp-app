@@ -14,29 +14,6 @@ export class RepresentationService {
     ) {}
 
     /**
-     * checks if representation file exists
-     * @param urlToFile sipi url to file representation
-     * @returns true if file exists
-     */
-    doesFileExist(urlToFile: string): boolean {
-        // it seems that SIPI does not support HEAD request only --> xhr.open('HEAD')
-        // this is why we have to grab the sidecar file to check if the file exists
-        const pathToKnoraJson =
-            urlToFile.substring(0, urlToFile.lastIndexOf('/')) + '/knora.json';
-        try {
-            const xhr = new XMLHttpRequest();
-
-            xhr.open('GET', pathToKnoraJson, false);
-            xhr.withCredentials = true;
-            xhr.send();
-
-            return xhr.status === 200;
-        } catch (e) {
-            return false;
-        }
-    }
-
-    /**
      * returns info about a file
      * @param url url of the file
      * @param imageFilename optional parameter if the file is an image because the url structure differs from other file types
@@ -44,6 +21,7 @@ export class RepresentationService {
      */
     getFileInfo(url: string, imageFilename?: string): Observable<unknown> {
         const token = this._getTokenFromLocalStorage();
+
         const headersConfig: { [header: string]: string } = {
             'Content-Type': 'application/json',
         };
@@ -68,6 +46,7 @@ export class RepresentationService {
         } else {
             pathToJson = url.substring(0, url.lastIndexOf('/')) + '/knora.json';
         }
+
         return this._http.get(pathToJson, requestOptions).pipe(
             catchError(error => {
                 // handle error in app

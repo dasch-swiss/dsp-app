@@ -90,7 +90,7 @@ describe('AudioComponent', () => {
     beforeEach(async () => {
         const representationServiceSpyObj = jasmine.createSpyObj(
             'RepresentationService',
-            ['getFileInfo', 'doesFileExist']
+            ['getFileInfo']
         );
         // const sanitizerSpyObj = jasmine.createSpyObj('DomSanitizer', ['bypassSecurityTrustUrl']);
 
@@ -137,10 +137,6 @@ describe('AudioComponent', () => {
         ).getFileInfo.and.callFake(() =>
             of(knoraJson).pipe(map((response: any) => response as object))
         );
-
-        (
-            representationServiceSpy as jasmine.SpyObj<RepresentationService>
-        ).doesFileExist.and.callFake(() => true);
 
         testHostFixture = TestBed.createComponent(TestHostComponent);
         testHostComponent = testHostFixture.componentInstance;

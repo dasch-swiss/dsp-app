@@ -768,26 +768,28 @@ export class StillImageComponent
         this._viewer.addOnceHandler('open', (args) => {
             // check if the current image exists
             if (this.images[0].fileValue.fileUrl.includes(args.source['@id'])) {
-                this.failedToLoad = !this._rs.doesFileExist(
-                    args.source['@id'] + '/info.json'
-                );
-                if (this.failedToLoad) {
-                    // failed to laod
-                    // disable mouse navigation incl. zoom
-                    this._viewer.setMouseNavEnabled(false);
-                    // disable the navigator
-                    this._viewer.navigator.element.style.display = 'none';
-                    // disable the region draw mode
-                    this.regionDrawMode = false;
-                    // stop loading tiles
-                    this._viewer.removeAllHandlers('open');
-                } else {
-                    // enable mouse navigation incl. zoom
-                    this._viewer.setMouseNavEnabled(true);
-                    // enable the navigator
-                    this._viewer.navigator.element.style.display = 'block';
-                }
-                this.loading = false;
+                this._rs.getFileInfo(args.source['@id'] + '/info.json')
+                    .subscribe(
+                        res => {
+                            // enable mouse navigation incl. zoom
+                            this._viewer.setMouseNavEnabled(true);
+                            // enable the navigator
+                            this._viewer.navigator.element.style.display = 'block';
+                            this.loading = false;
+                        },
+                        error => {
+                            this.failedToLoad = true;
+                            // disable mouse navigation incl. zoom
+                            this._viewer.setMouseNavEnabled(false);
+                            // disable the navigator
+                            this._viewer.navigator.element.style.display = 'none';
+                            // disable the region draw mode
+                            this.regionDrawMode = false;
+                            // stop loading tiles
+                            this._viewer.removeAllHandlers('open');
+                            this.loading = false;
+                        }
+                    );
             }
         });
         this._viewer.open(tileSources);

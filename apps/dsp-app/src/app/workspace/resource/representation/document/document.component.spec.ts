@@ -153,7 +153,7 @@ describe('DocumentComponent', () => {
     beforeEach(async () => {
         const representationServiceSpyObj = jasmine.createSpyObj(
             'RepresentationService',
-            ['getFileInfo', 'doesFileExist']
+            ['getFileInfo']
         );
 
         await TestBed.configureTestingModule({
