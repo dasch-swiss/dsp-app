@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
     Component,
     ElementRef,
@@ -6,9 +6,8 @@ import {
     HostListener,
     Input,
     OnChanges,
-    OnInit,
     Output,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
@@ -39,8 +38,7 @@ export interface Dimension {
     templateUrl: './video-preview.component.html',
     styleUrls: ['./video-preview.component.scss'],
 })
-export class VideoPreviewComponent implements OnInit, OnChanges {
-    @Input() dispTime = false;
+export class VideoPreviewComponent implements OnChanges {
 
     // needed video information: name and duration
     @Input() src: FileRepresentation;
@@ -48,14 +46,7 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
     // show frame at the corresponding time
     @Input() time?: number;
 
-    // if video file has changed; it will run ngOnChanges
-    @Input() fileHasChanged = false;
-
-    // in preview only, when clicking on the flipbook, it opens the video at this position
-    @Output() open = new EventEmitter<{ video: string; time: number }>();
-
-    // sends the metadata (sipi sidecar) to the parent e.g. video player
-    @Output() fileMetadata = new EventEmitter<MovingImageSidecar>();
+    @Input() fileInfo: MovingImageSidecar;
 
     // emit true when the matrix file (or the default error file) is loaded;
     // this helps to avoid an empty or black preview frame
@@ -63,11 +54,9 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
 
     @ViewChild('frame') frame: ElementRef;
 
-    fileInfo: MovingImageSidecar;
-
     focusOnPreview = false;
 
-    // video information: aspect ration
+    // video information: aspect ratio
     aspectRatio: number;
 
     // preview images are organized in matrix files;
@@ -97,62 +86,16 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
 
     constructor(private _host: ElementRef, private _http: HttpClient) {}
 
-    @HostListener('mouseenter', ['$event']) onEnter() {
-        this.toggleFlipbook(true);
-    }
-
-    @HostListener('mouseleave', ['$event']) onLeave() {
-        this.toggleFlipbook(false);
-    }
-
     @HostListener('mousemove', ['$event']) onMove(e: MouseEvent) {
         this.updatePreviewByPosition(e);
     }
 
-    @HostListener('click', ['$event']) onClick() {
-        this.openVideo();
-    }
-
-    ngOnInit(): void {
-        const requestOptions = {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            withCredentials: true,
-        };
-
-        const pathToJson =
-            this.src.fileValue.fileUrl.substring(
-                0,
-                this.src.fileValue.fileUrl.lastIndexOf('/')
-            ) + '/knora.json';
-
-        this._http
-            .get(pathToJson, requestOptions)
-            .subscribe((res: MovingImageSidecar) => {
-                this.fileInfo = res;
-                this.fileMetadata.emit(res);
-            });
-    }
 
     ngOnChanges() {
         this.time = this.time || 0;
 
-        if (this.frame.nativeElement) {
+        if (this.frame?.nativeElement && this.fileInfo) {
             this.updatePreviewByTime();
-        }
-    }
-
-    /**
-     * toggles flipbook
-     * @param active
-     */
-    toggleFlipbook(active: boolean) {
-        this.focusOnPreview = active;
-
-        if (this.focusOnPreview) {
-            // automatic playback of individual frames from first matrix
-            // --> TODO: activate this later with an additional parameter (@Input) to switch between mousemove and automatic preview
-            // this.autoPlay(i, j);
         }
     }
 
@@ -345,15 +288,6 @@ export class VideoPreviewComponent implements OnInit, OnChanges {
         }
     }
 
-    /**
-     * opens video by clicking on a certain frame
-     * used in preview only.
-     * --> Not sure if we have to keep it in DSP-APP.
-     * It will be part of the grid view and has to be activated when using there.
-     */
-    openVideo() {
-        // this.open.emit({ video: this.fileInfo.name, time: Math.round(this.time) });
-    }
 
     /**
      * get matrix file by filenumber and with information from video file

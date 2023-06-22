@@ -6,13 +6,13 @@ import {
     HostListener,
     Inject,
     Input,
-    OnInit,
+    OnChanges,
     Output,
     ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
     ApiResponseError,
     Constants,
@@ -24,7 +24,7 @@ import {
     UpdateValue,
     WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
-import { catchError, mergeMap, observeOn, subscribeOn } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -39,14 +39,16 @@ import { PointerValue } from '../av-timeline/av-timeline.component';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
 import { NotificationService } from '../../../../main/services/notification.service';
-import { asyncScheduler, Observable, of } from 'rxjs';
+import {
+    MovingImageSidecar
+} from '@dsp-app/src/app/workspace/resource/representation/video/video-preview/video-preview.component';
 
 @Component({
     selector: 'app-video',
     templateUrl: './video.component.html',
     styleUrls: ['./video.component.scss'],
 })
-export class VideoComponent implements OnInit, AfterViewInit {
+export class VideoComponent implements OnChanges, AfterViewInit {
     @Input() src: FileRepresentation;
 
     @Input() start? = 0;
@@ -65,12 +67,12 @@ export class VideoComponent implements OnInit, AfterViewInit {
 
     @ViewChild('preview') preview: ElementRef;
 
-    loading = true;
-    originalFilename: string;
-    failedToLoad = false;
+    fileInfo: MovingImageSidecar;
 
     // video file url
     video: SafeUrl;
+
+    videoError: string;
 
     // video information
     aspectRatio: number;
@@ -115,9 +117,6 @@ export class VideoComponent implements OnInit, AfterViewInit {
     // matTooltipPosition
     matTooltipPos = 'below';
 
-    // if file was replaced, we have to reload the preview
-    fileHasChanged = false;
-
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
@@ -138,39 +137,17 @@ export class VideoComponent implements OnInit, AfterViewInit {
         }
     }
 
-    ngOnInit(): void {
-        // make sure there is a src, avoid any misbehaviour like freeze
-        if (!this.src || !this.src.fileValue.fileUrl) {
-            return;
-        }
+    ngOnChanges(): void {
+        this.videoError = '';
+        // set the file info first bc. browsers might queue and block requests
+        // if there are already six ongoing requests
+        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe((file: MovingImageSidecar) => {
+            this.fileInfo = file;
+        })
 
         this.video = this._sanitizer.bypassSecurityTrustUrl(
             this.src.fileValue.fileUrl
         );
-
-        /** get the knora json for the original file name. For not freezing
-         *  the app at low resources there are subscribeOn and observeOn().
-         *  The subscribeOn() operator specifies the asyncScheduler that will
-         *  execute the work in a separate context. The observeOn() operator
-         *  ensures that the emitted values are handled on the same scheduler.
-         *  This allows the main thread to continue executing other tasks
-         *  without freezing.
-         */
-        this._getKnoraJson()
-            .pipe(
-                subscribeOn(asyncScheduler), // Offload work to asyncScheduler
-                observeOn(asyncScheduler), // Handle emissions on asyncScheduler
-                catchError((error) => {
-                    console.error(error);
-                    return of(null); // Return null
-                })
-            )
-            .subscribe((res) => {
-                if (res) {
-                    this.fileHasChanged = false;
-                    this.originalFilename = res['originalFilename'];
-                }
-            });
     }
 
     ngAfterViewInit() {
@@ -191,16 +168,14 @@ export class VideoComponent implements OnInit, AfterViewInit {
      * toggle play / pause
      */
     togglePlay() {
-        if (!this.failedToLoad) {
-            this.play = !this.play;
+        this.play = !this.play;
 
-            if (this.play) {
-                this.videoEle.nativeElement.play();
-            } else {
-                this.videoEle.nativeElement.pause();
-            }
+        if (this.play) {
+            this.videoEle.nativeElement.play();
+        } else {
+            this.videoEle.nativeElement.pause();
         }
-    }
+}
 
     /**
      * toggle player size between cinema (big) and normal mode
@@ -238,10 +213,6 @@ export class VideoComponent implements OnInit, AfterViewInit {
         } else {
             this.reachedTheEnd = false;
         }
-        // --> TODO: activate the buffer information
-        // const loadStartPercentage = (bf.start(range) / this.duration) * 100;
-        // const loadEndPercentage = (bf.end(range) / this.duration) * 100;
-        // const loadPercentage = (loadEndPercentage - loadStartPercentage);
     }
 
     /**
@@ -264,7 +235,6 @@ export class VideoComponent implements OnInit, AfterViewInit {
      * what happens when video is loaded
      */
     loadedVideo() {
-        this.loading = false;
         this.play = !this.videoEle.nativeElement.paused;
     }
 
@@ -282,6 +252,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
             this._navigate(this.currentTime + range);
         }
     }
+
     /**
      * video navigation from timeline / progress bar
      *
@@ -314,6 +285,9 @@ export class VideoComponent implements OnInit, AfterViewInit {
      * @param  ev PointerValue
      */
     updatePreview(ev: PointerValue) {
+        if (!this.timelineDimension) {
+            return;
+        }
         this.displayPreview(true);
 
         this.previewTime = Math.round(ev.time);
@@ -372,10 +346,10 @@ export class VideoComponent implements OnInit, AfterViewInit {
         e.href = url;
 
         // set filename
-        if (this.originalFilename === undefined) {
+        if (this.fileInfo.originalFilename === undefined) {
             e.download = url.substring(url.lastIndexOf('/') + 1);
         } else {
-            e.download = this.originalFilename;
+            e.download = this.fileInfo.originalFilename;
         }
 
         document.body.appendChild(e);
@@ -443,32 +417,12 @@ export class VideoComponent implements OnInit, AfterViewInit {
         this.previewTime = this.previewTime < 0 ? 0 : this.previewTime;
     }
 
-    private _getKnoraJson(): Observable<any> {
-        const requestOptions = {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            withCredentials: true,
-        };
-
-        const index = this.src.fileValue.fileUrl.indexOf(
-            this.src.fileValue.filename
-        );
-        const pathToJson =
-            this.src.fileValue.fileUrl.substring(
-                0,
-                index + this.src.fileValue.filename.length
-            ) + '/knora.json';
-        return this._http.get(pathToJson, requestOptions);
-    }
-
     /**
      * replaces file
      * @param file
      */
     private _replaceFile(file: UpdateFileValue) {
         this.goToStart();
-
-        this.fileHasChanged = true;
 
         const updateRes = new UpdateResource();
         updateRes.id = this.parentResource.id;
@@ -504,7 +458,7 @@ export class VideoComponent implements OnInit, AfterViewInit {
                         ][0] as ReadMovingImageFileValue
                     ).strval;
 
-                    this.ngOnInit();
+                    this.ngOnChanges();
 
                     this.loadedMetadata();
 
@@ -523,5 +477,43 @@ export class VideoComponent implements OnInit, AfterViewInit {
                     this._errorHandler.showMessage(error);
                 }
             );
+    }
+
+    /**
+     * Handle errors at playback. Display errors via error handler if there is
+     * a network error or if the video format is not supported; log everything
+     * to console
+     * @param event: The error event coming from the media element
+     */
+    handleVideoError(event: ErrorEvent) {
+        const videoElement = event.target as HTMLMediaElement;
+        console.error('Video error:', videoElement.error);
+
+        if (videoElement.error) {
+            let vErr = '';
+            switch (videoElement.error.code) {
+                case MediaError.MEDIA_ERR_ABORTED:
+                    vErr = 'Video playback aborted.';
+                    console.error(vErr);
+                    break;
+                case MediaError.MEDIA_ERR_NETWORK:
+                    vErr = 'Network error occurred while loading the video.';
+                    console.error(vErr);
+                    break;
+                case MediaError.MEDIA_ERR_DECODE:
+                    vErr = 'Video decoding error.';
+                    console.error(vErr);
+                    break;
+                case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                    vErr = 'The video format is not supported.';
+                    console.error(vErr);
+                    break;
+                default:
+                    vErr = 'An unknown video error occurred.';
+                    console.error(vErr);
+                    break;
+            }
+            this.videoError = vErr;
+        }
     }
 }

@@ -2,10 +2,10 @@
     <div class="container">
         <!-- in case of an error -->
         <app-status
-            [status]="404"
+            [comment]="videoError"
             [url]="src.fileValue.fileUrl"
             [representation]="'video'"
-            *ngIf="failedToLoad"
+            *ngIf="videoError"
         >
         </app-status>
 
@@ -13,7 +13,7 @@
             <video
                 class="video"
                 #videoEle
-                *ngIf="!fileHasChanged; else loading"
+                *ngIf="video; else loading"
                 [src]="video"
                 type="video/mp4"
                 preload="auto"
@@ -22,6 +22,7 @@
                 (timeupdate)="timeUpdate()"
                 (loadedmetadata)="loadedMetadata()"
                 (canplaythrough)="loadedVideo()"
+                (error)="handleVideoError($event)"
             ></video>
 
             <div class="overlay">
@@ -49,14 +50,13 @@
             <app-progress-indicator></app-progress-indicator>
         </ng-template>
 
-        <div class="preview-line" *ngIf="!failedToLoad">
+        <div class="preview-line">
             <!-- preview image -->
             <div class="preview" #preview>
                 <app-video-preview
                     [src]="src"
                     [time]="previewTime"
-                    [dispTime]="true"
-                    [fileHasChanged]="fileHasChanged"
+                    [fileInfo]='fileInfo'
                     (loaded)="displayPreview(!$event)"
                 >
                 </app-video-preview>
@@ -78,7 +78,7 @@
                 (dimension)="timelineDimension = $event"
                 (mouseleave)="displayPreview(false)"
                 (changed)="updateTimeFromSlider($event)"
-                [disabled]="failedToLoad"
+                [disabled]="!videoEle"
             ></app-av-timeline>
         </mat-toolbar-row>
 
@@ -121,7 +121,7 @@
             <button
                 mat-icon-button
                 (click)="goToStart()"
-                [disabled]="currentTime === 0 || failedToLoad"
+                [disabled]="currentTime === 0 || !videoEle"
                 matTooltip="Stop and go to start"
                 [matTooltipPosition]="matTooltipPos"
             >
@@ -134,7 +134,7 @@
                     reachedTheEnd ? 'Replay' : play ? 'Pause' : 'Play'
                 "
                 [matTooltipPosition]="matTooltipPos"
-                [disabled]="failedToLoad"
+                [disabled]="!videoEle"
             >
                 <mat-icon>{{
                     reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow'
@@ -164,7 +164,7 @@
             <button
                 mat-icon-button
                 (click)="toggleCinemaMode()"
-                [disabled]="failedToLoad"
+                [disabled]="!videoEle"
                 [matTooltip]="cinemaMode ? 'Default view' : 'Cinema mode'"
                 [matTooltipPosition]="matTooltipPos"
             >
