@@ -1,5 +1,36 @@
 # Changelog
 
+## [10.21.0](https://github.com/dasch-swiss/dsp-das/compare/v10.20.3...v10.21.0) (2023-06-23)
+
+
+### Bug Fixes
+
+* **freeze:** Remove/replace freezing request ([#1110](https://github.com/dasch-swiss/dsp-das/issues/1110)) ([6a9e259](https://github.com/dasch-swiss/dsp-das/commit/6a9e2594667bc00ab2459a23e3fe6fe6dab61278))
+* **freezing:** app freeze if sipi does not respond (DEV-1562) ([#1099](https://github.com/dasch-swiss/dsp-das/issues/1099)) ([aaaa887](https://github.com/dasch-swiss/dsp-das/commit/aaaa887359937dd0b139de80af37b19b088fea79))
+
+
+### Enhancements
+
+* add skeleton loading to onto class items ([#1107](https://github.com/dasch-swiss/dsp-das/issues/1107)) ([e3d7a79](https://github.com/dasch-swiss/dsp-das/commit/e3d7a790b581514e2ca7024b615f6b52bd3ff963))
+* **dsp-app:** fixed wrong error-messages in update forms ([#1106](https://github.com/dasch-swiss/dsp-das/issues/1106)) ([c9e5d3f](https://github.com/dasch-swiss/dsp-das/commit/c9e5d3fe56ffddeeecaf1503344951fe86dd36eb))
+* **video component:** enhance video component ([#1108](https://github.com/dasch-swiss/dsp-das/issues/1108)) ([0236a5e](https://github.com/dasch-swiss/dsp-das/commit/0236a5ea64a3bf50f72697e5b3191c69b46f387d))
+
+
+### Maintenance
+
+* allow access to app locally on host 0.0.0.0 ([#1111](https://github.com/dasch-swiss/dsp-das/issues/1111)) ([e193e78](https://github.com/dasch-swiss/dsp-das/commit/e193e786b97bdd2e3605d8f292ef856471a74c2a))
+* angular mdc migration list ([#1109](https://github.com/dasch-swiss/dsp-das/issues/1109)) ([9a59633](https://github.com/dasch-swiss/dsp-das/commit/9a59633adfdb7dfb7ecbac4c6c4faf21ff058d5d))
+* angular mdc migration menu ([#1082](https://github.com/dasch-swiss/dsp-das/issues/1082)) ([e6097bd](https://github.com/dasch-swiss/dsp-das/commit/e6097bdab000df751170245f008cd3c430105c36))
+* angular mdc migration paginator ([#1097](https://github.com/dasch-swiss/dsp-das/issues/1097)) ([f873d24](https://github.com/dasch-swiss/dsp-das/commit/f873d2460ef4acb6b7fa4ca3ce9b0b957a512b7e))
+* angular mdc migration progress bar ([#1098](https://github.com/dasch-swiss/dsp-das/issues/1098)) ([5465070](https://github.com/dasch-swiss/dsp-das/commit/54650706f297f6bf90fd1415e76b2e0216f201db))
+* angular mdc migration slide toggle ([#1089](https://github.com/dasch-swiss/dsp-das/issues/1089)) ([a06d06f](https://github.com/dasch-swiss/dsp-das/commit/a06d06ff4b038b33e3426c9f1d9d22f0b77a2684))
+* angular mdc migration tabs ([#1094](https://github.com/dasch-swiss/dsp-das/issues/1094)) ([237291d](https://github.com/dasch-swiss/dsp-das/commit/237291d4c49f282b248f14c9894a5735a628f46e))
+* **app:** delete unused MatProgressSpinnerModule ([#1084](https://github.com/dasch-swiss/dsp-das/issues/1084)) ([09d3256](https://github.com/dasch-swiss/dsp-das/commit/09d32560bf155ba8db29567e7b346ac878a4f80d))
+* **deps:** bump JS-LIB to 8.2.6 ([#1112](https://github.com/dasch-swiss/dsp-das/issues/1112)) ([2082da1](https://github.com/dasch-swiss/dsp-das/commit/2082da14902d625b49884c8940df5104d1aa202b))
+* move session service to a lib ([#1101](https://github.com/dasch-swiss/dsp-das/issues/1101)) ([152ca06](https://github.com/dasch-swiss/dsp-das/commit/152ca063adc111c3622d79e873cb174eca437f51))
+* refactor cache service ([#1073](https://github.com/dasch-swiss/dsp-das/issues/1073)) ([1e8f67d](https://github.com/dasch-swiss/dsp-das/commit/1e8f67dffaf4df190166ab3d1d42b3059e051540))
+* remove unused components ([#1100](https://github.com/dasch-swiss/dsp-das/issues/1100)) ([6d9f1c6](https://github.com/dasch-swiss/dsp-das/commit/6d9f1c67f44cce9ef7cc2194d15dfccd40443eee))
+
 ## [10.20.3](https://github.com/dasch-swiss/dsp-das/compare/v10.20.2...v10.20.3) (2023-06-09)
 
 
