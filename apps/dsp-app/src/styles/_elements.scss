@@ -3,6 +3,7 @@
 @use "sass:math";
 @use "@material/snackbar" as snackbar;
 @use "@material/button" as button;
+@use "@material/menu-surface" as menu-surface;
 
 .fill-remaining-space {
   /* This fills the remaining space, by using flexbox.
@@ -305,7 +306,7 @@ a,
     }
 
     &.overlay {
-      background: #292929;
+      background: $dark;
     }
 
     &.vertical {
@@ -340,6 +341,14 @@ a,
   // .pdfViewer {
   //   margin-bottom: 64px;
   // }
+}
+
+// file representation menu styling
+.representation-menu {
+  &.mdc-menu-surface {
+    @include menu-surface.fill-color($dark);
+    @include menu-surface.ink-color($white);
+  }
 }
 
 .no-results {
