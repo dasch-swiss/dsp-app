@@ -8,7 +8,7 @@ import {
     MatDialogModule,
     MatDialogRef,
 } from '@angular/material/dialog';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {
     BrowserAnimationsModule,
     NoopAnimationsModule,

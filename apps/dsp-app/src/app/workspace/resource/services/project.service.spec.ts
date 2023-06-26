@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';

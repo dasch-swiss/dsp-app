@@ -8,7 +8,7 @@ import {
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';

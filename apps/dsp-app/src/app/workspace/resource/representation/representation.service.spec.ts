@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';

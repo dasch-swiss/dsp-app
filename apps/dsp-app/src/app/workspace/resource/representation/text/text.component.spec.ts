@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { FileRepresentation } from '../file-representation';

@@ -12,7 +12,7 @@ import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy
 import { MatListModule } from '@angular/material/list';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';

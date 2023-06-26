@@ -1,6 +1,8 @@
 @use "config" as *;
 @use "mixins" as *;
 @use "sass:math";
+@use "@material/snackbar" as snackbar;
+@use "@material/button" as button;
 
 .fill-remaining-space {
   /* This fills the remaining space, by using flexbox.
@@ -593,21 +595,33 @@ $gc-small: $form-width - $gc-large - 4;
   }
 }
 
-.mat-snack-bar-container {
+.mat-mdc-snack-bar-container {
+
   &.success {
-    color: $primary_contrast;
-    background-color: rgba($primary, 0.9);
+    @include snackbar.fill-color(rgba($primary, 0.9));
+    @include snackbar.label-ink-color($primary_contrast);
+
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+      @include button.ink-color($primary_contrast);
+    }
   }
 
-  &.failed,
-  &.error {
-    color: $red_contrast;
-    background-color: rgba($red, 0.9);
+  &.failed, &.error {
+    @include snackbar.fill-color(rgba($red, 0.9));
+    @include snackbar.label-ink-color($red_contrast);
+
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+      @include button.ink-color($red_contrast);
+    }
   }
 
   &.note {
-    color: $yellow_contrast;
-    background-color: rgba($yellow, 0.9);
+    @include snackbar.fill-color(rgba($yellow, 0.9));
+    @include snackbar.label-ink-color($yellow_contrast);
+
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled){
+      @include button.ink-color($yellow_contrast);
+    }
   }
 }
 
@@ -790,3 +804,4 @@ $gc-small: $form-width - $gc-large - 4;
     background-color: $primary_400;
   }
 }
+

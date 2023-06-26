@@ -90,12 +90,13 @@
   }
 
   .list-icon {
-    font-size: 16px;
-    margin-right: 0px;
+    color: $black;
+    margin-right: 10px;
   }
 
   &.link {
     border-top: 1px solid rgba(black, 0.12);
+    cursor: pointer;
   }
 }
 

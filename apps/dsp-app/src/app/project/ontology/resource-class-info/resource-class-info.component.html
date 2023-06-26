@@ -97,10 +97,8 @@
             <!-- here we have to know if the class has values or not -->
             <mat-list-item *ngIf="lastModificationDate && projectStatus && userCanEdit" class="property link"
                 [matMenuTriggerFor]="addPropertyMenu">
-                <span mat-list-icon class="list-icon">
-                    <mat-icon>add</mat-icon>
-                </span>
-                Add property
+                <mat-icon matListItemIcon class="list-icon">add</mat-icon>
+                <span matListItemTitle>Add property</span>
             </mat-list-item>
         </mat-list>
 
