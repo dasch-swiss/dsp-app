@@ -36,17 +36,30 @@
 <div class="toolbar bottom">
     <!-- navigation -->
     <div class="navigation horizontal" *ngIf="compoundNavigation">
+        <!-- TODO: The 'tickInterval' property no longer exists -->
         <mat-slider
             [color]="'primary'"
             [disabled]="compoundNavigation.totalPages < 2"
             [max]="compoundNavigation.totalPages"
             [min]="1"
             [step]="1"
-            [thumbLabel]="true"
-            [tickInterval]="'auto'"
             [(ngModel)]="compoundNavigation.page"
-            (change)="openPage($event.value)"
-        >
+            showTickMarks
+            discrete
+            #ngSlider
+            ><input
+                matSliderThumb
+                (change)="
+                    openPage(
+                        {
+                            source: ngSliderThumb,
+                            parent: ngSlider,
+                            value: ngSliderThumb.value
+                        }.value
+                    )
+                "
+                #ngSliderThumb="matSliderThumb"
+            />
         </mat-slider>
     </div>
     <!-- toolbar -->

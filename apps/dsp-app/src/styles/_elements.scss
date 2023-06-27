@@ -801,16 +801,3 @@ $gc-small: $form-width - $gc-large - 4;
   }
 }
 
-// --------------------------------------
-
-//
-// slider in compound object viewer
-.navigation.horizontal {
-  .mat-slider-track-background {
-    background-color: $primary_200;
-  }
-  .mat-slider-thumb {
-    background-color: $primary_400;
-  }
-}
-

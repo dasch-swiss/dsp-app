@@ -87,9 +87,19 @@
                         min="0"
                         [max]="getDuration()"
                         step="1"
-                        [value]="currentTime"
-                        (input)="onSliderChangeEnd($event)"
-                    ></mat-slider>
+                        #ngSlider
+                        ><input
+                            matSliderThumb
+                            [value]="currentTime"
+                            (input)="
+                                onSliderChangeEnd({
+                                    source: ngSliderThumb,
+                                    parent: ngSlider,
+                                    value: ngSliderThumb.value
+                                })
+                            "
+                            #ngSliderThumb="matSliderThumb"
+                    /></mat-slider>
                 </div>
                 <button
                     mat-icon-button

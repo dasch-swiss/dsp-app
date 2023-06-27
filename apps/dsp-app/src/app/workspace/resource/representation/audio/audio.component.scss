@@ -35,10 +35,5 @@
 .time-slider-container {
     .time-slider {
         width: 90%;
-        ::ng-deep {
-            .mat-slider-track-background {
-                background-color: whitesmoke !important;
-            }
-        }
     }
 }

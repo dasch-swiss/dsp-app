@@ -79,7 +79,6 @@ body {
   }
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 .grid-card .mat-mdc-card-header > div.mat-card-header-text {
   margin: 0 0 !important;
 }
@@ -241,22 +240,6 @@ button.space-reducer {
   .mat-mdc-dialog-container {
     transition: none !important;
     border-radius: 0 !important;
-  }
-}
-
-// moving image player: overwrite mat-slider
-.progress {
-  .mat-slider-track-background {
-    background-color: whitesmoke !important;
-  }
-
-  .mat-slider-wrapper {
-    top: 12px !important;
-  }
-
-  .mat-slider-thumb {
-    background-color: $yellow !important;
-    border-color: $yellow !important;
   }
 }
 
