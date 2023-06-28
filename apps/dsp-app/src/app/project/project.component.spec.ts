@@ -31,7 +31,7 @@ import {
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { ApplicationStateService } from '../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../main/dialog/dialog.component';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';

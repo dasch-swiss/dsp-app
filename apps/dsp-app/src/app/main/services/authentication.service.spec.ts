@@ -3,7 +3,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from './../../../test.config';
-import { ApplicationStateService } from '../cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,

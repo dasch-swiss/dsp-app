@@ -35,7 +35,8 @@ export class ApplicationStateService {
     >();
 
     /**
-     * gets the value from a state if the key is provided.
+     * gets the value from a state if the key is provided
+     * @param key Key is the id of the content
      */
     get(
         key: string
@@ -49,7 +50,18 @@ export class ApplicationStateService {
         | ListNodeInfo[]
     > {
         if (this.has(key)) {
-            return of(this._applicationState.get(key).value);
+            const content = this._applicationState.get(key);
+            // content should never be undefined but we'll check anyway
+            // if it is undefined, it means the app is in an invalid state
+            if (content === undefined) {
+                return throwError(
+                    'Requested key "' +
+                        key +
+                        '" has value of undefined in the application state'
+                );
+            } else {
+                return of(content.value);
+            }
         } else {
             return throwError(
                 'Requested key "' +
@@ -61,6 +73,8 @@ export class ApplicationStateService {
 
     /**
      * sets the value with key in the application state
+     * @param key Key is the id of the content
+     * @param value Value is the content
      */
     set(
         key: string,
@@ -78,6 +92,7 @@ export class ApplicationStateService {
 
     /**
      * checks if the key exists in the application state
+     * @param key Key is the id of the content
      */
     has(key: string): boolean {
         return this._applicationState.has(key);
@@ -87,7 +102,7 @@ export class ApplicationStateService {
      * delete a states content by key
      * @param key Key is the id of the content
      */
-    del(key: string) {
+    delete(key: string) {
         this._applicationState.delete(key);
     }
 
@@ -95,7 +110,6 @@ export class ApplicationStateService {
      * clear the whole application state
      */
     destroy() {
-        sessionStorage.clear();
         this._applicationState.clear();
     }
 }

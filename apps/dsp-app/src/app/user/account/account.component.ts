@@ -18,7 +18,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 
 @Component({
     selector: 'app-account',

@@ -10,7 +10,7 @@ import {
     StoredProject,
     ProjectsResponse,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';

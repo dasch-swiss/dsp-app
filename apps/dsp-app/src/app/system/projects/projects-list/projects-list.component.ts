@@ -17,7 +17,7 @@ import {
     StoredProject,
     UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
@@ -204,7 +204,7 @@ export class ProjectsListComponent implements OnInit {
                 () => {
                     this.refreshParent.emit();
                     // update project state
-                    this._applicationStateService.del(uuid);
+                    this._applicationStateService.delete(uuid);
 
                     this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id).subscribe(
                         (response: ApiResponseData<ProjectResponse>) => this._applicationStateService.set(uuid, response.body.project)
@@ -230,7 +230,7 @@ export class ProjectsListComponent implements OnInit {
                 () => {
                     this.refreshParent.emit();
                     // update project state
-                    this._applicationStateService.del(uuid);
+                    this._applicationStateService.delete(uuid);
 
                     this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(id).subscribe(
                         (response: ApiResponseData<ProjectResponse>) => this._applicationStateService.set(uuid, response.body.project)

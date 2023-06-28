@@ -15,7 +15,7 @@ import {
     UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { ApplicationStateService } from '../../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,

@@ -18,7 +18,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { AddUserComponent } from './add-user/add-user.component';
-import { ApplicationStateService } from '../../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 
 @Component({
     selector: 'app-collaboration',

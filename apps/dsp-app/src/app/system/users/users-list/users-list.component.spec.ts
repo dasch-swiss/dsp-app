@@ -27,7 +27,7 @@ import { TestConfig } from '@dsp-app/src/test.config';
 import { UsersListComponent } from './users-list.component';
 import { Component } from '@angular/core';
 import { AjaxResponse } from 'rxjs/ajax';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({

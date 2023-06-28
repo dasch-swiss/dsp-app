@@ -33,7 +33,7 @@ import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handle
 import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-import { ApplicationStateService } from '../../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 
 @Component({
     selector: 'app-project-form',
@@ -568,7 +568,7 @@ export class ProjectFormComponent implements OnInit {
         // refresh the component
         this.loading = true;
         // update the application state
-        this._applicationStateService.del(this._projectService.iriToUuid(this.projectIri));
+        this._applicationStateService.delete(this._projectService.iriToUuid(this.projectIri));
         this._dspApiConnection.admin.projectsEndpoint
             .getProjectByIri(this.projectIri)
             .subscribe(

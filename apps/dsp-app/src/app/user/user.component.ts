@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiResponseData, KnoraApiConnection, UserResponse } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
-import { ApplicationStateService } from '../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
@@ -51,7 +51,7 @@ export class UserComponent implements OnInit {
     initContent() {
         this.loading = true;
 
-        this._applicationStateService.del(this.session.user.name);
+        this._applicationStateService.delete(this.session.user.name);
 
         // update session
         this._session.setSession(

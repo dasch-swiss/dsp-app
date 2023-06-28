@@ -22,7 +22,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { ApplicationStateService } from '../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
 import { ErrorHandlerService } from '../main/services/error-handler.service';

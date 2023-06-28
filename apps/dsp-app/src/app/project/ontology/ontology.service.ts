@@ -7,7 +7,7 @@ import {
     ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConfigToken } from '@dasch-swiss/vre/shared/app-config';
 import {
     DefaultProperties,

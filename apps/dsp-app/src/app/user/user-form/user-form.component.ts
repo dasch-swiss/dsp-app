@@ -38,7 +38,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-session';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
-import { ApplicationStateService } from '../../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 
 @Component({
     selector: 'app-user-form',
@@ -439,7 +439,7 @@ export class UserFormComponent implements OnInit, OnChanges {
                         this.buildForm(this.user);
 
                         // update application state: users list
-                        this._applicationStateService.del('allUsers');
+                        this._applicationStateService.delete('allUsers');
 
                         this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe(
                             (response: ApiResponseData<UsersResponse>) => this._applicationStateService.set('allUsers', response.body.users)

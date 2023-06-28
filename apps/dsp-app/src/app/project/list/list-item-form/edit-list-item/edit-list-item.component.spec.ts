@@ -22,7 +22,7 @@ import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ProgressIndicatorComponent } from '@dsp-app/src/app/main/action/progress-indicator/progress-indicator.component';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { EditListItemComponent } from './edit-list-item.component';

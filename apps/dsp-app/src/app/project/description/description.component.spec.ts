@@ -37,7 +37,7 @@ import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { AjaxResponse } from 'rxjs/ajax';
-import { ApplicationStateService } from '../../main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 
 @Component({
     template: '<app-description #description></app-description>',

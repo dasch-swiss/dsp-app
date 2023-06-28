@@ -7,7 +7,7 @@ import {
     ReadGroup,
     ReadProject,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import {
@@ -104,7 +104,7 @@ export class PermissionComponent implements OnInit {
         // referesh the component
         this.loading = true;
         // update the application state
-        this._applicationStateService.del('members_of_' + this.projectUuid);
+        this._applicationStateService.delete('members_of_' + this.projectUuid);
 
         this.initList();
 

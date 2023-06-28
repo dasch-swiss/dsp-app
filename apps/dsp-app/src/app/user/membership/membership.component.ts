@@ -19,7 +19,7 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
-import { ApplicationStateService } from '@dsp-app/src/app/main/cache/application-state.service';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
 import { Session } from '@dasch-swiss/vre/shared/app-session';
@@ -165,7 +165,7 @@ export class MembershipComponent implements OnInit {
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
                     // set new user state
-                    this._applicationStateService.del(this.username);
+                    this._applicationStateService.delete(this.username);
                     this._applicationStateService.set(
                         this.username,
                         this.user
@@ -190,7 +190,7 @@ export class MembershipComponent implements OnInit {
                 (response: ApiResponseData<UserResponse>) => {
                     this.user = response.body.user;
                     // set new user state
-                    this._applicationStateService.del(this.username);
+                    this._applicationStateService.delete(this.username);
                     this._applicationStateService.set(
                         this.username,
                         this.user
