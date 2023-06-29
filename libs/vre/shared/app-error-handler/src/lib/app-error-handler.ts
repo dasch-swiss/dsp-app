@@ -16,16 +16,16 @@ export class AppErrorHandler implements ErrorHandler {
     handleError(error: Error): void {
         if (error instanceof HttpErrorResponse) {
             // HTTP related error
-            this.logger.error('Caught HttpErrorResponse error', error);
-        } else if (
-            error instanceof TypeError ||
-            error instanceof ReferenceError
-        ) {
-            // Runtime exceptions mostly induced by Developer's code
-            this.logger.error('Caught Type or Reference error', error);
+            this.logger.error('Caught HttpErrorResponse error', {}, error);
+        } else if (error instanceof TypeError) {
+            // Runtime exceptions mostly introduced by Developer's code
+            this.logger.error('Caught TypeError', {}, error);
+        } else if (error instanceof ReferenceError) {
+            // Runtime exceptions mostly introduced by Developer's code
+            this.logger.error('Caught ReferenceError', {}, error);
         } else {
             // catch-all: catch rest of errors
-            this.logger.error('Caught error', error);
+            this.logger.error('Caught other error', {}, error);
         }
     }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "vre-shared-app-log",
+  "name": "vre-shared-app-logging",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/vre/shared/app-log/src",
+  "sourceRoot": "libs/vre/shared/app-logging/src",
   "prefix": "dasch-swiss",
   "tags": [],
   "projectType": "library",
@@ -10,7 +10,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/vre/shared/app-log/jest.config.ts",
+        "jestConfig": "libs/vre/shared/app-logging/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -25,8 +25,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/vre/shared/app-log/**/*.ts",
-          "libs/vre/shared/app-log/**/*.html"
+          "libs/vre/shared/app-logging/**/*.ts",
+          "libs/vre/shared/app-logging/**/*.html"
         ]
       }
     }

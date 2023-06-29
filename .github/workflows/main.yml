@@ -12,6 +12,22 @@ env:
 
 jobs:
 
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gets additionally all tags which we need
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npx nx run-many --all --target=lint
+      - run: npx nx run-many --all --target=test --configuration=ci
+        env:
+          TZ: Europe/Zurich
+
   dsp-app-tests:
     name: DSP-APP
     runs-on: ubuntu-latest
@@ -91,6 +107,7 @@ jobs:
   publish:
     name: Publish to Dockerhub only on main or tag (release) commits
     needs: [
+      test,
       dsp-app-tests,
       dateadapter-tests,
       jdnconvertiblecalendar-tests,

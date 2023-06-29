@@ -72,6 +72,7 @@
     "@angular/compiler-cli": "^15.2.2",
     "@angular/language-service": "^15.2.2",
     "@datadog/datadog-ci": "^2.14.0",
+    "@hirez_io/observer-spy": "^2.2.0",
     "@nrwl/eslint-plugin-nx": "16.2.2",
     "@nx/cypress": "16.2.2",
     "@nx/jest": "16.2.2",
