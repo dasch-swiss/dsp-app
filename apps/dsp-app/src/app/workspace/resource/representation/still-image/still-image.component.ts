@@ -51,6 +51,7 @@ import {
 } from '../../services/value-operation-event.service';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
+import { Subscription } from 'rxjs';
 
 /**
  * represents a region resource.
@@ -135,6 +136,9 @@ export class StillImageComponent
 
     @Output() loaded = new EventEmitter<boolean>();
 
+    imagesSub: Subscription;
+    fileInfoSub: Subscription;
+
     loading = true;
     failedToLoad = false;
     originalFilename: string;
@@ -202,11 +206,13 @@ export class StillImageComponent
         if (
             changes['images'] &&
             changes['images'].previousValue &&
+            changes['images'].currentValue &&
             changes['images'].currentValue[0].fileValue.fileUrl !==
                 changes['images'].previousValue[0].fileValue.fileUrl
         ) {
             this.loadImages();
         }
+
         if (this.currentTab === 'annotations') {
             this.renderRegions();
         }
@@ -227,19 +233,45 @@ export class StillImageComponent
             this._viewer.destroy();
             this._viewer = undefined;
         }
+        if (this.imagesSub) {
+            this.imagesSub.unsubscribe();
+        }
+
+        if (this.fileInfoSub) {
+            this.fileInfoSub.unsubscribe();
+        }
     }
 
     private loadImages() {
-        this._rs
+        // closing, so no more loading of short in between images if turning
+        // multiple pages
+        this._viewer.close()
+        if (this.imagesSub) {
+            this.imagesSub.unsubscribe();
+        }
+        this.imagesSub = this._rs
             .getFileInfo(
                 this.images[0].fileValue.fileUrl,
                 this.images[0].fileValue.filename
-            )
-            .subscribe((res) => {
-                this.originalFilename = res['originalFilename'];
-                this._openImages();
-                this._unhighlightAllRegions();
-            });
+            ).subscribe(
+                res => {
+                    this.originalFilename = res['originalFilename'];
+                    this._openImages();
+                    this._unhighlightAllRegions();
+                    },
+            error => {
+                    this.failedToLoad = true;
+                    // disable mouse navigation incl. zoom
+                    this._viewer.setMouseNavEnabled(false);
+                    // disable the navigator
+                    this._viewer.navigator.element.style.display = 'none';
+                    // disable the region draw mode
+                    this.regionDrawMode = false;
+                    // stop loading tiles
+                    this._viewer.removeAllHandlers('open');
+                    this.loading = false;
+                }
+            );
     }
 
     /**
@@ -437,7 +469,6 @@ export class StillImageComponent
         updateRes.type = this.parentResource.type;
         updateRes.property = Constants.HasStillImageFileValue;
         updateRes.value = file;
-
         this._dspApiConnection.v2.values
             .updateValue(updateRes as UpdateResource<UpdateValue>)
             .pipe(
@@ -768,28 +799,12 @@ export class StillImageComponent
         this._viewer.addOnceHandler('open', (args) => {
             // check if the current image exists
             if (this.images[0].fileValue.fileUrl.includes(args.source['@id'])) {
-                this._rs.getFileInfo(args.source['@id'] + '/info.json')
-                    .subscribe(
-                        res => {
-                            // enable mouse navigation incl. zoom
-                            this._viewer.setMouseNavEnabled(true);
-                            // enable the navigator
-                            this._viewer.navigator.element.style.display = 'block';
-                            this.loading = false;
-                        },
-                        error => {
-                            this.failedToLoad = true;
-                            // disable mouse navigation incl. zoom
-                            this._viewer.setMouseNavEnabled(false);
-                            // disable the navigator
-                            this._viewer.navigator.element.style.display = 'none';
-                            // disable the region draw mode
-                            this.regionDrawMode = false;
-                            // stop loading tiles
-                            this._viewer.removeAllHandlers('open');
-                            this.loading = false;
-                        }
-                    );
+                // enable mouse navigation incl. zoom
+                this._viewer.setMouseNavEnabled(true);
+                // enable the navigator
+                this._viewer.navigator.element.style.display = 'block';
+                this.loading = false;
+
             }
         });
         this._viewer.open(tileSources);

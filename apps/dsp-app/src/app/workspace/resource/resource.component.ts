@@ -88,6 +88,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     // in case of incoming representations,
     // this will be the currently selected (part-of main) resource
     incomingResource: DspResource;
+    incomingResourceSub: Subscription;
 
     // for the annotations e.g. regions in a still image representation
     annotationResources: DspResource[];
@@ -103,6 +104,10 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     // list of representations to be displayed
     // --> TODO: will be expanded with | MovingImageRepresentation[] | AudioRepresentation[] etc.
     representationsToDisplay: FileRepresentation[] = [];
+
+    stillImageRepresentationsForCompoundResourceSub: Subscription;
+
+    incomingRegionsSub: Subscription;
 
     representationConstants = RepresentationConstants;
 
@@ -207,6 +212,13 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                 sub.unsubscribe()
             );
         }
+        if (this.stillImageRepresentationsForCompoundResourceSub) {
+            this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
+        }
+
+        if (this.incomingRegionsSub) {
+            this.incomingRegionsSub.unsubscribe();
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -299,10 +311,12 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
         this.representationsToDisplay =
             this.collectRepresentationsAndAnnotations(resource);
-
         if (!this.representationsToDisplay.length && !this.compoundPosition) {
             // the resource could be a compound object
-            this._incomingService
+            if (this.stillImageRepresentationsForCompoundResourceSub) {
+                this.stillImageRepresentationsForCompoundResourceSub.unsubscribe()
+            }
+            this.stillImageRepresentationsForCompoundResourceSub = this._incomingService
                 .getStillImageRepresentationsForCompoundResource(
                     resource.res.id,
                     0,
@@ -325,6 +339,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                         this._errorHandler.showMessage(error);
                     }
                 );
+
         } else {
             this.requestIncomingResources(resource);
         }
@@ -396,7 +411,11 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     }
 
     getIncomingResource(iri: string) {
-        this._dspApiConnection.v2.res.getResource(iri).subscribe(
+        if (this.incomingResourceSub) {
+            this.incomingResourceSub.unsubscribe();
+        }
+        this.incomingResourceSub =
+            this._dspApiConnection.v2.res.getResource(iri).subscribe(
             (response: ReadResource) => {
                 const res = new DspResource(response);
 
@@ -526,7 +545,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                 .properties[
                 Constants.HasStillImageFileValue
             ] as ReadStillImageFileValue[];
-
             for (const img of fileValues) {
                 const regions: Region[] = [];
 
@@ -621,7 +639,10 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         }
 
         // get all representations for compound resource of this offset sequence
-        this._incomingService
+        if (this.stillImageRepresentationsForCompoundResourceSub) {
+            this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
+        }
+        this.stillImageRepresentationsForCompoundResourceSub = this._incomingService
             .getStillImageRepresentationsForCompoundResource(
                 this.resource.res.id,
                 offset
@@ -685,7 +706,10 @@ export class ResourceComponent implements OnChanges, OnDestroy {
      * @param offset the offset to be used (needed for paging). First request uses an offset of 0.
      */
     protected getIncomingRegions(resource: DspResource, offset: number): void {
-        this._incomingService
+        if (this.incomingRegionsSub) {
+            this.incomingRegionsSub.unsubscribe()
+        }
+        this.incomingRegionsSub = this._incomingService
             .getIncomingRegions(resource.res.id, offset)
             .subscribe(
                 (regions: ReadResourceSequence) => {
