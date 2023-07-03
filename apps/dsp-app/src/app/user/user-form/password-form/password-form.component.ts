@@ -272,8 +272,10 @@ export class PasswordFormComponent implements OnInit {
                     this.buildForm();
                     this.loading = false;
                 },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
+                () => {
+                    this.confirmForm.controls.requesterPassword.setErrors({
+                        incorrectPassword: true,
+                    });
                     this.loading = false;
                     this.error = true;
                 }
@@ -305,7 +307,14 @@ export class PasswordFormComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
+                    if (error.status === 403) {
+                        // incorrect old password
+                        this.form.controls.requesterPassword.setErrors({
+                            incorrectPassword: true,
+                        });
+                    } else {
+                        this._errorHandler.showMessage(error);
+                    }
                     this.loading = false;
                     this.error = true;
                 }
