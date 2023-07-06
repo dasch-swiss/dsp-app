@@ -25,7 +25,7 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
-import { ErrorHandlerService } from '../main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     ComponentCommunicationEventService,
     Events,
@@ -79,7 +79,7 @@ export class ProjectComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _componentCommsService: ComponentCommunicationEventService,
         private _applicationStateService: ApplicationStateService,
         private _route: ActivatedRoute,

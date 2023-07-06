@@ -34,6 +34,8 @@ import { DialogComponent } from '../../main/dialog/dialog.component';
 import { DialogHeaderComponent } from '../../main/dialog/dialog-header/dialog-header.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProjectService } from '../../workspace/resource/services/project.service';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component to simulate child component, here progress-indicator from action module.
@@ -89,10 +91,10 @@ describe('OverviewComponent', () => {
                 ]),
             },
         };
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
-            'get',
-            'set',
-        ]);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get', 'set']
+        );
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'iriToUuid',
         ]);
@@ -119,6 +121,7 @@ describe('OverviewComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

@@ -11,7 +11,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     Session,
     SessionService,
@@ -38,7 +38,7 @@ export class DataModelsComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _route: ActivatedRoute,
         private _router: Router,
         private _appInit: AppConfigService,

@@ -22,14 +22,16 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {
+    AppConfigService,
+    DspApiConnectionToken,
+} from '@dasch-swiss/vre/shared/app-config';
 import { ListNodeOperation } from '../list-item-form/list-item-form.component';
 import { ListItemComponent } from './list-item.component';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component.
@@ -95,7 +97,10 @@ describe('ListItemComponent', () => {
             'getSession',
         ]);
 
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         TestBed.configureTestingModule({
             declarations: [
@@ -110,6 +115,7 @@ describe('ListItemComponent', () => {
                 MatSnackBarModule,
             ],
             providers: [
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: listsEndpointSpyObj,
@@ -149,9 +155,13 @@ describe('ListItemComponent', () => {
         );
 
         // mock application state service
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
+        );
 
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
             const response: ProjectResponse = new ProjectResponse();
 
             const mockProjects = MockProjects.mockProjects();

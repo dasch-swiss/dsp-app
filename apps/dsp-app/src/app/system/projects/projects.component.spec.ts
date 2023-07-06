@@ -8,7 +8,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockProjects, MockUsers, ProjectsEndpointAdmin, StoredProject, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
+import {
+    MockProjects,
+    MockUsers,
+    ProjectsEndpointAdmin,
+    StoredProject,
+    UsersEndpointAdmin,
+} from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
@@ -19,6 +25,8 @@ import { ProjectsComponent } from './projects.component';
 import { of } from 'rxjs';
 import { SortButtonComponent } from '../../main/action/sort-button/sort-button.component';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component to simulate child component, here progress-indicator from action module.
@@ -53,7 +61,7 @@ describe('ProjectsComponent', () => {
 
         const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
             'getSession',
-            'setSession'
+            'setSession',
         ]);
 
         TestBed.configureTestingModule({
@@ -80,6 +88,7 @@ describe('ProjectsComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpy,
@@ -132,8 +141,7 @@ describe('ProjectsComponent', () => {
         });
 
         (
-            dspConnSpy.admin
-                .usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
+            dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
         ).getUserByUsername.and.callFake(() => {
             const loggedInUser = MockUsers.mockUser();
 

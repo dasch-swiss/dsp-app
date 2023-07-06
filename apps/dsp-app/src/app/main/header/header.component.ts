@@ -16,7 +16,7 @@ import {
     DspApiConnectionToken,
     DspConfig,
 } from '@dasch-swiss/vre/shared/app-config';
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({

@@ -12,7 +12,7 @@ import {
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     Session,
     SessionService,
@@ -67,7 +67,7 @@ export class OntologyClassInstanceComponent implements OnChanges {
         private _projectService: ProjectService,
         private _sessionService: SessionService,
         private _router: Router,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: AppErrorHandler
     ) {
         // parameters from the url
         const uuid = this._route.parent.snapshot.params.uuid;

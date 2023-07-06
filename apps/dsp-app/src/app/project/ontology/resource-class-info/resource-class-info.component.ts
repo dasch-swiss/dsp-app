@@ -25,8 +25,8 @@ import {
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import {
     DefaultProperties,
@@ -122,7 +122,7 @@ export class ResourceClassInfoComponent implements OnInit {
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
         private _dialog: MatDialog,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _notification: NotificationService,
         private _ontoService: OntologyService,
         private _sortingService: SortingService

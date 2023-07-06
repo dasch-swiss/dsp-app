@@ -29,7 +29,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
-import { ErrorHandlerService } from '../../../main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     Session,
     SessionService,
@@ -126,7 +126,7 @@ export class ListItemFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _dialog: MatDialog,
         private _session: SessionService,
         private _applicationStateService: ApplicationStateService

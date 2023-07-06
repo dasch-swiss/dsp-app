@@ -19,7 +19,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import { GravsearchGenerationService } from '../services/gravsearch-generation.service';
 import { ResourceAndPropertySelectionComponent } from './resource-and-property-selection/resource-and-property-selection.component';
@@ -67,7 +67,7 @@ export class AdvancedSearchComponent
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _gravsearchGenerationService: GravsearchGenerationService
     ) {}
 

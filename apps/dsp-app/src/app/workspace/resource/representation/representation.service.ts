@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { ErrorHandlerService } from '../../../main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class RepresentationService {
     constructor(
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private readonly _http: HttpClient
     ) {}
 

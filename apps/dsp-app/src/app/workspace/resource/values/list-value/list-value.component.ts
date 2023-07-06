@@ -20,8 +20,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 @Component({
     selector: 'app-list-value',
     templateUrl: './list-value.component.html',
@@ -47,7 +46,7 @@ export class ListValueComponent
         @Inject(FormBuilder) protected _fb: FormBuilder,
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: AppErrorHandler
     ) {
         super();
     }

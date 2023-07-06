@@ -26,7 +26,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     DefaultProperties,
     DefaultProperty,
@@ -145,7 +145,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _ontoService: OntologyService
     ) {
         this._applicationStateService

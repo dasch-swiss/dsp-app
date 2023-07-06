@@ -25,6 +25,8 @@ import {
 import { DatadogRumService } from '../../services/datadog-rum.service';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { LoginFormComponent } from './login-form.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate login-form component.
@@ -88,6 +90,7 @@ xdescribe('LoginFormComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 DatadogRumService,
                 SessionService,
                 {

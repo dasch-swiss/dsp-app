@@ -18,6 +18,8 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { OntologyClassInstanceComponent } from './ontology-class-instance.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component that mocks ListViewComponent
@@ -65,6 +67,7 @@ describe('OntologyClassInstanceComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpyObj,

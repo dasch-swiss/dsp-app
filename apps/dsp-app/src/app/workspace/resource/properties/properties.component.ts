@@ -47,8 +47,8 @@ import {
     EmitEvent,
     Events as CommsEvents,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 import { IncomingService } from '../services/incoming.service';
@@ -169,7 +169,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _dialog: MatDialog,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _incomingService: IncomingService,
         private _notification: NotificationService,
         private _resourceService: ResourceService,

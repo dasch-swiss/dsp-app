@@ -14,7 +14,7 @@ import {
     EmitEvent,
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 
 @Component({
@@ -51,7 +51,7 @@ export class OntologyClassItemComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _ontologyService: OntologyService,
         private _route: ActivatedRoute,
         private _router: Router,

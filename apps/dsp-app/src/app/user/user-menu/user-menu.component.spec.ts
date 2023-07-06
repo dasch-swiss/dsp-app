@@ -18,6 +18,8 @@ import { DatadogRumService } from '@dsp-app/src/app/main/services/datadog-rum.se
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { UserMenuComponent } from './user-menu.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component to simulate login form component.
@@ -52,6 +54,7 @@ describe('UserMenuComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 SessionService,
                 {
                     provide: DspApiConfigToken,

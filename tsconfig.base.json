@@ -33,9 +33,15 @@
       "@dasch-swiss/vre/shared/app-logging": [
         "libs/vre/shared/app-logging/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-notification": [
+        "libs/vre/shared/app-notification/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-session": [
         "libs/vre/shared/app-session/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/assets/status-msg": [
+        "libs/vre/shared/assets/status-msg/src/index.ts"
+       ],
       "@dasch-swiss/vre/shared/app-state-service": [
         "libs/vre/shared/app-state-service/src/index.ts"
       ],

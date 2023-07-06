@@ -33,7 +33,7 @@ import { AppGlobal } from '@dsp-app/src/app/app-global';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import { OntologyService } from '../ontology.service';
 
@@ -147,7 +147,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
         private _cdr: ChangeDetectorRef,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
         private _os: OntologyService
     ) {}

@@ -22,7 +22,7 @@ import {
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     EmitEvent,
     Events,
@@ -52,7 +52,7 @@ export class TextComponent implements OnInit, AfterViewInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _dialog: MatDialog,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _rs: RepresentationService,
         private _valueOperationEventService: ValueOperationEventService
     ) {}

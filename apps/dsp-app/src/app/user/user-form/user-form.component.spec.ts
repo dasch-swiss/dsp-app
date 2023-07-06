@@ -29,6 +29,8 @@ import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/pro
 import { TestConfig } from '@dsp-app/src/test.config';
 import { PasswordFormComponent } from './password-form/password-form.component';
 import { UserFormComponent } from './user-form.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 describe('UserFormComponent', () => {
     let component: UserFormComponent;
@@ -84,6 +86,7 @@ describe('UserFormComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: ProjectService,
                     useValue: projectServiceSpy,
@@ -120,13 +123,13 @@ describe('UserFormComponent', () => {
         });
 
         const cacheSpyAllUsers = TestBed.inject(ApplicationStateService);
-        (cacheSpyAllUsers as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(
-            () => {
-                const allUsers: ApiResponseData<UsersResponse> =
-                    MockUsers.mockUsers();
-                return of(allUsers.body.users);
-            }
-        );
+        (
+            cacheSpyAllUsers as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
+            const allUsers: ApiResponseData<UsersResponse> =
+                MockUsers.mockUsers();
+            return of(allUsers.body.users);
+        });
 
         fixture = TestBed.createComponent(UserFormComponent);
         component = fixture.componentInstance;

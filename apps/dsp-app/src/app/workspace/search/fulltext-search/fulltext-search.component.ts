@@ -36,8 +36,8 @@ import {
     ComponentCommunicationEventService,
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 
@@ -137,7 +137,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _componentCommsService: ComponentCommunicationEventService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _overlay: Overlay,
         private _sortingService: SortingService,
         private _viewContainerRef: ViewContainerRef,

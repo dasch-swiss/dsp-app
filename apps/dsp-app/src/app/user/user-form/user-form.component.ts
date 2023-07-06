@@ -30,8 +30,8 @@ import {
 import { AppGlobal } from '@dsp-app/src/app/app-global';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
     Session,
     SessionService,
@@ -180,7 +180,7 @@ export class UserFormComponent implements OnInit, OnChanges {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _formBuilder: UntypedFormBuilder,
         private _notification: NotificationService,
         private _route: ActivatedRoute,

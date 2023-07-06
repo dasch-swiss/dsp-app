@@ -31,6 +31,8 @@ import {
 import { TestConfig } from '@dsp-app/src/test.config';
 import { PropertyInfoObject } from '../default-data/default-properties';
 import { PropertyFormComponent } from './property-form.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component
@@ -312,7 +314,10 @@ describe('PropertyFormComponent', () => {
     let listHostFixture: ComponentFixture<ListHostComponent>;
 
     beforeEach(waitForAsync(() => {
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         TestBed.configureTestingModule({
             declarations: [
@@ -340,6 +345,7 @@ describe('PropertyFormComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

@@ -14,10 +14,7 @@ import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import {
-    MatMenu,
-    MatMenuModule,
-} from '@angular/material/menu';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -32,6 +29,8 @@ import { of } from 'rxjs';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { IRI } from '../operator';
 import { SearchListValueComponent } from './search-list-value.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component.
@@ -112,6 +111,7 @@ describe('SearchListValueComponent', () => {
                 TestSearchDisplayListComponent,
             ],
             providers: [
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: listSpyObj,

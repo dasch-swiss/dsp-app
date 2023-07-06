@@ -37,7 +37,7 @@ import {
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/advanced-search/resource-and-property-selection/search-select-property/specify-property-value/operator';
@@ -50,7 +50,7 @@ import {
 import { OntologyService } from '../ontology.service';
 import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { PropToDisplay } from '../resource-class-info/resource-class-info.component';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 
 export type EditMode =
     | 'createProperty'
@@ -178,7 +178,7 @@ export class PropertyFormComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
         private _os: OntologyService,
         private _sortingService: SortingService,

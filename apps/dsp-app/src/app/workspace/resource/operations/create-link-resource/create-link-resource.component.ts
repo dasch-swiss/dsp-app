@@ -24,7 +24,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SelectPropertiesComponent } from '../../resource-instance-form/select-properties/select-properties.component';
 
 @Component({
@@ -64,7 +64,7 @@ export class CreateLinkResourceComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _fb: UntypedFormBuilder,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: AppErrorHandler
     ) {}
 
     ngOnInit(): void {

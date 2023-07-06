@@ -30,6 +30,8 @@ import { OntologyCache } from '@dasch-swiss/dsp-js/src/cache/ontology-cache/Onto
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ResourceAndPropertySelectionComponent } from './resource-and-property-selection.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate select resource class component.
@@ -128,6 +130,7 @@ describe('ResourceAndPropertySelectionComponent', () => {
                 TestSearchSelectPropertyComponent,
             ],
             providers: [
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpy,

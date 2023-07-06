@@ -17,7 +17,7 @@ import {
     ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { SearchSelectPropertyComponent } from './search-select-property/search-select-property.component';
 import { SearchSelectResourceClassComponent } from './search-select-resource-class/search-select-resource-class.component';
@@ -60,7 +60,7 @@ export class ResourceAndPropertySelectionComponent
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         @Inject(UntypedFormBuilder) private _fb: UntypedFormBuilder,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _sortingService: SortingService
     ) {}
 

@@ -40,6 +40,8 @@ import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { MatMenuModule } from '@angular/material/menu';
 import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component
@@ -204,7 +206,10 @@ describe('ResourceClassPropertyInfoComponent', () => {
     let overlayContainer: OverlayContainer;
 
     beforeEach(waitForAsync(() => {
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         const ontologyEndpointSpyObj = {
             v2: {
@@ -237,6 +242,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -276,9 +282,13 @@ describe('ResourceClassPropertyInfoComponent', () => {
 
     beforeEach(() => {
         // mock application state service for currentOntology
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
+        );
 
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
             const response: ReadOntology = MockOntology.mockReadOntology(
                 'http://0.0.0.0:3333/ontology/0001/anything/v2'
             );
@@ -307,9 +317,13 @@ describe('ResourceClassPropertyInfoComponent', () => {
 
     beforeEach(() => {
         // mock application state service for currentOntologyLists
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
+        );
 
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
             const response: ListNodeInfo[] = [
                 {
                     comments: [],

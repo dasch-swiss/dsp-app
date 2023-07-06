@@ -11,6 +11,8 @@ import {
 } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ResourceComponent } from './resource.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 describe('ResourceComponent', () => {
     let component: ResourceComponent;
@@ -33,6 +35,7 @@ describe('ResourceComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

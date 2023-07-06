@@ -8,7 +8,13 @@ import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ApiResponseData, MockProjects, ProjectResponse, ProjectsEndpointAdmin, StringLiteral } from '@dasch-swiss/dsp-js';
+import {
+    ApiResponseData,
+    MockProjects,
+    ProjectResponse,
+    ProjectsEndpointAdmin,
+    StringLiteral,
+} from '@dasch-swiss/dsp-js';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
@@ -18,6 +24,8 @@ import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/pro
 import { ProjectFormComponent } from './project-form.component';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 @Component({ selector: 'app-string-literal-input', template: '' })
 class MockStringLiteralInputComponent {
@@ -77,6 +85,7 @@ describe('ProjectFormComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: ProjectService,
                     useValue: projectServiceSpy,
@@ -94,26 +103,28 @@ describe('ProjectFormComponent', () => {
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
         // mock projects endpoint
-        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(
-            () => {
-                const response = new ProjectResponse();
+        (
+            dspConnSpy.admin
+                .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
+        ).getProjectByIri.and.callFake(() => {
+            const response = new ProjectResponse();
 
-                const mockProjects = MockProjects.mockProjects();
+            const mockProjects = MockProjects.mockProjects();
 
-                response.project = mockProjects.body.projects[0];
+            response.project = mockProjects.body.projects[0];
 
-                return of(
-                    ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
-                );
-            }
-        );
+            return of(
+                ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+            );
+        });
 
-        ( dspConnSpy.admin .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjects.and.callFake(
-            () => {
-                const projects = MockProjects.mockProjects();
-                return of(projects);
-            }
-        );
+        (
+            dspConnSpy.admin
+                .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
+        ).getProjects.and.callFake(() => {
+            const projects = MockProjects.mockProjects();
+            return of(projects);
+        });
 
         fixture = TestBed.createComponent(ProjectFormComponent);
         component = fixture.componentInstance;

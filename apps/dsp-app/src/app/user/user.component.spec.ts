@@ -31,6 +31,8 @@ import { CollectionListComponent } from './collection-list/collection-list.compo
 import { ProfileComponent } from './profile/profile.component';
 import { PasswordFormComponent } from './user-form/password-form/password-form.component';
 import { UserComponent } from './user.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component to simulate child component, here progress-indicator from action module.
@@ -100,6 +102,7 @@ describe('UserComponent', () => {
                     },
                 },
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

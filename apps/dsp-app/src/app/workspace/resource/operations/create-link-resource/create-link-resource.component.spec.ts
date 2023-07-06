@@ -51,6 +51,8 @@ import { IntValueComponent } from '../../values/int-value/int-value.component';
 import { TextValueAsStringComponent } from '../../values/text-value/text-value-as-string/text-value-as-string.component';
 
 import { CreateLinkResourceComponent } from './create-link-resource.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component.
@@ -264,6 +266,7 @@ describe('CreateLinkResourceComponent', () => {
                 TranslateModule.forRoot(),
             ],
             providers: [
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpy,

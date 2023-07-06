@@ -27,7 +27,7 @@ import {
 import { mergeMap } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component';
 import {
     EmitEvent,
@@ -38,7 +38,7 @@ import {
 import { PointerValue } from '../av-timeline/av-timeline.component';
 import { FileRepresentation } from '../file-representation';
 import { RepresentationService } from '../representation.service';
-import { NotificationService } from '../../../../main/services/notification.service';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
     MovingImageSidecar
 } from '@dsp-app/src/app/workspace/resource/representation/video/video-preview/video-preview.component';
@@ -124,7 +124,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
         private _dialog: MatDialog,
         private _sanitizer: DomSanitizer,
         private _rs: RepresentationService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _notification: NotificationService,
         private _valueOperationEventService: ValueOperationEventService
     ) {}

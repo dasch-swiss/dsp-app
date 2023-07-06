@@ -20,13 +20,12 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { OntologyService } from '../ontology/ontology.service';
 
 import { DataModelsComponent } from './data-models.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 @Component({
     template: '<app-data-models #dataModels></app-data-models>',
@@ -85,6 +84,7 @@ describe('DataModelsComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpyObj,

@@ -18,6 +18,8 @@ import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ProjectsListComponent } from './projects-list.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 describe('ProjectsListComponent', () => {
     let component: ProjectsListComponent;
@@ -55,6 +57,7 @@ describe('ProjectsListComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: ProjectService,
                     useValue: projectServiceSpy,

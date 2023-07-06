@@ -29,6 +29,8 @@ import { AddUserComponent } from './add-user/add-user.component';
 import { CollaborationComponent } from './collaboration.component';
 import { SelectGroupComponent } from './select-group/select-group.component';
 import { Component } from '@angular/core';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component to simulate child component, here progress-indicator from action module.
@@ -50,7 +52,6 @@ describe('CollaborationComponent', () => {
     };
 
     beforeEach(waitForAsync(() => {
-
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'uuidToIri',
         ]);
@@ -63,7 +64,7 @@ describe('CollaborationComponent', () => {
                 SelectGroupComponent,
                 DialogComponent,
                 StatusComponent,
-                TestProgressIndicatorComponent
+                TestProgressIndicatorComponent,
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -81,6 +82,7 @@ describe('CollaborationComponent', () => {
                 TranslateModule.forRoot(),
             ],
             providers: [
+                MockProvider(AppLoggingService),
                 {
                     provide: ActivatedRoute,
                     useValue: {

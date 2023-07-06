@@ -26,6 +26,8 @@ import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-servi
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { EditListItemComponent } from './edit-list-item.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component for updating an existing child node.
@@ -104,10 +106,10 @@ describe('EditListItemComponent', () => {
             },
         };
 
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
-            'get',
-            'set',
-        ]);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get', 'set']
+        );
 
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'iriToUuid',
@@ -133,6 +135,7 @@ describe('EditListItemComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: ProjectService,
                     useValue: projectServiceSpy,
@@ -151,9 +154,13 @@ describe('EditListItemComponent', () => {
 
     beforeEach(() => {
         // mock application state service
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
+        );
 
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
             const response: ProjectResponse = new ProjectResponse();
 
             const mockProjects = MockProjects.mockProjects();

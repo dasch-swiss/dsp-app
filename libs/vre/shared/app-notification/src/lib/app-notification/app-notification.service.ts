@@ -4,7 +4,8 @@ import {
     MatSnackBarConfig,
 } from '@angular/material/snack-bar';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
-import { HttpStatusMsg } from '@dsp-app/src/assets/http/statusMsg';
+import {HttpStatusMsg} from '@dasch-swiss/vre/shared/assets/status-msg';
+import { AjaxError } from 'rxjs/ajax';
 
 @Injectable({
     providedIn: 'root',
@@ -33,8 +34,9 @@ export class NotificationService {
 
         if (notification instanceof ApiResponseError) {
             conf.panelClass = type ? type : 'error';
-            if (
-                notification.error &&
+            notification = notification as ApiResponseError;
+            if ( 
+                notification.error && notification.error instanceof AjaxError &&
                 !notification.error['message'].startsWith('ajax error')
             ) {
                 // the Api response error contains a complex error message from dsp-js-lib
@@ -49,7 +51,7 @@ export class NotificationService {
                     message += `There was a timeout issue with one or several requests.
                                 The resource(s) or a part of it cannot be displayed correctly.
                                 Failed on ${notification.url}`;
-                    conf.duration = null;
+                    conf.duration = undefined;
                 } else {
                     message += `${
                         defaultStatusMsg[notification.status].description
@@ -60,7 +62,6 @@ export class NotificationService {
             conf.panelClass = type ? type : 'success';
             message = notification;
         }
-
         this._snackBar.open(message, 'x', conf);
     }
 }

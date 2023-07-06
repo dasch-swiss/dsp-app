@@ -15,13 +15,13 @@ import {
     ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     ComponentCommunicationEventService,
     EmitEvent,
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { NotificationService } from '@dsp-app/src/app/main/services/notification.service';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -124,7 +124,7 @@ export class ListViewComponent implements OnChanges, OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _componentCommsService: ComponentCommunicationEventService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _notification: NotificationService
     ) {}
 

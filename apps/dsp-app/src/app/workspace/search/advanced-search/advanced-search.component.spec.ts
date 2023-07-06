@@ -21,6 +21,8 @@ import {
 import { of } from 'rxjs';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AdvancedSearchComponent } from './advanced-search.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test component to simulate select ontology component.
@@ -94,6 +96,7 @@ describe('AdvancedSearchComponent', () => {
                 MatSnackBarModule,
             ],
             providers: [
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpy,

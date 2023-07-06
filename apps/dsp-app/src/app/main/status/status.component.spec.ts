@@ -13,7 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HealthEndpointSystem, MockHealth } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';
-import { HttpStatusMsg } from '@dsp-app/src/assets/http/statusMsg';
+import {HttpStatusMsg} from '@dasch-swiss/vre/shared/assets/status-msg';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { StatusComponent } from './status.component';
 

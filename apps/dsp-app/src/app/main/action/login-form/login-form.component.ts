@@ -21,7 +21,7 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '../../services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { AuthenticationService } from '../../services/authentication.service';
 import {
     ComponentCommunicationEventService,
@@ -123,7 +123,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         private _auth: AuthenticationService,
         private _componentCommsService: ComponentCommunicationEventService,
         private _datadogRumService: DatadogRumService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
         private _session: SessionService,
         private _route: ActivatedRoute,

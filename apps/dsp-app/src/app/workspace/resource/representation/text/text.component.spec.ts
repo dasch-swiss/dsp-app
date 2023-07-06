@@ -13,6 +13,8 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RepresentationService } from '../representation.service';
 import { MatIconModule } from '@angular/material/icon';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 const textFileValue = {
     arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/9876/=wcU1HzYTEKbJCYPybyKmAs/Kp81r_BPTHKa4oSd5iIxXgd',
@@ -105,6 +107,7 @@ describe('TextComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: appInitSpy,

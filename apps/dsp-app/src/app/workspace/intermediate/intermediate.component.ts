@@ -4,7 +4,7 @@ import {
     MatDialogConfig,
 } from '@angular/material/dialog';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { FilteredResources } from '../results/list-view/list-view.component';
 
 @Component({
@@ -28,7 +28,7 @@ export class IntermediateComponent {
 
     constructor(
         private _dialog: MatDialog,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: AppErrorHandler
     ) {}
 
     /**

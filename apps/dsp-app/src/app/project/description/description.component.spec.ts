@@ -38,6 +38,8 @@ import { By } from '@angular/platform-browser';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { AjaxResponse } from 'rxjs/ajax';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 @Component({
     template: '<app-description #description></app-description>',
@@ -79,9 +81,10 @@ describe('DescriptionComponent', () => {
             },
         };
 
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
-            'get',
-        ]);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         TestBed.configureTestingModule({
             declarations: [
@@ -125,6 +128,7 @@ describe('DescriptionComponent', () => {
                     },
                 },
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -172,31 +176,34 @@ describe('DescriptionComponent', () => {
         // mock application state service
         const cacheSpy = TestBed.inject(ApplicationStateService);
 
-        (cacheSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
-            const response: ProjectResponse = new ProjectResponse();
-
-            const mockProjects = MockProjects.mockProjects();
-
-            response.project = mockProjects.body.projects[0];
-
-            return of(response.project as ReadProject);
-        });
-
-        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-
-        (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+        (cacheSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(
             () => {
-                const response = new ProjectResponse();
+                const response: ProjectResponse = new ProjectResponse();
 
                 const mockProjects = MockProjects.mockProjects();
 
                 response.project = mockProjects.body.projects[0];
 
-                return of(
-                    ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
-                );
+                return of(response.project as ReadProject);
             }
         );
+
+        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+        (
+            dspConnSpy.admin
+                .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
+        ).getProjectByShortcode.and.callFake(() => {
+            const response = new ProjectResponse();
+
+            const mockProjects = MockProjects.mockProjects();
+
+            response.project = mockProjects.body.projects[0];
+
+            return of(
+                ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
+            );
+        });
 
         testHostFixture = TestBed.createComponent(TestHostDescriptionComponent);
         testHostComponent = testHostFixture.componentInstance;

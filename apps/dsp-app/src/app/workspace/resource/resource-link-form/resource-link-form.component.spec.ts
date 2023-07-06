@@ -46,12 +46,11 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { FilteredResources } from '../../results/list-view/list-view.component';
 import { ResourceLinkFormComponent } from './resource-link-form.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 const resolvedPromise = Promise.resolve(null);
 
@@ -148,7 +147,10 @@ describe('ResourceLinkFormComponent', () => {
             'getSession',
         ]);
 
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         const appInitSpy = {
             dspAppConfig: {
@@ -178,6 +180,7 @@ describe('ResourceLinkFormComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpy,
@@ -218,9 +221,13 @@ describe('ResourceLinkFormComponent', () => {
             }
         );
 
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
+        );
 
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
             const response: UserResponse = new UserResponse();
 
             const project = MockProjects.mockProject();

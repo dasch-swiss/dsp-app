@@ -33,6 +33,8 @@ import { PropertyFormComponent } from '../property-form/property-form.component'
 import { PropertyInfoComponent } from './property-info.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 // mock property definition
 const mockPropertyDefinition: ResourcePropertyDefinitionWithAllLanguages = {
@@ -131,7 +133,10 @@ describe('Property info component', () => {
     let fixture: ComponentFixture<PropertyInfoComponent>;
 
     beforeEach(async () => {
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         const ontologyEndpointSpyObj = {
             v2: {
@@ -163,6 +168,7 @@ describe('Property info component', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,
@@ -189,25 +195,27 @@ describe('Property info component', () => {
 
     beforeEach(() => {
         // mock application state service get requests
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
-
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(
-            (key: string) => {
-                if (key === 'currentOntologyLists') {
-                    const response: ListNodeInfo[] = mockOntologyResponse;
-                    return of(response);
-                } else if (key === 'currentProjectOntologies') {
-                    const response: ReadOntology[] = [];
-                    return of(response);
-                } else if (key === 'currentOntology') {
-                    const response: ReadOntology = undefined;
-                    return of(response);
-                } else {
-                    // Handle any other keys as needed
-                    return of(null);
-                }
-            }
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
         );
+
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake((key: string) => {
+            if (key === 'currentOntologyLists') {
+                const response: ListNodeInfo[] = mockOntologyResponse;
+                return of(response);
+            } else if (key === 'currentProjectOntologies') {
+                const response: ReadOntology[] = [];
+                return of(response);
+            } else if (key === 'currentOntology') {
+                const response: ReadOntology = undefined;
+                return of(response);
+            } else {
+                // Handle any other keys as needed
+                return of(null);
+            }
+        });
 
         const dspConnSpy = TestBed.inject(DspApiConnectionToken);
         (

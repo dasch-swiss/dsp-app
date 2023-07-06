@@ -21,7 +21,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '@dsp-app/src/app/main/services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { DefaultProperty } from '../../default-data/default-properties';
 import { DefaultClass } from '../../default-data/default-resource-classes';
 import { OntologyService } from '../../ontology.service';
@@ -107,7 +107,7 @@ export class ResourceClassPropertyInfoComponent
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
-        private _errorHandler: ErrorHandlerService,
+        private _errorHandler: AppErrorHandler,
         private _ontoService: OntologyService
     ) {
         this._applicationStateService

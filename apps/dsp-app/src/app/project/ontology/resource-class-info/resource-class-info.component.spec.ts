@@ -34,6 +34,8 @@ import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ResourceClassInfoComponent } from './resource-class-info.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component
@@ -110,7 +112,10 @@ describe('ResourceClassInfoComponent', () => {
             },
         };
 
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get']
+        );
 
         TestBed.configureTestingModule({
             declarations: [
@@ -136,6 +141,7 @@ describe('ResourceClassInfoComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConfigToken,
                     useValue: TestConfig.ApiConfig,

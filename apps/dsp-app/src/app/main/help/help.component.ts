@@ -11,7 +11,7 @@ import {
     DspApiConnectionToken,
     DspConfig,
 } from '@dasch-swiss/vre/shared/app-config';
-import { ErrorHandlerService } from '../services/error-handler.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { GridItem } from '../grid/grid.component';
 import { environment } from '@dsp-app/src/environments/environment';
 
@@ -100,7 +100,7 @@ export class HelpComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _appConfigService: AppConfigService,
-        private _errorHandler: ErrorHandlerService
+        private _errorHandler: AppErrorHandler
     ) {}
 
     ngOnInit() {

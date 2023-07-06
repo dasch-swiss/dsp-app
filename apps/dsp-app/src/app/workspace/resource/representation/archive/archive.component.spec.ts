@@ -12,6 +12,8 @@ import { RepresentationService } from '../representation.service';
 import { of } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { map } from 'rxjs/operators';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 const archiveFileValue = {
     arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/0123/6c=f69h6Ss6GXPME565EqAS/dDHcFHlwQ9K46255QfUGrQ8',
@@ -106,6 +108,7 @@ describe('ArchiveComponent', () => {
             ],
             providers: [
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: appInitSpy,

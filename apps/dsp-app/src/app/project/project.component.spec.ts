@@ -38,6 +38,8 @@ import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { StatusComponent } from '../main/status/status.component';
 import { OntologyService } from './ontology/ontology.service';
 import { ProjectComponent } from './project.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 @Component({
     selector: 'app-ontology-classes',
@@ -71,11 +73,10 @@ describe('ProjectComponent', () => {
     };
 
     beforeEach(waitForAsync(() => {
-        const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', [
-            'get',
-            'set',
-            'has',
-        ]);
+        const applicationStateServiceSpy = jasmine.createSpyObj(
+            'ApplicationStateService',
+            ['get', 'set', 'has']
+        );
 
         // getProjectMembersByIri and getGroups currently have no mock implementation because
         // their results are stored in the application state but never actually used in the component
@@ -133,6 +134,7 @@ describe('ProjectComponent', () => {
                     provide: AppConfigService,
                     useValue: appInitSpy,
                 },
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpyObj,
@@ -164,9 +166,13 @@ describe('ProjectComponent', () => {
 
     beforeEach(() => {
         // mock application state service
-        const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
+        const applicationStateServiceSpy = TestBed.inject(
+            ApplicationStateService
+        );
 
-        (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+        (
+            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+        ).get.and.callFake(() => {
             const response: ProjectResponse = new ProjectResponse();
 
             const mockProjects = MockProjects.mockProjects();

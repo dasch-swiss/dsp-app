@@ -47,6 +47,8 @@ import {
     PropertiesComponent,
     PropertyInfoValues,
 } from './properties.component';
+import { MockProvider } from 'ng-mocks';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 /**
  * test host component to simulate parent component.
@@ -224,6 +226,7 @@ describe('PropertiesComponent', () => {
             providers: [
                 ValueOperationEventService,
                 AppConfigService,
+                MockProvider(AppLoggingService),
                 {
                     provide: DspApiConnectionToken,
                     useValue: adminSpyObj,
