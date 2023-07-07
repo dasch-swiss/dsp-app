@@ -1,5 +1,30 @@
 # Changelog
 
+## [10.22.0](https://github.com/dasch-swiss/dsp-das/compare/v10.21.0...v10.22.0) (2023-07-07)
+
+
+### Bug Fixes
+
+* **app:** navigate to home after logout ([#1125](https://github.com/dasch-swiss/dsp-das/issues/1125)) ([bfdd7ce](https://github.com/dasch-swiss/dsp-das/commit/bfdd7ce1a45c71f2dbb5a30fd83c8a923aeb0304))
+* **image navigation:** remove flickering, remove in between load images ([#1127](https://github.com/dasch-swiss/dsp-das/issues/1127)) ([d7b0922](https://github.com/dasch-swiss/dsp-das/commit/d7b0922571fae560e19c293fe06f00570953298f))
+* **password-form:** add better error handling ([#1128](https://github.com/dasch-swiss/dsp-das/issues/1128)) ([e131a39](https://github.com/dasch-swiss/dsp-das/commit/e131a39195876dd95b34ce43868321a81732e601))
+* **visibility of menu entries:** Utilise proper editing permissions for enabling/disabling editing menu items ([#1129](https://github.com/dasch-swiss/dsp-das/issues/1129)) ([a59e85e](https://github.com/dasch-swiss/dsp-das/commit/a59e85e855abdba1420005c2091715edebecfaba))
+
+
+### Enhancements
+
+* **app/migration:** migrate snackbar ([#1116](https://github.com/dasch-swiss/dsp-das/issues/1116)) ([76f495b](https://github.com/dasch-swiss/dsp-das/commit/76f495b43ce2b225aa9843e28d381a2517b6e8d6))
+* **error-handler:** move error-handler and all its dependencies into library ([#1126](https://github.com/dasch-swiss/dsp-das/issues/1126)) ([e720bb2](https://github.com/dasch-swiss/dsp-das/commit/e720bb21cb540ad233b43cee004b5bf6b4365777))
+
+
+### Maintenance
+
+* angular mdc migration slider ([#1119](https://github.com/dasch-swiss/dsp-das/issues/1119)) ([27c7d86](https://github.com/dasch-swiss/dsp-das/commit/27c7d8681ba7f153524292e84813df945811048f))
+* **app-state-service:** move Application State Service to a library ([#1120](https://github.com/dasch-swiss/dsp-das/issues/1120)) ([fe5718f](https://github.com/dasch-swiss/dsp-das/commit/fe5718f3b6b0873ba3b07781b342903c6248f6e9))
+* **deps:** bump socket.io-parser from 4.2.2 to 4.2.4 ([#1078](https://github.com/dasch-swiss/dsp-das/issues/1078)) ([3fb0647](https://github.com/dasch-swiss/dsp-das/commit/3fb06476f912a78f4d2af66e71ff2418cd34e4ea))
+* **mat-menu:** apply black background to representation menu ([#1118](https://github.com/dasch-swiss/dsp-das/issues/1118)) ([f367394](https://github.com/dasch-swiss/dsp-das/commit/f3673943c82073be4bcd079f41bd23d4ab69aac0))
+* update js-lib to v8.2.7 ([#1133](https://github.com/dasch-swiss/dsp-das/issues/1133)) ([52340c4](https://github.com/dasch-swiss/dsp-das/commit/52340c4a9649581854d4c9b232792c0ae8078c97))
+
 ## [10.21.0](https://github.com/dasch-swiss/dsp-das/compare/v10.20.3...v10.21.0) (2023-06-23)
 
 
