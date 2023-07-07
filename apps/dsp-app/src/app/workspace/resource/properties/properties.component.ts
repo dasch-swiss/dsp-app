@@ -6,7 +6,7 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    Output,
+    Output
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -74,7 +74,7 @@ export interface PropertyInfoValues {
 @Component({
     selector: 'app-properties',
     templateUrl: './properties.component.html',
-    styleUrls: ['./properties.component.scss'],
+    styleUrls: ['./properties.component.scss']
 })
 export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     /**
@@ -93,11 +93,6 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * does the logged-in user has system or project admin permissions?
      */
     @Input() adminPermissions = false;
-
-    /**
-     * is the logged-in user project member?
-     */
-    @Input() editPermissions = false;
 
     /**
      * in case properties belongs to an annotation (e.g. region in still images)
@@ -142,8 +137,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     deletedResource = false;
 
-    deleteButtonIsVisible: boolean;
-    addButtonIsVisible: boolean; // used to toggle add value button
+    userCanDelete: boolean;
+    userCanEdit: boolean;
     addValueFormIsVisible: boolean; // used to toggle add value form field
     propID: string; // used in template to show only the add value form of the corresponding value
 
@@ -202,11 +197,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             this.lastModificationDate = this.resource.res.lastModificationDate;
 
             // if user has modify permissions, set addButtonIsVisible to true so the user see's the add button
-            this.addButtonIsVisible =
-                allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
+            this.userCanEdit = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
 
             // if user has delete permissions, set deleteButtonIsVisible to true so the user see's the delete button
-            this.deleteButtonIsVisible =
+            this.userCanDelete =
                 allPermissions.indexOf(PermissionUtil.Permissions.D) !== -1;
         }
 
@@ -472,7 +466,6 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      */
     hideAddValueForm() {
         this.addValueFormIsVisible = false;
-        this.addButtonIsVisible = true;
         this.propID = undefined;
     }
 
@@ -504,7 +497,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         return (
             isAllowed &&
             this.propID !== prop.propDef.id &&
-            this.addButtonIsVisible
+            this.userCanEdit
         );
     }
 
