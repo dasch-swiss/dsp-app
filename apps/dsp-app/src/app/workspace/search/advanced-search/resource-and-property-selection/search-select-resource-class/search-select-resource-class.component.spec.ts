@@ -10,9 +10,10 @@ import { MockOntology, ResourceClassDefinition } from '@dasch-swiss/dsp-js';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
-import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
-import { MatLegacySelectHarness as MatSelectHarness } from '@angular/material/legacy-select/testing';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectHarness } from '@angular/material/select/testing';
+
 import { SearchSelectResourceClassComponent } from './search-select-resource-class.component';
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 

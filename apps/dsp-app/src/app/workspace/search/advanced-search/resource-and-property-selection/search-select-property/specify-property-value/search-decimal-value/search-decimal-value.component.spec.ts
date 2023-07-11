@@ -3,7 +3,7 @@ import { SearchDecimalValueComponent } from './search-decimal-value.component';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatInputModule } from '@angular/material/input';
 import { ValueLiteral } from '../operator';
 import { By } from '@angular/platform-browser';
 

@@ -1,10 +1,13 @@
 :host ::ng-deep .child-value-component {
-  .mat-form-field-underline {
+  .mdc-line-ripple {
     display: none;
   }
-  .mat-form-field-infix {
+  .mat-mdc-form-field-infix {
     border-top: 0.2em solid transparent !important;
-    .mat-form-field-underline {
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+    min-height: 45px !important;
+    .mdc-line-ripple {
       display: block;
     }
   }

@@ -1,13 +1,13 @@
 <div [formGroup]="colorForm" class="color-picker-container">
     <mat-form-field
         appearance="outline"
-        [floatLabel]="'always'"
         class="child-input-component full-width"
     >
         <mat-label>{{ value }}</mat-label>
         <!-- check the ngx-color-picker doc to know more about the options - https://www.npmjs.com/package/ngx-color-picker -->
         <input
             matInput
+            placeholder="Select a color"
             class="color-picker-input color"
             [formControlName]="'color'"
             [(colorPicker)]="value"

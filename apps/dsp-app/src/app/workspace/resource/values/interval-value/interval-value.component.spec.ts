@@ -21,9 +21,9 @@ import {
     ReactiveFormsModule,
 } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatInputModule } from '@angular/material/input';
 import { Interval } from './interval-input/interval-input.component';
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { ErrorStateMatcher } from '@angular/material/core';

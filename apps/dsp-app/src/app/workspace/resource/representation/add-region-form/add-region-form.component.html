@@ -1,13 +1,13 @@
-<form [formGroup]="regionForm" class="form-content small-form">
-    <mat-form-field class="medium-field">
+<form [formGroup]="regionForm" class="form-content">
+    <mat-form-field class="large-field">
         <mat-label>Label</mat-label>
         <input matInput formControlName="label" />
     </mat-form-field>
-    <mat-form-field class="medium-field">
+    <mat-form-field class="large-field">
         <mat-label>Comment</mat-label>
         <textarea matInput rows="7" formControlName="comment"></textarea>
     </mat-form-field>
-    <mat-form-field class="medium-field without-border">
+    <mat-form-field class="large-field without-border color-field">
         <mat-label>Color *</mat-label>
         <app-color-picker #colorInput [formControlName]="'color'" class="value">
         </app-color-picker>

@@ -250,19 +250,4 @@
       bottom: 12px;
     }
   }
-
-  // TODO: do not use ng-deep anymore!!!
-  ::ng-deep .cdk-overlay-pane {
-    .mat-mdc-menu-panel {
-      box-shadow: none;
-      max-width: 100% !important;
-    }
-
-    .mat-select-panel-wrap {
-      margin-top: 20%;
-      .mat-select-panel {
-        max-height: 100% !important;
-      }
-    }
-  }
 }

@@ -1,35 +1,36 @@
-<div [formGroup]="form" class="interval-input-container">
-    <mat-form-field class="child-input-component">
-        <input
-            matInput
-            class="interval-input-element start"
-            [formControlName]="'start'"
-            type="number"
-            aria-label="start"
-            (input)="_handleInput()"
-            [placeholder]="intervalStartLabel"
-            [errorStateMatcher]="matcher"
-        />
-        <mat-error *ngIf="form.controls.start.hasError('required')">
-            Start is <strong>required</strong>.
-        </mat-error>
-    </mat-form-field>
-    <mat-form-field class="child-input-component">
-        <input
-            matInput
-            class="interval-input-element end"
-            [formControlName]="'end'"
-            type="number"
-            aria-label="end"
-            (input)="_handleInput()"
-            [placeholder]="intervalEndLabel"
-            [errorStateMatcher]="matcher"
-        />
-        <mat-error *ngIf="form.controls.end.hasError('required')">
-            End is <strong>required</strong>.
-        </mat-error>
-    </mat-form-field>
-
+<div [formGroup]="form">
+    <div class="inputs-wrapper">
+        <mat-form-field class="child-input-component">
+            <input
+                matInput
+                class="interval-input-element start"
+                [formControlName]="'start'"
+                type="number"
+                aria-label="start"
+                (input)="_handleInput()"
+                [placeholder]="intervalStartLabel"
+                [errorStateMatcher]="matcher"
+            />
+            <mat-error *ngIf="form.controls.start.hasError('required')">
+                Start is <strong>required</strong>.
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="child-input-component">
+            <input
+                matInput
+                class="interval-input-element end"
+                [formControlName]="'end'"
+                type="number"
+                aria-label="end"
+                (input)="_handleInput()"
+                [placeholder]="intervalEndLabel"
+                [errorStateMatcher]="matcher"
+            />
+            <mat-error *ngIf="form.controls.end.hasError('required')">
+                End is <strong>required</strong>.
+            </mat-error>
+        </mat-form-field>
+    </div>
     <div class="date-form-error">
         <mat-error
             *ngIf="

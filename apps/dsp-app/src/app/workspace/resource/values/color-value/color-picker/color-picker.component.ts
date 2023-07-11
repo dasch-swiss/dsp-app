@@ -27,7 +27,7 @@ import {
     _AbstractConstructor,
     _Constructor,
 } from '@angular/material/core';
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 
 /** error when invalid control is dirty, touched, or submitted. */

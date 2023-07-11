@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { of } from 'rxjs';

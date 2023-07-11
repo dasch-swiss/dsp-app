@@ -34,7 +34,7 @@ import {
     _AbstractConstructor,
     _Constructor,
 } from '@angular/material/core';
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import {
     CalendarDate,
     CalendarPeriod,

@@ -521,7 +521,7 @@ export class StillImageComponent
         overlay: Element
     ): void {
         const dialogConfig: MatDialogConfig = {
-            width: '337px',
+            width: '560px',
             maxHeight: '80vh',
             position: {
                 top: '112px',

@@ -9,3 +9,19 @@
     margin-top: 16px;
   }
 }
+
+.color-field {
+  // unfortunate necessary use of ng-deep to override the default
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    overflow: visible;
+    z-index: 999;
+
+    // the color picker library calculates the wrong position if placed in a dialog window
+    // this is a workaround to fix the position
+    .color-picker.open {
+      top: -240px !important;
+      left: 240px !important;
+      position: absolute !important;
+    }
+  }
+}

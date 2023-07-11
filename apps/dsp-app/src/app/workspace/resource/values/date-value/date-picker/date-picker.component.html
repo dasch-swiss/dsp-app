@@ -41,7 +41,7 @@
     >
         <!-- select calendar and button to close date picker -->
         <div class="calendar-selector panel">
-            <mat-form-field class="calendar" floatLabel="never">
+            <mat-form-field class="calendar">
                 <mat-label>Calendar</mat-label>
                 <mat-select formControlName="calendar" class="center">
                     <mat-option
@@ -73,12 +73,11 @@
             <!-- select month -->
             <mat-form-field
                 class="month"
-                floatLabel="never"
                 [class.larger]="calendar === 'ISLAMIC'"
             >
                 <mat-label>Month</mat-label>
                 <mat-select formControlName="month" class="center">
-                    <mat-option>-- None --</mat-option>
+                    <mat-option>None</mat-option>
                     <mat-option
                         *ngFor="let month of months; let i = index"
                         [value]="i + 1"
@@ -95,10 +94,9 @@
             <!-- set year incl. era -->
             <mat-form-field
                 class="year"
-                floatLabel="never"
                 [class.withButtonToggle]="calendar !== 'ISLAMIC'"
             >
-                <mat-label>Year *</mat-label>
+                <mat-label>Year</mat-label>
                 <input
                     matInput
                     type="number"

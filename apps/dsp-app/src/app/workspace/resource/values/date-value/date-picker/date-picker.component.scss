@@ -18,9 +18,9 @@
   margin: 0 8px;
 
   &.calendar-selector,
-  &.mont-year-selector {
+  &.month-year-selector {
     display: inline-flex;
-    height: 56px;
+    align-items: start;
   }
 
   &.calendar-selector {
@@ -30,17 +30,22 @@
 
     .action {
       display: flex;
+
+      button {
+        height: 48px;
+      }
     }
   }
   &.month-year-selector {
     .month {
-      width: 96px;
+      width: 126px;
       &.larger {
         width: 136px;
       }
     }
     .year {
       width: 136px;
+      padding-left: 2px;
 
       &.withButtonToggle {
         width: 180px;
@@ -48,7 +53,8 @@
 
       .era {
         mat-button-toggle {
-          width: 48px;
+          width: 40px;
+          font-size: 12px;
         }
       }
     }

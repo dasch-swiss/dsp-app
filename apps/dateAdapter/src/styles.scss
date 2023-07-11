@@ -31,7 +31,7 @@ $theme: mat.define-light-theme($primary, $accent, $warn);
 @include mat.all-component-themes($theme);
 
 app-calendar-header {
-  .mat-select {
+  .mat-mdc-select {
     background: #00796b;
     color: white;
     padding: 20px;
@@ -39,8 +39,8 @@ app-calendar-header {
     box-sizing: border-box;
   }
 
-  .mat-select-value,
-  .mat-select-arrow {
+  .mat-mdc-select-value,
+  .mat-mdc-select-arrow {
     color: #fff;
   }
 }

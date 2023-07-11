@@ -1,15 +1,24 @@
 :host ::ng-deep .child-value-component {
   width: fit-content;
-
-  .mat-form-field-underline {
+  .mdc-line-ripple {
     display: none;
   }
 
-  .mat-form-field-infix {
+  .mat-mdc-form-field-infix {
     border-top: 0.2em solid transparent !important;
-    .mat-form-field-underline {
+    padding-top: 16px;
+
+    .mat-mdc-form-field-underline {
       display: block;
     }
+  }
+}
+
+.color-field {
+  // unfortunate necessary use of ng-deep to override the default
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    overflow: visible;
+    z-index: 999;
   }
 }
 

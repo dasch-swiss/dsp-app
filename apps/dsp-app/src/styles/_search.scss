@@ -90,6 +90,10 @@ $gc-small: $full-input-width - $gc-large - 4;
     width: calc(100% - 32px);
     display: inline-flex;
   }
+
+  .large-field {
+    min-width: $full-input-width !important;
+  }
 }
 
 .small-field {

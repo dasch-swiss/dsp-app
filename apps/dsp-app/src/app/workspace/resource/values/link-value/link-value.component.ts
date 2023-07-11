@@ -10,7 +10,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
-import { MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
     Constants,

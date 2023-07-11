@@ -72,6 +72,19 @@ body {
 
 // The following styles will override material design!
 
+// mat-form-field overrides
+.mdc-text-field--filled:not(.mdc-text-field--disabled){
+  background-color: transparent;
+}
+
+.mat-mdc-form-field-focus-overlay {
+  background-color: whitesmoke;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-focus-overlay {
+  opacity: 1;
+}
+
 // jdnconvertiblecalendar main style
 .mat-datepicker-content {
   .mat-calendar {
@@ -83,24 +96,11 @@ body {
   margin: 0 0 !important;
 }
 
-app-color-value {
-  .mat-form-field-flex,
-  .color-picker-input {
-    cursor: pointer !important;
-  }
-
-  .mat-form-field-label span {
-    display: block;
-    padding: 8px 4px;
-    margin: 0 auto;
-  }
-}
-
 // String literal input
 // string literal textarea: overwrite material styling !important
 .string-literal {
   &.short-text {
-    .mat-form-field-infix {
+    .mat-mdc-form-field-infix {
       margin-left: 12px;
     }
   }
@@ -114,14 +114,13 @@ app-color-value {
     }
 
     // textarea
-    .mat-form-field-wrapper {
+    .mat-mdc-text-field-wrapper {
       width: 100%;
-
-      .mat-form-field-flex {
+      padding-left: 0px;
+      .mat-mdc-form-field-flex {
         border-left: 1px solid rgba(0, 0, 0, 0.12);
         min-height: calc(4 * 36px + 2px);
-
-        .mat-form-field-infix {
+        .mat-mdc-form-field-infix {
           // negative values are not the best choice,
           // but with this margin-top the placeholder is at the
           // same position as in the short-text input
@@ -146,54 +145,8 @@ app-color-value {
   max-width: 312px !important;
 }
 
-.year.withButtonToggle {
-  top: -0.05em;
-
-  .mat-form-field-suffix {
-    .suffix-toggle-group {
-      font-size: 12px;
-      border-radius: 0;
-      height: calc(36px - 0.25em);
-
-      .mat-button-toggle-label-content {
-        line-height: 36px !important;
-      }
-    }
-  }
-}
-
-.year,
-.month {
-  // hide dropdown arrow
-  .mat-select-arrow {
-    border: none;
-  }
-
-  // hide number de- and increase buttons
-  // input[type="number"]::-webkit-inner-spin-button,
-  // input[type="number"]::-webkit-outer-spin-button {
-  //   -webkit-appearance: none;
-  // }
-
-  // input[type="number"] {
-  //   -moz-appearance: textfield;
-  // }
-}
-
-// our own date picker value does not need additional space at the bottom
-// because of the combination with mat-menu which contains the date picker form
-.mat-form-field.date-picker-value {
-  .mat-form-field-wrapper {
-    padding-bottom: 0 !important;
-
-    .mat-form-field-underline {
-      bottom: 0 !important;
-    }
-  }
-}
-
-.mat-form-field.without-border {
-  .mat-form-field-underline {
+.mat-mdc-form-field.without-border {
+  .mdc-line-ripple {
     display: none;
   }
 }

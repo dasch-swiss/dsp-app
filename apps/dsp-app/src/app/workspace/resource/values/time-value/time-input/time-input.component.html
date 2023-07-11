@@ -1,43 +1,45 @@
 <div [formGroup]="form">
-    <app-jdn-datepicker [activeCalendar]="'Gregorian'">
+    <div class="inputs-wrapper">
+        <app-jdn-datepicker [activeCalendar]="'Gregorian'">
+            <mat-form-field class="child-input-component">
+                <input
+                    matInput
+                    class="time-input-element date"
+                    [matDatepicker]="picker"
+                    [formControlName]="'date'"
+                    (dateChange)="_handleInput()"
+                    aria-label="Date"
+                    [placeholder]="dateLabel"
+                    readonly
+                />
+                <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </app-jdn-datepicker>
         <mat-form-field class="child-input-component">
             <input
                 matInput
-                class="time-input-element date"
-                [matDatepicker]="picker"
-                [formControlName]="'date'"
-                (dateChange)="_handleInput()"
-                aria-label="Date"
-                [placeholder]="dateLabel"
-                readonly
+                class="time-input-element time"
+                [formControlName]="'time'"
+                type="time"
+                aria-label="Time"
+                (input)="_handleInput()"
+                [placeholder]="timeLabel"
+                [errorStateMatcher]="matcher"
             />
-            <mat-datepicker-toggle
-                matSuffix
-                [for]="picker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="form.controls.time.hasError('required')">
+                A time value in precision HH:MM is <strong>required</strong>.
+            </mat-error>
+            <mat-error *ngIf="form.controls.time.hasError('pattern')">
+                <span class="custom-error-message"
+                    >Time should be given in precision HH:MM.</span
+                >
+            </mat-error>
         </mat-form-field>
-    </app-jdn-datepicker>
-    <mat-form-field class="child-input-component">
-        <input
-            matInput
-            class="time-input-element time"
-            [formControlName]="'time'"
-            type="time"
-            aria-label="Time"
-            (input)="_handleInput()"
-            [placeholder]="timeLabel"
-            [errorStateMatcher]="matcher"
-        />
-        <mat-error *ngIf="form.controls.time.hasError('required')">
-            A time value in precision HH:MM is <strong>required</strong>.
-        </mat-error>
-        <mat-error *ngIf="form.controls.time.hasError('pattern')">
-            <span class="custom-error-message"
-                >Time should be given in precision HH:MM.</span
-            >
-        </mat-error>
-    </mat-form-field>
+    </div>
     <div class="date-form-error">
         <mat-error
             *ngIf="

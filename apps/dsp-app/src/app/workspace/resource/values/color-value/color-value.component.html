@@ -12,8 +12,10 @@
     <span [formGroup]="form">
         <mat-form-field
             class="large-field color-field child-value-component"
-            floatLabel="never"
         >
+            <!-- empty label so that the mat-label in the child component appears -->
+            <!-- it's a bit hacky but so is this entire component -->
+            <mat-label *ngIf="valueFormControl.value"></mat-label>
             <app-color-picker
                 #colorInput
                 [formControlName]="'value'"

@@ -11,8 +11,8 @@
     <span [formGroup]="form" class="parent-component-wrapper">
         <mat-form-field
             class="large-field child-value-component"
-            floatLabel="never"
         >
+            <mat-label *ngIf="valueFormControl.value"></mat-label>
             <app-time-input
                 #timeInput
                 [formControlName]="'value'"
