@@ -272,9 +272,6 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                     this.isError = true;
 
                     this.loading = false;
-
-                    // log error to Rollbar (done automatically by simply throwing a new Error)
-                    throw new Error('login failed');
                 }
             );
     }
