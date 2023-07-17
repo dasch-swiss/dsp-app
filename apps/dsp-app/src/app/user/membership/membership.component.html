@@ -9,27 +9,29 @@
     <mat-list>
         <!-- list of projects where the user is member of -->
         <mat-list-item *ngFor="let project of user.projects">
-            <mat-icon mat-list-icon>
-                <span>assignment</span>
-            </mat-icon>
-            <h4 mat-line>{{project.longname}}
-                ({{project.shortname}})</h4>
-            <p mat-line>
-                <span *ngIf="userIsProjectAdmin(user.permissions, project.id)">
-                    User is <strong>Project admin</strong>
-                </span>
-            </p>
-            <span class="fill-remaining-space"></span>
-            <button
-                mat-icon-button
-                color="warn"
-                (click)="removeFromProject(project.id)"
-                aria-label="Button to remove user from project"
-                matTooltip="Remove user from project"
-                matTooltipPosition="above"
-            >
-                <mat-icon>delete_outline</mat-icon>
-            </button>
+            <div class='item-container'>
+                <mat-icon mat-list-icon>
+                    <span>assignment</span>
+                </mat-icon>
+                <h4 mat-line>{{project.longname}}
+                    ({{project.shortname}})</h4>
+                <p mat-line>
+                    <span *ngIf="userIsProjectAdmin(user.permissions, project.id)">
+                        User is <strong>Project admin</strong>
+                    </span>
+                </p>
+                <span class="fill-remaining-space"></span>
+                <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="removeFromProject(project.id)"
+                    aria-label="Button to remove user from project"
+                    matTooltip="Remove user from project"
+                    matTooltipPosition="above"
+                >
+                    <mat-icon>delete_outline</mat-icon>
+                </button>
+            </div>
         </mat-list-item>
         <mat-divider class="more-space-top more-space-bottom"></mat-divider>
         <!-- select another project to add user -->
