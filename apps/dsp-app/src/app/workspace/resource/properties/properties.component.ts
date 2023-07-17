@@ -138,6 +138,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     deletedResource = false;
 
     userCanDelete: boolean;
+    cantDeleteReason = '';
+
     userCanEdit: boolean;
     addValueFormIsVisible: boolean; // used to toggle add value form field
     propID: string; // used in template to show only the add value form of the corresponding value
@@ -199,7 +201,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
             // if user has modify permissions, set addButtonIsVisible to true so the user see's the add button
             this.userCanEdit = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
 
-            // if user has delete permissions, set deleteButtonIsVisible to true so the user see's the delete button
+            // if user has delete permissions
             this.userCanDelete =
                 allPermissions.indexOf(PermissionUtil.Permissions.D) !== -1;
         }
@@ -571,11 +573,20 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
      * @param prop the resource property
      */
     deleteValueIsAllowed(prop: PropertyInfoValues): boolean {
-        return CardinalityUtil.deleteValueForPropertyAllowed(
+        const card = CardinalityUtil.deleteValueForPropertyAllowed(
             prop.propDef.id,
             prop.values.length,
             this.resource.res.entityInfo.classes[this.resource.res.type]
-        );
+        )
+            if (!card) {
+                this.cantDeleteReason = 'This value can not be deleted because it is required.';
+            }
+
+            if (!this.userCanDelete) {
+                this.cantDeleteReason = 'You do not have teh permission to delete this value.';
+            }
+
+            return card && this.userCanDelete;
     }
 
     /**

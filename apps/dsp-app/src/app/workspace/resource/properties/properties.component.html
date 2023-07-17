@@ -129,9 +129,16 @@
                 <div class="property-value">
                     <!-- the value(s) of the property -->
                     <div *ngFor="let val of prop.values">
-                        <app-display-edit *ngIf="val" #displayEdit [parentResource]="resource.res" [displayValue]="val"
-                            [propArray]="resource.resProps" [canDelete]="deleteValueIsAllowed(prop)"
-                            [projectStatus]="project?.status" [valueUuidToHighlight]="valueUuidToHighlight"
+                        <app-display-edit
+                            *ngIf="val"
+                            #displayEdit
+                            [parentResource]="resource.res"
+                            [displayValue]="val"
+                            [propArray]="resource.resProps"
+                            [canDelete]="deleteValueIsAllowed(prop)"
+                            [cantDeleteReason]='cantDeleteReason'
+                            [projectStatus]="project?.status"
+                            [valueUuidToHighlight]="valueUuidToHighlight"
                             (referredResourceClicked)="openResource($event)"
                             (referredResourceHovered)="previewResource()">
                         </app-display-edit>

@@ -91,6 +91,8 @@ export class DisplayEditComponent implements OnInit {
 
     @Input() canDelete: boolean;
 
+    @Input() cantDeleteReason: string;
+
     @Input() projectStatus: boolean;
 
     @Input() valueUuidToHighlight: string;
