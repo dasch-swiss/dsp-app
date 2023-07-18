@@ -20,6 +20,9 @@
         "ls-test-server": {
           "devServerTarget": "dsp-app:serve:ls-test-server"
         },
+        "0845-test-server": {
+          "devServerTarget": "dsp-app:serve:0845-test-server"
+        },
         "staging-server": {
           "devServerTarget": "dsp-app:serve:staging-server"
         }
@@ -40,6 +43,9 @@
         },
         "ls-test-server": {
           "devServerTarget": "dsp-app:serve:ls-test-server"
+        },
+        "0845-test-server": {
+          "devServerTarget": "dsp-app:serve:0845-test-server"
         },
         "staging-server": {
           "devServerTarget": "dsp-app:serve:staging-server"

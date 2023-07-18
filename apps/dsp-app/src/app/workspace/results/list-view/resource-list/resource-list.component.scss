@@ -26,9 +26,11 @@
   display: flex;
   flex-grow: 1; /* grow to fill remaining space */
   cursor: pointer;
+  overflow: hidden;
 }
 
 .res-list-item-text{
+  width: 85%;
   padding-left: 16px;
   padding-top: 8px;
   padding-bottom: 8px;
@@ -49,6 +51,7 @@
 }
 
 .res-class-value {
+  width: 85%;
   font-weight: bold !important;
   font-size: 16px !important;
   line-height: 1.5;
@@ -56,4 +59,8 @@
 
 .res-prop-label {
   font-style: italic;
+}
+
+.res-checkbox {
+  min-width: 3em;
 }

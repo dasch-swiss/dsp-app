@@ -1,0 +1,31 @@
+{
+  "dspRelease": "2023.05.03",
+  "apiProtocol": "https",
+  "apiHost": "api.0845-test-server.dasch.swiss",
+  "apiPort": 443,
+  "apiPath": "",
+  "iiifProtocol": "https",
+  "iiifHost": "iiif.0845-test-server.dasch.swiss",
+  "iiifPort": 443,
+  "iiifPath": "",
+  "geonameToken": "knora",
+  "jsonWebToken": "",
+  "logErrors": true,
+  "zioPrefix": ":5555",
+  "zioEndpoints": [],
+  "iriBase": "http://rdfh.ch",
+  "instrumentation": {
+    "environment": "0845-test-server",
+    "dataDog": {
+      "enabled": false,
+      "applicationId": "",
+      "clientToken": "",
+      "site": "",
+      "service": ""
+    },
+    "rollbar": {
+      "enabled": false,
+      "accessToken": ""
+    }
+  }
+}

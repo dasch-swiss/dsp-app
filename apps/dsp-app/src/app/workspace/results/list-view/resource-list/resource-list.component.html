@@ -11,7 +11,7 @@
         "
     >
         <mat-list-item>
-            <span matListItemTitle class="res-list-item-container">
+            <div matListItemTitle class="res-list-item-container">
                 <div class="res-list-item-content"
                     (click)="
                         selectResource({
@@ -25,13 +25,13 @@
                 >
                     <mat-icon matListItemIcon>{{ getIcon(resource) }}</mat-icon>
                     <div matLine class="res-list-item-text">
-                        <p matLine class="res-class-label">
+                        <p matLine class="res-class-label shorten-long-text">
                             {{
                                 resource.entityInfo.classes[resource.type].label
                             }}
                         </p>
-                        <h3 matLine class="res-class-value">
-                            {{ resource.label }}
+                        <h3 matLine class="res-class-value shorten-long-text">
+                            label{{ resource.label }}
                         </h3>
                         <div
                             matLine
@@ -73,7 +73,7 @@
                     >
                     </mat-checkbox>
                 </div>
-            </span>
+            </div>
         </mat-list-item>
     </div>
 </mat-list>
