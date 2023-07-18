@@ -8,3 +8,9 @@
   display: flex;
   align-items: center;
 }
+
+.item-container h4 {
+  max-width: 85%;
+  text-overflow: ellipsis;
+  overflow: clip;
+}
