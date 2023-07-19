@@ -1,52 +1,70 @@
 {
-    "root": true,
-    "ignorePatterns": ["**/*"],
-    "plugins": ["@nrwl/nx", "ban"],
-    "overrides": [
-        {
-            "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-            "rules": {
-                "@nrwl/nx/enforce-module-boundaries": [
-                    "error",
-                    {
-                        "enforceBuildableLibDependency": true,
-                        "allow": [],
-                        "depConstraints": [
-                            {
-                                "sourceTag": "*",
-                                "onlyDependOnLibsWithTags": ["*"]
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "files": ["*.ts", "*.tsx"],
-            "extends": ["plugin:@nrwl/nx/typescript"],
-            "rules": {}
-        },
-        {
-            "files": ["*.js", "*.jsx"],
-            "extends": ["plugin:@nrwl/nx/javascript"],
-            "rules": {}
-        },
-        {
-            "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
-            "env": {
-                "jest": true
-            },
-            "rules": {
-                "ban/ban": [
-                    2,
-                    { "name": ["describe", "only"], "message": "don't focus tests" },
-                    { "name": "fdescribe", "message": "don't focus tests" },
-                    { "name": ["it", "only"], "message": "don't focus tests" },
-                    { "name": "fit", "message": "don't focus tests" },
-                    { "name": ["test", "only"], "message": "don't focus tests" },
-                    { "name": "ftest", "message": "don't focus tests" }
-                ]
-            }
-        }
-    ]
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx", "ban"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "ban/ban": [
+          2,
+          {
+            "name": ["describe", "only"],
+            "message": "don't focus tests"
+          },
+          {
+            "name": "fdescribe",
+            "message": "don't focus tests"
+          },
+          {
+            "name": ["it", "only"],
+            "message": "don't focus tests"
+          },
+          {
+            "name": "fit",
+            "message": "don't focus tests"
+          },
+          {
+            "name": ["test", "only"],
+            "message": "don't focus tests"
+          },
+          {
+            "name": "ftest",
+            "message": "don't focus tests"
+          }
+        ]
+      }
+    }
+  ]
 }
