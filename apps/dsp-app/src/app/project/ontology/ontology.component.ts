@@ -326,6 +326,7 @@ export class OntologyComponent implements OnInit {
         this._dspApiConnection.v2.onto.getOntology(iri, true).subscribe(
             (response: ReadOntology) => {
                 this.resetOntologyView(response);
+                this._dspApiConnection.v2.ontologyCache.reloadCachedItem(response.id);
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
