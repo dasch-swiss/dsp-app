@@ -63,6 +63,8 @@ export class AddValueComponent implements OnInit, AfterViewInit {
     // gui element in case of textValue
     textValueGuiEle: 'simpleText' | 'textArea' | 'richText';
 
+    textArea = false;
+
     ontoIri: string;
 
     constructor(
@@ -97,6 +99,10 @@ export class AddValueComponent implements OnInit, AfterViewInit {
                 this.textValueGuiEle = this._valueService.getTextValueGuiEle(
                     this.resourcePropertyDefinition.guiElement
                 );
+
+                if (this.textValueGuiEle === 'textArea') {
+                    this.textArea = true;
+                }
             }
         }
     }
