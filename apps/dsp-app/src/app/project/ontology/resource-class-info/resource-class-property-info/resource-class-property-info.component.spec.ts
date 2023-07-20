@@ -1,7 +1,7 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component, DebugElement, ViewChild } from '@angular/core';
+import { Component, DebugElement, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import {
@@ -140,6 +140,16 @@ class LinkHostComponent {
     };
 }
 
+@Component({
+    selector: 'ngx-skeleton-loader',
+    template: '',
+})
+class MockNgxSkeletonLoaderComponent {
+    @Input() theme: string;
+    // Add any other necessary input properties here
+}
+
+
 /**
  * test host component to simulate parent component
  * Property is of type list dropdown
@@ -228,6 +238,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
                 SimpleTextHostComponent,
                 SplitPipe,
                 ResourceClassPropertyInfoComponent,
+                MockNgxSkeletonLoaderComponent
             ],
             imports: [
                 BrowserAnimationsModule,
@@ -262,7 +273,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
                 {
                     provide: MatDialogRef,
                     useValue: {},
-                },
+                }
             ],
         }).compileComponents();
     }));

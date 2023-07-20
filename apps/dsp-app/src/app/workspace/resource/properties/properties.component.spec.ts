@@ -148,6 +148,7 @@ class TestDisplayValueComponent {
     @Input() parentResource: DspResource;
     @Input() configuration?: object;
     @Input() canDelete: boolean;
+    @Input() cantDeleteReason: string;
     @Input() projectStatus: boolean;
     @Input() valueUuidToHighlight: string;
 
