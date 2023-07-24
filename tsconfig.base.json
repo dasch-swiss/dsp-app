@@ -7,6 +7,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "target": "ES2022",
     "module": "ES2020",
     "lib": ["ES2021", "dom"],
     "moduleResolution": "node",
@@ -22,6 +23,9 @@
       ],
       "@dasch-swiss/jdnconvertiblecalendardateadapter": [
         "libs/jdnconvertiblecalendardateadapter/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-analytics": [
+        "libs/vre/shared/app-analytics/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-config": [
         "libs/vre/shared/app-config/src/index.ts"

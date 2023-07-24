@@ -3,7 +3,10 @@ import { ApiResponseError, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { DatadogRumService } from './datadog-rum.service';
+import {
+    DatadogRumService,
+    PendoAnalyticsService,
+} from '@dasch-swiss/vre/shared/app-analytics';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Injectable({
@@ -15,6 +18,7 @@ export class AuthenticationService {
         private _dspApiConnection: KnoraApiConnection,
         private _applicationStateService: ApplicationStateService,
         private _datadogRumService: DatadogRumService,
+        private _pendoAnalyticsService: PendoAnalyticsService,
         private _errorHandler: AppErrorHandler,
         private _session: SessionService
     ) {}
@@ -36,6 +40,9 @@ export class AuthenticationService {
 
                 // remove active datadog user
                 this._datadogRumService.removeActiveUser();
+
+                // remove active pendo user
+                this._pendoAnalyticsService.removeActiveUser();
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
