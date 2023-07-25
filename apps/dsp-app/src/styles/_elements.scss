@@ -345,6 +345,7 @@ a,
 
 // file representation menu styling
 .representation-menu {
+  --mat-menu-item-label-text-color: $white;
   &.mdc-menu-surface {
     @include menu-surface.fill-color($dark);
     @include menu-surface.ink-color($white);
