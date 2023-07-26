@@ -27,6 +27,20 @@ export interface SearchPlace {
     locationType: string;
 }
 
+export interface GeonameData {
+    geonameId: string;
+    name: string;
+    asciiName: string;
+    countryCode: string;
+    countryName: string;
+    adminName1?: string;
+    fclName: string;
+}
+
+export interface GeonameResponse {
+    geonames: GeonameData[];
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -109,67 +123,24 @@ export class GeonameService {
      * @param searchString place to search for.
      */
     searchPlace(searchString: string): Observable<SearchPlace[]> {
-        return this._http
-            .get<object>(
-                'https://ws.geonames.net/searchJSON?userName=' +
-                    this._appConfigService.dspAppConfig.geonameToken +
-                    '&lang=en&style=full&maxRows=12&name_startsWith=' +
-                    encodeURIComponent(searchString)
-            )
-            .pipe(
-                map(
-                    (places: {
-                        geonames: {
-                            geonameId: string;
-                            name: string;
-                            countryName: string;
-                            adminName1?: string;
-                            fclName: string;
-                        }[]; // assertions for TS compiler
-                    }) => {
-                        if (!Array.isArray(places.geonames)) {
-                            // there is no top level array
-                            throw new Error(
-                                'search did not return an array of results'
-                            );
-                        }
+        const url = `https://ws.geonames.net/searchJSON?userName=${this._appConfigService.dspAppConfig.geonameToken}&lang=en&style=full&maxRows=12&name_startsWith=${encodeURIComponent(searchString)}`;
 
-                        return places.geonames.map((geo) => {
-                            if (
-                                !(
-                                    'geonameId' in geo &&
-                                    'name' in geo &&
-                                    'countryName' in geo &&
-                                    'fclName' in geo
-                                )
-                            ) {
-                                // at least one of the expected properties is not present
-                                throw new Error(
-                                    'required property missing in geonames response'
-                                );
-                            }
-
-                            return {
-                                id: geo.geonameId.toString(),
-                                displayName:
-                                    geo.name +
-                                    (geo.adminName1 !== undefined
-                                        ? ', ' + geo.adminName1
-                                        : '') +
-                                    ', ' +
-                                    geo.countryName,
-                                name: geo.name,
-                                administrativeName: geo.adminName1,
-                                country: geo.countryName,
-                                locationType: geo.fclName,
-                            };
-                        });
-                    }
-                ),
-                catchError((error) =>
-                    // an error occurred
-                    throwError(error)
-                )
-            );
+        return this._http.get<GeonameResponse>(url).pipe(
+            map(response => {
+                return response.geonames
+                    .filter(geo => geo.geonameId && geo.name && geo.countryName && geo.fclName) // only map those with required properties to avoid duplicates
+                    .map(geo => {
+                        return {
+                            id: geo.geonameId.toString(),
+                            displayName: `${geo.name}${geo.adminName1 ? ', ' + geo.adminName1 : ''}${geo.countryName ? ', ' + geo.countryName : ''}`,
+                            name: geo.name,
+                            administrativeName: geo.adminName1,
+                            country: geo.countryName,
+                            locationType: geo.fclName,
+                        };
+                    });
+            }),
+            catchError((error) => throwError(error))
+        );
     }
 }
