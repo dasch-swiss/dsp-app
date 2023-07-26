@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import {
+    ChangeDetectorRef,
     Component,
     Inject,
     Input,
     OnChanges,
     OnDestroy,
-    ViewChild,
+    ViewChild
 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
@@ -140,7 +141,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         private _router: Router,
         private _session: SessionService,
         private _titleService: Title,
-        private _valueOperationEventService: ValueOperationEventService
+        private _valueOperationEventService: ValueOperationEventService,
+        private _cdr:ChangeDetectorRef
     ) {
         this._route.params.subscribe((params) => {
             this.projectCode = params['project'];
@@ -440,15 +442,16 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
     tabChanged(e: MatTabChangeEvent) {
         if (e.tab.textLabel === 'annotations') {
-            this.stillImageComponent.renderRegions();
+            this.stillImageComponent?.renderRegions();
         } else {
-            this.stillImageComponent.removeOverlays();
+            this.stillImageComponent?.removeOverlays();
         }
         this.selectedTabLabel = e.tab.textLabel;
     }
 
     representationLoaded(e: boolean) {
         this.loading = !e;
+        this._cdr.detectChanges();
     }
 
     /**
@@ -643,6 +646,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
             )
             .subscribe(
                 (incomingImageRepresentations: ReadResourceSequence) => {
+                    if (!this.resource) {
+                        return; // if there is no resource anymore when the response arrives, do nothing
+                    }
                     if (incomingImageRepresentations.resources.length > 0) {
                         // set the incoming representations for the current offset only
                         this.resource.incomingRepresentations =
@@ -734,12 +740,16 @@ export class ResourceComponent implements OnChanges, OnDestroy {
      */
     protected getIncomingLinks(offset: number): void {
         this._incomingService
-            .getIncomingLinksForResource(this.resource.res.id, offset)
+            .getIncomingLinksForResource(this.resource?.res.id, offset)
             .subscribe(
                 (incomingResources: ReadResourceSequence) => {
+                    // Check if incomingReferences is initialized, if not, initialize it as an empty array
+                    if (!this.resource?.res.incomingReferences) {
+                        this.resource.res.incomingReferences = [];
+                    }
                     // append elements incomingResources to this.resource.incomingLinks
                     Array.prototype.push.apply(
-                        this.resource.res.incomingReferences,
+                        this.resource?.res.incomingReferences,
                         incomingResources.resources
                     );
                 },

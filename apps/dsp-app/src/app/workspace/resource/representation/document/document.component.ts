@@ -140,6 +140,9 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     }
 
     openFullscreen() {
+        if (!this.elem) {
+            return; // guard
+        }
         if (this.elem.requestFullscreen) {
             this.elem.requestFullscreen();
         } else if (this.elem.mozRequestFullScreen) {

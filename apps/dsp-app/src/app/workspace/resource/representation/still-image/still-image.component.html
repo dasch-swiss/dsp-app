@@ -43,12 +43,12 @@
             [max]="compoundNavigation.totalPages"
             [min]="1"
             [step]="1"
-            [(ngModel)]="compoundNavigation.page"
             showTickMarks
             discrete
             #ngSlider
             ><input
                 matSliderThumb
+                [(ngModel)]="compoundNavigation.page"
                 (change)="
                     openPage(
                         {
