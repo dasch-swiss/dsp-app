@@ -14,6 +14,7 @@
     #upload
     [representation]="representation"
     (fileInfo)="setFileValue($event)"
+    (forceReload)=closeDialog.emit(undefined);
 ></app-upload>
 
 <div class="form-panel form-action">

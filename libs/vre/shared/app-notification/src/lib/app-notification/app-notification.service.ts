@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
     MatSnackBar,
@@ -20,7 +21,7 @@ export class NotificationService {
     // action: string = 'x', duration: number = 4200
     // and / or type: 'note' | 'warning' | 'error' | 'success'; which can be used for the panelClass
     openSnackBar(
-        notification: string | ApiResponseError,
+        notification: string | HttpErrorResponse | ApiResponseError,
         type?: 'success' | 'error'
     ): void {
         let message: string;
@@ -35,7 +36,7 @@ export class NotificationService {
         if (notification instanceof ApiResponseError) {
             conf.panelClass = type ? type : 'error';
             notification = notification as ApiResponseError;
-            if ( 
+            if (
                 notification.error && notification.error instanceof AjaxError &&
                 !notification.error['message'].startsWith('ajax error')
             ) {
@@ -60,7 +61,16 @@ export class NotificationService {
             }
         } else {
             conf.panelClass = type ? type : 'success';
-            message = notification;
+            if (notification instanceof HttpErrorResponse) {
+                message = notification.message;
+                // sipi error
+                if(message.includes('knora.json: 0 Unknown Error')){
+                    message = 'IIIF server error: The image could not be loaded. Please try again later.';
+                }
+
+            } else {
+                message = notification;
+            }
         }
         this._snackBar.open(message, 'x', conf);
     }

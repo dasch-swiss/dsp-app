@@ -24,6 +24,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
 const resolvedPromise = Promise.resolve(null);
@@ -49,7 +50,9 @@ export class UploadComponent implements OnInit {
     @Output() fileInfo: EventEmitter<CreateFileValue> =
         new EventEmitter<CreateFileValue>();
 
-    
+    @Output() forceReload = new EventEmitter<void>();
+
+
     @ViewChild('fileInput') fileInput: ElementRef;
     file: File;
     form: UntypedFormGroup;
@@ -78,7 +81,8 @@ export class UploadComponent implements OnInit {
         private _fb: UntypedFormBuilder,
         private _notification: NotificationService,
         private _sanitizer: DomSanitizer,
-        private _upload: UploadFileService
+        private _upload: UploadFileService,
+        private _errorHandler: AppErrorHandler
     ) {}
 
     ngOnInit(): void {
@@ -144,11 +148,16 @@ export class UploadComponent implements OnInit {
                         }
                         this.isLoading = false;
                     },
-                    (e: Error) => {
+                    (e: Error) => { // as we do not get a proper error message from the server
+                        if (e.message.startsWith('Http failure response for ')) {
+                            e.message = 'ERROR: File upload failed. The iiif server is not reachable at the moment. Please try again later.';
+                        }
                         this._notification.openSnackBar(e.message);
                         this.isLoading = false;
                         this.file = null;
                         this.thumbnailUrl = null;
+                        this._errorHandler.handleError(e);
+                        this.forceReload.emit();
                     }
                 );
             }

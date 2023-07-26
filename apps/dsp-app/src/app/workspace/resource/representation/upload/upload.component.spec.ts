@@ -14,6 +14,8 @@ import { of } from 'rxjs';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
 import { UploadFileService } from './upload-file.service';
 import { UploadComponent } from './upload.component';
+import { AppErrorHandler} from '@dasch-swiss/vre/shared/app-error-handler';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 
 /**
  * test host component to simulate parent component.
@@ -51,6 +53,10 @@ describe('UploadComponent', () => {
         const uploadServiceSpy = jasmine.createSpyObj('UploadFileService', [
             'upload',
         ]);
+        const notificationServiceMock = jasmine.createSpyObj('NotificationService', ['openSnackBar']);
+        const errorHandlerMock = jasmine.createSpyObj('AppErrorHandler', ['handleError']);
+
+
 
         TestBed.configureTestingModule({
             declarations: [UploadComponent, TestHostComponent, SplitPipe],
@@ -65,6 +71,14 @@ describe('UploadComponent', () => {
                 {
                     provide: UploadFileService,
                     useValue: uploadServiceSpy,
+                },
+                {
+                    provide: NotificationService,
+                    useValue: notificationServiceMock,
+                },
+                {
+                    provide: AppErrorHandler,
+                    useValue: errorHandlerMock,
                 },
             ],
         }).compileComponents();
