@@ -15,15 +15,19 @@ export class TextValueHtmlLinkDirective {
      */
     @HostListener('mousedown', ['$event.target'])
     onClick(targetElement) {
+        if (targetElement.nodeName.toLowerCase() !== 'a') {
+            return false; // only handle click events on links
+        }
         if (
-            targetElement.nodeName.toLowerCase() === 'a' &&
             targetElement.className
                 .toLowerCase()
                 .indexOf(Constants.SalsahLink) !== -1
         ) {
             this.internalLinkClicked.emit(targetElement.href);
-
-            // preventDefault (propagation)
+            return false;
+        } else {
+            // open all other links as external links in a new tab
+            window.open(targetElement.href, '_blank');
             return false;
         }
     }
