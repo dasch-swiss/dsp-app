@@ -1,5 +1,45 @@
 # Changelog
 
+## [10.23.0](https://github.com/dasch-swiss/dsp-das/compare/v10.22.0...v10.23.0) (2023-07-26)
+
+
+### Enhancements
+
+* **remove property menu:** add skeleton to mat menu until content loaded ([#1148](https://github.com/dasch-swiss/dsp-das/issues/1148)) ([659f0f4](https://github.com/dasch-swiss/dsp-das/commit/659f0f490cd8711be76ee3598801da04bcf1df17))
+* **upload image:** add snackbar message if upload to sipi temp failed ([#1166](https://github.com/dasch-swiss/dsp-das/issues/1166)) ([6df61e9](https://github.com/dasch-swiss/dsp-das/commit/6df61e9931c6116435ef23f0e924e71bbaa37040))
+
+
+### Bug Fixes
+
+* **action bubble position:** reposition the action bubble ([#1147](https://github.com/dasch-swiss/dsp-das/issues/1147)) ([cc5b66c](https://github.com/dasch-swiss/dsp-das/commit/cc5b66c40cff5875abe70ee0f77b8279501cee9a))
+* **add-value:** paragraph not showing as textarea ([#1155](https://github.com/dasch-swiss/dsp-das/issues/1155)) ([83a0854](https://github.com/dasch-swiss/dsp-das/commit/83a08541ec691c88e0a83a4af8252a728d8b2f7e))
+* **app/ontology:** stop ontology service from spamming errors ([#1144](https://github.com/dasch-swiss/dsp-das/issues/1144)) ([fecf296](https://github.com/dasch-swiss/dsp-das/commit/fecf296beccce49b81fe505402aa992b14fc1e08))
+* **delete value button:** evaluate users permissions to enable/disable delete button ([#1138](https://github.com/dasch-swiss/dsp-das/issues/1138)) ([6736942](https://github.com/dasch-swiss/dsp-das/commit/6736942502def96427aa703ba62a16d83ce01ce5))
+* **geonames search results:** filter out properties instead of error ([#1164](https://github.com/dasch-swiss/dsp-das/issues/1164)) ([7c478d6](https://github.com/dasch-swiss/dsp-das/commit/7c478d68074dcb29d1e9f020952bbbf551ebe28f))
+* **ontology:** Ontology cache is not updated when adding property to resource class ([#1156](https://github.com/dasch-swiss/dsp-das/issues/1156)) ([162b52e](https://github.com/dasch-swiss/dsp-das/commit/162b52eb68938d8a12ad8aa3d1691814675b376e))
+* **pdf viewer:** menubar is broken ([#1160](https://github.com/dasch-swiss/dsp-das/issues/1160)) ([22e99e5](https://github.com/dasch-swiss/dsp-das/commit/22e99e5c0fed9b69faad1ca5b4ce2b165eaf1d6e))
+* **project list items:** users project list items display elements correctly ([#1141](https://github.com/dasch-swiss/dsp-das/issues/1141)) ([f7eca25](https://github.com/dasch-swiss/dsp-das/commit/f7eca2507725c3a3b1a3c0c48bb3a0e19737e719))
+* **resource-list:** remove erroneous text before each label ([#1154](https://github.com/dasch-swiss/dsp-das/issues/1154)) ([2177437](https://github.com/dasch-swiss/dsp-das/commit/2177437c3015b47d8207aac5a7884a719dc3cc25))
+* **runtime errors:** fix forms error, ExpressionChangedAfterItHasBeenChecked and properties of undefined ([#1168](https://github.com/dasch-swiss/dsp-das/issues/1168)) ([3f6a253](https://github.com/dasch-swiss/dsp-das/commit/3f6a253434617740f858fee52fda98233f2ecc2a))
+* **text values:** open all non internal links in a new tab ([#1167](https://github.com/dasch-swiss/dsp-das/issues/1167)) ([ea6ccff](https://github.com/dasch-swiss/dsp-das/commit/ea6ccffcc7434d24dad0b37dcd6ccc0ea895be19))
+* **type error:** check existence of internal context ([#1136](https://github.com/dasch-swiss/dsp-das/issues/1136)) ([c32f8b8](https://github.com/dasch-swiss/dsp-das/commit/c32f8b86384cfef1c6c9bba0a22eccf177d8d1c3))
+* **type error:** check existence of ReadOntology instances ([#1140](https://github.com/dasch-swiss/dsp-das/issues/1140)) ([c8d8024](https://github.com/dasch-swiss/dsp-das/commit/c8d8024f055048b2e6c36c86a96ee340be136b2d))
+
+
+### Maintenance
+
+* add pendo analytics ([#1157](https://github.com/dasch-swiss/dsp-das/issues/1157)) ([15f7a33](https://github.com/dasch-swiss/dsp-das/commit/15f7a33de7d0f48f5e6094aa3be72cf63e958c49))
+* **deps:** bump semver from 5.7.1 to 5.7.2 ([#1143](https://github.com/dasch-swiss/dsp-das/issues/1143)) ([46351b0](https://github.com/dasch-swiss/dsp-das/commit/46351b0ad324b00ff5c5ca0d23a3c916689fe6c4))
+* **deps:** bump word-wrap from 1.2.3 to 1.2.5 ([#1158](https://github.com/dasch-swiss/dsp-das/issues/1158)) ([884d6c3](https://github.com/dasch-swiss/dsp-das/commit/884d6c3ee5d48c97454975b09dc1a069cd909821))
+* **empty comment:** Keep empty comments placeholder unstyled ([#1169](https://github.com/dasch-swiss/dsp-das/issues/1169)) ([a96215c](https://github.com/dasch-swiss/dsp-das/commit/a96215cfd10ebbc5f705f92947acfc65a6de84b7))
+* **error logging:** do not throw error on failed login attempt ([#1142](https://github.com/dasch-swiss/dsp-das/issues/1142)) ([e548344](https://github.com/dasch-swiss/dsp-das/commit/e548344d4c02709264dda5d57beadff8ffd6d1b4))
+* **mdc-migration:** migrate material formfield, input, select, autocomplete ([#1122](https://github.com/dasch-swiss/dsp-das/issues/1122)) ([41dd432](https://github.com/dasch-swiss/dsp-das/commit/41dd4320f2cf1ffc3abfaed62145eb31f42e49b5))
+* **representation components:** set the text color of the menu items ([#1162](https://github.com/dasch-swiss/dsp-das/issues/1162)) ([b1f510e](https://github.com/dasch-swiss/dsp-das/commit/b1f510e482af908306efddc31668ce6eac0e0d9a))
+* **resource list:** prevent shift/overlap of checkboxes ([#1149](https://github.com/dasch-swiss/dsp-das/issues/1149)) ([e2d1582](https://github.com/dasch-swiss/dsp-das/commit/e2d15829c4007c55af1a1ac02e8a8cc8ba9bfda5))
+* **test console output:** Mock components to avoid spamming ([#1152](https://github.com/dasch-swiss/dsp-das/issues/1152)) ([fd3ff9e](https://github.com/dasch-swiss/dsp-das/commit/fd3ff9e2531786d14f2d606562503b3d1fede1bc))
+* upgrade angular to 16 ([#1153](https://github.com/dasch-swiss/dsp-das/issues/1153)) ([08c17fa](https://github.com/dasch-swiss/dsp-das/commit/08c17fa9665c9fe1a6607f8aa0bcb7cba2414fe3))
+* **user membership:** Clip long project names with overflow ellipsis ([#1150](https://github.com/dasch-swiss/dsp-das/issues/1150)) ([f219e84](https://github.com/dasch-swiss/dsp-das/commit/f219e84c619982cb26f5803ebb5f5cbb50078fa5))
+
 ## [10.22.0](https://github.com/dasch-swiss/dsp-das/compare/v10.21.0...v10.22.0) (2023-07-07)
 
 
