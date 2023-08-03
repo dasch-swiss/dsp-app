@@ -82,7 +82,8 @@ class NoValueRequiredTestHostComponent implements OnInit {
 }
 
 @Component({
-    selector: 'app-date-picker',
+    // eslint-disable-next-line @angular-eslint/component-selector
+    selector: 'dasch-swiss-app-date-picker',
     template: '',
     providers: [
         {

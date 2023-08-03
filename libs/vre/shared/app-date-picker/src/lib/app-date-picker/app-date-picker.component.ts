@@ -36,8 +36,13 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { Subject } from 'rxjs';
-import { KnoraDatePipe } from '../../../../../main/pipes/formatting/knoradate.pipe';
-import { ValueService } from '../../../services/value.service';
+import {
+    CalendarDate,
+    CalendarPeriod,
+    GregorianCalendarDate,
+    IslamicCalendarDate,
+    JulianCalendarDate,
+} from '@dasch-swiss/jdnconvertiblecalendar';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
@@ -57,6 +62,16 @@ export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
 type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> &
     _AbstractConstructor<CanUpdateErrorState>;
 
+interface FormErrors {
+    [key: string]: string;
+}
+
+interface ValidationMessages {
+    [key: string]: {
+        [key: string]: string;
+    };
+}
+
 class MatInputBase {
     constructor(
         public _defaultErrorStateMatcher: ErrorStateMatcher,
@@ -70,16 +85,11 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
     mixinErrorState(MatInputBase);
 
 @Component({
-    selector: 'app-date-picker',
-    templateUrl: './date-picker.component.html',
-    styleUrls: ['./date-picker.component.scss'],
-    providers: [
-        { provide: MatFormFieldControl, useExisting: DatePickerComponent },
-        { provide: KnoraDatePipe },
-        { provide: Subject },
-    ],
+    selector: 'dasch-swiss-app-date-picker',
+    templateUrl: './app-date-picker.component.html',
+    styleUrls: ['./app-date-picker.component.scss'],
 })
-export class DatePickerComponent
+export class AppDatePickerComponent
     extends _MatInputMixinBase
     implements
         ControlValueAccessor,
@@ -91,33 +101,35 @@ export class DatePickerComponent
 {
     static nextId = 0;
 
-    @ViewChild(MatMenuTrigger) popover: MatMenuTrigger;
+    @ViewChild(MatMenuTrigger) popover!: MatMenuTrigger;
     @Output() closed: EventEmitter<void> = new EventEmitter();
-    @Input() errorStateMatcher: ErrorStateMatcher;
+    @Input() override errorStateMatcher!: ErrorStateMatcher;
 
     // disable calendar selector in case of end date in a period date value
-    @Input() disableCalendarSelector: boolean;
+    @Input() disableCalendarSelector!: boolean;
 
     // set predefinde calendar
     @Input() calendar = 'GREGORIAN';
 
-    @HostBinding() id = `app-date-picker-${DatePickerComponent.nextId++}`;
+    @HostBinding()
+    id = `dasch-swiss-app-date-picker-${AppDatePickerComponent.nextId++}`;
 
     @HostBinding('attr.aria-describedby') describedBy = '';
     dateForm: UntypedFormGroup;
     focused = false;
-    errorState = false;
-    controlType = 'app-date-picker';
+    override errorState = false;
+    controlType = 'dasch-swiss-app-date-picker';
     matcher = new DatePickerErrorStateMatcher();
 
     // own date picker variables
-    date: KnoraDate;
-    form: UntypedFormGroup;
-    formErrors = {
+    date!: KnoraDate;
+    form!: UntypedFormGroup;
+
+    formErrors: FormErrors = {
         year: '',
     };
 
-    validationMessages = {
+    validationMessages: ValidationMessages = {
         year: {
             required: 'At least the year has to be set.',
             min: 'A valid year is greater than 0.',
@@ -142,13 +154,13 @@ export class DatePickerComponent
 
     weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-    weeks = [];
+    weeks: number[][] = [];
     days: number[] = [];
-    day: number;
-    month: number;
-    year: number;
+    day: number | undefined;
+    month!: number;
+    year!: number;
 
-    disableDaySelector: boolean;
+    disableDaySelector!: boolean;
 
     calendars = ['GREGORIAN', 'JULIAN', 'ISLAMIC'];
 
@@ -157,7 +169,7 @@ export class DatePickerComponent
 
     private _required = false;
     private _disabled = false;
-    private _placeholder: string;
+    private _placeholder!: string;
 
     @HostBinding('class.floating')
     get shouldLabelFloat() {
@@ -169,14 +181,31 @@ export class DatePickerComponent
         return this._required;
     }
 
+    set required(req) {
+        this._required = coerceBooleanProperty(req);
+        this.stateChanges.next();
+    }
+
     @Input()
     get disabled(): boolean {
         return this._disabled;
     }
 
+    set disabled(value: boolean) {
+        this._disabled = coerceBooleanProperty(value);
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        this._disabled ? this.dateForm.disable() : this.dateForm.enable();
+        this.stateChanges.next();
+    }
+
     @Input()
     get placeholder() {
         return this._placeholder;
+    }
+
+    set placeholder(plh) {
+        this._placeholder = plh;
+        this.stateChanges.next();
     }
 
     @Input()
@@ -188,36 +217,10 @@ export class DatePickerComponent
         return null;
     }
 
-    get empty() {
-        const dateInput = this.dateForm.value;
-        return !dateInput.knoraDate;
-    }
-
-    set required(req) {
-        this._required = coerceBooleanProperty(req);
-        this.stateChanges.next();
-    }
-
-    set disabled(value: boolean) {
-        this._disabled = coerceBooleanProperty(value);
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        this._disabled ? this.dateForm.disable() : this.dateForm.enable();
-        this.stateChanges.next();
-    }
-
-    set placeholder(plh) {
-        this._placeholder = plh;
-        this.stateChanges.next();
-    }
-
     set value(dateValue: KnoraDate | null) {
         if (dateValue !== null) {
             this.dateForm.setValue({
-                date: this._knoraDatePipe.transform(
-                    dateValue,
-                    'dd.MM.YYYY',
-                    'era'
-                ),
+                date: this.transform(dateValue, 'dd.MM.YYYY', 'era'),
                 knoraDate: dateValue,
             });
             this.calendar = dateValue.calendar;
@@ -227,6 +230,7 @@ export class DatePickerComponent
                     : dateValue.era === 'noEra'
                     ? 'CE'
                     : dateValue.era;
+
             this.day = dateValue.day;
             this.month = dateValue.month ? dateValue.month : 0;
             this.year = dateValue.year;
@@ -238,6 +242,11 @@ export class DatePickerComponent
         this.buildForm();
     }
 
+    get empty() {
+        const dateInput = this.dateForm.value;
+        return !dateInput.knoraDate;
+    }
+
     setDescribedByIds(ids: string[]) {
         this.describedBy = ids.join(' ');
     }
@@ -247,13 +256,11 @@ export class DatePickerComponent
         _defaultErrorStateMatcher: ErrorStateMatcher,
         @Optional() _parentForm: NgForm,
         @Optional() _parentFormGroup: FormGroupDirective,
-        @Optional() @Self() public ngControl: NgControl,
+        @Optional() @Self() public override ngControl: NgControl,
         private _stateChanges: Subject<void>,
         fb: UntypedFormBuilder,
         private _elRef: ElementRef<HTMLElement>,
-        private _fm: FocusMonitor,
-        private _knoraDatePipe: KnoraDatePipe,
-        private _valueService: ValueService
+        private _fm: FocusMonitor
     ) {
         super(
             _defaultErrorStateMatcher,
@@ -284,15 +291,16 @@ export class DatePickerComponent
 
         this.dateForm.valueChanges.subscribe(() => this.handleInput());
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     onChange = (_: any) => {};
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onTouched = () => {};
 
     ngOnChanges(changes: SimpleChanges) {
         // in case the calendar has changed (from parent e.g. in a period)
         // update the calendar form control
-        if (changes.calendar && this.disableCalendarSelector) {
+        if (changes['calendar'] && this.disableCalendarSelector) {
             this._updateForm();
         }
     }
@@ -309,12 +317,137 @@ export class DatePickerComponent
 
     onContainerClick(event: MouseEvent) {
         if ((event.target as Element).tagName.toLowerCase() !== 'input') {
-            this._elRef.nativeElement.querySelector('input').focus();
+            this._elRef.nativeElement.querySelector('input')?.focus();
         }
     }
 
     writeValue(dateValue: KnoraDate | null): void {
         this.value = dateValue;
+    }
+
+    transform(
+        date: KnoraDate,
+        format?: string,
+        displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'
+    ): string {
+        if (!(date instanceof KnoraDate)) {
+            // console.error('Non-KnoraDate provided. Expected a valid KnoraDate');
+            return '';
+        }
+
+        const formattedString = this.getFormattedString(date, format);
+
+        if (displayOptions) {
+            return this.addDisplayOptions(
+                date,
+                formattedString,
+                displayOptions
+            );
+        } else {
+            return formattedString;
+        }
+    }
+
+    getFormattedString(date: KnoraDate, format: string | undefined): string {
+        switch (format) {
+            case 'dd.MM.YYYY':
+                if (date.precision === 2) {
+                    return `${this.leftPadding(date.day)}.${this.leftPadding(
+                        date.month
+                    )}.${date.year}`;
+                } else if (date.precision === 1) {
+                    return `${this.leftPadding(date.month)}.${date.year}`;
+                } else {
+                    return `${date.year}`;
+                }
+            case 'dd-MM-YYYY':
+                if (date.precision === 2) {
+                    return `${this.leftPadding(date.day)}-${this.leftPadding(
+                        date.month
+                    )}-${date.year}`;
+                } else if (date.precision === 1) {
+                    return `${this.leftPadding(date.month)}-${date.year}`;
+                } else {
+                    return `${date.year}`;
+                }
+            case 'MM/dd/YYYY':
+                if (date.precision === 2) {
+                    return `${this.leftPadding(date.month)}/${this.leftPadding(
+                        date.day
+                    )}/${date.year}`;
+                } else if (date.precision === 1) {
+                    return `${this.leftPadding(date.month)}/${date.year}`;
+                } else {
+                    return `${date.year}`;
+                }
+            default:
+                if (date.precision === 2) {
+                    return `${this.leftPadding(date.day)}.${this.leftPadding(
+                        date.month
+                    )}.${date.year}`;
+                } else if (date.precision === 1) {
+                    return `${this.leftPadding(date.month)}.${date.year}`;
+                } else {
+                    return `${date.year}`;
+                }
+        }
+    }
+
+    leftPadding(value: number | undefined): string {
+        if (value !== undefined) {
+            return ('0' + value).slice(-2);
+        } else {
+            return '';
+        }
+    }
+
+    addDisplayOptions(date: KnoraDate, value: string, options: string): string {
+        switch (options) {
+            case 'era':
+                // displays date with era; era only in case of BCE
+                return (
+                    value +
+                    (date.era === 'noEra'
+                        ? ''
+                        : date.era === 'BCE' || date.era === 'AD'
+                        ? ' ' + date.era
+                        : '')
+                );
+            case 'calendar':
+                // displays date without era but with calendar type
+                return value + ' ' + this.titleCase(date.calendar);
+            case 'calendarOnly':
+                // displays only the selected calendar type without any data
+                return this.titleCase(date.calendar);
+            case 'all':
+                // displays date with era (only as BCE) and selected calendar type
+                return (
+                    value +
+                    (date.era === 'noEra'
+                        ? ''
+                        : date.era === 'BCE'
+                        ? ' ' + date.era
+                        : '') +
+                    ' ' +
+                    this.titleCase(date.calendar)
+                );
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * returns a string in Title Case format
+     * It's needed to transform a calendar name e.g. 'GREGORIAN' into 'Gregorian'
+     *
+     * @param str
+     * @returns string
+     */
+    titleCase(str: string): string {
+        return str
+            .split(' ')
+            .map((w) => w[0].toUpperCase() + w.substring(1).toLowerCase())
+            .join(' ');
     }
 
     registerOnChange(fn: any): void {
@@ -365,18 +498,18 @@ export class DatePickerComponent
             return;
         }
 
-        this.calendar = this.form.controls.calendar.value;
+        this.calendar = this.form.controls['calendar'].value;
 
         this.era =
             this.calendar === 'ISLAMIC'
                 ? 'noEra'
-                : this.form.controls.era.value
-                ? this.form.controls.era.value
+                : this.form.controls['era'].value
+                ? this.form.controls['era'].value
                 : 'CE';
         // islamic calendar doesn't have a "before common era"
         // in case of switching calendar from islamic to gregorian or julian set default era value to CE
         if (this.calendar !== 'ISLAMIC' && this.era === 'noEra') {
-            this.form.controls.era.setValue('CE');
+            this.form.controls['era'].setValue('CE');
         }
 
         if (data.year > 0) {
@@ -398,12 +531,12 @@ export class DatePickerComponent
 
         const form = this.form;
 
-        Object.keys(this.formErrors).map((field) => {
+        Object.keys(this.formErrors).map((field: string) => {
             this.formErrors[field] = '';
             const control = form.get(field);
-            if (control && control.dirty && !control.valid) {
+            if (control && control.dirty && !control.valid && control.errors !== null) {
                 const messages = this.validationMessages[field];
-                Object.keys(control.errors).map((key) => {
+                Object.keys(control.errors).map((key: string) => {
                     this.formErrors[field] += messages[key] + ' ';
                 });
             }
@@ -414,14 +547,14 @@ export class DatePickerComponent
 
     setDate(day?: number) {
         // set date on year, on year and month or on year, month and day precision
-        if (this.form.controls.year.value > 0 && this.form.valid) {
+        if (this.form.controls['year'].value > 0 && this.form.valid) {
             this.day = day;
             this.date = new KnoraDate(
                 this.calendar.toUpperCase(),
                 this.era,
-                this.form.controls.year.value,
-                this.form.controls.month.value
-                    ? this.form.controls.month.value
+                this.form.controls['year'].value,
+                this.form.controls['month'].value
+                    ? this.form.controls['month'].value
                     : undefined,
                 day ? day : undefined
             );
@@ -437,6 +570,13 @@ export class DatePickerComponent
         let month: number;
         let year: number;
 
+        let islamicDay: string;
+        let islamicMonth: string;
+        let islamicYear: string;
+
+        let julianDate: Date;
+        let difference: number;
+
         this.era = 'CE';
 
         switch (this.calendar) {
@@ -444,18 +584,15 @@ export class DatePickerComponent
             case 'ISLAMIC':
                 // found solution and formula here:
                 // https://medium.com/@Saf_Bes/get-today-hijri-date-in-javascript-90855d3cd45b
-                const islamicDay = new Intl.DateTimeFormat(
-                    'en-TN-u-ca-islamic',
-                    { day: 'numeric' }
-                ).format(today);
-                const islamicMonth = new Intl.DateTimeFormat(
-                    'en-TN-u-ca-islamic',
-                    { month: 'numeric' }
-                ).format(today);
-                const islamicYear = new Intl.DateTimeFormat(
-                    'en-TN-u-ca-islamic',
-                    { year: 'numeric' }
-                ).format(today);
+                islamicDay = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+                    day: 'numeric',
+                }).format(today);
+                islamicMonth = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+                    month: 'numeric',
+                }).format(today);
+                islamicYear = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+                    year: 'numeric',
+                }).format(today);
                 day = parseInt(islamicDay, 10);
                 month = parseInt(islamicMonth, 10);
                 year = parseInt(islamicYear.substring(0, 4), 10);
@@ -466,8 +603,8 @@ export class DatePickerComponent
             case 'JULIAN':
                 // found solution and formula here:
                 // https://sciencing.com/convert-julian-date-calender-date-6017669.html
-                const julianDate = new Date();
-                const difference =
+                julianDate = new Date();
+                difference =
                     parseInt(
                         (julianDate.getFullYear() + '').substring(0, 2),
                         10
@@ -509,11 +646,59 @@ export class DatePickerComponent
             month: this.month,
         });
         if (this.disableCalendarSelector) {
-            this.form.controls.calendar.disable();
+            this.form.controls['calendar'].disable();
         } else {
-            this.form.controls.calendar.enable();
+            this.form.controls['calendar'].enable();
         }
         this._setDays(this.calendar, this.era, this.year, this.month);
+    }
+
+    /**
+     * given a historical date (year), returns the astronomical year.
+     *
+     * @param year year of the given date.
+     * @param era era of the given date.
+     */
+    convertHistoricalYearToAstronomicalYear(year: number, era: string) {
+        let yearAstro = year;
+        if (era === 'BCE') {
+            // convert historical date to astronomical date
+            yearAstro = yearAstro * -1 + 1;
+        }
+        return yearAstro;
+    }
+
+    /**
+     * calculates the number of days in a month for a given year.
+     *
+     * @param calendar the date's calendar.
+     * @param year the date's year.
+     * @param month the date's month.
+     */
+    calculateDaysInMonth(
+        calendar: string,
+        year: number,
+        month: number
+    ): number {
+        const date = new CalendarDate(year, month, 1);
+        if (calendar === 'GREGORIAN') {
+            const calDate = new GregorianCalendarDate(
+                new CalendarPeriod(date, date)
+            );
+            return calDate.daysInMonth(date);
+        } else if (calendar === 'JULIAN') {
+            const calDate = new JulianCalendarDate(
+                new CalendarPeriod(date, date)
+            );
+            return calDate.daysInMonth(date);
+        } else if (calendar === 'ISLAMIC') {
+            const calDate = new IslamicCalendarDate(
+                new CalendarPeriod(date, date)
+            );
+            return calDate.daysInMonth(date);
+        } else {
+            throw Error('Unknown calendar ' + calendar);
+        }
     }
 
     /**
@@ -530,14 +715,13 @@ export class DatePickerComponent
         year: number,
         month: number
     ) {
-        const yearAstro =
-            this._valueService.convertHistoricalYearToAstronomicalYear(
-                year,
-                era
-            );
+        const yearAstro = this.convertHistoricalYearToAstronomicalYear(
+            year,
+            era
+        );
 
         // count the days of the month
-        let days = this._valueService.calculateDaysInMonth(
+        let days = this.calculateDaysInMonth(
             calendar.toUpperCase(),
             yearAstro,
             month
@@ -626,5 +810,4 @@ export class DatePickerComponent
         }
         this.weeks = weeks;
     }
-
 }

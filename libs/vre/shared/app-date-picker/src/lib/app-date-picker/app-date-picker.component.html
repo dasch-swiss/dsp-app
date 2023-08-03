@@ -12,7 +12,7 @@
         class="child-input-component date-picker-value"
         [matMenuTriggerFor]="datePicker"
     >
-        <mat-label>{{ calendar | titlecase }}</mat-label>
+        <mat-label>{{ titleCase(calendar) }}</mat-label>
         <input
             matInput
             class="date-picker-input date"
@@ -48,7 +48,7 @@
                         *ngFor="let cal of calendars; let i = index"
                         [value]="cal"
                     >
-                        {{ cal | titlecase }}
+                        {{ titleCase(cal) }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

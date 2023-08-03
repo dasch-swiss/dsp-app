@@ -1,5 +1,3 @@
-@use "../../../../../../styles/config" as *;
-
 .child-input-component {
   width: 96%;
 }
@@ -71,7 +69,8 @@
     .week-days {
       margin-bottom: 0;
       font-weight: lighter;
-      color: $dark;
+      // $dark in _config.scss of dsp-app
+      color: rgb(41, 41, 41); ;
     }
 
     .week {
@@ -89,8 +88,10 @@
   padding: 2px;
 
   &.selected {
-    background-color: $primary_700;
-    color: $bright;
+    // $primary_700 in _config.scss of dsp-app
+    background-color: #336790;
+    // $bright in _config.scss of dsp-app
+    color: rgb(249, 249, 249);
     border-radius: 50%;
   }
 

@@ -30,6 +30,9 @@
       "@dasch-swiss/vre/shared/app-config": [
         "libs/vre/shared/app-config/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-date-picker": [
+        "libs/vre/shared/app-date-picker/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-error-handler": [
         "libs/vre/shared/app-error-handler/src/index.ts"
       ],

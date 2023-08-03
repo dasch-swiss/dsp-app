@@ -1,11 +1,11 @@
 <div [formGroup]="form">
     <div class="date-form-grid">
         <div class="date-form-field">
-            <app-date-picker
+            <dasch-swiss-app-date-picker
                 class="start-date"
                 [formControlName]="'startDate'"
                 (closed)="handlePickerClose()"
-            ></app-date-picker>
+            ></dasch-swiss-app-date-picker>
         </div>
 
         <button
@@ -26,13 +26,13 @@
             *ngIf="isPeriodControl.value && startDate.value"
             class="date-form-field"
         >
-            <app-date-picker
+            <dasch-swiss-app-date-picker
                 class="end-date"
                 [formControlName]="'endDate'"
                 [disableCalendarSelector]="true"
                 [calendar]="startDate.value.calendar"
             >
-            </app-date-picker>
+            </dasch-swiss-app-date-picker>
         </div>
     </div>
 

@@ -5,7 +5,6 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
-    ViewChild,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import {
@@ -17,7 +16,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
-import { DatePickerComponent } from './date-picker/date-picker.component';
 
 @Component({
     selector: 'app-date-value',
@@ -28,8 +26,6 @@ export class DateValueComponent
     extends BaseValueDirective
     implements OnInit, OnChanges, OnDestroy
 {
-    @ViewChild('dateInput') datePickerComponent: DatePickerComponent;
-
     @Input() displayValue?: ReadDateValue;
 
     // @Input() displayOptions?: 'era' | 'calendar' | 'all';
