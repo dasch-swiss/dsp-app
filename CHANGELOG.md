@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.23.1](https://github.com/dasch-swiss/dsp-das/compare/v10.23.0...v10.23.1) (2023-08-04)
+
+
+### Maintenance
+
+* move date-picker out into a library ([#1172](https://github.com/dasch-swiss/dsp-das/issues/1172)) ([ab847bd](https://github.com/dasch-swiss/dsp-das/commit/ab847bd06f9a5eeb5531a8279e370b3e9a109cb1))
+* update js-lib to v8.3.1 ([#1175](https://github.com/dasch-swiss/dsp-das/issues/1175)) ([63c9105](https://github.com/dasch-swiss/dsp-das/commit/63c910591969c24a4d771ba9a9ed7e27d7a211a0))
+
 ## [10.23.0](https://github.com/dasch-swiss/dsp-das/compare/v10.22.0...v10.23.0) (2023-07-26)
 
 
