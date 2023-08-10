@@ -153,11 +153,11 @@ export class ResourceClassPropertyInfoComponent
                 this._applicationStateService.get('currentProjectOntologies').subscribe(
                     (ontologies: ReadOntology[]) => {
                         const onto = ontologies.find((i) => i.id === baseOnto);
-                        if (
-                            !onto &&
-                            this.propDef.objectType === Constants.Region
-                        ) {
-                            this.propAttribute = 'Region';
+                        if ( !onto ) {
+                            if (this.propDef.objectType === Constants.Region) {
+                                this.propAttribute = 'Region';
+                            }  // else no ontology found
+
                         } else {
                             this.propAttribute =
                                 onto.classes[this.propDef.objectType].label;
