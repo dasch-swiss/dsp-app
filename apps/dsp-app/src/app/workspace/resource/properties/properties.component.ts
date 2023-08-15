@@ -133,6 +133,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     @Output() regionChanged: EventEmitter<ReadValue> =
         new EventEmitter<ReadValue>();
 
+    @Output() regionDeleted: EventEmitter<void> =
+        new EventEmitter<void>();
+
     lastModificationDate: string;
 
     deletedResource = false;
@@ -375,6 +378,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                                 CommsEvents.resourceDeleted
                                             )
                                         );
+                                        if (this.isAnnotation) {
+                                            this.regionDeleted.emit();
+                                        }
                                     },
                                     (error: ApiResponseError) => {
                                         this._errorHandler.showMessage(error);
@@ -398,6 +404,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                                 CommsEvents.resourceDeleted
                                             )
                                         );
+                                        // if it is an Annotation/Region which has been erases, we emit the
+                                        // regionChanged event, in order to refresh the page
+                                        if (this.isAnnotation) {
+                                            this.regionDeleted.emit();
+                                        }
                                     },
                                     (error: ApiResponseError) => {
                                         this._errorHandler.showMessage(error);

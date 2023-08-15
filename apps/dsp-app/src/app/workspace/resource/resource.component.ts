@@ -220,6 +220,12 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         }
     }
 
+    // reload the page with the same resource
+    reloadWithResource() {
+        this.oldResourceIri = undefined;
+        this.ngOnChanges();
+    }
+
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
     // general methods
