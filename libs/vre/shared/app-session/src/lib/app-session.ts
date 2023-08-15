@@ -8,7 +8,7 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
 /**
@@ -129,7 +129,14 @@ export class SessionService {
                             );
                             return idUpdated;
                         }
-                    )
+                    ),
+                    catchError(error => {
+                        // if there is any error checking the credentials (mostly a 401 for after
+                        // switching the server where this session/the credentials are unknown), we destroy the session
+                        // so a new login is required
+                        this.destroySession();
+                        return of(false);
+                    })
                 );
             } else {
                 // the internal session is still valid
