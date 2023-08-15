@@ -114,7 +114,7 @@ export class HttpStatusMsg {
         404: {
             message: 'Not Found',
             description:
-                'The requested page could not be found but may be available again in the future',
+                'The requested page could not be found',
         },
         405: {
             message: 'Method Not Allowed',
