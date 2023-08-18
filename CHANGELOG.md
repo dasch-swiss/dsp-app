@@ -1,5 +1,25 @@
 # Changelog
 
+## [10.23.2](https://github.com/dasch-swiss/dsp-das/compare/v10.23.1...v10.23.2) (2023-08-18)
+
+
+### Bug Fixes
+
+* **regions:** reload the resource after deletion of regions ([#1185](https://github.com/dasch-swiss/dsp-das/issues/1185)) ([c5a14e6](https://github.com/dasch-swiss/dsp-das/commit/c5a14e62009f8ed4ecbfa9dd5076bdd16d142091))
+* **runtime errors:** fix errors thrown ([#1178](https://github.com/dasch-swiss/dsp-das/issues/1178)) ([55f56cd](https://github.com/dasch-swiss/dsp-das/commit/55f56cd1a1b86850b8be26ee1877071bb8d26a2e))
+* **session service:** destroy session and return of false if an error… ([#1183](https://github.com/dasch-swiss/dsp-das/issues/1183)) ([3ead94d](https://github.com/dasch-swiss/dsp-das/commit/3ead94d4a1c971d446136fa9a8d0d016a86e2731))
+
+
+### Maintenance
+
+* **deps:** bump js-lib to 8.3.2 ([#1187](https://github.com/dasch-swiss/dsp-das/issues/1187)) ([d5ba644](https://github.com/dasch-swiss/dsp-das/commit/d5ba6443fca26dda9fac4055e3f8ab09b3dbab3f))
+* **msg text:** Change notification message text for 404 not found ([#1184](https://github.com/dasch-swiss/dsp-das/issues/1184)) ([20d5d0b](https://github.com/dasch-swiss/dsp-das/commit/20d5d0b81b6773107f1960b38a3e31216c36785b))
+
+
+### Documentation
+
+* fix expert search docs ([#1180](https://github.com/dasch-swiss/dsp-das/issues/1180)) ([2b786a6](https://github.com/dasch-swiss/dsp-das/commit/2b786a6d310ddc9a00ec970d358d2fea3535d3f9))
+
 ## [10.23.1](https://github.com/dasch-swiss/dsp-das/compare/v10.23.0...v10.23.1) (2023-08-04)
 
 
