@@ -128,10 +128,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
             data: { mode: mode, title: name, id: iri },
         };
 
-        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(() => {
-            // do something
-        });
+        this._dialog.open(DialogComponent, dialogConfig);
     }
 }

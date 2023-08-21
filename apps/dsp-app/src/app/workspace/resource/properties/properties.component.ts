@@ -352,6 +352,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe((answer: ConfirmationWithComment) => {
+            if (!answer) {
+                // if the user clicks outside of the dialog window, answer is undefined
+                return;
+            }
             if (answer.confirmed === true) {
                 if (type !== 'edit') {
                     const payload = new DeleteResource();

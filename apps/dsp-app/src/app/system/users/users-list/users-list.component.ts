@@ -408,9 +408,6 @@ export class UsersListComponent implements OnInit {
                         this.activateUser(iri);
                         break;
                 }
-            } else {
-                // update the view
-                this.refreshParent.emit();
             }
         });
     }

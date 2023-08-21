@@ -177,10 +177,9 @@ export class ProjectsListComponent implements OnInit {
                         break;
                 }
             } else {
-                // update the view
-                this.refreshParent.emit();
-
                 if (mode === 'createProject') {
+                    // update the view
+                    this.refreshParent.emit();
                     this._componentCommsService.emit(
                         new EmitEvent(Events.projectCreated, true)
                     );

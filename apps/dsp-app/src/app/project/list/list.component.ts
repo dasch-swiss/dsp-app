@@ -203,7 +203,6 @@ export class ListComponent implements OnInit {
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe((data) => {
-            console.log('data: ', data);
             switch (mode) {
                 case 'editListInfo': {
                     window.location.reload();
