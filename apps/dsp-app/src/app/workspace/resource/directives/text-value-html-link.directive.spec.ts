@@ -65,51 +65,72 @@ describe('TextValueHtmlLinkDirective', () => {
         expect(testHostComponent).toBeTruthy();
     });
 
-    it('should emit a left mouse button click on an internal link', () => {
+    it('should emit a left mouse click on an internal link', () => {
 
-        expect(testHostComponent).toBeTruthy();
-        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
+        // fake the link element
+        const fakeEventTarget = {
+            nodeName: 'A',
+            className: 'salsah-link',
+            href: 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
+        };
 
-        const hostCompDe = testHostFixture.debugElement;
-        const directiveDe = hostCompDe.query(
-            By.directive(TextValueHtmlLinkDirective)
-        );
+        // fake a left mouse click
+        const fakeEvent = {
+            target: fakeEventTarget,
+            button: 0, // left mouse button
+            preventDefault: jasmine.createSpy('preventDefault')
+        };
 
-        const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
+        // Create a spy on the emit method
+        spyOn(directive.internalLinkClicked, 'emit');
 
-        // left mouse event
-        internalLinkDe.nativeElement.dispatchEvent(
-            new MouseEvent('mousedown', { bubbles: true, button: 0 })
-    );
+        // Call the onClick method directly with the fake event without using/testing the @HostListener decorator
+        // or outputs
+        directive.onClick(fakeEvent as any);
 
-        testHostFixture.detectChanges();
+        // Check if emit was called
+        expect(directive.internalLinkClicked.emit).toHaveBeenCalled();
 
-        expect(testHostComponent.internalLinkClickedIri).toEqual(
-            'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
-        );
+        // check the value; no need to test Angular EventEmitter
+        expect(directive.internalLinkClicked.emit).toHaveBeenCalledWith('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw');
+
+        // Check if the default action (i.e. window open of 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw') was prevented.
+        // This must happen in case of an internal link.
+        expect(fakeEvent.preventDefault).toHaveBeenCalled();
     });
 
-    it('should emit a right mouse button click on an internal link', () => {
-        expect(testHostComponent).toBeTruthy();
-        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
+    it('should emit right mouse down on an internal link', () => {
 
-        const hostCompDe = testHostFixture.debugElement;
-        const directiveDe = hostCompDe.query(
-            By.directive(TextValueHtmlLinkDirective)
-        );
+        // fake the link element
+        const fakeEventTarget = {
+            nodeName: 'A',
+            className: 'salsah-link',
+            href: 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
+        };
 
-        const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
+        // fake a left mouse down event
+        const fakeMouseDownEvent = {
+            target: fakeEventTarget,
+            button: 2, // left mouse button
+            preventDefault: jasmine.createSpy('preventDefault')
+        };
 
-        // left mouse event
-        internalLinkDe.nativeElement.dispatchEvent(
-            new MouseEvent('mousedown', { bubbles: true, button: 2 })
-        );
+        // Create a spy on the emit method
+        spyOn(directive.internalLinkClicked, 'emit');
 
-        testHostFixture.detectChanges();
+        // Call the onClick method directly with the fake event without using/testing the @HostListener decorator
+        // or outputs
+        directive.onMouseDown(fakeMouseDownEvent as any);
 
-        expect(testHostComponent.internalLinkClickedIri).toEqual(
-            'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
-        );
+        // Check if emit was called
+        expect(directive.internalLinkClicked.emit).toHaveBeenCalled();
+
+        // check the value; no need to test Angular EventEmitter
+        expect(directive.internalLinkClicked.emit).toHaveBeenCalledWith('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw');
+
+        // Check if the default action (i.e. window open of 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw') was prevented.
+        // This must happen in case of an internal link.
+        expect(fakeMouseDownEvent.preventDefault).toHaveBeenCalled();
     });
 
     it('should emit a middle mouse button click on an internal link', () => {
@@ -135,21 +156,29 @@ describe('TextValueHtmlLinkDirective', () => {
         );
     });
 
-    it('should not react to clicking on an external link', () => {
+    it('should not emit on click on an external link', () => {
         expect(testHostComponent).toBeTruthy();
+        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
 
         const hostCompDe = testHostFixture.debugElement;
         const directiveDe = hostCompDe.query(
             By.directive(TextValueHtmlLinkDirective)
         );
 
+
         const externalLinkDe = directiveDe.query(By.css('a:not(.salsah-link)'));
 
-        externalLinkDe.nativeElement.click();
+        // left mouse event
+        externalLinkDe.nativeElement.dispatchEvent(
+            new MouseEvent('click', { bubbles: true, button: 0 })
+        );
 
         testHostFixture.detectChanges();
 
-        expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
+        // as the link is external, the internalLinkClickedIri should not still be set to undefined
+        expect(testHostComponent.internalLinkClickedIri).toEqual(
+            undefined
+        );
     });
 
     it('should react to hovering over an internal link', () => {
