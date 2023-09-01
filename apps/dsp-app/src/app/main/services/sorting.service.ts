@@ -14,33 +14,46 @@ export class SortingService {
     }
 
     /**
-     * compares value by value and sorts in alphabetical order using the provided key
-     * optionally, you can have the array returned to you in reversed order by setting the reversed parameter to 'true'
+     * compares value by value and sorts in alphabetical order using the provided first key, in case the comparison
+     * of the values results in zero the second key is used if provided.
      */
     keySortByAlphabetical<T extends object>(
         value: Array<T>,
-        sortKey: keyof T,
-        reversed = false
+        firstSortKey: keyof T,
+        secondSortKey?: keyof T
     ): Array<T> {
         const sortedArray = value.slice();
         sortedArray.sort((a: T, b: T) => {
             if (
-                String(a[sortKey]).toLowerCase() <
-                String(b[sortKey]).toLowerCase()
+                String(a[firstSortKey]).toLowerCase() <
+                String(b[firstSortKey]).toLowerCase()
             ) {
                 return -1;
             } else if (
-                String(a[sortKey]).toLowerCase() >
-                String(b[sortKey]).toLowerCase()
+                String(a[firstSortKey]).toLowerCase() >
+                String(b[firstSortKey]).toLowerCase()
             ) {
                 return 1;
             } else {
-                return 0;
+                if (secondSortKey) {
+                    if (
+                        String(a[secondSortKey]).toLowerCase() <
+                        String(b[secondSortKey]).toLowerCase()
+                    ) {
+                        return -1;
+                    } else if (
+                        String(a[secondSortKey]).toLowerCase() >
+                        String(b[secondSortKey]).toLowerCase()
+                    ) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return 0
+                }
             }
         });
-        if (reversed) {
-            sortedArray.reverse();
-        }
         return sortedArray;
     }
 }

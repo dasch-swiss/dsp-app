@@ -144,36 +144,6 @@ describe('SortingService', () => {
                 },
             ]);
         });
-
-        it('should return an array sorted by lastname reversed', () => {
-            const sorted = service.keySortByAlphabetical(
-                data,
-                'lastname',
-                true
-            );
-            expect(sorted).toEqual([
-                {
-                    firstname: 'Mickey',
-                    lastname: 'Mouse',
-                    creator: 'Walt Disney',
-                },
-                {
-                    firstname: 'Gaston',
-                    lastname: 'Lagaffe',
-                    creator: 'André Franquin',
-                },
-                {
-                    firstname: 'Gyro',
-                    lastname: 'Gearloose',
-                    creator: 'Carl Barks',
-                },
-                {
-                    firstname: 'Charlie',
-                    lastname: 'Brown',
-                    creator: 'Charles M. Schulz',
-                },
-            ]);
-        });
     });
 
     describe('Sort an array of ReadProject', () => {
@@ -207,16 +177,6 @@ describe('SortingService', () => {
             const sorted = service.keySortByAlphabetical(projects, 'longname');
 
             expect(sorted).toEqual([project1, project2, project3, project4]);
-        });
-
-        it('should sort an array of ReadProject by "longname" reversed', () => {
-            const sorted = service.keySortByAlphabetical(
-                projects,
-                'longname',
-                true
-            );
-
-            expect(sorted).toEqual([project4, project3, project2, project1]);
         });
     });
 });

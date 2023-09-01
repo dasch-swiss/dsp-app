@@ -63,6 +63,7 @@ import {
     ValueOperationEventService,
 } from '../services/value-operation-event.service';
 import { ValueService } from '../services/value.service';
+import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 
 // object of property information from ontology class, properties and property values
 export interface PropertyInfoValues {
@@ -177,7 +178,8 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         private _valueOperationEventService: ValueOperationEventService,
         private _valueService: ValueService,
         private _componentCommsService: ComponentCommunicationEventService,
-        private _projectService: ProjectService
+        private _projectService: ProjectService,
+        private _sortingService: SortingService,
     ) {}
 
     ngOnInit(): void {
@@ -672,7 +674,11 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                 .subscribe(
                     (response: ReadResourceSequence) => {
                         if (response.resources.length > 0) {
-                            this.incomingLinkResources = response.resources;
+                            this.incomingLinkResources = this._sortingService.keySortByAlphabetical(
+                                response.resources,
+                                "resourceClassLabel",
+                                "label"
+                            );
                         }
                         this.loading = false;
                     },
