@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.23.3](https://github.com/dasch-swiss/dsp-das/compare/v10.23.2...v10.23.3) (2023-09-01)
+
+
+### Bug Fixes
+
+* **sorting:** sorts incoming links by res class then res label ([#1197](https://github.com/dasch-swiss/dsp-das/issues/1197)) ([85f1af6](https://github.com/dasch-swiss/dsp-das/commit/85f1af699385674df6d5c414ea8ed30a499d6c80))
+
+
+### Maintenance
+
+* update dsp-js-lib to v8.3.3 ([#1199](https://github.com/dasch-swiss/dsp-das/issues/1199)) ([a0717c2](https://github.com/dasch-swiss/dsp-das/commit/a0717c22f0c832356fa35ae66ce74c92524accca))
+
 ## [10.23.2](https://github.com/dasch-swiss/dsp-das/compare/v10.23.1...v10.23.2) (2023-08-18)
 
 
