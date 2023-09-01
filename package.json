@@ -39,7 +39,7 @@
     "@angular/platform-browser-dynamic": "^16.1.5",
     "@angular/router": "^16.1.5",
     "@ckeditor/ckeditor5-angular": "^5.2.0",
-    "@dasch-swiss/dsp-js": "^8.3.2",
+    "@dasch-swiss/dsp-js": "^8.3.3",
     "@datadog/browser-logs": "^4.42.2",
     "@datadog/browser-rum": "^4.42.2",
     "@ngx-translate/core": "^14.0.0",
