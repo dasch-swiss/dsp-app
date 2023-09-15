@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.23.4](https://github.com/dasch-swiss/dsp-das/compare/v10.23.3...v10.23.4) (2023-09-15)
+
+
+### Maintenance
+
+* **CI:** add PR title check ([#1205](https://github.com/dasch-swiss/dsp-das/issues/1205)) ([3acf5be](https://github.com/dasch-swiss/dsp-das/commit/3acf5be36bf2ab28d554b652729758b4579d7dc0))
+* **deps-dev:** bump @types/node from 18.15.9 to 20.5.9 ([#1200](https://github.com/dasch-swiss/dsp-das/issues/1200)) ([81c666e](https://github.com/dasch-swiss/dsp-das/commit/81c666ed66c4eb30a3f9383147363adf8cef2847))
+* update dsp-js to v8.3.4 ([#1206](https://github.com/dasch-swiss/dsp-das/issues/1206)) ([2ce2fe1](https://github.com/dasch-swiss/dsp-das/commit/2ce2fe1cf3dc6fc5500c604d33efe4081e0ce723))
+
 ## [10.23.3](https://github.com/dasch-swiss/dsp-das/compare/v10.23.2...v10.23.3) (2023-09-01)
 
 
