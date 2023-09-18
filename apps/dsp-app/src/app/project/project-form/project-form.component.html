@@ -1,43 +1,43 @@
-<div class="no-shadow">
-    <!-- content -->
+<div class="project-form-container">
     <form
         *ngIf="!loading && project.status"
         [formGroup]="form"
-        class="form-content project-data"
+        class="project-form"
         (ngSubmit)="submitData()"
     >
-        <!-- short and long name -->
-        <mat-form-field class="small-field">
-            <input
-                matInput
-                placeholder="{{
-                    'appLabels.form.project.general.shortcode' | translate
-                }}"
-                [maxlength]="shortcodeMaxLength"
-                [formControl]="form.controls['shortcode']"
-            />
-            <mat-hint *ngIf="formErrors.shortcode">
-                {{ formErrors.shortcode }}
-            </mat-hint>
-        </mat-form-field>
+        <div class="project-form-short">
+            <!-- short and long name -->
+            <mat-form-field class="shortcode">
+                <input
+                    matInput
+                    placeholder="{{
+                        'appLabels.form.project.general.shortcode' | translate
+                    }}"
+                    [maxlength]="shortcodeMaxLength"
+                    [formControl]="form.controls['shortcode']"
+                />
+                <mat-hint *ngIf="formErrors.shortcode">
+                    {{ formErrors.shortcode }}
+                </mat-hint>
+            </mat-form-field>
 
-        <!-- short name -->
-        <mat-form-field class="medium-field">
-            <input
-                matInput
-                [maxlength]="shortnameMaxLength"
-                placeholder="{{
-                    'appLabels.form.project.general.shortname' | translate
-                }}"
-                [formControl]="form.controls['shortname']"
-            />
-            <mat-hint *ngIf="formErrors.shortname">
-                {{ formErrors.shortname }}
-            </mat-hint>
-        </mat-form-field>
-
+            <!-- short name -->
+            <mat-form-field class="shortname">
+                <input
+                    matInput
+                    [maxlength]="shortnameMaxLength"
+                    placeholder="{{
+                        'appLabels.form.project.general.shortname' | translate
+                    }}"
+                    [formControl]="form.controls['shortname']"
+                />
+                <mat-hint *ngIf="formErrors.shortname">
+                    {{ formErrors.shortname }}
+                </mat-hint>
+            </mat-form-field>
+        </div>
         <!-- long name -->
-        <mat-form-field class="large-field">
+        <mat-form-field class="longname">
             <input
                 matInput
                 placeholder="{{
@@ -77,7 +77,7 @@
         </mat-form-field>
         -->
         <!-- keywords -->
-        <mat-form-field class="large-field">
+        <mat-form-field class="keywords">
             <mat-chip-grid #chipList>
                 <mat-chip-row
                     *ngFor="let tag of keywords"
@@ -122,11 +122,10 @@
                 <button color="primary"
                     mat-button
                     type="reset"
-                    (click)="closeDialog.emit()">
+                    (click)="goBack()">
                     {{ 'appLabels.form.action.cancel' | translate }}
                 </button>
             </span>
-            <span class="fill-remaining-space"></span>
             <span>
                 <button
                     mat-raised-button

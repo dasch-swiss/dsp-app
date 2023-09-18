@@ -28,6 +28,7 @@ import { UserComponent } from './user/user.component';
 // search results and resource viewer
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
+import {ProjectFormComponent} from "@dsp-app/src/app/project/project-form/project-form.component";
 
 const routes: Routes = [
     {
@@ -43,9 +44,18 @@ const routes: Routes = [
         component: LoginFormComponent,
     },
     {
+        path: 'project/create-new',
+        canActivate: [AuthGuard],
+        component: ProjectFormComponent
+    },
+    {
         path: 'project/:uuid',
         component: ProjectComponent,
         children: [
+            {   path: 'edit',
+                canActivate: [AuthGuard],
+                component: ProjectFormComponent
+            },
             {
                 path: '',
                 component: DescriptionComponent

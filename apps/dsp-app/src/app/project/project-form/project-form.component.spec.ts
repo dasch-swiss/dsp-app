@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute } from "@angular/router";
 import {
     ApiResponseData,
     MockProjects,
@@ -26,6 +27,7 @@ import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import {convertToParamMap} from "@angular/router";
 
 @Component({ selector: 'app-string-literal-input', template: '' })
 class MockStringLiteralInputComponent {
@@ -48,9 +50,17 @@ describe('ProjectFormComponent', () => {
         },
     };
 
+
+    const activatedRouteMock = {
+        parent: {
+            paramMap: of(convertToParamMap({ uuid: 'mockUuid' }))
+        }
+    };
+
     beforeEach(waitForAsync(() => {
         const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
             'iriToUuid',
+            'uuidToIri',
         ]);
 
         const dspConnSpyObj = {
@@ -94,6 +104,10 @@ describe('ProjectFormComponent', () => {
                     provide: DspApiConnectionToken,
                     useValue: dspConnSpyObj,
                 },
+                {   // mock activated route
+                    provide: ActivatedRoute,
+                    useValue: activatedRouteMock
+                },
             ],
         }).compileComponents();
     }));
@@ -128,6 +142,7 @@ describe('ProjectFormComponent', () => {
 
         fixture = TestBed.createComponent(ProjectFormComponent);
         component = fixture.componentInstance;
+        component.projectUuid = 'http://rdfh.ch/projects/0001'; // mock project uuid
         fixture.detectChanges();
     });
 

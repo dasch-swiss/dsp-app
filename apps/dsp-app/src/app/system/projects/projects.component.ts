@@ -10,7 +10,6 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     Session,
@@ -132,23 +131,6 @@ export class ProjectsComponent implements OnInit {
                     }
                 );
         }
-    }
-
-    openDialog(mode: string): void {
-        const dialogConfig: MatDialogConfig = {
-            width: '560px',
-            maxHeight: '80vh',
-            position: {
-                top: '112px',
-            },
-            data: { mode: mode },
-        };
-
-        const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(() => {
-            // update the view
-        });
     }
 
     /**

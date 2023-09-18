@@ -154,28 +154,6 @@
     </div>
 
     <!-- all about PROJECT -->
-    <!-- Create project -->
-    <div *ngSwitchCase="'createProject'">
-        <app-dialog-header
-            [title]="'appLabels.form.project.title.profile' | translate"
-            [subtitle]="'appLabels.form.project.title.new' | translate"
-        >
-        </app-dialog-header>
-        <app-project-form (closeDialog)="dialogRef.close()"></app-project-form>
-    </div>
-
-    <!-- Modify project information -->
-    <div *ngSwitchCase="'editProject'">
-        <app-dialog-header
-            [title]="data.name"
-            [subtitle]="'appLabels.form.project.title.edit' | translate"
-        >
-        </app-dialog-header>
-        <app-project-form
-            [projectIri]="data.project"
-            (closeDialog)="dialogRef.close()"
-        ></app-project-form>
-    </div>
 
     <!-- Deactivate project -->
     <div *ngSwitchCase="'deactivateProject'">

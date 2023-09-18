@@ -10,6 +10,7 @@
     "start": "nx run dsp-app:serve",
     "start-dev": "nx run dsp-app:serve:development --host 0.0.0.0",
     "start-with-test-server": "nx run dsp-app:serve:test-server",
+    "start-with-dev-server": "nx run dsp-app:serve:dev-server",
     "start-with-ls-test-server": "nx run dsp-app:serve:ls-test-server",
     "start-with-0845-test-server": "nx run dsp-app:serve:0845-test-server",
     "start-with-staging-server": "nx run dsp-app:serve:staging-server",

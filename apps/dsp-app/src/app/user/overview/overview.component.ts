@@ -193,4 +193,8 @@ export class OverviewComponent implements OnInit {
                 break;
         }
     }
+
+    createNewProject() {
+        this._router.navigate(['project', 'create-new']);
+    }
 }

@@ -13,7 +13,7 @@
             <span class="app-toolbar-action button left">
                 <!-- sort button if more than one item in the list -->
                 <app-sort-button
-                    *ngIf="list.length > 1"
+                    *ngIf="list.length"
                     [icon]="'sort_by_alpha'"
                     [sortProps]="sortProps"
                     [activeKey]="sortBy"
@@ -32,7 +32,7 @@
                 <button
                     mat-flat-button
                     [color]="'primary'"
-                    (click)="openDialog('createProject')"
+                    (click)="createNewProject()"
                 >
                     Create new
                 </button>
@@ -80,7 +80,7 @@
                     mat-icon-button
                     [matMenuTriggerFor]="projectMenu"
                     [disabled]="
-                        (!sysAdmin && !userIsProjectAdmin(project.id)) ||
+                        (!userHasPermission(project.id)) ||
                         doNotDelete.includes(project.id)
                     "
                 >
@@ -94,20 +94,10 @@
                     <button
                         mat-menu-item
                         *ngIf="status"
-                        (click)="
-                            openDialog(
-                                'editProject',
-                                project.shortname,
-                                project.id
-                            )
-                        "
+                        (click)="editProject(project.id)"
                     >
                         Edit project information
                     </button>
-                    <!-- disable the deactivate-button for the following two projects:
-                    - http://www.knora.org/ontology/knora-admin#SystemProject
-                    - http://www.knora.org/ontology/knora-admin#DefaultSharedOntologiesProject
-                    -->
                     <button
                         mat-menu-item
                         *ngIf="status"

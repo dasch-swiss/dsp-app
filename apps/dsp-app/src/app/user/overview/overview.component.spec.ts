@@ -321,24 +321,6 @@ describe('OverviewComponent', () => {
             // 'Create new project' button should be found by above method
             expect(createNewProjBtn.length).toEqual(1);
         });
-
-        it('should open the "Create new project" popup', async () => {
-            // grab the 'Create new project' button
-            const createNewProjBtn = await rootLoader.getHarness(
-                MatButtonHarness.with({
-                    selector: '.create-project-button button',
-                })
-            );
-
-            await createNewProjBtn.click();
-
-            // get dialog harness
-            const dialogHarnesses = await rootLoader.getAllHarnesses(
-                MatDialogHarness
-            );
-
-            expect(dialogHarnesses.length).toEqual(1);
-        });
     });
 
     describe('Unknown user (logged out)', () => {

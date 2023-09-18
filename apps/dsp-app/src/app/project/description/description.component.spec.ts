@@ -62,6 +62,16 @@ class MockStringLiteralInputComponent {
     constructor() {}
 }
 
+
+/**
+ * test component that mocks StringLiteralInputComponent
+ */
+@Component({ selector: 'app-project-form', template: '' })
+class MockProjectFormComponent {
+    @Input() projectIri: string;
+    constructor() {}
+}
+
 describe('DescriptionComponent', () => {
     let testHostComponent: TestHostDescriptionComponent;
     let testHostFixture: ComponentFixture<TestHostDescriptionComponent>;
@@ -91,6 +101,7 @@ describe('DescriptionComponent', () => {
                 DescriptionComponent,
                 TestHostDescriptionComponent,
                 MockStringLiteralInputComponent,
+                MockProjectFormComponent,
                 DialogComponent,
                 StatusComponent,
             ],
@@ -232,8 +243,7 @@ describe('DescriptionComponent', () => {
     });
 
     it('should not display the edit button as a regular user', async () => {
-        testHostComponent.descriptionComp.projectAdmin = false;
-        testHostComponent.descriptionComp.sysAdmin = false;
+        testHostComponent.descriptionComp.userHasPermission = false;
 
         testHostFixture.detectChanges();
 
@@ -245,8 +255,7 @@ describe('DescriptionComponent', () => {
     });
 
     it('should display the edit button as an admin', async () => {
-        testHostComponent.descriptionComp.projectAdmin = true;
-        testHostComponent.descriptionComp.sysAdmin = true;
+        testHostComponent.descriptionComp.userHasPermission = true;
 
         testHostFixture.detectChanges();
 
@@ -254,10 +263,7 @@ describe('DescriptionComponent', () => {
             MatButtonHarness.with({ selector: '.app-toolbar-action button' })
         );
 
-        await editBtn.click();
-
-        const form = descriptionComponentDe.query(By.css('.description-form'));
-        expect(form).toBeTruthy();
+        expect(editBtn).toBeTruthy();
     });
 
     // todo: check the project name, if there is description and keywords, check if we can edit the project info if the user is project admin or system admin (edit btn displayed)
