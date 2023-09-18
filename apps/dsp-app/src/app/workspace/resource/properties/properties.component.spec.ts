@@ -309,7 +309,7 @@ describe('PropertiesComponent', () => {
 
     it('should get one incoming link', () => {
         expect(
-            testHostComponent.propertiesComponent.incomingLinkResources.length
+            testHostComponent.propertiesComponent.allIncomingLinkResources.length
         ).toEqual(1);
     });
 

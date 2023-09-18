@@ -106,7 +106,7 @@
         <!-- list of properties -->
         <div *ngFor="let prop of resource.resProps; let last = last">
             <!-- show property; all in case of showAll === true or only the ones with prop.values -->
-            <div *ngIf="(showAllProps || ( prop.values && prop.values.length > 0 ) || (prop.propDef.id === hasIncomingLinkIri && incomingLinkResources.length > 0)) && (
+            <div *ngIf="(showAllProps || ( prop.values && prop.values.length > 0 ) || (prop.propDef.id === hasIncomingLinkIri && numberOffAllIncomingLinkRes > 0)) && (
                 !prop.propDef['isLinkProperty'] &&
                 prop.propDef.objectType !== representationConstants.stillImage &&
                 prop.propDef.objectType !== representationConstants.movingImage &&
@@ -159,15 +159,15 @@
                     </div>
 
                     <!-- in case of incoming links we have to display them here -->
-                    <div *ngIf="prop.propDef.id === hasIncomingLinkIri && incomingLinkResources.length > 0">
+                    <div *ngIf="prop.propDef.id === hasIncomingLinkIri">
                         <app-progress-indicator *ngIf="loading"></app-progress-indicator>
                         <div *ngIf="!loading">
                             <!-- the value(s) of the incoming links -->
-                            <a class="link link-value" *ngFor="let inRes of incomingLinkResources"
+                            <a class="link link-value" *ngFor="let inRes of displayedIncomingLinkResources"
                                 (click)="openResource(inRes.id)">{{inRes.resourceClassLabel}}: <strong>{{inRes.label}}</strong></a>
-                            <mat-paginator *ngIf="numberOffAllIncomingLinkRes > 25" [length]=numberOffAllIncomingLinkRes
-                                [pageSize]="25" [hidePageSize]="true" [pageIndex]="pageEvent.pageIndex"
-                                (page)="goToPage($event)">
+                            <mat-paginator *ngIf="numberOffAllIncomingLinkRes > amount_resources" [length]=numberOffAllIncomingLinkRes
+                                           [pageSize]="amount_resources" [hidePageSize]="true" [pageIndex]="pageEvent.pageIndex"
+                                           (page)="goToPage($event)">
                             </mat-paginator>
                         </div>
                     </div>
