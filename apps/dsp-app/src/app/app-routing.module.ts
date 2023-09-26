@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HintComponent } from './main/action/hint/hint.component';
-import { LoginFormComponent } from './main/action/login-form/login-form.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import { AuthGuard } from './main/guard/auth.guard';
 import { HelpComponent } from './main/help/help.component';
@@ -29,117 +28,114 @@ import { UserComponent } from './user/user.component';
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import {ProjectFormComponent} from "@dsp-app/src/app/project/project-form/project-form.component";
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 
 const routes: Routes = [
     {
-        path: '',
+        path: RouteConstants.home,
         component: OverviewComponent,
     },
     {
-        path: 'help',
+        path: RouteConstants.help,
         component: HelpComponent,
     },
     {
-        path: 'login',
-        component: LoginFormComponent,
-    },
-    {
-        path: 'project/create-new',
+        path: RouteConstants.createNewProjectRelative,
         canActivate: [AuthGuard],
         component: ProjectFormComponent
     },
     {
-        path: 'project/:uuid',
+        path: RouteConstants.projectUuidRelative,
         component: ProjectComponent,
         children: [
-            {   path: 'edit',
+            {   path: RouteConstants.edit,
                 canActivate: [AuthGuard],
                 component: ProjectFormComponent
             },
             {
-                path: '',
-                component: DescriptionComponent
+                path: RouteConstants.home,
+                component: DescriptionComponent,
             },
             {
-                path: 'add-ontology',
+                path: RouteConstants.addOntology,
                 component: OntologyFormComponent,
                 canActivate: [AuthGuard],
             },
             {
-                path: 'ontology',
+                path: RouteConstants.ontology,
                 component: HintComponent,
                 data: { topic: 'ontology' },
             },
             {
-                path: 'data-models',
-                component: DataModelsComponent
+                path: RouteConstants.dataModels,
+                component: DataModelsComponent,
             },
             {
-                path: 'ontology/:onto',
+                path: RouteConstants.ontologyRelative,
                 component: OntologyComponent,
                 canActivate: [AuthGuard],
             },
             {
-                path: 'ontology/:onto/editor/:view',
+                path: RouteConstants.OntologyEditorViewRelative,
                 component: OntologyComponent,
                 canActivate: [AuthGuard],
             },
             {
-                path: 'ontology/:onto/:class',
+                path: RouteConstants.OntologyClassRelative,
                 component: OntologyClassInstanceComponent,
             },
             {
-                path: 'ontology/:onto/:class/conf',
+                path: RouteConstants.OntologyClassConfRelative,
                 component: StatusComponent,
                 data: {
-                    status: 501,
+                    status: RouteConstants.notImplemented,
                     comment:
                         'Here you will be able to configure the resource class.',
                 },
                 canActivate: [AuthGuard],
             },
             {
-                path: 'ontology/:onto/:class/:instance',
+                path: RouteConstants.OntologyClassInstanceRelative,
                 component: OntologyClassInstanceComponent,
             },
             {
-                path: 'add-list',
+                path: RouteConstants.addList,
                 component: ListInfoFormComponent,
                 canActivate: [AuthGuard],
             },
             {
-                path: 'list',
+                path: RouteConstants.list,
                 component: HintComponent,
                 data: { topic: 'list' },
             },
             {
-                path: 'list/:list',
+                path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
                 component: ListComponent
             },
             {
-                path: 'settings',
+                path: RouteConstants.settings,
                 component: SettingsComponent,
                 canActivate: [AuthGuard],
                 children: [
                     {
-                        path: '',
+                        path: RouteConstants.home,
                         pathMatch: 'full',
-                        redirectTo: 'collaboration',
+                        redirectTo: RouteConstants.collaboration,
                     },
                     {
-                        path: 'collaboration',
+                        path: RouteConstants.collaboration,
                         component: CollaborationComponent,
                     },
                     {
-                        path: 'permissions',
+                        path: RouteConstants.permissions,
                         component: PermissionComponent,
                     },
                 ],
             },
             {
-                path: '**',
+                path: RouteConstants.notFoundWildcard,
                 component: StatusComponent,
-                data: { status: 404 },
+                data: { status: RouteConstants.notFound },
             },
         ],
     },
@@ -150,17 +146,17 @@ const routes: Routes = [
     },
     */
     {
-        path: 'profile',
+        path: RouteConstants.profile,
         component: UserComponent,
         canActivate: [AuthGuard],
     },
     {
-        path: 'account',
+        path: RouteConstants.userAccount,
         component: UserComponent,
         canActivate: [AuthGuard],
     },
     {
-        path: 'projects',
+        path: RouteConstants.projects,
         component: UserComponent,
         canActivate: [AuthGuard],
     },
@@ -170,70 +166,75 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     }, */
     {
-        path: 'system',
+        path: RouteConstants.system,
         component: SystemComponent,
         canActivate: [AuthGuard],
         children: [
             {
-                path: '',
+                path: RouteConstants.home,
                 pathMatch: 'full',
-                redirectTo: 'projects',
+                redirectTo: RouteConstants.systemProjects,
             },
             {
-                path: 'projects',
+                path: RouteConstants.systemProjects,
                 component: ProjectsComponent,
             },
             {
-                path: 'users',
+                path: RouteConstants.systemUsers,
                 component: UsersComponent,
             },
         ],
     },
     {
-        path: 'search',
+        path: RouteConstants.search,
         children: [
             {
-                path: ':mode/:q/:project',
+                path: RouteConstants.searchProjectRelative,
                 component: ResultsComponent,
             },
             {
-                path: ':mode/:q',
+                path: RouteConstants.searchRelative,
                 component: ResultsComponent,
             },
         ],
     },
     {
-        path: 'resource',
+        path: RouteConstants.resource,
         children: [
             {
-                path: ':project/:resource/:value',
+                path: RouteConstants.projectResourceValueRelative,
                 component: ResourceComponent,
             },
             {
-                path: ':project/:resource',
+                path: RouteConstants.projectResourceRelative,
                 component: ResourceComponent,
             },
         ],
         runGuardsAndResolvers: 'always',
     },
     {
-        path: 'cookie-policy',
+        path: RouteConstants.cookiePolicy,
         component: CookiePolicyComponent,
     },
     {
-        path: 'teapot',
+        path: RouteConstants.teapot,
         component: StatusComponent,
         data: { status: 418 },
     },
     {
-        path: '**',
+        path: RouteConstants.notFoundWildcard,
         component: StatusComponent,
-        data: { status: 404 },
+        data: { status: RouteConstants.notFound },
     },
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+    imports: [
+        RouterModule.forRoot(routes, {
+            bindToComponentInputs: true,
+            onSameUrlNavigation: 'reload',
+        }),
+    ],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}
