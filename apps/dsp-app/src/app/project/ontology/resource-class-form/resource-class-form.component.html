@@ -82,13 +82,13 @@
                     "
                     (click)="submitData()"
                 >
-                    <app-progress-indicator
+                    <dasch-swiss-app-progress-indicator
                         [color]="'white'"
                         [status]="0"
                         *ngIf="loading"
                         class="submit-progress"
                     >
-                    </app-progress-indicator>
+                    </dasch-swiss-app-progress-indicator>
                     <mat-icon *ngIf="error && !loading">close</mat-icon>
                     {{ error ? 'Failed' : 'Update' }}
                 </button>

@@ -42,6 +42,9 @@
       "@dasch-swiss/vre/shared/app-notification": [
         "libs/vre/shared/app-notification/src/index.ts"
       ],
+      "@dasch-swiss/vre/shared/app-progress-indicator": [
+        "libs/vre/shared/app-progress-indicator/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-session": [
         "libs/vre/shared/app-session/src/index.ts"
       ],

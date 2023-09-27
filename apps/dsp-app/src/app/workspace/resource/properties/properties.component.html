@@ -160,7 +160,7 @@
 
                     <!-- in case of incoming links we have to display them here -->
                     <div *ngIf="prop.propDef.id === hasIncomingLinkIri">
-                        <app-progress-indicator *ngIf="loading"></app-progress-indicator>
+                        <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
                         <div *ngIf="!loading">
                             <!-- the value(s) of the incoming links -->
                             <a class="link link-value" *ngFor="let inRes of displayedIncomingLinkResources"

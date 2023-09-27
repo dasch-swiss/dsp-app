@@ -15,18 +15,18 @@
     <div>
         <!-- bullet point before submit -->
         <mat-icon *ngIf="status === -1" class="before-submit"
-            >keyboard_arrow_right</mat-icon
+        >keyboard_arrow_right</mat-icon
         >
         <!-- icon 'check' when done -->
         <mat-icon
             *ngIf="status === 1"
             class="after-submit"
             [style.color]="color"
-            >done</mat-icon
+        >done</mat-icon
         >
         <!-- in case of an error -->
         <mat-icon *ngIf="status === 400" class="submit-error"
-            >not_interested</mat-icon
+        >not_interested</mat-icon
         >
     </div>
 </div>

@@ -1,11 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {NgIf} from "@angular/common";
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
-    selector: 'app-progress-indicator',
-    templateUrl: './progress-indicator.component.html',
-    styleUrls: ['./progress-indicator.component.scss'],
+    standalone: true,
+    selector: 'dasch-swiss-app-progress-indicator',
+    imports: [
+        NgIf,
+        MatIconModule
+    ],
+    templateUrl: './app-progress-indicator.component.html',
+    styleUrls: ['./app-progress-indicator.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProgressIndicatorComponent implements OnInit {
+export class AppProgressIndicatorComponent implements OnInit {
     /**
      * @param status number relating to status
      *
@@ -31,7 +39,7 @@ export class ProgressIndicatorComponent implements OnInit {
 
     @Input() size: 'small' | 'large' = 'small';
 
-    widthAndHeight: string;
+    widthAndHeight!: string;
 
     ngOnInit() {
         this.widthAndHeight = this.size === 'small' ? '48px' : '128px';

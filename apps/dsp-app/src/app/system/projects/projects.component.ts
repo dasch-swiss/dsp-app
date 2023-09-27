@@ -15,6 +15,7 @@ import {
     Session,
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/shared/app-progress-indicator';
 
 /**
  * projects component handles the list of projects

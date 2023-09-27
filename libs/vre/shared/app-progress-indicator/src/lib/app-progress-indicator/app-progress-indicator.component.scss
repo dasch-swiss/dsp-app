@@ -1,0 +1,67 @@
+// default progress-indicator: rolling dasch logo
+
+.app-progress-indicator.default {
+       margin: 48px auto;
+
+.loader {
+    display: block;
+    margin: 0 auto;
+}
+svg path {
+    stroke-dasharray: 530;
+    stroke-dashoffset: 530;
+    animation: load 3s both infinite;
+}
+
+@keyframes load {
+    to {
+        stroke-dashoffset: 2120;
+    }
+}
+}
+
+//
+// submit data has a different progress indicator
+//
+.app-progress-indicator.submit {
+    height: 32px;
+    width: 32px;
+
+.on-submit {
+    animation: spinner-keyframes 0.7s linear infinite;
+    height: 32px;
+    width: 32px;
+
+.spinner {
+    border: 2px solid #336790; // $primary;;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    border-right-color: transparent;
+    height: 28px;
+    width: 28px;
+}
+}
+
+.before-submit {
+    color: #6B7280;
+    // color: $cool_gray;
+}
+
+.after-submit {
+    color: #336790;
+    // color: $primary;
+}
+
+.submit-error {
+    color: #EF4444;
+}
+
+@keyframes spinner-keyframes {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+}

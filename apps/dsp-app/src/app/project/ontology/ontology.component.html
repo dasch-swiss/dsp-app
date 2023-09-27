@@ -1,6 +1,6 @@
 <div *ngIf="!disableContent">
 
-    <app-progress-indicator *ngIf="loading"></app-progress-indicator>
+    <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
 
     <!-- main content: overview shows resource classes of ontology -->
     <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
@@ -140,7 +140,7 @@
             </mat-sidenav-content>
         </mat-sidenav-container>
 
-        <app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></app-progress-indicator>
+        <dasch-swiss-app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></dasch-swiss-app-progress-indicator>
     </div>
 
 </div>

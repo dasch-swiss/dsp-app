@@ -20,7 +20,6 @@ import { AppComponent } from './app.component';
 import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationMessageComponent } from './main/action/confirmation-dialog/confirmation-message/confirmation-message.component';
 import { LoginFormComponent } from './main/action/login-form/login-form.component';
-import { ProgressIndicatorComponent } from './main/action/progress-indicator/progress-indicator.component';
 import { SelectedResourcesComponent } from './main/action/selected-resources/selected-resources.component';
 import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
 import { StringLiteralInputComponent } from './main/action/string-literal-input/string-literal-input.component';
@@ -180,6 +179,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-config';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AppDatePickerModule } from '@dasch-swiss/vre/shared/app-date-picker';
+import { AppProgressIndicatorComponent } from "@dasch-swiss/vre/shared/app-progress-indicator";
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -256,7 +256,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         PermissionComponent,
         PermissionInfoComponent,
         ProfileComponent,
-        ProgressIndicatorComponent,
         ProjectComponent,
         ProjectFormComponent,
         ProjectsComponent,
@@ -337,6 +336,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     imports: [
         AngularSplitModule,
         AppDatePickerModule,
+        AppProgressIndicatorComponent,
         AppRoutingModule,
         BrowserAnimationsModule,
         BrowserModule,

@@ -1,5 +1,5 @@
 <!-- create property values and submit data -->
-<app-progress-indicator *ngIf="preparing"></app-progress-indicator>
+<dasch-swiss-app-progress-indicator *ngIf="preparing"></dasch-swiss-app-progress-indicator>
 <form *ngIf="propertiesParentForm && !preparing"
     class="resource-instance-form form-content"
     [formGroup]="propertiesParentForm"
@@ -39,7 +39,7 @@
                 [disabled]="!propertiesParentForm.valid"
             >
             <div class="progress-button-content">
-                <app-progress-indicator
+                <dasch-swiss-app-progress-indicator
                 *ngIf="loading"
                 [color]="'white'"
                 [status]="0"

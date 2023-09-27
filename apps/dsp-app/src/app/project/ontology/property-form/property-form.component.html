@@ -221,13 +221,13 @@
             (click)="submitData()"
             class="submit"
         >
-            <app-progress-indicator
+            <dasch-swiss-app-progress-indicator
                 [color]="'white'"
                 [status]="0"
                 *ngIf="loading"
                 class="submit-progress"
             >
-            </app-progress-indicator>
+            </dasch-swiss-app-progress-indicator>
             <mat-icon *ngIf="error && !loading">close</mat-icon>
             {{
                 error
@@ -243,12 +243,12 @@
 </form>
 <div *ngIf="editMode === 'changeCardinalities'" class="form-content">
     <div class="center">
-        <app-progress-indicator
+        <dasch-swiss-app-progress-indicator
             [status]="0"
             *ngIf="!canChangeCardinalityChecked"
             class="submit-progress"
         >
-        </app-progress-indicator>
+        </dasch-swiss-app-progress-indicator>
     </div>
     <div *ngIf="canChangeCardinalityChecked">
         <div class="center">
@@ -309,9 +309,9 @@
         </div>
     </div>
     <div class="center" *ngIf="submittingChange">
-        <app-progress-indicator
+        <dasch-swiss-app-progress-indicator
             class="submit-progress"
             [status]="0"
-        ></app-progress-indicator>
+        ></dasch-swiss-app-progress-indicator>
     </div>
 </div>
