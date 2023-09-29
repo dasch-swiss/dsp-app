@@ -1,5 +1,21 @@
 # Changelog
 
+## [10.23.5](https://github.com/dasch-swiss/dsp-das/compare/v10.23.4...v10.23.5) (2023-09-29)
+
+
+### Bug Fixes
+
+* **app:** sort incoming links for more than 25 ([#1203](https://github.com/dasch-swiss/dsp-das/issues/1203)) ([7a17d7c](https://github.com/dasch-swiss/dsp-das/commit/7a17d7c8569e5005f48ed1011bd6f26053d5a989))
+* **link to controlled vocabulary:** Link to correct route ([#1207](https://github.com/dasch-swiss/dsp-das/issues/1207)) ([51bae4b](https://github.com/dasch-swiss/dsp-das/commit/51bae4bba2588f138b7ca95434895ab105fe4c1f))
+
+
+### Maintenance
+
+* **app-global, app-routing-module:** Replaces string literals with constants ([#1210](https://github.com/dasch-swiss/dsp-das/issues/1210)) ([a70388c](https://github.com/dasch-swiss/dsp-das/commit/a70388cee52e4ad56c68019da048e33bba4b5435))
+* **deps:** bump js-lib version to 8.3.5 ([#1211](https://github.com/dasch-swiss/dsp-das/issues/1211)) ([a6682e9](https://github.com/dasch-swiss/dsp-das/commit/a6682e9e05f498df83f65c0c0ed47e09bacbf8da))
+* **progress indicator:** move app progress indicator into shared lib ([#1204](https://github.com/dasch-swiss/dsp-das/issues/1204)) ([95d843d](https://github.com/dasch-swiss/dsp-das/commit/95d843d9c1c3231244c67f4712d0bbfc2365a2fa))
+* **project edit dialog:** remove dialog and replace in component ([#1202](https://github.com/dasch-swiss/dsp-das/issues/1202)) ([7a42167](https://github.com/dasch-swiss/dsp-das/commit/7a421679caab8405a1e0a8d112656c3b06a2bc53))
+
 ## [10.23.4](https://github.com/dasch-swiss/dsp-das/compare/v10.23.3...v10.23.4) (2023-09-15)
 
 
