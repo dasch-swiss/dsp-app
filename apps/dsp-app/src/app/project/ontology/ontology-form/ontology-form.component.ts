@@ -47,12 +47,12 @@ export class OntologyFormComponent implements OnInit {
     // ontology iri in case of edit
     @Input() iri: string;
 
-    // existing ontology names; name has to be unique
-    @Input() existingOntologyNames: string[] = [];
-
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
     @Output() updateParent: EventEmitter<string> = new EventEmitter<string>();
+
+    // existing ontology names; name has to be unique
+    existingOntologyNames: string[] = [];
 
     loading: boolean;
 
@@ -139,7 +139,8 @@ export class OntologyFormComponent implements OnInit {
             this.projectUuid = this._route.parent.snapshot.params.uuid;
         }
 
-        if (!this.existingOntologyNames.length) {
+        if (!this.iri && !this.existingOntologyNames.length) {
+            // if there is no iri, we are creating a new ontology
             this._applicationStateService.get('currentProjectOntologies').subscribe(
                 (response: ReadOntology[]) => {
                     response.forEach((onto) => {
