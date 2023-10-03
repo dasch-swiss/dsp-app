@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.23.6](https://github.com/dasch-swiss/dsp-das/compare/v10.23.5...v10.23.6) (2023-10-03)
+
+
+### Bug Fixes
+
+* **ontology form:** remove the input decorator ([#1212](https://github.com/dasch-swiss/dsp-das/issues/1212)) ([64100e7](https://github.com/dasch-swiss/dsp-das/commit/64100e7385f0985e1b7eca7b087e99c413a85368))
+
 ## [10.23.5](https://github.com/dasch-swiss/dsp-das/compare/v10.23.4...v10.23.5) (2023-09-29)
 
 
