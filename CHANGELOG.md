@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.23.7](https://github.com/dasch-swiss/dsp-das/compare/v10.23.6...v10.23.7) (2023-10-04)
+
+
+### Bug Fixes
+
+* **resource:** resources do not load from url ([#1214](https://github.com/dasch-swiss/dsp-das/issues/1214)) ([689acbe](https://github.com/dasch-swiss/dsp-das/commit/689acbe6933e3da508268c8c65dfd76c74afeeb9))
+
 ## [10.23.6](https://github.com/dasch-swiss/dsp-das/compare/v10.23.5...v10.23.6) (2023-10-03)
 
 
