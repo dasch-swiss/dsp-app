@@ -1,57 +1,64 @@
 @use "../../../../styles/config" as *;
 
 .list-view-header {
-  display: flex;
-  box-sizing: border-box;
-  flex-direction: row;
-  align-items: center;
-  white-space: nowrap;
-  padding: 0 16px;
-  height: 60px;
-  width: 100%;
-  z-index: 1;
-  background: $bright;
-
-  .pagination-button:disabled {
-    span,
-    mat-icon{
-      color: $cool_gray_300;
-    }
-  }
-
-  .pagination-button {
-    &.previous {
-      span{
-        padding-left: 14px;
-      }
-    }
-
-    &.next {
-      span{
-        padding-right: 14px;
-      }
-    }
-
-    span,
-    mat-icon{
-      color: $primary;
-      font-weight: 400;
-    }
-  }
-
-  .range{
-    color: $cool_gray_500;
-    font-weight: 300;
-  }
-}
-
-.list-view-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   position: sticky !important;
   top: 0;
+  background: $bright;
+  z-index: 1;
 
-  .switch-view-label {
-    margin-right: 16px;
+  .back {
+    text-align: right;
+    padding: 3% 0%;
+
+    .back-button {
+        border: 1px solid $primary;
+        margin-right: 2%;
+        color: $primary;
+    }
+  }
+
+  .navigation {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    padding: 0 16px;
+    height: 60px;
+    width: 100%;
+
+    .pagination-button:disabled {
+      span,
+      mat-icon{
+        color: $cool_gray_300;
+      }
+    }
+
+    .pagination-button {
+      &.previous {
+        span{
+          padding-left: 14px;
+        }
+      }
+
+      &.next {
+        span{
+          padding-right: 14px;
+        }
+      }
+
+      span,
+      mat-icon{
+        color: $primary;
+        font-weight: 400;
+      }
+    }
+
+    .range{
+      color: $cool_gray_500;
+      font-weight: 300;
+    }
   }
 }
 
@@ -66,6 +73,18 @@
   mat-icon {
     color: $yellow_500;
     min-width: 25px;
+  }
+}
+
+.no-results {
+  .back {
+    padding: 0% 0% 3% 0%;
+
+    .back-button {
+        border: 1px solid $primary;
+        margin-right: 2%;
+        color: $primary;
+    }
   }
 }
 

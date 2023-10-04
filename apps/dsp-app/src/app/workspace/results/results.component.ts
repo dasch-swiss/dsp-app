@@ -5,6 +5,8 @@ import {
     FilteredResources,
     SearchParams,
 } from './list-view/list-view.component';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface SplitSize {
     gutterNum: number;
@@ -17,7 +19,10 @@ export interface SplitSize {
     styleUrls: ['./results.component.scss'],
 })
 export class ResultsComponent {
-    searchParams: SearchParams;
+    searchParams: SearchParams = {
+        query: '',
+        mode: 'fulltext',
+    };
 
     resIri: string;
 
@@ -38,29 +43,29 @@ export class ResultsComponent {
     splitSize: SplitSize;
 
     constructor(private _route: ActivatedRoute, private _titleService: Title) {
-        this._route.paramMap.subscribe((params: Params) => {
-            this.searchQuery = decodeURIComponent(params.get('q'));
-            this.searchMode =
-                decodeURIComponent(params.get('mode')) === 'fulltext'
-                    ? 'fulltext'
-                    : 'gravsearch';
+        const parentParams$ = this._route.parent.paramMap;
+        const params$ = this._route.paramMap;
 
-            this.searchParams = {
-                query: this.searchQuery,
-                mode: this.searchMode,
-            };
-            // get the project iri if exists
-            if (params.get('project')) {
-                this.searchParams.filter = {
-                    limitToProject: decodeURIComponent(params.get('project')),
+        const combinedParams$ = combineLatest([parentParams$, params$]).pipe(
+            map(([parentParams, params]) => {
+                return {
+                    parentParams: parentParams,
+                    params: params,
                 };
-            }
-        });
-
-        // set the page title
-        this._titleService.setTitle(
-            'Search results for ' + this.searchParams.mode + ' search'
+            })
         );
+
+        combinedParams$.subscribe((data) => {
+            const parentParams = data.parentParams;
+            const params = data.params;
+
+            this._handleParentParams(parentParams);
+            this._handleSearchParams(params);
+
+            this._titleService.setTitle(
+                'Search results for ' + this.searchParams.mode + ' search'
+            );
+        });
     }
 
     onSelectionChange(res: FilteredResources) {
@@ -74,6 +79,27 @@ export class ResultsComponent {
                 this.viewMode =
                     res && res.count > 0 ? 'intermediate' : 'single';
             }
+        }
+    }
+
+    private _handleParentParams(parentParams: Params) {
+        const uuid = parentParams.get('uuid');
+        if (uuid) {
+            this.searchParams.projectUuid = uuid;
+        }
+    }
+
+    private _handleSearchParams(params: Params) {
+        this.searchQuery = decodeURIComponent(params.get('q'));
+        this.searchMode = decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch';
+
+        this.searchParams.query = this.searchQuery;
+        this.searchParams.mode = this.searchMode;
+
+        if (params.get('project') && this.searchMode === 'fulltext') {
+            this.searchParams.filter = {
+                limitToProject: decodeURIComponent(params.get('project')),
+            };
         }
     }
 }

@@ -12,6 +12,8 @@ import { TestConfig } from '@dsp-app/src/test.config';
 import { ResourceComponent } from '../resource/resource.component';
 import { SearchParams } from './list-view/list-view.component';
 import { ResultsComponent } from './results.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 /**
  * test component that mocks ListViewComponent
@@ -44,6 +46,33 @@ describe('ResultsComponent', () => {
                 {
                     provide: DspApiConnectionToken,
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
+                },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        parent: {
+                            paramMap: of({
+                                get: (param: string) => {
+                                    if (param === 'uuid') {
+                                        return TestConfig.ProjectUuid;
+                                    }
+                                },
+                            }),
+                            snapshot: {
+                                url: [{ path: 'project' }],
+                            },
+                        },
+                        paramMap: of({
+                            get: (param: string) => {
+                                if (param === 'mode') {
+                                    return 'gravsearch';
+                                }
+                                if (param === 'q') {
+                                    return 'query';
+                                }
+                            },
+                        }),
+                    },
                 },
             ],
         }).compileComponents();

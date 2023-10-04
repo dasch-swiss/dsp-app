@@ -17,6 +17,7 @@ import {
     ViewContainerRef,
 } from '@angular/core';
 import { SearchParams } from '../../results/list-view/list-view.component';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
     selector: 'app-search-panel',
@@ -70,8 +71,22 @@ export class SearchPanelComponent {
 
     constructor(
         private _overlay: Overlay,
-        private _viewContainerRef: ViewContainerRef
+        private _viewContainerRef: ViewContainerRef,
+        private _router: Router,
+        private _route: ActivatedRoute
     ) {}
+
+    routeToAdvancedSearch() {
+        this._route.firstChild.paramMap.subscribe((params: Params) => {
+            const uuid = params.get('uuid');
+
+            const navigationExtras = {
+                state: { uuid: uuid }
+            };
+
+            this._router.navigate(['advanced-search'], navigationExtras);
+        });
+    }
 
     openPanelWithBackdrop(type: string) {
         this.showAdvanced = type === 'advanced';

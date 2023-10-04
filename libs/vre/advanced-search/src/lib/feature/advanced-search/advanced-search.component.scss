@@ -1,0 +1,17 @@
+.advanced-search-container {
+  padding: 0% 2.5%;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+
+    .title {
+      flex: 1;
+      text-align: left;
+      font-size: 22px;
+    }
+  }
+
+}

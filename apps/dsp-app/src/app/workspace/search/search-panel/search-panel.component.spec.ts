@@ -10,6 +10,7 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { SearchPanelComponent } from './search-panel.component';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * test host component to simulate child component, here fulltext-search.
@@ -56,6 +57,17 @@ describe('SearchPanelComponent', () => {
                 TestFulltextSearchComponent,
             ],
             imports: [OverlayModule, MatMenuModule, MatIconModule],
+            providers: [
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        snapshot: {
+                            url: [{ path: 'project' }],
+                            params: [{ uuid: '00123001' }],
+                        },
+                    },
+                },
+            ],
         }).compileComponents();
     }));
 

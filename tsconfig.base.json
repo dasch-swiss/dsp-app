@@ -24,6 +24,9 @@
       "@dasch-swiss/jdnconvertiblecalendardateadapter": [
         "libs/jdnconvertiblecalendardateadapter/src/index.ts"
       ],
+      "@dasch-swiss/vre/advanced-search": [
+        "libs/vre/advanced-search/src/index.ts"
+      ],
       "@dasch-swiss/vre/shared/app-analytics": [
         "libs/vre/shared/app-analytics/src/index.ts"
       ],

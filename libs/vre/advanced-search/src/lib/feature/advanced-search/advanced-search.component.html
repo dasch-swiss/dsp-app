@@ -1,0 +1,80 @@
+<div class="advanced-search-container">
+    <div class="header">
+        <div class="title">
+            <p>Advanced search</p>
+        </div>
+    </div>
+    <div
+        *ngIf="{
+            ontologies: ontologies$ | async,
+            ontologiesLoading: ontologiesLoading$ | async,
+            resourceClasses: resourceClasses$ | async,
+            resourceClassesLoading: resourceClassesLoading$ | async,
+            searchButtonDisabled: searchButtonDisabled$ | async,
+            propertyFormList: propertyFormList$ | async,
+            propertiesOrderByList: propertiesOrderByList$ | async,
+            properties: properties$ | async,
+            propertiesLoading: propertiesLoading$ | async,
+            filteredProperties: filteredProperties$ | async,
+            addButtonDisabled: addButtonDisabled$ | async,
+            resetButtonDisabled: resetButtonDisabled$ | async,
+            selectedOntology: selectedOntology$ ? (selectedOntology$ | async) : undefined,
+            selectedResourceClass: selectedResourceClass$ ? (selectedResourceClass$| async) : undefined,
+            matchResourceClassesLoading: matchResourceClassesLoading$ | async,
+            resourcesSearchResultsLoading: resourcesSearchResultsLoading$ | async,
+            resourcesSearchResultsCount: resourcesSearchResultsCount$ | async,
+            resourcesSearchResults: resourcesSearchResults$ | async,
+            resourcesSearchNoResults: resourcesSearchNoResults$ | async,
+            orderByButtonDisabled: orderByButtonDisabled$ | async,
+        } as asyncData"
+    >
+        <dasch-swiss-order-by
+            [orderByList]="asyncData.propertiesOrderByList"
+            [orderByDisabled]="asyncData.orderByButtonDisabled"
+            (emitPropertyOrderByChanged)="handlePropertyOrderByChanged($event)"
+        >
+        </dasch-swiss-order-by>
+        <dasch-swiss-ontology-resource-form
+            [ontologies]="asyncData.ontologies"
+            [ontologiesLoading]="asyncData.ontologiesLoading"
+            [resourceClasses]="asyncData.resourceClasses"
+            [resourceClassesLoading]="asyncData.resourceClassesLoading"
+            [selectedOntology]="asyncData.selectedOntology"
+            [selectedResourceClass]="asyncData.selectedResourceClass"
+            (emitSelectedOntology)="handleSelectedOntology($event)"
+            (emitSelectedResourceClass)="handleSelectedResourceClass($event)"
+        ></dasch-swiss-ontology-resource-form>
+        <dasch-swiss-property-form
+            *ngFor="let propertyForm of asyncData.propertyFormList"
+            [matchResourceClassesLoading]="asyncData.matchResourceClassesLoading"
+            [resourcesSearchResultsLoading]="asyncData.resourcesSearchResultsLoading"
+            [resourcesSearchResultsCount]="asyncData.resourcesSearchResultsCount"
+            [resourcesSearchResults]="asyncData.resourcesSearchResults"
+            [resourcesSearchNoResults]="asyncData.resourcesSearchNoResults"
+            [propertyFormItem]="propertyForm"
+            [properties]="asyncData.filteredProperties?.length ? asyncData.filteredProperties : asyncData.properties"
+            [propertiesLoading]="asyncData.propertiesLoading"
+            (emitRemovePropertyForm)="handleRemovePropertyForm($event)"
+            (emitSelectedPropertyChanged)="handleSelectedPropertyChanged($event)"
+            (emitSelectedOperatorChanged)="handleSelectedOperatorChanged($event)"
+            (emitSelectedMatchPropertyResourceClassChanged)="handleSelectedMatchPropertyResourceClassChanged($event)"
+            (emitSearchValueChanged)="handleSearchValueChanged($event)"
+            (emitResourceSearchValueChanged)="handleResourceSearchValueChanged($event)"
+            (emitLoadMoreSearchResults)="handleLoadMoreSearchResults($event)"
+            (emitAddChildPropertyForm)="handleAddChildPropertyForm($event)"
+            (emitRemoveChildPropertyForm)="handleRemoveChildPropertyForm($event)"
+            (emitChildSelectedPropertyChanged)="handleChildSelectedPropertyChanged($event)"
+            (emitChildSelectedOperatorChanged)="handleChildSelectedOperatorChanged($event)"
+            (emitChildValueChanged)="handleChildValueChanged($event)"
+        ></dasch-swiss-property-form>
+        <dasch-swiss-form-actions
+            [addButtonDisabled]="asyncData.addButtonDisabled"
+            [resetButtonDisabled]="asyncData.resetButtonDisabled"
+            [searchButtonDisabled]="asyncData.searchButtonDisabled"
+            (emitAddPropertyForm)="handleAddPropertyForm()"
+            (emitResetButtonClicked)="handleResetButtonClicked()"
+            (emitSearchButtonClicked)="handleSearchButtonClicked()"
+        >
+        </dasch-swiss-form-actions>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+<div
+    *ngFor="let item of values; let i = index"
+    class="parent-container child-property-list"
+>
+    <div class="form-fields-container">
+        <div class="dropdown-container">
+            <div class="content">
+                <p class="label">Select a property</p>
+                <mat-form-field>
+                    <mat-select
+                        (selectionChange)="onSelectedPropertyChanged($event, i)"
+                        placeholder="Select a value"
+                        name="properties"
+                    >
+                        <mat-option [value]="resourceLabelObj">{{
+                            resourceLabelObj.label
+                        }}</mat-option>
+                        <mat-option
+                            *ngFor="let prop of properties"
+                            [value]="prop"
+                        >
+                            {{ prop.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="dropdown-container">
+            <div class="content">
+                <p class="label">Comparison Operator</p>
+                <mat-form-field class="operator">
+                    <mat-select
+                        #operatorsList
+                        (selectionChange)="onSelectedOperatorChanged($event, i)"
+                        placeholder="Select a value"
+                        name="operators"
+                    >
+                        <mat-option
+                            *ngFor="let operator of item.operators"
+                            [value]="operator"
+                        >
+                            {{ operator }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div
+            *ngIf="
+                item.selectedOperator &&
+                item.selectedOperator !== operators.Exists &&
+                item.selectedOperator !== operators.NotExists
+            "
+            class="value-container"
+        >
+            <!-- choose correct component based on objectType -->
+            <dasch-swiss-property-form-value
+                #propertyFormValue
+                *ngIf="
+                    !item.selectedProperty?.isLinkedResourceProperty &&
+                    item.selectedProperty?.objectType !== constants.ListValue
+                "
+                [objectType]="item.selectedProperty?.objectType"
+                (emitValueChanged)="onValueChanged($event, i)"
+            />
+            <dasch-swiss-property-form-list-value
+                *ngIf="
+                    item.selectedProperty?.objectType === constants.ListValue
+                "
+                [list]="item.list"
+                (emitValueChanged)="onValueChanged($event, i)"
+            >
+            </dasch-swiss-property-form-list-value>
+            <dasch-swiss-property-form-link-value
+                *ngIf="item.selectedProperty?.isLinkedResourceProperty"
+                [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
+                [resourcesSearchResultsCount]="resourcesSearchResultsCount"
+                [resourcesSearchResults]="resourcesSearchResults"
+                [resourcesSearchNoResults]="resourcesSearchNoResults"
+                (emitResourceSearchValueChanged)="
+                    onResourceSearchValueChanged($event, i)
+                "
+                (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event, i)"
+                (emitResourceSelected)="onValueChanged($event, i)"
+            ></dasch-swiss-property-form-link-value>
+        </div>
+    </div>
+    <div class="side-container">
+        <button
+            mat-icon-button
+            (click)="onRemovePropertyFormClicked(item)"
+            class="remove-property-button"
+        >
+            <mat-icon>remove_circle</mat-icon>
+        </button>
+    </div>
+</div>
+
+<div class="parent-container child-property-list">
+    <div class="add-property-button">
+        <button mat-button (click)="onAddPropertyFormClicked()">
+            Add Subcriteria
+        </button>
+    </div>
+</div>

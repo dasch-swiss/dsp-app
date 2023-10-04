@@ -14,7 +14,7 @@ import {
     KnoraApiConnection,
     ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
     ComponentCommunicationEventService,
@@ -24,6 +24,7 @@ import {
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * query: search query. It can be gravserch query or fulltext string query.
@@ -40,6 +41,7 @@ export interface SearchParams {
     query: string;
     mode: 'fulltext' | 'gravsearch';
     filter?: IFulltextSearchParams;
+    projectUuid?: string;
 }
 
 export interface ShortResInfo {
@@ -125,7 +127,9 @@ export class ListViewComponent implements OnChanges, OnInit {
         private _dspApiConnection: KnoraApiConnection,
         private _componentCommsService: ComponentCommunicationEventService,
         private _errorHandler: AppErrorHandler,
-        private _notification: NotificationService
+        private _notification: NotificationService,
+        private _route: ActivatedRoute,
+        private _router: Router
     ) {}
 
     ngOnInit(): void {
@@ -188,6 +192,13 @@ export class ListViewComponent implements OnChanges, OnInit {
         this._calculateRange(this.currentIndex);
 
         this._doSearch(this.currentIndex);
+    }
+
+    handleBackButtonClicked() {
+        const projectUuid = this._route.parent.snapshot.paramMap.get('uuid');
+        if (projectUuid) {
+            this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.advancedSearch]);
+        }
     }
 
     /**

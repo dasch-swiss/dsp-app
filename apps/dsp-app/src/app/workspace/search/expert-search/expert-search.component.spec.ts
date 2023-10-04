@@ -16,9 +16,9 @@ import {
 import { TestConfig } from '@dsp-app/src/test.config';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import {
-    AdvancedSearchParams,
-    AdvancedSearchParamsService,
-} from '../services/advanced-search-params.service';
+    GravsearchSearchParams,
+    SearchParamsService,
+} from '../services/search-params.service';
 import { ExpertSearchComponent } from './expert-search.component';
 
 /**
@@ -47,8 +47,8 @@ describe('ExpertSearchComponent', () => {
     let testHostFixture: ComponentFixture<TestHostComponent>;
     let hostCompDe: DebugElement;
 
-    let searchParamsServiceSpy: jasmine.SpyObj<AdvancedSearchParamsService>;
-    let advancedSearchParams: AdvancedSearchParams;
+    let searchParamsServiceSpy: jasmine.SpyObj<SearchParamsService>;
+    let gravsearchSearchParams: GravsearchSearchParams;
 
     beforeEach(waitForAsync(() => {
         const spy = jasmine.createSpyObj('SearchParamsService', [
@@ -77,7 +77,7 @@ describe('ExpertSearchComponent', () => {
                     useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
-                    provide: AdvancedSearchParamsService,
+                    provide: SearchParamsService,
                     useValue: spy,
                 },
             ],
@@ -89,11 +89,11 @@ describe('ExpertSearchComponent', () => {
         testHostComponent = testHostFixture.componentInstance;
 
         searchParamsServiceSpy = TestBed.inject(
-            AdvancedSearchParamsService
-        ) as jasmine.SpyObj<AdvancedSearchParamsService>;
+            SearchParamsService
+        ) as jasmine.SpyObj<SearchParamsService>;
         searchParamsServiceSpy.changeSearchParamsMsg.and.callFake(
-            (searchParams: AdvancedSearchParams) => {
-                advancedSearchParams = searchParams;
+            (searchParams: GravsearchSearchParams) => {
+                gravsearchSearchParams = searchParams;
             }
         );
 
@@ -187,8 +187,8 @@ CONSTRUCT {
         expect(
             searchParamsServiceSpy.changeSearchParamsMsg
         ).toHaveBeenCalledTimes(1);
-        expect(advancedSearchParams).toBeDefined();
-        expect(advancedSearchParams.generateGravsearch(0)).toEqual(
+        expect(gravsearchSearchParams).toBeDefined();
+        expect(gravsearchSearchParams.generateGravsearch(0)).toEqual(
             expectedGravsearch
         );
     });

@@ -1,0 +1,64 @@
+<div class="value-form-container" *ngIf="objectType" [ngSwitch]="objectType">
+
+    <!-- property label -->
+    <mat-form-field *ngSwitchCase="resourceLabel">
+        <mat-label>Property Label</mat-label>
+        <input matInput type="text" [formControl]="inputControl" />
+    </mat-form-field>
+
+    <!-- text value -->
+    <mat-form-field *ngSwitchCase="constants.TextValue">
+        <mat-label>Text Value</mat-label>
+        <input matInput type="text" [formControl]="inputControl" />
+    </mat-form-field>
+
+    <!-- boolean value -->
+    <mat-form-field *ngSwitchCase="constants.BooleanValue">
+        <mat-label>Value</mat-label>
+        <mat-select [formControl]="inputControl">
+            <mat-option value="true">
+                True
+            </mat-option>
+            <mat-option value="false">
+                False
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <!-- uri value -->
+    <mat-form-field *ngSwitchCase="constants.UriValue">
+        <mat-label>URI Value</mat-label>
+        <input matInput [formControl]="inputControl" [errorStateMatcher]="matcher" />
+        <mat-error *ngIf="inputControl.hasError('pattern')">
+            <span class="custom-error-message">
+                Value must be a URI value.
+            </span>
+        </mat-error>
+    </mat-form-field>
+
+    <!-- integer value -->
+    <mat-form-field *ngSwitchCase="constants.IntValue">
+        <mat-label>Integer Value</mat-label>
+        <input matInput type="number" [formControl]="inputControl" [errorStateMatcher]="matcher" />
+        <mat-error *ngIf="inputControl.hasError('pattern')">
+            <span class="custom-error-message">
+                Value must be an integer value.
+            </span>
+        </mat-error>
+    </mat-form-field>
+
+    <!-- decimal value -->
+    <mat-form-field *ngSwitchCase="constants.DecimalValue">
+        <mat-label>Decimal Value</mat-label>
+        <input matInput type="number" [formControl]="inputControl" [errorStateMatcher]="matcher" />
+        <mat-error *ngIf="inputControl.hasError('pattern')">
+            <span class="custom-error-message">
+                Value must be a decimal value.
+            </span>
+        </mat-error>
+    </mat-form-field>
+
+    <!-- date value -->
+    <dasch-swiss-app-date-picker *ngSwitchCase="constants.DateValue" (emitDateChanged)="onDateSelected($event)"></dasch-swiss-app-date-picker>
+
+</div>

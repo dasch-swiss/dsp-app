@@ -27,7 +27,8 @@ import { UserComponent } from './user/user.component';
 // search results and resource viewer
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
-import {ProjectFormComponent} from "@dsp-app/src/app/project/project-form/project-form.component";
+import { AdvancedSearchContainerComponent } from './workspace/search/advanced-search/advanced-search-container.component';
+import { ProjectFormComponent } from "@dsp-app/src/app/project/project-form/project-form.component";
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 
 const routes: Routes = [
@@ -131,6 +132,14 @@ const routes: Routes = [
                         component: PermissionComponent,
                     },
                 ],
+            },
+            {
+                path: RouteConstants.advancedSearch,
+                component: AdvancedSearchContainerComponent,
+            },
+            {
+                path: RouteConstants.advancedSearchResultsRelative,
+                component: ResultsComponent,
             },
             {
                 path: RouteConstants.notFoundWildcard,

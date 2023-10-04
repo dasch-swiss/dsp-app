@@ -1,0 +1,33 @@
+<button class="menu-button" mat-button [matMenuTriggerFor]="rootMenu">
+    <span>{{ selectedItem ? selectedItem : 'Select list value' }}</span>
+</button>
+<mat-menu #rootMenu="matMenu">
+    <span *ngFor="let child of list?.children">
+        <span *ngIf="child.children && child.children.length > 0">
+            <button
+                mat-menu-item
+                [matMenuTriggerFor]="menu.childMenu"
+                (click)="onItemClicked(child)"
+                type="button"
+            >
+                {{ child.label }}
+            </button>
+            <dasch-swiss-list-item
+                #menu
+                [children]="child.children"
+                (selectedNode)="onItemClicked($event)"
+            >
+            </dasch-swiss-list-item>
+        </span>
+
+        <span *ngIf="!child.children || child.children.length === 0">
+            <button
+                mat-menu-item
+                (click)="onItemClicked(child)"
+                type="button"
+            >
+                {{ child.label }}
+            </button>
+        </span>
+    </span>
+</mat-menu>

@@ -1,0 +1,22 @@
+mat-dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+
+  .cancel-button,
+  .confirm-button {
+    flex: 1;
+    margin: 0;
+    max-width: 100px;
+    border: 1px solid #336790;
+  }
+
+  .cancel-button {
+    background-color: #336790;
+    color: white;
+  }
+
+  .confirm-button {
+    color:#336790;
+  }
+}

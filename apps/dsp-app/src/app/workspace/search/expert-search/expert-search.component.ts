@@ -10,9 +10,9 @@ import {
 import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import {
-    AdvancedSearchParams,
-    AdvancedSearchParamsService,
-} from '../services/advanced-search-params.service';
+    GravsearchSearchParams,
+    SearchParamsService,
+} from '../services/search-params.service';
 
 /**
  * validator checking that the query does not contain a certain term, here OFFSET
@@ -59,7 +59,7 @@ CONSTRUCT {
 
     constructor(
         private _os: OntologyService,
-        private _searchParamsService: AdvancedSearchParamsService,
+        private _searchParamsService: SearchParamsService,
         private _fb: UntypedFormBuilder
     ) {}
 
@@ -125,7 +125,7 @@ CONSTRUCT {
         if (offset === 0) {
             // store the function so another Gravsearch query can be created with an increased offset
             this._searchParamsService.changeSearchParamsMsg(
-                new AdvancedSearchParams(generateGravsearchWithCustomOffset)
+                new GravsearchSearchParams(generateGravsearchWithCustomOffset)
             );
         }
         return query + offsetTemplate;

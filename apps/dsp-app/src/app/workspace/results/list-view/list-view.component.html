@@ -1,16 +1,24 @@
 <!-- header / toolbar to select view and pagination -->
-<div *ngIf="numberOfAllResults !== 0 && loading === false" class="list-view-header">
-    <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
-        <mat-icon>west</mat-icon>
-        <span>Previous</span>
-    </button>
-    <span class="fill-remaining-space"></span>
-    <div class="range">{{currentRangeStart}} - {{currentRangeEnd}} of {{numberOfAllResults}}</div>
-    <span class="fill-remaining-space"></span>
-    <button mat-button class="pagination-button next" [disabled]="(pageSize > numberOfAllResults) || nextDisabled" (click)="goToPage('next')">
-        <span>Next</span>
-        <mat-icon>east</mat-icon>
-    </button>
+<div *ngIf="!loading && (numberOfAllResults > 0 && resources.resources.length)" class="list-view-header">
+    <div *ngIf="search.mode === 'gravsearch' && search.projectUuid && (numberOfAllResults > 0 && resources.resources.length)" class="back">
+        <button mat-button class="back-button" (click)="handleBackButtonClicked()">
+            <span>Go Back to Search Form</span>
+            <mat-icon iconPositionEnd>chevron_right</mat-icon>
+        </button>
+    </div>
+    <div class="navigation">
+        <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
+            <mat-icon>west</mat-icon>
+            <span>Previous</span>
+        </button>
+        <span class="fill-remaining-space"></span>
+        <div class="range">{{currentRangeStart}} - {{currentRangeEnd}} of {{numberOfAllResults}}</div>
+        <span class="fill-remaining-space"></span>
+        <button mat-button class="pagination-button next" [disabled]="(pageSize > numberOfAllResults) || nextDisabled" (click)="goToPage('next')">
+            <span>Next</span>
+            <mat-icon>east</mat-icon>
+        </button>
+    </div>
 </div>
 
 <!-- container with search results -->
@@ -43,10 +51,16 @@
         </div>
         <!-- Case B: user clicked on the class item -->
         <div *ngIf="search.mode !== 'fulltext'">
+            <div *ngIf="search.mode === 'gravsearch' && search.projectUuid" class="back">
+                <button mat-button class="back-button" (click)="handleBackButtonClicked()">
+                    <span>Go Back to Search Form</span>
+                    <mat-icon iconPositionEnd>chevron_right</mat-icon>
+                </button>
+            </div>
             <!-- Case B1: there is no resources created-->
             <div *ngIf="hasPermission" class="no-results-container">
                 <mat-icon>warning</mat-icon>
-                <div>No resources have been created for this class yet.</div>
+                <div>No results were found for your query.</div>
             </div>
             <!-- Case B2: no permission-->
             <div *ngIf="!hasPermission" class="no-results-container">

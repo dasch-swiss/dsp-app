@@ -21,16 +21,6 @@
             <span class="desktop-only">How to search</span>
         </button>
         <span class="fill-remaining-space"></span>
-        <!-- advanced search button: if advanced === true -->
-        <button
-            mat-flat-button
-            *ngIf="advanced"
-            [class.active]="showAdvanced"
-            (click)="openPanelWithBackdrop('advanced')"
-        >
-            <mat-icon matPrefix>manage_search</mat-icon>
-            <span class="desktop-only">advanced</span>
-        </button>
 
         <!-- expert search button: if expert === true -->
         <button
@@ -67,11 +57,6 @@
             </span>
         </div>
         <div class="app-menu-content" [ngSwitch]="true">
-            <app-advanced-search
-                *ngSwitchCase="showAdvanced"
-                [limitToProject]="limitToProject"
-                (search)="emitSearch($event)"
-            ></app-advanced-search>
             <app-expert-search
                 *ngSwitchCase="showExpert"
                 (search)="emitSearch($event)"

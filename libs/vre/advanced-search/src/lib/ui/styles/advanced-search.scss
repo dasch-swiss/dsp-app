@@ -1,0 +1,91 @@
+.parent-container {
+  width: 100%;
+
+  &.child-property-list {
+    padding-left: 5%;
+
+    .form-fields-container {
+      width: 95%;
+    }
+
+    .side-container {
+      margin-top: 0%;
+      width: 4%;
+    }
+  }
+
+  .form-fields-container,
+  .side-container {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .form-fields-container {
+    width: 90%;
+  }
+
+  .side-container {
+    width: 9%;
+    margin-top: 2%;
+  }
+
+  .dropdown-container {
+    width: 49%;
+    display: inline-flex;
+
+    &.match-resource-class {
+      width: 44%;
+      margin-left: 5%;
+    }
+
+    .content {
+      width: 100%;
+
+      .label {
+        margin-block-end: 0%;
+        font-size: 14px;
+      }
+
+      mat-form-field {
+        width: 90%;
+        &.operator {
+          width: 40%
+        }
+      }
+    }
+  }
+}
+
+.add-property-button {
+  button {
+    padding: 0% 3%;
+    height: 50px;
+    margin: 1% 0% 5% 0%;
+  }
+
+  button:disabled {
+    border: 1px solid #BDBFC1;
+    background-color: #BDBFC1;
+    color: white;
+  }
+
+  button:not(:disabled) {
+    border: 1px solid #336790;
+    background-color: #336790;
+    color: white;
+  }
+}
+
+.remove-property-button {
+  height: 44px;
+  width: 44px;
+  padding: 0px;
+  color: #E11D48;
+
+  mat-icon {
+    height: 44px;
+    width: 44px;
+    font-size: 44px;
+
+  }
+}
