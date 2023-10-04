@@ -144,6 +144,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         private _valueOperationEventService: ValueOperationEventService,
         private _cdr:ChangeDetectorRef
     ) {
+        
         this._route.params.subscribe((params) => {
             this.projectCode = params['project'];
             this.resourceUuid = params['resource'];
@@ -292,10 +293,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         if (resource.res.isDeleted) {
             // guard; not yet implemented
             return;
-        }
-        if (resource.res.id !== this.resourceIri) {
-            // ensure that only the latest requested resource is rendered
-            return; // guard for there is already another resource requested
         }
         if (resource.isRegion) {
             // render the image onto which the region is pointing; a region
