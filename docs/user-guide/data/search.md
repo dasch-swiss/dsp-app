@@ -2,7 +2,6 @@
 
 DSP-APP offers the possibility for the user to search in 3 different ways: **full-text** search, **advanced** search, and **expert** search (Gravsearch query). The search bar is always available in the header of each page, whether logged in or out.
 
-![Search bar with the 3 search modes: full-text, advanced, and expert](../../assets/images/search-3modes.png)
 
 ## Full-text search
 
@@ -62,20 +61,31 @@ Such an example is `r̥tasya`, where the `r̥` must be replaced either by `rr` o
 
 ## Advanced search
 
-![Advanced search link is findable in the search menu at the right of the full-text search field.](../../assets/images/search-advanced-link.png)
 
-The advanced search allows the creation of complex queries using a form.
-The form creates a string representing a Gravsearch (SPARQL) query to be sent to DSP-API.
+
+![search-advanced-link Advanced search link is findable in the search menu at the right of the full-text search field.](https://github.com/dasch-swiss/dsp-das/assets/136320187/a550b36a-3de9-4788-8fb9-13bd575c1199)
+
+The advanced search allows the creation of complex queries using a form. The advanced search can be accessed from the data browser of any project. 
+The form creates a string representing a Gravsearch (SPARQL) query to be sent to DSP-API. 
 
 A query consists of the following elements:
 
-- selection of the data model
+- selection of the data model (if you have more than one data model within your project)
 - selection of a resource class belonging to the selected data model (optional)
 - specification of properties, comparison operators, and values (optional).
 
-Although the selection of a resource or a property or both are optional, either a resource class has to be selected or at least one property has to be specified, otherwise, the query is not considered valid and cannot be submitted.
+Although the selection of a resource or a property or both are optional, either a resource class has to be selected or at least one property has to be specified, otherwise, the search button stays inactive.
 
-![Search 2: Advanced search offers many filter combinations and is a powerful search tool.](../../assets/images/search-advanced.png)*<https://admin.dasch.swiss> - Search 2: Advanced search offers many filter combinations and is a powerful search tool.*
+![advanced-search-form offers many filter combinations and is a powerful search tool.](https://github.com/dasch-swiss/dsp-das/assets/136320187/cccc1001-f223-485c-8004-99977f6b7015)
+
+### How do I sort the search results?
+
+You can open the "Order by" dropdown, by selecting the checkboy of the property, you specify that it will be sorted by. The order of the entries determines which criterion should be used for sorting first. You can reorder them by clicking and dragging them.
+
+
+https://github.com/dasch-swiss/dsp-das/assets/136320187/e43bb484-91b9-48ad-a59d-0e7c79a4df1b
+
+
 
 ### Comparison Operators
 
@@ -103,8 +113,11 @@ The `is like` operator lets the user search for texts that are *like* the search
 In this example, all books are found whose title contains "Narrenschiff" followed by a space and some other characters like "(lat.)" or "(dt.)".
 
 For general information about regular expressions, see this [interactive tutorial](https://regexone.com).
+![is-like-operator](https://github.com/dasch-swiss/dsp-das/assets/136320187/d3d18b82-c5a3-4d8c-902f-813d1dac9296)
 
-![Advanced search panel with a search example](../../assets/images/advanced-search-regex.png)
+![is-like-search-results](https://github.com/dasch-swiss/dsp-das/assets/136320187/89a5d664-a75a-4b5e-867e-56e0c5347610)
+
+
 
 #### matches (Lucene Parser Syntax)
 
@@ -115,7 +128,9 @@ This search finds "Jacob" as well as "Jakob".
 
 **Note the difference between regular expressions and Lucene parser syntax!**
 
-![Advanced search panel with a search example](../../assets/images/advanced-search-match.png)
+![matches-operator](https://github.com/dasch-swiss/dsp-das/assets/136320187/8097ae8c-4265-4f5a-91fa-e1f10007dd36)
+
+![matches_results](https://github.com/dasch-swiss/dsp-das/assets/136320187/f53cc01d-b588-4ec4-87c2-8715218f1447)
 
 #### matches (specifying a Linked Resource)
 
@@ -127,13 +142,17 @@ In this example, the user writes a query looking for all letters that have an au
 
 This is different from the "is equal to" operator that lets the user specify a certain person (selected from a list).
 
-![Advanced search panel with a search example](../../assets/images/advanced-search-linked-resource.png)
+![Specified-linked-resource](https://github.com/dasch-swiss/dsp-das/assets/136320187/739e7584-bd2d-4e84-839c-61dbf7fe05bd)
+
+
+
 
 ---
 
 ## Expert search
 
-![Expert search link is findable in the search menu at the right of the full-text search field.](../../assets/images/search-expert-link.png)
+![Expert-link](https://github.com/dasch-swiss/dsp-das/assets/136320187/7a12ded5-0eac-4cb7-8ca0-ef53e3821f4b)
+
 
 The expert search can be more powerful than the advanced search, but requires knowing how to use the query language Gravsearch (based on SparQL and developed by the DaSCH team). With Gravsearch, expert users can build searches by combining text-related criteria with any other criteria.
 
