@@ -1,4 +1,5 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     ElementRef,
     EventEmitter,
@@ -8,21 +9,40 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
+import {CommonModule } from "@angular/common";
 import {
+    FormsModule,
     UntypedFormBuilder,
     UntypedFormControl,
     UntypedFormGroup,
 } from '@angular/forms';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { ReactiveFormsModule} from "@angular/forms";
+import { MatButtonModule} from "@angular/material/button";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import {MatIconModule} from "@angular/material/icon";
 
 @Component({
-    selector: 'app-string-literal-input',
-    templateUrl: './string-literal-input.component.html',
-    styleUrls: ['./string-literal-input.component.scss'],
+    selector: 'dasch-swiss-app-string-literal',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatIconModule,
+        MatInputModule,
+        MatMenuModule,
+        FormsModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './dasch-swiss-string-literal.component.html',
+    styleUrls: ['./dasch-swiss-string-literal.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StringLiteralInputComponent implements OnInit, OnChanges {
+export class AppStringLiteralComponent implements OnInit, OnChanges {
     /**
      * optional placeholder for the input field e.g. Label
      *
@@ -35,7 +55,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      *
      * @param  {string} language
      */
-    @Input() language: string;
+    @Input() language = '';
 
     /**
      * optional form field input type: textarea? set to true for textarea
@@ -43,7 +63,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      *
      * @param  {boolean} [textarea=false]
      */
-    @Input() textarea: boolean;
+    @Input() textarea = false;
 
     /**
      * optional form field value of type StringLiteral[]
@@ -57,14 +77,14 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      *
      * @param {boolean}: [disabled=false]
      */
-    @Input() disabled: boolean;
+    @Input() disabled = false;
 
     /**
      * the readonly attribute specifies whether the control may be modified by the user.
      *
      * @param {boolean}: [readonly=false]
      */
-    @Input() readonly: boolean;
+    @Input() readonly = false;
 
     /**
      * returns (output) an array of StringLiteral on any change on the input field.
@@ -73,7 +93,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      */
     @Output() dataChanged: EventEmitter<StringLiteral[]> = new EventEmitter<
         StringLiteral[]
-    >();
+        >();
 
     /**
      * returns (output) true when the field was touched. This can be used to validate data, e.g. in case a value is required
@@ -94,14 +114,14 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      *
      * @emits {boolean} focus
      */
-    @Output() focus: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() inFocus: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    @ViewChild('textInput', { static: false }) textInput: ElementRef;
+    @ViewChild('textInput', { static: false }) textInput!: ElementRef;
 
     @ViewChild('btnToSelectLanguage', { static: false })
-    btnToSelectLanguage: MatMenuTrigger;
+    btnToSelectLanguage!: MatMenuTrigger;
 
-    form: UntypedFormGroup;
+    form!: UntypedFormGroup;
     languages: string[] = ['de', 'fr', 'it', 'en', 'rm'];
 
     constructor(
@@ -110,9 +130,9 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
     ) {
         // set selected language, if it's not defined yet
         if (!this.language) {
-            if (this._sessionService.getSession() !== null) {
-                // get language from the logged-in user profile data
-                this.language = this._sessionService.getSession().user.lang;
+            const usersLanguage = this._sessionService.getSession()?.user?.lang;
+            if (usersLanguage) {
+                this.language = usersLanguage
             } else {
                 // get default language from browser
                 this.language = navigator.language.substring(0, 2);
@@ -161,15 +181,11 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
 
         const form = this.form;
         const control = form.get('text');
-        this.touched.emit(control.dirty || control.touched);
+        this.touched.emit(control?.dirty || control?.touched);
 
-        this.updateStringLiterals(this.language, this.form.controls.text.value);
+        this.updateStringLiterals(this.language, this.form.controls['text'].value);
 
         this.dataChanged.emit(this.value);
-    }
-
-    toggleAll() {
-        // tODO: open/show all languages with their values
     }
 
     /**
@@ -181,13 +197,14 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
             // clean stringLIteral value for previous language, if text field is empty
             this.updateStringLiterals(
                 this.language,
-                this.form.controls.text.value
+                this.form.controls['text'].value
             );
 
             this.language = lang;
             // update form field value / reset in case of no value
             const val = this.getValueFromStringLiteral(lang);
             this.updateFormField(val);
+            this.switchFocus()
         }
     }
 
@@ -205,7 +222,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
         }
 
         if (!this.disabled) {
-            this.form.controls.text.enable();
+            this.form.controls['text'].enable();
             this.textInput.nativeElement.focus();
         }
     }
@@ -215,7 +232,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
      */
     menuClosed() {
         if (!this.disabled) {
-            this.form.controls.text.enable();
+            this.form.controls['text'].enable();
             this.textInput.nativeElement.focus();
         }
     }
@@ -230,13 +247,13 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
         if (!this.form) {
             return;
         }
-        this.form.controls.text.setValue(value);
+        this.form.controls['text'].setValue(value);
     }
 
     /**
      * update the array of StringLiterals depending on value / empty value add or remove item from array.
      */
-    updateStringLiterals(lang: string, value?: string) {
+    updateStringLiterals(lang: string, value = '') {
         const index = this.value.findIndex((i) => i.language === lang);
 
         if (index > -1 && this.value[index].value.length > 0) {
@@ -279,7 +296,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
             if (
                 this.value.findIndex((i) => i.language === this.language) === -1
             ) {
-                this.language = this.value[0].language;
+                this.language = this.value[0].language || '';
             }
         } else {
             this.value = [];
@@ -296,7 +313,7 @@ export class StringLiteralInputComponent implements OnInit, OnChanges {
         if (this.value[index] && this.value[index].value.length > 0) {
             return this.value[index].value;
         } else {
-            return undefined;
+            return '';
         }
     }
 }

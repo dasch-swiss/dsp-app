@@ -23,11 +23,11 @@
                 type="button"
                 class="lang-button"
                 *ngFor="let lang of languages"
-                (click)="setLanguage(lang); switchFocus()"
+                (click)="setLanguage(lang)"
             >
                 <span
                     [class.existing-value]="getValueFromStringLiteral(lang)"
-                    >{{ lang }}</span
+                >{{ lang }}</span
                 >
             </button>
             <!-- TODO / QUESTION: should we support a show all button, to display values for all languages?
@@ -46,7 +46,7 @@
             class="inputValue"
             #textInput
             [readonly]="readonly"
-            (focus)="focus.emit(true)"
+            (focus)="inFocus.emit(true)"
             (keyup.enter)="enter.emit(true)"
         />
     </mat-form-field>
@@ -68,7 +68,7 @@
             >
                 <span
                     [class.existing-value]="getValueFromStringLiteral(lang)"
-                    >{{ lang }}</span
+                >{{ lang }}</span
                 >
             </mat-button-toggle>
         </mat-button-toggle-group>
@@ -78,7 +78,7 @@
                 matInput
                 [placeholder]="placeholder"
                 [formControlName]="'text'"
-                (focus)="focus.emit(true)"
+                (focus)="inFocus.emit(true)"
                 class="textAreaValue"
                 #textInput
                 [readonly]="readonly"

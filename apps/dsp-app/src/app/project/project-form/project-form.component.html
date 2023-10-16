@@ -51,7 +51,7 @@
         </mat-form-field>
 
         <!-- description -->
-        <app-string-literal-input
+        <dasch-swiss-app-string-literal
             placeholder="{{
                 'appLabels.form.project.general.description' | translate
             }} *"
@@ -60,7 +60,7 @@
             [value]="project.description"
             (dataChanged)="getStringLiteral($event)"
         >
-        </app-string-literal-input>
+        </dasch-swiss-app-string-literal>
         <mat-hint class="string-literal-error" *ngIf="formErrors.description">
             {{ formErrors.description }}
         </mat-hint>

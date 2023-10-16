@@ -2,12 +2,12 @@
 
 <div *ngIf="!loading" class="form-content list-info">
     <!-- list label -->
-    <app-string-literal-input
+    <dasch-swiss-app-string-literal
         [placeholder]="'Child node label *'"
         [value]="labels"
         (dataChanged)="handleData($event, 'labels')"
     >
-    </app-string-literal-input>
+    </dasch-swiss-app-string-literal>
     <mat-hint
         class="invalid-form string-literal-error"
         *ngIf="formInvalidMessage"
@@ -17,14 +17,14 @@
     <br /><br />
 
     <!-- list description / comment -->
-    <app-string-literal-input
+    <dasch-swiss-app-string-literal
         [textarea]="true"
         [placeholder]="'Child node description'"
         [value]="comments"
         (dataChanged)="handleData($event, 'comments')"
         [language]="labels.length ? labels[0].language : 'en'"
     >
-    </app-string-literal-input>
+    </dasch-swiss-app-string-literal>
 
     <div class="form-panel form-action">
         <span>

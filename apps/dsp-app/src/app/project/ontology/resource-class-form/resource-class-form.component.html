@@ -23,14 +23,14 @@
 
             <!-- label -->
             <div class="large-field string-literal-container more-space-top">
-                <app-string-literal-input
+                <dasch-swiss-app-string-literal
                     [placeholder]="'Label *'"
                     [value]="resourceClassLabels"
                     (enter)="submitData()"
                     (touched)="resourceClassLabelsTouched = $event"
                     (dataChanged)="handleData($event, 'label')"
                 >
-                </app-string-literal-input>
+                </dasch-swiss-app-string-literal>
                 <mat-hint class="string-literal-error" *ngIf="formErrors.label">
                     {{ formErrors.label }}
                 </mat-hint>
@@ -38,14 +38,14 @@
 
             <!-- description -->
             <div class="large-field string-literal-container more-space-top">
-                <app-string-literal-input
+                <dasch-swiss-app-string-literal
                     placeholder="Comment"
                     [value]="resourceClassComments"
                     [textarea]="true"
                     (touched)="resourceClassCommentsTouched = $event"
                     (dataChanged)="handleData($event, 'comment')"
                 >
-                </app-string-literal-input>
+                </dasch-swiss-app-string-literal>
             </div>
         </div>
 

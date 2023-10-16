@@ -4,17 +4,17 @@
     <div *ngIf="!loading" class="form-content list-info">
         <h3 *ngIf="mode ==='create'">Create new controlled vocabulary</h3>
         <!-- list label -->
-        <app-string-literal-input [placeholder]="'Controlled vocabulary label *'" [value]="labels"
+        <dasch-swiss-app-string-literal [placeholder]="'Controlled vocabulary label *'" [value]="labels"
             (dataChanged)="handleData($event, 'labels')" (focus)="isLabelTouched = $event">
-        </app-string-literal-input>
+        </dasch-swiss-app-string-literal>
         <mat-hint class="invalid-form string-literal-error" *ngIf="labelInvalidMessage && isLabelTouched">{{ labelInvalidMessage }}</mat-hint>
 
         <br><br>
 
         <!-- list description / comment -->
-        <app-string-literal-input [textarea]="true" [placeholder]="'Controlled vocabulary description *'" [value]="comments"
+        <dasch-swiss-app-string-literal [textarea]="true" [placeholder]="'Controlled vocabulary description *'" [value]="comments"
             (dataChanged)="handleData($event, 'comments')" (focus)="isCommentTouched = $event" [language]="labels.length ? labels[0].language : 'en'">
-        </app-string-literal-input>
+        </dasch-swiss-app-string-literal>
         <mat-hint class="invalid-form string-literal-error" *ngIf="commentInvalidMessage && isCommentTouched">{{ commentInvalidMessage }}</mat-hint>
 
         <div class="form-panel form-action">

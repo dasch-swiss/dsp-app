@@ -72,14 +72,14 @@
 
         <!-- label -->
         <div class="large-field string-literal-container">
-            <app-string-literal-input
+            <dasch-swiss-app-string-literal
                 [placeholder]="'Property label *'"
                 [value]="labels"
                 [disabled]="editMode === 'assignExistingProperty'"
                 (touched)="labelsTouched = $event"
                 (dataChanged)="handleData($event, 'label')"
             >
-            </app-string-literal-input>
+            </dasch-swiss-app-string-literal>
             <mat-hint class="string-literal-error" *ngIf="formErrors.label">
                 {{ formErrors.label }}
             </mat-hint>
@@ -87,14 +87,14 @@
 
         <!-- comment/description -->
         <div class="large-field string-literal-container">
-            <app-string-literal-input
+            <dasch-swiss-app-string-literal
                 placeholder="Comment"
                 [value]="comments"
                 [disabled]="editMode === 'assignExistingProperty'"
                 [textarea]="true"
                 (dataChanged)="handleData($event, 'comment')"
             >
-            </app-string-literal-input>
+            </dasch-swiss-app-string-literal>
         </div>
 
         <!-- depending on type: display gui attribute -->
