@@ -119,17 +119,34 @@ export class GravsearchService {
                     ' .';
                 whereString = constructString;
             }
+            // if search value is an array that means that it's a linked resource with child properties
             if (Array.isArray(property.searchValue)) {
                 property.searchValue.forEach((value, i) => {
                     if (value.selectedProperty?.objectType !== ResourceLabel) {
-                        constructString += `\n?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .`;
                         if (value.selectedOperator === Operators.NotExists) {
+                            constructString += `\n?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .`;
                             whereString +=
                                 `\nFILTER NOT EXISTS { \n` +
                                 `?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .\n` +
                                 `}\n`;
+                        } else if (
+                            value.selectedOperator === Operators.Equals
+                        ) {
+                            constructString += `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .`;
+                            whereString += `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .\n`;
+                            whereString += `\n?prop${index} a <${property.selectedMatchPropertyResourceClass?.iri}> .\n`;
+                        } else if (
+                            value.selectedOperator === Operators.NotEquals
+                        ) {
+                            constructString += `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .`;
+                            whereString +=
+                                `\nFILTER NOT EXISTS { \n` +
+                                `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .\n` +
+                                `}\n`;
+                            whereString += `\n?prop${index} a <${property.selectedMatchPropertyResourceClass?.iri}> .\n`;
                         } else {
-                            whereString += `\n?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .`;
+                            constructString += `\n?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .`;
+                            whereString += `\n?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .\n`;
                         }
                     }
                 });
@@ -142,14 +159,11 @@ export class GravsearchService {
                 property.selectedOperator === Operators.NotExists
             )
         ) {
-            whereString += this._valueStringHelper(
-                property,
-                index,
-                '?prop',
-                '?mainRes'
-            );
+            whereString +=
+                `\n` +
+                this._valueStringHelper(property, index, '?prop', '?mainRes');
         } else if (property.selectedOperator === Operators.NotExists) {
-            whereString = `FILTER NOT EXISTS { \n` + whereString + `}\n`;
+            whereString = `FILTER NOT EXISTS { \n` + whereString + `\n}\n`;
         }
 
         return {
@@ -172,6 +186,14 @@ export class GravsearchService {
         identifier: string,
         labelRes: string
     ): string {
+        // if the property if a child property and the operator is equals or not equals, return an empty string
+        if (
+            property.isChildProperty &&
+            (property.selectedOperator === Operators.Equals ||
+                property.selectedOperator === Operators.NotEquals)
+        )
+            return '';
+
         // add first 8 characters of the property id to create unique identifier for the variable name when searching for a resource label
         // it's sliced because gravsearch doesn't allow minus signs in variable names
         const labelVariableName = `?label${property.id.slice(0, 8)}`;
