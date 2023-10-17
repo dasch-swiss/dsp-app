@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.24.1](https://github.com/dasch-swiss/dsp-das/compare/v10.24.0...v10.24.1) (2023-10-17)
+
+
+### Bug Fixes
+
+* **advanced-search:** generate correct gravsearch for linked resources with property values ([#1229](https://github.com/dasch-swiss/dsp-das/issues/1229)) ([2caa0a2](https://github.com/dasch-swiss/dsp-das/commit/2caa0a2b576eff4206557b65512bf5fc4a162cda))
+
+
+### Maintenance
+
+* **string literal component:** move app string literal component into shared lib ([#1209](https://github.com/dasch-swiss/dsp-das/issues/1209)) ([3f2a562](https://github.com/dasch-swiss/dsp-das/commit/3f2a562b4999bcf625e257b425e2f75e47079bc1))
+
 ## [10.24.0](https://github.com/dasch-swiss/dsp-das/compare/v10.23.7...v10.24.0) (2023-10-13)
 
 
