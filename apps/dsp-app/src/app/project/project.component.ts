@@ -104,7 +104,8 @@ export class ProjectComponent implements OnInit {
      */
     @HostListener('window:keyup', ['$event'])
     keyEvent(event: KeyboardEvent) {
-        if (event.key === '[') {
+        const element = event.target as HTMLElement;
+        if (event.key === '[' && !element.matches('input, textarea')) {
             this.toggleSidenav();
         }
     }
