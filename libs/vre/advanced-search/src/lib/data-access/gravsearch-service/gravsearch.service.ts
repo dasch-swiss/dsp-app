@@ -75,7 +75,7 @@ export class GravsearchService {
             `}\n` +
             `${orderByString}\n` +
             `OFFSET 0`;
-        console.log('gravSearch: ', gravSearch);
+        // console.log('gravSearch: ', gravSearch);
 
         return gravSearch;
     }
@@ -130,13 +130,17 @@ export class GravsearchService {
                                 `?prop${index} <${value.selectedProperty?.iri}> ?linkProp${index}${i} .\n` +
                                 `}\n`;
                         } else if (
+                            // searching for a resource class
                             value.selectedOperator === Operators.Equals
+                            && !value.selectedProperty?.objectType.includes(Constants.KnoraApiV2)
                         ) {
                             constructString += `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .`;
                             whereString += `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .\n`;
                             whereString += `\n?prop${index} a <${property.selectedMatchPropertyResourceClass?.iri}> .\n`;
                         } else if (
+                            // searching for a resource class
                             value.selectedOperator === Operators.NotEquals
+                            && !value.selectedProperty?.objectType.includes(Constants.KnoraApiV2)
                         ) {
                             constructString += `\n?prop${index} <${value.selectedProperty?.iri}> <${value.searchValue}> .`;
                             whereString +=
@@ -186,9 +190,10 @@ export class GravsearchService {
         identifier: string,
         labelRes: string
     ): string {
-        // if the property if a child property and the operator is equals or not equals, return an empty string
+        // if the property is a child property, a linked resource, and the operator is equals or not equals, return an empty string
         if (
             property.isChildProperty &&
+            !property.selectedProperty?.objectType.includes(Constants.KnoraApiV2) &&
             (property.selectedOperator === Operators.Equals ||
                 property.selectedOperator === Operators.NotEquals)
         )

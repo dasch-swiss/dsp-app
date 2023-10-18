@@ -322,7 +322,7 @@ export class AdvancedSearchService {
         // Cancel the previous count request
         this.cancelPreviousCountRequest$.next();
 
-        if (!searchValue || searchValue.length <= 2) return of(0);
+        if (!searchValue || searchValue.length <= 2 || typeof searchValue !== 'string') return of(0);
 
         return this._dspApiConnection.v2.search
             .doSearchByLabelCountQuery(searchValue, {
