@@ -24,7 +24,7 @@ describe('AppConfigService with dev config', () => {
         jsonWebToken: 'mytoken',
         logErrors: true,
         zioPrefix: ':5555',
-        zioEndpoints: ['/admin/projects'],
+        zioEndpoints: [],
         geonameToken: 'geoname_token',
         iriBase: 'http://rdfh.ch',
         instrumentation: {
@@ -62,7 +62,7 @@ describe('AppConfigService with dev config', () => {
         expect(service.dspApiConfig.apiHost).toEqual('0.0.0.0');
         expect(service.dspApiConfig.apiPort).toEqual(3333);
         expect(service.dspApiConfig.zioPrefix).toEqual(':5555');
-        expect(service.dspApiConfig.zioEndpoints).toEqual(['/admin/projects']);
+        expect(service.dspApiConfig.zioEndpoints).toEqual([]);
         expect(service.dspApiConfig.apiPath).toEqual('mypath');
         expect(service.dspIiifConfig.iiifProtocol).toEqual('http');
         expect(service.dspIiifConfig.iiifHost).toEqual('0.0.0.0');
