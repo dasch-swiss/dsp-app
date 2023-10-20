@@ -236,7 +236,7 @@ export class AppDatePickerComponent
             this.month = dateValue.month ? dateValue.month : 0;
             this.year = dateValue.year;
             this.emitDateChanged.emit(
-                this.transform(dateValue, 'YYYY-dd-MM', 'gravsearch')
+                this.transform(dateValue, 'YYYY-MM-dd', 'gravsearch')
             );
         } else {
             this.dateForm.setValue({ date: null, knoraDate: null });
@@ -389,13 +389,13 @@ export class AppDatePickerComponent
                 } else {
                     return `${date.year}`;
                 }
-            case 'YYYY-dd-MM':
+            case 'YYYY-MM-dd':
                 if (date.precision === 2) {
                     return `${date.year}-${this.leftPadding(
                         date.month
                     )}-${this.leftPadding(date.day)}`;
                 } else if (date.precision === 1) {
-                    return `${this.leftPadding(date.month)}-${date.year}`;
+                    return `${date.year}-${this.leftPadding(date.month)}`;
                 } else {
                     return `${date.year}`;
                 }
