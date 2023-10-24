@@ -71,20 +71,15 @@ import { PropertyFormComponent } from './project/ontology/property-form/property
 import { PropertyInfoComponent } from './project/ontology/property-info/property-info.component';
 import { ResourceClassFormComponent } from './project/ontology/resource-class-form/resource-class-form.component';
 import { ResourceClassInfoComponent } from './project/ontology/resource-class-info/resource-class-info.component';
-import { AddGroupComponent } from './project/permission/add-group/add-group.component';
-import { PermissionComponent } from './project/permission/permission.component';
 import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { GroupsListComponent } from './system/groups/groups-list/groups-list.component';
-import { GroupsComponent } from './system/groups/groups.component';
 import { ProjectsListComponent } from './system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from './system/projects/projects.component';
 import { SystemComponent } from './system/system.component';
 import { UsersListComponent } from './system/users/users-list/users-list.component';
 import { UsersComponent } from './system/users/users.component';
 import { AccountComponent } from './user/account/account.component';
-import { CollectionListComponent } from './user/collection-list/collection-list.component';
 import { MembershipComponent } from './user/membership/membership.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { PasswordFormComponent } from './user/user-form/password-form/password-form.component';
@@ -175,7 +170,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
 @NgModule({
     declarations: [
         AccountComponent,
-        AddGroupComponent,
         AddRegionFormComponent,
         AddUserComponent,
         AddValueComponent,
@@ -188,7 +182,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         DescriptionComponent,
         BooleanValueComponent,
         CollaborationComponent,
-        CollectionListComponent,
         ColorPickerComponent,
         ColorValueComponent,
         CommentFormComponent,
@@ -215,8 +208,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         FulltextSearchComponent,
         GeonameValueComponent,
         GridComponent,
-        GroupsComponent,
-        GroupsListComponent,
         HeaderComponent,
         HelpComponent,
         IntermediateComponent,
@@ -239,7 +230,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         OntologyComponent,
         OntologyFormComponent,
         PasswordFormComponent,
-        PermissionComponent,
         PermissionInfoComponent,
         ProfileComponent,
         ProjectComponent,

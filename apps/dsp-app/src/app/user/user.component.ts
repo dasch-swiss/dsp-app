@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiResponseData, KnoraApiConnection, UserResponse } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '../app-global';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { MenuItem } from '../main/declarations/menu-item';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 
@@ -25,7 +25,7 @@ export class UserComponent implements OnInit {
     open = true;
 
     navigation: MenuItem[] = AppGlobal.userNav;
-
+    routeConstants = RouteConstants;
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,

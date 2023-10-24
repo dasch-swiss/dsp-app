@@ -58,8 +58,6 @@ export class ProjectComponent implements OnInit {
 
     color = 'primary';
 
-    navigation: MenuItem[] = AppGlobal.projectNav;
-
     ontologies: ReadOntology[] = [];
 
     // list of project ontologies
@@ -158,11 +156,6 @@ export class ProjectComponent implements OnInit {
                         if (!this.project.status) {
                             this.color = 'warn';
                         }
-
-                        this.navigation[0].label =
-                            'Project: ' +
-                            response.body.project.shortname.toUpperCase();
-
                         // is logged-in user projectAdmin?
                         if (this.session) {
                             this._session.setSession(

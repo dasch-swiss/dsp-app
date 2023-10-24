@@ -27,7 +27,6 @@ import { StatusComponent } from '../main/status/status.component';
 import { ProjectsListComponent } from '../system/projects/projects-list/projects-list.component';
 import { ProjectsComponent } from '../system/projects/projects.component';
 import { AccountComponent } from './account/account.component';
-import { CollectionListComponent } from './collection-list/collection-list.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PasswordFormComponent } from './user-form/password-form/password-form.component';
 import { UserComponent } from './user.component';
@@ -53,7 +52,6 @@ describe('UserComponent', () => {
         TestBed.configureTestingModule({
             declarations: [
                 AccountComponent,
-                CollectionListComponent,
                 DialogComponent,
                 StatusComponent,
                 PasswordFormComponent,
