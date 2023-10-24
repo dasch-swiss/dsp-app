@@ -1,4 +1,4 @@
-.parent-container {
+.parent-property-container {
   width: 100%;
 
   &.child-property-list {
@@ -56,6 +56,52 @@
   }
 }
 
+.action-buttons {
+  padding: 20px 0px;
+
+  &.right-margin {
+    margin-right: 4%;
+  }
+
+  button {
+    border-radius: 6px;
+    min-width: 132px;
+    height: 50px;
+
+    &:first-child {
+      margin-right: 20px;
+    }
+  }
+
+  button:disabled {
+    border: 1px solid #BDBFC1;
+
+    &.reset-button {
+      color:#BDBFC1;
+    }
+
+    &.search-button,
+    &.previous-search-button {
+      background-color: #BDBFC1;
+      color: white;
+    }
+  }
+
+  button:not(:disabled) {
+    border: 1px solid #336790;
+
+    &.reset-button {
+      color:#336790;
+    }
+
+    &.search-button,
+    &.previous-search-button {
+      background-color: #336790;
+      color: white;
+    }
+  }
+}
+
 .add-property-button {
   button {
     padding: 0% 3%;
@@ -71,8 +117,8 @@
 
   button:not(:disabled) {
     border: 1px solid #336790;
-    background-color: #336790;
-    color: white;
+    background-color: white;
+    color: #336790;
   }
 }
 

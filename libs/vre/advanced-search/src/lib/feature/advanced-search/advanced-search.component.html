@@ -1,7 +1,10 @@
 <div class="advanced-search-container">
     <div class="header">
         <div class="title">
-            <p>Advanced search</p>
+            <p>Advanced Search</p>
+        </div>
+        <div *ngIf="previousSearchObject" class="action-buttons right-margin">
+            <button class="previous-search-button" mat-button (click)="loadPreviousSearch()">Use Previous Search</button>
         </div>
     </div>
     <div
@@ -54,6 +57,8 @@
             [propertyFormItem]="propertyForm"
             [properties]="asyncData.filteredProperties?.length ? asyncData.filteredProperties : asyncData.properties"
             [propertiesLoading]="asyncData.propertiesLoading"
+            [selectedProperty]="propertyForm.selectedProperty"
+            [selectedOperator]="propertyForm.selectedOperator"
             (emitRemovePropertyForm)="handleRemovePropertyForm($event)"
             (emitSelectedPropertyChanged)="handleSelectedPropertyChanged($event)"
             (emitSelectedOperatorChanged)="handleSelectedOperatorChanged($event)"

@@ -1,4 +1,4 @@
-<div class="parent-container">
+<div class="parent-property-container">
     <div class="form-fields-container">
         <div class="dropdown-container">
             <div class="content">
@@ -9,6 +9,7 @@
                         (selectionChange)="onSelectedOntologyChanged()"
                         name="ontologies"
                         placeholder="Select a value"
+                        [compareWith]="compareApiDataObjects"
                     >
                         <mat-option *ngIf="ontologiesLoading" disabled="true"
                             >Loading...</mat-option
@@ -34,6 +35,7 @@
                         (selectionChange)="onSelectedResourceClassChanged()"
                         name="resourceClass"
                         placeholder="Select a value"
+                        [compareWith]="compareApiDataObjects"
                     >
                         <mat-option *ngIf="resourceClassesLoading" disabled="true"
                             >Loading...</mat-option

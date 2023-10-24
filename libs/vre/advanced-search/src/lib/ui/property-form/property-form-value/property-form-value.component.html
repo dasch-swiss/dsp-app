@@ -59,6 +59,8 @@
     </mat-form-field>
 
     <!-- date value -->
-    <dasch-swiss-app-date-picker *ngSwitchCase="constants.DateValue" (emitDateChanged)="onDateSelected($event)"></dasch-swiss-app-date-picker>
+    <div *ngSwitchCase="constants.DateValue" [formGroup]="dateFormGroup">
+        <dasch-swiss-app-date-picker [formControlName]="'date'" (emitDateChanged)="onDateSelected($event)"></dasch-swiss-app-date-picker>
+    </div>
 
 </div>

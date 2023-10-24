@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
     EventEmitter,
@@ -16,6 +17,7 @@ import {
     MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatAutocompleteOptionsScrollDirective } from '../../directives/mat-autocomplete-options-scroll.directive';
+import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 @Component({
     selector: 'dasch-swiss-property-form-link-value',
     standalone: true,
@@ -31,7 +33,9 @@ import { MatAutocompleteOptionsScrollDirective } from '../../directives/mat-auto
     styleUrls: ['./property-form-link-value.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PropertyFormLinkValueComponent implements OnInit {
+export class PropertyFormLinkValueComponent implements OnInit, AfterViewInit {
+    @Input() value: string | PropertyFormItem[] | undefined = undefined;
+    @Input() label: string | undefined = undefined;
     @Input() resourcesSearchResultsLoading: boolean | null = false;
     @Input() resourcesSearchResultsCount: number | null = 0;
     @Input() resourcesSearchResults: ApiData[] | null = null;
@@ -39,7 +43,7 @@ export class PropertyFormLinkValueComponent implements OnInit {
 
     @Output() emitResourceSearchValueChanged = new EventEmitter<string>();
     @Output() emitLoadMoreSearchResults = new EventEmitter<string>();
-    @Output() emitResourceSelected = new EventEmitter<string>();
+    @Output() emitResourceSelected = new EventEmitter<ApiData>();
 
     inputControl = new FormControl();
 
@@ -51,9 +55,15 @@ export class PropertyFormLinkValueComponent implements OnInit {
             });
     }
 
+    ngAfterViewInit(): void {
+        if (this.value && typeof this.value === 'string' && this.label) {
+            this.inputControl.setValue({ label: this.label, iri: this.value });
+        }
+    }
+
     onResourceSelected(event: MatAutocompleteSelectedEvent) {
         const data = event.option.value as ApiData;
-        this.emitResourceSelected.emit(data.iri);
+        this.emitResourceSelected.emit(data);
     }
 
     onInputFocused() {
@@ -67,7 +77,8 @@ export class PropertyFormLinkValueComponent implements OnInit {
     }
 
     /**
-     * used in the template to display the label of the selected resource.
+     * used in the template to display the label of the selected resource
+     * because the value we want to display is different than the value we want to emit
      *
      * @param resource the resource containing the label to be displayed (or no selection yet).
      */

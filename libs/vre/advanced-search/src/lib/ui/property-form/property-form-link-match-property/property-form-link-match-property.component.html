@@ -1,6 +1,6 @@
 <div
     *ngFor="let item of values; let i = index"
-    class="parent-container child-property-list"
+    class="parent-property-container child-property-list"
 >
     <div class="form-fields-container">
         <div class="dropdown-container">
@@ -8,9 +8,11 @@
                 <p class="label">Select a property</p>
                 <mat-form-field>
                     <mat-select
+                        #propertiesList
                         (selectionChange)="onSelectedPropertyChanged($event, i)"
                         placeholder="Select a value"
                         name="properties"
+                        [compareWith]="compareObjects"
                     >
                         <mat-option [value]="resourceLabelObj">{{
                             resourceLabelObj.label
@@ -61,6 +63,7 @@
                     item.selectedProperty?.objectType !== constants.ListValue
                 "
                 [objectType]="item.selectedProperty?.objectType"
+                [value]="item.searchValue"
                 (emitValueChanged)="onValueChanged($event, i)"
             />
             <dasch-swiss-property-form-list-value
@@ -68,11 +71,14 @@
                     item.selectedProperty?.objectType === constants.ListValue
                 "
                 [list]="item.list"
+                [value]="item.searchValue"
                 (emitValueChanged)="onValueChanged($event, i)"
             >
             </dasch-swiss-property-form-list-value>
             <dasch-swiss-property-form-link-value
                 *ngIf="item.selectedProperty?.isLinkedResourceProperty"
+                [value]="item.searchValue"
+                [label]="item.searchValueLabel"
                 [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
                 [resourcesSearchResultsCount]="resourcesSearchResultsCount"
                 [resourcesSearchResults]="resourcesSearchResults"
@@ -96,7 +102,7 @@
     </div>
 </div>
 
-<div class="parent-container child-property-list">
+<div class="parent-property-container child-property-list">
     <div class="add-property-button">
         <button mat-button (click)="onAddPropertyFormClicked()">
             Add Subcriteria

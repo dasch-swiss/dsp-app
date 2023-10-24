@@ -51,4 +51,8 @@ export class OntologyResourceFormComponent {
         const selectedResourceClass = this.resourceClassesList.value;
         this.emitSelectedResourceClass.emit(selectedResourceClass);
     }
+
+    compareApiDataObjects(object1: ApiData, object2: ApiData) {
+        return object1 && object2 && object1.iri == object2.iri;
+    }
 }

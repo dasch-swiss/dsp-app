@@ -1,4 +1,5 @@
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
     EventEmitter,
@@ -50,7 +51,7 @@ import { MatIconModule } from '@angular/material/icon';
     styleUrls: ['./property-form-link-match-property.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PropertyFormLinkMatchPropertyComponent {
+export class PropertyFormLinkMatchPropertyComponent implements AfterViewInit {
     @Input() values: PropertyFormItem[] | undefined = [];
     @Input() properties: PropertyData[] | undefined = [];
     @Input() resourcesSearchResultsLoading: boolean | null = false;
@@ -68,6 +69,7 @@ export class PropertyFormLinkMatchPropertyComponent {
     @Output() emitResourceSearchValueChanged = new EventEmitter<SearchItem>();
     @Output() emitLoadMoreSearchResults = new EventEmitter<SearchItem>();
 
+    @ViewChildren('propertiesList') propertiesList!: QueryList<MatSelect>;
     @ViewChildren('operatorsList') operatorsList!: QueryList<MatSelect>;
     @ViewChild('propertyFormValue')
     propertyFormValueComponent!: PropertyFormValueComponent;
@@ -77,6 +79,20 @@ export class PropertyFormLinkMatchPropertyComponent {
 
     // objectType is manually set so that it uses the KnoraApiV2 string for boolean checks later
     resourceLabelObj = ResourceLabelObject;
+
+    ngAfterViewInit(): void {
+        if (this.propertiesList && this.values?.length) {
+            this.values.forEach((value, index) => {
+                this.propertiesList.toArray()[index].value = value.selectedProperty;
+            });
+        }
+
+        if (this.operatorsList && this.values?.length) {
+            this.values.forEach((value, index) => {
+                this.operatorsList.toArray()[index].value = value.selectedOperator;
+            });
+        }
+    }
 
     onAddPropertyFormClicked(): void {
         if (this.values) {
@@ -111,9 +127,14 @@ export class PropertyFormLinkMatchPropertyComponent {
         }
     }
 
-    onValueChanged(value: string, index: number): void {
+    onValueChanged(value: string | ApiData, index: number): void {
         if (this.values) {
-            this.values[index].searchValue = value;
+            if(this._isApiData(value)) {
+                this.values[index].searchValue = value.iri;
+                this.values[index].searchValueLabel = value.label;
+            } else {
+                this.values[index].searchValue = value;
+            }
             this.emitValueChanged.emit(this.values[index]);
         }
     }
@@ -140,5 +161,14 @@ export class PropertyFormLinkMatchPropertyComponent {
                 });
             }
         }
+    }
+
+    compareObjects(object1: PropertyData | ApiData, object2: PropertyData | ApiData) {
+        return object1 && object2 && object1.iri == object2.iri;
+    }
+
+    // Type guard function to check if the value adheres to ApiData interface
+    _isApiData(value: any): value is ApiData {
+        return value && typeof value === 'object' && 'iri' in value && 'label' in value;
     }
 }

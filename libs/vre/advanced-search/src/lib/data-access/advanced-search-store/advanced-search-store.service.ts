@@ -34,6 +34,18 @@ export interface AdvancedSearchState {
     error?: unknown;
 }
 
+export interface AdvancedSearchStateSnapshot {
+    ontologies: ApiData[];
+    resourceClasses: ApiData[];
+    selectedProject: string | undefined;
+    selectedOntology: ApiData | undefined;
+    selectedResourceClass: ApiData | undefined;
+    propertyFormList: PropertyFormItem[];
+    properties: PropertyData[];
+    propertiesOrderByList: OrderByItem[];
+    filteredProperties: PropertyData[];
+}
+
 export interface PropertyFormItem {
     id: string;
     selectedProperty: PropertyData | undefined;
@@ -45,6 +57,7 @@ export interface PropertyFormItem {
     selectedMatchPropertyResourceClass?: ApiData | undefined;
     isChildProperty?: boolean;
     childPropertiesList?: PropertyData[];
+    searchValueLabel?: string;
 }
 
 export interface SearchItem {
@@ -912,6 +925,8 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
         const propertyFormList = this.get((state) => state.propertyFormList);
         const orderByList = this.get((state) => state.propertiesOrderByList);
 
+        this._storeSnapshotInLocalStorage();
+
         return this._gravsearchService.generateGravSearchQuery(
             selectedResourceClass?.iri,
             propertyFormList,
@@ -1112,5 +1127,35 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
             data.objectType === ResourceLabel ||
             data.objectType?.includes(Constants.KnoraApiV2)
         );
+    }
+
+    private _storeSnapshotInLocalStorage(): void {
+        const ontologies = this.get((state) => state.ontologies);
+        const resourceClasses = this.get((state) => state.resourceClasses);
+        const selectedProject = this.get((state) => state.selectedProject);
+        const selectedOntology = this.get((state) => state.selectedOntology);
+        const selectedResourceClass = this.get(
+            (state) => state.selectedResourceClass
+        );
+        const propertyFormList = this.get((state) => state.propertyFormList);
+        const properties = this.get((state) => state.properties);
+        const propertiesOrderByList = this.get(
+            (state) => state.propertiesOrderByList
+        );
+        const filteredProperties = this.get((state) => state.filteredProperties);
+
+        const snapshot: AdvancedSearchStateSnapshot = {
+            ontologies,
+            resourceClasses,
+            selectedProject,
+            selectedOntology,
+            selectedResourceClass,
+            propertyFormList,
+            properties,
+            propertiesOrderByList,
+            filteredProperties,
+        };
+
+        localStorage.setItem('advanced-search-previous-search', JSON.stringify(snapshot));
     }
 }

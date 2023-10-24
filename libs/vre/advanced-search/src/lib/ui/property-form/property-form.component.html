@@ -1,4 +1,4 @@
-<div class="parent-container">
+<div class="parent-property-container">
     <div class="form-fields-container">
         <div class="dropdown-container">
             <div class="content">
@@ -9,6 +9,7 @@
                         (selectionChange)="onSelectedPropertyChanged($event)"
                         placeholder="Select a value"
                         name="properties"
+                        [compareWith]="compareObjects"
                     >
                         <mat-option *ngIf="propertiesLoading" disabled="true"
                             >Loading...</mat-option
@@ -60,12 +61,13 @@
                 <p class="label">Resource Class</p>
                 <mat-form-field class="resource-class">
                     <mat-select
-                        #operatorsList
+                        #resourceClassList
                         (selectionChange)="
                             onSelectedMatchPropertyResourceClassChanged($event)
                         "
                         placeholder="Select a value"
                         name="resource-classes"
+                        [compareWith]="compareObjects"
                     >
                         <mat-option
                             *ngIf="matchResourceClassesLoading"
@@ -106,6 +108,7 @@
                         constants.ListValue
                 "
                 [objectType]="propertyFormItem.selectedProperty?.objectType"
+                [value]="propertyFormItem.searchValue"
                 (emitValueChanged)="onValueChanged($event)"
             />
             <dasch-swiss-property-form-list-value
@@ -114,6 +117,7 @@
                     constants.ListValue
                 "
                 [list]="propertyFormItem.list"
+                [value]="propertyFormItem.searchValue"
                 (emitValueChanged)="onValueChanged($event)"
             >
             </dasch-swiss-property-form-list-value>
@@ -127,6 +131,8 @@
                         constants.Label &&
                     propertyFormItem.selectedOperator !== operators.Matches
                 "
+                [value]="propertyFormItem.searchValue"
+                [label]="propertyFormItem.searchValueLabel"
                 [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
                 [resourcesSearchResultsCount]="resourcesSearchResultsCount"
                 [resourcesSearchResults]="resourcesSearchResults"

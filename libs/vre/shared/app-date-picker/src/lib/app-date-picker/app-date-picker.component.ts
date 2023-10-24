@@ -219,7 +219,7 @@ export class AppDatePickerComponent
     }
 
     set value(dateValue: KnoraDate | null) {
-        if (dateValue !== null) {
+        if (dateValue !== null && dateValue instanceof KnoraDate) {
             this.dateForm.setValue({
                 date: this.transform(dateValue, 'dd.MM.YYYY', 'era'),
                 knoraDate: dateValue,

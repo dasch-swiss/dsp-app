@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListNodeV2, Constants } from '@dasch-swiss/dsp-js';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { ListItemComponent } from './list-item/list-item.component';
+import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 
 @Component({
     selector: 'dasch-swiss-property-form-list-value',
@@ -12,8 +13,9 @@ import { ListItemComponent } from './list-item/list-item.component';
     templateUrl: './property-form-list-value.component.html',
     styleUrls: ['./property-form-list-value.component.scss'],
 })
-export class PropertyFormListValueComponent {
+export class PropertyFormListValueComponent implements AfterViewInit {
     @Input() list: ListNodeV2 | undefined = undefined;
+    @Input() value: string | PropertyFormItem[] | undefined = undefined;
 
     @Output() emitValueChanged = new EventEmitter<string>();
 
@@ -21,11 +23,30 @@ export class PropertyFormListValueComponent {
 
     selectedItem: string | undefined = undefined;
 
-    listItems: ListNodeV2[] = [];
+    ngAfterViewInit(): void {
+        if (this.list && this.value && typeof this.value === 'string') {
+            this.selectedItem = this.findItemById(this.list, this.value)?.label;
+        }
+    }
 
     onItemClicked(item: ListNodeV2) {
         this.selectedItem = item.label;
         this.emitValueChanged.emit(item.id);
+    }
+
+    findItemById(node: ListNodeV2, targetId: string): ListNodeV2 | undefined {
+        if (node.id === targetId) {
+            return node;
+        }
+
+        for (const child of node.children) {
+            const found = this.findItemById(child, targetId);
+            if (found) {
+                return found;
+            }
+        }
+
+        return undefined;
     }
 
 }
