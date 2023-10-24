@@ -26,7 +26,7 @@ import {
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { Subscription } from 'rxjs';
 
-type AvailableRoute = typeof RouteConstants.project | typeof RouteConstants.settings | typeof RouteConstants.dataModels;
+type AvailableRoute = typeof RouteConstants.project | typeof RouteConstants.settings | typeof RouteConstants.dataModels | typeof RouteConstants.advancedSearch;
 
 @Component({
     selector: 'app-project',
@@ -75,6 +75,7 @@ export class ProjectComponent implements OnInit {
     projectRoute: AvailableRoute = RouteConstants.project;
     settingsRoute: AvailableRoute = RouteConstants.settings;
     dataModelsRoute: AvailableRoute = RouteConstants.dataModels;
+    advancedSearchRoute: AvailableRoute = RouteConstants.advancedSearch;
 
     constructor(
         @Inject(DspApiConnectionToken)
