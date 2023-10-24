@@ -1,6 +1,6 @@
 <div class="class-item-container">
     <div class="content" [routerLinkActive]="['is-active']" (click)="selectItem()">
-        <div class="box link" [routerLink]="link">
+        <div class="box link" [routerLink]="classLink">
             <div class="label" matTooltip="{{resClass.label}}" matTooltipShowDelay="750" [matTooltipPosition]="'above'"
                  [matTooltipDisabled]="resClass.label.length < MAX_LABEL_CHAR">{{trimLabel(resClass.label)}}</div>
             <div class="entry-container">
@@ -17,7 +17,7 @@
                 <div *ngIf="results !== undefined" class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
             </div>
         </div>
-        <div class="icon link" *ngIf="projectMember" [routerLink]="link + '/add'">
+        <div class="icon link" *ngIf="projectMember" [routerLink]="getAddClassInstanceLink()">
             <mat-icon>add_circle_outline</mat-icon>
         </div>
     </div>

@@ -20,7 +20,7 @@ import {
     StringLiteral,
     UpdateListInfoRequest,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 
@@ -193,7 +193,7 @@ export class ListInfoFormComponent implements OnInit {
                         // go to the new list page
                         const array = response.body.list.listinfo.id.split('/');
                         const name = array[array.length - 1];
-                        this._router.navigate(['list', name], {
+                        this._router.navigate([RouteConstants.list, name], {
                             relativeTo: this._route.parent,
                         });
                     },

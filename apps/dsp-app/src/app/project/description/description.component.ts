@@ -10,6 +10,7 @@ import {
     SessionService,
 } from '@dasch-swiss/vre/shared/app-session';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import {RouteConstants} from "@dasch-swiss/vre/shared/app-config";
 
 @Component({
     selector: 'app-description',
@@ -78,6 +79,6 @@ export class DescriptionComponent implements OnInit {
     }
 
     editProject() {
-        this._router.navigate(['project', this.projectUuid, 'edit']);
+        this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.edit]);
     }
 }

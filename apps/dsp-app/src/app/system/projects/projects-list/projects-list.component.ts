@@ -18,7 +18,7 @@ import {
     UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
@@ -142,17 +142,17 @@ export class ProjectsListComponent implements OnInit {
         const uuid = this._projectService.iriToUuid(iri);
 
         this._router
-            .navigateByUrl('/refresh', { skipLocationChange: true })
-            .then(() => this._router.navigate(['project/' + uuid]));
+            .navigateByUrl(`/${RouteConstants.refresh}`, { skipLocationChange: true })
+            .then(() => this._router.navigate([RouteConstants.project, uuid]));
     }
 
     createNewProject() {
-        this._router.navigate(['project', 'create-new']);
+        this._router.navigate([RouteConstants.project, RouteConstants.createNew]);
     }
 
     editProject(iri: string) {
         const uuid = this._projectService.iriToUuid(iri);
-        this._router.navigate(['project', uuid, 'edit']);
+        this._router.navigate([RouteConstants.project, uuid, RouteConstants.edit]);
     }
 
     openDialog(mode: string, name?: string, id?: string): void {

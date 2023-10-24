@@ -17,7 +17,7 @@ import {
     StringLiteral,
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import {AppConfigService, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
@@ -215,11 +215,11 @@ export class ListComponent implements OnInit {
                                     this.lists = this.lists.filter(
                                         (list) => list.id !== res.body.iri
                                     );
-
-                                    this._router
-                                        .navigateByUrl(
-                                            `/project/${this.projectUuid}/data-models`
-                                        )
+                                    this._router.navigate([
+                                        RouteConstants.project,
+                                        this.projectUuid,
+                                        RouteConstants.dataModels
+                                    ])
                                         .then(() => {
                                             // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
                                             window.location.reload();

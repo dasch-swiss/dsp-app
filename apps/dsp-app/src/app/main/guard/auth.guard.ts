@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import {RouteConstants} from "@dasch-swiss/vre/shared/app-config";
 
 @Injectable({
     providedIn: 'root',
@@ -19,7 +20,7 @@ export class AuthGuard implements CanActivate {
         state: RouterStateSnapshot
     ): Observable<boolean> | Promise<boolean> | boolean {
         if (!this._session.getSession()) {
-            this._router.navigate(['']);
+            this._router.navigate([RouteConstants.home]);
             return false;
         }
 

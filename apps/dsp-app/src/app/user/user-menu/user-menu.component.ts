@@ -8,7 +8,7 @@ import {
     UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { AuthenticationService } from '@dsp-app/src/app/main/services/authentication.service';
 import { SessionService } from '@dasch-swiss/vre/shared/app-session';
@@ -32,6 +32,8 @@ export class UserMenuComponent implements OnChanges {
 
     navigation: MenuItem[];
 
+    systemLink = RouteConstants.system;
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
@@ -46,13 +48,13 @@ export class UserMenuComponent implements OnChanges {
             {
                 label: 'DSP-App Home Page',
                 shortLabel: 'home',
-                route: '/',
+                route: RouteConstants.home,
                 icon: '',
             },
             {
                 label: 'My Account',
                 shortLabel: 'Account',
-                route: '/account',
+                route: RouteConstants.userAccount,
                 icon: '',
             },
         ];

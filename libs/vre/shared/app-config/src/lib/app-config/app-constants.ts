@@ -32,12 +32,15 @@ export class RouteConstants {
     static readonly system = 'system';
     static readonly systemProjects = 'projects';
     static readonly systemUsers = 'users';
+    static readonly gravSearch = 'gravsearch'
 
     static readonly editor = 'editor';
     static readonly conf = 'conf';
 
     static readonly list = 'list';
     static readonly addList = 'add-list';
+
+    static readonly addClassInstance = 'add';
 
     static readonly cookiePolicy = 'cookie-policy';
     static readonly teapot = 'teapot';
@@ -57,6 +60,9 @@ export class RouteConstants {
     static readonly classParameter = 'class';
     static readonly instanceParameter = 'instance';
     static readonly listParameter = 'list';
+    static readonly classes = 'classes';
+    static readonly properties = 'properties';
+
 
     static readonly homeRelative = `/${RouteConstants.home}`;
     static readonly dashboardRelative = `/${RouteConstants.dashboard}`;

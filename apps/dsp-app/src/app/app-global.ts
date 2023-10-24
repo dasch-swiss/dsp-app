@@ -49,7 +49,7 @@ export class AppGlobal {
         {
             label: 'My Projects',
             shortLabel: 'Projects',
-            route: RouteConstants.projectRelative,
+            route: RouteConstants.projectsRelative,
             icon: 'assignment',
         },
         // label to reactivate when dsp-app will be used as a research platform again: -->

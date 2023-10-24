@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar-header">
-    <span class="logo" routerLink="/">
+    <span class="logo" routerLink="{{homeLink}}">
         <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color"></mat-icon>
         <div class="title-container">
             <div class="title desktop-only">DaSCH Service Platform</div>
@@ -36,7 +36,7 @@
         <!-- navigation: help -->
         <button
             mat-button
-            [routerLink]="'/help'"
+            [routerLink]="helpLink"
             class="main-toolbar-button help"
         >
             Help

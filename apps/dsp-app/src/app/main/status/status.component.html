@@ -19,7 +19,7 @@
                 <span [innerHTML]="comment | appLinkify"></span>
             </p>
             <div [ngSwitch]="message?.action" class="action">
-                <button *ngSwitchCase="'goback'" mat-button routerLink="/">
+                <button *ngSwitchCase="'goback'" mat-button routerLink="{{homeLink}}">
                     <mat-icon>keyboard_backspace</mat-icon> Please go back to
                     the start page.
                 </button>

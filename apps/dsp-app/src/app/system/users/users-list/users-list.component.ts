@@ -20,7 +20,7 @@ import {
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
@@ -314,12 +314,13 @@ export class UsersListComponent implements OnInit {
                                 // logged-in user is NOT system admin:
                                 // go to project page and reload project admin interface
                                 this._router
-                                    .navigateByUrl('/refresh', {
+                                    .navigateByUrl(`/${RouteConstants.refresh}`, {
                                         skipLocationChange: true,
                                     })
                                     .then(() =>
                                         this._router.navigate([
-                                            '/project/' + this.projectUuid,
+                                            RouteConstants.project,
+                                            this.projectUuid
                                         ])
                                     );
                             }

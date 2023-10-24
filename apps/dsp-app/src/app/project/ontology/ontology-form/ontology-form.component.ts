@@ -23,7 +23,7 @@ import {
     UpdateOntologyMetadata,
 } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
@@ -318,7 +318,7 @@ export class OntologyFormComponent implements OnInit {
                         const name = this._ontologyService.getOntologyName(
                             response.id
                         );
-                        this._router.navigate(['ontology', name], {
+                        this._router.navigate([RouteConstants.ontology, name], {
                             relativeTo: this._route.parent,
                         });
                     },

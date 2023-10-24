@@ -57,7 +57,7 @@
             class="ontology-editor-container">
             <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
                 <mat-list>
-                    <a mat-list-item routerLinkActive="active" [routerLink]="'../classes'"
+                    <a mat-list-item routerLinkActive="active" [routerLink]="classesLink"
                         (click)="view = 'classes'">Classes</a>
                     <span *ngIf="view === 'classes'">
                         <button mat-button (click)="expandClasses = !expandClasses" [disabled]="!ontoClasses.length">
@@ -81,7 +81,7 @@
                         </span>
                     </span>
                     <mat-divider></mat-divider>
-                    <a mat-list-item routerLinkActive="active" [routerLink]="'../properties'"
+                    <a mat-list-item routerLinkActive="active" [routerLink]="propertiesLink"
                         (click)="view = 'properties'">Properties</a>
                     <span mat-list-item *ngIf="project?.status && (sysAdmin || projectAdmin) && ontologyIri"
                         [matTooltip]="'This data model can\'t be edited because of missing \'lastModificationDate\'!'"

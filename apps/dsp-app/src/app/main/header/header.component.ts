@@ -5,7 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import {AppConfigService, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import {
     ComponentCommunicationEventService,
@@ -28,10 +28,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     session = false;
     show = false;
     searchParams: SearchParams;
+    helpLink = RouteConstants.help
 
     dsp: DspConfig;
 
     componentCommsSubscription: Subscription;
+
+    homeLink = RouteConstants.home;
 
     constructor(
         @Inject(DspApiConnectionToken)
@@ -99,11 +102,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.searchParams = search;
 
         if (this.searchParams.mode && this.searchParams.query) {
-            let doSearchRoute =
-                '/search/' +
-                this.searchParams.mode +
-                '/' +
-                encodeURIComponent(this.searchParams.query);
+            let doSearchRoute = `/${RouteConstants.search}/${this.searchParams.mode}/${encodeURIComponent(this.searchParams.query)}`;
 
             if (
                 this.searchParams.filter &&

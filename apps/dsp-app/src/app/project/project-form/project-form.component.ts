@@ -16,7 +16,7 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import { Location } from "@angular/common";
 import {
     ApiResponseData,
-    ApiResponseError,
+    ApiResponseError, Constants,
     KnoraApiConnection,
     Project,
     ProjectResponse,
@@ -26,7 +26,7 @@ import {
     UpdateProjectRequest,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -486,13 +486,13 @@ export class ProjectFormComponent implements OnInit {
                                                 this.loading = false;
                                                 // redirect to project page
                                                 this._router
-                                                    .navigateByUrl('/project', {
+                                                    .navigateByUrl(`/${RouteConstants.project}`, {
                                                         skipLocationChange:
                                                             true,
                                                     })
                                                     .then(() =>
                                                         this._router.navigate([
-                                                            '/project/' + uuid,
+                                                            RouteConstants.project, uuid,
                                                         ])
                                                     );
                                             },

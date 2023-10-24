@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import {RouteConstants} from "@dasch-swiss/vre/shared/app-config";
 
 @Component({
     selector: 'app-root',
@@ -30,7 +31,7 @@ export class AppComponent implements OnInit {
     }
 
     goToCookiePolicy() {
-        this._router.navigate(['cookie-policy']);
+        this._router.navigate([RouteConstants.cookiePolicy]);
     }
 
     closeCookieBanner() {

@@ -7,7 +7,7 @@ import {
     KnoraApiConnection,
 } from '@dasch-swiss/dsp-js';
 import {HttpStatusMsg} from '@dasch-swiss/vre/shared/assets/status-msg';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 
 export interface StatusMsg {
     status: number;
@@ -92,6 +92,8 @@ export class StatusComponent implements OnInit {
             image: 'dsp-error-503.svg',
         },
     ];
+
+    homeLink = RouteConstants.home;
 
     constructor(
         @Inject(DspApiConnectionToken)

@@ -144,7 +144,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         private _valueOperationEventService: ValueOperationEventService,
         private _cdr:ChangeDetectorRef
     ) {
-        
         this._route.params.subscribe((params) => {
             this.projectCode = params['project'];
             this.resourceUuid = params['resource'];

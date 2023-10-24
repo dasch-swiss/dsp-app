@@ -11,7 +11,7 @@ import {
     ProjectsResponse,
 } from '@dasch-swiss/dsp-js';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
@@ -180,12 +180,12 @@ export class OverviewComponent implements OnInit {
 
         switch (params.path) {
             case 'workspace':
-                this._router.navigate(['/project/' + uuid]);
+                this._router.navigate([RouteConstants.project, uuid]);
                 break;
 
             case 'settings':
                 this._router.navigate([
-                    '/project/' + uuid + '/settings/collaboration',
+                    RouteConstants.project, uuid, RouteConstants.settings, RouteConstants.collaboration
                 ]);
                 break;
 
@@ -195,6 +195,6 @@ export class OverviewComponent implements OnInit {
     }
 
     createNewProject() {
-        this._router.navigate(['project', 'create-new']);
+        this._router.navigate([RouteConstants.project, RouteConstants.createNew]);
     }
 }
