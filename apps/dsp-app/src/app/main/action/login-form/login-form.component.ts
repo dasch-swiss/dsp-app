@@ -204,12 +204,9 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
                             if (this.returnUrl) {
                                 this._router.navigate([this.returnUrl]);
                             } else if (
-                                !this._location.path() ||
-                                (this._route.snapshot.url.length &&
-                                    this._route.snapshot.url[0].path ===
-                                        RouteConstants.login)
+                                !this._location.path()
                             ) {
-                                // if user is on "/" or "/login"
+                                // if user is on "/" route, redirect them after login to the project they are a member of
                                 const username = this.session.user.name;
                                 this._dspApiConnection.admin.usersEndpoint
                                     .getUserByUsername(username)

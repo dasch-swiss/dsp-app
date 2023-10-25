@@ -79,16 +79,6 @@ const routes: Routes = [
                 component: OntologyClassInstanceComponent,
             },
             {
-                path: RouteConstants.OntologyClassConfRelative,
-                component: StatusComponent,
-                data: {
-                    status: RouteConstants.notImplemented,
-                    comment:
-                        'Here you will be able to configure the resource class.',
-                },
-                canActivate: [AuthGuard],
-            },
-            {
                 path: RouteConstants.OntologyClassInstanceRelative,
                 component: OntologyClassInstanceComponent,
             },
@@ -131,11 +121,6 @@ const routes: Routes = [
                 data: { status: RouteConstants.notFound },
             },
         ],
-    },
-    {
-        path: RouteConstants.profile,
-        component: UserComponent,
-        canActivate: [AuthGuard],
     },
     {
         path: RouteConstants.userAccount,
@@ -197,11 +182,6 @@ const routes: Routes = [
     {
         path: RouteConstants.cookiePolicy,
         component: CookiePolicyComponent,
-    },
-    {
-        path: RouteConstants.teapot,
-        component: StatusComponent,
-        data: { status: 418 },
     },
     {
         path: RouteConstants.notFoundWildcard,
