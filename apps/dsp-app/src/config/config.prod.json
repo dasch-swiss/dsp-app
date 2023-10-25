@@ -3,7 +3,6 @@
   "apiProtocol": "http",
   "apiHost": "0.0.0.0",
   "apiPort": 3333,
-  "zioApiPort": 5555,
   "apiPath": "",
   "iiifProtocol": "http",
   "iiifHost": "0.0.0.0",
@@ -12,8 +11,6 @@
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": false,
-  "zioPrefix": ":5555",
-  "zioEndpoints": [],
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
     "environment": "prod",

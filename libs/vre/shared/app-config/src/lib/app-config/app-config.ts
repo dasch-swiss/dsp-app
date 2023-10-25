@@ -84,8 +84,6 @@ export const AppConfig = z.object({
     apiProtocol: z.enum(['http', 'https']),
     apiHost: z.string().nonempty("required 'apiHost' value missing in config"),
     apiPort: ApiPort,
-    zioPrefix: z.enum(['/zio', ':5555']),
-    zioEndpoints: z.array(z.string()), // array of strings
     apiPath: z.string(),
     iiifProtocol: z.enum(['http', 'https']),
     iiifHost: z

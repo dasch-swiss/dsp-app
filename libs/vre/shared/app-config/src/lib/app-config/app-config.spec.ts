@@ -20,8 +20,6 @@ describe('app-config schema tests', () => {
             iiifPath: '',
             jsonWebToken: 'mytoken',
             logErrors: true,
-            zioPrefix: '/zio',
-            zioEndpoints: [],
             geonameToken: 'geoname_token',
             iriBase: 'http://rdfh.ch',
             instrumentation: {
@@ -58,8 +56,6 @@ describe('app-config schema tests', () => {
             iiifPath: '',
             jsonWebToken: 'mytoken',
             logErrors: true,
-            zioPrefix: '/zio',
-            zioEndpoints: [],
             geonameToken: 'geoname_token',
             iriBase: 'http://rdfh.ch',
             instrumentation: {

@@ -63,8 +63,6 @@ export class AppConfigService {
             c.apiPath,
             c.jsonWebToken,
             c.logErrors,
-            c.zioPrefix,
-            c.zioEndpoints
         );
 
         // init iiif configuration
