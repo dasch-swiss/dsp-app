@@ -1,6 +1,15 @@
-<button class="menu-button" mat-button [matMenuTriggerFor]="rootMenu">
-    <span>{{ selectedItem ? selectedItem : 'Select list value' }}</span>
-</button>
+<div class="header">
+    Select a list value
+</div>
+<div class="dropdown" [matMenuTriggerFor]="rootMenu">
+    <div class="container">
+        <div class="label">{{ selectedItem ? selectedItem : 'Select a value' }}</div>
+        <div class="icon">
+            <mat-icon>arrow_drop_down</mat-icon>
+        </div>
+    </div>
+    <div class="line"></div>
+</div>
 <mat-menu #rootMenu="matMenu">
     <span *ngFor="let child of list?.children">
         <span *ngIf="child.children && child.children.length > 0">
