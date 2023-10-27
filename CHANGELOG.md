@@ -1,5 +1,31 @@
 # Changelog
 
+## [11.0.0](https://github.com/dasch-swiss/dsp-das/compare/v10.24.2...v11.0.0) (2023-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** bump js-lib to 9.0.0 ([#1241](https://github.com/dasch-swiss/dsp-das/issues/1241))
+
+### Enhancements
+
+* **advanced-search:** make list menu resemble a dropdown ([#1243](https://github.com/dasch-swiss/dsp-das/issues/1243)) ([96eab7f](https://github.com/dasch-swiss/dsp-das/commit/96eab7fb1021eb7a0c5671773497412332aa1361))
+* restore previous advanced search that user executed ([#1226](https://github.com/dasch-swiss/dsp-das/issues/1226)) ([8c5eec9](https://github.com/dasch-swiss/dsp-das/commit/8c5eec97354365a945c9de5cffb74d68712e9af3))
+
+
+### Bug Fixes
+
+* **advanced search link:** Add route constant ([#1238](https://github.com/dasch-swiss/dsp-das/issues/1238)) ([db3e22a](https://github.com/dasch-swiss/dsp-das/commit/db3e22a4186e0c86f346c84401b3dbc8d501d86d))
+
+
+### Maintenance
+
+* cleanup routes and unused components ([#1239](https://github.com/dasch-swiss/dsp-das/issues/1239)) ([2ce9065](https://github.com/dasch-swiss/dsp-das/commit/2ce9065b568bf023bba030a2b2f080adb298abd4))
+* **deps:** bump js-lib to 9.0.0 ([#1241](https://github.com/dasch-swiss/dsp-das/issues/1241)) ([94b7f26](https://github.com/dasch-swiss/dsp-das/commit/94b7f267b18ce75621e0a790395f5cc8e34b7ce7))
+* **deps:** bump js-lib to 9.0.1 ([#1244](https://github.com/dasch-swiss/dsp-das/issues/1244)) ([4fc6a40](https://github.com/dasch-swiss/dsp-das/commit/4fc6a40f463845bfa95ed6310aa858d49d3a7a05))
+* **routing:** apply route constants ([#1227](https://github.com/dasch-swiss/dsp-das/issues/1227)) ([0b0dff5](https://github.com/dasch-swiss/dsp-das/commit/0b0dff586da77200bdd33ecd865b74e6c40a43fb))
+* **routing:** cleanup unused routes ([#1240](https://github.com/dasch-swiss/dsp-das/issues/1240)) ([caa1819](https://github.com/dasch-swiss/dsp-das/commit/caa181998e2ae5cbae77c11ee10934feda52093d))
+
 ## [10.24.2](https://github.com/dasch-swiss/dsp-das/compare/v10.24.1...v10.24.2) (2023-10-20)
 
 
