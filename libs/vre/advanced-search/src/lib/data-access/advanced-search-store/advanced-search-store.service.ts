@@ -1121,8 +1121,9 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
     );
 
     private _isOrderByItemDisabled(data: PropertyData | undefined): boolean {
-        if (!data) return true;
-        if (data.objectType === Constants.UriValue) return true;
+        if (!data) {
+            return true;
+        }
         return !(
             data.objectType === ResourceLabel ||
             data.objectType?.includes(Constants.KnoraApiV2)
@@ -1142,7 +1143,9 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
         const propertiesOrderByList = this.get(
             (state) => state.propertiesOrderByList
         );
-        const filteredProperties = this.get((state) => state.filteredProperties);
+        const filteredProperties = this.get(
+            (state) => state.filteredProperties
+        );
 
         const snapshot: AdvancedSearchStateSnapshot = {
             ontologies,
@@ -1156,6 +1159,9 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
             filteredProperties,
         };
 
-        localStorage.setItem('advanced-search-previous-search', JSON.stringify(snapshot));
+        localStorage.setItem(
+            'advanced-search-previous-search',
+            JSON.stringify(snapshot)
+        );
     }
 }
