@@ -17,8 +17,8 @@ describe('DatePickerComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AppDatePickerComponent],
             imports: [
+                AppDatePickerComponent,
                 BrowserAnimationsModule,
                 MatButtonModule,
                 MatButtonToggleModule,

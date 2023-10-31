@@ -23,17 +23,17 @@ import {
     FormGroupDirective,
     NgControl,
     NgForm,
-    Validators,
+    Validators, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
 import {
     CanUpdateErrorState,
     ErrorStateMatcher,
     mixinErrorState,
     _AbstractConstructor,
-    _Constructor,
+    _Constructor, MatOptionModule
 } from '@angular/material/core';
-import { MatFormFieldControl } from '@angular/material/form-field';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 import { Subject } from 'rxjs';
 import {
@@ -43,6 +43,12 @@ import {
     IslamicCalendarDate,
     JulianCalendarDate,
 } from '@dasch-swiss/jdnconvertiblecalendar';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSelectModule } from '@angular/material/select';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
@@ -85,9 +91,23 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
     mixinErrorState(MatInputBase);
 
 @Component({
+    standalone: true,
     selector: 'dasch-swiss-app-date-picker',
     templateUrl: './app-date-picker.component.html',
     styleUrls: ['./app-date-picker.component.scss'],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatSelectModule,
+    ]
 })
 export class AppDatePickerComponent
     extends _MatInputMixinBase
