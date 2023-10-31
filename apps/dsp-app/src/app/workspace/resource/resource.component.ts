@@ -572,16 +572,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                 representations.push(stillImage);
 
                 this.annotationResources = annotations;
-
-                // developer feature: this keeps the annotations tab open, if you add "/annotations" to the end of the URL
-                // e.g. http://0.0.0.0:4200/resource/[project-shortcode]/[resource-iri]/annotations
-                if (
-                    this.valueUuid === 'annotations' ||
-                    this.selectedRegion === this.resourceIri
-                ) {
-                    this.selectedTab = this.incomingResource ? 2 : 1;
-                    this.selectedTabLabel = 'annotations';
-                }
             }
         } else if (resource.res.properties[Constants.HasDocumentFileValue]) {
             const fileValues: ReadDocumentFileValue[] = resource.res.properties[
