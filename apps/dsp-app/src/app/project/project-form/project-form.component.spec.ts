@@ -29,7 +29,7 @@ import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import {convertToParamMap} from "@angular/router";
 
-@Component({ selector: 'app-string-literal-input', template: '' })
+@Component({ selector: 'dasch-swiss-app-string-literal', template: '' })
 class MockStringLiteralInputComponent {
     @Input() placeholder = 'Label';
     @Input() language: string;

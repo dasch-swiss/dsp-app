@@ -28,6 +28,7 @@ import { EditListItemComponent } from './edit-list-item.component';
 import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
+
 /**
  * test host component to simulate parent component for updating an existing child node.
  */
@@ -70,7 +71,7 @@ class TestHostInsertChildNodeComponent {
     constructor() {}
 }
 
-@Component({ selector: 'app-string-literal-input', template: '' })
+@Component({ selector: 'dasch-swiss-app-string-literal', template: '' })
 class MockStringLiteralInputComponent {
     @Input() placeholder = 'Label';
     @Input() language: string;

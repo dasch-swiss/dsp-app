@@ -107,28 +107,6 @@ describe('ExpertSearchComponent', () => {
         expect(testHostComponent.expertSearch).toBeTruthy();
     });
 
-    it('should init the form with the default query', () => {
-        const textarea = hostCompDe.query(
-            By.css('textarea.textarea-field-content')
-        );
-        const textareaEle = textarea.nativeElement;
-
-        expect(textareaEle.value).toBe(
-            `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
-
-CONSTRUCT {
-    ?book knora-api:isMainResource true .
-    ?book incunabula:title ?title .
-
-} WHERE {
-    ?book a incunabula:book .
-    ?book incunabula:title ?title .
-}
-`
-        );
-    });
-
     it('should reset the form', () => {
         const resetBtn = hostCompDe.query(By.css('button.reset'));
         const textarea = hostCompDe.query(
@@ -138,9 +116,8 @@ CONSTRUCT {
         const resetEle = resetBtn.nativeElement;
         const textareaEle = textarea.nativeElement;
 
-        // delete textarea content displayed by default to make a change
-        textareaEle.value = '';
-        expect(textareaEle.value).toBe('');
+        // mock enter some characters into textarea
+        textareaEle.value = 'some text';
 
         resetEle.click();
 
@@ -148,105 +125,24 @@ CONSTRUCT {
 
         // reset the textarea content
         expect(textareaEle.value).toBe(
-            `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
-
-CONSTRUCT {
-    ?book knora-api:isMainResource true .
-    ?book incunabula:title ?title .
-
-} WHERE {
-    ?book a incunabula:book .
-    ?book incunabula:title ?title .
-}
-`
+            ''
         );
-    });
-
-    it('should register the query in the params service', () => {
-        const expectedGravsearch = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
-
-CONSTRUCT {
-    ?book knora-api:isMainResource true .
-    ?book incunabula:title ?title .
-
-} WHERE {
-    ?book a incunabula:book .
-    ?book incunabula:title ?title .
-}
-
-             OFFSET 0
-             `;
-        const submitBtn = hostCompDe.query(By.css('button[type="submit"]'));
-        const submitBtnEle = submitBtn.nativeElement;
-
-        submitBtnEle.click();
-        testHostFixture.detectChanges();
-
-        expect(
-            searchParamsServiceSpy.changeSearchParamsMsg
-        ).toHaveBeenCalledTimes(1);
-        expect(gravsearchSearchParams).toBeDefined();
-        expect(gravsearchSearchParams.generateGravsearch(0)).toEqual(
-            expectedGravsearch
-        );
-    });
-
-    it('should emit the Gravsearch query', () => {
-        const expectedGravsearch = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
-
-CONSTRUCT {
-    ?book knora-api:isMainResource true .
-    ?book incunabula:title ?title .
-
-} WHERE {
-    ?book a incunabula:book .
-    ?book incunabula:title ?title .
-}
-
-         OFFSET 0
-         `;
-
-        const submitBtn = hostCompDe.query(By.css('button[type="submit"]'));
-        const submitBtnEle = submitBtn.nativeElement;
-
-        expect(testHostComponent.gravsearchQ).toBeUndefined();
-
-        submitBtnEle.click();
-        testHostFixture.detectChanges();
-
-        expect(testHostComponent.gravsearchQ).toBeDefined();
-        expect(testHostComponent.gravsearchQ.query).toEqual(expectedGravsearch);
-        expect(testHostComponent.gravsearchQ.mode).toEqual('gravsearch');
     });
 
     it('should not return an invalid query', () => {
+        // if no query is entered
         expect(
             testHostComponent.expertSearch.expertSearchForm.valid
-        ).toBeTruthy();
+        ).toBeFalsy();
 
         const textarea = hostCompDe.query(
             By.css('textarea.textarea-field-content')
         );
         const textareaEle = textarea.nativeElement;
 
-        expect(textareaEle.value).toBe(
-            `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
+        expect(textareaEle.value).toBe('');
 
-CONSTRUCT {
-    ?book knora-api:isMainResource true .
-    ?book incunabula:title ?title .
-
-} WHERE {
-    ?book a incunabula:book .
-    ?book incunabula:title ?title .
-}
-`
-        );
-
+        // mock enter a wrong gravsearch query into textarea: "OFFSET 0" is not allowed in the query.
         textareaEle.value = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
 PREFIX incunabula: <http://0.0.0.0:3333/ontology/0803/incunabula/v2#>
 

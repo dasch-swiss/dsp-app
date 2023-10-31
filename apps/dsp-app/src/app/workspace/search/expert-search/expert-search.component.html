@@ -2,7 +2,12 @@
     <form [formGroup]="expertSearchForm" class="expert-search-form app-form-content">
         <mat-form-field class="textarea-field large-field">
             <mat-label>Write your Gravsearch query</mat-label>
-            <textarea matInput [formControlName]="'gravsearchquery'" cdkTextareaAutosize cdkAutosizeMinRows="12"
+            <textarea
+                #textArea
+                matInput
+                [formControlName]="'gravsearchquery'"
+                [placeholder]='defaultGravsearchQuery'
+                cdkTextareaAutosize cdkAutosizeMinRows="12"
                 cdkAutosizeMaxRows="24" class="textarea-field-content">
             </textarea>
             <mat-error *ngIf="expertSearchForm.controls.gravsearchquery.hasError('forbiddenName')">

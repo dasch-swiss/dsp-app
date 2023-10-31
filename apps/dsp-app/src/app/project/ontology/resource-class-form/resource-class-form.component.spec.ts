@@ -38,6 +38,7 @@ import { ResourceClassFormComponent } from './resource-class-form.component';
 import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
+
 /**
  * test host component to simulate parent component.
  */
@@ -46,10 +47,9 @@ import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 })
 class TestHostResourceClassFormComponent {}
 
-@Component({ selector: 'app-string-literal-input', template: '' })
+@Component({ selector: 'dasch-swiss-app-string-literal', template: '' })
 class MockStringLiteralInputComponent {
     @Input() placeholder = 'Label';
-    @Input() language: string;
     @Input() textarea: boolean;
     @Input() value: StringLiteral[] = [];
     @Input() disabled: boolean;

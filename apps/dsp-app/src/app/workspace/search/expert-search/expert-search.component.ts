@@ -1,4 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    EventEmitter,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import {
     AbstractControl,
     UntypedFormBuilder,
@@ -31,7 +40,7 @@ export function forbiddenTermValidator(termRe: RegExp): ValidatorFn {
     templateUrl: './expert-search.component.html',
     styleUrls: ['./expert-search.component.scss'],
 })
-export class ExpertSearchComponent implements OnInit {
+export class ExpertSearchComponent implements OnInit, AfterViewInit {
     /**
      * the data event emitter of type SearchParams
      *
@@ -39,42 +48,52 @@ export class ExpertSearchComponent implements OnInit {
      */
     @Output() search = new EventEmitter<SearchParams>();
 
+    @ViewChild('textArea') textAreaElement: ElementRef;
+
     expertSearchForm: UntypedFormGroup;
     queryFormControl: UntypedFormControl;
 
     iriBaseUrl = this._os.getIriBaseUrl();
 
     defaultGravsearchQuery = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-PREFIX incunabula: <${this.iriBaseUrl}/ontology/0803/incunabula/v2#>
+PREFIX webern: <${this.iriBaseUrl}/ontology/0806/webern-onto/v2#>
 
 CONSTRUCT {
-    ?book knora-api:isMainResource true .
-    ?book incunabula:title ?title .
+?s knora-api:isMainResource true .
+?s webern:hasTitle ?title .
 
 } WHERE {
-    ?book a incunabula:book .
-    ?book incunabula:title ?title .
+?s a knora-api:Resource .
+?s a webern:EditedText .
+?s webern:hasTitle ?title .
 }
 `;
 
     constructor(
         private _os: OntologyService,
         private _searchParamsService: SearchParamsService,
-        private _fb: UntypedFormBuilder
+        private _fb: UntypedFormBuilder,
+        private _cdr: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
-        // initialize the form with predefined Gravsearch query as example.
-        this.queryFormControl = new UntypedFormControl(
-            this.defaultGravsearchQuery
+        this.queryFormControl = new UntypedFormControl(''
         );
 
         this.expertSearchForm = this._fb.group({
             gravsearchquery: [
-                this.defaultGravsearchQuery,
+                '',
                 [Validators.required, forbiddenTermValidator(/OFFSET/i)],
             ],
         });
+    }
+
+    ngAfterViewInit() {
+        if (this.textAreaElement?.nativeElement) {
+            // focus the text area
+            this.textAreaElement.nativeElement.focus();
+            this._cdr.detectChanges();
+        }
     }
 
     /**
@@ -82,8 +101,9 @@ CONSTRUCT {
      */
     resetForm() {
         this.expertSearchForm.reset({
-            gravsearchquery: this.defaultGravsearchQuery,
         });
+        // focus the text area
+        this.textAreaElement.nativeElement.focus();
     }
 
     /**

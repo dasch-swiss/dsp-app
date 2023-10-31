@@ -37,7 +37,7 @@ import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
  * test component to simulate child component, here progress-indicator from action module.
  */
 @Component({
-    selector: 'app-progress-indicator',
+    selector: 'dasch-swiss-app-progress-indicator',
     template: '',
 })
 class TestProgressIndicatorComponent {}

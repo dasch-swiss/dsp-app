@@ -16,6 +16,15 @@ import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { ProfileComponent } from './profile.component';
+import { Component } from '@angular/core';
+
+
+@Component({
+    selector: 'dasch-swiss-app-progress-indicator',
+    template: '',
+})
+class MockProgressIndicatorComponent {}
+
 
 describe('ProfileComponent', () => {
     let component: ProfileComponent;
@@ -23,7 +32,12 @@ describe('ProfileComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [ProfileComponent, DialogComponent, StatusComponent],
+            declarations: [
+                ProfileComponent,
+                DialogComponent,
+                StatusComponent,
+                MockProgressIndicatorComponent
+            ],
             imports: [
                 BrowserAnimationsModule,
                 MatButtonModule,

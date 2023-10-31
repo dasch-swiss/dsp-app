@@ -50,7 +50,7 @@ class MockOntologyClassesComponent {
 }
 
 @Component({
-    selector: 'app-progress-indicator',
+    selector: 'dasch-swiss-app-progress-indicator',
     template: '',
 })
 class MockProgressIndicatorComponent {}

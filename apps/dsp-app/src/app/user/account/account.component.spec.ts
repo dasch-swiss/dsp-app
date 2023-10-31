@@ -20,6 +20,14 @@ import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { PasswordFormComponent } from '../user-form/password-form/password-form.component';
 import { AccountComponent } from './account.component';
+import { Component } from '@angular/core';
+
+@Component({
+    selector: 'dasch-swiss-app-progress-indicator',
+    template: '',
+})
+class MockProgressIndicatorComponent {}
+
 
 describe('AccountComponent', () => {
     let component: AccountComponent;
@@ -32,6 +40,7 @@ describe('AccountComponent', () => {
                 PasswordFormComponent,
                 DialogComponent,
                 StatusComponent,
+                MockProgressIndicatorComponent
             ],
             imports: [
                 BrowserAnimationsModule,

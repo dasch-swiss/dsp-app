@@ -233,7 +233,7 @@ class ListHostComponent {
     };
 }
 
-@Component({ selector: 'app-string-literal-input', template: '' })
+@Component({ selector: 'dasch-swiss-app-string-literal', template: '' })
 class MockStringLiteralInputComponent {
     @Input() placeholder = 'Label';
     @Input() language: string;
