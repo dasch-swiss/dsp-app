@@ -11,6 +11,8 @@ import {
 } from '@dasch-swiss/vre/shared/app-session';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import {RouteConstants} from "@dasch-swiss/vre/shared/app-config";
+import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-literal';
+import { AppGlobal } from '@dsp-app/src/app/app-global';
 
 @Component({
     selector: 'app-description',
@@ -62,11 +64,13 @@ export class DescriptionComponent implements OnInit {
         // get the project data
         this._applicationStateService.get(this.projectUuid).subscribe(
             (response: ReadProject) => {
-                this.project = response;
+                // sort the projectdescriptions by language
+                this.project = this.projectWithSortedDescriptions(response);
+
 
                 // if the user is not sysadmin, check if he is project admin
                 if (!this.userHasPermission) {
-                    this.userHasPermission = this.session.user.projectAdmin.some(
+                    this.userHasPermission = this.session?.user?.projectAdmin?.some(
                         (e) => e === this.project.id
                     );
                 }
@@ -76,6 +80,27 @@ export class DescriptionComponent implements OnInit {
             }
         );
         this.loading = false;
+    }
+
+    // returns the project with the descriptions sorted by language
+    private projectWithSortedDescriptions(project: ReadProject): ReadProject  {
+        if (project.description && project.description.length > 1) {
+            // sort the descriptions by language
+            project.description = this.sortDescriptionsByLanguage(project.description);
+        }
+        return project;
+    }
+
+    // returns the descriptions sorted by language
+    private sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
+        const languageOrder = AppGlobal.languagesList.map((l) => l.language);
+
+        return descriptions.sort((a, b) => {
+            const indexA = languageOrder.indexOf(a.language);
+            const indexB = languageOrder.indexOf(b.language);
+
+            return indexA - indexB;
+        });
     }
 
     editProject() {
