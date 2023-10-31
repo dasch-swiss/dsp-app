@@ -64,7 +64,7 @@ export class HelpComponent implements OnInit {
         {
             title: 'DSP-API ',
             text: 'Framework to store, share, and work with primary resources in the humanities.',
-            url: 'https://github.com/dasch-swiss/dsp-api/releases/tag/v',
+            url: 'https://github.com/dasch-swiss/dsp-api/releases/tag/',
             urlText: 'Release notes',
         },
         {
@@ -108,11 +108,8 @@ export class HelpComponent implements OnInit {
 
         this.support[0].url += this.dsp.environment + ': ' + this.dsp.release;
 
-        // quick solution; todo: has to be done in a better way
-        // to go directly to the page e.g. https://dasch.atlassian.net/wiki/spaces/changelog/pages/25067546/Releasenews+2022.01.02
-        // or https://dasch.atlassian.net/wiki/spaces/changelog/pages/21266446/Releasenews+2022.01.01
         this.releaseNotesUrl =
-            'https://dasch.atlassian.net/wiki/search?text=' + this.dsp.release;
+            'https://github.com/dasch-swiss/dsp-das/releases/tag/v' + this.appVersion;
 
         this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(
             (response: ApiResponseData<VersionResponse>) => {
@@ -124,7 +121,7 @@ export class HelpComponent implements OnInit {
 
                 // set dsp-api version
                 this.tools[1].title += this.apiVersion.webapi;
-                this.tools[1].url += this.apiVersion.webapi;
+                this.tools[1].url += this.apiVersion.webapi.split('-')[0];
 
                 // set dsp-sipi version
                 this.tools[2].title += this.apiVersion.sipi;
