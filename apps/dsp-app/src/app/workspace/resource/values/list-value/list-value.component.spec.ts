@@ -24,6 +24,7 @@ import { ListValueComponent } from './list-value.component';
 import { SublistValueComponent } from './subList-value/sublist-value.component';
 import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * test host component to simulate parent component.
@@ -107,6 +108,7 @@ describe('ListValueComponent', () => {
             imports: [
                 BrowserAnimationsModule,
                 MatDialogModule,
+                MatIconModule,
                 MatInputModule,
                 MatMenuModule,
                 MatSnackBarModule,
@@ -210,9 +212,12 @@ describe('ListValueComponent', () => {
                     .length
             ).toEqual(0);
 
-            const openListButtonDe = valueComponentDe.query(By.css('button'));
+            const dropdownDe = valueComponentDe.query(By.css('.dropdown'));
+            const dropdownLabel = valueComponentDe.query(By.css('.label'));
 
-            expect(openListButtonDe.nativeElement.textContent.trim()).toBe(
+            expect(dropdownDe).toBeTruthy();
+
+            expect(dropdownLabel.nativeElement.textContent.trim()).toBe(
                 'Tree list node 01'
             );
 
@@ -220,12 +225,6 @@ describe('ListValueComponent', () => {
                 testHostComponent.inputValueComponent.selectedNode.label
             ).toBe('Tree list node 01');
 
-            const openListButtonEle: HTMLElement =
-                openListButtonDe.nativeElement;
-            openListButtonEle.click();
-            testHostFixture.detectChanges();
-
-            testHostComponent.inputValueComponent.menuTrigger.openMenu();
         });
 
         it('should validate an existing value with an added comment', () => {

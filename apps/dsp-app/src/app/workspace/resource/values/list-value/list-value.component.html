@@ -1,28 +1,16 @@
 <span *ngIf="mode !== 'read' && listRootNode !== undefined">
-    <!-- button to select a list node -->
-    <span
-        [matTooltip]="
-            !selectedNode && !listRootNode.children.length
-                ? 'This list doesn\'t have any node values'
-                : 'Select list value'
-        "
-        [matTooltipPosition]="'above'"
-    >
-        <button
-            mat-stroked-button
-            [matMenuTriggerFor]="mainMenu"
-            type="button"
-            placeholder="List value"
-            [disabled]="!selectedNode && !listRootNode.children.length"
-        >
-            <!-- if no node is selected: display list label; if the list does not have any list nodes, the button should be disabled -->
-            <span *ngIf="!selectedNode">{{ listRootNode.label }}</span>
-
-            <!-- if a node is selected: display node label -->
-            <span *ngIf="selectedNode">{{ selectedNode.label }}</span>
-        </button>
-    </span>
-
+    <div *ngIf="!selectedNode && !listRootNode.children.length">
+        This controlled vocabulary does not have any items.
+    </div>
+    <div *ngIf="selectedNode || listRootNode.children.length" class="dropdown" [matMenuTriggerFor]="mainMenu">
+        <div class="container">
+            <div class="label">{{ selectedNode ? selectedNode.label : listRootNode.label }}</div>
+            <div class="icon">
+                <mat-icon>arrow_drop_down</mat-icon>
+            </div>
+        </div>
+        <div class="line"></div>
+    </div>
     <mat-menu #mainMenu="matMenu" [overlapTrigger]="false">
         <span *ngFor="let child of listRootNode.children">
             <span *ngIf="child.children && child.children.length > 0">
