@@ -238,7 +238,7 @@ export class AvTimelineComponent implements OnChanges {
         // recalculate timeline dimension
         const newDimension: DOMRect = this._getTimelineDimensions();
 
-        if (this.timelineDimension.width !== newDimension.width) {
+        if (this.timelineDimension?.width !== newDimension.width) {
             return newDimension;
         } else {
             return;
