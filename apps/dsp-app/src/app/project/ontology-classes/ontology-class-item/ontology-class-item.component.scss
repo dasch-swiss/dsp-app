@@ -19,8 +19,7 @@
     }
 
     .box {
-      padding-left: 10px;
-      padding-top: 10px;
+      padding: 6px 10px;
       border-radius: 7px 0 0 7px;
       flex-grow: 1;
 
@@ -28,6 +27,12 @@
         width: 200px;
         color: $secondary;
         padding-left: 4px;
+        height: 36px;
+        overflow: hidden;
+        display: -webkit-box;
+        line-height: 17px;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
 
       .entry-container {
@@ -42,7 +47,13 @@
         }
 
         .entry {
-          font-size: 20px;
+          font-size: 14px;
+        }
+
+        mat-icon {
+          height: 23px;
+          width: 23px;
+          font-size: 23px;
         }
       }
     }

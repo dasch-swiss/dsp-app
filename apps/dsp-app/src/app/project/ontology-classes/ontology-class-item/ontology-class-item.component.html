@@ -1,8 +1,8 @@
 <div class="class-item-container">
     <div class="content" [routerLinkActive]="['is-active']" (click)="selectItem()">
         <div class="box link" [routerLink]="classLink">
-            <div class="label" matTooltip="{{resClass.label}}" matTooltipShowDelay="750" [matTooltipPosition]="'above'"
-                 [matTooltipDisabled]="resClass.label.length < MAX_LABEL_CHAR">{{trimLabel(resClass.label)}}</div>
+            <div #resClassLabel class="label" matTooltip="{{resClass.label}}" matTooltipShowDelay="750" [matTooltipPosition]="'above'"
+                 [matTooltipDisabled]="tooltipDisabled">{{resClass.label}}</div>
             <div class="entry-container">
                 <mat-icon>{{icon}}</mat-icon>
                 <ngx-skeleton-loader
