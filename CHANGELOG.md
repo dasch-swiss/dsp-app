@@ -1,5 +1,29 @@
 # Changelog
 
+## [11.1.0](https://github.com/dasch-swiss/dsp-das/compare/v11.0.0...v11.1.0) (2023-11-10)
+
+
+### Enhancements
+
+* **advanced-search:** allow ordering by URI value ([#1248](https://github.com/dasch-swiss/dsp-das/issues/1248)) ([e5cfebe](https://github.com/dasch-swiss/dsp-das/commit/e5cfebe723ddda057ee7e01dec749f9d27f5f253))
+* **expert search:** implement default gravsearch as placeholder ([#1247](https://github.com/dasch-swiss/dsp-das/issues/1247)) ([5132f4d](https://github.com/dasch-swiss/dsp-das/commit/5132f4d48215cb53a8468dd8431a131f42bcad83))
+* **list-value:** make list menu resemble a dropdrown ([#1256](https://github.com/dasch-swiss/dsp-das/issues/1256)) ([f7a7a8c](https://github.com/dasch-swiss/dsp-das/commit/f7a7a8c802fb55c744c0b7c4fefdefa9d2129301))
+* **project description:** order project descriptions by language ([#1250](https://github.com/dasch-swiss/dsp-das/issues/1250)) ([f2c5dc9](https://github.com/dasch-swiss/dsp-das/commit/f2c5dc92a677929aba2aaa61f342d0da69c3cfac))
+
+
+### Bug Fixes
+
+* **app/help:** fix links to releases ([#1253](https://github.com/dasch-swiss/dsp-das/issues/1253)) ([e2ddcdd](https://github.com/dasch-swiss/dsp-das/commit/e2ddcddfbca0e79ae6cb436deb8769e6fe6bc6f5))
+* **app/resource:** removed developer feature that created annotation bug ([#1254](https://github.com/dasch-swiss/dsp-das/issues/1254)) ([7b908b0](https://github.com/dasch-swiss/dsp-das/commit/7b908b0e646918f091aefa7881472578d92b51d4))
+* **type errors:** fix type errors ([#1255](https://github.com/dasch-swiss/dsp-das/issues/1255)) ([389eccb](https://github.com/dasch-swiss/dsp-das/commit/389eccbbe68caf0c5419e1f017adadabdda34e15))
+
+
+### Maintenance
+
+* **date picker:** implement date picker as standalone component ([#1251](https://github.com/dasch-swiss/dsp-das/issues/1251)) ([e89dba8](https://github.com/dasch-swiss/dsp-das/commit/e89dba8b862eec8eb4c6c8985d3fa9d15a0bdfce))
+* **ontology-class-item:** change how long labels are handled ([#1257](https://github.com/dasch-swiss/dsp-das/issues/1257)) ([f6d42dc](https://github.com/dasch-swiss/dsp-das/commit/f6d42dc50181cd2be6f10124455138597c880405))
+* update dsp-js to v9.0.2 ([#1258](https://github.com/dasch-swiss/dsp-das/issues/1258)) ([cb86ebf](https://github.com/dasch-swiss/dsp-das/commit/cb86ebf695ddbdd0f6dc8de59b79d50fa4b200a1))
+
 ## [11.0.0](https://github.com/dasch-swiss/dsp-das/compare/v10.24.2...v11.0.0) (2023-10-27)
 
 
