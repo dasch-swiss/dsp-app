@@ -4,7 +4,7 @@ import {
     Inject,
     Input,
     OnInit,
-    Output,
+    Output
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -28,8 +28,7 @@ import {
 import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import {SortProp} from "@dsp-app/src/app/main/action/sort-button/sort-button.component";
-import {Subscription} from "rxjs";
-import {tap} from "rxjs/operators";
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-projects-list',
@@ -197,16 +196,15 @@ export class ProjectsListComponent implements OnInit {
 
         this._dspApiConnection.admin.projectsEndpoint
             .deleteProject(id)
-            .pipe(
-                tap((response: ApiResponseData<ProjectResponse>) => {
+            .pipe(take(1))
+            .subscribe((response: ApiResponseData<ProjectResponse>) => {
                     this._applicationStateService.set(uuid, response.body.project);
                     this.refreshParent.emit();
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                 }
-            )
-        );
+            );
     }
 
     activateProject(id: string) {
@@ -218,8 +216,8 @@ export class ProjectsListComponent implements OnInit {
 
         this._dspApiConnection.admin.projectsEndpoint
             .updateProject(id, data)
-            .pipe(
-                tap((response: ApiResponseData<ProjectResponse>) => {
+            .pipe(take(1))
+            .subscribe((response: ApiResponseData<ProjectResponse>) => {
                     this._applicationStateService.set(uuid, response.body.project);
                     this.refreshParent.emit();
 
@@ -227,7 +225,6 @@ export class ProjectsListComponent implements OnInit {
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
                 }
-            )
-        );
+            );
     }
 }
