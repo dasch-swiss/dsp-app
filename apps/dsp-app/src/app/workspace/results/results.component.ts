@@ -19,10 +19,7 @@ export interface SplitSize {
     styleUrls: ['./results.component.scss'],
 })
 export class ResultsComponent {
-    searchParams: SearchParams = {
-        query: '',
-        mode: 'fulltext',
-    };
+    searchParams: SearchParams;
 
     resIri: string;
 
@@ -93,8 +90,10 @@ export class ResultsComponent {
         this.searchQuery = decodeURIComponent(params.get('q'));
         this.searchMode = decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch';
 
-        this.searchParams.query = this.searchQuery;
-        this.searchParams.mode = this.searchMode;
+        this.searchParams = {
+            query: this.searchQuery,
+            mode: this.searchMode,
+        };
 
         if (params.get('project') && this.searchMode === 'fulltext') {
             this.searchParams.filter = {
