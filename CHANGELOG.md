@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.1.1](https://github.com/dasch-swiss/dsp-das/compare/v11.1.0...v11.1.1) (2023-11-14)
+
+
+### Bug Fixes
+
+* **activate/deactivate project:** subscribe to the observable ([#1261](https://github.com/dasch-swiss/dsp-das/issues/1261)) ([92431d4](https://github.com/dasch-swiss/dsp-das/commit/92431d45bf1ae1b39d5afabf10f358b4dc3e7eb6))
+* **results:** user unable to execute second fulltext search ([#1262](https://github.com/dasch-swiss/dsp-das/issues/1262)) ([baba2f4](https://github.com/dasch-swiss/dsp-das/commit/baba2f471fdc8246fb9047a870bb49a613e87dc0))
+
 ## [11.1.0](https://github.com/dasch-swiss/dsp-das/compare/v11.0.0...v11.1.0) (2023-11-10)
 
 
