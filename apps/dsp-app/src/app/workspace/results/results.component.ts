@@ -82,6 +82,10 @@ export class ResultsComponent {
     private _handleParentParams(parentParams: Params) {
         const uuid = parentParams.get('uuid');
         if (uuid) {
+            this.searchParams = {
+                query: '',
+                mode: 'gravsearch'
+            };
             this.searchParams.projectUuid = uuid;
         }
     }
