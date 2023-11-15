@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.1.2](https://github.com/dasch-swiss/dsp-das/compare/v11.1.1...v11.1.2) (2023-11-15)
+
+
+### Bug Fixes
+
+* **advanced-search:** undefined error leads to blank page ([#1264](https://github.com/dasch-swiss/dsp-das/issues/1264)) ([a176ce0](https://github.com/dasch-swiss/dsp-das/commit/a176ce04c9b039fb05d0358d46b9c15237e02aad))
+* **results:** go back to search form button fix ([#1266](https://github.com/dasch-swiss/dsp-das/issues/1266)) ([b2b18fe](https://github.com/dasch-swiss/dsp-das/commit/b2b18fe3fd8ecdf665fc799107148462c586fe37))
+
 ## [11.1.1](https://github.com/dasch-swiss/dsp-das/compare/v11.1.0...v11.1.1) (2023-11-14)
 
 
