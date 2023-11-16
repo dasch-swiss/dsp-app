@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.1.3](https://github.com/dasch-swiss/dsp-das/compare/v11.1.2...v11.1.3) (2023-11-16)
+
+
+### Bug Fixes
+
+* **date-picker:** date-picker doesn't show in advanced search ([#1267](https://github.com/dasch-swiss/dsp-das/issues/1267)) ([3d2778f](https://github.com/dasch-swiss/dsp-das/commit/3d2778f32337fc2e07d32cbf474fc802b1edc20a))
+
 ## [11.1.2](https://github.com/dasch-swiss/dsp-das/compare/v11.1.1...v11.1.2) (2023-11-15)
 
 
