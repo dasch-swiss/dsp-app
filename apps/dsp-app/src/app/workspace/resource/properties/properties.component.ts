@@ -325,6 +325,23 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         this._getDisplayedIncomingLinkRes();
     }
 
+    handleIncomingLinkForward(){
+        if(this.allIncomingLinkResources.length / this.amount_resources > this.pageEvent.pageIndex + 1){
+            const newPage = new PageEvent();
+            newPage.pageIndex = this.pageEvent.pageIndex + 1;
+            this.goToPage(newPage);
+        }
+    }
+
+    handleIncomingLinkBackward(){
+        if (this.pageEvent.pageIndex > 0){
+            const newPage = new PageEvent();
+            newPage.pageIndex = this.pageEvent.pageIndex - 1;
+            this.goToPage(newPage);
+        }
+        
+    }
+
     /**
      * opens resource
      * @param linkValue

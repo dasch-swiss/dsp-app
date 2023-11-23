@@ -169,6 +169,41 @@
   margin: 0;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  button {
+    margin: 0 15px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 100%;
+    height: fit-content;
+    padding: 10px;
+    display: flex; //centers the icon
+
+    mat-icon {
+      color: $primary;
+    }
+
+  }
+
+  button:hover {
+    background-color: $cool_gray_300;
+  }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  button:disabled:hover {
+    background-color: transparent;
+  }
+
+}
+
 @media screen and (max-width: 768px) {
   .properties,
   .incoming {

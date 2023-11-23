@@ -165,10 +165,15 @@
                             <!-- the value(s) of the incoming links -->
                             <a class="link link-value" *ngFor="let inRes of displayedIncomingLinkResources"
                                 (click)="openResource(inRes.id)">{{inRes.resourceClassLabel}}: <strong>{{inRes.label}}</strong></a>
-                            <mat-paginator *ngIf="numberOffAllIncomingLinkRes > amount_resources" [length]=numberOffAllIncomingLinkRes
+                            <!-- <mat-paginator *ngIf="numberOffAllIncomingLinkRes > amount_resources" [length]=numberOffAllIncomingLinkRes
                                            [pageSize]="amount_resources" [hidePageSize]="true" [pageIndex]="pageEvent.pageIndex"
                                            (page)="goToPage($event)">
-                            </mat-paginator>
+                            </mat-paginator> -->
+                            <div class="pagination" *ngIf="allIncomingLinkResources.length > amount_resources">
+                                <p>Show more</p>
+                                <button [disabled]="pageEvent.pageIndex < 1" (click)="handleIncomingLinkBackward()"><mat-icon>chevron_left</mat-icon></button>
+                                <button [disabled]="allIncomingLinkResources.length/ amount_resources <= pageEvent.pageIndex + 1" (click)="handleIncomingLinkForward()"><mat-icon>chevron_right</mat-icon></button>
+                            </div>
                         </div>
                     </div>
                 </div>
