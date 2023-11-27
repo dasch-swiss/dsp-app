@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.1.5](https://github.com/dasch-swiss/dsp-das/compare/v11.1.4...v11.1.5) (2023-11-23)
+
+
+### Bug Fixes
+
+* **app/properties:** remove number of incoming links in pagination (DEV-2474) ([#1270](https://github.com/dasch-swiss/dsp-das/issues/1270)) ([021cf29](https://github.com/dasch-swiss/dsp-das/commit/021cf291d45d55fd3fc6bf59ef9818fc2fb95af3))
+* **dsp-app:** loading variable ([#1271](https://github.com/dasch-swiss/dsp-das/issues/1271)) ([7bef1a9](https://github.com/dasch-swiss/dsp-das/commit/7bef1a98b65e57d57b75c960468be0c36a73dd7c))
+
 ## [11.1.4](https://github.com/dasch-swiss/dsp-das/compare/v11.1.3...v11.1.4) (2023-11-23)
 
 
