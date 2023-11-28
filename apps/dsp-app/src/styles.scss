@@ -207,3 +207,7 @@ button.space-reducer {
 .mat-drawer-inner-container::-webkit-scrollbar {
   display: none;
 }
+
+.mat-mdc-dialog-content { //prevent horizontal scrollbar in dialog
+  overflow-x: hidden !important;
+}
