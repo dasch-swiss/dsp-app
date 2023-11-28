@@ -3,56 +3,27 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/dsp-app-e2e/src",
   "projectType": "application",
+  "prefix": "dsp-app-e2e",
   "targets": {
     "e2e": {
-      "executor": "@angular-devkit/build-angular:protractor",
+      "executor": "@nrwl/cypress:cypress",
       "options": {
-        "protractorConfig": "apps/dsp-app-e2e/protractor.conf.js",
-        "devServerTarget": "dsp-app:serve"
+        "cypressConfig": "apps/dsp-app-e2e/cypress.config.ts"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "dsp-app:serve:production"
+          "devServerTarget": "dsp-app:serve:production",
+          "env": {
+            "API_URL": "http://0.0.0.0:3333/api"
+          }
         },
-        "test-server": {
-          "devServerTarget": "dsp-app:serve:test-server"
-        },
-        "ls-test-server": {
-          "devServerTarget": "dsp-app:serve:ls-test-server"
-        },
-        "0845-test-server": {
-          "devServerTarget": "dsp-app:serve:0845-test-server"
-        },
-        "staging-server": {
-          "devServerTarget": "dsp-app:serve:staging-server"
-        }
-      }
-    },
-    "e2e-ci": {
-      "executor": "@angular-devkit/build-angular:protractor",
-      "options": {
-        "protractorConfig": "apps/dsp-app-e2e/protractor-ci.conf.js",
-        "devServerTarget": "dsp-app:serve"
-      },
-      "configurations": {
-        "production": {
-          "devServerTarget": "dsp-app:serve:production"
-        },
-        "test-server": {
-          "devServerTarget": "dsp-app:serve:test-server"
-        },
-        "ls-test-server": {
-          "devServerTarget": "dsp-app:serve:ls-test-server"
-        },
-        "0845-test-server": {
-          "devServerTarget": "dsp-app:serve:0845-test-server"
-        },
-        "staging-server": {
-          "devServerTarget": "dsp-app:serve:staging-server"
+        "development": {
+          "devServerTarget": "dsp-app:serve:development",
+          "env": {
+            "API_URL": "http://0.0.0.0:3333/api"
+          }
         }
       }
     }
-  },
-  "implicitDependencies": ["dsp-app"],
-  "tags": []
+  }
 }

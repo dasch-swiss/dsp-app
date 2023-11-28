@@ -55,3 +55,7 @@ Thumbs.db
 
 .angular
 /libs/jdnconvertiblecalendar/coverage/
+
+#E2E
+/.nx
+apps/dsp-app-e2e/cypress/screenshots

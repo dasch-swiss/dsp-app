@@ -39,12 +39,14 @@ The monorepo is implemented using [NX](https://nx.dev).
 
 The most common commands are defined in `package.json`.
 
-> **_NOTE:_** You can install `nx` globally with `npm install -g nx`. If not, then all `nx` commands bellow need to be prefixed with `npx`.
+> **_NOTE:_** You can install `nx` globally with `npm install -g nx`. If not, then all `nx` commands below need to be prefixed with `npx`.
 
 | nx                                                            | npm                                 |
 |---------------------------------------------------------------|-------------------------------------|
 | `nx run dsp-app:test`                                         | `npm run test-local`                |
-| `nx run dsp-app:test --watch=false --browsers=ChromeHeadless` | `npm run test-ci`                   |
+| `nx run dsp-app:test:ci`                                      | `npm run test-ci`                   |
+| `nx run-many --all --target=test --configuration=ci`          | `npm run test-ci-all`               |
+| `nx run dsp-app:serve`                                        | `npm run start-dev`                 |
 | `nx run dsp-app:serve:test-server`                            | `npm run start-with-test-server`    |
 | `nx run dsp-app:serve:dev-server`                             | `npm run start-with-dev-server`     |
 | `nx run dsp-app:serve:ls-test-server`                         | `npm run start-with-ls-test-server` |
@@ -52,14 +54,24 @@ The most common commands are defined in `package.json`.
 | `nx run dsp-app:serve:0845-test-server`                       | `npm run start-with-0845-server`    |
 | `nx run dsp-app:lint`                                         | `npm run lint-ci`                   |
 | `nx run dsp-app:lint --fix`                                   | `npm run lint-local`                |
-| `nx run dsp-app-e2e:e2e`                                      | `npm run e2e`                       |
-| `nx run dsp-app-e2e:e2e-ci --webdriver-update=false`          | `npm run e2e-ci`                    |
+| `nx run dsp-app-e2e:e2e:development`                          | `npm run e2e-ci-dev`                |
+| `nx run dsp-app-e2e:e2e:production`                           | `npm run e2e-ci`                    |
 | `nx run dsp-app:build`                                        | `build`                             |
 | `nx run dsp-app:build:production`                             | `build-prod`                        |
+
+| npx                                                           | npm                                 |
+|---------------------------------------------------------------|-------------------------------------|
+| `cd apps/dsp-app-e2e && npx cypress open`                     | `npm run e2e-local`                 |
 
 ### IDE plugins
 - https://plugins.jetbrains.com/plugin/15101-nx-console-idea
 - https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console
+
+### E2E Tests
+- There are three spm scripts to run the E2E tests.
+- `npm run e2e-ci-dev` will run the E2E tests in the console in a development environment.
+- `npm run e2e-ci` will run the E2E tests in the console in a production environment. This is the command that is run on GitHub CI.
+- `npm run e2e-local` will open the Cypress UI which will enable you to easy run individual tests and see every step as it runs.
 
 
 ## Further Documentation

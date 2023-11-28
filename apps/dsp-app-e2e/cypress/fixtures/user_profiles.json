@@ -1,0 +1,13 @@
+{
+  "admin_username": "daschAdmin",
+  "admin_password": "DaSCHianer1",
+  "change_admin_password": "DaSCHianer2",
+  "projectMember_username": "daschMember",
+  "projectMember_password": "AMembersPassword1",
+  "change_projectMember_password": "AMembersPassword2",
+  "systemAdmin_username": "daschSystemAdmin",
+  "systemAdmin_password": "IamAllowedTODoEverything1",
+  "systemAdmin_username_root": "root",
+  "systemAdmin_password_root": "test",
+  "change_systemAdmin_password": "IamAllowedTODoEverything2"
+}
