@@ -1,30 +1,24 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
-    Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 import {
-    ApiResponseData,
-    ApiResponseError,
     Constants,
-    KnoraApiConnection,
-    MembersResponse,
-    ProjectsResponse,
     ReadUser,
-    UserResponse,
+    StoredProject,
 } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { Session } from '@dasch-swiss/vre/shared/app-session';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { AutocompleteItem } from '../../workspace/search/operator';
+import { Select, Store } from '@ngxs/store';
+import { AddUserToProjectMembershipAction, ProjectsSelectors, RemoveUserFromProjectAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { map, takeUntil } from 'rxjs/operators';
+import { Observable, Subject, combineLatest } from 'rxjs';
 
 // --> TODO replace it by IPermissions from dsp-js
 export interface IPermissions {
@@ -33,22 +27,35 @@ export interface IPermissions {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-membership',
     templateUrl: './membership.component.html',
     styleUrls: ['./membership.component.scss'],
 })
-export class MembershipComponent implements OnInit {
-    @Input() username: string;
+export class MembershipComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    @Input() user: ReadUser;
 
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
 
-    loading: boolean;
+    get user$(): Observable<ReadUser> {
+            return this.allUsers$
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map((users) => users.find(u => u.id === this.user.id))
+            );
+    }
 
-    session: Session;
+    // get all projects and filter by projects where the user is already member of
+    get projects$(): Observable<AutocompleteItem[]> {
+        return combineLatest([this.allProjects$, this.user$])
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(([projects, user]) => this.getProjects(projects, user))
+            );
+    }
 
-    user: ReadUser;
-
-    projects: AutocompleteItem[] = [];
     newProject = new UntypedFormControl();
 
     // i18n plural mapping
@@ -60,95 +67,20 @@ export class MembershipComponent implements OnInit {
         },
     };
 
+    @Select(ProjectsSelectors.allProjects) allProjects$: Observable<StoredProject[]>;
+    @Select(UserSelectors.allUsers) allUsers$: Observable<ReadUser[]>;
+    @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+    
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
-        private _errorHandler: AppErrorHandler,
-        private _router: Router,
-        private _projectService: ProjectService
+        private _store: Store
     ) {}
 
     ngOnInit() {
-        this.loading = true;
-
-        this._dspApiConnection.admin.usersEndpoint.getUserByUsername(this.username).subscribe(
-            (response: ApiResponseData<UserResponse>) => {
-                this.user = response.body.user;
-                this._applicationStateService.set(this.username, this.user)
-                this.initNewProjects();
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loading = false;
-            }
-        );
     }
 
-    initNewProjects() {
-        this.projects = [];
-        // get all projects and filter by projects where the user is already member of
-        this._dspApiConnection.admin.projectsEndpoint.getProjects().subscribe(
-            (response: ApiResponseData<ProjectsResponse>) => {
-                for (const p of response.body.projects) {
-                    if (
-                        p.id !== Constants.SystemProjectIRI &&
-                        p.id !== Constants.DefaultSharedOntologyIRI &&
-                        p.status === true
-                    ) {
-                        // get index example:
-                        // myArray.findIndex(i => i.hello === "stevie");
-                        if (
-                            this.user.projects.findIndex(
-                                (i) => i.id === p.id
-                            ) === -1
-                        ) {
-                            this.projects.push({
-                                iri: p.id,
-                                name: p.longname + ' (' + p.shortname + ')',
-                            });
-                        }
-                        /*
-                        if (this.user.projects.indexOf(p.id) > -1) {
-                            console.log('member of', p);
-                        } */
-                    }
-                }
-
-                this.projects.sort(function (
-                    u1: AutocompleteItem,
-                    u2: AutocompleteItem
-                ) {
-                    if (u1.name < u2.name) {
-                        return -1;
-                    } else if (u1.name > u2.name) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                });
-
-                this.newProject.setValue('');
-
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
-    }
-
-    updateProjectCache(iri: string) {
-        const projectUuid: string = this._projectService.iriToUuid(iri);
-
-        // reset the application state of project members
-
-        this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(iri).subscribe(
-            (response: ApiResponseData<MembersResponse>) => {
-                this._applicationStateService.set('members_of_' + projectUuid, response.body.members)
-            }
-        )
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
@@ -157,54 +89,14 @@ export class MembershipComponent implements OnInit {
      * @param iri Project iri
      */
     removeFromProject(iri: string) {
-        this.loading = true;
-
-        this._dspApiConnection.admin.usersEndpoint
-            .removeUserFromProjectMembership(this.user.id, iri)
-            .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
-                    // set new user state
-                    this._applicationStateService.delete(this.username);
-                    this._applicationStateService.set(
-                        this.username,
-                        this.user
-                    );
-                    this.initNewProjects();
-                    // this.updateProjectCache(iri);
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
+        this._store.dispatch(new RemoveUserFromProjectAction(this.user.id, iri));
     }
 
     addToProject(iri: string) {
-        this.loading = true;
-
-        this._dspApiConnection.admin.usersEndpoint
-            .addUserToProjectMembership(this.user.id, iri)
-            .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
-                    // set new user state
-                    this._applicationStateService.delete(this.username);
-                    this._applicationStateService.set(
-                        this.username,
-                        this.user
-                    );
-                    this.initNewProjects();
-                    // this.updateProjectCache(iri);
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
+        this._store.dispatch(new AddUserToProjectMembershipAction(this.user.id, iri));
     }
+    
+    trackByFn = (index: number, item: StoredProject) => `${index}-${item?.id}`;
 
     /**
      * returns true, when the user is project admin;
@@ -222,5 +114,33 @@ export class MembershipComponent implements OnInit {
                 Constants.ProjectAdminGroupIRI
             ) > -1
         );
+    }
+
+    private getProjects(projects: StoredProject[], user: ReadUser): AutocompleteItem[] {
+        return projects.map((p) => {
+            if (
+                p.id !== Constants.SystemProjectIRI &&
+                p.id !== Constants.DefaultSharedOntologyIRI &&
+                p.status === true &&
+                user.projects.findIndex((i) => i.id === p.id) === -1
+            ) {
+                return <AutocompleteItem>{
+                    iri: p.id,
+                    name: `${p.longname} (${p.shortname})`,
+                }
+            }
+        })
+        .sort(function (
+            u1: AutocompleteItem,
+            u2: AutocompleteItem
+        ) {
+            if (u1.name < u2.name) {
+                return -1;
+            } else if (u1.name > u2.name) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 }

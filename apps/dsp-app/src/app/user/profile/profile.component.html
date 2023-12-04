@@ -1,7 +1,9 @@
-<dasch-swiss-app-progress-indicator *ngIf="loading && !user"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator *ngIf="(isLoading$ | async) === true && !!(user$ | async)"></dasch-swiss-app-progress-indicator>
 
+<ng-container *ngIf="(isLoading$ | async) === false && loggedInUser">
+<ng-container *ngIf="(user$ | async) as user">
 <!-- own user profile (logged-in user) -->
-<div *ngIf="!loading && user && loggedInUser" class="user-profile">
+<div class="user-profile">
     <img
         appAdminImage
         [image]="user.email"
@@ -27,7 +29,7 @@
                 <span *ngIf="user.status">Active</span>
                 <span *ngIf="!user.status">Suspended</span>
             </li> -->
-            <li class="status warning text-only" *ngIf="sysAdmin">
+            <li class="status warning text-only" *ngIf="isSysAdmin$ | async">
                 <mat-icon>verified_user</mat-icon>
                 <span>System admin</span>
             </li>
@@ -40,7 +42,7 @@
     <button
         mat-button
         [color]="'primary'"
-        (click)="openDialog('editUser', user.username)"
+        (click)="openDialog('editUser', user)"
         style="width: 100%"
     >
         Edit my profile
@@ -48,7 +50,7 @@
 </div>
 
 <!-- phone view -->
-<div *ngIf="!loading && user && loggedInUser" class="user-profile-mobile">
+<div class="user-profile-mobile">
     <img
         appAdminImage
         [image]="user.email"
@@ -80,9 +82,11 @@
             mat-button
             class="user-profile-edit"
             [color]="'primary'"
-            (click)="openDialog('editUser', user.username)"
+            (click)="openDialog('editUser', user)"
         >
             <mat-icon>edit</mat-icon>
         </button>
     </div>
 </div>
+</ng-container>
+</ng-container>

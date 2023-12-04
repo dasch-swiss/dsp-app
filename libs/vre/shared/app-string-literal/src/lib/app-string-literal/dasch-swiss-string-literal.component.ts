@@ -1,3 +1,4 @@
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -22,8 +23,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import {MatMenuModule, MatMenuTrigger} from '@angular/material/menu';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import {MatIconModule} from "@angular/material/icon";
+import { NgxsStoreModule, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 
 @Component({
     selector: 'dasch-swiss-app-string-literal',
@@ -37,6 +39,8 @@ import {MatIconModule} from "@angular/material/icon";
         MatMenuModule,
         FormsModule,
         ReactiveFormsModule,
+        NgxsStoreModule,
+        NgxsStoragePluginModule,
     ],
     templateUrl: './dasch-swiss-string-literal.component.html',
     styleUrls: ['./dasch-swiss-string-literal.component.scss'],
@@ -126,17 +130,14 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
 
     constructor(
         private _fb: UntypedFormBuilder,
-        private _sessionService: SessionService
+        private _store: Store,
     ) {
         // set selected language, if it's not defined yet
         if (!this.language) {
-            const usersLanguage = this._sessionService.getSession()?.user?.lang;
-            if (usersLanguage) {
-                this.language = usersLanguage
-            } else {
-                // get default language from browser
-                this.language = navigator.language.substring(0, 2);
-            }
+            const usersLanguage = this._store.selectSnapshot(UserSelectors.language) as string;
+            this.language = usersLanguage
+                ? usersLanguage
+                : navigator.language.substring(0, 2); // get default language from browser
         }
 
         // does the defined language exists in our supported languages list?
@@ -187,6 +188,8 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
 
         this.dataChanged.emit(this.value);
     }
+    
+    trackByFn = (index: number, item: string) => `${index}-${item}`;
 
     /**
      * set the language after selecting;
@@ -306,7 +309,8 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
     /**
      * get the value from array of StringLiterals for the selected language
      */
-    getValueFromStringLiteral(lang: string): string {
+    getValueFromStringLiteral(lang?: string): string {
+        lang = lang === '' ? undefined : lang;
         // get index for this language
         const index = this.value.findIndex((i) => i.language === lang);
 

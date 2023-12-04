@@ -1,5 +1,4 @@
 import { KnoraApiConfig } from '@dasch-swiss/dsp-js';
-import { Session } from '@dasch-swiss/vre/shared/app-session';
 
 export class TestConfig {
 
@@ -9,7 +8,7 @@ export class TestConfig {
 
     public static ProjectUuid = '0123';
 
-    public static CurrentSession: Session = {
+    public static CurrentSession: any = {
         id: 1555226377250,
         user: {
             jwt: '',

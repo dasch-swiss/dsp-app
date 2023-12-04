@@ -22,7 +22,7 @@
                 mat-menu-item
                 type="button"
                 class="lang-button"
-                *ngFor="let lang of languages"
+                *ngFor="let lang of languages; trackBy: trackByFn"
                 (click)="setLanguage(lang)"
             >
                 <span
@@ -61,7 +61,7 @@
             class="string-literal-select-lang"
         >
             <mat-button-toggle
-                *ngFor="let lang of languages"
+                *ngFor="let lang of languages; trackBy: trackByFn"
                 (click)="setLanguage(lang); switchFocus()"
                 [checked]="lang === language"
                 class="lang-toggle-button"

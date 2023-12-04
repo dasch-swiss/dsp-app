@@ -1,66 +1,35 @@
-import { Component, HostListener, Inject, OnInit } from '@angular/core';
-import {
-    UntypedFormBuilder
-} from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
-    ApiResponseData,
-    ApiResponseError,
-    DeleteListResponse,
-    KnoraApiConnection,
     ListNodeInfo,
-    ListsResponse,
-    ProjectResponse,
-    ReadProject,
     StringLiteral,
 } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
 import {AppConfigService, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectBase } from '../project-base';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { CurrentProjectSelectors, DeleteListNodeAction, ListsSelectors, LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-list',
     templateUrl: './list.component.html',
     styleUrls: ['./list.component.scss'],
 })
-export class ListComponent implements OnInit {
-    // loading for progress indicator
-    loading: boolean;
-    loadList: boolean;
-
-    // permissions of logged-in user
-    session: Session;
-    sysAdmin = false;
-    projectAdmin = false;
-    projectMember = undefined;
-
-    // project uuid; as identifier in project application state service
-    projectUuid: string;
-
-    // project data
-    project: ReadProject;
-
-    // lists in the project
-    lists: ListNodeInfo[] = [];
-
-    // list of languages
+export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    
     languagesList: StringLiteral[] = AppGlobal.languagesList;
 
     // current selected language
     language: string;
-
-    // selected list
-    list: ListNodeInfo;
 
     // selected list iri
     listIri: string = undefined;
@@ -79,24 +48,30 @@ export class ListComponent implements OnInit {
     // disable content on small devices
     disableContent = false;
 
+    get list$(): Observable<ListNodeInfo> {
+        return this.listsInProject$.pipe(
+            map(lists => this.listIri
+                ? lists.find((i) => i.id === this.listIri)
+                : null
+            ));
+    }
+    
+    @Select(ListsSelectors.isListsLoading) isListsLoading$: Observable<boolean>;
+    @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
+
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
         private _acs: AppConfigService,
-        private _applicationStateService: ApplicationStateService,
         private _dialog: MatDialog,
         private _errorHandler: AppErrorHandler,
-        private _fb: UntypedFormBuilder,
-        private _route: ActivatedRoute,
-        private _router: Router,
-        private _session: SessionService,
-        private _titleService: Title,
-        private _projectService: ProjectService
+        protected _route: ActivatedRoute,
+        protected _router: Router,
+        protected _titleService: Title,
+        protected _projectService: ProjectService,
+        protected _store: Store,
+        protected _cd: ChangeDetectorRef,
+        protected _actions$: Actions
     ) {
-        // get the uuid of the current project
-        this._route.parent.paramMap.subscribe((params: Params) => {
-            this.projectUuid = params.get('uuid');
-        });
+        super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
     }
 
     @HostListener('window:resize', ['$event']) onWindowResize() {
@@ -108,74 +83,24 @@ export class ListComponent implements OnInit {
     }
 
     ngOnInit() {
+        super.ngOnInit();
         this.disableContent = window.innerWidth <= 768;
 
-        this.loading = true;
+        // set the page title
+        this._setPageTitle();
 
-        // get information about the logged-in user
-        this.session = this._session.getSession();
 
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
-
-        // get the project
-        this._dspApiConnection.admin.projectsEndpoint
-            .getProjectByIri(this._projectService.uuidToIri(this.projectUuid))
-            .subscribe(
-                (response: ApiResponseData<ProjectResponse>) => {
-                    this.project = response.body.project;
-
-                    // set the page title
-                    this._setPageTitle();
-
-                    // is logged-in user projectAdmin?
-                    if (this.session) {
-                        this.projectAdmin = this.sysAdmin
-                            ? this.sysAdmin
-                            : this.session.user.projectAdmin.some(
-                                  (e) => e === this.project.id
-                              );
-                    }
-
-                    // get list iri from list name
-                    this._route.params.subscribe((params) => {
-                        this.listIri = `${this._acs.dspAppConfig.iriBase}/lists/${this.project.shortcode}/${params['list']}`;
-                        this.initLists();
-                    });
-
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
+        // get list iri from list name
+        this._route.params.subscribe((params) => {
+            if (this.project) {
+                this.listIri = `${this._acs.dspAppConfig.iriBase}/lists/${this.project.shortcode}/${params['list']}`;
+            }
+        });
     }
 
-    /**
-     * build the list of lists
-     */
-    initLists(): void {
-        this.loading = true;
-
-        this._dspApiConnection.admin.listsEndpoint
-            .getListsInProject(this.project.id)
-            .subscribe(
-                (response: ApiResponseData<ListsResponse>) => {
-                    this.lists = response.body.lists;
-
-                    if (this.listIri) {
-                        this.list = this.lists.find(
-                            (i) => i.id === this.listIri
-                        );
-                    }
-
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
@@ -194,7 +119,7 @@ export class ListComponent implements OnInit {
                 mode: mode,
                 title: name,
                 id: iri,
-                project: this.project.id,
+                project: this.projectUuid,
             },
         };
 
@@ -208,48 +133,14 @@ export class ListComponent implements OnInit {
                 }
                 case 'deleteList': {
                     if (typeof data === 'boolean' && data === true) {
-                        this._dspApiConnection.admin.listsEndpoint
-                            .deleteListNode(this.listIri)
-                            .subscribe(
-                                (res: ApiResponseData<DeleteListResponse>) => {
-                                    this.lists = this.lists.filter(
-                                        (list) => list.id !== res.body.iri
-                                    );
-                                    this._router.navigate([
-                                        RouteConstants.project,
-                                        this.projectUuid,
-                                        RouteConstants.dataModels
-                                    ])
-                                        .then(() => {
-                                            // refresh whole page; todo: would be better to use an event emitter to the parent to update the list of resource classes
-                                            window.location.reload();
-                                        });
-                                },
-                                (error: ApiResponseError) => {
-                                    // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
-                                    if (error.status === 400) {
-                                        const errorDialogConfig: MatDialogConfig =
-                                            {
-                                                width: '640px',
-                                                position: {
-                                                    top: '112px',
-                                                },
-                                                data: {
-                                                    mode: 'deleteListNodeError',
-                                                },
-                                            };
-
-                                        // open the dialog box
-                                        this._dialog.open(
-                                            DialogComponent,
-                                            errorDialogConfig
-                                        );
-                                    } else {
-                                        // use default error behavior
-                                        this._errorHandler.showMessage(error);
-                                    }
-                                }
-                            );
+                        this._store.dispatch(new DeleteListNodeAction(this.listIri));
+                        this.listIri = undefined;
+                        this._actions$.pipe(ofActionSuccessful(DeleteListNodeAction))
+                            .pipe(take(1))
+                            .subscribe(() => {
+                                this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
+                                this._router.navigate([RouteConstants.project, this.projectUuid,RouteConstants.dataModels]);
+                            });
                     }
                     break;
                 }
@@ -258,11 +149,7 @@ export class ListComponent implements OnInit {
     }
 
     private _setPageTitle() {
-        this._titleService.setTitle(
-            'Project ' +
-                this.project?.shortname +
-                ' | List' +
-                (this.listIri ? '' : 's')
-        );
+        const project = this._store.selectSnapshot(CurrentProjectSelectors.project);
+        this._titleService.setTitle(`Project ${project?.shortname} | List ${this.listIri ? '' : 's'}`);
     }
 }

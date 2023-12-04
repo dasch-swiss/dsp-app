@@ -3,6 +3,7 @@ import {
     EventEmitter,
     Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
@@ -34,23 +35,25 @@ import {
     UpdateResourcePropertyGuiElement,
     UpdateResourcePropertyLabel,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
+import { OntologyService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import {
     DefaultProperties,
     DefaultProperty,
     PropertyCategory,
     PropertyInfoObject,
-} from '../default-data/default-properties';
-import { OntologyService } from '../ontology.service';
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
-import { PropToDisplay } from '../resource-class-info/resource-class-info.component';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/operator';
+import { ListsSelectors, OntologiesSelectors, PropToDisplay, SetCurrentOntologyAction } from '@dasch-swiss/vre/shared/app-state';
+import { Observable, Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { takeUntil } from 'rxjs/operators';
+import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 
 export type EditMode =
     | 'createProperty'
@@ -70,7 +73,10 @@ export interface ClassToSelect {
     templateUrl: './property-form.component.html',
     styleUrls: ['./property-form.component.scss'],
 })
-export class PropertyFormComponent implements OnInit {
+export class PropertyFormComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    DialogEvent = DialogEvent;
     /**
      * propertyInfo contains default property type information
      * and in case of 'edit' mode also the ResourcePropertyDefintion
@@ -174,15 +180,19 @@ export class PropertyFormComponent implements OnInit {
     };
     canChangeCardinalityChecked = false;
 
+    @Select(OntologiesSelectors.currentOntology) currentOntology$: Observable<ReadOntology>;
+    @Select(OntologiesSelectors.currentProjectOntologies) currentProjectOntologies$: Observable<ReadOntology[]>;
+    @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
         private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
         private _os: OntologyService,
         private _sortingService: SortingService,
-        private _notification: NotificationService
+        private _notification: NotificationService,
+        private _store: Store,
     ) {}
 
     ngOnInit() {
@@ -190,12 +200,13 @@ export class PropertyFormComponent implements OnInit {
         this.setEditMode();
 
         // set various lists to select from
-        this._applicationStateService.get('currentOntology').subscribe(
-            (response: ReadOntology) => {
+        this.currentOntology$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((response: ReadOntology) => {
                 this.ontology = response;
                 this.lastModificationDate = response.lastModificationDate;
 
-                const resourceProperties = response.getAllPropertyDefinitions();
+                const resourceProperties = getAllEntityDefinitionsAsArray(response.properties);
 
                 // set list of all existing resource property names to avoid same name twice
                 resourceProperties.forEach((resProp: PropertyDefinition) => {
@@ -206,8 +217,7 @@ export class PropertyFormComponent implements OnInit {
                 });
 
                 // add all resource classes to the same list
-                response
-                    .getAllClassDefinitions()
+                getAllEntityDefinitionsAsArray(response.classes)
                     .forEach((resClass: ClassDefinition) => {
                         const name = this._os.getNameFromIri(resClass.id);
                         this.existingNames.push(
@@ -216,21 +226,18 @@ export class PropertyFormComponent implements OnInit {
                             )
                         );
                     });
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+            });
 
         // a) in case of link value:
         // set list of resource classes from response; needed for linkValue
-        this._applicationStateService.get('currentProjectOntologies').subscribe(
-            (response: ReadOntology[]) => {
+        this.currentProjectOntologies$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((response: ReadOntology[]) => {
                 // reset list of ontology classes
                 this.ontologyClasses = [];
                 response.forEach((onto) => {
                     const classDef = this._sortingService.keySortByAlphabetical(
-                        onto.getAllClassDefinitions(),
+                        getAllEntityDefinitionsAsArray(onto.classes),
                         'label'
                     );
                     if (classDef.length) {
@@ -248,8 +255,8 @@ export class PropertyFormComponent implements OnInit {
 
         // b) in case of list value:
         // set list of lists; needed for listValue
-        this._applicationStateService
-            .get('currentOntologyLists')
+        this.listsInProject$
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((response: ListNodeInfo[]) => {
                 this.lists = response;
             });
@@ -268,6 +275,11 @@ export class PropertyFormComponent implements OnInit {
             // request for changing cardinalities
             this.canChangeCardinality(this.targetGuiCardinality);
         }
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     buildForm() {
@@ -685,9 +697,9 @@ export class PropertyFormComponent implements OnInit {
                             );
                     }
 
-                    this.ontology.lastModificationDate =
-                        this.lastModificationDate;
-                    this._applicationStateService.set('currentOntology', this.ontology);
+                    
+                    this.ontology.lastModificationDate = this.lastModificationDate;
+                    this._store.dispatch(new SetCurrentOntologyAction(this.ontology));
                 },
                 (error: ApiResponseError) => {
                     this.error = true;
@@ -1005,6 +1017,11 @@ export class PropertyFormComponent implements OnInit {
             this.editMode = 'editProperty';
             return;
         }
+    }
+
+    onCancel() {
+        // emit DialogCanceled event
+        this.closeDialog.emit(DialogEvent.DialogCanceled);
     }
 
     /**

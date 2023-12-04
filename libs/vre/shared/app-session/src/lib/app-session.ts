@@ -1,48 +1,29 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import {
     ApiResponseData,
     ApiResponseError,
     Constants,
     CredentialsResponse,
-    KnoraApiConnection,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { Observable, of } from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-
-/**
- * information about the current user
- */
-interface CurrentUser {
-    // username
-    name: string;
-
-    // json web token
-    jwt?: string;
-
-    // default language for ui
-    lang: string;
-
-    // is system admin?
-    sysAdmin: boolean;
-
-    // list of project shortcodes where the user is project admin
-    projectAdmin: string[];
-}
-
-/**
- * session with id (= login timestamp) and inforamtion about logged-in user
- */
-export interface Session {
-    id: number;
-    user: CurrentUser;
-}
+import { Observable, of } from 'rxjs';
+import { catchError, map, takeLast } from 'rxjs/operators';
+import { Session } from './session';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
     providedIn: 'root',
 })
 export class SessionService {
+    private _applicationStateService = inject(ApplicationStateService);
+    private _dspApiConnection = inject(DspApiConnectionToken);
+
+    session = signal<Session | undefined>(undefined);
+    session$ = toObservable(this.session);
+
     /**
      * max session time in milliseconds
      * default value (24h = 24 * 60 * 60 * 1000): 86400000
@@ -50,10 +31,39 @@ export class SessionService {
      */
     readonly MAX_SESSION_TIME: number = 3600;
 
-    constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection
-    ) {}
+    constructor() {
+        // check if the (possibly) existing session is still valid and if not, destroy it
+        this.isSessionValid()
+            .pipe(takeLast(1))
+            .subscribe((valid) => {
+                if (!valid) {
+                    this.destroySession();
+                }
+            });
+
+        if (this.session()) {
+            /**
+             * set the application state for current/logged-in user
+             */
+            const session = this.session() as Session;
+            this._dspApiConnection.admin.usersEndpoint
+                .getUserByUsername(session.user.name as string)
+                .subscribe(
+                    (
+                        response:
+                            | ApiResponseData<UserResponse>
+                            | ApiResponseError
+                    ) => {
+                        if (response instanceof ApiResponseData) {
+                            this._applicationStateService.set(
+                                session.user.name,
+                                response.body.user
+                            );
+                        }
+                    }
+                );
+        }
+    }
 
     /**
      * get session information from localstorage
@@ -75,7 +85,7 @@ export class SessionService {
         jwt: string,
         identifier: string,
         type: 'email' | 'username'
-    ): Observable<void> {
+    ): Observable<boolean> {
         this._dspApiConnection.v2.jsonWebToken = jwt ? jwt : '';
 
         // get user information
@@ -90,7 +100,7 @@ export class SessionService {
                     ) => {
                         this._storeSessionInLocalStorage(response, jwt);
                         // return type is void
-                        return;
+                        return true;
                     }
                 )
             );
@@ -122,12 +132,11 @@ export class SessionService {
                                 | ApiResponseData<CredentialsResponse>
                                 | ApiResponseError
                         ) => {
-                            const idUpdated = this._updateSessionId(
+                            return this._updateSessionId(
                                 credentials,
                                 session,
                                 tsNow
                             );
-                            return idUpdated;
                         }
                     ),
                     catchError(error => {
@@ -140,6 +149,7 @@ export class SessionService {
                 );
             } else {
                 // the internal session is still valid
+                this.session.set(session);
                 return of(true);
             }
         } else {
@@ -155,6 +165,7 @@ export class SessionService {
      */
     destroySession() {
         localStorage.removeItem('session');
+        this.session.set(undefined);
     }
 
     /**
@@ -220,8 +231,10 @@ export class SessionService {
 
             // update localStorage
             localStorage.setItem('session', JSON.stringify(session));
+            this.session.set(session);
         } else {
             localStorage.removeItem('session');
+            this.session.set(undefined);
             // console.error(response);
         }
     }
@@ -242,6 +255,7 @@ export class SessionService {
             // update the session.id
             session.id = timestamp;
             localStorage.setItem('session', JSON.stringify(session));
+            this.session.set(session);
             return true;
         } else {
             // a user is not authenticated anymore!

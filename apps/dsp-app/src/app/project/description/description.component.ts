@@ -1,44 +1,62 @@
-import { Component, OnInit } from '@angular/core';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {
-    ApiResponseError,
-    ReadProject
-} from '@dasch-swiss/dsp-js';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+    ReadProject, ReadUser} from '@dasch-swiss/dsp-js';
+import { Observable, combineLatest, of } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { map, take } from 'rxjs/operators';
+import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import {RouteConstants} from "@dasch-swiss/vre/shared/app-config";
 import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-literal';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-description',
     templateUrl: './description.component.html',
     styleUrls: ['./description.component.scss'],
 })
 export class DescriptionComponent implements OnInit {
-    // loading for progress indicator
-    loading = true;
-
-    // permissions of the logged-in user
-    session: Session;
-    userHasPermission = false;
-
     // project uuid coming from the route
     projectUuid: string;
 
-    // project data to be displayed
-    project: ReadProject;
+    get readProject$(): Observable<ReadProject> {
+        if (!this.projectUuid) {
+            return of({} as ReadProject);
+        }
+
+        return this.readProjects$.pipe(
+            take(1),
+            map(projects => this.getCurrentProject(projects))
+        );
+    }
+
+    get userHasPermission$(): Observable<boolean> {
+        return combineLatest([
+            this.user$,
+            this.readProject$,
+            this.store.select(UserSelectors.userProjectAdminGroups)
+        ]).pipe(
+            map(([user, readProject, userProjectGroups]: [ReadUser, ReadProject, string[]]) => {
+                if (readProject == null) {
+                    return false;
+                }
+                
+                return this.projectService.isProjectAdminOrSysAdmin(user, userProjectGroups, readProject.id);
+            })
+        );
+    }
+
+    @Select(UserSelectors.user) user$: Observable<ReadUser>;
+    @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
+    @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
 
     constructor(
-        private _errorHandler: AppErrorHandler,
-        private _session: SessionService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _applicationStateService: ApplicationStateService
+        private store: Store,
+        private projectService: ProjectService,
     ) {
         // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {
@@ -47,50 +65,16 @@ export class DescriptionComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        // get information about the logged-in user, if one is logged-in
-        this.session = this._session.getSession();
-        this.userHasPermission = this.session?.user?.sysAdmin; // if the user is sysadmin, he has the permission to edit the project
-
-        // get project info from backend
-        this.initProject();
     }
-
-    /**
-     * initProject: get the project data from the application state service and update
-     * if the user has permission to edit the project if not a sysadmin
-     */
-    initProject() {
-        // get the project data
-        this._applicationStateService.get(this.projectUuid).subscribe(
-            (response: ReadProject) => {
-                // sort the projectdescriptions by language
-                this.project = this.projectWithSortedDescriptions(response);
-
-
-                // if the user is not sysadmin, check if he is project admin
-                if (!this.userHasPermission) {
-                    this.userHasPermission = this.session?.user?.projectAdmin?.some(
-                        (e) => e === this.project.id
-                    );
-                }
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
-        this.loading = false;
+    
+    editProject() {
+        this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.edit]);
     }
-
-    // returns the project with the descriptions sorted by language
-    private projectWithSortedDescriptions(project: ReadProject): ReadProject  {
-        if (project.description && project.description.length > 1) {
-            // sort the descriptions by language
-            project.description = this.sortDescriptionsByLanguage(project.description);
-        }
-        return project;
-    }
-
+    
+    trackByFn = (index: number, item: string) => `${index}-${item}`;
+    
+    trackByStringLiteralFn = (index: number, item: StringLiteral) => `${index}-${item.value}`;
+    
     // returns the descriptions sorted by language
     private sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
         const languageOrder = AppGlobal.languagesList.map((l) => l.language);
@@ -103,7 +87,21 @@ export class DescriptionComponent implements OnInit {
         });
     }
 
-    editProject() {
-        this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.edit]);
+    private getCurrentProject(projects: ReadProject[]): ReadProject {
+        if (!projects) {
+            return null;
+        }
+
+        const project = projects.find(x => x.id.split('/').pop() === this.projectUuid);
+        return project ? this.projectWithSortedDescriptions(project) : null;
+    }
+
+    // returns the project with the descriptions sorted by language
+    private projectWithSortedDescriptions(project: ReadProject): ReadProject  {
+        if (project.description && project.description.length > 1) {
+            // sort the descriptions by language
+            project.description = this.sortDescriptionsByLanguage(project.description);
+        }
+        return project;
     }
 }

@@ -1,29 +1,33 @@
 import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
-    Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import {
-    ApiResponseData,
-    ApiResponseError,
-    GroupsResponse,
-    KnoraApiConnection,
+    ReadGroup,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/operator';
+import { IKeyValuePairs, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Select } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-select-group',
     templateUrl: './select-group.component.html',
     styleUrls: ['./select-group.component.scss'],
 })
-export class SelectGroupComponent implements OnInit {
+export class SelectGroupComponent implements OnInit, OnDestroy, AfterViewInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     // project short code
     @Input() projectCode: string;
 
@@ -40,46 +44,47 @@ export class SelectGroupComponent implements OnInit {
     @Output() groupChange: EventEmitter<any> = new EventEmitter<any>();
 
     // default system groups and project specific groups
-    projectGroups: AutocompleteItem[] = [];
+    get projectGroups$(): Observable<AutocompleteItem[]> {
+        return this.allProjectGroups$
+        .pipe(
+            takeUntil(this.ngUnsubscribe),
+            map((projectGroups) => {
+                if (!projectGroups[this.projectid]) {
+                    return [];
+                }
+
+                return projectGroups[this.projectid].value.map(group => <AutocompleteItem>{
+                    iri: group.id,
+                    name: group.name,
+                });
+            })
+        );
+    }
 
     groupCtrl = new UntypedFormControl();
 
     // send data only, when the selection has changed
     sendData = false;
 
-    constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
-        private _errorHandler: AppErrorHandler
-    ) {}
+    @Select(ProjectsSelectors.projectGroups) allProjectGroups$: Observable<IKeyValuePairs<ReadGroup>[]>;
+
+    constructor(private _cd: ChangeDetectorRef) {}
 
     ngOnInit() {
-        this.groupCtrl.setValue(this.permissions);
-
-        // build list of groups: default and project-specific
-        this.setList();
     }
 
-    setList() {
-        // update list of groups with the project specific groups
-        this._dspApiConnection.admin.groupsEndpoint.getGroups().subscribe(
-            (response: ApiResponseData<GroupsResponse>) => {
-                this._applicationStateService.set('groups_of_' + this.projectCode, response.body.groups);
-                for (const group of response.body.groups) {
-                    if (group.project.id === this.projectid) {
-                        this.projectGroups.push({
-                            iri: group.id,
-                            name: group.name,
-                        });
-                    }
-                }
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.groupCtrl.setValue(this.permissions);
+        });
     }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    trackByFn = (index: number, item: AutocompleteItem) => `${index}-${item.label}`;
 
     onGroupChange() {
         // get the selected values onOpen and onClose

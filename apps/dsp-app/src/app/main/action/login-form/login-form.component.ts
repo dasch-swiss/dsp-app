@@ -1,8 +1,8 @@
 import {
-    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
-    Inject,
     Input,
     OnInit,
     Output,
@@ -12,37 +12,31 @@ import {
     UntypedFormGroup,
     Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-    ApiResponseData,
-    ApiResponseError,
-    KnoraApiConnection,
-    LoginResponse,
-    UserResponse,
-} from '@dasch-swiss/dsp-js';
-import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { AuthenticationService } from '../../services/authentication.service';
 import {
     ComponentCommunicationEventService,
     EmitEvent,
     Events,
 } from '../../services/component-communication-event.service';
 import {
-    DatadogRumService,
-    PendoAnalyticsService,
-} from '@dasch-swiss/vre/shared/app-analytics';
+    AuthService,
+    AuthError,
+} from '@dasch-swiss/vre/shared/app-session';
+import { map, take, takeLast } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { Location } from '@angular/common';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
-import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
-import { v5 as uuidv5 } from 'uuid';
+import { LoadProjectsAction, UserStateModel } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 
 @Component({
     selector: 'app-login-form',
     templateUrl: './login-form.component.html',
     styleUrls: ['./login-form.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginFormComponent implements OnInit, AfterViewInit {
+export class LoginFormComponent implements OnInit {
+    private readonly returnUrlParameterName = 'returnUrl';
+    private destroyed$ = new Subject<void>();
     /**
      * set whether or not you want icons to display in the input fields
      *
@@ -67,19 +61,11 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     @Output() logoutSuccess: EventEmitter<boolean> =
         new EventEmitter<boolean>();
 
-    // @ViewChild('username') usernameInput: ElementRef;
-
-    // is there already a valid session?
-    session: Session;
-
     // form
     form: UntypedFormGroup;
 
     // show progress indicator
     loading = false;
-
-    // url history
-    returnUrl: string;
 
     // in case of an error
     isError: boolean;
@@ -121,41 +107,32 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         },
     };
 
+    returnUrl: string;
+
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _auth: AuthenticationService,
         private _componentCommsService: ComponentCommunicationEventService,
-        private _datadogRumService: DatadogRumService,
-        private _pendoAnalytics: PendoAnalyticsService,
-        private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
-        private _session: SessionService,
-        private _route: ActivatedRoute,
-        private _router: Router,
-        private _location: Location,
-        private _projectService: ProjectService
+        private router: Router,
+        private _authService: AuthService,
+        private route: ActivatedRoute,
+        private location: Location,
+        private cd: ChangeDetectorRef,
     ) {
-        this.returnUrl = this._route.snapshot.queryParams['returnUrl'];
     }
 
+    /**
+     * The login form is currently only shown from the user-menu.component.ts.
+     * The use case of showing the login form when the user is redirected
+     * to /login?returnUrl=... was removed.
+     */
     ngOnInit() {
-        // if session is valid (a user is logged-in) show a message, otherwise build the form
-        this._session.isSessionValid().subscribe((result) => {
-            // returns a result if session is still valid
-            if (result) {
-                this.session = JSON.parse(localStorage.getItem('session'));
-            } else {
-                // session is invalid, build the login form
-                this.buildLoginForm();
-            }
-        });
+        this.buildLoginForm();
+        this.returnUrl = this.getReturnUrl() || '/';
     }
 
-    ngAfterViewInit() {
-        if (this.session) {
-            // this.usernameInput.nativeElement.focus();
-        }
+    ngOnDestroy(): void {
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     buildLoginForm(): void {
@@ -166,8 +143,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     *
-     * login and set session
+     * login
      */
     login() {
         this.loading = true;
@@ -177,109 +153,67 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         const identifier: string = this.form.get('username').value;
         const password: string = this.form.get('password').value;
 
-        const identifierType: 'iri' | 'email' | 'username' =
-            identifier.indexOf('@') > -1 ? 'email' : 'username';
+        this._authService
+            .apiLogin$(identifier, password)
+            .pipe(takeLast(1))
+            .subscribe({
+                next: (loginResult) => {
+                    if (loginResult) {
+                        this._componentCommsService.emit(
+                            new EmitEvent(Events.loginSuccess, true)
+                        );
 
-        // FIXME: remove authentication business logic from component into authentication service
-        this._dspApiConnection.v2.auth
-            .login(identifierType, identifier, password)
-            .subscribe(
-                (response: ApiResponseData<LoginResponse>) => {
-                    this._session
-                        .setSession(
-                            response.body.token,
-                            identifier,
-                            identifierType
-                        )
-                        .subscribe(() => {
-                            this.loginSuccess.emit(true);
-                            this.session = this._session.getSession();
-
-                            this._componentCommsService.emit(
-                                new EmitEvent(Events.loginSuccess, true)
-                            );
-                            // if user hit a page that requires to be logged in, they will have a returnUrl in the url
-                            this.returnUrl =
-                                this._route.snapshot.queryParams['returnUrl'];
-                            if (this.returnUrl) {
-                                this._router.navigate([this.returnUrl]);
-                            } else if (
-                                !this._location.path()
-                            ) {
-                                // if user is on "/" route, redirect them after login to the project they are a member of
-                                const username = this.session.user.name;
-                                this._dspApiConnection.admin.usersEndpoint
-                                    .getUserByUsername(username)
-                                    .subscribe(
-                                        (
-                                            userResponse: ApiResponseData<UserResponse>
-                                        ) => {
-                                            const uuid =
-                                                this._projectService.iriToUuid(
-                                                    userResponse.body.user
-                                                        .projects[0]?.id
-                                                );
-                                            // if user is NOT a sysAdmin and only a member of one project, redirect them to that projects dashboard
-                                            if (
-                                                !this.session.user.sysAdmin &&
-                                                userResponse.body.user.projects
-                                                    .length === 1
-                                            ) {
-                                                this._router
-                                                    .navigateByUrl(`/${RouteConstants.refresh}`, {
-                                                        skipLocationChange:
-                                                            true,
-                                                    })
-                                                    .then(() =>
-                                                        this._router.navigate([
-                                                            RouteConstants.project, uuid
-                                                        ])
-                                                    );
-                                            } else {
-                                                // if user is a sysAdmin or a member of multiple projects, redirect them to the overview
-                                                this._router
-                                                    .navigateByUrl(`/${RouteConstants.refresh}`, {
-                                                        skipLocationChange:
-                                                            true,
-                                                    })
-                                                    .then(() =>
-                                                        this._router.navigate([
-                                                            RouteConstants.home,
-                                                        ])
-                                                    );
-                                            }
-                                        }
-                                    );
-                            } else {
-                                window.location.reload();
-                            }
-                            const uuid: string = uuidv5(identifier, uuidv5.URL);
-                            this._datadogRumService.setActiveUser(uuid);
-                            this._pendoAnalytics.setActiveUser(uuid);
-                            this.loading = false;
-                        });
-                },
-                (error: ApiResponseError) => {
-                    // error handling
-                    this.loginFailed =
-                        error.status === 401 || error.status === 404;
-                    this.loginErrorServer =
-                        error.status === 0 ||
-                        (error.status >= 500 && error.status < 600);
-
-                    if (this.loginErrorServer) {
-                        this._errorHandler.showMessage(error);
+                        return this._authService.loadUser(identifier)
+                            .pipe(take(1))
+                            .pipe(map((result: any) => result.user))
+                            .subscribe((user: UserStateModel) => {
+                                this.loading = false;
+                                this._authService.loginSuccessfulEvent.emit(user.user);
+                                this.cd.markForCheck();
+                                this.router.navigate([this.returnUrl]);
+                            });
                     }
+                },
+                error: (error: AuthError) => {
+                    this.loginSuccess.emit(false);
 
-                    this.isError = true;
+                    this._componentCommsService.emit(
+                        new EmitEvent(Events.loginSuccess, false)
+                    );
 
                     this.loading = false;
-                }
-            );
+                    this.isError = true;
+
+                    if (error.status === 401) {
+                        this.loginFailed = true;
+                    } else {
+                        this.loginErrorServer = true;
+                    }
+                },
+            });
     }
 
-    logout() {
-        // bring back the logout method and use it in the parent (somehow)
-        this._auth.logout();
+    private getReturnUrl(): string {
+        const returnUrl = this.route.snapshot.queryParams[this.returnUrlParameterName];
+        this.location.go(this.removeParameterFromUrl(this.location.path(), this.returnUrlParameterName, returnUrl));
+        return returnUrl;
+    }
+
+    private removeParameterFromUrl(path: string, parameterName: string, parameterValue: string): string {
+        const urlSegments = path.split('?');
+        const queryString = urlSegments.pop();
+        if (!queryString) {
+            return path;
+        }
+        const params = queryString.split('&');
+        const newQuerystring = params
+            .filter((item) => item !== `${parameterName}=${encodeURIComponent(parameterValue)}`)
+            .join('&');
+
+        if (newQuerystring) {
+            urlSegments.push(newQuerystring);
+        }
+
+        return urlSegments.join('?');
     }
 }

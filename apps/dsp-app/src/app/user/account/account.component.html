@@ -1,6 +1,5 @@
-<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
-
-<div *ngIf="user && !loading">
+<dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+<div *ngIf="(isLoading$ | async) === false">
     <!-- password update: header -->
     <div class="app-toolbar more-space-bottom">
         <div class="app-toolbar-row">
@@ -19,7 +18,7 @@
         </div>
     </div>
     <!-- password update: form -->
-    <app-password-form [username]="username"></app-password-form>
+    <app-password-form [user]="user$ | async"></app-password-form>
 
     <!-- danger zone: delete account -->
     <div class="app-danger-zone more-space-top">
@@ -34,10 +33,10 @@
             </div>
             <div class="app-toolbar-row">
                 <h2 class="mat-headline-6">
-                    <span *ngIf="user.status">{{
+                    <span *ngIf="(user$ | async)?.status">{{
                         'appLabels.form.user.title.delete' | translate
                     }}</span>
-                    <span *ngIf="!user.status">Reactivate user</span>
+                    <span *ngIf="!((user$ | async)?.status)">Reactivate user</span>
                 </h2>
                 <span class="fill-remaining-space"></span>
                 <span class="app-toolbar-action"> </span>
@@ -46,10 +45,10 @@
         <!-- delete account: button -->
         <div class="center more-space-top more-space-bottom">
             <button
-                *ngIf="user.status"
+                *ngIf="(user$ | async)?.status"
                 mat-button
                 [color]="'warn'"
-                (click)="openDialog('deleteUser', user.username, user.id)"
+                (click)="openDialog('deleteUser', username, userId)"
             >
                 {{
                     'appLabels.form.user.title.deleteButton'
@@ -59,10 +58,10 @@
             </button>
 
             <button
-                *ngIf="!user.status"
+                *ngIf="!((user$ | async)?.status)"
                 mat-button
                 [color]="'primary'"
-                (click)="openDialog('activateUser', user.username, user.id)"
+                (click)="openDialog('activateUser', username, userId)"
             >
                 ACTIVATE ACCOUNT
             </button>

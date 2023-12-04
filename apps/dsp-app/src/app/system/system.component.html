@@ -1,4 +1,4 @@
-<div *ngIf="sysAdmin; else notAllowed">
+<div *ngIf="isSysAdmin$ | async; else notAllowed">
     <nav
         mat-tab-nav-bar
         mat-align-tabs="center"

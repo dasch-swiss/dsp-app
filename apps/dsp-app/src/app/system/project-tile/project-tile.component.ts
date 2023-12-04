@@ -1,6 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { StoredProject } from '@dasch-swiss/dsp-js';
-import { TileLinks, routeParams } from '@dsp-app/src/app/user/overview/overview.component';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { Router } from '@angular/router';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
     selector: 'app-project-tile',
@@ -10,12 +12,21 @@ import { TileLinks, routeParams } from '@dsp-app/src/app/user/overview/overview.
 export class ProjectTileComponent {
     @Input() project: StoredProject;
     @Input() sysAdmin: boolean; // used to show settings button
-    @Output() buttonClicked = new EventEmitter<routeParams>();
 
-    constructor() {}
+    constructor(
+        private _router: Router,
+        private _projectService: ProjectService,
+    ) {}
 
-    emitButtonClicked(id: string, path: TileLinks) {
-        const params: routeParams = { id, path };
-        this.buttonClicked.emit(params);
+    navigateToProject(id: string) {
+        const uuid = this._projectService.iriToUuid(id);
+        this._router.navigate([RouteConstants.project, uuid]);
+    }
+
+    navigateToSettings(id: string) {
+        const uuid = this._projectService.iriToUuid(id);
+        this._router.navigate([
+            RouteConstants.project, uuid, RouteConstants.settings, RouteConstants.collaboration
+        ]);
     }
 }

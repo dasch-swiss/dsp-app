@@ -16,7 +16,7 @@ export class ComponentCommunicationEventService {
         return this._subject$
             .pipe(
                 // filter down based on event name to any events that are emitted out of the subject from the emit method below.
-                filter((e: EmitEvent) => e.name === event),
+                filter((e: EmitEvent) => e.name === event && (e.value == null || e.value === true)),
                 map((e: EmitEvent) => e.value)
             )
             .subscribe(action); // subscribe to the subject to get the data.

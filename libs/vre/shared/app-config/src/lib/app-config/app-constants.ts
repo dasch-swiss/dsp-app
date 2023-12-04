@@ -55,6 +55,7 @@ export class RouteConstants {
     static readonly homeRelative = `/${RouteConstants.home}`;
     static readonly userAccountRelative = `/${RouteConstants.userAccount}`;
     static readonly systemAdminRelative = `/${RouteConstants.systemAdmin}`;
+    static readonly refreshRelative = `/${RouteConstants.refresh}`;
 
     static readonly projectsRelative = `/${RouteConstants.projects}`;
     static readonly projectRelative = `/${RouteConstants.project}`;
@@ -80,4 +81,11 @@ export enum Auth {
     AccessToken = 'ACCESS_TOKEN',
     Refresh_token = 'REFRESH_TOKEN',
     Bearer = 'Bearer',
+}
+
+export enum MaterialColor {
+    Primary = 'primary',
+    Warn = 'warn',
+    Accent = 'accent',
+    Default = 'default',
 }

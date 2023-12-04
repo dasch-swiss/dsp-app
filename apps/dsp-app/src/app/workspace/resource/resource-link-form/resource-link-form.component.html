@@ -2,7 +2,7 @@
     [formGroup]="form"
     (ngSubmit)="submitData()"
     class="form"
-    *ngIf="usersProjects?.length; else notProjectMember"
+    *ngIf="(usersProjects$ | async)?.length; else notProjectMember"
 >
     <!-- auto complete list to select resource classes -->
     <div class="form-content">
@@ -10,7 +10,7 @@
             matTooltip="The link resource has to be added to a project. Please select one of yours."
             [matTooltipPosition]="'above'"
             [formGroup]="form"
-            [usersProjects]="usersProjects"
+            [usersProjects]="usersProjects$ | async"
             (projectSelected)="selectedProject = $event"
         >
         </app-select-project>
@@ -57,18 +57,18 @@
                 <button
                     mat-raised-button
                     type="submit"
-                    [color]="error ? 'warn' : 'primary'"
+                    [color]="(hasLoadingErrors$ | async) ? 'warn' : 'primary'"
                     [disabled]="!form.valid"
                 >
                     <dasch-swiss-app-progress-indicator
                         [color]="'white'"
                         [status]="0"
-                        *ngIf="loading"
+                        *ngIf="isLoading$ | async"
                         class="submit-progress"
                     >
                     </dasch-swiss-app-progress-indicator>
-                    <mat-icon *ngIf="error && !loading">close</mat-icon>
-                    {{ error ? 'Failed' : 'Create' }}
+                    <mat-icon *ngIf="(hasLoadingErrors$ | async) && (isLoading$ | async) === false">close</mat-icon>
+                    {{ (hasLoadingErrors$ | async) === true ? 'Failed' : 'Create' }}
                 </button>
             </span>
         </div>

@@ -29,9 +29,9 @@ export interface DefaultProperty {
     icon: string;
     label: string;
     description: string;
-    subPropOf: string;
+    subPropOf: string | undefined;
     objectType?: string;
-    guiEle: string;
+    guiEle: string | undefined;
     group: string;
 }
 

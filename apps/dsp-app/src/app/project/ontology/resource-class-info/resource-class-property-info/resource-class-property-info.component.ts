@@ -13,18 +13,15 @@ import {
     Constants,
     IHasProperty,
     KnoraApiConnection,
-    ListNodeInfo,
-    ReadOntology,
     ResourcePropertyDefinitionWithAllLanguages,
     UpdateOntology,
     UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { DefaultProperty } from '../../default-data/default-properties';
-import { DefaultClass } from '../../default-data/default-resource-classes';
-import { OntologyService } from '../../ontology.service';
+import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 
 // property data structure
 export class Property {
@@ -101,20 +98,13 @@ export class ResourceClassPropertyInfoComponent
 
     propCanBeRemovedFromClass: boolean;
 
-    ontology: ReadOntology;
-
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
         private _errorHandler: AppErrorHandler,
-        private _ontoService: OntologyService
+        private _ontoService: OntologyService,
+        private _store: Store,
     ) {
-        this._applicationStateService
-            .get('currentOntology')
-            .subscribe((response: ReadOntology) => {
-                this.ontology = response;
-            });
     }
 
     ngOnChanges(): void {
@@ -124,9 +114,11 @@ export class ResourceClassPropertyInfoComponent
         );
         this.propInfo.multiple = cards.multiple;
         this.propInfo.required = cards.required;
+        const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
+
         // get info about subproperties, if they are not a subproperty of knora base ontology
         // in this case add it to the list of subproperty iris
-        const superProp = this._ontoService.getSuperProperty(this.propDef);
+        const superProp = this._ontoService.getSuperProperty(this.propDef, currentProjectOntologies);
         if (superProp) {
             if (this.propDef.subPropertyOf.indexOf(superProp) === -1) {
                 this.propDef.subPropertyOf.push(superProp);
@@ -146,52 +138,44 @@ export class ResourceClassPropertyInfoComponent
             // this property is a link property to another resource class
             // get current ontology to get linked res class information
 
+            const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+            const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
             // get the base ontology of object type
             const baseOnto = this.propDef.objectType.split('#')[0];
-            if (baseOnto !== this.ontology.id) {
+            if (baseOnto !== ontology.id) {
                 // get class info from another ontology
-                this._applicationStateService.get('currentProjectOntologies').subscribe(
-                    (ontologies: ReadOntology[]) => {
-                        const onto = ontologies.find((i) => i.id === baseOnto);
-                        if ( !onto ) {
-                            if (this.propDef.objectType === Constants.Region) {
-                                this.propAttribute = 'Region';
-                            }  // else no ontology found
+                const onto = currentProjectOntologies.find((i) => i.id === baseOnto);
+                if ( !onto ) {
+                    if (this.propDef.objectType === Constants.Region) {
+                        this.propAttribute = 'Region';
+                    }  // else no ontology found
 
-                        } else {
-                            this.propAttribute =
-                                onto.classes[this.propDef.objectType].label;
-                            this.propAttributeComment =
-                                onto.classes[this.propDef.objectType].comment;
-                        }
-                    },
-                    () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
-                );
+                } else {
+                    this.propAttribute =
+                        onto.classes[this.propDef.objectType].label;
+                    this.propAttributeComment =
+                        onto.classes[this.propDef.objectType].comment;
+                }
             } else {
-                this.propAttribute =
-                    this.ontology.classes[this.propDef.objectType].label;
-                this.propAttributeComment =
-                    this.ontology.classes[this.propDef.objectType].comment;
+                this.propAttribute = ontology.classes[this.propDef.objectType].label;
+                this.propAttributeComment = ontology.classes[this.propDef.objectType].comment;
             }
         }
 
         if (this.propDef.objectType === Constants.ListValue) {
             // this property is a list property
             // get current ontology lists to get linked list information
-            this._applicationStateService
-                .get('currentOntologyLists')
-                .subscribe((response: ListNodeInfo[]) => {
-                    const re = /\<([^)]+)\>/;
-                    const listIri = this.propDef.guiAttributes[0].match(re)[1];
-                    const listUrl = `/project/${
-                        this.projectUuid
-                    }/list/${listIri.split('/').pop()}`;
-                    const list = response.find((i) => i.id === listIri);
-                    this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
-                    this.propAttributeComment = list.comments.length
-                        ? list.comments[0].value
-                        : null;
-                });
+            const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
+            const re = /\<([^)]+)\>/;
+            const listIri = this.propDef.guiAttributes[0].match(re)[1];
+            const listUrl = `/project/${
+                this.projectUuid
+            }/list/${listIri.split('/').pop()}`;
+            const list = currentOntologyLists.find((i) => i.id === listIri);
+            this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
+            this.propAttributeComment = list.comments.length
+                ? list.comments[0].value
+                : null;
         }
     }
 
@@ -215,7 +199,8 @@ export class ResourceClassPropertyInfoComponent
 
         onto.lastModificationDate = this.lastModificationDate;
 
-        onto.id = this.ontology.id;
+        const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+        onto.id = ontology.id;
 
         const delCard = new UpdateResourceClassCardinality();
 

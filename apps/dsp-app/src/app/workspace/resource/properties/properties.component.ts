@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -52,7 +54,7 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 import { IncomingService } from '../services/incoming.service';
-import { ProjectService } from '../services/project.service';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ResourceService } from '../services/resource.service';
 import { UserService } from '../services/user.service';
 import {
@@ -63,7 +65,7 @@ import {
     ValueOperationEventService,
 } from '../services/value-operation-event.service';
 import { ValueService } from '../services/value.service';
-import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
+import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 // object of property information from ontology class, properties and property values
 export interface PropertyInfoValues {
@@ -73,6 +75,7 @@ export interface PropertyInfoValues {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-properties',
     templateUrl: './properties.component.html',
     styleUrls: ['./properties.component.scss']
@@ -181,6 +184,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         private _componentCommsService: ComponentCommunicationEventService,
         private _projectService: ProjectService,
         private _sortingService: SortingService,
+        private _cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit(): void {
@@ -405,6 +409,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                         if (this.isAnnotation) {
                                             this.regionDeleted.emit();
                                         }
+                                        this._cd.markForCheck();
                                     },
                                     (error: ApiResponseError) => {
                                         this._errorHandler.showMessage(error);
@@ -433,6 +438,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                         if (this.isAnnotation) {
                                             this.regionDeleted.emit();
                                         }
+                                        this._cd.markForCheck();
                                     },
                                     (error: ApiResponseError) => {
                                         this._errorHandler.showMessage(error);
@@ -468,6 +474,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                             if (this.isAnnotation) {
                                                 this.regionChanged.emit();
                                             }
+                                            this._cd.markForCheck();
                                         },
                                         (error: ApiResponseError) => {
                                             this._errorHandler.showMessage(
@@ -699,6 +706,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
                             this._getDisplayedIncomingLinkRes();
                             this.loading = false;
+                            this._cd.markForCheck();
                         }, () => {
                                 this.loading = false;
                         });
@@ -769,6 +777,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                                 );
                             });
                         });
+                    this._cd.markForCheck();
                 },
                 (err) => {
                     console.error(err);
@@ -780,8 +789,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         this._dspApiConnection.v2.res
             .getResource(resId)
             .subscribe(
-                (res: ReadResource) =>
-                    (this.lastModificationDate = res.lastModificationDate)
+                (res: ReadResource) => {
+                    this.lastModificationDate = res.lastModificationDate;
+                    this._cd.markForCheck();
+                }
             );
     }
 }

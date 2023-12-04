@@ -3,7 +3,9 @@ import { Title } from '@angular/platform-browser';
 
 import { AppGlobal } from '../app-global';
 import { MenuItem } from '../main/declarations/menu-item';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { Select } from '@ngxs/store';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-system',
@@ -13,19 +15,17 @@ import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 export class SystemComponent implements OnInit {
     loading = true;
 
-    sysAdmin = false;
-
     navigation: MenuItem[] = AppGlobal.systemNav;
 
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+    
     constructor(
         private _titleService: Title,
-        private _session: SessionService
     ) {
         // set the page title
         this._titleService.setTitle('System administration');
     }
 
     ngOnInit() {
-        this.sysAdmin = this._session.getSession().user.sysAdmin;
     }
 }

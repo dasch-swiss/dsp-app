@@ -18,7 +18,6 @@ import { AppErrorHandler } from './app-error-handler';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { DataAccessService } from './data-access.service';
 import { AjaxResponse } from 'rxjs/ajax';
 import { MockProvider, MockService } from 'ng-mocks';
@@ -41,7 +40,6 @@ describe('AppErrorHandler', () => {
                 MockProvider(AppLoggingService),
                 MockProvider(NotificationService, notificationMock),
                 MockProvider(DataAccessService, dataAccessMock),
-                MockProvider(SessionService),
                 {
                     provide: HttpStatusMsg,
                 },

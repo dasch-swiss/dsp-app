@@ -6,6 +6,7 @@ import {
     trigger,
 } from '@angular/animations';
 import {
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -146,7 +147,8 @@ export class DisplayEditComponent implements OnInit {
         private _valueOperationEventService: ValueOperationEventService,
         private _dialog: MatDialog,
         private _userService: UserService,
-        private _valueService: ValueService
+        private _valueService: ValueService,
+        private _cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit() {
@@ -330,6 +332,7 @@ export class DisplayEditComponent implements OnInit {
 
                         // hide the progress indicator
                         this.submittingValue = false;
+                        this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         // error handling
@@ -351,6 +354,7 @@ export class DisplayEditComponent implements OnInit {
                                 );
                                 break;
                         }
+                        this._cd.markForCheck();
                     }
                 );
         } else {

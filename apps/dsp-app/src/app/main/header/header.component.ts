@@ -2,8 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NavigationStart, Router } from '@angular/router';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {AppConfigService, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
@@ -13,11 +12,9 @@ import {
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import {
-    DspApiConnectionToken,
     DspConfig,
 } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
     selector: 'app-header',
@@ -37,8 +34,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     homeLink = RouteConstants.home;
 
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
         private _appConfigService: AppConfigService,
         private _componentCommsService: ComponentCommunicationEventService,
         private _dialog: MatDialog,
@@ -46,7 +41,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         private _matIconRegistry: MatIconRegistry,
         private _notification: NotificationService,
         private _router: Router,
-        private _session: SessionService
     ) {
         // create own logo icon to use them in mat-icons
         this._matIconRegistry.addSvgIcon(
@@ -55,17 +49,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 '/assets/images/dasch-mosaic-icon-color.svg'
             )
         );
-
-        // logged-in user? show user menu or login button
-        this._router.events.forEach((event) => {
-            if (event instanceof NavigationStart) {
-                this._session
-                    .isSessionValid()
-                    .subscribe((response: boolean) => {
-                        this.session = response;
-                    });
-            }
-        });
 
         this.dsp = this._appConfigService.dspConfig;
     }

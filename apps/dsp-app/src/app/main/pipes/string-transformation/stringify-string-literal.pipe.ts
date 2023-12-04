@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 
 /**
  * this pipe stringifies an array of StringLiterals.
@@ -15,7 +16,7 @@ import { SessionService } from '@dasch-swiss/vre/shared/app-session';
     name: 'appStringifyStringLiteral',
 })
 export class StringifyStringLiteralPipe implements PipeTransform {
-    constructor(private _sessionService: SessionService) {}
+    constructor(private store: Store) {}
 
     transform(value: StringLiteral[], args?: string): string {
         let stringified = '';
@@ -40,13 +41,9 @@ export class StringifyStringLiteralPipe implements PipeTransform {
             // show only one value, depending on default language
             // the language is defined in user profile if a user is logged-in
             // otherwise it takes the language from browser
-            if (this._sessionService.getSession() !== null) {
-                // get language from the logged-in user profile data
-                language = this._sessionService.getSession().user.lang;
-            } else {
-                // get default language from browser
-                language = navigator.language.substring(0, 2);
-            }
+            const userLanguage = this.store.selectSnapshot(UserSelectors.language);
+            language = userLanguage != null ? userLanguage : navigator.language.substring(0, 2);
+
             // does the defined language exists and does it have a value?
             const index = value.findIndex((i) => i.language === language);
 

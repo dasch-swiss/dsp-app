@@ -30,12 +30,14 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-literal-v2';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
-import { OntologyService } from '../ontology.service';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { Store } from '@ngxs/store';
+import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 
 // nested form components; solution from:
 // https://medium.com/@joshblf/dynamic-nested-reactive-forms-in-angular-654c1d4a769a
@@ -145,46 +147,34 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
         private _cdr: ChangeDetectorRef,
         private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
-        private _os: OntologyService
+        private _os: OntologyService,
+        private _store: Store,
     ) {}
 
     ngOnInit() {
         // set file representation or default resource class as title
         this.resourceClassTitle = this.name;
 
-        this._applicationStateService.get('currentOntology').subscribe(
-            (response: ReadOntology) => {
-                this.ontology = response;
+        this.ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+        this.lastModificationDate = this.ontology.lastModificationDate;
 
-                this.lastModificationDate = this.ontology.lastModificationDate;
+        const resourceClasses = getAllEntityDefinitionsAsArray(this.ontology.classes);
+        const resourceProperties = getAllEntityDefinitionsAsArray(this.ontology.properties);
 
-                const resourceClasses = response.getAllClassDefinitions();
-                const resourceProperties = response.getAllPropertyDefinitions();
+        // set list of all existing resource class names to avoid same name twice
+        resourceClasses.forEach((resClass: ClassDefinition) => {
+            const name = this._os.getNameFromIri(resClass.id);
+            this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
+        });
 
-                // set list of all existing resource class names to avoid same name twice
-                resourceClasses.forEach((resClass: ClassDefinition) => {
-                    const name = this._os.getNameFromIri(resClass.id);
-                    this.existingNames.push(
-                        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-                    );
-                });
-
-                // add all resource properties to the same list
-                resourceProperties.forEach((resProp: PropertyDefinition) => {
-                    const name = this._os.getNameFromIri(resProp.id);
-                    this.existingNames.push(
-                        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-                    );
-                });
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+        // add all resource properties to the same list
+        resourceProperties.forEach((resProp: PropertyDefinition) => {
+            const name = this._os.getNameFromIri(resProp.id);
+            this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
+        });
 
         this.buildForm();
 
@@ -195,21 +185,25 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
         this._cdr.detectChanges();
     }
 
+    onCancel() {
+        // emit DialogCanceled event
+        this.closeDialog.emit(DialogEvent.DialogCanceled);
+    }
+    
     //
     // form handling:
 
     buildForm() {
         if (this.edit) {
+            // getClassDefinitionsByType is not accessible therefore following line was replaced from this: 
+            // const resourceClasses: ResourceClassDefinitionWithAllLanguages[] = this.ontology.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
+            const classDefinitions = getAllEntityDefinitionsAsArray(this.ontology.classes); 
             // edit mode: res class info (label and comment)
             // get resource class info
-            const resourceClasses: ResourceClassDefinitionWithAllLanguages[] =
-                this.ontology.getClassDefinitionsByType(
-                    ResourceClassDefinitionWithAllLanguages
-                );
-            Object.keys(resourceClasses).forEach((key) => {
-                if (resourceClasses[key].id === this.iri) {
-                    this.resourceClassLabels = resourceClasses[key].labels;
-                    this.resourceClassComments = resourceClasses[key].comments;
+            Object.keys(classDefinitions).forEach((key) => {
+                if (classDefinitions[key].id === this.iri) {
+                    this.resourceClassLabels = classDefinitions[key].labels;
+                    this.resourceClassComments = classDefinitions[key].comments;
                 }
             });
         }

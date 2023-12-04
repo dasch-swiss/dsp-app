@@ -10,8 +10,7 @@ import {
     DspInstrumentationToken,
 } from '@dasch-swiss/vre/shared/app-config';
 import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { v5 as uuidv5 } from 'uuid';
 
 @Injectable({
@@ -20,9 +19,10 @@ import { v5 as uuidv5 } from 'uuid';
 export class DatadogRumService {
     private buildTag$: Observable<BuildTag> = inject(BuildTagToken);
     private config: DspInstrumentationConfig = inject(DspInstrumentationToken);
-    private session: SessionService = inject(SessionService);
+    private authService: AuthService = inject(AuthService);
+
     constructor() {
-        this.buildTag$.pipe(first()).subscribe((tag) => {
+        this.buildTag$.subscribe((tag) => {
             if (
                 this.config.dataDog.enabled &&
                 this.config.dataDog.applicationId &&
@@ -58,17 +58,11 @@ export class DatadogRumService {
                     },
                 });
 
-                // if session is valid: setActiveUser
-                // FIXME: so that updates to the session state are reflected in the specified user
-                this.session.isSessionValid().subscribe((response: boolean) => {
-                    if (response) {
-                        const session: Session | null =
-                            this.session.getSession();
-                        if (session?.user?.name) {
-                            const id: string = uuidv5(
-                                session.user.name,
-                                uuidv5.URL
-                            );
+                // depending on the session state, activate or deactivate the user
+                this.authService.isLoggedIn$.subscribe((isLoggedIn: boolean) => {
+                    if (isLoggedIn) {
+                        if (this.authService.tokenUser) {
+                            const id: string = uuidv5(this.authService.tokenUser, uuidv5.URL);
                             this.setActiveUser(id);
                         } else {
                             this.removeActiveUser();

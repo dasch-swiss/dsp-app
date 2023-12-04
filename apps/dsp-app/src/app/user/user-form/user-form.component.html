@@ -6,8 +6,8 @@
         (ngSubmit)="submitData()">
 
         <!-- username -->
-        <mat-form-field [class.large-field]="!username"
-            [class.small-field]="username">
+        <mat-form-field [class.large-field]="!user"
+            [class.small-field]="user">
             <input matInput
                 type="text"
                 formControlName="username"
@@ -18,8 +18,8 @@
         </mat-form-field>
 
         <!-- email -->
-        <mat-form-field [class.large-field]="!username"
-            [class.medium-field]="username">
+        <mat-form-field [class.large-field]="!user"
+            [class.medium-field]="user">
             <input matInput
                 type="email"
                 formControlName="email"
@@ -53,7 +53,7 @@
         </mat-form-field>
 
         <!-- password // hidden in edit mode -->
-        <app-password-form *ngIf="!username"
+        <app-password-form *ngIf="!user"
             (sendToParent)="getPassword($event)"></app-password-form>
 
         <mat-form-field class="large-field">
@@ -70,7 +70,7 @@
 
         <div class="large-field">
             <mat-slide-toggle formControlName="systemAdmin"
-                *ngIf="sysAdmin">
+                *ngIf="isSysAdmin$ | async">
                 {{ 'appLabels.form.user.general.sysAdmin' | translate }}
             </mat-slide-toggle>
         </div>
@@ -89,15 +89,15 @@
                 <button mat-raised-button
                     type="submit"
                     color="primary"
-                    *ngIf="username"
+                    *ngIf="user"
                     [disabled]="!userForm.valid">
                     <dasch-swiss-app-progress-indicator [color]="'white'"
                         [status]="0"
                         *ngIf="loading"
                         class="submit-progress">
                     </dasch-swiss-app-progress-indicator>
-                    <mat-icon *ngIf="error && !loading">close</mat-icon>
-                    {{ !loading && error ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.update'
+                    <mat-icon *ngIf="(hasLoadingErrors$ | async) === true && !loading">close</mat-icon>
+                    {{ !loading && (hasLoadingErrors$ | async) === true ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.update'
                     |
                     translate) }}
                 </button>
@@ -105,15 +105,15 @@
                 <button mat-raised-button
                     type="submit"
                     color="primary"
-                    *ngIf="!username"
+                    *ngIf="!user"
                     [disabled]="!userForm.valid || (userForm.controls['password'].value.length < 8)">
                     <dasch-swiss-app-progress-indicator [color]="'white'"
                         [status]="0"
                         *ngIf="loading"
                         class="submit-progress">
                     </dasch-swiss-app-progress-indicator>
-                    <mat-icon *ngIf="error && !loading">close</mat-icon>
-                    {{ !loading && error ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.submit'
+                    <mat-icon *ngIf="(hasLoadingErrors$ | async) === true && !loading">close</mat-icon>
+                    {{ !loading && (hasLoadingErrors$ | async) === true ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.submit'
                     |
                     translate) }}
                 </button>

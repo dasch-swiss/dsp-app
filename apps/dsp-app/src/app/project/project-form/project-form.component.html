@@ -80,7 +80,7 @@
         <mat-form-field class="keywords">
             <mat-chip-grid #chipList>
                 <mat-chip-row
-                    *ngFor="let tag of keywords"
+                    *ngFor="let tag of keywords; trackBy: trackByFn"
                     [removable]="project.status"
                     (removed)="removeKeyword(tag)"
                 >

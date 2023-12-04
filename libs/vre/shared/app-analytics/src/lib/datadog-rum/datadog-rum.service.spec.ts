@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
 import { DatadogRumService } from './datadog-rum.service';
-import { MockProvider, MockService } from 'ng-mocks';
+import { MockProvider } from 'ng-mocks';
 import {
     BuildTag,
     BuildTagToken,
     DspInstrumentationToken,
 } from '@dasch-swiss/vre/shared/app-config';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 describe('DatadogRumService', () => {
@@ -22,7 +22,7 @@ describe('DatadogRumService', () => {
             providers: [
                 MockProvider(BuildTagToken, buildTag$),
                 MockProvider(DspInstrumentationToken, {}),
-                MockProvider(SessionService),
+                MockProvider(AuthService),
             ],
         });
         service = TestBed.inject(DatadogRumService);

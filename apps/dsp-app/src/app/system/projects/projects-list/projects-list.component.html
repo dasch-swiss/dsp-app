@@ -27,7 +27,7 @@
             <span class="fill-remaining-space"></span>
             <span
                 class="app-toolbar-action button right"
-                *ngIf="status && createNew && sysAdmin"
+                *ngIf="status && createNew && (isSysAdmin$ | async) === true"
             >
                 <button
                     mat-flat-button
@@ -70,7 +70,7 @@
                 </p>
             </td>
             <td class="table-admin-chip">
-                <mat-chip-listbox *ngIf="userIsProjectAdmin(project.id)">
+                <mat-chip-listbox *ngIf="userIsProjectAdmin$(project.id) | async">
                     <mat-chip class="admin-chip">Project Admin</mat-chip>
                 </mat-chip-listbox>
             </td>
@@ -79,10 +79,7 @@
                 <button
                     mat-icon-button
                     [matMenuTriggerFor]="projectMenu"
-                    [disabled]="
-                        (!userHasPermission(project.id)) ||
-                        doNotDelete.includes(project.id)
-                    "
+                    [disabled]="(userHasPermission$(project.id) | async) === false || doNotDelete.includes(project.id)"
                 >
                     <mat-icon>more_horiz</mat-icon>
                 </button>

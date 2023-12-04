@@ -1,4 +1,5 @@
 import {
+    ChangeDetectorRef,
     Component,
     Inject,
     Input,
@@ -30,12 +31,9 @@ import {
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import {
-    DefaultClass,
-    DefaultResourceClasses,
-} from '@dsp-app/src/app/project/ontology/default-data/default-resource-classes';
 import { ResourceService } from '../services/resource.service';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
+import { DefaultClass, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
     selector: 'app-resource-instance-form',
@@ -99,7 +97,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
         private _route: ActivatedRoute,
         private _router: Router,
         private _componentCommsService: ComponentCommunicationEventService,
-        private _notification: NotificationService
+        private _notification: NotificationService,
+        private _cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit(): void {
@@ -214,6 +213,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
                             }
                             this.preparing = false;
                             this.loading = false;
+                            this._cd.markForCheck();
                         },
                         (error: ApiResponseError) => {
                             this.preparing = false;
@@ -317,11 +317,10 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
                                 ],
                                 { relativeTo: this._route.parent }
                             )
-                            .then(() =>
-                                this._componentCommsService.emit(
-                                    new EmitEvent(CommsEvents.resourceCreated)
-                                )
-                            );
+                            .then(() => {
+                                this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceCreated));
+                                this._cd.markForCheck();
+                            });
                     },
                     (error: ApiResponseError) => {
                         this.error = true;

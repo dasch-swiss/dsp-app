@@ -1,22 +1,22 @@
 <div *ngIf="!disableContent">
 
-    <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+    <dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
 
     <!-- main content: overview shows resource classes of ontology -->
-    <div *ngIf="!loading && !loadOntology && ontology" class="ontology-editor">
+    <div *ngIf="(isLoading$ | async) === false && currentOntology$ | async" class="ontology-editor">
 
         <mat-toolbar class="ontology-editor-header">
             <mat-toolbar-row>
                 <span class="ontology-info">
                     <h3 class="mat-headline-6"
-                        [matTooltip]="ontology.label + (ontology.comment ? ' &mdash; ' + ontology.comment : '')"
+                        [matTooltip]="(currentOntology$ | async).label + ((currentOntology$ | async).comment ? ' &mdash; ' + (currentOntology$ | async).comment : '')"
                         matTooltipPosition="above">
-                        {{ontology?.label}}
+                        {{(currentOntology$ | async)?.label}}
                     </h3>
-                    <p class="mat-caption" [matTooltip]="'Last modification date: ' + lastModificationDate"
+                    <p class="mat-caption" [matTooltip]="'Last modification date: ' + (lastModificationDate$ | async)"
                         matTooltipPosition="above">
-                        <span *ngIf="lastModificationDate; else noModificationDate">
-                            Updated on: {{lastModificationDate | date:'medium'}}
+                        <span *ngIf="(lastModificationDate$ | async); else noModificationDate">
+                            Updated on: {{(lastModificationDate$ | async) | date:'medium'}}
                         </span>
                         <ng-template #noModificationDate>
                             <span class="note warning">
@@ -29,21 +29,22 @@
                 <span class="fill-remaining-space"></span>
 
                 <!-- edit options -->
-                <span class="ontology-actions project-actions" *ngIf="project.status">
+                <span class="ontology-actions project-actions" *ngIf="(project$ | async).status">
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
-                        [matTooltip]="(projectAdmin ? (ontology.lastModificationDate ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
-                        <button color="primary" mat-button [disabled]="!ontology.lastModificationDate || !projectAdmin"
-                            (click)="$event.stopPropagation(); openOntologyForm('editOntology', ontology.id)">
+                        [matTooltip]="((isAdmin$ | async) ? ((lastModificationDate$ | async) ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
+                        <button *ngIf="(currentOntology$ | async) as currentOntology" color="primary" mat-button [disabled]="!!(lastModificationDate$ | async) || (isAdmin$ | async) === false"
+                            (click)="$event.stopPropagation(); openOntologyForm('editOntology', currentOntology.id)">
                             <mat-icon>edit</mat-icon>
                             Edit
                         </button>
                     </span>
                     <span
-                        [matTooltip]="(projectAdmin ? (ontology.lastModificationDate ? (ontologyCanBeDeleted ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!') : null)">
+                        [matTooltip]="((isAdmin$ | async) ? ((lastModificationDate$ | async) ? ((currentOntologyCanBeDeleted$ | async) ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!') : null)">
                         <button color="warn" mat-button
-                            [disabled]="(!ontology.lastModificationDate || !ontologyCanBeDeleted) || (!projectAdmin || !sysAdmin)"
-                            (click)="$event.stopPropagation(); delete('Ontology', {iri: ontologyIri, label: ontology.label})">
+                            *ngIf="(currentOntology$ | async) as currentOntology"
+                            [disabled]="(!!(lastModificationDate$ | async) || (currentOntologyCanBeDeleted$ | async) === false) || ((isAdmin$ | async) === false)"
+                            (click)="$event.stopPropagation(); delete('Ontology', {iri: currentOntology.id, label: currentOntology.label})">
                             <mat-icon>delete</mat-icon>
                             Delete
                         </button>
@@ -53,27 +54,27 @@
             </mat-toolbar-row>
         </mat-toolbar>
 
-        <mat-sidenav-container #ontologyEditor *ngIf="!loadOntology && (view === 'classes' || view === 'properties')"
+        <mat-sidenav-container #ontologyEditor *ngIf="(isLoading$ | async) === false && (view === 'classes' || view === 'properties')"
             class="ontology-editor-container">
             <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
                 <mat-list>
                     <a mat-list-item routerLinkActive="active" [routerLink]="classesLink"
                         (click)="view = 'classes'">Classes</a>
                     <span *ngIf="view === 'classes'">
-                        <button mat-button (click)="expandClasses = !expandClasses" [disabled]="!ontoClasses.length">
+                        <button mat-button (click)="expandClasses = !expandClasses" [disabled]="!ontoClasses || !ontoClasses.length">
                             <mat-icon>{{expandClasses ? 'compress' : 'expand'}}</mat-icon>
                             {{expandClasses ? "Collapse all" : "Expand all"}}
                         </button>
-                        <span mat-list-item *ngIf="project?.status && (sysAdmin || projectAdmin) && ontologyIri"
+                        <span mat-list-item *ngIf="(project$ | async)?.status && (isAdmin$ | async) === true && (currentOntology$ | async).id"
                             [matTooltip]="'This data model can\'t be edited because of missing \'lastModificationDate\'!'"
-                            [matTooltipDisabled]="ontology.lastModificationDate">
+                            [matTooltipDisabled]="lastModificationDate$ | async">
                             <button mat-button [matMenuTriggerFor]="addResClassMenu"
-                                [disabled]="!ontology.lastModificationDate">
+                                [disabled]="!!(lastModificationDate$ | async)">
                                 <mat-icon>add</mat-icon>
                                 Create new class
                             </button>
                             <mat-menu #addResClassMenu="matMenu" xPosition="before">
-                                <button mat-menu-item *ngFor="let type of defaultClasses"
+                                <button mat-menu-item *ngFor="let type of defaultClasses; trackBy: trackByDefaultClassFn"
                                     (click)="openResourceClassForm('createResourceClass', type)">
                                     <mat-icon>{{type.icons[0]}}</mat-icon> {{ type.label }}
                                 </button>
@@ -83,19 +84,19 @@
                     <mat-divider></mat-divider>
                     <a mat-list-item routerLinkActive="active" [routerLink]="propertiesLink"
                         (click)="view = 'properties'">Properties</a>
-                    <span mat-list-item *ngIf="project?.status && (sysAdmin || projectAdmin) && ontologyIri"
+                    <span mat-list-item *ngIf="(project$ | async)?.status && (isAdmin$ | async) === true && (currentOntology$ | async).id"
                         [matTooltip]="'This data model can\'t be edited because of missing \'lastModificationDate\'!'"
-                        [matTooltipDisabled]="ontology.lastModificationDate">
+                        [matTooltipDisabled]="lastModificationDate$ | async">
                         <button mat-button *ngIf="view === 'properties'" [matMenuTriggerFor]="addPropertyMenu"
-                            [disabled]="!ontology.lastModificationDate">
+                            [disabled]="!!(lastModificationDate$ | async)">
                             <mat-icon>add</mat-icon>
                             Create new property
                         </button>
                         <mat-menu #addPropertyMenu="matMenu" xPosition="before" class="switch-nested-menu">
-                            <ng-container *ngFor="let type of defaultProperties">
+                            <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropertyCategoryFn">
                                 <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                                 <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
-                                    <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele"
+                                    <button mat-menu-item *ngFor="let ele of type.elements; trackBy: trackByElementFn" [value]="ele"
                                         [matTooltip]="ele.description" matTooltipPosition="before"
                                         (click)="openPropertyForm('createProperty', {propType: ele})">
                                         <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
@@ -110,27 +111,32 @@
             <mat-sidenav-content class="ontology-editor-canvas drag-drop-stop">
                 <div class="ontology-editor-grid classes" *ngIf="view === 'classes'">
                     <!-- list of resource classes -->
-                    <app-resource-class-info *ngFor="let resClass of ontoClasses"
+                    <app-resource-class-info *ngFor="let resClass of ontoClasses; trackBy: trackByClassDefinitionFn"
                                              [resourceClass]="resClass"
-                                             [projectUuid]="projectUuid" [projectStatus]="project.status" [ontologies]="ontologies"
+                                             [projectUuid]="projectUuid" 
+                                             [projectStatus]="(project$ | async).status"
                                              [expanded]="expandClasses"
-                                             [lastModificationDate]="lastModificationDate"
-                                             [userCanEdit]="(projectAdmin || sysAdmin)"
+                                             [userCanEdit]="isAdmin$ | async"
                                              (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
                                              (deleteResourceClass)="delete('ResourceClass', $event)"
-                                             (updatePropertyAssignment)="initOntology($event)">
+                                             (updatePropertyAssignment)="onUpdatePropertyAssignment()"
+                                             [updatePropertyAssignment$]="updatePropertyAssignment$">
                     </app-resource-class-info>
                 </div>
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
                     <!-- list of properties of current ontology -->
                     <mat-list class="without-padding">
-                        <mat-list-item class="property" *ngFor="let prop of ontoProperties.properties; let odd = odd"
+                        <mat-list-item class="property" *ngFor="let prop of ontoProperties.properties; trackBy: trackByPropertyDefinitionFn; let odd = odd"
                             [class.odd]="odd">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
                                  if objectType is a linkValue hide it (otherwise we have the property twice) -->
-                            <app-property-info [propDef]="ontology?.properties[prop.id]" [projectUuid]="projectUuid"
-                                [projectStatus]="project.status" [(lastModificationDate)]="lastModificationDate"
-                                [userCanEdit]="(projectAdmin || sysAdmin)"
+                            <app-property-info
+                                [propDef]="(currentOntology$ | async)?.properties[prop.id]" 
+                                [projectUuid]="projectUuid"
+                                [projectStatus]="(project$ | async).status" 
+                                [lastModificationDate]="lastModificationDate$ | async"
+                                (lastModificationDate)="onLastModificationDateChange($event)"
+                                [userCanEdit]="isAdmin$ | async"
                                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
                                 (deleteResourceProperty)="delete('Property', $event)">
                             </app-property-info>
@@ -140,7 +146,8 @@
             </mat-sidenav-content>
         </mat-sidenav-container>
 
-        <dasch-swiss-app-progress-indicator *ngIf="loadOntology && !loading && view !== 'graph'"></dasch-swiss-app-progress-indicator>
+        <dasch-swiss-app-progress-indicator *ngIf="(isOntologiesLoading$ | async) === true && (isProjectsLoading$ | async) === false && view !== 'graph'">
+        </dasch-swiss-app-progress-indicator>
     </div>
 
 </div>

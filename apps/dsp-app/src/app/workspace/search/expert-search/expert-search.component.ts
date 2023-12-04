@@ -16,12 +16,12 @@ import {
     ValidatorFn,
     Validators,
 } from '@angular/forms';
-import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 import {
     GravsearchSearchParams,
     SearchParamsService,
 } from '../services/search-params.service';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 /**
  * validator checking that the query does not contain a certain term, here OFFSET

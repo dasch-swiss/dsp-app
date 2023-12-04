@@ -1,8 +1,8 @@
-<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
-<div *ngIf="!loading" class="app-projects">
+<dasch-swiss-app-progress-indicator *ngIf="(isProjectsLoading$ | async) === true"></dasch-swiss-app-progress-indicator>
+<div *ngIf="(isProjectsLoading$ | async) === false" class="app-projects">
     <!-- <mat-divider></mat-divider> -->
     <app-projects-list
-        [list]="active"
+        [list]="activeProjects$ | async"
         [status]="true"
         (refreshParent)="refresh()"
         [createNew]="true"
@@ -10,7 +10,7 @@
     </app-projects-list>
     <!-- already deactivated projects: disable the menu -->
     <app-projects-list
-        [list]="inactive"
+        [list]="inactiveProjects$ | async"
         [status]="false"
         (refreshParent)="refresh()"
     ></app-projects-list>

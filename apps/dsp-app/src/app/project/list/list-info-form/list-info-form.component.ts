@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -22,9 +24,12 @@ import {
 } from '@dasch-swiss/dsp-js';
 import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { Store } from '@ngxs/store';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-list-info-form',
     templateUrl: './list-info-form.component.html',
     styleUrls: ['./list-info-form.component.scss'],
@@ -73,7 +78,9 @@ export class ListInfoFormComponent implements OnInit {
         private _errorHandler: AppErrorHandler,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _projectService: ProjectService
+        private _projectService: ProjectService,
+        private _cd: ChangeDetectorRef,
+        private _store: Store,
     ) {
         // in case of creating new
         if (this._route.parent) {
@@ -130,6 +137,7 @@ export class ListInfoFormComponent implements OnInit {
                     (response: ApiResponseData<ListInfoResponse>) => {
                         this.list = response.body.listinfo;
                         this.buildLists(response.body.listinfo);
+                        this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);
@@ -170,6 +178,7 @@ export class ListInfoFormComponent implements OnInit {
                 .updateListInfo(listInfoUpdateData)
                 .subscribe(
                     (response: ApiResponseData<ListInfoResponse>) => {
+                        this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
                         this.loading = false;
                         this.closeDialog.emit(response.body.listinfo);
                     },
@@ -189,6 +198,7 @@ export class ListInfoFormComponent implements OnInit {
                 .createList(listInfoData)
                 .subscribe(
                     (response: ApiResponseData<ListResponse>) => {
+                        this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
                         this.loading = false;
                         // go to the new list page
                         const array = response.body.list.listinfo.id.split('/');
@@ -196,6 +206,7 @@ export class ListInfoFormComponent implements OnInit {
                         this._router.navigate([RouteConstants.list, name], {
                             relativeTo: this._route.parent,
                         });
+                        this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);

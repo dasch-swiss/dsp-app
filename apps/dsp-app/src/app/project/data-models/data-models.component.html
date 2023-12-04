@@ -1,4 +1,4 @@
-<div *ngIf="!loading" class="data-models-container">
+<div *ngIf="(isLoading$ | async) === false" class="data-models-container">
     <div class="header">
         <p class="title">All Data Models</p>
         <mat-icon
@@ -9,7 +9,7 @@
             info
         </mat-icon>
     </div>
-    <div *ngIf="projectAdmin" class="action-buttons">
+    <div *ngIf="isAdmin$ | async" class="action-buttons">
         <button color="primary" mat-raised-button class="create" (click)="open('add-ontology')">
             <mat-icon class="v-align-middle">add_circle</mat-icon>
             <span class="v-align-middle">Create New</span>
@@ -19,24 +19,41 @@
             <mat-icon>chevron_right</mat-icon>
         </button>
     </div>
-    <div *ngIf="projectOntologies" class="projectOntos">
-        <div class="list" [class.top-padding]="projectAdmin">
-            <div
-                class="list-item ontos"
-                [class.no-click]="!session"
-                *ngFor="let onto of projectOntologies.ontologies"
-                (click)="session ? open('ontology', onto.id) : null">
+    <div *ngIf="ontologiesMetadata$ | async" class="projectOntos">
+        <div class="list" [class.top-padding]="isAdmin$ | async">
+            <ng-container *ngIf="(isLoggedIn$ | async) === true">
+            <div 
+                class="list-item ontos "
+                *ngFor="let onto of ontologiesMetadata$ | async; trackBy: trackByOntologyMetaFn"
+                (click)="open('ontology', onto.id)">
                 <mat-icon class="icon-prefix">bubble_chart</mat-icon>
                 <p
                     class="label"
                     matTooltip="You must be logged in to view data models"
                     matTooltipPosition="right"
-                    [matTooltipDisabled]="session">
+                    [matTooltipDisabled]="true">
                     {{onto.label}}
                 </p>
                 <span class="fill-remaining-space"></span>
                 <mat-icon class="icon-suffix">chevron_right</mat-icon>
             </div>
+            </ng-container>
+            <ng-container *ngIf="(isLoggedIn$ | async) === false">
+                <div
+                    class="list-item ontos no-click"
+                    *ngFor="let onto of ontologiesMetadata$ | async; trackBy: trackByOntologyMetaFn">
+                    <mat-icon class="icon-prefix">bubble_chart</mat-icon>
+                    <p
+                        class="label"
+                        matTooltip="You must be logged in to view data models"
+                        matTooltipPosition="right"
+                        [matTooltipDisabled]="false">
+                        {{onto.label}}
+                    </p>
+                    <span class="fill-remaining-space"></span>
+                    <mat-icon class="icon-suffix">chevron_right</mat-icon>
+                </div>
+                </ng-container>
         </div>
     </div>
     <div class="header">
@@ -49,15 +66,15 @@
             info
         </mat-icon>
     </div>
-    <div *ngIf="projectAdmin" class="action-buttons">
+    <div *ngIf="isAdmin$ | async" class="action-buttons">
         <button color="primary" mat-raised-button class="create" (click)="open('add-list')">
             <mat-icon class="v-align-middle">add_circle</mat-icon>
             <span class="v-align-middle">Create New</span>
         </button>
     </div>
-    <div *ngIf="projectLists" class="projectLists">
-        <div class="list" [class.top-padding]="projectAdmin">
-            <div class="list-item" *ngFor="let list of projectLists" (click)="open('list', list.id)">
+    <div *ngIf="(listsInProject$ | async)?.length > 0" class="projectLists">
+        <div class="list" [class.top-padding]="isAdmin$ | async">
+            <div class="list-item" *ngFor="let list of (listsInProject$ | async); trackBy: trackByFn" (click)="open('list', list.id)">
                 <mat-icon class="icon-prefix">list</mat-icon>
                 <p class="label">{{list.labels | appStringifyStringLiteral}}</p>
                 <span class="fill-remaining-space"></span>

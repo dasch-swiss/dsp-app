@@ -1,22 +1,17 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-    ApiResponseData,
-    ApiResponseError,
-    KnoraApiConnection,
     ListNodeInfo,
-    ListsResponse,
-    OntologiesMetadata,
-    UserResponse,
+    OntologyMetadata,
 } from '@dasch-swiss/dsp-js';
 import {AppConfigService, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { OntologyService } from '../ontology/ontology.service';
+import { Actions, Select, Store } from '@ngxs/store';
+import { ListsSelectors, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ProjectBase } from '../project-base';
+import { Title } from '@angular/platform-browser';
 
 // the routes available for navigation
 type DataModelRoute =
@@ -27,113 +22,58 @@ type DataModelRoute =
     | 'docs';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-data-models',
     templateUrl: './data-models.component.html',
     styleUrls: ['./data-models.component.scss'],
 })
-export class DataModelsComponent implements OnInit {
-    projectOntologies: OntologiesMetadata;
-    projectLists: ListNodeInfo[];
+export class DataModelsComponent extends ProjectBase implements OnInit {
+    get ontologiesMetadata$(): Observable<OntologyMetadata[]> {
+        const uuid = this._route.parent.snapshot.params.uuid;
+        const iri = `${this._appInit.dspAppConfig.iriBase}/projects/${uuid}`;
+        if (!uuid) {
+            return of({} as OntologyMetadata[]);
+        }
+        
+        return this._store.select(OntologiesSelectors.projectOntologies)
+            .pipe(
+                map(ontologies => {
+                    if (!ontologies || !ontologies[iri]) {
+                        return [];
+                    }
 
-    loading: boolean;
+                    return ontologies[iri].ontologiesMetadata;
+                })
+            )
+    }
 
-    // permissions of logged-in user
-    session: Session;
-    sysAdmin = false;
-    projectAdmin = false;
-    projectMember = false;
+    @Select(UserSelectors.isLoggedIn) isLoggedIn$: Observable<boolean>;
+    @Select(OntologiesSelectors.isLoading) isLoading$: Observable<boolean>;
+    @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
 
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: AppErrorHandler,
-        private _route: ActivatedRoute,
-        private _router: Router,
-        private _appInit: AppConfigService,
-        private _ontologyService: OntologyService,
-        private _session: SessionService
+        protected _route: ActivatedRoute,
+        protected _router: Router,
+        protected _appInit: AppConfigService,
+        protected _store: Store,
+        protected _projectService: ProjectService,
+        protected _titleService: Title,
+        protected _cd: ChangeDetectorRef,
+        protected _actions$: Actions,
     ) {
-        // get session
-        this.session = this._session.getSession();
+        super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
     }
 
     ngOnInit(): void {
-        this.loading = true;
+        super.ngOnInit();
         const uuid = this._route.parent.snapshot.params.uuid;
-        const iri = `${this._appInit.dspAppConfig.iriBase}/projects/${uuid}`;
-        this._dspApiConnection.v2.onto
-            .getOntologiesByProjectIri(iri)
-            .subscribe((ontologies: OntologiesMetadata) => {
-                this.projectOntologies = ontologies;
-                if (this.projectLists) {
-                    this.loading = false;
-                }
-            });
-
-        // get all project lists
-        this._dspApiConnection.admin.listsEndpoint
-            .getListsInProject(iri)
-            .subscribe(
-                (lists: ApiResponseData<ListsResponse>) => {
-                    this.projectLists = lists.body.lists;
-                    if (this.projectOntologies) {
-                        this.loading = false;
-                    }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-
-        // is logged-in user projectAdmin?
-        if (this.session) {
-            this.loading = true;
-
-            // is the logged-in user system admin?
-            this.sysAdmin = this.session.user.sysAdmin;
-
-            // is the logged-in user project admin?
-            this.projectAdmin = this.sysAdmin
-                ? this.sysAdmin
-                : this.session.user.projectAdmin.some((e) => e === iri);
-
-            // or at least project member?
-            if (!this.projectAdmin) {
-                this._dspApiConnection.admin.usersEndpoint
-                    .getUserByUsername(this.session.user.name)
-                    .subscribe(
-                        (res: ApiResponseData<UserResponse>) => {
-                            const usersProjects = res.body.user.projects;
-                            if (usersProjects.length === 0) {
-                                // the user is not part of any project
-                                this.projectMember = false;
-                            } else {
-                                // check if the user is member of the current project
-                                // id contains the iri
-                                this.projectMember = usersProjects.some(
-                                    (p) => p.id === iri
-                                );
-                            }
-                            // wait for onto and lists to load
-                            if (this.projectOntologies && this.projectLists) {
-                                this.loading = false;
-                            }
-                        },
-                        (error: ApiResponseError) => {
-                            this._errorHandler.showMessage(error);
-                            this.loading = false;
-                        }
-                    );
-            } else {
-                this.projectMember = this.projectAdmin;
-
-                // wait for onto and lists to load
-                if (this.projectOntologies && this.projectLists) {
-                    this.loading = false;
-                }
-            }
-        }
+        //TODO Soft or Hard loading?
+        //this._store.dispatch(new LoadListsInProjectAction(uuid)); 
     }
+
+    trackByFn = (index: number, item: ListNodeInfo) => `${index}-${item.id}`;
+
+    trackByOntologyMetaFn = (index: number, item: OntologyMetadata) => `${index}-${item.id}`;
 
     /**
      * handles routing to the correct path
@@ -144,7 +84,7 @@ export class DataModelsComponent implements OnInit {
 
         if (route === RouteConstants.ontology && id) {
             // get name of ontology
-            const ontoName = this._ontologyService.getOntologyName(id);
+            const ontoName = OntologyService.getOntologyName(id);
             this._router.navigate(
                 [route, encodeURIComponent(ontoName), RouteConstants.editor, RouteConstants.classes],
                 { relativeTo: this._route.parent }

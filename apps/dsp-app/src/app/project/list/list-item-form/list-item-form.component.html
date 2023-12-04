@@ -1,7 +1,12 @@
 <!-- add new node item -->
-<div class="new-list-item medium-field" *ngIf="newNode && projectAdmin">
-    <dasch-swiss-app-string-literal class="list-item-label" [placeholder]="placeholder" [value]="[]"
-        (dataChanged)="handleData($event)" [language]="language" (enter)="createChildNode()">
+<div class="new-list-item medium-field" *ngIf="newNode && isAdmin">
+    <dasch-swiss-app-string-literal 
+        class="list-item-label" 
+        [placeholder]="placeholder" 
+        [value]="[]"
+        (dataChanged)="handleData($event)" 
+        [language]="language" 
+        (enter)="createChildNode()">
     </dasch-swiss-app-string-literal>
     <button *ngIf="!loading" color="primary" mat-icon-button matSuffix [disabled]="!labels?.length" class="add-node-btn"
         (click)="createChildNode()">
@@ -17,9 +22,13 @@
     *ngIf="!newNode"
     (mouseenter)="mouseEnter()"
     (mouseleave)="mouseLeave()">
-    <dasch-swiss-app-string-literal class="list-item-label"
-        [placeholder]="labels | appStringifyStringLiteral:'all' | appTruncate: 128" [value]="labels" [readonly]="true"
-        (dataChanged)="handleData($event)" [language]="language">
+    <dasch-swiss-app-string-literal 
+        class="list-item-label"
+        [placeholder]="labels | appStringifyStringLiteral:'all' | appTruncate: 128" 
+        [value]="labels" 
+        [readonly]="true"
+        (dataChanged)="handleData($event)" 
+        [language]="language">
     </dasch-swiss-app-string-literal>
     <div class="action-bubble" *ngIf="showActionBubble && projectStatus" [@simpleFadeAnimation]="'in'">
         <div class="button-container">

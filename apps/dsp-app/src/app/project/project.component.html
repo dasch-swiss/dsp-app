@@ -1,4 +1,4 @@
-<div *ngIf="!error; else StatusMsg">
+<div *ngIf="(hasLoadingErrors$ | async) === false; else StatusMsg">
     <mat-sidenav-container class="project-view">
         <mat-sidenav #sidenav mode="side" [(opened)]="sideNavOpened" [disableClose]="true" class="project-nav">
             <div *ngIf="sideNavOpened" class="sidenav-collapse-btn">
@@ -9,17 +9,18 @@
             </div>
             <div class="main-content">
                 <!-- Project label -->
-                <div *ngIf="project !== undefined" class="project-title">
-                    <p #projectTitle matTooltip="{{project.longname}}" matTooltipShowDelay="500"
+                <div *ngIf="(readProject$ | async) !== undefined" class="project-title">
+                    <p #projectTitle matTooltip="{{(readProject$ | async)?.longname}}" matTooltipShowDelay="500"
                         [matTooltipDisabled]="compareElementHeights(projectTitle)" matTooltipPosition="right">
-                        {{project.longname}}
+                        {{(readProject$ | async)?.longname}}
                     </p>
                 </div>
                 <mat-list class="main-list">
 
                     <!-- Description Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item [ngClass]="{ 'active': listItemSelected === 'advanced-search'}" class="section-title" (click)="open(advancedSearchRoute)">
+                    <mat-list-item 
+                        [ngClass]="{ 'active': listItemSelected === routeConstants.advancedSearch}" class="section-title" (click)="open(routeConstants.advancedSearch)">
                         <span matListItemTitle class="section-label">
                             <mat-icon class="sidenav-prefix-icon">search</mat-icon>
                             <p>Advanced Search</p>
@@ -30,7 +31,10 @@
 
                     <!-- Description Section -->
                     <mat-divider></mat-divider>
-                    <mat-list-item [ngClass]="{ 'active': listItemSelected === '/' + projectRoute + '/' + projectUuid}" class="section-title" (click)="open(projectRoute, projectUuid)">
+                    <mat-list-item [ngClass]="{ 'active': listItemSelected === routeConstants.projectRelative + '/' + projectUuid }"
+                        class="section-title" 
+                        (click)="open(routeConstants.project, projectUuid)"
+                    >
                         <span matListItemTitle class="section-label">
                             <mat-icon class="sidenav-prefix-icon">description</mat-icon>
                             <p>Project Description</p>
@@ -51,7 +55,7 @@
                     <mat-divider></mat-divider>
 
                     <!-- Project Ontologies -->
-                    <mat-accordion *ngFor="let onto of projectOntologies; let first = first"
+                    <mat-accordion *ngFor="let onto of projectOntologies$ | async; trackBy: trackByFn; let first = first"
                         multi
                         [displayMode]="'flat'">
                         <mat-expansion-panel [expanded]="first">
@@ -67,15 +71,14 @@
                                 </div>
                             </mat-expansion-panel-header>
                             <!-- list of ontology classes -->
-                            <app-ontology-classes [resClasses]="onto.getAllClassDefinitions()"
-                                [projectMember]="projectMember">
+                            <app-ontology-classes [resClasses]="getAllEntityDefinitionsAsArray(onto.classes)"
+                                [projectMember]="isAdmin$ | async">
                             </app-ontology-classes>
                         </mat-expansion-panel>
                         <mat-divider></mat-divider>
                     </mat-accordion>
-
                     <div class="sidenav-footer"
-                        *ngIf="projectAdmin">
+                        *ngIf="isAdmin$ | async">
                         <mat-list-item [ngClass]="{ 'active': listItemSelected === settingsRoute}" class="section-title footer"
                             (click)="open(settingsRoute)">
                             <span matListItemTitle class="section-label">
@@ -97,8 +100,8 @@
                 </button>
             </div>
             <div class="main-content">
-                <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
-                <router-outlet *ngIf="!loading"></router-outlet>
+                <dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+                <router-outlet></router-outlet>
             </div>
         </mat-sidenav-content>
     </mat-sidenav-container>
@@ -107,7 +110,6 @@
 
 <ng-template #StatusMsg>
     <div class="content large middle">
-        <app-status *ngIf="error"
-            [status]="404"></app-status>
+        <app-status *ngIf="hasLoadingErrors$ | async" [status]="404"></app-status>
     </div>
 </ng-template>

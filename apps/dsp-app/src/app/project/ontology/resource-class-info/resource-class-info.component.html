@@ -54,19 +54,19 @@
     </mat-card-header>
     <!-- resource class card content with list of properties -->
 
-    <mat-card-content *ngIf="expanded" class="resource-class-content">
-        <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event)"
-            *ngIf="propsToDisplay.length; else noProperties">
+    <mat-card-content *ngIf="expanded && currentOntologyPropertiesToDisplay$ | async as currentOntologyPropertiesToDisplay" class="resource-class-content">
+        <mat-list cdkDropList class="resource-class-properties" (cdkDropListDropped)="drop($event, currentOntologyPropertiesToDisplay)"
+            *ngIf="currentOntologyPropertiesToDisplay?.length; else noProperties">
             <div cdkDrag
                 [cdkDragDisabled]="(!ontology.lastModificationDate || !canChangeGuiOrder) || !userCanEdit"
-                *ngFor="let prop of propsToDisplay; let i = index;">
+                *ngFor="let prop of currentOntologyPropertiesToDisplay; let i = index; trackBy: trackByPropToDisplayFn">
                 <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
                 <mat-list-item class="property" [disabled]="loadProperty">
                     <span cdkDragHandle matListItemIcon class="list-icon gui-order">
-                        <span [class.hide-on-hover]="canChangeGuiOrder && lastModificationDate && userCanEdit">
+                        <span [class.hide-on-hover]="canChangeGuiOrder && (lastModificationDate$ | async) && userCanEdit">
                             {{i + 1}})
                         </span>
-                        <span *ngIf="canChangeGuiOrder && lastModificationDate &&  userCanEdit"
+                        <span *ngIf="canChangeGuiOrder && (lastModificationDate$ | async) &&  userCanEdit"
                             class="display-on-hover drag-n-drop-handle">
                             <mat-icon>drag_indicator</mat-icon>
                         </span>
@@ -75,14 +75,14 @@
                      objectType is not a linkValue (otherwise we have the property twice) -->
                     <span matListItemTitle>
                         <app-resource-class-property-info class="property-info"
-                            [propDef]="propsToDisplay[i].propDef"
-                            [propCard]="propsToDisplay[i]"
+                            [propDef]="currentOntologyPropertiesToDisplay[i]?.propDef"
+                            [propCard]="currentOntologyPropertiesToDisplay[i]"
                             [projectUuid]="projectUuid"
                             [resourceIri]="resourceClass.id"
-                            [lastModificationDate]="lastModificationDate"
+                            [lastModificationDate]="lastModificationDate$ | async"
                             [userCanEdit]="userCanEdit"
-                            (removePropertyFromClass)="removeProperty($event)"
-                            (changeCardinalities)="changeCardinalities($event)">
+                            (removePropertyFromClass)="removeProperty($event, currentOntologyPropertiesToDisplay)"
+                            (changeCardinalities)="changeCardinalities($event, currentOntologyPropertiesToDisplay)">
                         </app-resource-class-property-info>
                     </span>
                 </mat-list-item>
@@ -95,7 +95,7 @@
         <!-- button to assign new property to class -->
         <mat-list>
             <!-- here we have to know if the class has values or not -->
-            <mat-list-item *ngIf="lastModificationDate && projectStatus && userCanEdit" class="property link"
+            <mat-list-item *ngIf="(lastModificationDate$ | async) && projectStatus && userCanEdit" class="property link"
                 [matMenuTriggerFor]="addPropertyMenu">
                 <mat-icon matListItemIcon class="list-icon">add</mat-icon>
                 <span matListItemTitle>Add property</span>
@@ -107,23 +107,23 @@
             <button mat-menu-item [matMenuTriggerFor]="addExistingProp">Add existing property</button>
         </mat-menu>
         <mat-menu #newFromPropType="matMenu">
-            <ng-container *ngFor="let type of defaultProperties">
+            <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropCategoryFn">
                 <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                 <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-                    <button mat-menu-item *ngFor="let ele of type.elements" [value]="ele" [matTooltip]="ele.description"
-                        matTooltipPosition="after" (click)="addNewProperty(ele)">
+                    <button mat-menu-item *ngFor="let ele of type.elements; trackBy: trackByDefaultPropertyFn" [value]="ele" [matTooltip]="ele.description"
+                        matTooltipPosition="after" (click)="addNewProperty(ele, currentOntologyPropertiesToDisplay)">
                         <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
                     </button>
                 </mat-menu>
             </ng-container>
         </mat-menu>
         <mat-menu #addExistingProp="matMenu" class="default-nested-sub-menu">
-            <ng-container *ngFor="let onto of existingProperties">
+            <ng-container *ngFor="let onto of existingProperties$ | async; trackBy: trackByPropToAddFn">
                 <button mat-menu-item [disabled]="!onto.properties.length" [matMenuTriggerFor]="sub_menu">{{
                     onto.ontologyLabel }}</button>
                 <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
-                    <button mat-menu-item *ngFor="let prop of onto.properties" [matTooltip]="prop.propDef.comment"
-                        matTooltipPosition="after" (click)="addExistingProperty(prop)">
+                    <button mat-menu-item *ngFor="let prop of onto.properties; trackBy: trackByPropFn" [matTooltip]="prop.propDef.comment"
+                        matTooltipPosition="after" (click)="addExistingProperty(prop, currentOntologyPropertiesToDisplay)">
                         <mat-icon>{{prop.propType?.icon}}</mat-icon> {{prop.propDef.label}}
                     </button>
                 </mat-menu>

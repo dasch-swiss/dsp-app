@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
@@ -25,7 +24,6 @@ import { SortButtonComponent } from './main/action/sort-button/sort-button.compo
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
 import {
     DspApiConfigToken,
-    DspApiConnectionToken,
     DspAppConfigToken,
     DspInstrumentationToken,
 } from '@dasch-swiss/vre/shared/app-config';
@@ -159,6 +157,9 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
+import { apiConnectionTokenProvider } from './providers/api-connection-token.provider';
+import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
 import { AppProgressIndicatorComponent } from "@dasch-swiss/vre/shared/app-progress-indicator";
 import {AppStringLiteralComponent} from "@dasch-swiss/vre/shared/app-string-literal";
 
@@ -320,6 +321,8 @@ export function httpLoaderFactory(httpClient: HttpClient) {
             },
         }),
         AppStringLiteralComponent,
+        NgxsStoreModule,
+        NgxsStoragePluginModule.forRoot(),
     ],
     providers: [
         AppConfigService,
@@ -332,12 +335,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
                 appConfigService.dspApiConfig,
             deps: [AppConfigService],
         },
-        {
-            provide: DspApiConnectionToken,
-            useFactory: (appConfigService: AppConfigService) =>
-                new KnoraApiConnection(appConfigService.dspApiConfig),
-            deps: [AppConfigService],
-        },
+        apiConnectionTokenProvider,
         {
             provide: DspAppConfigToken,
             useFactory: (appConfigService: AppConfigService) =>

@@ -3,8 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { PendoAnalyticsService } from './pendo-analytics.service';
 import { MockProvider } from 'ng-mocks';
 import { DspInstrumentationToken } from '@dasch-swiss/vre/shared/app-config';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 
 describe('PendoAnalyticsService', () => {
     let service: PendoAnalyticsService;
@@ -16,7 +16,7 @@ describe('PendoAnalyticsService', () => {
         TestBed.configureTestingModule({
             providers: [
                 MockProvider(DspInstrumentationToken, {}),
-                MockProvider(SessionService, {
+                MockProvider(AuthService, {
                     isSessionValid: () => isSessionValidResult,
                 }),
             ],

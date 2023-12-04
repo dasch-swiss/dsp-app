@@ -1,5 +1,5 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {
     ClassDefinition,
     KnoraApiConnection,
@@ -15,9 +15,10 @@ import {
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { OntologyService } from '@dsp-app/src/app/project/ontology/ontology.service';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-ontology-class-item',
     templateUrl: './ontology-class-item.component.html',
     styleUrls: ['./ontology-class-item.component.scss'],
@@ -54,9 +55,7 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: AppErrorHandler,
-        private _ontologyService: OntologyService,
         private _route: ActivatedRoute,
-        private _router: Router,
         private _componentCommsService: ComponentCommunicationEventService,
         private _cdr: ChangeDetectorRef,
     ) {}
@@ -64,8 +63,8 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     ngOnInit(): void {
         const uuid = this._route.snapshot.params.uuid;
         const splitIri = this.resClass.id.split('#');
-        const ontologyName = this._ontologyService.getOntologyName(splitIri[0]);
-        this.classLink = `/${RouteConstants.project}/${uuid}/${RouteConstants.ontology}/${ontologyName}/${splitIri[1]}`;
+        const ontologyName = OntologyService.getOntologyName(splitIri[0]);
+        this.classLink = `${RouteConstants.projectRelative}/${uuid}/${RouteConstants.ontology}/${ontologyName}/${splitIri[1]}`;
 
         this.gravsearch = this._setGravsearch(this.resClass.id);
 
@@ -157,6 +156,7 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
             .subscribe(
                 (res: CountQueryResponse) => {
                     this.results = res.numberOfResults;
+                    this._cdr.markForCheck();
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);

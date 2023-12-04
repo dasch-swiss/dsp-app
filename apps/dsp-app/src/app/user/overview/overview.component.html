@@ -1,9 +1,10 @@
 <div class="content extra-large middle">
-    <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+    <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
-    <div *ngIf="!loading" class="overview">
+    <div class="overview">
+
         <!-- user is a system admin -->
-        <div *ngIf="sysAdmin">
+        <div *ngIf="(isSysAdmin$ | async) && (isProjectsLoading$ | async) === false">
             <!-- list all projects -->
             <div class="title-bar admin">
                 <div class="title">
@@ -21,20 +22,18 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let proj of otherProjects"
+                    *ngFor="let proj of allProjects$ | async"
                     class="project-tile-container"
                 >
                     <app-project-tile
                         [project]="proj"
                         [sysAdmin]="true"
-                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
         </div>
-
         <!-- user is logged in and not a system admin -->
-        <div *ngIf="!sysAdmin && this.session">
+        <div *ngIf="(isSysAdmin$ | async) === false && !!(user$ | async)">
             <div class="title-bar">
                 <div class="title">
                     <p>My Projects</p>
@@ -42,13 +41,12 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let userProj of userProjects"
+                    *ngFor="let userProj of userActiveProjects$ | async"
                     class="project-tile-container"
                 >
                     <app-project-tile
                         [project]="userProj"
                         [sysAdmin]="false"
-                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
@@ -59,20 +57,19 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let otherProj of otherProjects"
+                    *ngFor="let otherProj of userOtherActiveProjects$ | async"
                     class="project-tile-container"
                 >
                     <app-project-tile
                         [project]="otherProj"
                         [sysAdmin]="false"
-                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
         </div>
 
         <!-- user is not logged in -->
-        <div *ngIf="!sysAdmin && !this.session">
+        <div *ngIf="((isProjectsLoading$ | async) === false) && !!((user$ | async))">
             <!-- list all projects -->
             <div class="title-bar admin">
                 <div class="title">
@@ -81,16 +78,16 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let proj of otherProjects"
+                    *ngFor="let proj of allActiveProjects$ | async"
                     class="project-tile-container"
                 >
                     <app-project-tile
                         [project]="proj"
                         [sysAdmin]="false"
-                        (buttonClicked)="navigateTo($event)"
                     ></app-project-tile>
                 </div>
             </div>
         </div>
+
     </div>
 </div>

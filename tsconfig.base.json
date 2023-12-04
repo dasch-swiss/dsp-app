@@ -27,6 +27,7 @@
       "@dasch-swiss/vre/advanced-search": [
         "libs/vre/advanced-search/src/index.ts"
       ],
+      "@dasch-swiss/shared/prelude": ["libs/shared/prelude/src/index.ts"],
       "@dasch-swiss/vre/shared/app-analytics": [
         "libs/vre/shared/app-analytics/src/index.ts"
       ],
@@ -38,6 +39,9 @@
       ],
       "@dasch-swiss/vre/shared/app-error-handler": [
         "libs/vre/shared/app-error-handler/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-state": [
+        "libs/vre/shared/app-state/src/index.ts"
       ],
       "@dasch-swiss/vre/shared/app-logging": [
         "libs/vre/shared/app-logging/src/index.ts"
@@ -59,6 +63,9 @@
       ],
       "@dasch-swiss/vre/shared/app-string-literal": [
         "libs/vre/shared/app-string-literal/src/index.ts"
+      ],
+      "@dasch-swiss/vre/shared/app-helper-services": [
+        "libs/vre/shared/app-helper-services/src/index.ts"
       ],
       "@dsp-app/*": ["apps/dsp-app/*"]
     }

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import {
+    ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     Inject,
@@ -30,17 +31,14 @@ import {
     ReadResourceSequence,
     ReadStillImageFileValue,
     ReadTextFileValue,
+    ReadUser,
     SystemPropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
 import { SplitSize } from '../results/results.component';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { PropertyInfoValues } from './properties/properties.component';
@@ -59,14 +57,20 @@ import {
     UpdatedFileEventValue,
     ValueOperationEventService,
 } from './services/value-operation-event.service';
+import { Select } from '@ngxs/store';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-resource',
     templateUrl: './resource.component.html',
     styleUrls: ['./resource.component.scss'],
     providers: [ValueOperationEventService], // provide service on the component level so that each implementation of this component has its own instance.
 })
 export class ResourceComponent implements OnChanges, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    
     @ViewChild('stillImage') stillImageComponent: StillImageComponent;
 
     @Input() resourceIri: string;
@@ -120,15 +124,28 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
     refresh: boolean;
 
-    // permissions of logged-in user
-    session: Session;
-    adminPermissions = false;
-
     navigationSubscription: Subscription;
 
     valueOperationEventSubscriptions: Subscription[] = [];
 
     showRestrictedMessage = true;
+
+    attachedToProjectResource = '';
+
+    get isAdmin$(): Observable<boolean> {
+        return combineLatest([this.user$, this.userProjectAdminGroups$])
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(([user, userProjectGroups]) => {
+                    return this.attachedToProjectResource 
+                        ? this._projectService.isProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
+                        : false;
+                })
+            )
+    }
+
+    @Select(UserSelectors.user) user$: Observable<ReadUser>;
+    @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
 
     constructor(
         @Inject(DspApiConnectionToken)
@@ -139,10 +156,10 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         private _resourceService: ResourceService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _session: SessionService,
         private _titleService: Title,
         private _valueOperationEventService: ValueOperationEventService,
-        private _cdr:ChangeDetectorRef
+        private _cdr:ChangeDetectorRef,
+        private _projectService: ProjectService,
     ) {
         this._route.params.subscribe((params) => {
             this.projectCode = params['project'];
@@ -218,6 +235,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         if (this.incomingRegionsSub) {
             this.incomingRegionsSub.unsubscribe();
         }
+
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     // reload the page with the same resource
@@ -256,19 +276,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
             this.collectRepresentationsAndAnnotations(this.incomingResource);
     }
 
-    setAdminPermissionsOnResource(project: string) {
-        const session = this._session.getSession();
-        if (session) {
-            this.session = session;
-            // is the logged-in user system admin or project admin?
-            this.adminPermissions = this.session.user.sysAdmin
-                ? this.session.user.sysAdmin
-                : this.session.user.projectAdmin.some(
-                      (e) => e === project // this.resource.res.attachedToProject
-                  );
-        }
-    }
-
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
     // get and display resource
@@ -300,7 +307,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         } else {
             this.renderAsMainResource(resource);
         }
-        this.setAdminPermissionsOnResource(resource.res.attachedToProject);
+
+        this.attachedToProjectResource = resource.res.attachedToProject;
+        this._cdr.markForCheck();
     }
 
     renderAsMainResource(resource: DspResource) {
@@ -331,10 +340,12 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                             // not a compound object
                             this.loading = false;
                         }
+                        this._cdr.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         this.loading = false;
                         this._errorHandler.showMessage(error);
+                        this._cdr.markForCheck();
                     }
                 );
 
@@ -653,6 +664,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                     } else {
                         this.loading = false;
                         this.representationsToDisplay = [];
+                        this._cdr.markForCheck();
                     }
                 },
                 (error: ApiResponseError) => {

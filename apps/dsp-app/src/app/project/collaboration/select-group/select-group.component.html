@@ -1,4 +1,4 @@
-<mat-form-field *ngIf="projectGroups.length > 0">
+<mat-form-field *ngIf="(projectGroups$ | async)?.length > 0">
     <mat-select
         placeholder="Permission group"
         [formControl]="groupCtrl"
@@ -7,7 +7,7 @@
         (openedChange)="onGroupChange()"
     >
         <mat-option
-            *ngFor="let group of projectGroups"
+            *ngFor="let group of (projectGroups$ | async); trackBy: trackByFn"
             [value]="group.iri"
             [disabled]="disabled"
         >
@@ -16,6 +16,6 @@
     </mat-select>
 </mat-form-field>
 
-<div *ngIf="projectGroups.length === 0" class="center">
+<div *ngIf="(projectGroups$ | async)?.length === 0" class="center">
     No group defined yet.
 </div>

@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -20,9 +22,10 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-edit-list-item',
     templateUrl: './edit-list-item.component.html',
     styleUrls: ['./edit-list-item.component.scss'],
@@ -75,7 +78,8 @@ export class EditListItemComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: AppErrorHandler,
-        private _projectService: ProjectService
+        private _projectService: ProjectService,
+        private _cd: ChangeDetectorRef
     ) {}
 
     ngOnInit(): void {
@@ -90,6 +94,7 @@ export class EditListItemComponent implements OnInit {
                         this.loading = false;
                         this.listNode = response.body.nodeinfo;
                         this.buildForm(response.body.nodeinfo);
+                        this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);

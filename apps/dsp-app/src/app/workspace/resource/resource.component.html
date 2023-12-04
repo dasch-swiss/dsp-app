@@ -72,7 +72,7 @@
                     <app-properties *ngIf="resource.res"
                         [resource]="resource"
                         [displayProjectInfo]="true"
-                        [adminPermissions]="adminPermissions"
+                        [adminPermissions]="isAdmin$ | async"
                         [valueUuidToHighlight]="valueUuid">
                     </app-properties>
                 </mat-tab>
@@ -83,7 +83,7 @@
                     <app-properties *ngIf="incomingResource.res"
                         [resource]="incomingResource"
                         [displayProjectInfo]="false"
-                        [adminPermissions]="adminPermissions"
+                        [adminPermissions]="isAdmin$ | async"
                         [valueUuidToHighlight]="valueUuid">
                     </app-properties>
                 </mat-tab>
@@ -104,7 +104,7 @@
                             [resource]="annotation"
                             [displayProjectInfo]="false"
                             [isAnnotation]="true"
-                            [adminPermissions]="adminPermissions"
+                            [adminPermissions]="isAdmin$ | async"
                             [valueUuidToHighlight]="valueUuid"
                             (regionChanged)="updateRegion()"
                             (regionDeleted)="reloadWithResource()">
@@ -115,7 +115,7 @@
             </mat-tab-group>
             <ng-template #deletedResource>
                 <app-properties *ngIf="resource.res" [resource]="resource" [displayProjectInfo]="true"
-                    [adminPermissions]="adminPermissions" [valueUuidToHighlight]="valueUuid">
+                    [adminPermissions]="isAdmin$ | async" [valueUuidToHighlight]="valueUuid">
                 </app-properties>
             </ng-template>
         </div>

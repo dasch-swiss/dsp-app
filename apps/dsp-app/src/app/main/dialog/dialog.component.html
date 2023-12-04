@@ -18,12 +18,12 @@
     <!-- Modify user data -->
     <div *ngSwitchCase="'editUser'">
         <app-dialog-header
-            [title]="data.name"
+            [title]="data.user.username"
             [subtitle]="'appLabels.form.user.title.edit' | translate"
         >
         </app-dialog-header>
         <app-user-form
-            [username]="data.name"
+            [user]="data.user"
             (closeDialog)="dialogRef.close()"
         ></app-user-form>
     </div>
@@ -31,12 +31,12 @@
     <!-- Update password -->
     <div *ngSwitchCase="'editPassword'">
         <app-dialog-header
-            [title]="data.name"
+            [title]="data.user.username"
             [subtitle]="'appLabels.form.user.title.password' | translate"
         >
         </app-dialog-header>
         <app-password-form
-            [username]="data.name"
+            [user]="data.user"
             (closeDialog)="dialogRef.close()"
         ></app-password-form>
     </div>
@@ -133,12 +133,12 @@
     <!-- Manage user project membership -->
     <div *ngSwitchCase="'manageProjectMembership'">
         <app-dialog-header
-            [title]="data.name"
+            [title]="data.user.username"
             [subtitle]="'Manage project membership'"
         >
         </app-dialog-header>
         <app-membership
-            [username]="data.name"
+            [user]="data.user"
             (closeDialog)="dialogRef.close()"
         ></app-membership>
         <mat-dialog-actions>
@@ -413,7 +413,7 @@
             [iri]="data.id"
             [name]="data.title"
             [projectUuid]="data.project"
-            (closeDialog)="dialogRef.close()"
+            (closeDialog)="dialogRef.close($event)"
             (updateParent)="replaceTitle($event)"
         >
         </app-resource-class-form>
@@ -427,7 +427,7 @@
             [name]="data.title"
             [projectUuid]="data.project"
             [edit]="true"
-            (closeDialog)="dialogRef.close()"
+            (closeDialog)="dialogRef.close($event)"
         >
         </app-resource-class-form>
     </div>
@@ -493,7 +493,7 @@
             [propertyInfo]="data.propInfo"
             [resClassIri]="data.parentIri"
             [guiOrder]="data.position"
-            (closeDialog)="dialogRef.close()"
+            (closeDialog)="dialogRef.close($event)"
         >
         </app-property-form>
     </div>
@@ -655,7 +655,6 @@
             ></app-replace-file-form>
         </mat-dialog-content>
     </div>
-
     <div *ngSwitchCase="'linkResources'">
         <app-dialog-header
             [title]="data.title"

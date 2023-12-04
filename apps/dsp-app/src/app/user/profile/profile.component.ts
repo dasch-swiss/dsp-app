@@ -1,105 +1,72 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
-    Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import {
-    ApiResponseData,
-    ApiResponseError,
-    KnoraApiConnection,
     ReadUser,
-    UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { DialogComponent } from '../../main/dialog/dialog.component';
+import { Select, Store } from '@ngxs/store';
+import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-profile',
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit {
-    @Input() username: string;
+export class ProfileComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @Input() loggedInUser?: boolean = false;
 
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
 
-    loading: boolean;
-    error: boolean;
-
-    sysAdmin = false;
-
-    user: ReadUser;
-
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+    @Select(UserSelectors.user) user$: Observable<ReadUser>;
+    @Select(UserSelectors.isLoading) isLoading$: Observable<boolean>;
+    
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
         private _dialog: MatDialog,
-        private _errorHandler: AppErrorHandler,
-        private _session: SessionService,
-        private _titleService: Title
+        private _titleService: Title,
+        private _store: Store,
     ) {
-        // get info about the logged-in user: does he have the right to change user's profile?
-        if (this._session.getSession() && !this.loggedInUser) {
-            this.sysAdmin = this._session.getSession().user.sysAdmin;
-        }
     }
 
     ngOnInit() {
-        this.getUser();
+        this.user$.pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(user => 
+                this._titleService.setTitle(`${user.username} (${user.givenName} ${user.familyName})`));
+            
     }
 
-    getUser() {
-        this.loading = true;
-
-        this._dspApiConnection.admin.usersEndpoint
-            .getUserByUsername(this.username)
-            .subscribe(
-                (response: ApiResponseData<UserResponse>) => {
-                    this.user = response.body.user;
-
-                    // set the page title
-                    this._titleService.setTitle(
-                        this.user.username +
-                            ' (' +
-                            this.user.givenName +
-                            ' ' +
-                            this.user.familyName +
-                            ')'
-                    );
-
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                    this.loading = false;
-                }
-            );
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
-    openDialog(mode: string, name: string): void {
+    openDialog(mode: string, user: ReadUser): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',
             position: {
                 top: '112px',
             },
-            data: { name: name, mode: mode },
+            data: { user, mode },
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(() => {
-            // update the view
-            this.getUser();
-        });
+        dialogRef.afterClosed()
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(() => this._store.dispatch(new LoadUserAction(user.username)));
     }
 }

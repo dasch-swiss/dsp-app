@@ -3,11 +3,11 @@ import {
     MatDialogRef,
     MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { Cardinality, ReadResource } from '@dasch-swiss/dsp-js';
-import { PropertyInfoObject } from '@dsp-app/src/app/project/ontology/default-data/default-properties';
+import { Cardinality, ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
+import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { FilteredResources } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
-import { PropToDisplay } from '../../project/ontology/resource-class-info/resource-class-info.component';
+import { PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
 
 export interface DialogData {
     mode: string; // switch mode
@@ -17,6 +17,7 @@ export interface DialogData {
     subtitle?: string;
     comment?: string;
     name?: string;
+    user?: ReadUser;
     existing?: string[];
     propInfo?: PropertyInfoObject;
     currentCardinality?: Cardinality;
@@ -48,6 +49,7 @@ export enum DialogEvent {
     styleUrls: ['./dialog.component.scss'],
 })
 export class DialogComponent {
+    DialogEvent = DialogEvent;
     notYetImplemented = `The component <strong>${this.data.mode}</strong> is not implemented yet.`;
 
     comment?: string;

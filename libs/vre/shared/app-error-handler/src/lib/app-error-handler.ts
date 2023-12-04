@@ -13,7 +13,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { AjaxError } from 'rxjs/ajax';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -26,7 +25,6 @@ export class AppErrorHandler implements ErrorHandler {
     appLoggingService: AppLoggingService = inject(AppLoggingService);
     dataAccessService: DataAccessService = inject(DataAccessService);
     notificationService: NotificationService = inject(NotificationService);
-    sessionService: SessionService = inject(SessionService);
     httpStatusMsg: HttpStatusMsg = inject(HttpStatusMsg);
 
     /**
@@ -112,9 +110,6 @@ export class AppErrorHandler implements ErrorHandler {
             // logout if error status is a 401 error and comes from a DSP-JS request
             this.dataAccessService.logout().subscribe(
                 () => {
-                    // destroy session
-                    this.sessionService.destroySession();
-
                     // reload the page
                     window.location.reload();
                 },

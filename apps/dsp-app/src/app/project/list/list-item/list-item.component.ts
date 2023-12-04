@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -13,20 +15,16 @@ import {
     ListChildNodeResponse,
     ListNode,
     ListResponse,
-    ReadProject,
     RepositionChildNodeRequest,
     RepositionChildNodeResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ListNodeOperation } from '../list-item-form/list-item-form.component';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import { take } from 'rxjs/operators';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-list-item',
     templateUrl: './list-item.component.html',
     styleUrls: ['./list-item.component.scss'],
@@ -51,9 +49,7 @@ export class ListItemComponent implements OnInit {
     >();
 
     // permissions of logged-in user
-    session: Session;
-    sysAdmin = false;
-    projectAdmin = false;
+    @Input() isAdmin = false;
 
     expandedNode: string;
 
@@ -61,43 +57,21 @@ export class ListItemComponent implements OnInit {
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: AppErrorHandler,
-        private _session: SessionService,
-        private _applicationStateService: ApplicationStateService
+        private _cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit() {
-        // get information about the logged-in user
-        this.session = this._session.getSession();
-
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session ? this.session.user.sysAdmin : false;
-
-        if (this.session) {
-            // get the project data from application state service
-            this._applicationStateService.get(this.projectUuid).subscribe(
-                (response: ReadProject) => {
-                    // is logged-in user projectAdmin?
-                    this.projectAdmin = this.sysAdmin
-                        ? this.sysAdmin
-                        : this.session.user.projectAdmin.some(
-                              (e) => e === response.id
-                          );
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-        }
-
         // in case of parent node: run the following request to get the entire list
         if (!this.childNode) {
             this._dspApiConnection.admin.listsEndpoint
                 .getList(this.parentIri)
+                .pipe(take(1))
                 .subscribe(
                     (result: ApiResponseData<ListResponse>) => {
                         this.list = result.body.list.children;
                         this.language =
                             result.body.list.listinfo.labels[0].language;
+                        this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         this._errorHandler.showMessage(error);
@@ -167,6 +141,7 @@ export class ListItemComponent implements OnInit {
 
                                 // emit the updated list of children to the parent node
                                 this.refreshChildren.emit(this.list);
+                                this._cd.markForCheck();
                             },
                             (error: ApiResponseError) => {
                                 this._errorHandler.showMessage(error);
@@ -211,6 +186,7 @@ export class ListItemComponent implements OnInit {
                                 this.list = res.body.node.children;
 
                                 this.refreshChildren.emit(this.list);
+                                this._cd.markForCheck();
                             }
                         );
                     break;

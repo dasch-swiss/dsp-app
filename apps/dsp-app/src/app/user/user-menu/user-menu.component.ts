@@ -1,80 +1,59 @@
-import { Component, Inject, Input, OnChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
-    ApiResponseData,
-    ApiResponseError,
-    KnoraApiConnection,
-    ReadUser,
-    UserResponse,
+    User,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { AuthenticationService } from '@dsp-app/src/app/main/services/authentication.service';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
-import { MenuItem } from '../../main/declarations/menu-item';
+import { AuthService } from '@dasch-swiss/vre/shared/app-session';
+import { MenuItem } from '@dsp-app/src/app/main/declarations/menu-item';
+import { Observable, Subject } from 'rxjs';
+import { Select } from '@ngxs/store';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
     selector: 'app-user-menu',
     templateUrl: './user-menu.component.html',
     styleUrls: ['./user-menu.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserMenuComponent implements OnChanges {
-    @Input() session: boolean;
-
+export class UserMenuComponent implements OnInit, OnDestroy {
     @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
-
-    user: ReadUser;
-
-    username: string;
-
-    sysAdmin = false;
-
+    
+    routeConstants = RouteConstants;
     navigation: MenuItem[];
+
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    
+    isLoggedIn$: Observable<boolean> = this._authService.isLoggedIn$;
+    @Select(UserSelectors.user) user$: Observable<User>;
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<User>;
 
     systemLink = RouteConstants.system;
 
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _auth: AuthenticationService,
-        private _applicationStateService: ApplicationStateService,
-        private _errorHandler: AppErrorHandler,
-        private _session: SessionService
+        private _authService: AuthService,
     ) {}
 
-    ngOnChanges() {
+    ngOnInit() {
         this.navigation = [
             {
                 label: 'DSP-App Home Page',
                 shortLabel: 'home',
-                route: RouteConstants.home,
+                route: this.routeConstants.homeRelative,
                 icon: '',
             },
             {
                 label: 'My Account',
                 shortLabel: 'Account',
-                route: RouteConstants.userAccount,
+                route: this.routeConstants.userAccountRelative,
                 icon: '',
             },
         ];
+    }
 
-        if (this.session) {
-            this.username = this._session.getSession().user.name;
-            this.sysAdmin = this._session.getSession().user.sysAdmin;
-
-            this._dspApiConnection.admin.usersEndpoint
-                .getUserByUsername(this.username)
-                .subscribe(
-                    (response: ApiResponseData<UserResponse>) => {
-                        this.user = response.body.user;
-                        this._applicationStateService.set(this.username, this.user);
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
-        }
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
@@ -82,13 +61,15 @@ export class UserMenuComponent implements OnChanges {
      *
      */
     logout() {
-        this._auth.logout();
+        this._authService.logout();
     }
 
     /**
      * closes menu in case of submitting login form
      */
-    closeMenu() {
-        this.menuTrigger.closeMenu();
+    closeMenu(loginSuccess: boolean) {
+        if (loginSuccess) {
+            this.menuTrigger.closeMenu();
+        }
     }
 }

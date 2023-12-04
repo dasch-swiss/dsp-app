@@ -13,17 +13,17 @@ import {
     Validators,
 } from '@angular/forms';
 import {
-    ApiResponseData,
     ApiResponseError,
     KnoraApiConnection,
     ReadUser,
-    UserResponse,
+    User,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
+import { Store } from '@ngxs/store';
 
 @Component({
     selector: 'app-password-form',
@@ -32,7 +32,7 @@ import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-r
 })
 export class PasswordFormComponent implements OnInit {
     // update password for:
-    @Input() username: string;
+    @Input() user: ReadUser;
 
     // output to close dialog
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
@@ -44,12 +44,6 @@ export class PasswordFormComponent implements OnInit {
     loading: boolean;
     error: boolean;
 
-    user: ReadUser;
-
-    loggedInUserName: string;
-
-    // who is logged in?
-    // loggedInUserName: string;
     // update own password?
     updateOwn: boolean;
 
@@ -99,44 +93,25 @@ export class PasswordFormComponent implements OnInit {
         private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
         private _notification: NotificationService,
-        private _session: SessionService
+        private store: Store,
     ) {}
 
     ngOnInit() {
-        this.loading = true;
-
-        const session = this._session.getSession();
-
-        if (this.username) {
+        const usernameFromState = this.store.selectSnapshot(UserSelectors.username);
+        const userFromState = this.store.selectSnapshot(UserSelectors.user) as User;
+        if (this.user) {
             // edit mode
-            if (session.user.name === this.username) {
+            if (usernameFromState === this.user.username) {
                 // update own password
                 this.updateOwn = true;
             } else {
                 // update not own password, if logged-in user is system admin
-                if (session.user.sysAdmin) {
-                    this.loggedInUserName = session.user.name;
+                if (userFromState.systemAdmin) {
                     this.updateOwn = false;
                 }
             }
             this.showPasswordForm = this.updateOwn;
-
-            this._dspApiConnection.admin.usersEndpoint
-                .getUserByUsername(this.username)
-                .subscribe(
-                    (response: ApiResponseData<UserResponse>) => {
-                        this.user = response.body.user;
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
-
-            if (!this.updateOwn) {
-                this.buildConfirmForm();
-            } else {
-                this.buildForm();
-            }
+            this.updateOwn ? this.buildForm() : this.buildConfirmForm();
         } else {
             // create new password
             this.updateOwn = false;
@@ -171,12 +146,12 @@ export class PasswordFormComponent implements OnInit {
                 ? ''
                 : this.confirmForm.controls.requesterPassword.value;
 
-        const name = this.username ? this.username : '';
+        const name = this.user.username ? this.user.username : '';
 
         this.form = this._fb.group({
             username: new UntypedFormControl({
                 value: name,
-                disabled: !this.username,
+                disabled: !this.user.username,
             }),
             requesterPassword: new UntypedFormControl(
                 {
@@ -261,7 +236,7 @@ export class PasswordFormComponent implements OnInit {
         this._dspApiConnection.v2.auth
             .login(
                 'username',
-                this.loggedInUserName,
+                this.store.selectSnapshot(UserSelectors.username),
                 this.confirmForm.controls.requesterPassword.value
             )
             .subscribe(

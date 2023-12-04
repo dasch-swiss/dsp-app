@@ -1,12 +1,13 @@
 <div *ngIf="!disableContent">
-    <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+    <dasch-swiss-app-progress-indicator *ngIf="isListsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
     <!-- display only when loading is finished and project member has value -->
-    <div *ngIf="!loading">
+    <div *ngIf="(isListsLoading$ | async) === false">
         <div class="content large middle">
 
             <!-- main content: show selected list -->
-            <div *ngIf="list && !loadList" class="list-editor" #listEditor>
+            <ng-container *ngIf="(list$ | async) as list">
+            <div class="list-editor" #listEditor>
 
                 <mat-toolbar class="more-space-bottom">
                     <mat-toolbar-row>
@@ -17,7 +18,7 @@
                             {{list.comments | appStringifyStringLiteral | appTruncate:64}}</p>
                         <span class="fill-remaining-space"></span>
 
-                        <span class="project-actions" *ngIf="project.status && projectAdmin">
+                        <span class="project-actions" *ngIf="(project$ | async)?.status && (isAdmin$ | async)">
                     <p class="mat-caption space-reducer">Controlled vocabulary configuration</p>
                     <button color="primary" mat-button
                             (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
@@ -35,10 +36,18 @@
                     </mat-toolbar-row>
                 </mat-toolbar>
 
-                <app-list-item [list]="list" [parentIri]="list.id" [projectIri]="project.id" [projectUuid]="projectUuid" [projectStatus]="project.status">
+                <app-list-item 
+                    [list]="list" 
+                    [parentIri]="list.id" 
+                    [projectIri]="(project$ | async)?.id" 
+                    [projectUuid]="projectUuid" 
+                    [projectStatus]="(project$ | async)?.status"
+                    [isAdmin]="isAdmin$ | async" 
+                >
                 </app-list-item>
 
             </div>
+            </ng-container>
         </div>
     </div>
 </div>

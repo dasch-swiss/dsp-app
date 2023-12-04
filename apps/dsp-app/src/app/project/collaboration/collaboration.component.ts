@@ -1,66 +1,73 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
-    ApiResponseData,
-    ApiResponseError,
-    KnoraApiConnection,
-    MembersResponse,
-    ProjectResponse,
     ReadProject,
     ReadUser,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AddUserComponent } from './add-user/add-user.component';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { CurrentProjectSelectors, LoadProjectMembersAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable, Subject } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
+import { ProjectBase } from '../project-base';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-collaboration',
     templateUrl: './collaboration.component.html',
     styleUrls: ['./collaboration.component.scss'],
 })
-export class CollaborationComponent implements OnInit {
+export class CollaborationComponent extends ProjectBase implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    
     @ViewChild('addUserComponent') addUser: AddUserComponent;
 
-    // loading for progess indicator
-    loading: boolean;
+    get activeProjectMembers$(): Observable<ReadUser[]> {
+        return this.projectMembers$
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map((projectMembers) => {
+                    if (!projectMembers[this.projectIri]) {
+                        return [];
+                    }
 
-    // permissions of logged-in user
-    session: Session;
-    sysAdmin = false;
-    projectAdmin = false;
+                    return projectMembers[this.projectIri].value.filter(member => member.status === true);
+                })
+            );
+    }
 
-    // project uuid; as identifier in project application state service
-    projectUuid: string;
+    get inactiveProjectMembers$(): Observable<ReadUser[]> {
+        return this.projectMembers$
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map((projectMembers) => {
+                    if (!projectMembers[this.projectIri]) {
+                        return [];
+                    }
 
-    // project data
-    project: ReadProject;
-
-    // project members
-    projectMembers: ReadUser[] = [];
-
-    // two lists of project members:
-    // list of active users
-    active: ReadUser[] = [];
-    // list of inactive (deleted) users
-    inactive: ReadUser[] = [];
-
+                    return projectMembers[this.projectIri].value.filter(member => !member.status);
+                })
+            );
+    }
+    
+    @Select(ProjectsSelectors.projectMembers) projectMembers$: Observable<ReadUser[]>;
+    @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+    @Select(UserSelectors.user) user$: Observable<ReadUser>;
+    @Select(CurrentProjectSelectors.project) project$: Observable<ReadProject>;
+    
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: AppErrorHandler,
-        private _route: ActivatedRoute,
-        private _session: SessionService,
-        private _titleService: Title,
-        private _projectService: ProjectService,
-        private _applicationStateService: ApplicationStateService
+        protected _route: ActivatedRoute,
+        protected _projectService: ProjectService,
+        protected _titleService: Title,
+        protected _store: Store,
+        protected _cd: ChangeDetectorRef,
+        protected _actions$: Actions,
+        protected _router: Router,
     ) {
+        super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
         // get the uuid of the current project
         if (this._route.parent.parent.snapshot.url.length) {
             this._route.parent.parent.paramMap.subscribe((params: Params) => {
@@ -70,86 +77,21 @@ export class CollaborationComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loading = true;
-
-        // get information about the logged-in user
-        this.session = this._session.getSession();
-
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
-
-        this._applicationStateService.get(this.projectUuid).subscribe(
-            (response: ReadProject) => {
-                this.project = response;
-
-                // set the page title
-                this._titleService.setTitle(
-                    'Project ' + this.project.shortname + ' | Collaboration'
-                );
-
-                // is logged-in user projectAdmin?
-                this.projectAdmin = this.sysAdmin
-                    ? this.sysAdmin
-                    : this.session.user.projectAdmin.some(
-                          (e) => e === this.project.id
-                      );
-
-                // get list of project members and groups
-                if (this.projectAdmin) {
-                    this.refresh();
-                }
-
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                this.loading = false;
-            }
-        )
-
+        super.ngOnInit();
+        const project = this._store.selectSnapshot(CurrentProjectSelectors.project) as ReadProject;
+        this._titleService.setTitle(`Project ${project?.shortname} | Collaboration`);
     }
 
-    /**
-     * build the list of members
-     */
-    initList(): void {
-        const projectIri = this._projectService.uuidToIri(this.projectUuid);
-
-        // get project members
-        this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri).subscribe(
-            (response: ApiResponseData<MembersResponse>) => {
-                this.projectMembers = response.body.members;
-                // set project members state in application state service
-                this._applicationStateService.set('members_of_' + this.projectUuid, this.projectMembers);
-
-                // clean up list of users
-                this.active = [];
-                this.inactive = [];
-
-                for (const u of this.projectMembers) {
-                    if (u.status === true) {
-                        this.active.push(u);
-                    } else {
-                        this.inactive.push(u);
-                    }
-                }
-
-                this.loading = false;
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-            }
-        );
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
      * refresh list of members after adding a new user to the team
      */
     refresh(): void {
-        // refresh the component
-        this.loading = true;
-
-        this.initList();
+        this._store.dispatch(new LoadProjectMembersAction(this.projectUuid));
 
         // refresh child component: add user
         if (this.addUser) {

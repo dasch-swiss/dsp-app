@@ -27,6 +27,11 @@ Cypress.Commands.add('login', (user: User) => {
             localStorage.setItem('cookieBanner', 'false');
             cy.visit('/');
             cy.get('rn-banner').shadow().find('.rn-close-btn').click();
+
+            cy.get('button.login-button').click();
+            cy.get("[formcontrolname='username']").type(user.username);
+            cy.get("[formcontrolname='password']").type(user.password);
+            cy.get('.login-form button[type="submit"]').click().wait(3000);
         });
     },
     {

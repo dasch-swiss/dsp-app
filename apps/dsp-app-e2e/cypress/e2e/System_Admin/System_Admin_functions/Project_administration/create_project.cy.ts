@@ -10,7 +10,7 @@ describe('create new project', () => {
         cy.get("#mat-mdc-chip-list-input-0").type("{enter}");
         cy.get("#mat-mdc-chip-list-input-0").type("test");
         cy.get("#mat-mdc-chip-list-input-0").type("{enter}");
-        cy.get("div.app-content span.mdc-button__label > span").click();
+        cy.get("form.project-form button[type='submit']").click();
         cy.get('.project-longname').should('contain', 'Test Project');
     });
 });

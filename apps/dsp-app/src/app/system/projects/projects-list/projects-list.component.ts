@@ -1,41 +1,46 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
     Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {
     ApiResponseData,
     ApiResponseError,
     Constants,
     KnoraApiConnection,
     ProjectResponse,
+    ReadProject,
+    ReadUser,
     StoredProject,
     UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {SortProp} from "@dsp-app/src/app/main/action/sort-button/sort-button.component";
-import { take } from 'rxjs/operators';
+import {Observable, Subject, combineLatest} from "rxjs";
+import {map, takeUntil, tap} from "rxjs/operators";
+import { Select } from '@ngxs/store';
+import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-projects-list',
     templateUrl: './projects-list.component.html',
     styleUrls: ['./projects-list.component.scss'],
 })
-export class ProjectsListComponent implements OnInit {
+export class ProjectsListComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     // list of users: status active or inactive (deleted)
     @Input() status: boolean;
 
@@ -50,10 +55,6 @@ export class ProjectsListComponent implements OnInit {
 
     // loading for progess indicator
     loading: boolean;
-
-    // permissions of the logged-in user
-    session: Session;
-    sysAdmin = false;
 
     // list of default, dsp-specific projects, which are not able to be deleted or to be editied
     doNotDelete: string[] = [
@@ -88,29 +89,31 @@ export class ProjectsListComponent implements OnInit {
 
     sortBy = 'longname'; // default sort by
 
+    @Select(UserSelectors.user) user$: Observable<ReadUser>;
+    @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+    @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
+    @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
         private _errorHandler: AppErrorHandler,
         private _dialog: MatDialog,
-        private _route: ActivatedRoute,
         private _router: Router,
-        private _session: SessionService,
         private _sortingService: SortingService,
         private _projectService: ProjectService
     ) {}
 
     ngOnInit() {
-        // get information about the logged-in user
-        this.session = this._session.getSession();
-
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session?.user?.sysAdmin;
-
         // sort list by defined key
         this.sortBy = localStorage.getItem('sortProjectsBy') || this.sortBy;
         this.sortList(this.sortBy);
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
@@ -119,17 +122,29 @@ export class ProjectsListComponent implements OnInit {
      *
      * @param  projectId the iri of the project to be checked
      */
-    userHasPermission(projectId: string): boolean {
-        return this.sysAdmin || this.userIsProjectAdmin(projectId);
+    userHasPermission$(projectId: string): Observable<boolean> {
+        return combineLatest([this.user$, this.userProjectAdminGroups$])
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(([user, userProjectGroups]) => {
+                    return this._projectService.isProjectAdminOrSysAdmin(user, userProjectGroups, projectId);
+                })
+            )
     }
-
+    
     /**
      * return true, when the user is project admin of the given project.
      *
      * @param  projectId the iri of the project to be checked
      */
-    userIsProjectAdmin(projectId: string): boolean {
-        return this.session?.user.projectAdmin.some((e) => e === projectId);
+    userIsProjectAdmin$(projectId: string): Observable<boolean> {
+        return combineLatest([this.user$, this.userProjectAdminGroups$])
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(([user, userProjectGroups]) => {
+                    return this._projectService.isInProjectGroup(userProjectGroups, projectId);
+                })
+            )
     }
 
     /**
@@ -196,14 +211,13 @@ export class ProjectsListComponent implements OnInit {
 
         this._dspApiConnection.admin.projectsEndpoint
             .deleteProject(id)
-            .pipe(take(1))
-            .subscribe((response: ApiResponseData<ProjectResponse>) => {
-                    this._applicationStateService.set(uuid, response.body.project);
-                    this.refreshParent.emit();
+            .pipe(
+                tap((response: ApiResponseData<ProjectResponse>) => {
+                    this.refreshParent.emit(); //TODO Soft or Hard refresh ?
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
-                }
+                })
             );
     }
 
@@ -212,19 +226,15 @@ export class ProjectsListComponent implements OnInit {
         const data: UpdateProjectRequest = new UpdateProjectRequest();
         data.status = true;
 
-        const uuid = this._projectService.iriToUuid(id);
-
         this._dspApiConnection.admin.projectsEndpoint
             .updateProject(id, data)
-            .pipe(take(1))
-            .subscribe((response: ApiResponseData<ProjectResponse>) => {
-                    this._applicationStateService.set(uuid, response.body.project);
+            .pipe(
+                tap((response: ApiResponseData<ProjectResponse>) => {
                     this.refreshParent.emit();
-
                 },
                 (error: ApiResponseError) => {
                     this._errorHandler.showMessage(error);
-                }
+                })
             );
     }
 }

@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -75,6 +77,7 @@ export interface CheckboxUpdate {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-list-view',
     templateUrl: './list-view.component.html',
     styleUrls: ['./list-view.component.scss'],
@@ -129,7 +132,8 @@ export class ListViewComponent implements OnChanges, OnInit {
         private _errorHandler: AppErrorHandler,
         private _notification: NotificationService,
         private _route: ActivatedRoute,
-        private _router: Router
+        private _router: Router,
+        private _cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit(): void {
@@ -222,6 +226,8 @@ export class ListViewComponent implements OnChanges, OnInit {
      */
     private _doSearch(index = 0) {
         this.loading = true;
+        this._cd.markForCheck();
+
 
         if (this.search.mode === 'fulltext') {
             // search mode: fulltext
@@ -246,6 +252,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                                 this.emitSelectedResources();
                                 this.resources = undefined;
                                 this.loading = false;
+                                this._cd.markForCheck();
                             }
                         },
                         (countError: ApiResponseError) => {
@@ -253,6 +260,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                                 this.numberOfAllResults = 0;
                             }
                             this.loading = false;
+                            this._cd.markForCheck();
                             this._errorHandler.showMessage(countError);
                         }
                     );
@@ -270,6 +278,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                         }
                         this.resources = response;
                         this.loading = false;
+                        this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
                         this.loading = false;
@@ -304,6 +313,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                                       this.emitSelectedResources();
                                       this.resources = undefined;
                                       this.loading = false;
+                                      this._cd.markForCheck();
                                   }
 
                                   return count.numberOfResults;
@@ -343,6 +353,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                                         this.resources.resources.length === 0
                                     );
                                     this.loading = false;
+                                    this._cd.markForCheck();
                                 },
                                 (error: ApiResponseError) => {
                                     this.loading = false;
@@ -356,12 +367,14 @@ export class ListViewComponent implements OnChanges, OnInit {
                         );
                         this.resources = undefined;
                         this.loading = false;
+                        this._cd.markForCheck();
                     }
                 },
                 (countError: ApiResponseError) => {
                     // if error is a timeout, keep the loading animation
                     this.loading = countError.status === 504;
                     this._errorHandler.showMessage(countError);
+                    this._cd.markForCheck();
                 }
             );
         }

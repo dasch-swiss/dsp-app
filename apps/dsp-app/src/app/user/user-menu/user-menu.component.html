@@ -1,13 +1,14 @@
 <!-- if user is looged-in: display user's avatar and user menu -->
-<button *ngIf="session" mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu">
-    <img appAdminImage [image]="user?.email" [type]="'user'" class="avatar" />
+<ng-container *ngIf="isLoggedIn$ | async; else loginFormTemplate">
+<button mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu">
+    <img appAdminImage [image]="(user$ | async)?.email" [type]="'user'" class="avatar" />
 </button>
 
 <mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
     <!-- first line: user name and close button -->
     <div class="menu-header">
         <div class="menu-title">Signed in as</div>
-        <div class="menu-title">{{user?.givenName}} {{user?.familyName}}</div>
+        <div class="menu-title">{{(user$ | async)?.givenName}} {{(user$ | async)?.familyName}}</div>
     </div>
     <!-- menu items -->
     <div class="menu-content">
@@ -26,7 +27,7 @@
 
             <!-- system for system admin only -->
 
-            <mat-list-item *ngIf="sysAdmin" class="nav-item">
+            <mat-list-item *ngIf="isSysAdmin$ | async" class="nav-item">
                 <button
                     mat-button
                     [routerLink]="systemLink"
@@ -36,7 +37,7 @@
                 </button>
             </mat-list-item>
             <mat-divider></mat-divider>
-            <mat-list-item *ngIf="session" class="nav-item">
+            <mat-list-item class="nav-item">
                 <button
                     mat-button
                     (click)="logout()"
@@ -47,11 +48,13 @@
         </mat-list>
     </div>
 </mat-menu>
+</ng-container>
 
-<!-- login form -->
-<button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" *ngIf="!session" class="login-button">
+<ng-template #loginFormTemplate>
+<button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" class="login-button">
     LOGIN
 </button>
 <mat-menu #loginForm xPosition="before" class="form-menu">
-    <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" (loginSuccess)="closeMenu()"></app-login-form>
+    <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" (loginSuccess)="closeMenu($event)"></app-login-form>
 </mat-menu>
+</ng-template>

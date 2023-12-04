@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
-import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
+import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-ontology-classes',
     templateUrl: './ontology-classes.component.html',
     styleUrls: ['./ontology-classes.component.scss'],
@@ -34,4 +35,6 @@ export class OntologyClassesComponent implements OnInit {
             'label'
         );
     }
+
+    trackByFn = (index: number, item: ClassDefinition) => `${index}-${item.id}`;
 }

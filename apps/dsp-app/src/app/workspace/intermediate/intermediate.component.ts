@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import {
     MatDialog,
     MatDialogConfig,
@@ -8,6 +8,7 @@ import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { FilteredResources } from '../results/list-view/list-view.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-intermediate',
     templateUrl: './intermediate.component.html',
     styleUrls: ['./intermediate.component.scss'],
@@ -46,7 +47,7 @@ export class IntermediateComponent {
                 top: '112px',
             },
             data: {
-                mode: type + 'Resources',
+                mode: 'linkResources',
                 title: title,
                 selectedResources: data,
             },

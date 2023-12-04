@@ -1,4 +1,4 @@
-<div class="login-container" *ngIf="!session && form">
+<div class="login-container" *ngIf="form">
     <!-- <h2 class="login-form-title mat-title">{{formLabel.title}}</h2> -->
 
     <!-- This is the login form -->
@@ -60,25 +60,4 @@
             {{ formLabel.error.failed }}
         </p>
     </form>
-</div>
-
-<!-- a user is already logged in; show who it is and a logout button -->
-<div class="logout-container" *ngIf="session">
-    <p>You are already logged in as: <strong>{{ session.user.name }}</strong></p>
-    <br />
-    <p>Please log out if it's not you.</p>
-    <button
-        mat-raised-button
-        (click)="logout()"
-        class="full-width mat-warn logout-button"
-    >
-        <div class="progress-button-content">
-            <dasch-swiss-app-progress-indicator
-            [color]="'white'"
-            [status]="0"
-            *ngIf="loading"
-            class="login-progress"/>
-            <span>{{ formLabel.logout }}</span>
-        </div>
-    </button>
 </div>

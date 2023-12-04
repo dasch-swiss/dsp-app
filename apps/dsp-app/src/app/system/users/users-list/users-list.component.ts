@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -15,22 +17,22 @@ import {
     GroupsResponse,
     KnoraApiConnection,
     Permissions,
-    ProjectResponse,
     ReadProject,
     ReadUser,
     UserResponse,
 } from '@dasch-swiss/dsp-js';
-import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-    Session,
-    SessionService,
-} from '@dasch-swiss/vre/shared/app-session';
-import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
+import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { CurrentProjectSelectors, LoadProjectAction, LoadProjectMembersAction, LoadUserAction, RemoveUserFromProjectAction, SetUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-users-list',
     templateUrl: './users-list.component.html',
     styleUrls: ['./users-list.component.scss'],
@@ -45,16 +47,11 @@ export class UsersListComponent implements OnInit {
     // enable the button to create new user
     @Input() createNew = false;
 
+    // proje0ct data
+    @Input() project: ReadProject;
+
     // in case of modification
     @Output() refreshParent: EventEmitter<any> = new EventEmitter<any>();
-
-    // loading for progess indicator
-    loading: boolean;
-
-    // permissions of logged-in user
-    session: Session;
-    sysAdmin = false;
-    projectAdmin = false;
 
     // i18n plural mapping
     itemPluralMapping = {
@@ -77,9 +74,6 @@ export class UsersListComponent implements OnInit {
 
     // project uuid; as identifier in project application state service
     projectUuid: string;
-
-    // project data
-    project: ReadProject;
 
     //
     // sort properties
@@ -105,6 +99,14 @@ export class UsersListComponent implements OnInit {
     // ... and sort by 'username'
     sortBy = 'username';
 
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+    @Select(UserSelectors.user) user$: Observable<ReadUser>;
+    @Select(UserSelectors.username) username$: Observable<string>;
+    @Select(CurrentProjectSelectors.isProjectAdmin) isProjectAdmin$: Observable<boolean>;
+    @Select(CurrentProjectSelectors.project) project$: Observable<ReadProject>;
+    @Select(CurrentProjectSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+    @Select(UserSelectors.isLoading) isUsersLoading$: Observable<boolean>;
+    
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
@@ -112,9 +114,11 @@ export class UsersListComponent implements OnInit {
         private _errorHandler: AppErrorHandler,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _session: SessionService,
         private _sortingService: SortingService,
-        private _applicationStateService: ApplicationStateService
+        private _store: Store,
+        private _projectService: ProjectService,
+        private _actions$: Actions,
+        private _cd: ChangeDetectorRef,
     ) {
         // get the uuid of the current project
         this._route.parent.parent.paramMap.subscribe((params: Params) => {
@@ -123,31 +127,6 @@ export class UsersListComponent implements OnInit {
     }
 
     ngOnInit() {
-        // get information about the logged-in user
-        this.session = this._session.getSession();
-
-        // is the logged-in user system admin?
-        this.sysAdmin = this.session.user.sysAdmin;
-
-        if (this.projectUuid) {
-            // get the project data from application state
-            this._applicationStateService.get(this.projectUuid).subscribe(
-                (response: ReadProject) => {
-                    this.project = response;
-                    // is logged-in user projectAdmin?
-                    this.projectAdmin = this.sysAdmin
-                        ? this.sysAdmin
-                        : this.session.user.projectAdmin.some(
-                              (e) => e === this.project.id
-                          );
-                    this.loading = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
-        }
-
         // sort list by defined key
         if (localStorage.getItem('sortUsersBy')) {
             this.sortBy = localStorage.getItem('sortUsersBy');
@@ -155,6 +134,8 @@ export class UsersListComponent implements OnInit {
             localStorage.setItem('sortUsersBy', this.sortBy);
         }
     }
+
+    trackByFn = (index: number, item: ReadUser) => `${index}-${item.id}`;
 
     /**
      * returns true, when the user is project admin;
@@ -166,19 +147,11 @@ export class UsersListComponent implements OnInit {
      * @returns boolean
      */
     userIsProjectAdmin(permissions?: Permissions): boolean {
-        if (permissions) {
-            // check if this user is project admin
-            return (
-                permissions.groupsPerProject[this.project.id].indexOf(
-                    Constants.ProjectAdminGroupIRI
-                ) > -1
-            );
-        } else {
-            // check if the logged-in user is project admin
-            return this.session.user.projectAdmin.some(
-                (e) => e === this.project.id
-            );
+        if (!this.project) {
+            return false;
         }
+
+        return this._projectService.isMemberOfProjectAdminGroup(permissions.groupsPerProject, this.project.id);
     }
 
     /**
@@ -221,51 +194,33 @@ export class UsersListComponent implements OnInit {
                         // add user to group
                         // console.log('add user to group');
                         for (const newGroup of groups) {
-                            this._dspApiConnection.admin.usersEndpoint
-                                .addUserToGroupMembership(id, newGroup)
-                                .subscribe(
-                                    () => {},
-                                    (ngError: ApiResponseError) => {
-                                        this._errorHandler.showMessage(ngError);
-                                    }
-                                );
+                            this.addUserToGroupMembership(id, newGroup);
                         }
                     } else {
                         // which one is deselected?
                         // find id in groups --> if not exists: remove from group
                         for (const oldGroup of currentUserGroups) {
-                            if (groups.indexOf(oldGroup) > -1) {
-                                // already member of this group
-                            } else {
+                            if (groups.indexOf(oldGroup) === -1) {
                                 // console.log('remove from group', oldGroup);
                                 // the old group is not anymore one of the selected groups --> remove user from group
                                 this._dspApiConnection.admin.usersEndpoint
                                     .removeUserFromGroupMembership(id, oldGroup)
-                                    .subscribe(
-                                        () => {},
-                                        (ngError: ApiResponseError) => {
-                                            this._errorHandler.showMessage(
-                                                ngError
-                                            );
+                                    .pipe(
+                                        take(1),
+                                        map((response: ApiResponseData<UserResponse>) => response.body.user))
+                                    .subscribe((user: ReadUser) => {
+                                        if (this.projectUuid) {
+                                            this._store.dispatch(new LoadProjectAction(this.projectUuid));
                                         }
-                                    );
+                                    },
+                                    (ngError: ApiResponseError) => {
+                                        this._errorHandler.showMessage(ngError);
+                                    });
                             }
                         }
                         for (const newGroup of groups) {
-                            if (currentUserGroups.indexOf(newGroup) > -1) {
-                                // already member of this group
-                            } else {
-                                // console.log('add user to group');
-                                this._dspApiConnection.admin.usersEndpoint
-                                    .addUserToGroupMembership(id, newGroup)
-                                    .subscribe(
-                                        () => {},
-                                        (ngError: ApiResponseError) => {
-                                            this._errorHandler.showMessage(
-                                                ngError
-                                            );
-                                        }
-                                    );
+                            if (currentUserGroups.indexOf(newGroup) === -1) {
+                                this.addUserToGroupMembership(id, newGroup);
                             }
                         }
                     }
@@ -280,6 +235,7 @@ export class UsersListComponent implements OnInit {
      * update user's admin-group membership
      */
     updateProjectAdminMembership(id: string, permissions: Permissions): void {
+        const currentUser = this._store.selectSnapshot(UserSelectors.user);
         if (this.userIsProjectAdmin(permissions)) {
             // true = user is already project admin --> remove from admin rights
 
@@ -288,10 +244,8 @@ export class UsersListComponent implements OnInit {
                 .subscribe(
                     (response: ApiResponseData<UserResponse>) => {
                         // if this user is not the logged-in user
-                        if (
-                            this.session.user.name !==
-                            response.body.user.username
-                        ) {
+                        if (currentUser.username !== response.body.user.username) {
+                            this._store.dispatch(new SetUserAction(response.body.user));
                             this.refreshParent.emit();
                         } else {
                             // the logged-in user removed himself as project admin
@@ -299,31 +253,25 @@ export class UsersListComponent implements OnInit {
                             // open dialog to confirm and
                             // redirect to project page
                             // update the application state of logged-in user and the session
-                            this._session
-                                .setSession(
-                                    this.session.user.jwt,
-                                    this.session.user.name,
-                                    'username'
-                                )
-                                .subscribe();
-
-                            if (this.sysAdmin) {
-                                // logged-in user is system admin:
-                                this.refreshParent.emit();
-                            } else {
-                                // logged-in user is NOT system admin:
-                                // go to project page and reload project admin interface
-                                this._router
-                                    .navigateByUrl(`/${RouteConstants.refresh}`, {
-                                        skipLocationChange: true,
-                                    })
-                                    .then(() =>
-                                        this._router.navigate([
-                                            RouteConstants.project,
-                                            this.projectUuid
-                                        ])
-                                    );
-                            }
+                            this._store.dispatch(new LoadUserAction(currentUser.username));
+                            this._actions$.pipe(ofActionSuccessful(LoadUserAction))
+                                .pipe(take(1))
+                                .subscribe(() => {
+                                    const isSysAdmin = this._projectService.isMemberOfSystemAdminGroup((currentUser as ReadUser).permissions.groupsPerProject)
+                                    if (isSysAdmin) {
+                                        this.refreshParent.emit();
+                                    } else {
+                                        // logged-in user is NOT system admin:
+                                        // go to project page and reload project admin interface
+                                        this._router
+                                            .navigateByUrl(RouteConstants.refreshRelative, {
+                                                skipLocationChange: true,
+                                            })
+                                            .then(() =>
+                                                this._router.navigate([ `${RouteConstants.projectRelative}/${this.projectUuid}`])
+                                            );
+                                    }
+                                });
                         }
                     },
                     (error: ApiResponseError) => {
@@ -336,22 +284,18 @@ export class UsersListComponent implements OnInit {
                 .addUserToProjectAdminMembership(id, this.project.id)
                 .subscribe(
                     (response: ApiResponseData<UserResponse>) => {
-                        if (
-                            this.session.user.name !==
-                            response.body.user.username
-                        ) {
+                        if (currentUser.username !== response.body.user.username) {
+                            this._store.dispatch(new SetUserAction(response.body.user));
                             this.refreshParent.emit();
                         } else {
                             // the logged-in user (system admin) added himself as project admin
                             // update the application state of logged-in user and the session
-                            this._session
-                                .setSession(
-                                    this.session.user.jwt,
-                                    this.session.user.name,
-                                    'username'
-                                )
-                                .subscribe();
-                            this.refreshParent.emit();
+                            this._store.dispatch(new LoadUserAction(currentUser.username));
+                            this._actions$.pipe(ofActionSuccessful(LoadUserAction))
+                                .pipe(take(1))
+                                .subscribe((readUser: ReadUser) => {
+                                    this.refreshParent.emit();
+                                });
                         }
                     },
                     (error: ApiResponseError) => {
@@ -364,16 +308,16 @@ export class UsersListComponent implements OnInit {
     updateSystemAdminMembership(user: ReadUser, systemAdmin: boolean): void {
         this._dspApiConnection.admin.usersEndpoint
             .updateUserSystemAdminMembership(user.id, systemAdmin)
-            .subscribe(
-                () => {
-                    if (this.session.user.name !== user.username) {
-                        this.refreshParent.emit();
-                    }
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
+            .pipe(take(1))
+            .subscribe((response: ApiResponseData<UserResponse>) => {
+                this._store.dispatch(new SetUserAction(response.body.user));
+                if (this._store.selectSnapshot(UserSelectors.username) !== user.username) {
+                    this.refreshParent.emit();
                 }
-            );
+            },
+            (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+            });
     }
 
     /**
@@ -383,53 +327,40 @@ export class UsersListComponent implements OnInit {
      * delete and reactivate user
      *
      */
-    openDialog(mode: string, name?: string, iri?: string): void {
+    openDialog(mode: string, user?: ReadUser): void {
         const dialogConfig: MatDialogConfig = {
             width: '560px',
             maxHeight: '80vh',
             position: {
                 top: '112px',
             },
-            data: { name: name, mode: mode },
+            data: { user, mode },
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe((response) => {
             if (response === true) {
-                // get the mode
                 switch (mode) {
                     case 'removeFromProject':
-                        this.removeUserFromProject(iri);
+                        this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
+                        this._actions$.pipe(ofActionSuccessful(SetUserAction))
+                            .pipe(take(1))
+                            .subscribe(() => {
+                                this._store.dispatch(new LoadProjectMembersAction(this.projectUuid));
+                                this.refreshParent.emit();
+                            });
                         break;
                     case 'deleteUser':
-                        this.deleteUser(iri);
+                        this.deleteUser(user.id);
                         break;
                     case 'activateUser':
-                        this.activateUser(iri);
+                        this.activateUser(user.id);
                         break;
                 }
             }
+            this._cd.markForCheck();
         });
-    }
-
-    /**
-     * remove user from project and update list of users
-     *
-     * @param id user's IRI
-     * @returns void
-     */
-    removeUserFromProject(id: string): void {
-        this._dspApiConnection.admin.usersEndpoint
-            .removeUserFromProjectMembership(id, this.project.id)
-            .subscribe(
-                () => {
-                    this.refreshParent.emit();
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                }
-            );
     }
 
     /**
@@ -438,8 +369,10 @@ export class UsersListComponent implements OnInit {
      * @param id user's IRI
      */
     deleteUser(id: string) {
-        this._dspApiConnection.admin.usersEndpoint.deleteUser(id).subscribe(
-            () => {
+        this._dspApiConnection.admin.usersEndpoint.deleteUser(id)
+            .pipe(take(1))
+            .subscribe((response: ApiResponseData<UserResponse>) => {
+                this._store.dispatch(new SetUserAction(response.body.user));
                 this.refreshParent.emit();
             },
             (error: ApiResponseError) => {
@@ -454,10 +387,10 @@ export class UsersListComponent implements OnInit {
      * @param id user's IRI
      */
     activateUser(id: string) {
-        this._dspApiConnection.admin.usersEndpoint
-            .updateUserStatus(id, true)
-            .subscribe(
-                () => {
+        this._dspApiConnection.admin.usersEndpoint.updateUserStatus(id, true)
+            .pipe(take(1))
+            .subscribe((response: ApiResponseData<UserResponse>) => {
+                    this._store.dispatch(new SetUserAction(response.body.user));
                     this.refreshParent.emit();
                 },
                 (error: ApiResponseError) => {
@@ -472,12 +405,31 @@ export class UsersListComponent implements OnInit {
         if (this.project && this.project.status === false) {
             return true;
         } else {
-            return !this.sysAdmin && !this.projectAdmin;
+            return !this._store.selectSnapshot(UserSelectors.isSysAdmin) 
+                && !this._store.selectSnapshot(CurrentProjectSelectors.isProjectAdmin);
         }
     }
 
     sortList(key: any) {
-        this.list = this._sortingService.keySortByAlphabetical(this.list, key);
+        this.sortBy = key;
+        this.list = this._sortingService.keySortByAlphabetical(this.list, this.sortBy as any);
         localStorage.setItem('sortUsersBy', key);
+    }
+
+    private addUserToGroupMembership(id: string, newGroup: string): void {
+        this._dspApiConnection.admin.usersEndpoint
+            .addUserToGroupMembership(id, newGroup)
+            .pipe(
+                take(1),
+                map((response: ApiResponseData<UserResponse>) => response.body.user))
+            .subscribe((user: ReadUser) => {
+                if (this.projectUuid) {
+                    this._store.dispatch(new LoadProjectAction(this.projectUuid));
+                }
+                //this._store.dispatch(new SetUserAction(user));
+            },
+                (ngError: ApiResponseError) => {
+                    this._errorHandler.showMessage(ngError);
+                });
     }
 }

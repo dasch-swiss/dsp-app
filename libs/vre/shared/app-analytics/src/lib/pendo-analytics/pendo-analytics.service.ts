@@ -1,38 +1,36 @@
 import { inject, Injectable } from '@angular/core';
-import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
-import { v5 as uuidv5 } from 'uuid';
+import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import {
     DspInstrumentationConfig,
     DspInstrumentationToken,
 } from '@dasch-swiss/vre/shared/app-config';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PendoAnalyticsService {
     private config: DspInstrumentationConfig = inject(DspInstrumentationToken);
-    private session: SessionService = inject(SessionService);
+    private authService: AuthService = inject(AuthService);
     private environment: string = this.config.environment;
 
     constructor() {
-        // FIXME: so that updates to the session state are reflected in specified user
-        this.session.isSessionValid().subscribe((response: boolean) => {
-            if (response) {
-                const session: Session | null = this.session.getSession();
-                if (session?.user?.name) {
-                    const id: string = uuidv5(session.user.name, uuidv5.URL);
-                    this.setActiveUser(id);
+        this.authService.isLoggedIn$
+            .pipe(takeUntilDestroyed())
+            .subscribe((isLoggedIn: boolean) => {
+                if (isLoggedIn) {
+                    this.setActiveUser(this.authService.tokenUser);
                 } else {
                     this.removeActiveUser();
                 }
-            }
-        });
+            });
     }
 
     /**
      * set active user
      */
     setActiveUser(id: string): void {
+        console.log('setActiveUser', id);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         pendo.initialize({
@@ -67,6 +65,7 @@ export class PendoAnalyticsService {
      * remove active user
      */
     removeActiveUser(): void {
+        console.log('removeActiveUser');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         pendo.initialize({

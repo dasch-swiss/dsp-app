@@ -1,9 +1,11 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
     Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
@@ -13,51 +15,39 @@ import {
     CanDoResponse,
     ClassDefinition,
     Constants,
-    IHasProperty,
     KnoraApiConnection,
     PropertyDefinition,
     ReadOntology,
-    ResourceClassDefinitionWithAllLanguages,
     ResourcePropertyDefinitionWithAllLanguages,
-    UpdateOntology,
-    UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
+import { DialogComponent, DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { SortingService } from '@dsp-app/src/app/main/services/sorting.service';
+import { DefaultClass, DefaultResourceClasses, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
     DefaultProperties,
     DefaultProperty,
     PropertyCategory,
     PropertyInfoObject,
-} from '../default-data/default-properties';
-import {
-    DefaultClass,
-    DefaultResourceClasses,
-} from '../default-data/default-resource-classes';
-import { PropertyAssignment, OntologyProperties } from '../ontology.component';
-import { OntologyService } from '../ontology.service';
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
-
-export interface PropToDisplay extends IHasProperty {
-    propDef?: PropertyDefinition;
-}
-
-export interface PropToAdd {
-    ontologyId: string;
-    ontologyLabel: string;
-    properties: PropertyInfoObject[];
-}
+import { OntologiesSelectors, OntologyProperties, PropToAdd, PropToDisplay, PropertyAssignment, RemovePropertyAction, ReplacePropertyAction } from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-resource-class-info',
     templateUrl: './resource-class-info.component.html',
     styleUrls: ['./resource-class-info.component.scss'],
+
 })
-export class ResourceClassInfoComponent implements OnInit {
+export class ResourceClassInfoComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    
     // open / close res class card
     @Input() expanded = false;
 
@@ -67,9 +57,11 @@ export class ResourceClassInfoComponent implements OnInit {
 
     @Input() projectStatus: boolean;
 
-    @Input() ontologies: ReadOntology[] = [];
-
-    @Input() lastModificationDate?: string;
+    get lastModificationDate$(): Observable<string> {
+        return this.currentOntology$.pipe(
+            takeUntil(this.ngUnsubscribe),
+            map(x => x?.lastModificationDate));
+    }
 
     @Input() userCanEdit: boolean; // is user a project admin or sys admin?
 
@@ -87,21 +79,16 @@ export class ResourceClassInfoComponent implements OnInit {
 
     // to update the assignment of a property to a class we need the information about property (incl. propType)
     // and resource class
-    @Output() updatePropertyAssignment: EventEmitter<string> =
-        new EventEmitter<string>();
+    @Output() updatePropertyAssignment: EventEmitter<string> = new EventEmitter<string>();
+
+    @Input() updatePropertyAssignment$: Subject<any>;
 
     ontology: ReadOntology;
-
-    // list of all ontologies with their properties
-    ontoProperties: OntologyProperties[] = [];
 
     // set to false if it is a subclass of a default class inheriting the order
     canChangeGuiOrder: boolean;
 
     classCanBeDeleted: boolean;
-
-    // list of properties that can be displayed (not all the props should be displayed)
-    propsToDisplay: PropToDisplay[] = [];
 
     subClassOfLabel = '';
 
@@ -111,59 +98,116 @@ export class ResourceClassInfoComponent implements OnInit {
     // list of default property types
     defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
-    // list of existing ontology properties, which are not in this resource class
-    existingProperties: PropToAdd[];
-
     // load single property (in case of property cardinality action)
     loadProperty = false;
+    
+    get currentOntologyPropertiesToDisplay$(): Observable<PropToDisplay[]> {
+        return this.currentProjectOntologyProperties$
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(ontoProperties => 
+                    this.getPropsToDisplay([...this.resourceClass.propertiesList], [...ontoProperties])));
+    }
 
+    // list of existing ontology properties, which are not in this resource class
+    get existingProperties$(): Observable<PropToAdd[]> {
+        return this.currentProjectOntologyProperties$
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(ontoProperties => 
+                    this.getExistingProperties([...this.resourceClass.propertiesList], [...ontoProperties])));
+    }
+
+    // list of all ontologies with their properties
+    @Select(OntologiesSelectors.currentProjectOntologyProperties) currentProjectOntologyProperties$: Observable<OntologyProperties[]>;
+    @Select(OntologiesSelectors.currentOntology) currentOntology$: Observable<ReadOntology>;
+    
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
-        private _applicationStateService: ApplicationStateService,
         private _dialog: MatDialog,
         private _errorHandler: AppErrorHandler,
         private _notification: NotificationService,
+        private _sortingService: SortingService,
+        private _store: Store,
+        private _actions$: Actions,
         private _ontoService: OntologyService,
-        private _sortingService: SortingService
     ) {}
 
     ngOnInit(): void {
-        // grab the onto properties information to display
-        this.ontoProperties = [];
-        // get all project ontologies
-        this._applicationStateService.get('currentProjectOntologies').subscribe(
-            (ontologies: ReadOntology[]) => {
-                this.ontologies = ontologies;
-                ontologies.forEach((onto) => {
-                    const prepareList: OntologyProperties = {
-                        ontology: onto.id,
-                        properties: this.initOntoProperties(
-                            onto.getAllPropertyDefinitions()
-                        ),
-                    };
-                    this.ontoProperties.push(prepareList);
-                });
-            },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
-        );
+        this.ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+        // translate iris from "subclass of" array
+        this.translateSubClassOfIri(this.resourceClass.subClassOf);
+        // check if the class can be deleted
+        this.canBeDeleted();
+    }
+    
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+    
+    trackByPropToAddFn = (index: number, item: PropToAdd) => `${index}-${item.ontologyId}`;
 
-        // get currently selected ontology
-        this._applicationStateService.get('currentOntology').subscribe(
-            (response: ReadOntology) => {
-                this.ontology = response;
-                this.lastModificationDate = this.ontology.lastModificationDate;
-                // translate iris from "subclass of" array
-                this.translateSubClassOfIri(this.resourceClass.subClassOf);
-                // prepare list of properties to display
-                this.preparePropsToDisplay(this.resourceClass.propertiesList);
-                // check if the class can be deleted
-                this.canBeDeleted();
-            },
-            (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
+    trackByPropCategoryFn = (index: number, item: PropertyCategory) => `${index}-${item.group}`;
+
+    trackByDefaultPropertyFn = (index: number, item: DefaultProperty) => `${index}-${item.label}`;
+
+    trackByPropFn = (index: number, item: PropertyInfoObject) => `${index}-${item.propDef?.id}`;
+
+    trackByPropToDisplayFn = (index: number, item: PropToDisplay) => `${index}-${item.propertyIndex}`;
+    
+    /**
+     * prepares props to display
+     * Not all props should be displayed; there are some system / API-specific
+     * properties which have to be filtered.
+     *
+     * @param classProps
+     */
+    private getPropsToDisplay(classProps: PropToDisplay[], ontoProperties: OntologyProperties[]): PropToDisplay[] {
+        if (classProps.length === 0 || ontoProperties.length === 0) {
+            return [];
+        }
+        
+        const propsToDisplay: PropToDisplay[] = [];
+        let remainingProperties: PropertyDefinition[] = [];
+        classProps.forEach((hasProp: PropToDisplay) => {
+            const ontoIri = hasProp.propertyIndex.split(Constants.HashDelimiter)[0];
+            // ignore http://api.knora.org/ontology/knora-api/v2 and ignore  http://www.w3.org/2000/01/rdf-schema
+            if (
+                ontoIri !== Constants.KnoraApiV2 &&
+                ontoIri !== Constants.Rdfs
+            ) {
+                // get property definition from list of project ontologies
+                const index = ontoProperties.findIndex((item: OntologyProperties) => item.ontology === ontoIri);
+                remainingProperties = [...ontoProperties[index].properties];
+                hasProp.propDef = remainingProperties.find(
+                    (obj: ResourcePropertyDefinitionWithAllLanguages) => 
+                        obj.id === hasProp.propertyIndex &&
+                        ((obj.subjectType &&
+                            !obj.subjectType.includes('Standoff') &&
+                            obj.objectType !== Constants.LinkValue) ||
+                            !obj.isLinkValueProperty)
+                );
+
+                // propDef was found, add hasProp to the properties list which has to be displayed in this resource class
+                if (hasProp.propDef) {
+                    if (propsToDisplay.indexOf(hasProp) === -1) {
+                        propsToDisplay.push(hasProp);
+                    }
+
+                    // and remove from list of existing properties to avoid double cardinality entries
+                    // because the prop displayed in the class cannot be added a second time,
+                    // so we have to hide it from the list of "Add existing property"
+                    const delProp = remainingProperties.indexOf(hasProp.propDef, 0);
+                    if (delProp > -1) {
+                        remainingProperties.splice(delProp, 1);
+                    }
+                }
             }
-        );
+        });
+
+        return propsToDisplay;
     }
 
     /**
@@ -241,100 +285,6 @@ export class ResourceClassInfoComponent implements OnInit {
         );
     }
 
-    /**
-     * prepares props to display
-     * Not all props should be displayed; there are some system / API-specific
-     * properties which have to be filtered.
-     *
-     * @param classProps
-     */
-    preparePropsToDisplay(classProps: PropToDisplay[]) {
-        // reset existing properties to select from
-        this.existingProperties = [];
-
-        classProps.forEach((hasProp: PropToDisplay) => {
-            const ontoIri = hasProp.propertyIndex.split(
-                Constants.HashDelimiter
-            )[0];
-            // ignore http://api.knora.org/ontology/knora-api/v2 and ignore  http://www.w3.org/2000/01/rdf-schema
-            if (
-                ontoIri !== Constants.KnoraApiV2 &&
-                ontoIri !== Constants.Rdfs
-            ) {
-                // get property definition from list of project ontologies
-                const index = this.ontoProperties.findIndex(
-                    (item: OntologyProperties) => item.ontology === ontoIri
-                );
-                hasProp.propDef = this.ontoProperties[index].properties.find(
-                    (obj: ResourcePropertyDefinitionWithAllLanguages) =>
-                        obj.id === hasProp.propertyIndex &&
-                        ((obj.subjectType &&
-                            !obj.subjectType.includes('Standoff') &&
-                            obj.objectType !== Constants.LinkValue) ||
-                            !obj.isLinkValueProperty)
-                );
-
-                // propDef was found, add hasProp to the properties list which has to be displayed in this resource class
-                if (hasProp.propDef) {
-                    if (this.propsToDisplay.indexOf(hasProp) === -1) {
-                        this.propsToDisplay.push(hasProp);
-                    }
-
-                    // and remove from list of existing properties to avoid double cardinality entries
-                    // because the prop displayed in the class cannot be added a second time,
-                    // so we have to hide it from the list of "Add existing property"
-                    const delProp = this.ontoProperties[
-                        index
-                    ].properties.indexOf(hasProp.propDef, 0);
-                    if (delProp > -1) {
-                        this.ontoProperties[index].properties.splice(
-                            delProp,
-                            1
-                        );
-                    }
-                }
-            }
-        });
-
-        this.ontoProperties.forEach((op: OntologyProperties, i: number) => {
-            this.existingProperties.push({
-                ontologyId: op.ontology,
-                ontologyLabel: this.ontologies[i].label,
-                properties: [],
-            });
-
-            op.properties.forEach(
-                (availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
-                    const superProp =
-                        this._ontoService.getSuperProperty(availableProp);
-                    if (superProp) {
-                        if (
-                            availableProp.subPropertyOf.indexOf(superProp) ===
-                            -1
-                        ) {
-                            availableProp.subPropertyOf.push(superProp);
-                        }
-                    }
-
-                    let propType: DefaultProperty;
-                    // find corresponding default property to have more prop info
-                    this._ontoService
-                        .getDefaultPropType(availableProp)
-                        .subscribe((prop: DefaultProperty) => {
-                            propType = prop;
-                        });
-
-                    const propToAdd: PropertyInfoObject = {
-                        propType: propType,
-                        propDef: availableProp,
-                    };
-
-                    this.existingProperties[i].properties.push(propToAdd);
-                }
-            );
-        });
-    }
-
     canBeDeleted() {
         // check if the class can be deleted
         this._dspApiConnection.v2.onto
@@ -349,17 +299,17 @@ export class ResourceClassInfoComponent implements OnInit {
             );
     }
 
-    addNewProperty(propType: DefaultProperty) {
+    addNewProperty(propType: DefaultProperty, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
         const propertyAssignment: PropertyAssignment = {
             resClass: this.resourceClass,
             property: {
                 propType: propType,
             },
         };
-        this.assignProperty(propertyAssignment);
+        this.assignProperty(propertyAssignment, currentOntologyPropertiesToDisplay);
     }
 
-    addExistingProperty(prop: PropertyInfoObject) {
+    addExistingProperty(prop: PropertyInfoObject, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
         const propertyAssignment: PropertyAssignment = {
             resClass: this.resourceClass,
             property: {
@@ -367,52 +317,25 @@ export class ResourceClassInfoComponent implements OnInit {
                 propDef: prop.propDef,
             },
         };
-        this.assignProperty(propertyAssignment);
+        this.assignProperty(propertyAssignment, currentOntologyPropertiesToDisplay);
     }
 
     /**
      * removes property from resource class
      * @param property
      */
-    removeProperty(property: DefaultClass) {
-        this.loadProperty = true;
+    removeProperty(property: DefaultClass, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
+        //TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after following subscription is triggered
+        this.updatePropertyAssignment.pipe(take(1)).subscribe(() => this.updatePropertyAssignment$.next());
 
-        const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-
-        onto.lastModificationDate = this.lastModificationDate;
-
-        onto.id = this.ontology.id;
-
-        const delCard = new UpdateResourceClassCardinality();
-
-        delCard.id = this.resourceClass.id;
-
-        delCard.cardinalities = [];
-
-        delCard.cardinalities = this.propsToDisplay.filter(
-            (prop) => prop.propertyIndex === property.iri
-        );
-        onto.entity = delCard;
-
-        this._dspApiConnection.v2.onto
-            .deleteCardinalityFromResourceClass(onto)
-            .subscribe(
-                (res: ResourceClassDefinitionWithAllLanguages) => {
-                    this.lastModificationDate = res.lastModificationDate;
-                    this.preparePropsToDisplay(this.propsToDisplay);
-                    // update the ontology
-                    this.updatePropertyAssignment.emit(this.ontology.id);
-                    // display success message
-                    this._notification.openSnackBar(
-                        `You have successfully removed "${property.label}" from "${this.resourceClass.label}".`
-                    );
-
-                    this.loadProperty = false;
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(<ApiResponseError>error);
-                }
-            );
+        this._store.dispatch(new RemovePropertyAction(property, this.resourceClass, currentOntologyPropertiesToDisplay));
+        this._actions$.pipe(ofActionSuccessful(RemovePropertyAction))
+            .pipe(take(1))
+            .subscribe((res) => {
+                //TODO should be the same as ontology lastModificationDate ? if yes remove commented line, otherwise add additional lastModificationDate property to the state
+                //this.lastModificationDate = res.lastModificationDate;
+                this.updatePropertyAssignment.emit(this.ontology.id);
+            });
     }
 
     /**
@@ -420,7 +343,7 @@ export class ResourceClassInfoComponent implements OnInit {
      * property and add it to the class
      * @param propertyAssignment information about the link of a property to a class
      **/
-    assignProperty(propertyAssignment: PropertyAssignment) {
+    assignProperty(propertyAssignment: PropertyAssignment, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
         if (!propertyAssignment) {
             return;
         }
@@ -461,7 +384,7 @@ export class ResourceClassInfoComponent implements OnInit {
                 subtitle: 'Customize property and cardinality',
                 mode: mode,
                 parentIri: propertyAssignment.resClass.id,
-                position: this.propsToDisplay.length + 1,
+                position: currentOntologyPropertiesToDisplay.length + 1,
             },
         };
         this.openEditDialog(dialogConfig);
@@ -476,7 +399,8 @@ export class ResourceClassInfoComponent implements OnInit {
         prop: PropToDisplay;
         propType: DefaultProperty;
         targetCardinality: GuiCardinality;
-    }) {
+    },
+    currentOntologyPropertiesToDisplay: PropToDisplay[]) {
         const dialogConfig: MatDialogConfig = {
             width: '640px',
             maxHeight: '80vh',
@@ -494,7 +418,7 @@ export class ResourceClassInfoComponent implements OnInit {
                 parentIri: this.resourceClass.id,
                 currentCardinality: cardRequest.prop.cardinality,
                 targetCardinality: cardRequest.targetCardinality,
-                classProperties: this.propsToDisplay,
+                classProperties: currentOntologyPropertiesToDisplay,
             },
         };
         this.openEditDialog(dialogConfig);
@@ -507,71 +431,41 @@ export class ResourceClassInfoComponent implements OnInit {
     openEditDialog(dialogConfig: MatDialogConfig) {
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe(() => {
-            // update the view: list of properties in resource class
-            this.updatePropertyAssignment.emit(this.ontology.id);
+        dialogRef.afterClosed().subscribe((event: DialogEvent) => {
+            if (event !== DialogEvent.DialogCanceled) {
+                // update the view: list of properties in resource class
+                this.updatePropertyAssignment.emit(this.ontology.id);
+            }
         });
     }
 
     /**
      * drag and drop property line
      */
-    drop(event: CdkDragDrop<string[]>) {
+    drop(event: CdkDragDrop<string[]>, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
         // set sort order for child component
         moveItemInArray(
-            this.propsToDisplay,
+            currentOntologyPropertiesToDisplay, //TODO items should be updated in state if LoadProjectOntologiesAction is not executed after this
             event.previousIndex,
             event.currentIndex
         );
 
         if (event.previousIndex !== event.currentIndex) {
+            this.updatePropertyAssignment.pipe(take(1)).subscribe(() => this.updatePropertyAssignment$.next());
             // the dropped property item has a new index (= gui order)
             // send the new gui-order to the api by
             // preparing the UpdateOntology object first
-            const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-
-            onto.lastModificationDate = this.lastModificationDate;
-
-            onto.id = this.ontology.id;
-
-            const addCard = new UpdateResourceClassCardinality();
-
-            addCard.id = this.resourceClass.id;
-
-            addCard.cardinalities = [];
-
-            this.propsToDisplay.forEach((prop, index) => {
-                const propCard: IHasProperty = {
-                    propertyIndex: prop.propertyIndex,
-                    cardinality: prop.cardinality,
-                    guiOrder: index + 1,
-                };
-
-                addCard.cardinalities.push(propCard);
+            this._store.dispatch(new ReplacePropertyAction(this.resourceClass, currentOntologyPropertiesToDisplay));
+            this._actions$.pipe(ofActionSuccessful(ReplacePropertyAction))
+                .pipe(take(1))
+                .subscribe(() => {
+                    // successful request: update the view
+                    this.updatePropertyAssignment.emit(this.ontology.id);
+                    // display success message
+                    this._notification.openSnackBar(
+                        `You have successfully changed the order of properties in the resource class "${this.resourceClass.label}".`
+                    );
             });
-
-            onto.entity = addCard;
-
-            // send the request to the api
-            this._dspApiConnection.v2.onto
-                .replaceGuiOrderOfCardinalities(onto)
-                .subscribe(
-                    (
-                        responseGuiOrder: ResourceClassDefinitionWithAllLanguages
-                    ) => {
-                        this.lastModificationDate =
-                            responseGuiOrder.lastModificationDate;
-                        // successful request: update the view
-                        this.updatePropertyAssignment.emit(this.ontology.id);
-                        // display success message
-                        this._notification.openSnackBar(
-                            `You have successfully changed the order of properties in the resource class "${this.resourceClass.label}".`
-                        );
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                );
         }
     }
 
@@ -603,5 +497,58 @@ OFFSET 0`;
             gravsearch
         )}`;
         window.open(doSearchRoute, '_blank');
+    }
+
+    private getExistingProperties(classProps: PropToDisplay[], ontoProperties: OntologyProperties[]): PropToAdd[] {
+        if (classProps.length === 0 || ontoProperties.length === 0) {
+            return [];
+        }
+
+        const existingProperties: PropToAdd[] = [];
+        const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
+        ontoProperties.forEach((op: OntologyProperties, i: number) => {
+            const onto = currentProjectOntologies.find((i) => i?.id === op.ontology);
+            existingProperties.push({
+                ontologyId: op.ontology,
+                ontologyLabel: onto?.label,
+                properties: [],
+            });
+
+            op.properties.forEach(
+                (availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
+                    const superProp = this._ontoService.getSuperProperty(availableProp, currentProjectOntologies);
+                    if (superProp && availableProp.subPropertyOf.indexOf(superProp) === -1) {
+                        availableProp.subPropertyOf.push(superProp);
+                    }
+
+                    let propType: DefaultProperty;
+                    // find corresponding default property to have more prop info
+                    this._ontoService
+                        .getDefaultPropType(availableProp)
+                        .subscribe((prop: DefaultProperty) => {
+                            propType = prop;
+                        });
+
+                    const propToAdd: PropertyInfoObject = {
+                        propType: propType,
+                        propDef: availableProp,
+                    };
+
+                    if (this.isPropertyToAdd(classProps, availableProp)) {
+                        existingProperties[i].properties.push(propToAdd);
+                    }
+                }
+            );
+        });
+
+        return existingProperties;
+    }
+
+    private isPropertyToAdd(classProps: PropToDisplay[], availableProp: ResourcePropertyDefinitionWithAllLanguages): boolean {
+        return classProps.findIndex(x => x.propertyIndex === availableProp.id) === -1 &&
+            ((availableProp.subjectType &&
+            !availableProp.subjectType.includes('Standoff') &&
+            availableProp.objectType !== Constants.LinkValue) ||
+            !availableProp.isLinkValueProperty);
     }
 }

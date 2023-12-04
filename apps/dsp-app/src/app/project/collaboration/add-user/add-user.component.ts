@@ -1,4 +1,6 @@
 import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     EventEmitter,
     Inject,
@@ -27,10 +29,13 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/operator';
+import { Store } from '@ngxs/store';
+import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-add-user',
     templateUrl: './add-user.component.html',
     styleUrls: ['./add-user.component.scss'],
@@ -132,7 +137,9 @@ export class AddUserComponent implements OnInit {
         private _dialog: MatDialog,
         private _errorHandler: AppErrorHandler,
         private _formBuilder: UntypedFormBuilder,
-        private _projectService: ProjectService
+        private _projectService: ProjectService,
+        private _store: Store,
+        private _cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit() {
@@ -152,91 +159,72 @@ export class AddUserComponent implements OnInit {
                 const members: string[] = [];
 
                 // get all members of this project
-                this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(this.projectIri).subscribe(
-                    (res: ApiResponseData<MembersResponse>) => {
-                        for (const m of res.body.members) {
-                            members.push(m.id);
-
-                            // if the user is already member of the project
-                            // add the email to the list of existing
-                            this.existingEmailInProject.push(
-                                new RegExp(
-                                    '(?:^|W)' +
-                                        m.email.toLowerCase() +
-                                        '(?:$|W)'
-                                )
-                            );
-                            // add username to the list of existing
-                            this.existingUsernameInProject.push(
-                                new RegExp(
-                                    '(?:^|W)' +
-                                        m.username.toLowerCase() +
-                                        '(?:$|W)'
-                                )
-                            );
-                        }
-
-                        let i = 0;
-                        for (const u of response.body.users) {
-                            // if the user is already member of the project
-                            // add the email to the list of existing
-                            this.existingEmails.push(
-                                new RegExp(
-                                    '(?:^|W)' +
-                                        u.email.toLowerCase() +
-                                        '(?:$|W)'
-                                )
-                            );
-                            // add username to the list of existing
-                            this.existingUsernames.push(
-                                new RegExp(
-                                    '(?:^|W)' +
-                                        u.username.toLowerCase() +
-                                        '(?:$|W)'
-                                )
-                            );
-
-                            let existsInProject = '';
-
-                            if (members && members.indexOf(u.id) > -1) {
-                                existsInProject = '* ';
-                            }
-
-                            this.users[i] = {
-                                iri: u.id,
-                                name: u.username,
-                                label:
-                                    existsInProject +
-                                    u.username +
-                                    ' | ' +
-                                    u.email +
-                                    ' | ' +
-                                    u.givenName +
-                                    ' ' +
-                                    u.familyName,
-                            };
-                            i++;
-                        }
-
-                        this.users.sort(function (
-                            u1: AutocompleteItem,
-                            u2: AutocompleteItem
-                        ) {
-                            if (u1.label < u2.label) {
-                                return -1;
-                            } else if (u1.label > u2.label) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        });
-                    },
-                    (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
+                const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers);
+                if (projectMembers[this.projectIri]) {
+                    for (const m of projectMembers[this.projectIri].value) {
+                        members.push(m.id);
+    
+                        // if the user is already member of the project
+                        // add the email to the list of existing
+                        this.existingEmailInProject.push(
+                            new RegExp('(?:^|W)' + m.email.toLowerCase() + '(?:$|W)')
+                        );
+                        // add username to the list of existing
+                        this.existingUsernameInProject.push(
+                            new RegExp('(?:^|W)' + m.username.toLowerCase() + '(?:$|W)')
+                        );
                     }
-                );
+                }
+
+                let i = 0;
+                for (const u of response.body.users) {
+                    // if the user is already member of the project
+                    // add the email to the list of existing
+                    this.existingEmails.push(
+                        new RegExp('(?:^|W)' + u.email.toLowerCase() + '(?:$|W)')
+                    );
+                    // add username to the list of existing
+                    this.existingUsernames.push(
+                        new RegExp('(?:^|W)' + u.username.toLowerCase() + '(?:$|W)')
+                    );
+
+                    let existsInProject = '';
+
+                    if (members && members.indexOf(u.id) > -1) {
+                        existsInProject = '* ';
+                    }
+
+                    this.users[i] = {
+                        iri: u.id,
+                        name: u.username,
+                        label:
+                            existsInProject +
+                            u.username +
+                            ' | ' +
+                            u.email +
+                            ' | ' +
+                            u.givenName +
+                            ' ' +
+                            u.familyName,
+                    };
+                    i++;
+                }
+
+                this.users.sort(function (
+                    u1: AutocompleteItem,
+                    u2: AutocompleteItem
+                ) {
+                    if (u1.label < u2.label) {
+                        return -1;
+                    } else if (u1.label > u2.label) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
 
                 this.loading = false;
+                this._cd.markForCheck();
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
@@ -384,7 +372,6 @@ export class AddUserComponent implements OnInit {
         };
 
         const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
         dialogRef.afterClosed().subscribe(() => {
             // update the view
             this.refreshParent.emit();

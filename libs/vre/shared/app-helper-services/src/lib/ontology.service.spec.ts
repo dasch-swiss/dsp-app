@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import {
     DspApiConfigToken,
     DspApiConnectionToken,
 } from '@dasch-swiss/vre/shared/app-config';
-import { TestConfig } from '@dsp-app/src/test.config';
+//import { TestConfig } from '@dsp-app/src/test.config';
 import { OntologyService } from './ontology.service';
 
 describe('OntologyService', () => {
@@ -20,11 +19,11 @@ describe('OntologyService', () => {
                 AppConfigService,
                 {
                     provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig,
+                    //useValue: TestConfig.ApiConfig,
                 },
                 {
                     provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig),
+                    //useValue: new KnoraApiConnection(TestConfig.ApiConfig),
                 },
                 {
                     provide: ApplicationStateService,

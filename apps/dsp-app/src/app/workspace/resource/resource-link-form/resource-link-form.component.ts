@@ -1,8 +1,10 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     EventEmitter,
     Inject,
     Input,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
@@ -26,15 +28,21 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { FilteredResources } from '../../results/list-view/list-view.component';
-import { ProjectService } from '../services/project.service';
 import { ResourceService } from '../services/resource.service';
+import { Select } from '@ngxs/store';
+import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-resource-link-form',
     templateUrl: './resource-link-form.component.html',
     styleUrls: ['./resource-link-form.component.scss'],
 })
-export class ResourceLinkFormComponent implements OnInit {
+export class ResourceLinkFormComponent implements OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+
     @Input() resources: FilteredResources;
 
     @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
@@ -54,31 +62,33 @@ export class ResourceLinkFormComponent implements OnInit {
         },
     };
 
-    usersProjects: StoredProject[];
-
     selectedProject: string;
 
-    error = false;
-    loading = false;
+    get usersProjects$(): Observable<StoredProject[]> {
+        return combineLatest([this.currentUserProjects$, this.isSysAdmin$, this.allNotSystemProjects$])
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(([currentUserProjects, isSysAdmin, allNotSystemProjects]) => 
+                    isSysAdmin ? currentUserProjects : allNotSystemProjects
+                ));
+    }
+
+    @Select(ProjectsSelectors.allNotSystemProjects) allNotSystemProjects$: Observable<StoredProject[]>;
+    @Select(UserSelectors.userProjects) currentUserProjects$: Observable<StoredProject[]>;
+    @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean[]>;
+    @Select(ProjectsSelectors.isProjectsLoading) isLoading$: Observable<boolean>;
+    @Select(ProjectsSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;
 
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
         private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
-        private _project: ProjectService,
         private _resourceService: ResourceService,
         private _router: Router
     ) {}
 
     ngOnInit(): void {
-        // initialize projects to be used for the project selection in the creation form
-        this._project
-            .initializeProjects()
-            .subscribe((proj: StoredProject[]) => {
-                this.usersProjects = proj;
-            });
-
         this.form = this._fb.group({
             label: new UntypedFormControl(
                 {
@@ -92,6 +102,11 @@ export class ResourceLinkFormComponent implements OnInit {
         });
 
         this.form.valueChanges.subscribe(() => this.onValueChanged());
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
@@ -120,8 +135,6 @@ export class ResourceLinkFormComponent implements OnInit {
      * submits the data
      */
     submitData() {
-        this.loading = true;
-
         // build link resource as type CreateResource
         const linkObj = new CreateResource();
 
@@ -163,12 +176,9 @@ export class ResourceLinkFormComponent implements OnInit {
                     .navigate([])
                     .then(() => window.open(goto, '_blank'));
                 this.closeDialog.emit();
-                this.loading = false;
             },
             (error: ApiResponseError) => {
                 this._errorHandler.showMessage(error);
-                this.error = true;
-                this.loading = false;
             }
         );
     }
