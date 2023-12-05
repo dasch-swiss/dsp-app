@@ -1,5 +1,19 @@
 # Changelog
 
+## [11.1.6](https://github.com/dasch-swiss/dsp-das/compare/v11.1.5...v11.1.6) (2023-12-05)
+
+
+### Bug Fixes
+
+* **dsp-app:** prevent x overflow in dialog ([#1283](https://github.com/dasch-swiss/dsp-das/issues/1283)) ([ed43e09](https://github.com/dasch-swiss/dsp-das/commit/ed43e09ef215a1bc24eafc582c45d2254bb031e1))
+
+
+### Maintenance
+
+* created isFalsy pipe to handle no-negated-async linting rule ([#1299](https://github.com/dasch-swiss/dsp-das/issues/1299)) ([41f6f7f](https://github.com/dasch-swiss/dsp-das/commit/41f6f7fb15e456727832e63f54aadc917637d0e9))
+* **session-service:** add reactivity ([#1165](https://github.com/dasch-swiss/dsp-das/issues/1165)) ([d518fa8](https://github.com/dasch-swiss/dsp-das/commit/d518fa8b26e8f714ea2c5cece102708b47dc53d6))
+* update package-lock ([#1297](https://github.com/dasch-swiss/dsp-das/issues/1297)) ([b62b072](https://github.com/dasch-swiss/dsp-das/commit/b62b072dd23fe629523e0ca7033d8980cedf5d28))
+
 ## [11.1.5](https://github.com/dasch-swiss/dsp-das/compare/v11.1.4...v11.1.5) (2023-11-23)
 
 
