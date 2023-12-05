@@ -33,7 +33,7 @@
             </div>
         </div>
         <!-- user is logged in and not a system admin -->
-        <div *ngIf="(isSysAdmin$ | async) === false && !!(user$ | async)">
+        <div *ngIf="(isSysAdmin$ | async) === false && (user$ | async | isFalsy)">
             <div class="title-bar">
                 <div class="title">
                     <p>My Projects</p>
@@ -69,7 +69,7 @@
         </div>
 
         <!-- user is not logged in -->
-        <div *ngIf="((isProjectsLoading$ | async) === false) && !!((user$ | async))">
+        <div *ngIf="((isProjectsLoading$ | async) === false) && user$ | async | isFalsy">
             <!-- list all projects -->
             <div class="title-bar admin">
                 <div class="title">

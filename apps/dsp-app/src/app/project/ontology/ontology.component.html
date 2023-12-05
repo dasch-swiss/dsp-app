@@ -33,7 +33,7 @@
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
                         [matTooltip]="((isAdmin$ | async) ? ((lastModificationDate$ | async) ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
-                        <button *ngIf="(currentOntology$ | async) as currentOntology" color="primary" mat-button [disabled]="!!(lastModificationDate$ | async) || (isAdmin$ | async) === false"
+                        <button *ngIf="(currentOntology$ | async) as currentOntology" color="primary" mat-button [disabled]="(lastModificationDate$ | async | isFalsy) || (isAdmin$ | async) === false"
                             (click)="$event.stopPropagation(); openOntologyForm('editOntology', currentOntology.id)">
                             <mat-icon>edit</mat-icon>
                             Edit
@@ -43,7 +43,7 @@
                         [matTooltip]="((isAdmin$ | async) ? ((lastModificationDate$ | async) ? ((currentOntologyCanBeDeleted$ | async) ? 'Delete data model' : 'This data model can\'t be deleted because it is in use!') : 'This data model can\'t be deleted because of missing lastModificationDate!') : null)">
                         <button color="warn" mat-button
                             *ngIf="(currentOntology$ | async) as currentOntology"
-                            [disabled]="(!!(lastModificationDate$ | async) || (currentOntologyCanBeDeleted$ | async) === false) || ((isAdmin$ | async) === false)"
+                            [disabled]="((lastModificationDate$ | async | isFalsy) || (currentOntologyCanBeDeleted$ | async) === false) || ((isAdmin$ | async) === false)"
                             (click)="$event.stopPropagation(); delete('Ontology', {iri: currentOntology.id, label: currentOntology.label})">
                             <mat-icon>delete</mat-icon>
                             Delete
@@ -69,7 +69,7 @@
                             [matTooltip]="'This data model can\'t be edited because of missing \'lastModificationDate\'!'"
                             [matTooltipDisabled]="lastModificationDate$ | async">
                             <button mat-button [matMenuTriggerFor]="addResClassMenu"
-                                [disabled]="!!(lastModificationDate$ | async)">
+                                [disabled]="lastModificationDate$ | async | isFalsy">
                                 <mat-icon>add</mat-icon>
                                 Create new class
                             </button>
@@ -88,7 +88,7 @@
                         [matTooltip]="'This data model can\'t be edited because of missing \'lastModificationDate\'!'"
                         [matTooltipDisabled]="lastModificationDate$ | async">
                         <button mat-button *ngIf="view === 'properties'" [matMenuTriggerFor]="addPropertyMenu"
-                            [disabled]="!!(lastModificationDate$ | async)">
+                            [disabled]="lastModificationDate$ | async | isFalsy">
                             <mat-icon>add</mat-icon>
                             Create new property
                         </button>

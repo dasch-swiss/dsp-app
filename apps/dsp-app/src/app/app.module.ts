@@ -162,6 +162,7 @@ import { apiConnectionTokenProvider } from './providers/api-connection-token.pro
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
 import { AppProgressIndicatorComponent } from "@dasch-swiss/vre/shared/app-progress-indicator";
 import {AppStringLiteralComponent} from "@dasch-swiss/vre/shared/app-string-literal";
+import { IsFalsyPipe } from './main/pipes/isFalsy.piipe';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -293,6 +294,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         ProjectTileComponent,
         CommentFormComponent,
         DataModelsComponent,
+        IsFalsyPipe,
     ],
     imports: [
         AngularSplitModule,
