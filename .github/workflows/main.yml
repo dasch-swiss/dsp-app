@@ -22,9 +22,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install
-      - run: npx nx run-many --all --target=lint
-      # - run: npx nx run-many --all --target=test --configuration=ci
+      - name: "Adding GitHub registry"
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
+      - name: "Run npm install"
+        run: |
+          npm install
+          npx nx run-many --all --target=lint
+        # npx nx run-many --all --target=test --configuration=ci
         env:
           TZ: Europe/Zurich
 
@@ -39,6 +45,10 @@ jobs:
         with:
           node-version: 18
       - uses: browser-actions/setup-chrome@v1
+      - name: "Adding GitHub registry"
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: npm install
       - run: npx nx run dsp-app:lint
       # - run: npx nx run dsp-app:test:ci
@@ -55,6 +65,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: npm install
       - name: Checkout DSP-API repo
         uses: actions/checkout@v3
@@ -73,21 +86,6 @@ jobs:
           cd ../dsp-das
           npm run e2e-ci
 
-  dateadapter-tests:
-    name: DateAdapter
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # gets additionally all tags which we need
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install
-      - run: npx nx run dateAdapter:lint
-      - run: npx nx run dateAdapter:test:ci
-      # - run: npx nx run dateAdaper-e2e:e2e-ci
-
   jdnconvertiblecalendar-tests:
     name: JDNConvertibleCalendar
     runs-on: ubuntu-latest
@@ -98,6 +96,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: npm install
       - run: npx nx run jdnconvertiblecalendar:lint
       - run: npx nx run jdnconvertiblecalendar:test:ci
@@ -112,6 +113,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: npm install
       - run: npx nx run jdnconvertiblecalendardateadapter:lint
       - run: npx nx run jdnconvertiblecalendardateadapter:test:ci
@@ -126,6 +130,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: npm install
       - run: npx nx run vre-shared-app-config:lint
       - run: npx nx run vre-shared-app-config:test:ci
@@ -136,7 +143,6 @@ jobs:
     needs: [
       # test,
       # dsp-app-tests,
-      dateadapter-tests,
       jdnconvertiblecalendar-tests,
       jdnconvertiblecalendardateadapter-tests,
       vre-shared-app-config-tests

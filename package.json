@@ -41,7 +41,7 @@
     "@angular/platform-browser-dynamic": "^16.2.12",
     "@angular/router": "^16.2.12",
     "@ckeditor/ckeditor5-angular": "^5.2.0",
-    "@dasch-swiss/dsp-js": "^9.0.3",
+    "@dasch-swiss/dsp-js": "^9.1.8",
     "@datadog/browser-logs": "^4.42.2",
     "@datadog/browser-rum": "^4.42.2",
     "@ngrx/component-store": "^16.1.0",
@@ -137,5 +137,8 @@
     "@nx/nx-darwin-x64": "16.5.3",
     "@nx/nx-linux-x64-gnu": "16.5.3",
     "@nx/nx-win32-x64-msvc": "16.5.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/dasch-swiss"
   }
 }
