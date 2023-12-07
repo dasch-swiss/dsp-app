@@ -332,14 +332,14 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                 .subscribe(
                     (countQuery: CountQueryResponse) => {
                         if (countQuery.numberOfResults > 0) {
+                            // this is a compound object
                             this.compoundPosition = new DspCompoundPosition(
                                 countQuery.numberOfResults
                             );
                             this.compoundNavigation(1);
-                        } else {
-                            // not a compound object
-                            this.loading = false;
-                        }
+                        } 
+                        
+                        this.loading = false;
                         this._cdr.markForCheck();
                     },
                     (error: ApiResponseError) => {
