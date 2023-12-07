@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import {
@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { LoadProjectsAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'app-overview',
     templateUrl: './overview.component.html',
     styleUrls: ['./overview.component.scss'],
@@ -42,4 +43,6 @@ export class OverviewComponent implements OnInit {
     createNewProject() {
         this._router.navigate([RouteConstants.newProjectRelative]);
     }
+
+    trackByFn = (index: number, item: StoredProject) => `${index}-${item.id}`;
 }

@@ -15,7 +15,7 @@ export class ClearProjectsAction {
 
 export class RemoveUserFromProjectAction {
     static readonly type = '[Projects] Remove User From Project';
-    constructor(public userId: string, public projectId: string) {}
+    constructor(public userId: string, public projectIri: string) {}
 }
 
 export class AddUserToProjectMembershipAction {

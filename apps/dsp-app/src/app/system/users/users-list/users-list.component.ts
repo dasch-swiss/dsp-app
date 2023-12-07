@@ -344,10 +344,9 @@ export class UsersListComponent implements OnInit {
                 switch (mode) {
                     case 'removeFromProject':
                         this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
-                        this._actions$.pipe(ofActionSuccessful(SetUserAction))
+                        this._actions$.pipe(ofActionSuccessful(LoadProjectMembersAction))
                             .pipe(take(1))
                             .subscribe(() => {
-                                this._store.dispatch(new LoadProjectMembersAction(this.projectUuid));
                                 this.refreshParent.emit();
                             });
                         break;

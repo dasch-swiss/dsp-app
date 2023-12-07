@@ -142,11 +142,11 @@ export class ProjectsState {
     @Action(RemoveUserFromProjectAction)
     removeUserFromProject(
         ctx: StateContext<ProjectsStateModel>,
-        { userId, projectId }: RemoveUserFromProjectAction
+        { userId, projectIri }: RemoveUserFromProjectAction
     ) {
         ctx.patchState({ isLoading: true });
         return this._dspApiConnection.admin.usersEndpoint
-            .removeUserFromProjectMembership(userId, projectId)
+            .removeUserFromProjectMembership(userId, projectIri)
             .pipe(
                 take(1),
                 map((response: ApiResponseData<UserResponse> | ApiResponseError) => {
@@ -154,7 +154,10 @@ export class ProjectsState {
                 }),
                 tap({
                     next: (response: ApiResponseData<UserResponse>) => {
-                        ctx.dispatch(new SetUserAction(response.body.user));
+                        ctx.dispatch([
+                            new SetUserAction(response.body.user), 
+                            new LoadProjectMembersAction(projectIri)
+                        ]);
                         ctx.patchState({ isLoading: false });
                     },
                     error: (error) => {
@@ -179,7 +182,10 @@ export class ProjectsState {
                 }),
                 tap({
                     next: (response: ApiResponseData<UserResponse>) => {
-                        ctx.dispatch(new SetUserAction(response.body.user));
+                        ctx.dispatch([
+                            new SetUserAction(response.body.user), 
+                            new LoadProjectMembersAction(projectIri)
+                        ]);
                         ctx.patchState({ isLoading: false });
                     },
                     error: (error) => {

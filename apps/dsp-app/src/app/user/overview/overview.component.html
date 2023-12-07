@@ -21,10 +21,7 @@
                 </div>
             </div>
             <div class="project-tiles">
-                <div
-                    *ngFor="let proj of allProjects$ | async"
-                    class="project-tile-container"
-                >
+                <div *ngFor="let proj of allProjects$ | async; trackBy: trackByFn" class="project-tile-container">
                     <app-project-tile
                         [project]="proj"
                         [sysAdmin]="true"
@@ -33,7 +30,7 @@
             </div>
         </div>
         <!-- user is logged in and not a system admin -->
-        <div *ngIf="(isSysAdmin$ | async) === false && (user$ | async | isFalsy)">
+        <div *ngIf="(isSysAdmin$ | async) === false && (user$ | async)">
             <div class="title-bar">
                 <div class="title">
                     <p>My Projects</p>
@@ -41,7 +38,7 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let userProj of userActiveProjects$ | async"
+                    *ngFor="let userProj of userActiveProjects$ | async; trackBy: trackByFn"
                     class="project-tile-container"
                 >
                     <app-project-tile
@@ -57,7 +54,7 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let otherProj of userOtherActiveProjects$ | async"
+                    *ngFor="let otherProj of userOtherActiveProjects$ | async; trackBy: trackByFn"
                     class="project-tile-container"
                 >
                     <app-project-tile
@@ -78,7 +75,7 @@
             </div>
             <div class="project-tiles">
                 <div
-                    *ngFor="let proj of allActiveProjects$ | async"
+                    *ngFor="let proj of allActiveProjects$ | async; trackBy: trackByFn"
                     class="project-tile-container"
                 >
                     <app-project-tile

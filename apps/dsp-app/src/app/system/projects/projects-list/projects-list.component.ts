@@ -28,7 +28,7 @@ import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {SortProp} from "@dsp-app/src/app/main/action/sort-button/sort-button.component";
 import {Observable, Subject, combineLatest} from "rxjs";
-import {map, takeUntil, tap} from "rxjs/operators";
+import {map, take, takeUntil, tap} from "rxjs/operators";
 import { Select } from '@ngxs/store';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 
@@ -206,19 +206,12 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     }
 
     deactivateProject(id: string) {
-        const uuid = this._projectService.iriToUuid(id);
         // the deleteProject() method in js-lib sets the project's status to false, it is not actually deleted
-
-        this._dspApiConnection.admin.projectsEndpoint
-            .deleteProject(id)
-            .pipe(
-                tap((response: ApiResponseData<ProjectResponse>) => {
-                    this.refreshParent.emit(); //TODO Soft or Hard refresh ?
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                })
-            );
+        this._dspApiConnection.admin.projectsEndpoint.deleteProject(id)
+            .pipe(take(1))
+            .subscribe(response => {
+                this.refreshParent.emit(); //TODO Soft or Hard refresh ?
+            });
     }
 
     activateProject(id: string) {
@@ -228,13 +221,9 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
         this._dspApiConnection.admin.projectsEndpoint
             .updateProject(id, data)
-            .pipe(
-                tap((response: ApiResponseData<ProjectResponse>) => {
-                    this.refreshParent.emit();
-                },
-                (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
-                })
-            );
+            .pipe(take(1))
+            .subscribe(response => {
+                this.refreshParent.emit(); //TODO Soft or Hard refresh ?
+            });
     }
 }
