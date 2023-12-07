@@ -167,6 +167,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
+          echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: make docker-publish
 
   trigger-dev-deployment:
