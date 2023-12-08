@@ -1,5 +1,20 @@
 # Changelog
 
+## [11.1.7](https://github.com/dasch-swiss/dsp-das/compare/v11.1.6...v11.1.7) (2023-12-08)
+
+
+### Bug Fixes
+
+* add GH packages access for docker publish ([#1304](https://github.com/dasch-swiss/dsp-das/issues/1304)) ([bef179d](https://github.com/dasch-swiss/dsp-das/commit/bef179d1176c9590a17dc049922bfb84d7bc7f0a))
+* removing/adding users from/to project, project activation/deactivation. ([#1302](https://github.com/dasch-swiss/dsp-das/issues/1302)) ([a084369](https://github.com/dasch-swiss/dsp-das/commit/a084369c2d87925ae672f3c3124a872cfdcea8a3))
+* resource loading issue ([#1303](https://github.com/dasch-swiss/dsp-das/issues/1303)) ([c9dc099](https://github.com/dasch-swiss/dsp-das/commit/c9dc099b8725b1fbf4206403e0e0a05a96c2ede2))
+
+
+### Maintenance
+
+* Update dsp-js to v9.1.9 ([#1305](https://github.com/dasch-swiss/dsp-das/issues/1305)) ([494d026](https://github.com/dasch-swiss/dsp-das/commit/494d026aa84b9ed47a407369f136ae28648994c0))
+* use github packages in dsp-pp ([#1291](https://github.com/dasch-swiss/dsp-das/issues/1291)) ([6ceb41a](https://github.com/dasch-swiss/dsp-das/commit/6ceb41a7318a54d5f65186f73d809e8deaa737ce))
+
 ## [11.1.6](https://github.com/dasch-swiss/dsp-das/compare/v11.1.5...v11.1.6) (2023-12-05)
 
 
