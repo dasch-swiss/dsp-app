@@ -37,6 +37,7 @@ yarn-error.log
 testem.log
 /typings
 metals*
+.npmrc
 
 #Documentation Files
 docs/_site/
