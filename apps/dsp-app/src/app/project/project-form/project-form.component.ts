@@ -78,7 +78,7 @@ export class ProjectFormComponent implements OnInit {
     shortcodeMaxLength: number = this.shortcodeMinLength;
 
     shortnameMinLength = 3;
-    shortnameMaxLength = 16;
+    shortnameMaxLength = 20;
 
     // keywords is an array of objects of {name: 'string'}
     keywords: string[] = [];
