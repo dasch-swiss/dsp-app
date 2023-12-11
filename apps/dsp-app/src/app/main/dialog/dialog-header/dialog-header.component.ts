@@ -9,5 +9,5 @@ export class DialogHeaderComponent {
     @Input() title: string;
     @Input() subtitle: string;
 
-    @Output() close: EventEmitter<any> = new EventEmitter<any>();
+    @Output() closed = new EventEmitter<any>();
 }

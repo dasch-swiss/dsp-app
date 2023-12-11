@@ -55,8 +55,8 @@ export class ProjectComponent extends ProjectBase implements OnInit {
 
     get color$(): Observable<string> {
         return this.readProject$.pipe(
-            map(readProject => !readProject.status 
-                ? MaterialColor.Warn 
+            map(readProject => !readProject.status
+                ? MaterialColor.Warn
                 : MaterialColor.Primary)
         );
     }
@@ -76,7 +76,7 @@ export class ProjectComponent extends ProjectBase implements OnInit {
         if (!this.projectUuid) {
             return of({} as ReadOntology[]);
         }
-        
+
         return this._store.select(OntologiesSelectors.projectOntologies)
             .pipe(
                 map(ontologies => {
@@ -103,7 +103,7 @@ export class ProjectComponent extends ProjectBase implements OnInit {
     @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
     @Select(OntologiesSelectors.isLoading) isOntologiesLoading$: Observable<boolean>;
     @Select(OntologiesSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;
-    
+
     constructor(
         private _componentCommsService: ComponentCommunicationEventService,
         protected _cd: ChangeDetectorRef,
@@ -162,7 +162,7 @@ export class ProjectComponent extends ProjectBase implements OnInit {
             this.componentCommsSubscription.unsubscribe();
         }
     }
-    
+
     trackByFn = (index: number, item: ReadOntology) => `${index}-${item.id}`;
 
     open(route: AvailableRoute, id = '') {

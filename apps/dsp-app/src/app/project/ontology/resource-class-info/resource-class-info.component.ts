@@ -47,7 +47,7 @@ import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 })
 export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
+
     // open / close res class card
     @Input() expanded = false;
 
@@ -100,12 +100,12 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
     // load single property (in case of property cardinality action)
     loadProperty = false;
-    
+
     get currentOntologyPropertiesToDisplay$(): Observable<PropToDisplay[]> {
         return this.currentProjectOntologyProperties$
             .pipe(
                 takeUntil(this.ngUnsubscribe),
-                map(ontoProperties => 
+                map(ontoProperties =>
                     this.getPropsToDisplay([...this.resourceClass.propertiesList], [...ontoProperties])));
     }
 
@@ -114,14 +114,14 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
         return this.currentProjectOntologyProperties$
             .pipe(
                 takeUntil(this.ngUnsubscribe),
-                map(ontoProperties => 
+                map(ontoProperties =>
                     this.getExistingProperties([...this.resourceClass.propertiesList], [...ontoProperties])));
     }
 
     // list of all ontologies with their properties
     @Select(OntologiesSelectors.currentProjectOntologyProperties) currentProjectOntologyProperties$: Observable<OntologyProperties[]>;
     @Select(OntologiesSelectors.currentOntology) currentOntology$: Observable<ReadOntology>;
-    
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
@@ -141,12 +141,12 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
         // check if the class can be deleted
         this.canBeDeleted();
     }
-    
+
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
-    
+
     trackByPropToAddFn = (index: number, item: PropToAdd) => `${index}-${item.ontologyId}`;
 
     trackByPropCategoryFn = (index: number, item: PropertyCategory) => `${index}-${item.group}`;
@@ -156,7 +156,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     trackByPropFn = (index: number, item: PropertyInfoObject) => `${index}-${item.propDef?.id}`;
 
     trackByPropToDisplayFn = (index: number, item: PropToDisplay) => `${index}-${item.propertyIndex}`;
-    
+
     /**
      * prepares props to display
      * Not all props should be displayed; there are some system / API-specific
@@ -168,7 +168,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
         if (classProps.length === 0 || ontoProperties.length === 0) {
             return [];
         }
-        
+
         const propsToDisplay: PropToDisplay[] = [];
         let remainingProperties: PropertyDefinition[] = [];
         classProps.forEach((hasProp: PropToDisplay) => {
@@ -182,7 +182,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
                 const index = ontoProperties.findIndex((item: OntologyProperties) => item.ontology === ontoIri);
                 remainingProperties = [...ontoProperties[index].properties];
                 hasProp.propDef = remainingProperties.find(
-                    (obj: ResourcePropertyDefinitionWithAllLanguages) => 
+                    (obj: ResourcePropertyDefinitionWithAllLanguages) =>
                         obj.id === hasProp.propertyIndex &&
                         ((obj.subjectType &&
                             !obj.subjectType.includes('Standoff') &&

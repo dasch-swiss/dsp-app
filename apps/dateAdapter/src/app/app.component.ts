@@ -169,6 +169,7 @@ const makeCalToken = () => {
 };
 
 @Directive({
+    // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'jdn-datepicker',
   providers: [
     { provide: ACTIVE_CALENDAR, useFactory: makeCalToken },

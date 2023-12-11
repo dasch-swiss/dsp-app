@@ -17,7 +17,7 @@ import { AppGlobal } from '@dsp-app/src/app/app-global';
     templateUrl: './description.component.html',
     styleUrls: ['./description.component.scss'],
 })
-export class DescriptionComponent implements OnInit {
+export class DescriptionComponent {
     // project uuid coming from the route
     projectUuid: string;
 
@@ -42,7 +42,7 @@ export class DescriptionComponent implements OnInit {
                 if (readProject == null) {
                     return false;
                 }
-                
+
                 return this.projectService.isProjectAdminOrSysAdmin(user, userProjectGroups, readProject.id);
             })
         );
@@ -64,17 +64,14 @@ export class DescriptionComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
-    }
-    
     editProject() {
         this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.edit]);
     }
-    
+
     trackByFn = (index: number, item: string) => `${index}-${item}`;
-    
+
     trackByStringLiteralFn = (index: number, item: StringLiteral) => `${index}-${item.value}`;
-    
+
     // returns the descriptions sorted by language
     private sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
         const languageOrder = AppGlobal.languagesList.map((l) => l.language);

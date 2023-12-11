@@ -12,13 +12,13 @@ import { Observable } from 'rxjs';
     templateUrl: './system.component.html',
     styleUrls: ['./system.component.scss'],
 })
-export class SystemComponent implements OnInit {
+export class SystemComponent {
     loading = true;
 
     navigation: MenuItem[] = AppGlobal.systemNav;
 
     @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-    
+
     constructor(
         private _titleService: Title,
     ) {
@@ -26,6 +26,4 @@ export class SystemComponent implements OnInit {
         this._titleService.setTitle('System administration');
     }
 
-    ngOnInit() {
-    }
 }

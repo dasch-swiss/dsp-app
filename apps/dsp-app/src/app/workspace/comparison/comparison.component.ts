@@ -31,8 +31,6 @@ export class ComparisonComponent implements OnChanges {
     topRow: string[] = [];
     bottomRow: string[] = [];
 
-    constructor() {}
-
     ngOnChanges(): void {
         if (this.resources && this.resources.length) {
             this.resourceIds = this.resources.map((res) => res.id);

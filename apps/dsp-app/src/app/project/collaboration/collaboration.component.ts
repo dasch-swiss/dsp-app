@@ -21,7 +21,7 @@ import { ProjectBase } from '../project-base';
 })
 export class CollaborationComponent extends ProjectBase implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
+
     @ViewChild('addUserComponent') addUser: AddUserComponent;
 
     get activeProjectMembers$(): Observable<ReadUser[]> {
@@ -51,13 +51,13 @@ export class CollaborationComponent extends ProjectBase implements OnInit, OnDes
                 })
             );
     }
-    
+
     @Select(ProjectsSelectors.projectMembers) projectMembers$: Observable<ReadUser[]>;
     @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
     @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
     @Select(UserSelectors.user) user$: Observable<ReadUser>;
     @Select(CurrentProjectSelectors.project) project$: Observable<ReadProject>;
-    
+
     constructor(
         protected _route: ActivatedRoute,
         protected _projectService: ProjectService,

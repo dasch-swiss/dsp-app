@@ -1,3 +1,8 @@
+import { Injectable } from '@angular/core';
+import {
+    CanActivate,
+    Router,
+} from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Inject, Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
@@ -14,7 +19,7 @@ import { CurrentPageSelectors, SetUserAction, UserSelectors } from '@dasch-swiss
     providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-    
+
     isLoggedIn$: Observable<boolean> = this._authService.isLoggedIn$;
 
     @Select(UserSelectors.user) user$: Observable<ReadUser>;

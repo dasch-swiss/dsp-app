@@ -296,9 +296,10 @@ export class DateValueHandlerComponent
             endDate: this.endDate,
         });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onChange = (_: any) => {};
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onTouched = () => {};
 
     get empty() {
@@ -363,11 +364,12 @@ export class DateValueHandlerComponent
         ev.preventDefault();
         this.isPeriodControl.setValue(!this.isPeriodControl.value);
     }
-    /* eslint-disable @typescript-eslint/no-unused-vars */
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onContainerClick(event: MouseEvent): void {}
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     setDescribedByIds(ids: string[]): void {}
-    
+
     /* eslint-enable @typescript-eslint/no-unused-vars */
     handlePickerClose(){
         this.pickerClosed = true;

@@ -15,8 +15,6 @@ export class ListViewService {
     selectedResourcesList: ShortResInfo[] = [];
     selectedResourceIdxMultiple = [];
 
-    constructor() {}
-
     viewResource(
         status: CheckboxUpdate,
         withMultipleSelection: boolean,

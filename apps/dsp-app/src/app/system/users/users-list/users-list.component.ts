@@ -30,6 +30,7 @@ import { CurrentProjectSelectors, LoadProjectAction, LoadProjectMembersAction, L
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ignoreElements } from 'rxjs/operators';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -106,7 +107,7 @@ export class UsersListComponent implements OnInit {
     @Select(CurrentProjectSelectors.project) project$: Observable<ReadProject>;
     @Select(CurrentProjectSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
     @Select(UserSelectors.isLoading) isUsersLoading$: Observable<boolean>;
-    
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
@@ -404,7 +405,7 @@ export class UsersListComponent implements OnInit {
         if (this.project && this.project.status === false) {
             return true;
         } else {
-            return !this._store.selectSnapshot(UserSelectors.isSysAdmin) 
+            return !this._store.selectSnapshot(UserSelectors.isSysAdmin)
                 && !this._store.selectSnapshot(CurrentProjectSelectors.isProjectAdmin);
         }
     }

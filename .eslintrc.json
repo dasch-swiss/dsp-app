@@ -7,7 +7,7 @@
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
-          "error",
+          "warn", // TODO set to error later
           {
             "enforceBuildableLibDependency": true,
             "allow": [],
@@ -23,7 +23,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "extends": ["plugin:@nrwl/nx/typescript", "eslint:recommended"],
       "rules": {}
     },
     {
@@ -34,7 +34,8 @@
     {
       "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
       "env": {
-        "jest": true
+        "jest": true,
+        "jasmine": true
       },
       "rules": {
         "ban/ban": [

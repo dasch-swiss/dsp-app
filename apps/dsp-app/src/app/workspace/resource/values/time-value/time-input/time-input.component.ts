@@ -113,8 +113,9 @@ export class TimeInputComponent
     errorState = false;
     controlType = 'app-time-input';
     matcher = new ValueErrorStateMatcher();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onChange = (_: any) => {};
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onTouched = () => {};
 
     @Input() dateLabel = 'Date';

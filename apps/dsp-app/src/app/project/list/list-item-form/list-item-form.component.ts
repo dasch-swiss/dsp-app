@@ -266,7 +266,7 @@ export class ListItemFormComponent implements OnInit {
             },
             data: {
                 mode: mode,
-                title: mode === 'editListNode' || 'deleteListNode' ? name : '',
+                title: (mode === 'editListNode' || mode === 'deleteListNode') ? name : '',
                 id: iri,
                 project: this.projectIri,
                 projectUuid: this.projectUuid,

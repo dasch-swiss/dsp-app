@@ -46,7 +46,7 @@ export interface NewOntology {
 })
 export class OntologyFormComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
+
     // project uuid
     @Input() projectUuid: string;
 
@@ -129,7 +129,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
 
     @Select(OntologiesSelectors.currentProjectOntologies) currentProjectOntologies$: Observable<ReadOntology[]>;
     @Select(OntologiesSelectors.currentOntology) currentOntology$: Observable<ReadOntology>;
-    
+
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,

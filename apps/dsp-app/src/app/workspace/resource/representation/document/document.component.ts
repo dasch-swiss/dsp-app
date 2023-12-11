@@ -79,7 +79,7 @@ export class DocumentComponent implements OnInit, AfterViewInit {
             .subscribe(
                 res =>
                     this.originalFilename = res['originalFilename'],
-                error =>  // error already handled by getFileInfo
+              () =>  // error already handled by getFileInfo
                     this.failedToLoad = true
             );
     }

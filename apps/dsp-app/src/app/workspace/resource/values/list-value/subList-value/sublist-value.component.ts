@@ -20,7 +20,6 @@ export class SublistValueComponent {
         new EventEmitter<ListNodeV2>();
 
     @ViewChild('childMenu', { static: true }) public childMenu: MatMenu;
-    constructor() {}
     setValue(item: ListNodeV2) {
         this.selectedNode.emit(item);
     }

@@ -25,7 +25,7 @@ import { map, takeUntil } from 'rxjs/operators';
     templateUrl: './select-group.component.html',
     styleUrls: ['./select-group.component.scss'],
 })
-export class SelectGroupComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SelectGroupComponent implements OnDestroy, AfterViewInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     // project short code
@@ -69,9 +69,6 @@ export class SelectGroupComponent implements OnInit, OnDestroy, AfterViewInit {
     @Select(ProjectsSelectors.projectGroups) allProjectGroups$: Observable<IKeyValuePairs<ReadGroup>[]>;
 
     constructor(private _cd: ChangeDetectorRef) {}
-
-    ngOnInit() {
-    }
 
     ngAfterViewInit() {
         setTimeout(() => {

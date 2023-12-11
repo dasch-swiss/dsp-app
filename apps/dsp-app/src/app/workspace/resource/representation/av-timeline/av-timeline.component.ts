@@ -67,8 +67,6 @@ export class AvTimelineComponent implements OnChanges {
     // size of timeline; will be used to calculate progress position in pixel corresponding to time value
     timelineDimension: DOMRect | null = null;
 
-    constructor() {}
-
     @HostListener('mouseenter', ['$event']) onEnter() {
         this._onMouseenter();
     }

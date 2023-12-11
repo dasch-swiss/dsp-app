@@ -30,7 +30,6 @@ export class ValueService {
 
     private readonly _readTextValueAsHtml = 'ReadTextValueAsHtml';
 
-    constructor() {}
 
     /**
      * given a value, determines the type or class representing it.

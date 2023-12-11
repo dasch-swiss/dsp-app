@@ -18,7 +18,6 @@ export class SelectedResourcesComponent {
     // actions which can be applied on selected resources
     resourceAction: 'compare' | 'edit' | 'delete' | 'starred' | 'cancel';
 
-    constructor() {}
 
     // return compare action
     compareResources() {

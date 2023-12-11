@@ -32,7 +32,7 @@ export interface IPermissions {
     templateUrl: './membership.component.html',
     styleUrls: ['./membership.component.scss'],
 })
-export class MembershipComponent implements OnInit, OnDestroy {
+export class MembershipComponent implements OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     @Input() user: ReadUser;
@@ -70,13 +70,10 @@ export class MembershipComponent implements OnInit, OnDestroy {
     @Select(ProjectsSelectors.allProjects) allProjects$: Observable<StoredProject[]>;
     @Select(UserSelectors.allUsers) allUsers$: Observable<ReadUser[]>;
     @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
-    
+
     constructor(
         private _store: Store
     ) {}
-
-    ngOnInit() {
-    }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
@@ -95,7 +92,7 @@ export class MembershipComponent implements OnInit, OnDestroy {
     addToProject(iri: string) {
         this._store.dispatch(new AddUserToProjectMembershipAction(this.user.id, iri));
     }
-    
+
     trackByFn = (index: number, item: StoredProject) => `${index}-${item?.id}`;
 
     /**

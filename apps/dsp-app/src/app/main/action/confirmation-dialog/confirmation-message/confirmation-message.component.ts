@@ -10,8 +10,6 @@ export class ConfirmationMessageComponent {
     @Input() value: ReadValue;
     comment?: string;
 
-    constructor() {}
-
     onKey(event: KeyboardEvent) {
         this.comment = (event.target as HTMLInputElement).value;
     }

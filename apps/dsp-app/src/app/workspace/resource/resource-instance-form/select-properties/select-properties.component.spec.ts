@@ -108,7 +108,7 @@ describe('SelectPropertiesComponent', () => {
             testHostComponent.selectPropertiesComponent
                 .propertyValuesKeyValuePair;
         for (const propIri in keyValuePair) {
-            if (keyValuePair.hasOwnProperty(propIri)) {
+            if (propIri in keyValuePair) {
                 propsArray.push(keyValuePair[propIri]);
             }
         }

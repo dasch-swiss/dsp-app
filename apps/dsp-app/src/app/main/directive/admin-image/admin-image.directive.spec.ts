@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 @Component({
-    template: ` <img appAdminImage [image]="img" [type]="type" />`,
+    template: ` <img appAdminImage [image]="img" [type]="type" alt="text"/>`,
 })
 class TestAdminImageComponent {
     img = 'http://dasch.swiss/content/images/2017/11/DaSCH_Logo_RGB.png';

@@ -46,8 +46,6 @@ export class CommentFormComponent implements OnChanges {
      */
     disallowed = false;
 
-    constructor() {}
-
     ngOnChanges() {
         this.disallowed =
             (!this.valueFormControlValue || this.valueFormControlHasError) &&

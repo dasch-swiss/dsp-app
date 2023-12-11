@@ -23,7 +23,7 @@ import { map, takeUntil } from 'rxjs/operators';
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
+
     @Input() username?: string;
 
     get activeProjects$(): Observable<StoredProject[]> {
@@ -41,7 +41,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
                map(([userInactiveProjects, allInactiveProjects]) => this.username ? userInactiveProjects : allInactiveProjects)
            );
     }
-    
+
     /**
      * if username is definded: show only projects,
      * where this user is member of;
@@ -61,9 +61,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.username
-            ? this._titleService.setTitle('Your projects') 
+            ? this._titleService.setTitle('Your projects')
             : this._titleService.setTitle('All projects from DSP');
-        
+
         if (this._store.selectSnapshot(ProjectsSelectors.allProjects).length === 0) {
             this.refresh();
         }

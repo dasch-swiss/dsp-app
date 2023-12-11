@@ -66,7 +66,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
             .subscribe(
                 res =>
                     this.originalFilename = res['originalFilename'],
-                error => this.failedToLoad = true
+              () => this.failedToLoad = true
             );
         this.audio = this._sanitizer.bypassSecurityTrustUrl(
             this.src.fileValue.fileUrl

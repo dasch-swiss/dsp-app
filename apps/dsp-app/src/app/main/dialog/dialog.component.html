@@ -365,7 +365,7 @@
         <app-dialog-header
             [title]="data.title"
             [subtitle]="'Customize data model'"
-            (close)="dialogRef.close()"
+            (closed)="dialogRef.close()"
         >
         </app-dialog-header>
         <app-ontology-form
@@ -695,7 +695,7 @@
         <app-dialog-header
             [title]="'Not yet implemented'"
             [subtitle]="'ERROR 400'"
-            (close)="dialogRef.close()"
+            (closed)="dialogRef.close()"
         >
         </app-dialog-header>
         <p class="todo" [innerHtml]="notYetImplemented"></p>

@@ -179,6 +179,7 @@ export class EditListItemComponent implements OnInit {
                         this._dspApiConnection.admin.listsEndpoint
                             .deleteChildComments(childNodeUpdateData.listIri)
                             .subscribe(
+                              // eslint-disable-next-line @typescript-eslint/no-empty-function
                                 () => {},
                                 (error: ApiResponseError) =>
                                     this._errorHandler.showMessage(error)

@@ -63,7 +63,7 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
             .subscribe(
                 res =>
                     this.originalFilename = res['originalFilename'],
-                error => this.failedToLoad = true
+              () => this.failedToLoad = true
             );
     }
 

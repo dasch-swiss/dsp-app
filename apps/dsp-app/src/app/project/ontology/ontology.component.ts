@@ -91,7 +91,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     // route to classes view
     classesLink = `../${RouteConstants.classes}`;
     propertiesLink = `../${RouteConstants.properties}`;
-    
+
     @ViewChild('ontologyEditor', { read: ViewContainerRef })
     ontologyEditor: ViewContainerRef;
 
@@ -172,12 +172,12 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
                 ? this._route.snapshot.params.view
                 : RouteConstants.classes;
         }
-        
+
         const currentProject = this._store.selectSnapshot(CurrentProjectSelectors.project);
-        if (this.projectUuid 
+        if (this.projectUuid
             && (currentProject && currentProject.id === this.projectIri)) {
                 const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
-                if (currentProject.ontologies.length > 0 
+                if (currentProject.ontologies.length > 0
                     && (!projectOntologies[this.projectIri] || projectOntologies[this.projectIri].readOntologies.length === 0)) {
                     this._store.dispatch(new LoadProjectOntologiesAction(currentProject.id));
                     this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction))
@@ -187,7 +187,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
                 } else {
                     this.initOntology();
                 }
-        } 
+        }
 
         //TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after child component
         //subscription responsible for emitting event is triggered
@@ -232,7 +232,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
         combineLatest([this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction)), this.currentProjectOntologies$])
             .pipe(
                 take(1),
-                map(([loadListsInProjectAction, currentProjectOntologies]) => 
+                map(([loadListsInProjectAction, currentProjectOntologies]) =>
                     currentProjectOntologies.find((x) => x.id === this.ontologyIri)
                 ))
             .subscribe((readOnto) => {
@@ -264,7 +264,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
                             this._cd.markForCheck();
                         });
                 }
-            } 
+            }
         } else {
             this.resetOntologyView(currentOntology);
         }
@@ -320,7 +320,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     trackByClassDefinitionFn = (index: number, item: ClassDefinition) => `${index}-${item.id}`;
 
     trackByPropertyDefinitionFn = (index: number, item: PropertyDefinition) => `${index}-${item.id}`;
-    
+
     trackByDefaultClassFn = (index: number, item: DefaultClass) => `${index}-${item.iri}`;
 
     trackByElementFn = (index: number) => `${index}`;
@@ -502,7 +502,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
             this.initOntology();
         });
     }
-    
+
     onUpdatePropertyAssignment() {
         this.initOntologiesList();
     }
@@ -545,7 +545,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
                                     this._store.dispatch(new ClearProjectOntologiesAction(this.projectUuid));
                                     // reset current ontology
                                     // this._store.dispatch([
-                                    //     new SetCurrentOntologyAction(null), 
+                                    //     new SetCurrentOntologyAction(null),
                                     //     new RemoveProjectOntologyAction(updateOntology.id, this.projectUuid)
                                     // ]);
                                     // get the ontologies for this project
@@ -612,5 +612,5 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
                 this._titleService.setTitle(`Project ${project.shortname} | Data model ${currentOntology.id ? '' : 's'}`);
             });
     }
-    
+
 }

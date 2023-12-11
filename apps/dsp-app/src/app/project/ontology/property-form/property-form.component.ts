@@ -249,9 +249,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
                         this.ontologyClasses.push(ontoClasses);
                     }
                 });
-            },
-            () => {} // don't log error to rollbar if 'currentProjectOntologies' does not exist in the application state
-        );
+            });
 
         // b) in case of list value:
         // set list of lists; needed for listValue
