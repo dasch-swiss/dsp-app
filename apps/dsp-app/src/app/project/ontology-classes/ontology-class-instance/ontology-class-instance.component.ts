@@ -13,7 +13,7 @@ import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component'
 import { ProjectBase } from '../../project-base';
 import { Actions, Store } from '@ngxs/store';
 import { Title } from '@angular/platform-browser';
-import { CurrentProjectSelectors, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
@@ -61,7 +61,6 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this._route.params.subscribe((params) => {
             this.initProject(params);
         });
@@ -92,17 +91,14 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
     }
 
     private initProject(params: Params): void {
-        const currentProject = this._store.selectSnapshot(CurrentProjectSelectors.project);
-        const shortcode = currentProject.shortcode;
         const iriBase = this._ontologyService.getIriBaseUrl();
-
         const ontologyName = params[RouteConstants.ontoParameter];
         const className = params[RouteConstants.classParameter];
 
         // get the resource ids from the route. Do not use the RouteConstants ontology route constant here,
         // because the ontology and class ids are not defined within the apps domain. They are defined by
         // the api and can not be changed generically via route constants.
-        this.ontoId = `${iriBase}/ontology/${shortcode}/${ontologyName}/v2`;
+        this.ontoId = `${iriBase}/ontology/${this.projectUuid}/${ontologyName}/v2`;
         this.classId = `${this.ontoId}#${className}`;
 
         this.instanceId = params[RouteConstants.instanceParameter];
@@ -131,7 +127,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
                 }
             } else {
                 // get the single resource instance
-                this.resourceIri = `${this._acs.dspAppConfig.iriBase}/${shortcode}/${this.instanceId}`;
+                this.resourceIri = `${this._acs.dspAppConfig.iriBase}/${this.projectUuid}/${this.instanceId}`;
             }
         } else {
             // display all resource instances of this resource class

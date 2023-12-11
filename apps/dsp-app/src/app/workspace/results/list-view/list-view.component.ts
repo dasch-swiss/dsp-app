@@ -6,6 +6,7 @@ import {
     Inject,
     Input,
     OnChanges,
+    OnDestroy,
     OnInit,
     Output,
 } from '@angular/core';
@@ -24,8 +25,8 @@ import {
     Events,
 } from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { of, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, Subject, Subscription } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /**
@@ -82,7 +83,9 @@ export interface CheckboxUpdate {
     templateUrl: './list-view.component.html',
     styleUrls: ['./list-view.component.scss'],
 })
-export class ListViewComponent implements OnChanges, OnInit {
+export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    
     @Input() search: SearchParams;
 
     /**
@@ -154,6 +157,11 @@ export class ListViewComponent implements OnChanges, OnInit {
         this.emitSelectedResources();
 
         this._doSearch();
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     // the child component send the selected resources to the parent of this component directly;
@@ -240,6 +248,7 @@ export class ListViewComponent implements OnChanges, OnInit {
                         index,
                         this.search.filter
                     )
+                    .pipe(takeUntil(this.ngUnsubscribe))
                     .subscribe(
                         (count: CountQueryResponse) => {
                             this.numberOfAllResults = count.numberOfResults;
@@ -269,6 +278,7 @@ export class ListViewComponent implements OnChanges, OnInit {
             // perform full text search
             this._dspApiConnection.v2.search
                 .doFulltextSearch(this.search.query, index, this.search.filter)
+                .pipe(takeUntil(this.ngUnsubscribe))
                 .subscribe(
                     (response: ReadResourceSequence) => {
                         // if the response does not contain any resources even though the search count is greater than 0,
@@ -293,34 +303,28 @@ export class ListViewComponent implements OnChanges, OnInit {
             );
 
             // request the count query if the page index is zero otherwise it is already stored in the numberOfAllResults
-            const numberOfAllResults$ =
-                index !== 0
+            const numberOfAllResults$ = index !== 0
                     ? of(this.numberOfAllResults)
                     : this._dspApiConnection.v2.search
                           .doExtendedSearchCountQuery(this.search.query)
+                          .pipe(takeUntil(this.ngUnsubscribe))
                           .pipe(
                               map((count: CountQueryResponse) => {
-                                  this.numberOfAllResults =
-                                      count.numberOfResults;
-                                  this.currentRangeEnd =
-                                      this.numberOfAllResults > 25
-                                          ? 25
-                                          : this.numberOfAllResults;
-                                  if (this.numberOfAllResults === 0) {
-                                      this._notification.openSnackBar(
-                                          'No resources to display.'
-                                      );
-                                      this.emitSelectedResources();
-                                      this.resources = undefined;
-                                      this.loading = false;
-                                      this._cd.markForCheck();
-                                  }
+                                this.numberOfAllResults = count.numberOfResults;
+                                this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
+                                if (this.numberOfAllResults === 0) {
+                                    this._notification.openSnackBar('No resources to display.');
+                                    this.emitSelectedResources();
+                                    this.resources = undefined;
+                                    this.loading = false;
+                                    this._cd.markForCheck();
+                                }
 
-                                  return count.numberOfResults;
+                                return count.numberOfResults;
                               })
                           );
 
-            numberOfAllResults$.subscribe(
+            numberOfAllResults$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
                 (numberOfAllResults: number) => {
                     if (this.search.query !== undefined) {
                         // build the gravsearch query
@@ -333,6 +337,7 @@ export class ListViewComponent implements OnChanges, OnInit {
 
                         this._dspApiConnection.v2.search
                             .doExtendedSearch(gravsearch)
+                            .pipe(takeUntil(this.ngUnsubscribe))
                             .subscribe(
                                 (response: ReadResourceSequence) => {
                                     // if the response does not contain any resources even the search count is greater than 0,
