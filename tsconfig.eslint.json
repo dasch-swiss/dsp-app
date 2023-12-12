@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "include": [
-      // custom include - what do you want to be tested
-      "./src/app/**/*.ts",
-      // "./src/app/**/*.somelib.js"
-]
+    "./apps/**/*.ts",
+    "./libs/**/*.ts"
+  ]
 }

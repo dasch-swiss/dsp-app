@@ -9,15 +9,12 @@
         "*.ts"
       ],
       "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "@typescript-eslint/adjacent-overload-signatures": "warn", // TODO: remove this warning when refactoring unit tests.
-        "no-useless-escape": "warn", // TODO: remove this warning when refactoring unit tests.
-        "no-case-declarations": "warn", // TODO: remove this warning when refactoring unit tests.
+        "@typescript-eslint/adjacent-overload-signatures": "warn",
+
         "@angular-eslint/directive-selector": [
           "error",
           {
