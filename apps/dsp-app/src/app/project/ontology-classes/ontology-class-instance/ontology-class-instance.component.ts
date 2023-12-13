@@ -98,7 +98,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
         // get the resource ids from the route. Do not use the RouteConstants ontology route constant here,
         // because the ontology and class ids are not defined within the apps domain. They are defined by
         // the api and can not be changed generically via route constants.
-        this.ontoId = `${iriBase}/ontology/${this.projectUuid}/${ontologyName}/v2`;
+        this.ontoId = `${iriBase}/ontology/${this.project.shortcode}/${ontologyName}/v2`;
         this.classId = `${this.ontoId}#${className}`;
 
         this.instanceId = params[RouteConstants.instanceParameter];
