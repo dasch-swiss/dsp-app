@@ -8,7 +8,7 @@ Active projects are tagged with the status "Active". Projects tagged as "Deactiv
 
  The setting icon on the top right of each project tile is displayed only for projects and system admins. It leads to the project settings page.
 
-![Project list and project menu](../assets/images/dashboard.png)*<https://admin.dasch.swiss/dashboard> - DSP-APP projects overview page.*
+![Project list and project menu](../assets/images/dashboard.png)*<https://app.dasch.swiss/> - DSP-APP projects overview page.*
 
  By clicking on the button `Browse Data`, you go to the **project workspace**. You get access to the project information, the data model (if you are logged in), and the project settings (if you are logged in as a project admin or a system admin).
 
@@ -31,7 +31,7 @@ From the side panel of the project workspace, as a project admin (or a system ad
 
 > Project members and logged-in users from other projects can also view the project description, the data model, and the list of resource classes.
 
-![Project management available functionalities](../assets/images/project-workspace.png)*<https://admin.dasch.swiss/project/0803/info> - Project management functionalities; e.g. Incunabula project. The side panel can be opened or close by clicking on the chevron icon at the top.*
+![Project management available functionalities](../assets/images/project-workspace.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw> - Project management functionalities; e.g. Incunabula project. The side panel can be opened or closed by clicking on the chevron icon at the top.*
 
 ---
 
@@ -39,7 +39,7 @@ From the side panel of the project workspace, as a project admin (or a system ad
 
 As a project admin (or a system admin), you can add users as project members. The admin can grant another user as project admin (or remove this permission), edit the user's information, change the user's password if forgotten, and remove a user from the project by clicking on the three-dot icon to the right side of the user line.
 
-![Collaboration page](../assets/images/project-settings.png)*<https://admin.dasch.swiss/project/0803/collaboration> - Project members page where project admin and system admin can add new users to the team.*
+![Collaboration page](../assets/images/project-settings.png)*<https://app.dasch.swiss/project/3ABR_2i8QYGSIDvmP9mlEw/settings/collaboration> - Project members page where project admin and system admin can add new users to the team.*
 
 From the project workspace, as a project member, you can:
 
