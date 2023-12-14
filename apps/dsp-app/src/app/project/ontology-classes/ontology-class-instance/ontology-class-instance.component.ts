@@ -1,20 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import {
-    ResourceClassDefinition,
-} from '@dasch-swiss/dsp-js';
-import {AppConfigService, RouteConstants, getAllEntityDefinitionsAsArray} from '@dasch-swiss/vre/shared/app-config';
+import { ResourceClassDefinition } from '@dasch-swiss/dsp-js';
+import { AppConfigService, getAllEntityDefinitionsAsArray, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-    FilteredResources,
-    SearchParams,
-} from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
+import { FilteredResources, SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component';
 import { ProjectBase } from '../../project-base';
 import { Actions, Store } from '@ngxs/store';
 import { Title } from '@angular/platform-browser';
 import { OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
+import { filter } from 'rxjs/operators';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,8 +57,11 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
     }
 
     ngOnInit() {
-        this._route.params.subscribe((params) => {
-            this.initProject(params);
+        this.project$.pipe(
+            filter(project => project !== undefined),
+        ).subscribe((project) => {
+            this.project = project;
+            this.initProject(this._route.snapshot.params);
         });
     }
 
@@ -121,7 +120,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
                     } else {
                         // user is not a member of the project or a systemAdmin, redirect to project description
                         this._router.navigateByUrl(
-                            `/${RouteConstants.project}/${this.projectUuid}`
+                            `/${RouteConstants.project}/${this.projectUuid}`,
                         );
                     }
                 }
@@ -133,7 +132,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
             // display all resource instances of this resource class
             this.searchParams = {
                 query: this._setGravsearch(this.classId),
-                mode: 'gravsearch'
+                mode: 'gravsearch',
             };
             this._cdr.markForCheck();
         }
