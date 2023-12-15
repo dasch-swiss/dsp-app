@@ -26,6 +26,7 @@ import {
     KnoraApiConnection,
     PropertyDefinition,
     ReadOntology,
+    ReadProject,
     ReadUser,
     UpdateOntology,
 } from '@dasch-swiss/dsp-js';
@@ -41,8 +42,8 @@ import {
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
-import { ClearCurrentOntologyAction, ClearProjectOntologiesAction, CurrentOntologyCanBeDeletedAction, CurrentProjectSelectors, LoadListsInProjectAction, LoadOntologyAction, LoadProjectOntologiesAction, OntologiesSelectors, OntologyProperties, ProjectsSelectors, SetCurrentOntologyAction, SetCurrentProjectOntologyPropertiesAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { ClearCurrentOntologyAction, ClearProjectOntologiesAction, CurrentOntologyCanBeDeletedAction, LoadListsInProjectAction, LoadOntologyAction, LoadProjectOntologiesAction, OntologiesSelectors, OntologyProperties, ProjectsSelectors, SetCurrentOntologyAction, SetCurrentProjectOntologyPropertiesAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Observable, Subject, combineLatest, forkJoin } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { ProjectBase } from '../project-base';
 
@@ -101,7 +102,13 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     get ontologyIri(): string {
         const iriBase = this._ontologyService.getIriBaseUrl();
         const ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
-        return `${iriBase}/${RouteConstants.ontology}/${this.project.shortcode}/${ontologyName}/v2`;
+        return `${iriBase}/${RouteConstants.ontology}/${this.project?.shortcode}/${ontologyName}/v2`;
+    }
+    
+    getOntologyIri(projectShortcode: string): string {
+        const iriBase = this._ontologyService.getIriBaseUrl();
+        const ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
+        return `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2`;
     }
 
     // the lastModificationDate is the most important key
@@ -172,22 +179,12 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
                 ? this._route.snapshot.params.view
                 : RouteConstants.classes;
         }
-
-        const currentProject = this._store.selectSnapshot(CurrentProjectSelectors.project);
-        if (this.projectUuid
-            && (currentProject && currentProject.id === this.projectIri)) {
-                const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
-                if (currentProject.ontologies.length > 0
-                    && (!projectOntologies[this.projectIri] || projectOntologies[this.projectIri].readOntologies.length === 0)) {
-                    this._store.dispatch(new LoadProjectOntologiesAction(currentProject.id));
-                    this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction))
-                        .subscribe(() => {
-                            this.initOntology();
-                        });
-                } else {
-                    this.initOntology();
-                }
-        }
+        
+        this._store.select(ProjectsSelectors.currentProject)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe((project) => {
+                this.initProjectOntologies(project);
+            });        
 
         //TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after child component
         //subscription responsible for emitting event is triggered
@@ -196,6 +193,24 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
         });
 
         this._cd.markForCheck();
+    }
+
+    private initProjectOntologies(currentProject: ReadProject) {
+        if (!currentProject || !this.projectUuid || currentProject.id !== this.projectIri) {
+            return;
+        }
+
+        const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
+        if (currentProject.ontologies.length > 0 
+            && (!projectOntologies[this.projectIri] || projectOntologies[this.projectIri].readOntologies.length === 0)) {
+            this._store.dispatch(new LoadProjectOntologiesAction(currentProject.id));
+            this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction))
+                .subscribe(() => {
+                    this.initOntology();
+                });
+        } else {
+            this.initOntology();
+        }
     }
 
     ngOnDestroy() {
@@ -250,13 +265,15 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
         if (!currentOntology) {
             const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
             const projectIri = this._projectService.uuidToIri(this.projectUuid);
-            currentOntology = projectOntologies[projectIri]?.readOntologies.find(o => o.id === this.ontologyIri);
+            const currentProject = this._store.selectSnapshot(ProjectsSelectors.currentProject);
+            const ontologyIri = this.getOntologyIri(currentProject.shortcode);
+            currentOntology = projectOntologies[projectIri]?.readOntologies.find(o => o.id === ontologyIri);
             if (currentOntology) {
                 this.resetOntologyView(currentOntology);
             } else {
                 const isLoading = this._store.selectSnapshot(OntologiesSelectors.isLoading);
                 if (isLoading === false) {
-                    this._store.dispatch(new LoadOntologyAction(this.ontologyIri, this.projectUuid, true));
+                    this._store.dispatch(new LoadOntologyAction(ontologyIri, this.projectUuid, true));
                     this._actions$.pipe(ofActionSuccessful(LoadOntologyAction))
                         .pipe(take(1))
                         .subscribe(() => {
@@ -609,7 +626,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
         combineLatest([ProjectBase.navigationEndFilter(this._router.events), this.project$, this.currentOntology$])
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(([event, project, currentOntology]) => {
-                this._titleService.setTitle(`Project ${project.shortname} | Data model ${currentOntology.id ? '' : 's'}`);
+                this._titleService.setTitle(`Project ${project?.shortname} | Data model ${currentOntology.id ? '' : 's'}`);
             });
     }
 

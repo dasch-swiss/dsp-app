@@ -138,7 +138,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
                 takeUntil(this.ngUnsubscribe),
                 map(([user, userProjectGroups]) => {
                     return this.attachedToProjectResource 
-                        ? this._projectService.isProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
+                        ? ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
                         : false;
                 })
             )
@@ -159,7 +159,6 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         private _titleService: Title,
         private _valueOperationEventService: ValueOperationEventService,
         private _cdr:ChangeDetectorRef,
-        private _projectService: ProjectService,
     ) {
         this._route.params.subscribe((params) => {
             this.projectCode = params['project'];

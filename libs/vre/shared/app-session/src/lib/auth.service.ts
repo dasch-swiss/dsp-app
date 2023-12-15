@@ -4,11 +4,11 @@ import { EventEmitter, Injectable, Output, inject } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, switchMap, map, takeLast, take } from 'rxjs/operators';
 import { ApiResponseData, ApiResponseError, CredentialsResponse, LoginResponse, User } from '@dasch-swiss/dsp-js';
-import { Auth, RouteConstants, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { Auth, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { LoginError, ServerError } from './error';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { Store } from '@ngxs/store';
-import { LoadUserAction, ClearProjectsAction, LogUserOutAction, UserStateModel, ClearCurrentProjectAction, ClearListsAction, ClearOntologiesAction } from '@dasch-swiss/vre/shared/app-state';
+import { LoadUserAction, ClearProjectsAction, LogUserOutAction, UserStateModel, ClearListsAction, ClearOntologiesAction } from '@dasch-swiss/vre/shared/app-state';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -204,7 +204,6 @@ export class AuthService {
         this.store.dispatch([
             new LogUserOutAction(),
             new ClearProjectsAction(),
-            new ClearCurrentProjectAction(),
             new ClearListsAction(),
             new ClearOntologiesAction(),
         ]);

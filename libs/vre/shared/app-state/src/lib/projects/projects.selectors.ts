@@ -4,6 +4,10 @@ import { ProjectsStateModel } from './projects.state-model';
 import { Constants, ReadGroup, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { IKeyValuePairs } from '../model-interfaces';
 import { UserSelectors } from '../user/user.selectors';
+import { RouterSelectors } from '../router/router.selector';
+import { Params } from '@angular/router';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 
 export class ProjectsSelectors {
     // get list of all projects the user is NOT a member of
@@ -59,5 +63,36 @@ export class ProjectsSelectors {
             project.status
             && project.id !== Constants.SystemProjectIRI
             && project.id !== Constants.DefaultSharedOntologyIRI);
+    }
+    
+    @Selector([ProjectsState, RouterSelectors.params])
+    static currentProject(state: ProjectsStateModel, params: Params): ReadProject | undefined {
+        const uuid = params[`${RouteConstants.uuidParameter}`];
+        const project = state.readProjects.find(project => ProjectService.IriToUuid(project.id) === uuid);
+        return project;
+    }
+    
+    @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
+    static isCurrentProjectAdmin(
+        state: ProjectsStateModel, 
+        user: ReadUser, 
+        userProjectGroups: string[],
+        params: Params,
+    ): boolean | undefined {
+        const projectId = params[`${RouteConstants.uuidParameter}`];
+        const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectId);
+        return isProjectAdmin;
+    }
+    
+    @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
+    static isCurrentProjectMember(
+        state: ProjectsStateModel, 
+        user: ReadUser, 
+        userProjectGroups: string[],
+        params: Params
+    ): boolean | undefined {
+        const projectId = params[`${RouteConstants.uuidParameter}`];
+        const isProjectMember = ProjectService.IsProjectMember(user, userProjectGroups, projectId);
+        return isProjectMember;
     }
 }

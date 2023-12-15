@@ -15,7 +15,7 @@ import { ProjectBase } from '../project-base';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { CurrentProjectSelectors, DeleteListNodeAction, ListsSelectors, LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
+import { DeleteListNodeAction, ListsSelectors, LoadListsInProjectAction, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -149,7 +149,7 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
     }
 
     private _setPageTitle() {
-        const project = this._store.selectSnapshot(CurrentProjectSelectors.project);
+        const project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
         this._titleService.setTitle(`Project ${project?.shortname} | List ${this.listIri ? '' : 's'}`);
     }
 }

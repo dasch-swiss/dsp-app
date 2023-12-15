@@ -29,7 +29,7 @@
                 <span class="fill-remaining-space"></span>
 
                 <!-- edit options -->
-                <span class="ontology-actions project-actions" *ngIf="(project$ | async).status">
+                <span class="ontology-actions project-actions" *ngIf="(project$ | async)?.status">
                     <p class="mat-caption space-reducer">Data model configuration</p>
                     <span
                         [matTooltip]="((isAdmin$ | async) ? ((lastModificationDate$ | async) ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
@@ -114,7 +114,7 @@
                     <app-resource-class-info *ngFor="let resClass of ontoClasses; trackBy: trackByClassDefinitionFn"
                                              [resourceClass]="resClass"
                                              [projectUuid]="projectUuid" 
-                                             [projectStatus]="(project$ | async).status"
+                                             [projectStatus]="(project$ | async)?.status"
                                              [expanded]="expandClasses"
                                              [userCanEdit]="isAdmin$ | async"
                                              (editResourceClass)="openResourceClassForm('editResourceClass', $event)"
@@ -126,14 +126,14 @@
                 <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
                     <!-- list of properties of current ontology -->
                     <mat-list class="without-padding">
-                        <mat-list-item class="property" *ngFor="let prop of ontoProperties.properties; trackBy: trackByPropertyDefinitionFn; let odd = odd"
+                        <mat-list-item class="property" *ngFor="let prop of ontoProperties?.properties; trackBy: trackByPropertyDefinitionFn; let odd = odd"
                             [class.odd]="odd">
                             <!-- display only properties with guiOrder and if they exist in list of properties;
                                  if objectType is a linkValue hide it (otherwise we have the property twice) -->
                             <app-property-info
                                 [propDef]="(currentOntology$ | async)?.properties[prop.id]" 
                                 [projectUuid]="projectUuid"
-                                [projectStatus]="(project$ | async).status" 
+                                [projectStatus]="(project$ | async)?.status" 
                                 [lastModificationDate]="lastModificationDate$ | async"
                                 (lastModificationDate)="onLastModificationDateChange($event)"
                                 [userCanEdit]="isAdmin$ | async"

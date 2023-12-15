@@ -27,7 +27,7 @@ import {DspApiConnectionToken, RouteConstants} from '@dasch-swiss/vre/shared/app
 import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
-import { ClearProjectOntologiesAction, CurrentOntologyCanBeDeletedAction, CurrentProjectSelectors, LoadListsInProjectAction, LoadOntologyAction, LoadProjectOntologiesAction, OntologiesSelectors, SetCurrentOntologyAction, SetCurrentProjectOntologyPropertiesAction } from '@dasch-swiss/vre/shared/app-state';
+import { ClearProjectOntologiesAction, CurrentOntologyCanBeDeletedAction, LoadListsInProjectAction, LoadProjectOntologiesAction, OntologiesSelectors, ProjectsSelectors, SetCurrentOntologyAction, SetCurrentProjectOntologyPropertiesAction } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -157,7 +157,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
             });
         }
 
-        this.project = this._store.selectSnapshot(CurrentProjectSelectors.project);
+        this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
         this.buildForm();
 
         if (this.iri) {

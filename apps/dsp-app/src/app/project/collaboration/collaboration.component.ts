@@ -7,10 +7,10 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AddUserComponent } from './add-user/add-user.component';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
-import { CurrentProjectSelectors, LoadProjectMembersAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Select, Store } from '@ngxs/store';
+import { LoadProjectMembersAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Observable, Subject } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { ProjectBase } from '../project-base';
 
 @Component({
@@ -56,7 +56,7 @@ export class CollaborationComponent extends ProjectBase implements OnInit, OnDes
     @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
     @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
     @Select(UserSelectors.user) user$: Observable<ReadUser>;
-    @Select(CurrentProjectSelectors.project) project$: Observable<ReadProject>;
+    @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;
 
     constructor(
         protected _route: ActivatedRoute,
@@ -78,7 +78,7 @@ export class CollaborationComponent extends ProjectBase implements OnInit, OnDes
 
     ngOnInit() {
         super.ngOnInit();
-        const project = this._store.selectSnapshot(CurrentProjectSelectors.project) as ReadProject;
+        const project = this._store.selectSnapshot(ProjectsSelectors.currentProject) as ReadProject;
         this._titleService.setTitle(`Project ${project?.shortname} | Collaboration`);
     }
 

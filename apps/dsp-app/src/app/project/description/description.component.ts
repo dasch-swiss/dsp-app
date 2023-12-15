@@ -43,7 +43,7 @@ export class DescriptionComponent {
                     return false;
                 }
 
-                return this.projectService.isProjectAdminOrSysAdmin(user, userProjectGroups, readProject.id);
+                return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, readProject.id);
             })
         );
     }
@@ -56,7 +56,6 @@ export class DescriptionComponent {
         private _route: ActivatedRoute,
         private _router: Router,
         private store: Store,
-        private projectService: ProjectService,
     ) {
         // get the uuid of the current project
         this._route.parent.paramMap.subscribe((params: Params) => {

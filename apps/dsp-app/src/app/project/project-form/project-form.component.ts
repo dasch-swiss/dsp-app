@@ -34,7 +34,7 @@ import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
-import { CurrentProjectSelectors, LoadProjectAction, SetCurrentProjectAction, UpdateProjectAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { LoadProjectsAction, ProjectsSelectors, UpdateProjectAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -417,12 +417,10 @@ export class ProjectFormComponent implements OnInit {
 
             // edit / update project data
             this._store.dispatch(new UpdateProjectAction(this.project.id, projectData));
-            this._actions$.pipe(ofActionSuccessful(SetCurrentProjectAction))
+            this._actions$.pipe(ofActionSuccessful(LoadProjectsAction))
                 .subscribe(() => {
-                        this._store.dispatch(new LoadProjectAction(this.project.id, true));
                         this.success = true;
-                        const currentProject = this._store.selectSnapshot(CurrentProjectSelectors.project);
-                        this.project = currentProject;
+                        this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
                         this._notification.openSnackBar('You have successfully updated the project information.');
                         this._router.navigate([`${RouteConstants.projectRelative}/${this.projectUuid}`])
                         this.loading = false;

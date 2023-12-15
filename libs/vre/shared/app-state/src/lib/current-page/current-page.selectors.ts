@@ -4,12 +4,12 @@ import { CurrentPageStateModel } from './current-page.state-model';
 
 export class CurrentPageSelectors {
     @Selector([CurrentPageState])
-    static page(state: CurrentPageStateModel): string {
+    static page(state: CurrentPageStateModel): string | undefined {
         return state.page;
     }
 
     @Selector([CurrentPageState])
-    static appInit(state: CurrentPageStateModel): boolean {
+    static appInit(state: CurrentPageStateModel): boolean | undefined {
         return state.appInit;
     }
 

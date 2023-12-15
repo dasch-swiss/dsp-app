@@ -3,8 +3,8 @@ import { OntologiesStateModel } from './ontologies.state-model';
 import { OntologiesState } from './ontologies.state';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
 import { OntologyMetadata, ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
-import { CurrentProjectSelectors } from '../current-project/current-project.selectors';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectsSelectors } from '../projects/projects.selectors';
 
 export class OntologiesSelectors {
     @Selector([OntologiesState])
@@ -22,14 +22,14 @@ export class OntologiesSelectors {
         return state.projectOntologies;
     }
 
-    @Selector([OntologiesState, CurrentProjectSelectors.project])
+    @Selector([OntologiesState, ProjectsSelectors.currentProject])
     static currentProjectOntologyMetadata(state: OntologiesStateModel, project: ReadProject): OntologyMetadata[] {
         return state.projectOntologies[project.id] 
             ? state.projectOntologies[project.id].ontologiesMetadata 
             : [];
     }
 
-    @Selector([OntologiesState, CurrentProjectSelectors.project])
+    @Selector([OntologiesState, ProjectsSelectors.currentProject])
     static currentProjectOntologies(state: OntologiesStateModel, project: ReadProject): ReadOntology[] {
         return state.projectOntologies[project.id] 
             ? state.projectOntologies[project.id].readOntologies 
@@ -37,7 +37,7 @@ export class OntologiesSelectors {
     }
 
     // ontology name has to be unique
-    @Selector([OntologiesState, CurrentProjectSelectors.project])
+    @Selector([OntologiesState, ProjectsSelectors.currentProject])
     static currentProjectExistingOntologyNames(state: OntologiesStateModel, project: ReadProject): string[] {
         return state.projectOntologies[project.id].ontologiesMetadata
             .map((meta) => OntologyService.getOntologyName(meta.id));

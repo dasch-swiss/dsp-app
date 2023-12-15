@@ -57,6 +57,10 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
     }
 
     ngOnInit() {
+        // this._route.params.subscribe((params) => {
+        //     this.initProject(params);
+        // });
+
         this.project$.pipe(
             filter(project => project !== undefined),
         ).subscribe((project) => {
