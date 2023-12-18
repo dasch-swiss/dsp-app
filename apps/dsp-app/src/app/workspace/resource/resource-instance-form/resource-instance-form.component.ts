@@ -102,6 +102,10 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
     ) {}
 
     ngOnInit(): void {
+        if (!this.resourceClassIri) {
+            return;
+        }
+        
         // get ontology iri from res class iri
         const splitIri = this.resourceClassIri.split('#');
         this.ontologyIri = splitIri[0];

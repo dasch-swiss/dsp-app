@@ -87,6 +87,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     
     @Input() search: SearchParams;
+    currentSearch: SearchParams;
 
     /**
      * set to true if multiple resources can be selected for comparison
@@ -148,6 +149,16 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     ngOnChanges(): void {
+        if (this.isCurrentSearch()) {
+            this.currentSearch = this.search;
+            this.initSearch();
+        }
+    }
+
+    isCurrentSearch = (): boolean => 
+            this.search.query !== this.currentSearch?.query || this.currentSearch.query === undefined;
+    
+    initSearch(): void {
         // reset
         this.currentIndex = 0;
         this.currentRangeStart = 1;

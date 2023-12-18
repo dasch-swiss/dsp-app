@@ -134,12 +134,11 @@ export class ResourceClassPropertyInfoComponent
     }
 
     ngAfterContentInit() {
-        if (this.propDef.isLinkProperty) {
+        // get current ontology to get linked res class information
+        const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+        const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
+        if (ontology && currentProjectOntologies && this.propDef.isLinkProperty) {
             // this property is a link property to another resource class
-            // get current ontology to get linked res class information
-
-            const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
-            const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
             // get the base ontology of object type
             const baseOnto = this.propDef.objectType.split('#')[0];
             if (baseOnto !== ontology.id) {
@@ -162,10 +161,10 @@ export class ResourceClassPropertyInfoComponent
             }
         }
 
-        if (this.propDef.objectType === Constants.ListValue) {
+        // get current ontology lists to get linked list information
+        const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
+        if (currentOntologyLists && this.propDef.objectType === Constants.ListValue) {
             // this property is a list property
-            // get current ontology lists to get linked list information
-            const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
             const re = /\<([^)]+)\>/;
             const listIri = this.propDef.guiAttributes[0].match(re)[1];
             const listUrl = `/project/${
