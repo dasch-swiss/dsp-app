@@ -34,7 +34,7 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
         if (!uuid) {
             return of({} as OntologyMetadata[]);
         }
-        
+
         return this._store.select(OntologiesSelectors.projectOntologies)
             .pipe(
                 map(ontologies => {
@@ -66,9 +66,6 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
 
     ngOnInit(): void {
         super.ngOnInit();
-        const uuid = this._route.parent.snapshot.params.uuid;
-        //TODO Soft or Hard loading?
-        //this._store.dispatch(new LoadListsInProjectAction(uuid)); 
     }
 
     trackByFn = (index: number, item: ListNodeInfo) => `${index}-${item.id}`;

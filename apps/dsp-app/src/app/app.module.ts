@@ -1,7 +1,11 @@
 /* eslint-disable max-len */
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {
+    HTTP_INTERCEPTORS,
+    HttpClient,
+    HttpClientModule,
+} from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -13,7 +17,14 @@ import { AngularSplitModule } from 'angular-split';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
+import {
+    AppConfigService,
+    buildTagFactory,
+    BuildTagToken,
+    DspApiConfigToken,
+    DspAppConfigToken,
+    DspInstrumentationToken,
+} from '@dasch-swiss/vre/shared/app-config';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
@@ -22,11 +33,6 @@ import { LoginFormComponent } from './main/action/login-form/login-form.componen
 import { SelectedResourcesComponent } from './main/action/selected-resources/selected-resources.component';
 import { SortButtonComponent } from './main/action/sort-button/sort-button.component';
 import { CookiePolicyComponent } from './main/cookie-policy/cookie-policy.component';
-import {
-    DspApiConfigToken,
-    DspAppConfigToken,
-    DspInstrumentationToken,
-} from '@dasch-swiss/vre/shared/app-config';
 import { DialogHeaderComponent } from './main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from './main/dialog/dialog.component';
 import { AdminImageDirective } from './main/directive/admin-image/admin-image.directive';
@@ -150,19 +156,17 @@ import { CommentFormComponent } from './workspace/resource/values/comment-form/c
 import { DataModelsComponent } from './project/data-models/data-models.component';
 import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
-import {
-    buildTagFactory,
-    BuildTagToken,
-} from '@dasch-swiss/vre/shared/app-config';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { apiConnectionTokenProvider } from './providers/api-connection-token.provider';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
-import { AppProgressIndicatorComponent } from "@dasch-swiss/vre/shared/app-progress-indicator";
-import {AppStringLiteralComponent} from "@dasch-swiss/vre/shared/app-string-literal";
+import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/shared/app-progress-indicator';
+import { AppStringLiteralComponent } from '@dasch-swiss/vre/shared/app-string-literal';
 import { IsFalsyPipe } from './main/pipes/isFalsy.piipe';
+import { AuthGuardComponent } from '@dsp-app/src/app/main/guard/auth-guard.component';
+import { AuthInterceptor } from './main/http-interceptors/auth-interceptor';
 
 // translate: AoT requires an exported function for factories
 export function httpLoaderFactory(httpClient: HttpClient) {
@@ -180,6 +184,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
         AppComponent,
         ArchiveComponent,
         AudioComponent,
+        AuthGuardComponent,
         AvTimelineComponent,
         DescriptionComponent,
         BooleanValueComponent,
@@ -359,6 +364,11 @@ export function httpLoaderFactory(httpClient: HttpClient) {
             provide: ErrorHandler,
             useClass: AppErrorHandler,
             deps: [AppLoggingService],
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true,
         },
     ],
     bootstrap: [AppComponent],

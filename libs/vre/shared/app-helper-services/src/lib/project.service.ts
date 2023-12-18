@@ -72,7 +72,7 @@ export class ProjectService {
         const groupsPerProject = user.permissions.groupsPerProject ? user.permissions.groupsPerProject : {};
         return ProjectService.IsProjectOrSysAdmin(groupsPerProject, userProjectGroups, projectIri);
     }
-    
+
     static IsProjectOrSysAdmin(groupsPerProject: {[key: string]: string[]}, userProjectGroups: string[], projectIri: string): boolean
     {
         const isMemberOfSystemAdminGroup = ProjectService.IsMemberOfSystemAdminGroup(groupsPerProject);

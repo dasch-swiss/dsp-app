@@ -1,21 +1,31 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    HostListener,
+    OnDestroy,
+    OnInit,
+} from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-    ListNodeInfo,
-    StringLiteral,
-} from '@dasch-swiss/dsp-js';
+import { ListNodeInfo, StringLiteral } from '@dasch-swiss/dsp-js';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
-import {AppConfigService, RouteConstants} from '@dasch-swiss/vre/shared/app-config';
+import {
+    AppConfigService,
+    RouteConstants,
+} from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectBase } from '../project-base';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { DeleteListNodeAction, ListsSelectors, LoadListsInProjectAction, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import {
+    DeleteListNodeAction,
+    ListsSelectors,
+    LoadListsInProjectAction, ProjectsSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,7 +35,7 @@ import { DeleteListNodeAction, ListsSelectors, LoadListsInProjectAction, Project
 })
 export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
+
     languagesList: StringLiteral[] = AppGlobal.languagesList;
 
     // current selected language
@@ -50,19 +60,20 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
 
     get list$(): Observable<ListNodeInfo> {
         return this.listsInProject$.pipe(
-            map(lists => this.listIri
-                ? lists.find((i) => i.id === this.listIri)
-                : null
-            ));
+            map((lists) =>
+                this.listIri ? lists.find((i) => i.id === this.listIri) : null
+            )
+        );
     }
-    
+
     @Select(ListsSelectors.isListsLoading) isListsLoading$: Observable<boolean>;
-    @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
+    @Select(ListsSelectors.listsInProject) listsInProject$: Observable<
+        ListNodeInfo[]
+    >;
 
     constructor(
         private _acs: AppConfigService,
         private _dialog: MatDialog,
-        private _errorHandler: AppErrorHandler,
         protected _route: ActivatedRoute,
         protected _router: Router,
         protected _titleService: Title,
@@ -71,7 +82,15 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
         protected _cd: ChangeDetectorRef,
         protected _actions$: Actions
     ) {
-        super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
+        super(
+            _store,
+            _route,
+            _projectService,
+            _titleService,
+            _router,
+            _cd,
+            _actions$
+        );
     }
 
     @HostListener('window:resize', ['$event']) onWindowResize() {
@@ -88,7 +107,6 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
 
         // set the page title
         this._setPageTitle();
-
 
         // get list iri from list name
         this._route.params.subscribe((params) => {
@@ -133,13 +151,24 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
                 }
                 case 'deleteList': {
                     if (typeof data === 'boolean' && data === true) {
-                        this._store.dispatch(new DeleteListNodeAction(this.listIri));
+                        this._store.dispatch(
+                            new DeleteListNodeAction(this.listIri)
+                        );
                         this.listIri = undefined;
-                        this._actions$.pipe(ofActionSuccessful(DeleteListNodeAction))
+                        this._actions$
+                            .pipe(ofActionSuccessful(DeleteListNodeAction))
                             .pipe(take(1))
                             .subscribe(() => {
-                                this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
-                                this._router.navigate([RouteConstants.project, this.projectUuid,RouteConstants.dataModels]);
+                                this._store.dispatch(
+                                    new LoadListsInProjectAction(
+                                        this.projectIri
+                                    )
+                                );
+                                this._router.navigate([
+                                    RouteConstants.project,
+                                    this.projectUuid,
+                                    RouteConstants.dataModels,
+                                ]);
                             });
                     }
                     break;
@@ -149,7 +178,11 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
     }
 
     private _setPageTitle() {
-        const project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
-        this._titleService.setTitle(`Project ${project?.shortname} | List ${this.listIri ? '' : 's'}`);
+        const project = this._store.selectSnapshot(
+            ProjectsSelectors.currentProject
+        );
+        this._titleService.setTitle(
+            `Project ${project?.shortname} | List${this.listIri ? '' : 's'}`
+        );
     }
 }

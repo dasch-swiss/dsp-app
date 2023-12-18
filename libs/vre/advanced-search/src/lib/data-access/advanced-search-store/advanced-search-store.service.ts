@@ -390,8 +390,8 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
             if (objectType) {
                 // filter available operators based on the object type of the selected property
                 operators = Array.from(this.operatorsMap().entries())
-                    .filter(([_, values]) => values.includes(objectType))
-                    .map(([key, _]) => key);
+                    .filter((v => v[1].includes(objectType)))
+                    .map(([key]) => key);
 
                 // if there are no matching operators in the map it means the property is a linked resource
                 // i.e. http://0.0.0.0:3333/ontology/0801/newton/v2#letter
@@ -488,8 +488,8 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
             if (objectType) {
                 // filter available operators based on the object type of the selected property
                 operators = Array.from(this.operatorsMap().entries())
-                    .filter(([_, values]) => values.includes(objectType))
-                    .map(([key, _]) => key);
+                    .filter((v) => v[1].includes(objectType))
+                    .map(([key]) => key);
 
                 // if there are no matching operators in the map it means the property is a linked resource
                 // i.e. http://0.0.0.0:3333/ontology/0801/newton/v2#letter

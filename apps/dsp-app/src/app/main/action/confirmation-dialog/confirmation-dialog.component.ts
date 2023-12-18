@@ -31,7 +31,6 @@ export class ConfirmationDialogComponent {
     }
 
     onConfirmClick(): void {
-        const z = 0;
         const payload = new ConfirmationDialogValueDeletionPayload();
         payload.confirmed = true;
         payload.deletionComment = this.confirmationMessageComponent.comment

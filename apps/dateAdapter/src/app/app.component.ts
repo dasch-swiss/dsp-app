@@ -111,7 +111,7 @@ export class AppComponent {
   `,
   styleUrls: [],
 })
-export class HeaderComponent<D> implements OnInit {
+export class HeaderComponent implements OnInit {
   constructor(
     private _calendar: MatCalendar<JDNConvertibleCalendar>,
     private _dateAdapter: DateAdapter<JDNConvertibleCalendar>,

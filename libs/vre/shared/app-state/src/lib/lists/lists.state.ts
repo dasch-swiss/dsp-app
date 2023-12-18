@@ -1,13 +1,16 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Action, State, StateContext } from '@ngxs/store';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ApiResponseData, ApiResponseError, DeleteListNodeResponse, DeleteListResponse, KnoraApiConnection, ListsResponse } from '@dasch-swiss/dsp-js';
+import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ListsStateModel } from './lists.state-model';
-import { ClearListsAction, DeleteListNodeAction, LoadListsInProjectAction } from './lists.actions';
+import {
+    ClearListsAction,
+    DeleteListNodeAction,
+    LoadListsInProjectAction,
+} from './lists.actions';
 import { of } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { finalize, map, take, tap } from 'rxjs/operators';
+import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 
 const defaults: ListsStateModel = {
     isLoading: false,
@@ -21,10 +24,8 @@ const defaults: ListsStateModel = {
 @Injectable()
 export class ListsState {
     constructor(
-        @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection,
-        private _errorHandler: AppErrorHandler,
-        private _dialog: MatDialog,
+        private _listApiService: ListApiService,
+        private _errorHandler: AppErrorHandler
     ) {}
 
     @Action(LoadListsInProjectAction)
@@ -33,22 +34,13 @@ export class ListsState {
         { projectIri }: LoadListsInProjectAction
     ) {
         ctx.patchState({ isLoading: true });
-        return this._dspApiConnection.admin.listsEndpoint
-            .getListsInProject(projectIri)
-            .pipe(
-                take(1),
-                map((response: ApiResponseData<ListsResponse> | ApiResponseError) => { 
-                    return response as ApiResponseData<ListsResponse>;
-                }),
-                tap({
-                    next: (response: ApiResponseData<ListsResponse>) => {
-                        ctx.setState({ ...ctx.getState(), isLoading: false, listsInProject: response.body.lists });
-                    },
-                    error: (error: ApiResponseError) => {
-                        this._errorHandler.showMessage(error);
-                    }
-                })
-            );
+        return this._listApiService.listInProject(projectIri).pipe(
+            take(1),
+            tap((response) =>
+                ctx.patchState({ listsInProject: response.lists })
+            ),
+            finalize(() => ctx.patchState({ isLoading: false }))
+        );
     }
 
     @Action(DeleteListNodeAction)
@@ -57,28 +49,23 @@ export class ListsState {
         { listIri }: DeleteListNodeAction
     ) {
         ctx.patchState({ isLoading: true });
-        return this._dspApiConnection.admin.listsEndpoint
-            .deleteListNode(listIri)
-            .pipe(
-                take(1),
-                map((response: ApiResponseData<DeleteListNodeResponse | DeleteListResponse> | ApiResponseError) => { 
-                    return response as ApiResponseData<DeleteListNodeResponse>;
-                }),
-                tap({
-                    next: (response: ApiResponseData<DeleteListNodeResponse>) => {
-                        ctx.patchState({ isLoading: false });
-                    },
-                    error: (error: ApiResponseError) => {
-                        this.handleDeleteError(error);
-                    }
-                })
-            );
+        return this._listApiService.deleteListNode(listIri).pipe(
+            take(1),
+            tap({
+                next: () => {
+                    ctx.patchState({ isLoading: false });
+                },
+                error: (error: ApiResponseError) => {
+                    this.handleDeleteError(error);
+                },
+            })
+        );
     }
 
     @Action(ClearListsAction)
     clearCurrentProject(ctx: StateContext<ListsStateModel>) {
         return of(ctx.getState()).pipe(
-            map(currentState => {
+            map((currentState) => {
                 ctx.patchState(defaults);
                 return currentState;
             })
@@ -87,22 +74,7 @@ export class ListsState {
 
     private handleDeleteError(error: ApiResponseError): void {
         // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
-        if (error.status === 400) {
-            const errorDialogConfig: MatDialogConfig =
-                {
-                    width: '640px',
-                    position: {
-                        top: '112px',
-                    },
-                    data: {
-                        mode: 'deleteListNodeError',
-                    },
-                };
-
-            //TODO decouple error handling 
-            //this._dialog.open(DialogComponent, errorDialogConfig);
-        } else {
-            // use default error behavior
+        if (error.status !== 400) {
             this._errorHandler.showMessage(error);
         }
     }

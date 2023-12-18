@@ -24,6 +24,7 @@ import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import { Store } from '@ngxs/store';
+import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 
 @Component({
     selector: 'app-password-form',
@@ -90,6 +91,7 @@ export class PasswordFormComponent implements OnInit {
     constructor(
         @Inject(DspApiConnectionToken)
         private _dspApiConnection: KnoraApiConnection,
+        private _userApiService: UserApiService,
         private _errorHandler: AppErrorHandler,
         private _fb: UntypedFormBuilder,
         private _notification: NotificationService,
@@ -264,8 +266,8 @@ export class PasswordFormComponent implements OnInit {
             ? this.form.controls.requesterPassword.value
             : this.confirmForm.controls.requesterPassword.value;
 
-        this._dspApiConnection.admin.usersEndpoint
-            .updateUserPassword(
+          this._userApiService
+            .updatePassword(
                 this.user.id,
                 requesterPassword,
                 this.form.controls.password.value

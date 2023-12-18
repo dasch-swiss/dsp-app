@@ -6,17 +6,17 @@ import {
     KnoraApiConnection,
     ListNodeV2,
     OntologiesMetadata,
-    OntologyMetadata,
     ReadOntology,
     ReadResource,
     ReadResourceSequence,
     ResourceClassAndPropertyDefinitions,
     ResourceClassDefinition,
-    ResourcePropertyDefinition,
+    ResourcePropertyDefinition
 } from '@dasch-swiss/dsp-js';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { OntologyV2ApiService } from '@dasch-swiss/vre/shared/app-api';
 
 export interface ApiData {
     iri: string;
@@ -43,11 +43,11 @@ export const ResourceLabel =
 export const ResourceLabelObject = {
     iri: 'resourceLabel',
     label: 'Resource Label',
-    objectType: ResourceLabel,
+    objectType: ResourceLabel
 };
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class AdvancedSearchService {
     // subjects to handle canceling of previous search requests when searching for a linked resource
@@ -56,31 +56,21 @@ export class AdvancedSearchService {
 
     constructor(
         @Inject(DspApiConnectionToken)
-        private _dspApiConnection: KnoraApiConnection
-    ) {}
+        private _dspApiConnection: KnoraApiConnection,
+        private _ontologyV2Api: OntologyV2ApiService
+    ) {
+    }
 
     // API call to get the list of ontologies
     allOntologiesList = (): Observable<ApiData[]> => {
-        return this._dspApiConnection.v2.onto.getOntologiesMetadata().pipe(
-            map((response: OntologiesMetadata | ApiResponseError) => {
-                if (response instanceof ApiResponseError) {
-                    throw response; // caught by catchError operator
-                }
-                return response.ontologies
-                    .filter(
-                        (onto: OntologyMetadata) =>
-                            onto.attachedToProject !==
-                            Constants.SystemProjectIRI
-                    )
-                    .map((onto: { id: string; label: string }) => {
-                        return { iri: onto.id, label: onto.label };
-                    });
-            }),
-            catchError((err) => {
-                this._handleError(err);
-                return []; // return an empty array on error
-            })
-        );
+        return this._ontologyV2Api.getMetadata()
+            .pipe(
+                map((response) => response['@graph']
+                    .filter((onto) => onto['knora-api:attachedToProject'] !== Constants.SystemProjectIRI
+                    ).map((onto) => {
+                        return { iri: onto['@id'], label: onto['rdfs:label'] };
+                    })
+                ));
     };
 
     // API call to get the list of ontologies within the specified project iri
@@ -216,7 +206,7 @@ export class AdvancedSearchService {
                                         label: label,
                                         objectType: objectType,
                                         isLinkedResourceProperty: linkProperty,
-                                        listIri: listNodeIri,
+                                        listIri: listNodeIri
                                     };
                                 } else {
                                     console.error(
@@ -230,7 +220,7 @@ export class AdvancedSearchService {
                                 iri: propDef.id,
                                 label: label,
                                 objectType: objectType,
-                                isLinkedResourceProperty: linkProperty,
+                                isLinkedResourceProperty: linkProperty
                             };
                         });
                 }),
@@ -290,7 +280,7 @@ export class AdvancedSearchService {
                                         label: label,
                                         objectType: objectType,
                                         isLinkedResourceProperty: linkProperty,
-                                        listIri: listNodeIri,
+                                        listIri: listNodeIri
                                     };
                                 } else {
                                     console.error(
@@ -304,7 +294,7 @@ export class AdvancedSearchService {
                                 iri: propDef.id,
                                 label: label,
                                 objectType: objectType,
-                                isLinkedResourceProperty: linkProperty,
+                                isLinkedResourceProperty: linkProperty
                             };
                         });
                 }),
@@ -326,7 +316,7 @@ export class AdvancedSearchService {
 
         return this._dspApiConnection.v2.search
             .doSearchByLabelCountQuery(searchValue, {
-                limitToResourceClass: resourceClassIri,
+                limitToResourceClass: resourceClassIri
             })
             .pipe(
                 takeUntil(this.cancelPreviousCountRequest$), // Cancel previous request
@@ -355,7 +345,7 @@ export class AdvancedSearchService {
 
         return this._dspApiConnection.v2.search
             .doSearchByLabel(searchValue, offset, {
-                limitToResourceClass: resourceClassIri,
+                limitToResourceClass: resourceClassIri
             })
             .pipe(
                 takeUntil(this.cancelPreviousSearchRequest$), // Cancel previous request
@@ -367,7 +357,7 @@ export class AdvancedSearchService {
                         return of(
                             response.resources.map((res: ReadResource) => ({
                                 iri: res.id,
-                                label: res.label,
+                                label: res.label
                             }))
                         );
                     }

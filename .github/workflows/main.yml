@@ -29,7 +29,7 @@ jobs:
       - name: "Run npm install"
         run: |
           npm install
-          npx nx run-many --all --target=lint
+          npx nx run-many --all --target=lint --skip-nx-cache
         # npx nx run-many --all --target=test --configuration=ci
         env:
           TZ: Europe/Zurich

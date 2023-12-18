@@ -15,7 +15,6 @@ export class AuthService {
     private tokenRefreshIntervalId: any;
     private _isLoggedIn$ = new BehaviorSubject<boolean>(this.isLoggedIn());
     private _dspApiConnection = inject(DspApiConnectionToken);
-    private _errorHandler = inject(AppErrorHandler);
 
     isLoggedIn$ = this._isLoggedIn$.asObservable();
 
@@ -27,8 +26,7 @@ export class AuthService {
 
     constructor(
         private store: Store,
-        private router: Router,
-        // private intervalWrapper: IntervalWrapperService
+        private router: Router // private intervalWrapper: IntervalWrapperService
     ) {
         // check if the (possibly) existing session is still valid and if not, destroy it
         this.isSessionValid()
@@ -69,7 +67,7 @@ export class AuthService {
                             return this._updateSessionId(credentials);
                         }
                     ),
-                    catchError(error => {
+                    catchError(() => {
                         // if there is any error checking the credentials (mostly a 401 for after
                         // switching the server where this session/the credentials are unknown), we destroy the session
                         // so a new login is required
@@ -95,7 +93,9 @@ export class AuthService {
      * @param session the current session
      * @param timestamp timestamp in form of a number
      */
-    private _updateSessionId(credentials: ApiResponseData<CredentialsResponse> | ApiResponseError): boolean {
+    private _updateSessionId(
+        credentials: ApiResponseData<CredentialsResponse> | ApiResponseError
+    ): boolean {
         if (credentials instanceof ApiResponseData) {
             // the dsp api credentials are still valid
             this.storeToken(credentials.body.message);
@@ -108,12 +108,11 @@ export class AuthService {
     }
 
     loadUser(username: string): Observable<UserStateModel> {
-        return this.store.dispatch(new LoadUserAction(username))
-            .pipe(
-                tap(() => {
-                    this._isLoggedIn$.next(true);
-                })
-            );
+        return this.store.dispatch(new LoadUserAction(username)).pipe(
+            tap(() => {
+                this._isLoggedIn$.next(true);
+            })
+        );
     }
 
     /**
@@ -123,42 +122,54 @@ export class AuthService {
      * @returns an Either with the session or an error message
      */
     apiLogin$(identifier: string, password: string): Observable<boolean> {
-        const identifierType: 'iri' | 'email' | 'username' = identifier.indexOf('@') > -1 ? 'email' : 'username';
+        const identifierType: 'iri' | 'email' | 'username' =
+            identifier.indexOf('@') > -1 ? 'email' : 'username';
         return this._dspApiConnection.v2.auth
             .login(identifierType, identifier, password)
             .pipe(
                 takeLast(1),
-                tap((response: ApiResponseData<LoginResponse> | ApiResponseError) => {
-                    if (response instanceof ApiResponseData) {
-                        this.storeToken(response.body.token);
-                    }
-                }),
-                switchMap((response: ApiResponseData<LoginResponse> | ApiResponseError) => {
-                    if (response instanceof ApiResponseData) {
-                        return of(true);
-                    } else {
-                        // error handling
-                        if (
-                            response.status === 401 ||
-                            response.status === 403
-                        ) {
-                            // wrong credentials
-                            return throwError(<LoginError>{
-                                type: 'login',
-                                status: response.status,
-                                msg: 'Wrong credentials',
-                            });
-                        } else {
-                            // server error
-                            this._errorHandler.showMessage(response);
-                            return throwError(<ServerError>{
-                                type: 'server',
-                                status: response.status,
-                                msg: 'Server error',
-                            });
+                tap(
+                    (
+                        response:
+                            | ApiResponseData<LoginResponse>
+                            | ApiResponseError
+                    ) => {
+                        if (response instanceof ApiResponseData) {
+                            this.storeToken(response.body.token);
                         }
                     }
-                })
+                ),
+                switchMap(
+                    (
+                        response:
+                            | ApiResponseData<LoginResponse>
+                            | ApiResponseError
+                    ) => {
+                        if (response instanceof ApiResponseData) {
+                            return of(true);
+                        } else {
+                            // error handling
+                            if (
+                                response.status === 401 ||
+                                response.status === 403
+                            ) {
+                                // wrong credentials
+                                return throwError(<LoginError>{
+                                    type: 'login',
+                                    status: response.status,
+                                    msg: 'Wrong credentials',
+                                });
+                            } else {
+                                // server error
+                                return throwError(<ServerError>{
+                                    type: 'server',
+                                    status: response.status,
+                                    msg: 'Server error',
+                                });
+                            }
+                        }
+                    }
+                )
             );
     }
 
@@ -174,28 +185,28 @@ export class AuthService {
 
     logout() {
         //TODO ? logout by access token missing ?
-        this._dspApiConnection.v2.auth.logout().pipe(
-            take(1),
-            catchError((error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-                return of(error?.status === 200);
-            }),
-        ).subscribe((response: any) => {
-            if (!(response instanceof ApiResponseData)) {
-                throwError(<ServerError>{
-                    type: 'server',
-                    status: response.status,
-                    msg: 'Logout was not successful',
-                });
-                return;
-            }
+        this._dspApiConnection.v2.auth
+            .logout()
+            .pipe(
+                take(1),
+                catchError((error: ApiResponseError) => {
+                    return of(error?.status === 200);
+                })
+            )
+            .subscribe((response: any) => {
+                if (!(response instanceof ApiResponseData)) {
+                    throwError(<ServerError>{
+                        type: 'server',
+                        status: response.status,
+                        msg: 'Logout was not successful',
+                    });
+                    return;
+                }
 
-            if (response.body.status === 0) {
-                this.doLogoutUser();
-            } else {
-                this._errorHandler.showMessage(response.body.message);
-            }
-        });
+                if (response.body.status === 0) {
+                    this.doLogoutUser();
+                }
+            });
     }
 
     doLogoutUser() {
@@ -214,7 +225,7 @@ export class AuthService {
         return !!this.getAccessToken();
     }
 
-    getAccessToken(): string | null {
+    getAccessToken() {
         return localStorage.getItem(Auth.AccessToken);
     }
 
@@ -223,9 +234,9 @@ export class AuthService {
     }
 
     private storeToken(token: string) {
-            localStorage.setItem(Auth.AccessToken, token);
-            //localStorage.setItem(this.REFRESH_TOKEN, token);
-            this.startTokenRefresh();
+        localStorage.setItem(Auth.AccessToken, token);
+        //localStorage.setItem(this.REFRESH_TOKEN, token);
+        this.startTokenRefresh();
     }
 
     private refreshAccessToken(access_token: string) {
@@ -252,7 +263,10 @@ export class AuthService {
             return false;
         }
 
-        return date.setSeconds(date.getSeconds() - 30).valueOf() <= new Date().valueOf();
+        return (
+            date.setSeconds(date.getSeconds() - 30).valueOf() <=
+            new Date().valueOf()
+        );
     }
 
     getTokenExpirationDate(token: string): Date | null {
@@ -288,17 +302,10 @@ export class AuthService {
         const exp = this.getTokenExp(token);
         const date = new Date(0);
         date.setUTCSeconds(exp);
-        const interval = (date as any) - (new Date() as any);
 
         if (this.tokenRefreshIntervalId) {
             clearInterval(this.tokenRefreshIntervalId);
         }
-
-        //TODO upgrade RxJS to V7 for lastValueFrom support
-        // this.tokenRefreshIntervalId =
-        // this.intervalWrapper.setInterval(() => {
-        //     void lastValueFrom(this.refreshToken$());
-        // }, interval - 50000);
     }
 
     private getTokenUser(): string {

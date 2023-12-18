@@ -62,7 +62,7 @@ export class TextComponent implements OnInit, AfterViewInit {
             .getFileInfo(this.src.fileValue.fileUrl)
             .subscribe(
                 res => this.originalFilename = res['originalFilename'],
-                error => this.failedToLoad = true
+              () => this.failedToLoad = true
             );
     }
 

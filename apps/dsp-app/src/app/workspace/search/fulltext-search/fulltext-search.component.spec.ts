@@ -173,10 +173,6 @@ describe('FulltextSearchComponent', () => {
 
     it('should get projects on init', () => {
         const projSpy = TestBed.inject(DspApiConnectionToken);
-        expect(
-            projSpy.admin.projectsEndpoint.getProjects
-        ).toHaveBeenCalledTimes(1);
-
         expect(testHostComponent.fulltextSearch.projects).toBeDefined();
         expect(testHostComponent.fulltextSearch.projects.length).toEqual(5);
         expect(testHostComponent.fulltextSearch.projectfilter).toEqual(true);

@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, takeLast } from 'rxjs/operators';
 import { Session } from './session';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 
 @Injectable({
     providedIn: 'root',
@@ -31,7 +32,9 @@ export class SessionService {
      */
     readonly MAX_SESSION_TIME: number = 3600;
 
-    constructor() {
+    constructor(
+      private _userApiService: UserApiService,
+    ) {
         // check if the (possibly) existing session is still valid and if not, destroy it
         this.isSessionValid()
             .pipe(takeLast(1))
@@ -46,14 +49,10 @@ export class SessionService {
              * set the application state for current/logged-in user
              */
             const session = this.session() as Session;
-            this._dspApiConnection.admin.usersEndpoint
-                .getUserByUsername(session.user.name as string)
+              this._userApiService
+                .get(session.user.name as string, 'username')
                 .subscribe(
-                    (
-                        response:
-                            | ApiResponseData<UserResponse>
-                            | ApiResponseError
-                    ) => {
+                    response => {
                         if (response instanceof ApiResponseData) {
                             this._applicationStateService.set(
                                 session.user.name,
@@ -89,15 +88,11 @@ export class SessionService {
         this._dspApiConnection.v2.jsonWebToken = jwt ? jwt : '';
 
         // get user information
-        return this._dspApiConnection.admin.usersEndpoint
-            .getUser(type, identifier)
+          return this._userApiService
+            .get(identifier, type)
             .pipe(
                 map(
-                    (
-                        response:
-                            | ApiResponseData<UserResponse>
-                            | ApiResponseError
-                    ) => {
+                    response => {
                         this._storeSessionInLocalStorage(response, jwt);
                         // return type is void
                         return true;
@@ -139,7 +134,7 @@ export class SessionService {
                             );
                         }
                     ),
-                    catchError(error => {
+                    catchError(() => {
                         // if there is any error checking the credentials (mostly a 401 for after
                         // switching the server where this session/the credentials are unknown), we destroy the session
                         // so a new login is required
@@ -182,18 +177,15 @@ export class SessionService {
      * @param jwt JSON web token string
      */
     private _storeSessionInLocalStorage(
-        response: ApiResponseData<UserResponse> | ApiResponseError,
+        response: UserResponse,
         jwt: string
     ) {
-        let session: Session;
-
-        if (response instanceof ApiResponseData) {
             let sysAdmin = false;
             const projectAdmin: string[] = [];
 
             // get permission information: a) is user sysadmin? b) get list of project iri's where user is project admin
             const groupsPerProject =
-                response.body.user.permissions.groupsPerProject;
+                response.user.permissions.groupsPerProject;
 
             if (groupsPerProject) {
                 const groupsPerProjectKeys: string[] =
@@ -218,12 +210,12 @@ export class SessionService {
             }
 
             // store session information in browser's localstorage
-            session = {
+            const session = {
                 id: this._setTimestamp(),
                 user: {
-                    name: response.body.user.username,
+                    name: response.user.username,
                     jwt: jwt,
-                    lang: response.body.user.lang,
+                    lang: response.user.lang,
                     sysAdmin: sysAdmin,
                     projectAdmin: projectAdmin,
                 },
@@ -232,11 +224,6 @@ export class SessionService {
             // update localStorage
             localStorage.setItem('session', JSON.stringify(session));
             this.session.set(session);
-        } else {
-            localStorage.removeItem('session');
-            this.session.set(undefined);
-            // console.error(response);
-        }
     }
 
     /**

@@ -57,11 +57,6 @@ export class AppErrorHandler implements ErrorHandler {
             error.error &&
             !(error.error instanceof AjaxError && error.error['response']);
 
-        const apiResponseMessage =
-            error.error instanceof AjaxError && error.error['response']
-                ? error.error['response'].error
-                : undefined;
-
         if (
             ((error.status > 499 && error.status < 600) || apiServerError) &&
             error.status !== 504
