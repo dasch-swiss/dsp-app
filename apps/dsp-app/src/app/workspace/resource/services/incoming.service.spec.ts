@@ -3,34 +3,34 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { IncomingService } from './incoming.service';
 
 describe('IncomingService', () => {
-    let service: IncomingService;
+  let service: IncomingService;
 
-    beforeEach(() => {
-        const dspConnSpyObj = {
-            v2: {
-                search: jasmine.createSpyObj('search', ['doExtendedSearch']),
-            },
-        };
+  beforeEach(() => {
+    const dspConnSpyObj = {
+      v2: {
+        search: jasmine.createSpyObj('search', ['doExtendedSearch']),
+      },
+    };
 
-        TestBed.configureTestingModule({
-            providers: [
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: dspConnSpyObj,
-                },
-            ],
-        });
-        service = TestBed.inject(IncomingService);
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: DspApiConnectionToken,
+          useValue: dspConnSpyObj,
+        },
+      ],
     });
+    service = TestBed.inject(IncomingService);
+  });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
 
-    it('should get incoming regions ', () => {
-        const dspSpy = TestBed.inject(DspApiConnectionToken);
+  it('should get incoming regions ', () => {
+    const dspSpy = TestBed.inject(DspApiConnectionToken);
 
-        const expectedQuery = `
+    const expectedQuery = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
 CONSTRUCT {
@@ -67,17 +67,17 @@ knora-api:hasColor knora-api:objectType knora-api:Color .
 } OFFSET 0
 `;
 
-        service.getIncomingRegions('http://rdfh.ch/0801/letter', 0);
+    service.getIncomingRegions('http://rdfh.ch/0801/letter', 0);
 
-        expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-            expectedQuery
-        );
-    });
+    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
+      expectedQuery
+    );
+  });
 
-    it('should get incoming StillImageRepresentations ', () => {
-        const dspSpy = TestBed.inject(DspApiConnectionToken);
+  it('should get incoming StillImageRepresentations ', () => {
+    const dspSpy = TestBed.inject(DspApiConnectionToken);
 
-        const expectedQuery = `
+    const expectedQuery = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
 CONSTRUCT {
@@ -110,20 +110,20 @@ knora-api:hasStillImageFile knora-api:objectType knora-api:File .
 OFFSET 1
 `;
 
-        service.getStillImageRepresentationsForCompoundResource(
-            'http://rdfh.ch/0801/letter',
-            1
-        );
+    service.getStillImageRepresentationsForCompoundResource(
+      'http://rdfh.ch/0801/letter',
+      1
+    );
 
-        expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-            expectedQuery
-        );
-    });
+    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
+      expectedQuery
+    );
+  });
 
-    it('should get incoming Links', () => {
-        const dspSpy = TestBed.inject(DspApiConnectionToken);
+  it('should get incoming Links', () => {
+    const dspSpy = TestBed.inject(DspApiConnectionToken);
 
-        const expectedQuery = `
+    const expectedQuery = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
 CONSTRUCT {
@@ -156,10 +156,10 @@ FILTER NOT EXISTS {
 } OFFSET 0
 `;
 
-        service.getIncomingLinksForResource('http://rdfh.ch/0801/letter', 0);
+    service.getIncomingLinksForResource('http://rdfh.ch/0801/letter', 0);
 
-        expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-            expectedQuery
-        );
-    });
+    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
+      expectedQuery
+    );
+  });
 });

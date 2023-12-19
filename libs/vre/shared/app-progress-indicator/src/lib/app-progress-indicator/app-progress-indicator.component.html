@@ -1,50 +1,44 @@
 <!-- this is the progress indicator for forms -->
 <div
-    class="app-progress-indicator submit"
-    *ngIf="status !== undefined; else isLoading"
->
-    <!-- spinner while on load / on submit -->
-    <div class="on-submit" *ngIf="status === 0">
-        <div
-            class="spinner"
-            [style.border-top-color]="color"
-            [style.border-left-color]="color"
-        ></div>
-    </div>
+  class="app-progress-indicator submit"
+  *ngIf="status !== undefined; else isLoading">
+  <!-- spinner while on load / on submit -->
+  <div class="on-submit" *ngIf="status === 0">
+    <div
+      class="spinner"
+      [style.border-top-color]="color"
+      [style.border-left-color]="color"></div>
+  </div>
 
-    <div>
-        <!-- bullet point before submit -->
-        <mat-icon *ngIf="status === -1" class="before-submit"
-        >keyboard_arrow_right</mat-icon
-        >
-        <!-- icon 'check' when done -->
-        <mat-icon
-            *ngIf="status === 1"
-            class="after-submit"
-            [style.color]="color"
-        >done</mat-icon
-        >
-        <!-- in case of an error -->
-        <mat-icon *ngIf="status === 400" class="submit-error"
-        >not_interested</mat-icon
-        >
-    </div>
+  <div>
+    <!-- bullet point before submit -->
+    <mat-icon *ngIf="status === -1" class="before-submit"
+      >keyboard_arrow_right</mat-icon
+    >
+    <!-- icon 'check' when done -->
+    <mat-icon *ngIf="status === 1" class="after-submit" [style.color]="color"
+      >done</mat-icon
+    >
+    <!-- in case of an error -->
+    <mat-icon *ngIf="status === 400" class="submit-error"
+      >not_interested</mat-icon
+    >
+  </div>
 </div>
 
 <!-- default case: is loading -->
 <ng-template #isLoading>
-    <div class="app-progress-indicator default">
-        <svg
-            class="loader"
-            [attr.width]="widthAndHeight"
-            [attr.height]="widthAndHeight"
-            viewBox="5 20 200 170"
-            preserveAspectRatio="xMidYMid meet"
-            version="1.1"
-        >
-            <g [attr.stroke]="color" stroke-width="11" fill="none">
-                <path
-                    d="m 107.19141,27.064453 c 19.40811,0.72674 40.31867,-1.456974 57.69737,9.089791 21.86918,11.995467 35.15372,37.302817
+  <div class="app-progress-indicator default">
+    <svg
+      class="loader"
+      [attr.width]="widthAndHeight"
+      [attr.height]="widthAndHeight"
+      viewBox="5 20 200 170"
+      preserveAspectRatio="xMidYMid meet"
+      version="1.1">
+      <g [attr.stroke]="color" stroke-width="11" fill="none">
+        <path
+          d="m 107.19141,27.064453 c 19.40811,0.72674 40.31867,-1.456974 57.69737,9.089791 21.86918,11.995467 35.15372,37.302817
                 32.81003,62.109081 -1.44162,27.181075 -22.18624,51.396565 -48.36746,58.105135 -15.52706,3.91583 -31.7106,1.96603
                 -47.54641,2.56104 -12.037336,-0.47103 -24.435002,1.15224 -36.165837,-2.14642 C 47.465101,151.64804 35.68418,132.01794
                 38.846261,113.58197 41.044909,94.96699 58.432119,80.249806 77.041016,80.271484 c 17.227977,-0.187132 34.488494,-0.150034
@@ -63,9 +57,8 @@
                 82.206525,79.982527 65.775345,78.124805 53.519531,88.164062 35.12557,101.2767 33.081035,130.5764 48.717405,146.60724
                 c 8.968191,9.78898 22.647018,13.18722 35.509867,12.46014 18.713198,0.019 37.488438,0.58386 56.161608,-0.70035
                 28.73172,-3.16296 53.8499,-27.19104 57.15814,-56.10834 3.4273,-23.2831 -6.49873,-47.955352 -25.6328,-61.833968
-                -13.91005,-10.94423 -32.05671,-13.81719 -49.28858,-13.194089 -5.14452,-0.0723 -10.28903,-0.166142 -15.43423,-0.16618 z"
-                />
-            </g>
-        </svg>
-    </div>
+                -13.91005,-10.94423 -32.05671,-13.81719 -49.28858,-13.194089 -5.14452,-0.0723 -10.28903,-0.166142 -15.43423,-0.16618 z" />
+      </g>
+    </svg>
+  </div>
 </ng-template>

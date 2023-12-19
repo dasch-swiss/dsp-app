@@ -1,81 +1,80 @@
 import { TestBed } from '@angular/core/testing';
-import { ApplicationStateService } from './app-state.service';
 import { ReadUser } from '@dasch-swiss/dsp-js';
+import { ApplicationStateService } from './app-state.service';
 
 describe('ApplicationStateService', () => {
-    let service: ApplicationStateService;
+  let service: ApplicationStateService;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [],
-        });
-
-        service = TestBed.inject(ApplicationStateService);
-        expect(service).toBeTruthy();
-
-        // reset the state before each test
-        service.destroy();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [],
     });
 
-    it('should set a value in the dictionary', () => {
-        const user = new ReadUser();
-        service.set('user', user);
-        expect(service.has('user')).toBeTruthy();
+    service = TestBed.inject(ApplicationStateService);
+    expect(service).toBeTruthy();
+
+    // reset the state before each test
+    service.destroy();
+  });
+
+  it('should set a value in the dictionary', () => {
+    const user = new ReadUser();
+    service.set('user', user);
+    expect(service.has('user')).toBeTruthy();
+  });
+
+  it('should get a value in the dictionary', () => {
+    const user = new ReadUser();
+    user.id = '1234';
+
+    service.set('user', user);
+
+    const result$ = service.get('user');
+
+    result$.subscribe(result => {
+      expect(result).toMatchObject(user);
     });
+  });
 
-    it('should get a value in the dictionary', () => {
-        const user = new ReadUser();
-        user.id = '1234';
+  it('should throw an error if the key is not found', () => {
+    const result$ = service.get('user_not_found');
 
-        service.set('user', user);
+    result$.subscribe(
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      () => {},
+      error => {
+        expect(error).toBeTruthy();
+      }
+    );
+  });
 
-        const result$ = service.get('user');
+  it('should delete a value in the dictionary', () => {
+    const user = new ReadUser();
+    user.id = '1234';
+    service.set('user', user);
 
-        result$.subscribe((result) => {
-            expect(result).toMatchObject(user);
-        });
-    });
+    const user2 = new ReadUser();
+    user2.id = '5678';
+    service.set('user2', user2);
 
-    it('should throw an error if the key is not found', () => {
-        const result$ = service.get('user_not_found');
+    service.delete('user');
 
-        result$.subscribe(
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            () => {},
-            (error) => {
-                expect(error).toBeTruthy();
-            }
-        );
-    });
+    expect(service.has('user')).toBeFalsy();
+    expect(service.has('user2')).toBeTruthy();
+  });
 
-    it('should delete a value in the dictionary', () => {
-        const user = new ReadUser();
-        user.id = '1234';
-        service.set('user', user);
+  it('should destroy the dictionary', () => {
+    const user = new ReadUser();
+    user.id = '1234';
+    service.set('user', user);
 
-        const user2 = new ReadUser();
-        user2.id = '5678';
-        service.set('user2', user2);
+    const user2 = new ReadUser();
+    user2.id = '5678';
+    service.set('user2', user2);
 
-        service.delete('user');
+    service.destroy();
 
-        expect(service.has('user')).toBeFalsy();
-        expect(service.has('user2')).toBeTruthy();
-    });
-
-    it('should destroy the dictionary', () => {
-        const user = new ReadUser();
-        user.id = '1234';
-        service.set('user', user);
-
-        const user2 = new ReadUser();
-        user2.id = '5678';
-        service.set('user2', user2);
-
-        service.destroy();
-
-        expect(service.has('user')).toBeFalsy();
-        expect(service.has('user2')).toBeFalsy();
-    });
-
+    expect(service.has('user')).toBeFalsy();
+    expect(service.has('user2')).toBeFalsy();
+  });
 });

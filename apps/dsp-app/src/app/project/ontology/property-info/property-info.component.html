@@ -1,57 +1,93 @@
-<div class="property-info" [class.standalone]="true" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
-    <div class="upper-prop-container">
-        <div mat-line class="title" [class.with-line-break]="true">
-            <span class="icon" *ngIf="propType" [matTooltip]="propType?.group + ': ' + propType?.label + ' (' + propDef.id.split('#')[1] + ')'"
-                matTooltipPosition="above">
-                <mat-icon class="type">{{propType?.icon}}</mat-icon>
-            </span>
-            <span class="label" [matTooltip]="propDef.comment" matTooltipPosition="above" matTooltipClass="multi-line-tooltip">
-                {{!propDef.labels.length ? propDef?.label : propDef.labels | appStringifyStringLiteral:'all'}}
-            </span>
-            <!-- property is linked to a class or to a list: display connected class or list -->
-            <span class="attribute additional-info" *ngIf="propAttribute" [matTooltip]="propAttributeComment"
-                matTooltipPosition="above" [innerHTML]="'&rarr;&nbsp;' + propAttribute">
-            </span>
-        </div>
+<div
+  class="property-info"
+  [class.standalone]="true"
+  (mouseenter)="mouseEnter()"
+  (mouseleave)="mouseLeave()">
+  <div class="upper-prop-container">
+    <div mat-line class="title" [class.with-line-break]="true">
+      <span
+        class="icon"
+        *ngIf="propType"
+        [matTooltip]="propType?.group + ': ' + propType?.label + ' (' + propDef.id.split('#')[1] + ')'"
+        matTooltipPosition="above">
+        <mat-icon class="type">{{propType?.icon}}</mat-icon>
+      </span>
+      <span
+        class="label"
+        [matTooltip]="propDef.comment"
+        matTooltipPosition="above"
+        matTooltipClass="multi-line-tooltip">
+        {{!propDef.labels.length ? propDef?.label : propDef.labels |
+        appStringifyStringLiteral:'all'}}
+      </span>
+      <!-- property is linked to a class or to a list: display connected class or list -->
+      <span
+        class="attribute additional-info"
+        *ngIf="propAttribute"
+        [matTooltip]="propAttributeComment"
+        matTooltipPosition="above"
+        [innerHTML]="'&rarr;&nbsp;' + propAttribute">
+      </span>
     </div>
+  </div>
 
-    <div mat-line class="info additional-info" [class.with-line-break] = true>
-        <span [matTooltip]="'id: ' + propDef.id" matTooltipPosition="above" matTooltipClass="wide-tooltip" class="mat-caption">
-            {{propDef.id | split: '#':1}}
+  <div mat-line class="info additional-info" [class.with-line-break]="true">
+    <span
+      [matTooltip]="'id: ' + propDef.id"
+      matTooltipPosition="above"
+      matTooltipClass="wide-tooltip"
+      class="mat-caption">
+      {{propDef.id | split: '#':1}}
+    </span>
+    <span class="fill-remaining-space center"></span>
+    <!-- in case of ontology property: display corresponding resource classes -->
+    <span class="white-space">
+      <span *ngIf="resClasses.length; else notUsed">
+        <span class="mat-caption">&gt; Property is used in:</span>
+        <span *ngFor="let c of resClasses; trackBy: trackByFn; let last = last">
+          <span
+            [matTooltip]="c.comment"
+            matTooltipPosition="above"
+            (click)="clickedOnClass.emit(c)"
+            >{{c.label}}</span
+          ><span *ngIf="!last">&nbsp;&middot;</span>
         </span>
-        <span class="fill-remaining-space center"></span>
-        <!-- in case of ontology property: display corresponding resource classes -->
-        <span class="white-space">
-            <span *ngIf="resClasses.length; else notUsed">
-                <span class="mat-caption">&gt; Property is used in:</span>
-                <span *ngFor="let c of resClasses; trackBy: trackByFn; let last = last">
-                    <span [matTooltip]="c.comment" matTooltipPosition="above"
-                        (click)="clickedOnClass.emit(c)">{{c.label}}</span><span *ngIf="!last">&nbsp;&middot;</span>
-                </span>
-            </span>
-            <ng-template #notUsed>
-                <span class="mat-caption">&gt;
-                    <span class="not-used">This property is not used in a class.</span>
-                </span>
-            </ng-template>
+      </span>
+      <ng-template #notUsed>
+        <span class="mat-caption"
+          >&gt;
+          <span class="not-used">This property is not used in a class.</span>
         </span>
+      </ng-template>
+    </span>
+  </div>
+  <div
+    class="action-bubble"
+    *ngIf="lastModificationDate && projectStatus && showActionBubble"
+    [@simpleFadeAnimation]="'in'">
+    <div class="button-container">
+      <span
+        matTooltipPosition="above"
+        [matTooltip]="propDef.isEditable ? 'Edit property' : 'The property can\'t be edited; No further information available'">
+        <button
+          mat-button
+          [disabled]="!propDef.isEditable"
+          class="edit"
+          (click)="editResourceProperty.emit({propDef: propDef, propType: propType})">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </span>
+      <span
+        matTooltipPosition="above"
+        [matTooltip]="((!propCanBeDeleted) ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')">
+        <button
+          mat-button
+          [disabled]="!propCanBeDeleted"
+          class="delete"
+          (click)="deleteResourceProperty.emit({iri: propDef.id, label: propDef.label})">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </span>
     </div>
-    <div class="action-bubble" *ngIf="lastModificationDate && projectStatus && showActionBubble" [@simpleFadeAnimation]="'in'">
-        <div class="button-container">
-            <span matTooltipPosition="above"
-                [matTooltip]="propDef.isEditable ? 'Edit property' : 'The property can\'t be edited; No further information available'">
-                <button mat-button [disabled]="!propDef.isEditable" class="edit"
-                    (click)="editResourceProperty.emit({propDef: propDef, propType: propType})">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </span>
-            <span matTooltipPosition="above"
-                [matTooltip]="((!propCanBeDeleted) ? 'The property can\'t be deleted because it is used in a class' : 'Delete property')">
-                <button mat-button [disabled]="!propCanBeDeleted" class="delete"
-                    (click)="deleteResourceProperty.emit({iri: propDef.id, label: propDef.label})">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </span>
-        </div>
-    </div>
+  </div>
 </div>

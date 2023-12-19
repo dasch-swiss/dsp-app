@@ -1,44 +1,39 @@
 <!-- In case if results present -->
 <div class="content" *ngIf="searchParams">
-    <as-split direction="horizontal" (dragEnd)="splitSize = $event">
-        <as-split-area [size]="40">
-            <app-list-view
-                [search]="searchParams"
-                [withMultipleSelection]="true"
-                (selectedResources)="onSelectionChange($event)"
-            >
-            </app-list-view>
-        </as-split-area>
-        <as-split-area
-            [size]="60"
-            *ngIf="selectedResources?.count > 0"
-            cdkScrollable
-        >
-            <div [ngSwitch]="viewMode">
-                <!-- single resource view -->
-                <app-resource
-                    *ngSwitchCase="'single'"
-                    [resourceIri]="resourceIri"
-                    [splitSizeChanged]="splitSize"
-                >
-                </app-resource>
+  <as-split direction="horizontal" (dragEnd)="splitSize = $event">
+    <as-split-area [size]="40">
+      <app-list-view
+        [search]="searchParams"
+        [withMultipleSelection]="true"
+        (selectedResources)="onSelectionChange($event)">
+      </app-list-view>
+    </as-split-area>
+    <as-split-area
+      [size]="60"
+      *ngIf="selectedResources?.count > 0"
+      cdkScrollable>
+      <div [ngSwitch]="viewMode">
+        <!-- single resource view -->
+        <app-resource
+          *ngSwitchCase="'single'"
+          [resourceIri]="resourceIri"
+          [splitSizeChanged]="splitSize">
+        </app-resource>
 
-                <!-- intermediate view -->
-                <app-intermediate
-                    *ngSwitchCase="'intermediate'"
-                    [resources]="selectedResources"
-                    (action)="viewMode = $event"
-                ></app-intermediate>
+        <!-- intermediate view -->
+        <app-intermediate
+          *ngSwitchCase="'intermediate'"
+          [resources]="selectedResources"
+          (action)="viewMode = $event"></app-intermediate>
 
-                <!-- multiple resources view / comparison viewer -->
-                <app-comparison
-                    *ngSwitchCase="'compare'"
-                    [noOfResources]="selectedResources.count"
-                    [resources]="selectedResources.resInfo"
-                    [splitSizeChanged]="splitSize"
-                >
-                </app-comparison>
-            </div>
-        </as-split-area>
-    </as-split>
+        <!-- multiple resources view / comparison viewer -->
+        <app-comparison
+          *ngSwitchCase="'compare'"
+          [noOfResources]="selectedResources.count"
+          [resources]="selectedResources.resInfo"
+          [splitSizeChanged]="splitSize">
+        </app-comparison>
+      </div>
+    </as-split-area>
+  </as-split>
 </div>

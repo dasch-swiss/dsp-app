@@ -5,7 +5,7 @@ import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 // empty component used as a redirect when the user logs in
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: ''
+  template: '',
 })
 export class AuthGuardComponent {
   constructor(private router: Router) {

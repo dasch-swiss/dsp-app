@@ -1,54 +1,69 @@
 <button
-    color="primary"
-    mat-icon-button
-    class="permissions"
-    matTooltip="Resource permissions"
-    matTooltipPosition="above"
-    cdkOverlayOrigin
-    #infoButton="cdkOverlayOrigin"
-    (click)="toggleMenu()">
-    <mat-icon>lock</mat-icon>
+  color="primary"
+  mat-icon-button
+  class="permissions"
+  matTooltip="Resource permissions"
+  matTooltipPosition="above"
+  cdkOverlayOrigin
+  #infoButton="cdkOverlayOrigin"
+  (click)="toggleMenu()">
+  <mat-icon>lock</mat-icon>
 </button>
 
-<ng-template cdkConnectedOverlay
-    [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
-    [cdkConnectedOverlayPositions]="infoBoxPositions"
-    [cdkConnectedOverlayOrigin]="infoButton"
-    [cdkConnectedOverlayOpen]="isOpen"
-    (detach)="isOpen = false"
-    (backdropClick)="isOpen = false">
-    <div class="overlay-info-box">
-        <table>
-            <tr>
-                <th class="first-col">Permissions</th>
-                <th *ngFor="let dp of defaultPermissions">
-                    <mat-icon [matTooltip]="dp.label" matTooltipPosition="above">
-                        {{dp.icon}}
-                    </mat-icon>
-                </th>
-            </tr>
-            <ng-container *ngIf="hasPermissions && listOfPermissions.length">
-                <tr *ngFor="let item of listOfPermissions" [class]="item.group.split(':')[1]">
-                    <td class="first-col">{{item.group.split(':')[1] | titleFromCamelCase}}</td>
-                    <td *ngFor="let dp of defaultPermissions" [class]="'perm-' + dp.name">
-                        <mat-icon class="status" [class.checked]="getStatus(dp.name, item.restriction)"
-                            [matTooltip]="dp.label" matTooltipPosition="above">
-                            {{getStatus(dp.name, item.restriction) ? 'radio_button_checked' : 'radio_button_unchecked'}}
-                        </mat-icon>
-                    </td>
-                </tr>
-            </ng-container>
-            <tr *ngIf="userHasPermission && userRestrictions" class="border-top LoggedInUser">
-                <td class="first-col">Your permissions</td>
-                <td *ngFor="let dp of defaultPermissions" [class]="'perm-' + dp.name">
-                    <mat-icon class="status" [class.checked]="getStatus(dp.name, userRestrictions)"
-                        [matTooltip]="dp.label" matTooltipPosition="above">
-                        {{getStatus(dp.name, userRestrictions) ? 'radio_button_checked' : 'radio_button_unchecked'}}
-                    </mat-icon>
-                </td>
-            </tr>
-        </table>
-    </div>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayBackdropClass]="'cdk-overlay-transparent-backdrop'"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  [cdkConnectedOverlayScrollStrategy]="scrollStrategy"
+  [cdkConnectedOverlayPositions]="infoBoxPositions"
+  [cdkConnectedOverlayOrigin]="infoButton"
+  [cdkConnectedOverlayOpen]="isOpen"
+  (detach)="isOpen = false"
+  (backdropClick)="isOpen = false">
+  <div class="overlay-info-box">
+    <table>
+      <tr>
+        <th class="first-col">Permissions</th>
+        <th *ngFor="let dp of defaultPermissions">
+          <mat-icon [matTooltip]="dp.label" matTooltipPosition="above">
+            {{dp.icon}}
+          </mat-icon>
+        </th>
+      </tr>
+      <ng-container *ngIf="hasPermissions && listOfPermissions.length">
+        <tr
+          *ngFor="let item of listOfPermissions"
+          [class]="item.group.split(':')[1]">
+          <td class="first-col">
+            {{item.group.split(':')[1] | titleFromCamelCase}}
+          </td>
+          <td *ngFor="let dp of defaultPermissions" [class]="'perm-' + dp.name">
+            <mat-icon
+              class="status"
+              [class.checked]="getStatus(dp.name, item.restriction)"
+              [matTooltip]="dp.label"
+              matTooltipPosition="above">
+              {{getStatus(dp.name, item.restriction) ? 'radio_button_checked' :
+              'radio_button_unchecked'}}
+            </mat-icon>
+          </td>
+        </tr>
+      </ng-container>
+      <tr
+        *ngIf="userHasPermission && userRestrictions"
+        class="border-top LoggedInUser">
+        <td class="first-col">Your permissions</td>
+        <td *ngFor="let dp of defaultPermissions" [class]="'perm-' + dp.name">
+          <mat-icon
+            class="status"
+            [class.checked]="getStatus(dp.name, userRestrictions)"
+            [matTooltip]="dp.label"
+            matTooltipPosition="above">
+            {{getStatus(dp.name, userRestrictions) ? 'radio_button_checked' :
+            'radio_button_unchecked'}}
+          </mat-icon>
+        </td>
+      </tr>
+    </table>
+  </div>
 </ng-template>

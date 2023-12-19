@@ -7,8 +7,16 @@
     "@nrwl/nx",
     "ban",
     "unused-imports",
-    "simple-import-sort"
+    "simple-import-sort",
+    "import",
+    "prettier"
   ],
+  "extends": [
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": "error"
+  },
   "overrides": [
     {
       "files": [
@@ -42,7 +50,8 @@
         "*.tsx"
       ],
       "excludedFiles": [
-        "*.spec.ts"
+        "*.spec.ts",
+        "**/test-setup.ts"
       ],
       "extends": [
         "airbnb-base",
@@ -68,10 +77,7 @@
         "import/first": "off",
         "import/newline-after-import": "off",
         "import/no-cycle": "off",
-        "import/no-duplicates": "off",
-        "import/no-extraneous-dependencies": "off",
-        "import/no-useless-path-segments": "off",
-        "import/order": "off",
+        "import/order": ["error", { "alphabetize": { "order": "asc" } }],
         "implicit-arrow-linebreak": "off",
         "key-spacing": "off",
         "linebreak-style": "off",
@@ -125,7 +131,6 @@
         "space-in-parens": "off",
         "spaced-comment": "off",
         "semi-spacing": "off",
-        "simple-import-sort/imports": "off",
         "simple-import-sort/exports": "off",
         "space-unary-ops": "off",
         // eslint-plugin-unused-imports rules
@@ -193,6 +198,7 @@
         "jasmine": true
       },
       "rules": {
+        "import/order": ["error", { "alphabetize": { "order": "asc" } }],
         "ban/ban": [
           2,
           {

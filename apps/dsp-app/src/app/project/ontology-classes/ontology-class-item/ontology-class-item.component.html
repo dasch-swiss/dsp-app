@@ -1,24 +1,39 @@
 <div class="class-item-container">
-    <div class="content" [routerLinkActive]="['is-active']" (click)="selectItem()">
-        <div class="box link" [routerLink]="classLink">
-            <div #resClassLabel class="label" matTooltip="{{resClass.label}}" matTooltipShowDelay="750" [matTooltipPosition]="'above'"
-                 [matTooltipDisabled]="tooltipDisabled">{{resClass.label}}</div>
-            <div class="entry-container">
-                <mat-icon>{{icon}}</mat-icon>
-                <ngx-skeleton-loader
-                    *ngIf="results === undefined"
-                    count="1"
-                    appearance="line"
-                    [theme]="{
+  <div
+    class="content"
+    [routerLinkActive]="['is-active']"
+    (click)="selectItem()">
+    <div class="box link" [routerLink]="classLink">
+      <div
+        #resClassLabel
+        class="label"
+        matTooltip="{{resClass.label}}"
+        matTooltipShowDelay="750"
+        [matTooltipPosition]="'above'"
+        [matTooltipDisabled]="tooltipDisabled">
+        {{resClass.label}}
+      </div>
+      <div class="entry-container">
+        <mat-icon>{{icon}}</mat-icon>
+        <ngx-skeleton-loader
+          *ngIf="results === undefined"
+          count="1"
+          appearance="line"
+          [theme]="{
                         'margin-bottom': 0,
                         'vertical-align': 'middle'
                     }">
-                </ngx-skeleton-loader>
-                <div *ngIf="results !== undefined" class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
-            </div>
+        </ngx-skeleton-loader>
+        <div *ngIf="results !== undefined" class="entry">
+          {{results | i18nPlural: itemPluralMapping['entry']}}
         </div>
-        <div class="icon link" *ngIf="projectMember" [routerLink]="getAddClassInstanceLink()">
-            <mat-icon>add_circle_outline</mat-icon>
-        </div>
+      </div>
     </div>
+    <div
+      class="icon link"
+      *ngIf="projectMember"
+      [routerLink]="getAddClassInstanceLink()">
+      <mat-icon>add_circle_outline</mat-icon>
+    </div>
+  </div>
 </div>

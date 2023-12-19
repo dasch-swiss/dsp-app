@@ -1,55 +1,69 @@
 <div *ngIf="!disableContent">
-    <dasch-swiss-app-progress-indicator *ngIf="isListsLoading$ | async"></dasch-swiss-app-progress-indicator>
+  <dasch-swiss-app-progress-indicator
+    *ngIf="isListsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
-    <!-- display only when loading is finished and project member has value -->
-    <div *ngIf="(isListsLoading$ | async) === false">
-        <div class="content large middle">
+  <!-- display only when loading is finished and project member has value -->
+  <div *ngIf="(isListsLoading$ | async) === false">
+    <div class="content large middle">
+      <!-- main content: show selected list -->
+      <ng-container *ngIf="(list$ | async) as list">
+        <div class="list-editor" #listEditor>
+          <mat-toolbar class="more-space-bottom">
+            <mat-toolbar-row>
+              <h3
+                class="mat-headline-6"
+                [matTooltip]="list.labels |appStringifyStringLiteral:'all'"
+                matTooltipPosition="above">
+                {{list.labels | appStringifyStringLiteral}}
+              </h3>
+              <span class="fill-remaining-space"></span>
+              <p
+                class="mat-body"
+                [matTooltip]="list.comments | appStringifyStringLiteral"
+                matTooltipPosition="above">
+                {{list.comments | appStringifyStringLiteral | appTruncate:64}}
+              </p>
+              <span class="fill-remaining-space"></span>
 
-            <!-- main content: show selected list -->
-            <ng-container *ngIf="(list$ | async) as list">
-            <div class="list-editor" #listEditor>
+              <span
+                class="project-actions"
+                *ngIf="(project$ | async)?.status && (isAdmin$ | async)">
+                <p class="mat-caption space-reducer">
+                  Controlled vocabulary configuration
+                </p>
+                <button
+                  color="primary"
+                  mat-button
+                  (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
+                  matTooltip="Edit controlled vocabulary info">
+                  <mat-icon>edit</mat-icon>
+                  Edit
+                </button>
+                <button
+                  color="warn"
+                  mat-button
+                  class="delete"
+                  (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
+                  matTooltip="Delete controlled vocabulary">
+                  <mat-icon>delete</mat-icon>
+                  Delete
+                </button>
+              </span>
+            </mat-toolbar-row>
+          </mat-toolbar>
 
-                <mat-toolbar class="more-space-bottom">
-                    <mat-toolbar-row>
-                        <h3 class="mat-headline-6" [matTooltip]="list.labels |appStringifyStringLiteral:'all'"
-                            matTooltipPosition="above">{{list.labels | appStringifyStringLiteral}}</h3>
-                        <span class="fill-remaining-space"></span>
-                        <p class="mat-body" [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="above">
-                            {{list.comments | appStringifyStringLiteral | appTruncate:64}}</p>
-                        <span class="fill-remaining-space"></span>
-
-                        <span class="project-actions" *ngIf="(project$ | async)?.status && (isAdmin$ | async)">
-                    <p class="mat-caption space-reducer">Controlled vocabulary configuration</p>
-                    <button color="primary" mat-button
-                            (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
-                            matTooltip="Edit controlled vocabulary info">
-                        <mat-icon>edit</mat-icon>
-                        Edit
-                    </button>
-                    <button color="warn" mat-button class="delete"
-                            (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
-                            matTooltip="Delete controlled vocabulary">
-                        <mat-icon>delete</mat-icon>
-                        Delete
-                    </button>
-                </span>
-                    </mat-toolbar-row>
-                </mat-toolbar>
-
-                <app-list-item 
-                    [list]="list" 
-                    [parentIri]="list.id" 
-                    [projectIri]="(project$ | async)?.id" 
-                    [projectUuid]="projectUuid" 
-                    [projectStatus]="(project$ | async)?.status"
-                    [isAdmin]="isAdmin$ | async" 
-                >
-                </app-list-item>
-
-            </div>
-            </ng-container>
+          <app-list-item
+            [list]="list"
+            [parentIri]="list.id"
+            [projectIri]="(project$ | async)?.id"
+            [projectUuid]="projectUuid"
+            [projectStatus]="(project$ | async)?.status"
+            [isAdmin]="isAdmin$ | async">
+          </app-list-item>
         </div>
+      </ng-container>
     </div>
+  </div>
 </div>
 
 <app-status *ngIf="disableContent" [status]="204"></app-status>

@@ -1,9 +1,9 @@
 import {
-    Component,
-    OnInit,
-    Pipe,
-    PipeTransform,
-    ViewChild,
+  Component,
+  OnInit,
+  Pipe,
+  PipeTransform,
+  ViewChild,
 } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -12,9 +12,9 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HealthEndpointSystem, MockHealth } from '@dasch-swiss/dsp-js';
-import { of } from 'rxjs';
-import {HttpStatusMsg} from '@dasch-swiss/vre/shared/assets/status-msg';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
+import { of } from 'rxjs';
 import { StatusComponent } from './status.component';
 
 /**
@@ -22,10 +22,10 @@ import { StatusComponent } from './status.component';
  */
 @Pipe({ name: 'appLinkify' })
 class MockPipe implements PipeTransform {
-    transform(value: string): string {
-        // do stuff here, if you want
-        return value;
-    }
+  transform(value: string): string {
+    // do stuff here, if you want
+    return value;
+  }
 }
 
 /**
@@ -33,14 +33,14 @@ class MockPipe implements PipeTransform {
  * dsp specific http status message
  */
 @Component({
-    template: ` <app-status #warning [status]="204"></app-status>`,
+  template: ` <app-status #warning [status]="204"></app-status>`,
 })
 class NoContentTestHostComponent implements OnInit {
-    @ViewChild('warning', { static: false }) StatusComponent: StatusComponent;
+  @ViewChild('warning', { static: false }) StatusComponent: StatusComponent;
 
-    constructor() {}
+  constructor() {}
 
-    ngOnInit() {}
+  ngOnInit() {}
 }
 
 /**
@@ -48,124 +48,115 @@ class NoContentTestHostComponent implements OnInit {
  * default http status message
  */
 @Component({
-    template: ` <app-status #error [status]="418"></app-status>`,
+  template: ` <app-status #error [status]="418"></app-status>`,
 })
 class TeapotTestHostComponent implements OnInit {
-    @ViewChild('error', { static: false }) StatusComponent: StatusComponent;
+  @ViewChild('error', { static: false }) StatusComponent: StatusComponent;
 
-    constructor() {}
+  constructor() {}
 
-    ngOnInit() {}
+  ngOnInit() {}
 }
 
 describe('StatusComponent', () => {
-    let noContentTestHostComponent: NoContentTestHostComponent;
-    let noContentTestHostFixture: ComponentFixture<NoContentTestHostComponent>;
+  let noContentTestHostComponent: NoContentTestHostComponent;
+  let noContentTestHostFixture: ComponentFixture<NoContentTestHostComponent>;
 
-    let teapotTestHostComponent: TeapotTestHostComponent;
-    let teapotTestHostFixture: ComponentFixture<TeapotTestHostComponent>;
+  let teapotTestHostComponent: TeapotTestHostComponent;
+  let teapotTestHostFixture: ComponentFixture<TeapotTestHostComponent>;
 
-    const apiEndpointSpyObj = {
-        system: {
-            healthEndpoint: jasmine.createSpyObj('healthEndpoint', [
-                'getHealthStatus',
-            ]),
+  const apiEndpointSpyObj = {
+    system: {
+      healthEndpoint: jasmine.createSpyObj('healthEndpoint', [
+        'getHealthStatus',
+      ]),
+    },
+  };
+
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        StatusComponent,
+        NoContentTestHostComponent,
+        TeapotTestHostComponent,
+        MockPipe,
+      ],
+      imports: [BrowserAnimationsModule, MatIconModule, RouterTestingModule],
+      providers: [
+        HttpStatusMsg,
+        {
+          provide: MatDialogRef,
+          useValue: {},
         },
-    };
+        {
+          provide: DspApiConnectionToken,
+          useValue: apiEndpointSpyObj,
+        },
+      ],
+    }).compileComponents();
+  }));
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [
-                StatusComponent,
-                NoContentTestHostComponent,
-                TeapotTestHostComponent,
-                MockPipe,
-            ],
-            imports: [
-                BrowserAnimationsModule,
-                MatIconModule,
-                RouterTestingModule,
-            ],
-            providers: [
-                HttpStatusMsg,
-                {
-                    provide: MatDialogRef,
-                    useValue: {},
-                },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: apiEndpointSpyObj,
-                },
-            ],
-        }).compileComponents();
-    }));
+  beforeEach(() => {
+    noContentTestHostFixture = TestBed.createComponent(
+      NoContentTestHostComponent
+    );
+    noContentTestHostComponent = noContentTestHostFixture.componentInstance;
+    noContentTestHostFixture.detectChanges();
 
-    beforeEach(() => {
-        noContentTestHostFixture = TestBed.createComponent(
-            NoContentTestHostComponent
-        );
-        noContentTestHostComponent = noContentTestHostFixture.componentInstance;
-        noContentTestHostFixture.detectChanges();
+    teapotTestHostFixture = TestBed.createComponent(TeapotTestHostComponent);
+    teapotTestHostComponent = teapotTestHostFixture.componentInstance;
+    teapotTestHostFixture.detectChanges();
 
-        teapotTestHostFixture = TestBed.createComponent(
-            TeapotTestHostComponent
-        );
-        teapotTestHostComponent = teapotTestHostFixture.componentInstance;
-        teapotTestHostFixture.detectChanges();
-
-        const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-        (
-            dspConnSpy.system
-                .healthEndpoint as jasmine.SpyObj<HealthEndpointSystem>
-        ).getHealthStatus.and.callFake(() => {
-            const health = MockHealth.mockRunning();
-            return of(health);
-        });
+    const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+    (
+      dspConnSpy.system.healthEndpoint as jasmine.SpyObj<HealthEndpointSystem>
+    ).getHealthStatus.and.callFake(() => {
+      const health = MockHealth.mockRunning();
+      return of(health);
     });
+  });
 
-    it('should create', () => {
-        expect(noContentTestHostComponent).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(noContentTestHostComponent).toBeTruthy();
+  });
 
-    it('should display "warning 204 | no content"', () => {
-        expect(noContentTestHostComponent.StatusComponent).toBeTruthy();
-        expect(
-            noContentTestHostComponent.StatusComponent.message.status
-        ).toEqual(204);
-        expect(noContentTestHostComponent.StatusComponent.message.type).toEqual(
-            'warning'
-        );
+  it('should display "warning 204 | no content"', () => {
+    expect(noContentTestHostComponent.StatusComponent).toBeTruthy();
+    expect(noContentTestHostComponent.StatusComponent.message.status).toEqual(
+      204
+    );
+    expect(noContentTestHostComponent.StatusComponent.message.type).toEqual(
+      'warning'
+    );
 
-        const hostCompDe = noContentTestHostFixture.debugElement;
+    const hostCompDe = noContentTestHostFixture.debugElement;
 
-        const messageEl = hostCompDe.query(By.directive(StatusComponent));
+    const messageEl = hostCompDe.query(By.directive(StatusComponent));
 
-        const titleEle = messageEl.query(By.css('.mat-headline-6'));
+    const titleEle = messageEl.query(By.css('.mat-headline-6'));
 
-        expect(titleEle.nativeElement.innerText).toEqual(
-            ' WARNING 204 | No Content '
-        );
-    });
+    expect(titleEle.nativeElement.innerText).toEqual(
+      ' WARNING 204 | No Content '
+    );
+  });
 
-    it('should display "error 418 | I\'m a teapot"', () => {
-        expect(teapotTestHostComponent.StatusComponent).toBeTruthy();
-        expect(teapotTestHostComponent.StatusComponent.message.status).toEqual(
-            418
-        );
-        expect(teapotTestHostComponent.StatusComponent.message.type).toEqual(
-            'error'
-        );
+  it('should display "error 418 | I\'m a teapot"', () => {
+    expect(teapotTestHostComponent.StatusComponent).toBeTruthy();
+    expect(teapotTestHostComponent.StatusComponent.message.status).toEqual(418);
+    expect(teapotTestHostComponent.StatusComponent.message.type).toEqual(
+      'error'
+    );
 
-        const hostCompDe = teapotTestHostFixture.debugElement;
+    const hostCompDe = teapotTestHostFixture.debugElement;
 
-        const messageEl = hostCompDe.query(By.directive(StatusComponent));
+    const messageEl = hostCompDe.query(By.directive(StatusComponent));
 
-        const titleEle = messageEl.query(By.css('.mat-headline-6'));
+    const titleEle = messageEl.query(By.css('.mat-headline-6'));
 
-        expect(titleEle.nativeElement.innerText).toEqual(
-            "ERROR 418 | I'm a teapot"
-        );
-    });
+    expect(titleEle.nativeElement.innerText).toEqual(
+      "ERROR 418 | I'm a teapot"
+    );
+  });
 
-    // todo: check the input, check the switch (display 403 template if we get a 403 error, same for 404)
+  // todo: check the input, check the switch (display 403 template if we get a 403 error, same for 404)
 });

@@ -1,60 +1,73 @@
 <!-- if user is looged-in: display user's avatar and user menu -->
 <ng-container *ngIf="isLoggedIn$ | async; else loginFormTemplate">
-<button mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu">
-    <img appAdminImage [image]="(user$ | async)?.email" [type]="'user'" class="avatar" alt="avatar"/>
-</button>
+  <button
+    mat-button
+    [matMenuTriggerFor]="userMenu"
+    class="main-toolbar-button user-menu">
+    <img
+      appAdminImage
+      [image]="(user$ | async)?.email"
+      [type]="'user'"
+      class="avatar"
+      alt="avatar" />
+  </button>
 
-<mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
+  <mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
     <!-- first line: user name and close button -->
     <div class="menu-header">
-        <div class="menu-title">Signed in as</div>
-        <div class="menu-title">{{(user$ | async)?.givenName}} {{(user$ | async)?.familyName}}</div>
+      <div class="menu-title">Signed in as</div>
+      <div class="menu-title">
+        {{(user$ | async)?.givenName}} {{(user$ | async)?.familyName}}
+      </div>
     </div>
     <!-- menu items -->
     <div class="menu-content">
+      <mat-list class="navigation">
+        <mat-list-item *ngFor="let item of navigation" class="nav-item">
+          <button
+            mat-button
+            [routerLink]="item.route"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active-link"
+            class="nav-item button">
+            <span class="label">{{item.label}}</span>
+          </button>
+        </mat-list-item>
 
-        <mat-list class="navigation">
-            <mat-list-item *ngFor="let item of navigation" class="nav-item">
-                <button
-                    mat-button
-                    [routerLink]="item.route"
-                    [routerLinkActiveOptions]="{ exact: true }"
-                    routerLinkActive="active-link"
-                    class="nav-item button">
-                    <span class="label">{{item.label}}</span>
-                </button>
-            </mat-list-item>
+        <!-- system for system admin only -->
 
-            <!-- system for system admin only -->
-
-            <mat-list-item *ngIf="isSysAdmin$ | async" class="nav-item">
-                <button
-                    mat-button
-                    [routerLink]="systemLink"
-                    routerLinkActive="active-link"
-                    class="nav-item button">
-                    <span class="label">System Administration</span>
-                </button>
-            </mat-list-item>
-            <mat-divider></mat-divider>
-            <mat-list-item class="nav-item">
-                <button
-                    mat-button
-                    (click)="logout()"
-                    class="nav-item button">
-                    <span class="label">Logout</span>
-                </button>
-            </mat-list-item>
-        </mat-list>
+        <mat-list-item *ngIf="isSysAdmin$ | async" class="nav-item">
+          <button
+            mat-button
+            [routerLink]="systemLink"
+            routerLinkActive="active-link"
+            class="nav-item button">
+            <span class="label">System Administration</span>
+          </button>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item class="nav-item">
+          <button mat-button (click)="logout()" class="nav-item button">
+            <span class="label">Logout</span>
+          </button>
+        </mat-list-item>
+      </mat-list>
     </div>
-</mat-menu>
+  </mat-menu>
 </ng-container>
 
 <ng-template #loginFormTemplate>
-<button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" class="login-button">
+  <button
+    mat-raised-button
+    color="primary"
+    [matMenuTriggerFor]="loginForm"
+    class="login-button">
     LOGIN
-</button>
-<mat-menu #loginForm xPosition="before" class="form-menu">
-    <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" (loginSuccess)="closeMenu($event)"></app-login-form>
-</mat-menu>
+  </button>
+  <mat-menu #loginForm xPosition="before" class="form-menu">
+    <app-login-form
+      (click)="$event.stopPropagation()"
+      (keydown)="$event.stopPropagation()"
+      (loginSuccess)="closeMenu($event)"></app-login-form>
+  </mat-menu>
 </ng-template>

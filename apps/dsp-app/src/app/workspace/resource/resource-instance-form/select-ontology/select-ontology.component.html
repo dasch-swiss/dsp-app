@@ -1,36 +1,30 @@
 <span *ngIf="ontologiesMetadata !== undefined" [formGroup]="form">
-    <mat-form-field
-        *ngIf="ontologiesMetadata.ontologies.length === 1"
-        class="large-field selected-ontology"
-    >
-        <mat-label>Select a data model *</mat-label>
-        <input
-            matInput
-            disabled
-            value="{{ ontologiesMetadata.ontologies[0].label }}"
-            class="onto-label"
-        />
-    </mat-form-field>
-    <mat-form-field
-        *ngIf="ontologiesMetadata.ontologies.length > 1"
-        class="large-field selected-ontologies"
-    >
-        <mat-label>Select a data model</mat-label>
-        <mat-select
-            placeholder="Select a data model"
-            formControlName="ontologies"
-            class="select-ontology"
-        >
-            <mat-option
-                *ngFor="let onto of ontologiesMetadata.ontologies"
-                [value]="onto.id"
-                >{{ onto.label }}</mat-option
-            >
-        </mat-select>
-        <mat-error *ngIf="form.controls.ontologies.hasError('required')">
-            <span class="custom-error-message"
-                >A data model must be selected.</span
-            >
-        </mat-error>
-    </mat-form-field>
+  <mat-form-field
+    *ngIf="ontologiesMetadata.ontologies.length === 1"
+    class="large-field selected-ontology">
+    <mat-label>Select a data model *</mat-label>
+    <input
+      matInput
+      disabled
+      value="{{ ontologiesMetadata.ontologies[0].label }}"
+      class="onto-label" />
+  </mat-form-field>
+  <mat-form-field
+    *ngIf="ontologiesMetadata.ontologies.length > 1"
+    class="large-field selected-ontologies">
+    <mat-label>Select a data model</mat-label>
+    <mat-select
+      placeholder="Select a data model"
+      formControlName="ontologies"
+      class="select-ontology">
+      <mat-option
+        *ngFor="let onto of ontologiesMetadata.ontologies"
+        [value]="onto.id"
+        >{{ onto.label }}</mat-option
+      >
+    </mat-select>
+    <mat-error *ngIf="form.controls.ontologies.hasError('required')">
+      <span class="custom-error-message">A data model must be selected.</span>
+    </mat-error>
+  </mat-form-field>
 </span>

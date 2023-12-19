@@ -1,66 +1,61 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
-    <span class="rm-value">
-        <span *ngIf="valueFormControl.value?.end; else singleDate">
-            <span class="calendar mat-caption">{{
-                valueFormControl.value?.start
-                    | knoraDate : ontologyDateFormat : 'calendarOnly'
-            }}</span
-            ><br />
-            <span>{{
-                valueFormControl.value?.start
-                    | knoraDate : ontologyDateFormat : 'era'
-            }}</span>
-            <span
-                >&nbsp;&ndash;&nbsp;{{
-                    valueFormControl.value?.end
-                        | knoraDate : ontologyDateFormat : 'era'
-                }}</span
-            >
-        </span>
-
-        <ng-template #singleDate>
-            <span class="calendar mat-caption">{{
-                valueFormControl.value
-                    | knoraDate : ontologyDateFormat : 'calendarOnly'
-            }}</span
-            ><br />
-            <span>{{
-                valueFormControl.value | knoraDate : ontologyDateFormat : 'era'
-            }}</span>
-        </ng-template>
+  <span class="rm-value">
+    <span *ngIf="valueFormControl.value?.end; else singleDate">
+      <span class="calendar mat-caption"
+        >{{ valueFormControl.value?.start | knoraDate : ontologyDateFormat :
+        'calendarOnly' }}</span
+      ><br />
+      <span
+        >{{ valueFormControl.value?.start | knoraDate : ontologyDateFormat :
+        'era' }}</span
+      >
+      <span
+        >&nbsp;&ndash;&nbsp;{{ valueFormControl.value?.end | knoraDate :
+        ontologyDateFormat : 'era' }}</span
+      >
     </span>
-    <!-- Comment -->
-    <span class="rm-comment" *ngIf="shouldShowComment">{{
-        commentFormControl.value
-    }}</span>
+
+    <ng-template #singleDate>
+      <span class="calendar mat-caption"
+        >{{ valueFormControl.value | knoraDate : ontologyDateFormat :
+        'calendarOnly' }}</span
+      ><br />
+      <span
+        >{{ valueFormControl.value | knoraDate : ontologyDateFormat : 'era'
+        }}</span
+      >
+    </ng-template>
+  </span>
+  <!-- Comment -->
+  <span class="rm-comment" *ngIf="shouldShowComment"
+    >{{ commentFormControl.value }}</span
+  >
 </span>
 <ng-template #showForm>
-    <span [formGroup]="form">
-        <app-date-value-handler
-            #dateInput
-            [formControlName]="'value'"
-            [valueRequiredValidator]="valueRequiredValidator"
-            class="value"
-        ></app-date-value-handler>
+  <span [formGroup]="form">
+    <app-date-value-handler
+      #dateInput
+      [formControlName]="'value'"
+      [valueRequiredValidator]="valueRequiredValidator"
+      class="value"></app-date-value-handler>
 
-        <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
-            <span class="custom-error-message"
-                >New value must be different than the current value.</span
-            >
-        </mat-error>
-        <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
-            <span class="custom-error-message"
-                >This value already exists for this property. Duplicate values
-                are not allowed.</span
-            >
-        </mat-error>
+    <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
+      <span class="custom-error-message"
+        >New value must be different than the current value.</span
+      >
+    </mat-error>
+    <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+      <span class="custom-error-message"
+        >This value already exists for this property. Duplicate values are not
+        allowed.</span
+      >
+    </mat-error>
 
-        <!-- Comment field -->
-        <app-comment-form
-            *ngIf="!commentDisabled && valueFormControl && commentFormControl"
-            [valueFormControlHasError]="hasError()"
-            [(commentFormControl)]="commentFormControl"
-            [valueFormControlValue]="valueFormControl.value"
-        ></app-comment-form>
-    </span>
+    <!-- Comment field -->
+    <app-comment-form
+      *ngIf="!commentDisabled && valueFormControl && commentFormControl"
+      [valueFormControlHasError]="hasError()"
+      [(commentFormControl)]="commentFormControl"
+      [valueFormControlValue]="valueFormControl.value"></app-comment-form>
+  </span>
 </ng-template>

@@ -6,92 +6,92 @@ import { ComparisonOperatorConstants } from './operator-constants';
  * This interface is implemented for the supported comparison operators.
  */
 export interface ComparisonOperator {
-    // type of comparison operator
-    type: string;
-    // the label of the comparison operator to be presented to the user.
-    label: string;
-    // returns the class name when called on an instance
-    getClassName(): string;
+  // type of comparison operator
+  type: string;
+  // the label of the comparison operator to be presented to the user.
+  label: string;
+  // returns the class name when called on an instance
+  getClassName(): string;
 }
 
 export class Equals implements ComparisonOperator {
-    type = ComparisonOperatorConstants.EqualsComparisonOperator;
-    label = ComparisonOperatorConstants.EqualsComparisonLabel;
-    getClassName() {
-        return 'Equals';
-    }
+  type = ComparisonOperatorConstants.EqualsComparisonOperator;
+  label = ComparisonOperatorConstants.EqualsComparisonLabel;
+  getClassName() {
+    return 'Equals';
+  }
 }
 
 export class NotEquals implements ComparisonOperator {
-    type = ComparisonOperatorConstants.NotEqualsComparisonOperator;
-    label = ComparisonOperatorConstants.NotEqualsComparisonLabel;
-    getClassName() {
-        return 'NotEquals';
-    }
+  type = ComparisonOperatorConstants.NotEqualsComparisonOperator;
+  label = ComparisonOperatorConstants.NotEqualsComparisonLabel;
+  getClassName() {
+    return 'NotEquals';
+  }
 }
 
 export class GreaterThanEquals implements ComparisonOperator {
-    type = ComparisonOperatorConstants.GreaterThanEqualsComparisonOperator;
-    label = ComparisonOperatorConstants.GreaterThanEqualsComparisonLabel;
-    getClassName() {
-        return 'GreaterThanEquals';
-    }
+  type = ComparisonOperatorConstants.GreaterThanEqualsComparisonOperator;
+  label = ComparisonOperatorConstants.GreaterThanEqualsComparisonLabel;
+  getClassName() {
+    return 'GreaterThanEquals';
+  }
 }
 
 export class GreaterThan implements ComparisonOperator {
-    type = ComparisonOperatorConstants.GreaterThanComparisonOperator;
-    label = ComparisonOperatorConstants.GreaterThanComparisonLabel;
-    getClassName() {
-        return 'GreaterThan';
-    }
+  type = ComparisonOperatorConstants.GreaterThanComparisonOperator;
+  label = ComparisonOperatorConstants.GreaterThanComparisonLabel;
+  getClassName() {
+    return 'GreaterThan';
+  }
 }
 
 export class LessThan implements ComparisonOperator {
-    type = ComparisonOperatorConstants.LessThanComparisonOperator;
-    label = ComparisonOperatorConstants.LessThanComparisonLabel;
-    getClassName() {
-        return 'LessThan';
-    }
+  type = ComparisonOperatorConstants.LessThanComparisonOperator;
+  label = ComparisonOperatorConstants.LessThanComparisonLabel;
+  getClassName() {
+    return 'LessThan';
+  }
 }
 
 export class LessThanEquals implements ComparisonOperator {
-    type = ComparisonOperatorConstants.LessThanEqualsComparisonOperator;
-    label = ComparisonOperatorConstants.LessThanEqualsComparisonLabel;
-    getClassName() {
-        return 'LessThanEquals';
-    }
+  type = ComparisonOperatorConstants.LessThanEqualsComparisonOperator;
+  label = ComparisonOperatorConstants.LessThanEqualsComparisonLabel;
+  getClassName() {
+    return 'LessThanEquals';
+  }
 }
 
 export class Exists implements ComparisonOperator {
-    type = ComparisonOperatorConstants.ExistsComparisonOperator;
-    label = ComparisonOperatorConstants.ExistsComparisonLabel;
-    getClassName() {
-        return 'Exists';
-    }
+  type = ComparisonOperatorConstants.ExistsComparisonOperator;
+  label = ComparisonOperatorConstants.ExistsComparisonLabel;
+  getClassName() {
+    return 'Exists';
+  }
 }
 
 export class NotExists implements ComparisonOperator {
-    type = ComparisonOperatorConstants.NotExistsComparisonOperator;
-    label = ComparisonOperatorConstants.NotExistsComparisonLabel;
-    getClassName() {
-        return 'NotExists';
-    }
+  type = ComparisonOperatorConstants.NotExistsComparisonOperator;
+  label = ComparisonOperatorConstants.NotExistsComparisonLabel;
+  getClassName() {
+    return 'NotExists';
+  }
 }
 
 export class Like implements ComparisonOperator {
-    type = ComparisonOperatorConstants.LikeComparisonOperator;
-    label = ComparisonOperatorConstants.LikeComparisonLabel;
-    getClassName() {
-        return 'Like';
-    }
+  type = ComparisonOperatorConstants.LikeComparisonOperator;
+  label = ComparisonOperatorConstants.LikeComparisonLabel;
+  getClassName() {
+    return 'Like';
+  }
 }
 
 export class Match implements ComparisonOperator {
-    type = ComparisonOperatorConstants.MatchComparisonOperator;
-    label = ComparisonOperatorConstants.MatchComparisonLabel;
-    getClassName() {
-        return 'Match';
-    }
+  type = ComparisonOperatorConstants.MatchComparisonOperator;
+  label = ComparisonOperatorConstants.MatchComparisonLabel;
+  getClassName() {
+    return 'Match';
+  }
 }
 
 /**
@@ -99,84 +99,87 @@ export class Match implements ComparisonOperator {
  * In case the comparison operator is 'Exists', no value is given.
  */
 export class ComparisonOperatorAndValue {
-    constructor(
-        readonly comparisonOperator: ComparisonOperator,
-        readonly value?: Value
-    ) {}
+  constructor(
+    readonly comparisonOperator: ComparisonOperator,
+    readonly value?: Value
+  ) {}
 }
 
 /**
  * an abstract interface representing a value: an IRI or a literal.
  */
 export interface Value {
-    /**
-     * turns the value into a SPARQL string representation.
-     *
-     */
-    toSparql(): string;
+  /**
+   * turns the value into a SPARQL string representation.
+   *
+   */
+  toSparql(): string;
 }
 
 /**
  * represents a property's value as a literal with the indication of its type.
  */
 export class ValueLiteral implements Value {
-    /**
-     * constructs a [ValueLiteral].
-     *
-     * @param value the literal representation of the value.
-     * @param type the type of the value (making use of xsd).
-     */
-    constructor(public readonly value: string, public readonly type: string) {}
+  /**
+   * constructs a [ValueLiteral].
+   *
+   * @param value the literal representation of the value.
+   * @param type the type of the value (making use of xsd).
+   */
+  constructor(
+    public readonly value: string,
+    public readonly type: string
+  ) {}
 
-    /**
-     * creates a type annotated value literal to be used in a SPARQL query.
-     *
-     */
-    public toSparql(): string {
-        return `"${this.value}"^^<${this.type}>`;
-    }
+  /**
+   * creates a type annotated value literal to be used in a SPARQL query.
+   *
+   */
+  public toSparql(): string {
+    return `"${this.value}"^^<${this.type}>`;
+  }
 }
 
 /**
  * represents an IRI.
  */
 export class IRI implements Value {
-    /**
-     * constructs an [IRI].
-     *
-     * @param iri the IRI of a resource instance.
-     */
-    constructor(readonly iri: string) {}
+  /**
+   * constructs an [IRI].
+   *
+   * @param iri the IRI of a resource instance.
+   */
+  constructor(readonly iri: string) {}
 
-    /**
-     * creates a SPARQL representation of the IRI.
-     *
-     * @param schema indicates the Knora schema to be used.
-     */
-    public toSparql(): string {
-        // this is an instance Iri and does not have to be converted.
-        return `<${this.iri}>`;
-    }
+  /**
+   * creates a SPARQL representation of the IRI.
+   *
+   * @param schema indicates the Knora schema to be used.
+   */
+  public toSparql(): string {
+    // this is an instance Iri and does not have to be converted.
+    return `<${this.iri}>`;
+  }
 }
 
 /**
  * represents a linked resource.
  */
 export class LinkedResource implements Value {
-    /**
-     * constructs a [LinkedResource].
-     *
-     * @param properties the properties of the linked resource.
-     * @param resourceClass the class of the linked resource, if any.
-     */
-    constructor(
-        public properties: PropertyWithValue[],
-        public resourceClass?: string
-    ) {}
+  /**
+   * constructs a [LinkedResource].
+   *
+   * @param properties the properties of the linked resource.
+   * @param resourceClass the class of the linked resource, if any.
+   */
+  constructor(
+    public properties: PropertyWithValue[],
+    public resourceClass?: string
+  ) {}
 
-    public toSparql(): string {
-        throw Error('invalid call of toSparql');
-    }
+  public toSparql(): string {
+    throw Error('invalid call of toSparql');
+  }
 }
 
 /**
@@ -184,34 +187,34 @@ export class LinkedResource implements Value {
  * This interface has to be implemented for all value types (value component classes).
  */
 export interface PropertyValue {
-    /**
-     * type of the value.
-     */
-    type: string;
+  /**
+   * type of the value.
+   */
+  type: string;
 
-    /**
-     * returns the value.
-     *
-     */
-    getValue(): Value;
+  /**
+   * returns the value.
+   *
+   */
+  getValue(): Value;
 }
 
 /**
  * represents a property, the specified comparison operator, and value.
  */
 export class PropertyWithValue {
-    /**
-     * constructs a [PropertyWithValue].
-     *
-     * @param property the specified property.
-     * @param valueLiteral the specified comparison operator and value.
-     * @param isSortCriterion indicates if the property is used as a sort criterion.
-     */
-    constructor(
-        readonly property: ResourcePropertyDefinition,
-        readonly valueLiteral: ComparisonOperatorAndValue,
-        readonly isSortCriterion: boolean
-    ) {}
+  /**
+   * constructs a [PropertyWithValue].
+   *
+   * @param property the specified property.
+   * @param valueLiteral the specified comparison operator and value.
+   * @param isSortCriterion indicates if the property is used as a sort criterion.
+   */
+  constructor(
+    readonly property: ResourcePropertyDefinition,
+    readonly valueLiteral: ComparisonOperatorAndValue,
+    readonly isSortCriterion: boolean
+  ) {}
 }
 
 /**
@@ -219,7 +222,7 @@ export class PropertyWithValue {
  * contains objects with id and name. the id is usual the iri
  */
 export interface AutocompleteItem {
-    iri: string;
-    name: string;
-    label?: string;
+  iri: string;
+  name: string;
+  label?: string;
 }

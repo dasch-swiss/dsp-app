@@ -5,23 +5,23 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HintComponent } from './hint.component';
 
 describe('HintComponent', () => {
-    let component: HintComponent;
-    let fixture: ComponentFixture<HintComponent>;
+  let component: HintComponent;
+  let fixture: ComponentFixture<HintComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [HintComponent],
-            imports: [MatIconModule, RouterTestingModule],
-        }).compileComponents();
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [HintComponent],
+      imports: [MatIconModule, RouterTestingModule],
+    }).compileComponents();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(HintComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(HintComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

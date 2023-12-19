@@ -1,24 +1,23 @@
 <div class="app">
-    <div class="app-header">
-        <app-header></app-header>
-    </div>
+  <div class="app-header">
+    <app-header></app-header>
+  </div>
 
-    <div class="app-content">
-        <router-outlet></router-outlet>
-    </div>
+  <div class="app-content">
+    <router-outlet></router-outlet>
+  </div>
 
-    <!-- cookie information banner -->
-    <div class="cookie-banner" *ngIf="showCookieBanner">
-        <p class="note">
-            This web-application uses cookies to provide you with a greater user
-            experience. By using the application you accept our
-            <span class="link" (click)="goToCookiePolicy()">use of cookies</span
-            >.
-        </p>
-        <div class="action">
-            <button mat-flat-button color="primary" (click)="closeCookieBanner()">
-                ACCEPT
-            </button>
-        </div>
+  <!-- cookie information banner -->
+  <div class="cookie-banner" *ngIf="showCookieBanner">
+    <p class="note">
+      This web-application uses cookies to provide you with a greater user
+      experience. By using the application you accept our
+      <span class="link" (click)="goToCookiePolicy()">use of cookies</span>.
+    </p>
+    <div class="action">
+      <button mat-flat-button color="primary" (click)="closeCookieBanner()">
+        ACCEPT
+      </button>
     </div>
+  </div>
 </div>

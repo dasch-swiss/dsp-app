@@ -1,104 +1,92 @@
 <div class="parent-property-container">
-    <div class="form-fields-container">
-        <div class="dropdown-container">
-            <div class="content">
-                <p class="label">Select a property</p>
-                <mat-form-field>
-                    <mat-select
-                        #propertiesList
-                        (selectionChange)="onSelectedPropertyChanged($event)"
-                        placeholder="Select a value"
-                        name="properties"
-                        [compareWith]="compareObjects"
-                    >
-                        <mat-option *ngIf="propertiesLoading" disabled="true"
-                            >Loading...</mat-option
-                        >
-                        <ng-container *ngIf="!propertiesLoading">
-                            <mat-option [value]="resourceLabelObj">{{
-                                resourceLabelObj.label
-                            }}</mat-option>
-                            <mat-option
-                                *ngFor="let prop of properties"
-                                [value]="prop"
-                            >
-                                {{ prop.label }}
-                            </mat-option>
-                        </ng-container>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="dropdown-container">
-            <div class="content">
-                <p class="label">Comparison Operator</p>
-                <mat-form-field class="operator">
-                    <mat-select
-                        #operatorsList
-                        (selectionChange)="onSelectedOperatorChanged($event)"
-                        placeholder="Select a value"
-                        name="operators"
-                    >
-                        <mat-option
-                            *ngFor="let operator of propertyFormItem?.operators"
-                            [value]="operator"
-                        >
-                            {{ operator }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div
-            *ngIf="
+  <div class="form-fields-container">
+    <div class="dropdown-container">
+      <div class="content">
+        <p class="label">Select a property</p>
+        <mat-form-field>
+          <mat-select
+            #propertiesList
+            (selectionChange)="onSelectedPropertyChanged($event)"
+            placeholder="Select a value"
+            name="properties"
+            [compareWith]="compareObjects">
+            <mat-option *ngIf="propertiesLoading" disabled="true"
+              >Loading...</mat-option
+            >
+            <ng-container *ngIf="!propertiesLoading">
+              <mat-option [value]="resourceLabelObj"
+                >{{ resourceLabelObj.label }}</mat-option
+              >
+              <mat-option *ngFor="let prop of properties" [value]="prop">
+                {{ prop.label }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="dropdown-container">
+      <div class="content">
+        <p class="label">Comparison Operator</p>
+        <mat-form-field class="operator">
+          <mat-select
+            #operatorsList
+            (selectionChange)="onSelectedOperatorChanged($event)"
+            placeholder="Select a value"
+            name="operators">
+            <mat-option
+              *ngFor="let operator of propertyFormItem?.operators"
+              [value]="operator">
+              {{ operator }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div
+      *ngIf="
                 !propertyFormItem.selectedProperty?.objectType?.includes(
                     constants.KnoraApiV2
                 ) && propertyFormItem.selectedOperator === operators.Matches
             "
-            class="dropdown-container match-resource-class"
-        >
-            <div class="content">
-                <p class="label">Resource Class</p>
-                <mat-form-field class="resource-class">
-                    <mat-select
-                        #resourceClassList
-                        (selectionChange)="
+      class="dropdown-container match-resource-class">
+      <div class="content">
+        <p class="label">Resource Class</p>
+        <mat-form-field class="resource-class">
+          <mat-select
+            #resourceClassList
+            (selectionChange)="
                             onSelectedMatchPropertyResourceClassChanged($event)
                         "
-                        placeholder="Select a value"
-                        name="resource-classes"
-                        [compareWith]="compareObjects"
-                    >
-                        <mat-option
-                            *ngIf="matchResourceClassesLoading"
-                            disabled="true"
-                            >Loading...</mat-option
-                        >
-                        <ng-container *ngIf="!matchResourceClassesLoading">
-                            <mat-option
-                                *ngFor="
+            placeholder="Select a value"
+            name="resource-classes"
+            [compareWith]="compareObjects">
+            <mat-option *ngIf="matchResourceClassesLoading" disabled="true"
+              >Loading...</mat-option
+            >
+            <ng-container *ngIf="!matchResourceClassesLoading">
+              <mat-option
+                *ngFor="
                                     let resClass of propertyFormItem?.matchPropertyResourceClasses
                                 "
-                                [value]="resClass"
-                            >
-                                {{ resClass.label }}
-                            </mat-option>
-                        </ng-container>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div
-            *ngIf="
+                [value]="resClass">
+                {{ resClass.label }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div
+      *ngIf="
                 propertyFormItem.selectedOperator &&
                 propertyFormItem.selectedOperator !== operators.Exists &&
                 propertyFormItem.selectedOperator !== operators.NotExists
             "
-            class="value-container"
-        >
-            <dasch-swiss-property-form-value
-                #propertyFormValue
-                *ngIf="
+      class="value-container">
+      <dasch-swiss-property-form-value
+        #propertyFormValue
+        *ngIf="
                     (propertyFormItem.selectedProperty?.objectType?.includes(
                         constants.KnoraApiV2
                     ) ||
@@ -107,23 +95,21 @@
                     propertyFormItem.selectedProperty?.objectType !==
                         constants.ListValue
                 "
-                [objectType]="propertyFormItem.selectedProperty?.objectType"
-                [value]="propertyFormItem.searchValue"
-                (emitValueChanged)="onValueChanged($event)"
-            />
-            <dasch-swiss-property-form-list-value
-                *ngIf="
+        [objectType]="propertyFormItem.selectedProperty?.objectType"
+        [value]="propertyFormItem.searchValue"
+        (emitValueChanged)="onValueChanged($event)" />
+      <dasch-swiss-property-form-list-value
+        *ngIf="
                     propertyFormItem.selectedProperty?.objectType ===
                     constants.ListValue
                 "
-                [list]="propertyFormItem.list"
-                [value]="propertyFormItem.searchValue"
-                (emitValueChanged)="onValueChanged($event)"
-            >
-            </dasch-swiss-property-form-list-value>
+        [list]="propertyFormItem.list"
+        [value]="propertyFormItem.searchValue"
+        (emitValueChanged)="onValueChanged($event)">
+      </dasch-swiss-property-form-list-value>
 
-            <dasch-swiss-property-form-link-value
-                *ngIf="
+      <dasch-swiss-property-form-link-value
+        *ngIf="
                     !propertyFormItem.selectedProperty?.objectType?.includes(
                         constants.KnoraApiV2
                     ) &&
@@ -131,20 +117,19 @@
                         constants.Label &&
                     propertyFormItem.selectedOperator !== operators.Matches
                 "
-                [value]="propertyFormItem.searchValue"
-                [label]="propertyFormItem.searchValueLabel"
-                [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
-                [resourcesSearchResultsCount]="resourcesSearchResultsCount"
-                [resourcesSearchResults]="resourcesSearchResults"
-                [resourcesSearchNoResults]="resourcesSearchNoResults"
-                (emitResourceSearchValueChanged)="
+        [value]="propertyFormItem.searchValue"
+        [label]="propertyFormItem.searchValueLabel"
+        [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
+        [resourcesSearchResultsCount]="resourcesSearchResultsCount"
+        [resourcesSearchResults]="resourcesSearchResults"
+        [resourcesSearchNoResults]="resourcesSearchNoResults"
+        (emitResourceSearchValueChanged)="
                     onResourceSearchValueChanged($event)
                 "
-                (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event)"
-                (emitResourceSelected)="onValueChanged($event)"
-            ></dasch-swiss-property-form-link-value>
-            <dasch-swiss-property-form-link-match-property
-                *ngIf="
+        (emitLoadMoreSearchResults)="onLoadMoreSearchResults($event)"
+        (emitResourceSelected)="onValueChanged($event)"></dasch-swiss-property-form-link-value>
+      <dasch-swiss-property-form-link-match-property
+        *ngIf="
                     !propertyFormItem.selectedProperty?.objectType?.includes(
                         constants.KnoraApiV2
                     ) &&
@@ -153,43 +138,41 @@
                     propertyFormItem.selectedOperator === operators.Matches &&
                     propertyFormItem.selectedMatchPropertyResourceClass
                 "
-                [values]="
+        [values]="
                     getLinkMatchPropertyFormItems(propertyFormItem.searchValue)
                 "
-                [properties]="propertyFormItem.childPropertiesList"
-                [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
-                [resourcesSearchResultsCount]="resourcesSearchResultsCount"
-                [resourcesSearchResults]="resourcesSearchResults"
-                [resourcesSearchNoResults]="resourcesSearchNoResults"
-                (emitAddPropertyForm)="onAddChildPropertyFormClicked()"
-                (emitRemovePropertyForm)="
+        [properties]="propertyFormItem.childPropertiesList"
+        [resourcesSearchResultsLoading]="resourcesSearchResultsLoading"
+        [resourcesSearchResultsCount]="resourcesSearchResultsCount"
+        [resourcesSearchResults]="resourcesSearchResults"
+        [resourcesSearchNoResults]="resourcesSearchNoResults"
+        (emitAddPropertyForm)="onAddChildPropertyFormClicked()"
+        (emitRemovePropertyForm)="
                     onRemoveChildPropertyFormClicked($event)
                 "
-                (emitSelectedPropertyChanged)="
+        (emitSelectedPropertyChanged)="
                     onChildSelectedPropertyChanged($event)
                 "
-                (emitSelectedOperatorChanged)="
+        (emitSelectedOperatorChanged)="
                     onChildSelectedOperatorChanged($event)
                 "
-                (emitValueChanged)="onChildValueChanged($event)"
-                (emitResourceSearchValueChanged)="
+        (emitValueChanged)="onChildValueChanged($event)"
+        (emitResourceSearchValueChanged)="
                     onChildResourceSearchValueChanged($event)
                 "
-                (emitLoadMoreSearchResults)="
+        (emitLoadMoreSearchResults)="
                     onChildLoadMoreSearchResults($event)
-                "
-            >
-            </dasch-swiss-property-form-link-match-property>
-        </div>
+                ">
+      </dasch-swiss-property-form-link-match-property>
     </div>
+  </div>
 
-    <div class="side-container">
-        <button
-            mat-icon-button
-            (click)="onRemovePropertyFormClicked(propertyFormItem)"
-            class="remove-property-button remove"
-        >
-            <mat-icon>remove_circle</mat-icon>
-        </button>
-    </div>
+  <div class="side-container">
+    <button
+      mat-icon-button
+      (click)="onRemovePropertyFormClicked(propertyFormItem)"
+      class="remove-property-button remove">
+      <mat-icon>remove_circle</mat-icon>
+    </button>
+  </div>
 </div>

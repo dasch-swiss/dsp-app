@@ -1,4 +1,10 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,7 +13,7 @@ import {
   Inject,
   Input,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
@@ -17,12 +23,12 @@ import {
   KnoraApiConnection,
   ListInfoResponse,
   ListNode,
-  StringLiteral
+  StringLiteral,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { DialogComponent } from '../../../main/dialog/dialog.component';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { DialogComponent } from '../../../main/dialog/dialog.component';
 
 export class ListNodeOperation {
   operation: 'create' | 'insert' | 'update' | 'delete' | 'reposition';
@@ -46,7 +52,7 @@ export class ListNodeOperation {
         // the styles start from this point when the element appears
         style({ opacity: 0 }),
         // and animate toward the "in" state above
-        animate(150)
+        animate(150),
       ]),
 
       // fade out when destroyed.
@@ -54,9 +60,9 @@ export class ListNodeOperation {
         ':leave',
         // fading out uses a different syntax, with the "style" being passed into animate()
         animate(150, style({ opacity: 0 }))
-      )
-    ])
-  ]
+      ),
+    ]),
+  ],
 })
 export class ListItemFormComponent implements OnInit {
   /**
@@ -116,8 +122,7 @@ export class ListItemFormComponent implements OnInit {
     private _errorHandler: AppErrorHandler,
     private _dialog: MatDialog,
     private _cd: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.initComponent = true;
@@ -128,27 +133,23 @@ export class ListItemFormComponent implements OnInit {
 
     // it can be used in the input placeholder
     if (this.newNode) {
-      this._listApiService
-        .getNodeInfo(this.parentIri)
-        .subscribe(
-          response => {
-            if (response instanceof ListInfoResponse) {
-              // root node
-              this.placeholder +=
-                response.listinfo.labels[0].value;
-            } else {
-              // child node
-              this.placeholder +=
-                response.nodeinfo.labels[0].value;
-            }
-
-            this.initComponent = false;
-            this._cd.markForCheck();
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
+      this._listApiService.getNodeInfo(this.parentIri).subscribe(
+        response => {
+          if (response instanceof ListInfoResponse) {
+            // root node
+            this.placeholder += response.listinfo.labels[0].value;
+          } else {
+            // child node
+            this.placeholder += response.nodeinfo.labels[0].value;
           }
-        );
+
+          this.initComponent = false;
+          this._cd.markForCheck();
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+        }
+      );
     }
   }
 
@@ -189,23 +190,18 @@ export class ListItemFormComponent implements OnInit {
     // send payload to dsp-api's api
     this._listApiService
       .createChildNode(childNode.parentNodeIri, childNode)
-      .subscribe(
-        response => {
-          // this needs to return a ListNode as opposed to a ListNodeInfo, so we make one
-          listNodeOperation.listNode = new ListNode();
-          listNodeOperation.listNode.hasRootNode =
-            response.nodeinfo.hasRootNode;
-          listNodeOperation.listNode.id = response.nodeinfo.id;
-          listNodeOperation.listNode.labels =
-            response.nodeinfo.labels;
-          listNodeOperation.listNode.name =
-            response.nodeinfo.name;
-          listNodeOperation.listNode.position =
-            response.nodeinfo.position;
-          listNodeOperation.operation = 'create';
-          this.refreshParent.emit(listNodeOperation);
-          this.loading = false;
-        });
+      .subscribe(response => {
+        // this needs to return a ListNode as opposed to a ListNodeInfo, so we make one
+        listNodeOperation.listNode = new ListNode();
+        listNodeOperation.listNode.hasRootNode = response.nodeinfo.hasRootNode;
+        listNodeOperation.listNode.id = response.nodeinfo.id;
+        listNodeOperation.listNode.labels = response.nodeinfo.labels;
+        listNodeOperation.listNode.name = response.nodeinfo.name;
+        listNodeOperation.listNode.position = response.nodeinfo.position;
+        listNodeOperation.operation = 'create';
+        this.refreshParent.emit(listNodeOperation);
+        this.loading = false;
+      });
   }
 
   /**
@@ -248,17 +244,17 @@ export class ListItemFormComponent implements OnInit {
     const dialogConfig: MatDialogConfig = {
       width: '640px',
       position: {
-        top: '112px'
+        top: '112px',
       },
       data: {
         mode: mode,
-        title: (mode === 'editListNode' || mode === 'deleteListNode') ? name : '',
+        title: mode === 'editListNode' || mode === 'deleteListNode' ? name : '',
         id: iri,
         project: this.projectIri,
         projectUuid: this.projectUuid,
         parentIri: this.parentIri,
-        position: this.position
-      }
+        position: this.position,
+      },
     };
 
     // open the dialog box
@@ -290,38 +286,33 @@ export class ListItemFormComponent implements OnInit {
       ) {
         // delete
         // delete the node
-        this._listApiService
-          .deleteListNode(iri)
-          .subscribe(
-            response => {
-              listNodeOperation.listNode = response.node;
-              listNodeOperation.operation = 'delete';
+        this._listApiService.deleteListNode(iri).subscribe(
+          response => {
+            listNodeOperation.listNode = response.node;
+            listNodeOperation.operation = 'delete';
 
-              // emit data to parent to update the view
-              this.refreshParent.emit(listNodeOperation);
-            },
-            (error: ApiResponseError) => {
-              // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
-              if (error.status === 400) {
-                const errorDialogConfig: MatDialogConfig = {
-                  width: '640px',
-                  position: {
-                    top: '112px'
-                  },
-                  data: { mode: 'deleteListNodeError' }
-                };
+            // emit data to parent to update the view
+            this.refreshParent.emit(listNodeOperation);
+          },
+          (error: ApiResponseError) => {
+            // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
+            if (error.status === 400) {
+              const errorDialogConfig: MatDialogConfig = {
+                width: '640px',
+                position: {
+                  top: '112px',
+                },
+                data: { mode: 'deleteListNodeError' },
+              };
 
-                // open the dialog box
-                this._dialog.open(
-                  DialogComponent,
-                  errorDialogConfig
-                );
-              } else {
-                // use default error behavior
-                this._errorHandler.showMessage(error);
-              }
+              // open the dialog box
+              this._dialog.open(DialogComponent, errorDialogConfig);
+            } else {
+              // use default error behavior
+              this._errorHandler.showMessage(error);
             }
-          );
+          }
+        );
       }
     });
   }

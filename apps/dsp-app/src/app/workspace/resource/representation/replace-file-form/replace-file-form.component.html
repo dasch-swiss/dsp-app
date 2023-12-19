@@ -1,38 +1,36 @@
 <div class="warning">
-    <div class="container">
-        <div class="icon">
-            <mat-icon>warning</mat-icon>
-        </div>
-        <div class="message">
-            <p class="top">{{ warningMessages[0] }}</p>
-            <br />
-            <p class="bottom">{{ warningMessages[1] }}</p>
-        </div>
+  <div class="container">
+    <div class="icon">
+      <mat-icon>warning</mat-icon>
     </div>
+    <div class="message">
+      <p class="top">{{ warningMessages[0] }}</p>
+      <br />
+      <p class="bottom">{{ warningMessages[1] }}</p>
+    </div>
+  </div>
 </div>
 <app-upload
-    #upload
-    [representation]="representation"
-    (fileInfo)="setFileValue($event)"
-    (forceReload)=closeDialog.emit(undefined);
-></app-upload>
+  #upload
+  [representation]="representation"
+  (fileInfo)="setFileValue($event)"
+  (forceReload)="closeDialog.emit(undefined);"></app-upload>
 
 <div class="form-panel form-action">
-    <span>
-        <button mat-button type="button" (click)="closeDialog.emit()">
-            {{ 'appLabels.form.action.cancel' | translate }}
-        </button>
-    </span>
-    <span class="fill-remaining-space"></span>
-    <span>
-        <button
-            mat-raised-button
-            type="submit"
-            [disabled]="!fileValue"
-            [color]="'primary'"
-            (click)="saveFile()"
-        >
-            {{ 'appLabels.form.action.submit' | translate }}
-        </button>
-    </span>
+  <span>
+    <button mat-button type="button" (click)="closeDialog.emit()">
+      {{ 'appLabels.form.action.cancel' | translate }}
+    </button>
+  </span>
+  <span class="fill-remaining-space"></span>
+  <span>
+    <button
+      mat-raised-button
+      type="submit"
+      [disabled]="!fileValue"
+      [color]="'primary'"
+      (click)="saveFile()">
+      {{ 'appLabels.form.action.submit' | translate }}
+    </button>
+  </span>
 </div>

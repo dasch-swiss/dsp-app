@@ -7,34 +7,46 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { ApiResponseError, Constants, ReadUser, StringLiteral, UpdateUserRequest, User } from '@dasch-swiss/dsp-js';
-import { AppGlobal } from '@dsp-app/src/app/app-global';
+import {
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import {
+  ApiResponseError,
+  Constants,
+  ReadUser,
+  StringLiteral,
+  UpdateUserRequest,
+  User,
+} from '@dasch-swiss/dsp-js';
+import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
-import { combineLatest, Observable } from 'rxjs';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   AddUserToProjectMembershipAction,
   CreateUserAction,
   ProjectsSelectors,
   SetUserAction,
-  UserSelectors
+  UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
+import { AppGlobal } from '@dsp-app/src/app/app-global';
+import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
+import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
+import { combineLatest, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-user-form',
   templateUrl: './user-form.component.html',
-  styleUrls: ['./user-form.component.scss']
+  styleUrls: ['./user-form.component.scss'],
 })
 export class UserFormComponent implements OnInit, OnChanges {
   // the user form can be used in several cases:
@@ -77,7 +89,7 @@ export class UserFormComponent implements OnInit, OnChanges {
    * username should be unique
    */
   existingUsernames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible')
+    new RegExp('anEmptyRegularExpressionWasntPossible'),
   ];
   usernameMinLength = 4;
 
@@ -85,7 +97,7 @@ export class UserFormComponent implements OnInit, OnChanges {
    * email should be unique
    */
   existingEmails: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible')
+    new RegExp('anEmptyRegularExpressionWasntPossible'),
   ];
 
   /**
@@ -100,7 +112,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     givenName: '',
     familyName: '',
     email: '',
-    username: ''
+    username: '',
   };
 
   /**
@@ -108,30 +120,29 @@ export class UserFormComponent implements OnInit, OnChanges {
    */
   validationMessages = {
     givenName: {
-      required: 'First name is required.'
+      required: 'First name is required.',
     },
     familyName: {
-      required: 'Last name is required.'
+      required: 'Last name is required.',
     },
     email: {
       required: 'Email address is required.',
-      pattern: 'This doesn\'t appear to be a valid email address.',
+      pattern: "This doesn't appear to be a valid email address.",
       existingName:
         'This user exists already. If you want to edit it, ask a system administrator.',
-      member: 'This user is already a member of the project.'
+      member: 'This user is already a member of the project.',
     },
     username: {
       required: 'Username is required.',
-      pattern:
-        'Spaces and special characters are not allowed in username',
+      pattern: 'Spaces and special characters are not allowed in username',
       minlength:
         'Username must be at least ' +
         this.usernameMinLength +
         ' characters long.',
       existingName:
         'This user exists already. If you want to edit it, ask a system administrator.',
-      member: 'This user is already a member of the project.'
-    }
+      member: 'This user is already a member of the project.',
+    },
   };
 
   /**
@@ -143,7 +154,7 @@ export class UserFormComponent implements OnInit, OnChanges {
    */
   successMessage: any = {
     status: 200,
-    statusText: 'You have successfully updated user\'s profile data.'
+    statusText: "You have successfully updated user's profile data.",
   };
 
   /**
@@ -153,7 +164,8 @@ export class UserFormComponent implements OnInit, OnChanges {
 
   @Select(UserSelectors.allUsers) allUsers$: Observable<ReadUser[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(ProjectsSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;
+  @Select(ProjectsSelectors.hasLoadingErrors)
+  hasLoadingErrors$: Observable<boolean>;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -165,15 +177,14 @@ export class UserFormComponent implements OnInit, OnChanges {
     private _store: Store,
     private _actions$: Actions,
     private _cd: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.loadingData = true;
 
     if (this.user) {
       this.title = this.user.username;
-      this.subtitle = '\'appLabels.form.user.title.edit\' | translate';
+      this.subtitle = "'appLabels.form.user.title.edit' | translate";
       this.loadingData = !this.buildForm(this.user);
     } else {
       /**
@@ -181,32 +192,31 @@ export class UserFormComponent implements OnInit, OnChanges {
        */
 
       // get existing users to avoid same usernames and email addresses
-      this.allUsers$
-        .pipe(take(1))
-        .subscribe((allUsers) => {
-          for (const user of allUsers) {
-            // email address of the user should be unique.
-            // therefore we create a list of existing email addresses to avoid multiple use of user names
-            this.existingEmails.push(
-              new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)'));
-            // username should also be unique.
-            // therefore we create a list of existingUsernames to avoid multiple use of user names
-            this.existingUsernames.push(
-              new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)')
-            );
-          }
+      this.allUsers$.pipe(take(1)).subscribe(allUsers => {
+        for (const user of allUsers) {
+          // email address of the user should be unique.
+          // therefore we create a list of existing email addresses to avoid multiple use of user names
+          this.existingEmails.push(
+            new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)')
+          );
+          // username should also be unique.
+          // therefore we create a list of existingUsernames to avoid multiple use of user names
+          this.existingUsernames.push(
+            new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)')
+          );
+        }
 
-          const newUser: ReadUser = new ReadUser();
+        const newUser: ReadUser = new ReadUser();
 
-          if (CustomRegex.EMAIL_REGEX.test(this.name)) {
-            newUser.email = this.name;
-          } else {
-            newUser.username = this.name;
-          }
-          // build the form
-          this.loadingData = !this.buildForm(newUser);
-          this._cd.markForCheck();
-        });
+        if (CustomRegex.EMAIL_REGEX.test(this.name)) {
+          newUser.email = this.name;
+        } else {
+          newUser.username = this.name;
+        }
+        // build the form
+        this.loadingData = !this.buildForm(newUser);
+        this._cd.markForCheck();
+      });
     }
   }
 
@@ -229,7 +239,7 @@ export class UserFormComponent implements OnInit, OnChanges {
       // this user is member of the system project. does he has admin rights?
       this.sysAdminPermission = user.permissions.groupsPerProject[
         Constants.SystemProjectIRI
-        ].includes(Constants.SystemAdminGroupIRI);
+      ].includes(Constants.SystemAdminGroupIRI);
     }
 
     // if user is defined, we're in the edit mode
@@ -240,56 +250,56 @@ export class UserFormComponent implements OnInit, OnChanges {
       givenName: new UntypedFormControl(
         {
           value: user.givenName,
-          disabled: false
+          disabled: false,
         },
         [Validators.required]
       ),
       familyName: new UntypedFormControl(
         {
           value: user.familyName,
-          disabled: false
+          disabled: false,
         },
         [Validators.required]
       ),
       email: new UntypedFormControl(
         {
           value: user.email,
-          disabled: editMode
+          disabled: editMode,
         },
         [
           Validators.required,
           Validators.pattern(CustomRegex.EMAIL_REGEX),
-          existingNamesValidator(this.existingEmails)
+          existingNamesValidator(this.existingEmails),
         ]
       ),
       username: new UntypedFormControl(
         {
           value: user.username,
-          disabled: editMode
+          disabled: editMode,
         },
         [
           Validators.required,
           Validators.minLength(4),
           Validators.pattern(CustomRegex.USERNAME_REGEX),
-          existingNamesValidator(this.existingUsernames)
+          existingNamesValidator(this.existingUsernames),
         ]
       ),
       password: new UntypedFormControl({
         value: '',
-        disabled: editMode
+        disabled: editMode,
       }),
       lang: new UntypedFormControl({
         value: user.lang ? user.lang : 'en',
-        disabled: false
+        disabled: false,
       }),
       status: new UntypedFormControl({
         value: user.status ? user.status : true,
-        disabled: editMode
+        disabled: editMode,
       }),
       systemAdmin: new UntypedFormControl({
         value: this.sysAdminPermission,
-        disabled: editMode
-      })
+        disabled: editMode,
+      }),
       // 'systemAdmin': this.sysAdminPermission,
       // 'group': null
     });
@@ -305,12 +315,12 @@ export class UserFormComponent implements OnInit, OnChanges {
 
     const form = this.userForm;
 
-    Object.keys(this.formErrors).map((field) => {
+    Object.keys(this.formErrors).map(field => {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map((key) => {
+        Object.keys(control.errors).map(key => {
           this.formErrors[field] += messages[key] + ' ';
         });
       }
@@ -343,7 +353,9 @@ export class UserFormComponent implements OnInit, OnChanges {
           response => {
             this.user = response.user;
             this.buildForm(this.user);
-            const user = this._store.selectSnapshot(UserSelectors.user) as ReadUser;
+            const user = this._store.selectSnapshot(
+              UserSelectors.user
+            ) as ReadUser;
             // update application state
             if (user.username === this.user.username) {
               // update logged in user session
@@ -352,7 +364,7 @@ export class UserFormComponent implements OnInit, OnChanges {
 
             this._store.dispatch(new SetUserAction(this.user));
             this._notification.openSnackBar(
-              'You have successfully updated the user\'s profile data.'
+              "You have successfully updated the user's profile data."
             );
             this.closeDialog.emit();
             this.loading = false;
@@ -379,16 +391,22 @@ export class UserFormComponent implements OnInit, OnChanges {
     userData.lang = userForm.lang;
 
     this._store.dispatch(new CreateUserAction(userData));
-    combineLatest([this._actions$.pipe(ofActionSuccessful(CreateUserAction)), this.allUsers$])
+    combineLatest([
+      this._actions$.pipe(ofActionSuccessful(CreateUserAction)),
+      this.allUsers$,
+    ])
       .pipe(take(1))
       .subscribe(([loadUsersAction, allUsers]) => {
-        this.user = allUsers.find(user => user.username === loadUsersAction.userData.username);
+        this.user = allUsers.find(
+          user => user.username === loadUsersAction.userData.username
+        );
         this.buildForm(this.user);
         if (this.projectUuid) {
           // if a projectUuid exists, add the user to the project
           const projectIri = this._projectService.uuidToIri(this.projectUuid);
-          this._store.dispatch(new AddUserToProjectMembershipAction(this.user.id, projectIri));
-
+          this._store.dispatch(
+            new AddUserToProjectMembershipAction(this.user.id, projectIri)
+          );
         }
 
         this.closeDialog.emit(this.user);

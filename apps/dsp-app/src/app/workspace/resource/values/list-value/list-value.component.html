@@ -1,103 +1,97 @@
 <span *ngIf="mode !== 'read' && listRootNode !== undefined">
-    <div *ngIf="!selectedNode && !listRootNode.children.length">
-        This controlled vocabulary does not have any items.
+  <div *ngIf="!selectedNode && !listRootNode.children.length">
+    This controlled vocabulary does not have any items.
+  </div>
+  <div
+    *ngIf="selectedNode || listRootNode.children.length"
+    class="dropdown"
+    [matMenuTriggerFor]="mainMenu">
+    <div class="container">
+      <div class="label">
+        {{ selectedNode ? selectedNode.label : listRootNode.label }}
+      </div>
+      <div class="icon">
+        <mat-icon>arrow_drop_down</mat-icon>
+      </div>
     </div>
-    <div *ngIf="selectedNode || listRootNode.children.length" class="dropdown" [matMenuTriggerFor]="mainMenu">
-        <div class="container">
-            <div class="label">{{ selectedNode ? selectedNode.label : listRootNode.label }}</div>
-            <div class="icon">
-                <mat-icon>arrow_drop_down</mat-icon>
-            </div>
-        </div>
-        <div class="line"></div>
-    </div>
-    <mat-menu #mainMenu="matMenu" [overlapTrigger]="false">
-        <span *ngFor="let child of listRootNode.children">
-            <span *ngIf="child.children && child.children.length > 0">
-                <button
-                    mat-menu-item
-                    [matMenuTriggerFor]="menu.childMenu"
-                    (click)="getSelectedNode(child)"
-                    type="button"
-                >
-                    {{ child.label }}
-                </button>
-                <app-sublist-value
-                    #menu
-                    [children]="child.children"
-                    (selectedNode)="getSelectedNode($event)"
-                >
-                </app-sublist-value>
-            </span>
+    <div class="line"></div>
+  </div>
+  <mat-menu #mainMenu="matMenu" [overlapTrigger]="false">
+    <span *ngFor="let child of listRootNode.children">
+      <span *ngIf="child.children && child.children.length > 0">
+        <button
+          mat-menu-item
+          [matMenuTriggerFor]="menu.childMenu"
+          (click)="getSelectedNode(child)"
+          type="button">
+          {{ child.label }}
+        </button>
+        <app-sublist-value
+          #menu
+          [children]="child.children"
+          (selectedNode)="getSelectedNode($event)">
+        </app-sublist-value>
+      </span>
 
-            <span *ngIf="!child.children || child.children.length === 0">
-                <button
-                    mat-menu-item
-                    (click)="getSelectedNode(child)"
-                    type="button"
-                >
-                    {{ child.label }}
-                </button>
-            </span>
-        </span>
-    </mat-menu>
+      <span *ngIf="!child.children || child.children.length === 0">
+        <button mat-menu-item (click)="getSelectedNode(child)" type="button">
+          {{ child.label }}
+        </button>
+      </span>
+    </span>
+  </mat-menu>
 
-    <mat-error
-        *ngIf="
+  <mat-error
+    *ngIf="
             valueFormControl.hasError('valueNotChanged') &&
             valueFormControl.dirty
-        "
+        ">
+    <span class="custom-error-message"
+      >New value must be different than the current value.</span
     >
-        <span class="custom-error-message"
-            >New value must be different than the current value.</span
-        >
-    </mat-error>
-    <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
-        <span class="custom-error-message"
-            >This value already exists for this property. Duplicate values are
-            not allowed.</span
-        >
-    </mat-error>
+  </mat-error>
+  <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+    <span class="custom-error-message"
+      >This value already exists for this property. Duplicate values are not
+      allowed.</span
+    >
+  </mat-error>
 </span>
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
-    <span class="rm-value list">
-        <span
-            class="hierarchy"
-            *ngFor="
+  <span class="rm-value list">
+    <span
+      class="hierarchy"
+      *ngFor="
                 let item of selectedNodeHierarchy;
                 let first = first;
                 let last = last
-            "
-        >
-            <mat-icon *ngIf="!first">chevron_right</mat-icon>
-            <span [class.last]="last">{{ item }}</span>
-        </span>
+            ">
+      <mat-icon *ngIf="!first">chevron_right</mat-icon>
+      <span [class.last]="last">{{ item }}</span>
     </span>
-    <span class="rm-comment" *ngIf="shouldShowComment">{{
-        commentFormControl.value
-    }}</span>
+  </span>
+  <span class="rm-comment" *ngIf="shouldShowComment"
+    >{{ commentFormControl.value }}</span
+  >
 </span>
 <ng-template #showForm>
-    <span [formGroup]="form">
-        <mat-form-field
-            class="large-field child-value-component"
-            *ngIf="mode === 'read'"
-            floatLabel="never"
-        >
-            <input
-                [formControlName]="'value'"
-                class="value"
-                type="text"
-                placeholder="List value"
-                matInput
-                readonly
-            />
-        </mat-form-field>
-        <app-comment-form
-            *ngIf="!commentDisabled && valueFormControl && commentFormControl"
-            [valueFormControlHasError]="hasError()"
-            [(commentFormControl)]="commentFormControl"
-            [valueFormControlValue]="valueFormControl.value"
-        ></app-comment-form>
-    </span>
+  <span [formGroup]="form">
+    <mat-form-field
+      class="large-field child-value-component"
+      *ngIf="mode === 'read'"
+      floatLabel="never">
+      <input
+        [formControlName]="'value'"
+        class="value"
+        type="text"
+        placeholder="List value"
+        matInput
+        readonly />
+    </mat-form-field>
+    <app-comment-form
+      *ngIf="!commentDisabled && valueFormControl && commentFormControl"
+      [valueFormControlHasError]="hasError()"
+      [(commentFormControl)]="commentFormControl"
+      [valueFormControlValue]="valueFormControl.value"></app-comment-form>
+  </span>
 </ng-template>

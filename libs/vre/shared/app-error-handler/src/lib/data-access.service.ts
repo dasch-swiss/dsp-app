@@ -3,16 +3,16 @@ import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class DataAccessService {
-    dspApiConnection: KnoraApiConnection = inject(DspApiConnectionToken);
+  dspApiConnection: KnoraApiConnection = inject(DspApiConnectionToken);
 
-    getHealthStatus() {
-        return this.dspApiConnection.system.healthEndpoint.getHealthStatus();
-    }
+  getHealthStatus() {
+    return this.dspApiConnection.system.healthEndpoint.getHealthStatus();
+  }
 
-    logout() {
-        return this.dspApiConnection.v2.auth.logout();
-    }
+  logout() {
+    return this.dspApiConnection.v2.auth.logout();
+  }
 }

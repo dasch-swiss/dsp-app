@@ -1,38 +1,35 @@
-<dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator
+  *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
 <div *ngIf="(isProjectsLoading$ | async) === false">
-    <div *ngIf="isProjectAdmin$ | async" class="content large middle">
-        <!-- add user to the project -->
-        <app-add-user
-            *ngIf="(project$ | async)?.status && ((isSysAdmin$ | async) === true || (isProjectAdmin$ | async) === true)"
-            [projectUuid]="projectUuid"
-            (refreshParent)="refresh()"
-            #addUserComponent
-        ></app-add-user>
+  <div *ngIf="isProjectAdmin$ | async" class="content large middle">
+    <!-- add user to the project -->
+    <app-add-user
+      *ngIf="(project$ | async)?.status && ((isSysAdmin$ | async) === true || (isProjectAdmin$ | async) === true)"
+      [projectUuid]="projectUuid"
+      (refreshParent)="refresh()"
+      #addUserComponent></app-add-user>
 
-        <!-- main content: list of project members -->
+    <!-- main content: list of project members -->
 
-        <div class="users-list">
-            <!-- list of active users -->
-            <app-users-list
-            	[project]="project$ | async"
-                [list]="activeProjectMembers$ | async"
-                [status]="true"
-                (refreshParent)="refresh()"
-            ></app-users-list>
+    <div class="users-list">
+      <!-- list of active users -->
+      <app-users-list
+        [project]="project$ | async"
+        [list]="activeProjectMembers$ | async"
+        [status]="true"
+        (refreshParent)="refresh()"></app-users-list>
 
-            <!-- list of inactive users -->
-            <app-users-list
-				[project]="project$ | async"
-                [list]="inactiveProjectMembers$ | async"
-                [status]="false"
-                (refreshParent)="refresh()"
-            ></app-users-list>
-        </div>
+      <!-- list of inactive users -->
+      <app-users-list
+        [project]="project$ | async"
+        [list]="inactiveProjectMembers$ | async"
+        [status]="false"
+        (refreshParent)="refresh()"></app-users-list>
     </div>
+  </div>
 
-    <div *ngIf="(isProjectAdmin$ | async) === false" class="content large middle">
-        <app-status [status]="403"></app-status>
-    </div>
+  <div *ngIf="(isProjectAdmin$ | async) === false" class="content large middle">
+    <app-status [status]="403"></app-status>
+  </div>
 </div>
-

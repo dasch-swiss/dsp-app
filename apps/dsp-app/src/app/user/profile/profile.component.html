@@ -1,20 +1,20 @@
-<dasch-swiss-app-progress-indicator *ngIf="(isLoading$ | async) === true && (user$ | async | isFalsy)"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator
+  *ngIf="(isLoading$ | async) === true && (user$ | async | isFalsy)"></dasch-swiss-app-progress-indicator>
 
 <ng-container *ngIf="(isLoading$ | async) === false && loggedInUser">
-<ng-container *ngIf="(user$ | async) as user">
-<!-- own user profile (logged-in user) -->
-<div class="user-profile">
-    <img
+  <ng-container *ngIf="(user$ | async) as user">
+    <!-- own user profile (logged-in user) -->
+    <div class="user-profile">
+      <img
         appAdminImage
         [image]="user.email"
         [type]="'user'"
         alt="user profile"
-        class="user-profile-image"
-    />
-    <div class="user-profile-headline">
+        class="user-profile-image" />
+      <div class="user-profile-headline">
         <!-- user names -->
         <h2 class="mat-headline-6">
-            {{ user.givenName }} <br />{{ user.familyName }}
+          {{ user.givenName }} <br />{{ user.familyName }}
         </h2>
         <h3 class="mat-body subtitle">{{ user.username }}</h3>
 
@@ -22,73 +22,72 @@
 
         <!-- user profile info: status, description etc.? -->
         <ul class="user-profile-info">
-            <br />
-            <li><mat-icon>language</mat-icon>{{ user.lang }}</li>
-            <!-- Show user's status (active / supsended): Not necessary anymore because we use profile componen for own user profile only. Probably we can open it for public uswer profile information
+          <br />
+          <li><mat-icon>language</mat-icon>{{ user.lang }}</li>
+          <!-- Show user's status (active / supsended): Not necessary anymore because we use profile componen for own user profile only. Probably we can open it for public uswer profile information
                 <li class="status text-only" [class.active]="user.status">
                 <mat-icon>info</mat-icon>
                 <span *ngIf="user.status">Active</span>
                 <span *ngIf="!user.status">Suspended</span>
             </li> -->
-            <li class="status warning text-only" *ngIf="isSysAdmin$ | async">
-                <mat-icon>verified_user</mat-icon>
-                <span>System admin</span>
-            </li>
+          <li class="status warning text-only" *ngIf="isSysAdmin$ | async">
+            <mat-icon>verified_user</mat-icon>
+            <span>System admin</span>
+          </li>
         </ul>
-    </div>
+      </div>
 
-    <mat-divider></mat-divider>
-    <br />
-    <!-- edit button -->
-    <button
+      <mat-divider></mat-divider>
+      <br />
+      <!-- edit button -->
+      <button
         mat-button
         [color]="'primary'"
         (click)="openDialog('editUser', user)"
-        style="width: 100%"
-    >
+        style="width: 100%">
         Edit my profile
-    </button>
-</div>
+      </button>
+    </div>
 
-<!-- phone view -->
-<div class="user-profile-mobile">
-    <img
+    <!-- phone view -->
+    <div class="user-profile-mobile">
+      <img
         appAdminImage
         [image]="user.email"
         [type]="'user'"
         alt="user profile"
-        class="user-profile-image"
-    />
+        class="user-profile-image" />
 
-    <div class="user-profile-headline">
+      <div class="user-profile-headline">
         <!-- user names -->
-        <h2 class="mat-headline-6">{{ user.givenName }} {{ user.familyName }}</h2>
+        <h2 class="mat-headline-6">
+          {{ user.givenName }} {{ user.familyName }}
+        </h2>
         <h3 class="mat-body subtitle">{{ user.username }}</h3>
 
         <!-- user profile lang -->
         <ul class="user-profile-lang">
-            <li><mat-icon>flag</mat-icon>{{ user.lang }}</li>
+          <li><mat-icon>flag</mat-icon>{{ user.lang }}</li>
         </ul>
-    </div>
+      </div>
 
-    <div class="user-profile-status">
+      <div class="user-profile-status">
         <div class="fill-in-space"></div>
         <div class="status text-only" [class.active]="user.status">
-            <mat-icon>info</mat-icon>
-            <span *ngIf="user.status"></span>
-            <span *ngIf="!user.status"></span>
+          <mat-icon>info</mat-icon>
+          <span *ngIf="user.status"></span>
+          <span *ngIf="!user.status"></span>
         </div>
 
         <!-- edit button -->
         <button
-            mat-button
-            class="user-profile-edit"
-            [color]="'primary'"
-            (click)="openDialog('editUser', user)"
-        >
-            <mat-icon>edit</mat-icon>
+          mat-button
+          class="user-profile-edit"
+          [color]="'primary'"
+          (click)="openDialog('editUser', user)">
+          <mat-icon>edit</mat-icon>
         </button>
+      </div>
     </div>
-</div>
-</ng-container>
+  </ng-container>
 </ng-container>

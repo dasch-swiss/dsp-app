@@ -1,65 +1,65 @@
 import {
-    Component,
-    OnInit,
-    OnDestroy,
-    Input,
-    EventEmitter,
-    Output,
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 
 @Component({
-    selector: 'app-text-value-as-html',
-    templateUrl: './text-value-as-html.component.html',
-    styleUrls: ['./text-value-as-html.component.scss'],
+  selector: 'app-text-value-as-html',
+  templateUrl: './text-value-as-html.component.html',
+  styleUrls: ['./text-value-as-html.component.scss'],
 })
 export class TextValueAsHtmlComponent
-    extends BaseValueDirective
-    implements OnInit, OnDestroy
+  extends BaseValueDirective
+  implements OnInit, OnDestroy
 {
-    @Input() displayValue?: ReadTextValueAsHtml;
+  @Input() displayValue?: ReadTextValueAsHtml;
 
-    @Output() internalLinkClicked: EventEmitter<string> =
-        new EventEmitter<string>();
+  @Output() internalLinkClicked: EventEmitter<string> =
+    new EventEmitter<string>();
 
-    @Output() internalLinkHovered: EventEmitter<string> =
-        new EventEmitter<string>();
+  @Output() internalLinkHovered: EventEmitter<string> =
+    new EventEmitter<string>();
 
-    customValidators = [];
+  customValidators = [];
 
-    commentLabel = 'Comment';
-    htmlFromKnora: string;
-    comment: string;
+  commentLabel = 'Comment';
+  htmlFromKnora: string;
+  comment: string;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
+  }
+
+  ngOnInit() {
+    this.htmlFromKnora = this.getInitValue();
+    this.comment = this.getInitComment();
+  }
+
+  ngOnDestroy() {
+    super.ngOnDestroy();
+  }
+
+  getInitValue() {
+    if (this.displayValue !== undefined) {
+      return this.displayValue.html;
+    } else {
+      return null;
     }
+  }
 
-    ngOnInit() {
-        this.htmlFromKnora = this.getInitValue();
-        this.comment = this.getInitComment();
-    }
+  // readonly
+  getNewValue(): false {
+    return false;
+  }
 
-    ngOnDestroy() {
-        super.ngOnDestroy();
-    }
-
-    getInitValue() {
-        if (this.displayValue !== undefined) {
-            return this.displayValue.html;
-        } else {
-            return null;
-        }
-    }
-
-    // readonly
-    getNewValue(): false {
-        return false;
-    }
-
-    // readonly
-    getUpdatedValue(): false {
-        return false;
-    }
+  // readonly
+  getUpdatedValue(): false {
+    return false;
+  }
 }

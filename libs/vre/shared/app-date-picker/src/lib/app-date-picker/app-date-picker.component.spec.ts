@@ -8,38 +8,38 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppDatePickerComponent } from './app-date-picker.component'
 import { Subject } from 'rxjs';
+import { AppDatePickerComponent } from './app-date-picker.component';
 
 describe('DatePickerComponent', () => {
-    let component: AppDatePickerComponent;
-    let fixture: ComponentFixture<AppDatePickerComponent>;
+  let component: AppDatePickerComponent;
+  let fixture: ComponentFixture<AppDatePickerComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [
-                AppDatePickerComponent,
-                BrowserAnimationsModule,
-                MatButtonModule,
-                MatButtonToggleModule,
-                MatFormFieldModule,
-                MatInputModule,
-                MatIconModule,
-                MatMenuModule,
-                MatSelectModule,
-                ReactiveFormsModule,
-            ],
-            providers: [Subject],
-        }).compileComponents();
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        AppDatePickerComponent,
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatMenuModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+      ],
+      providers: [Subject],
+    }).compileComponents();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(AppDatePickerComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppDatePickerComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

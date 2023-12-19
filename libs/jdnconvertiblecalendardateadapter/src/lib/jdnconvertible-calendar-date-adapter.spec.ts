@@ -3,6 +3,8 @@
  *  SPDX-License-Identifier: Apache-2.0
  */
 
+import { async, inject, TestBed } from '@angular/core/testing';
+import { DateAdapter } from '@angular/material/core';
 import {
   CalendarDate,
   GregorianCalendarDate,
@@ -10,14 +12,12 @@ import {
   JDNPeriod,
   CalendarPeriod,
 } from '@dasch-swiss/jdnconvertiblecalendar';
+import { BehaviorSubject } from 'rxjs';
 import {
   JDNConvertibleCalendarDateAdapter,
   JDNConvertibleCalendarDateAdapterModule,
 } from '../index';
-import { async, inject, TestBed } from '@angular/core/testing';
-import { DateAdapter } from '@angular/material/core';
 import { ACTIVE_CALENDAR } from './active_calendar_token';
-import { BehaviorSubject } from 'rxjs';
 
 describe('JDNConvertibleCalendarDateAdapter', () => {
   let adapter: JDNConvertibleCalendarDateAdapter;
@@ -48,7 +48,10 @@ describe('JDNConvertibleCalendarDateAdapter', () => {
           .withContext(`Expected ${d} to be a date instance`)
           .not.toBeNull();
         expect(adapter.isValid(d!))
-          .withContext(`Expected ${d} to be ${valid ? 'valid' : 'invalid'},` + ` but was ${valid ? 'invalid' : 'valid'}`)
+          .withContext(
+            `Expected ${d} to be ${valid ? 'valid' : 'invalid'},` +
+              ` but was ${valid ? 'invalid' : 'valid'}`
+          )
           .toBe(valid);
       };
     }

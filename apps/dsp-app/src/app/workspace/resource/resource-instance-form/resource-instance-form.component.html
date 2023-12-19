@@ -1,59 +1,55 @@
 <!-- create property values and submit data -->
-<dasch-swiss-app-progress-indicator *ngIf="preparing"></dasch-swiss-app-progress-indicator>
-<form *ngIf="propertiesParentForm && !preparing"
-    class="resource-instance-form form-content"
-    [formGroup]="propertiesParentForm"
-    (ngSubmit)="submitData()"
-    appInvalidControlScroll
->
-    <!-- upload file -->
-    <app-upload
-        *ngIf="hasFileValue"
-        [parentForm]="propertiesParentForm"
-        [representation]="hasFileValue"
-        (fileInfo)="setFileValue($event)"
-    >
-    </app-upload>
+<dasch-swiss-app-progress-indicator
+  *ngIf="preparing"></dasch-swiss-app-progress-indicator>
+<form
+  *ngIf="propertiesParentForm && !preparing"
+  class="resource-instance-form form-content"
+  [formGroup]="propertiesParentForm"
+  (ngSubmit)="submitData()"
+  appInvalidControlScroll>
+  <!-- upload file -->
+  <app-upload
+    *ngIf="hasFileValue"
+    [parentForm]="propertiesParentForm"
+    [representation]="hasFileValue"
+    (fileInfo)="setFileValue($event)">
+  </app-upload>
 
-    <!-- create property values -->
-    <app-select-properties #selectProps
-        *ngIf="resourceClass"
-        [ontologyInfo]="ontologyInfo"
-        [selectedResourceClass]="resourceClass"
-        [properties]="properties"
-        [parentForm]="propertiesParentForm"
-        [currentOntoIri]="ontologyIri"
-        class="select-properties">
-    </app-select-properties>
+  <!-- create property values -->
+  <app-select-properties
+    #selectProps
+    *ngIf="resourceClass"
+    [ontologyInfo]="ontologyInfo"
+    [selectedResourceClass]="resourceClass"
+    [properties]="properties"
+    [parentForm]="propertiesParentForm"
+    [currentOntoIri]="ontologyIri"
+    class="select-properties">
+  </app-select-properties>
 
-    <!-- action buttons: save -->
-    <div class="form-panel form-action">
-
-        <span class="fill-remaining-space"></span>
-        <span>
-            <button
-                mat-raised-button
-                type="submit"
-                [color]="error ? 'warn' : 'primary'"
-                class="form-submit"
-                [disabled]="!propertiesParentForm.valid"
-            >
-            <div class="progress-button-content">
-                <dasch-swiss-app-progress-indicator
-                *ngIf="loading"
-                [color]="'white'"
-                [status]="0"
-                class="submit-progress"/>
-                <mat-icon *ngIf="!loading && error">close</mat-icon>
-                <span>
-                    {{
-                        !loading && error
-                            ? ('appLabels.form.action.retry' | translate)
-                            : ('appLabels.form.action.submit' | translate)
-                    }}
-                </span>
-            </div>
-            </button>
-        </span>
-    </div>
+  <!-- action buttons: save -->
+  <div class="form-panel form-action">
+    <span class="fill-remaining-space"></span>
+    <span>
+      <button
+        mat-raised-button
+        type="submit"
+        [color]="error ? 'warn' : 'primary'"
+        class="form-submit"
+        [disabled]="!propertiesParentForm.valid">
+        <div class="progress-button-content">
+          <dasch-swiss-app-progress-indicator
+            *ngIf="loading"
+            [color]="'white'"
+            [status]="0"
+            class="submit-progress" />
+          <mat-icon *ngIf="!loading && error">close</mat-icon>
+          <span>
+            {{ !loading && error ? ('appLabels.form.action.retry' | translate) :
+            ('appLabels.form.action.submit' | translate) }}
+          </span>
+        </div>
+      </button>
+    </span>
+  </div>
 </form>

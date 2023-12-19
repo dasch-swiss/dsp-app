@@ -1,115 +1,143 @@
 <div *ngIf="(hasLoadingErrors$ | async) === false; else StatusMsg">
-    <mat-sidenav-container class="project-view">
-        <mat-sidenav #sidenav mode="side" [(opened)]="sideNavOpened" [disableClose]="true" class="project-nav">
-            <div *ngIf="sideNavOpened" class="sidenav-collapse-btn">
-                <button mat-icon-button color="primary" class="collapse-btn" (click)="toggleSidenav()" matTooltip="collapse"
-                        matTooltipShowDelay="500" matTooltipPosition="right">
-                    <mat-icon>chevron_left</mat-icon>
-                </button>
-            </div>
-            <div class="main-content">
-                <!-- Project label -->
-                <div *ngIf="(readProject$ | async) !== undefined" class="project-title">
-                    <p #projectTitle matTooltip="{{(readProject$ | async)?.longname}}" matTooltipShowDelay="500"
-                        [matTooltipDisabled]="compareElementHeights(projectTitle)" matTooltipPosition="right">
-                        {{(readProject$ | async)?.longname}}
+  <mat-sidenav-container class="project-view">
+    <mat-sidenav
+      #sidenav
+      mode="side"
+      [(opened)]="sideNavOpened"
+      [disableClose]="true"
+      class="project-nav">
+      <div *ngIf="sideNavOpened" class="sidenav-collapse-btn">
+        <button
+          mat-icon-button
+          color="primary"
+          class="collapse-btn"
+          (click)="toggleSidenav()"
+          matTooltip="collapse"
+          matTooltipShowDelay="500"
+          matTooltipPosition="right">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+      </div>
+      <div class="main-content">
+        <!-- Project label -->
+        <div *ngIf="(readProject$ | async) !== undefined" class="project-title">
+          <p
+            #projectTitle
+            matTooltip="{{(readProject$ | async)?.longname}}"
+            matTooltipShowDelay="500"
+            [matTooltipDisabled]="compareElementHeights(projectTitle)"
+            matTooltipPosition="right">
+            {{(readProject$ | async)?.longname}}
+          </p>
+        </div>
+        <mat-list class="main-list">
+          <!-- Description Section -->
+          <mat-divider></mat-divider>
+          <mat-list-item
+            [ngClass]="{ 'active': listItemSelected === routeConstants.advancedSearch}"
+            class="section-title"
+            (click)="open(routeConstants.advancedSearch)">
+            <span matListItemTitle class="section-label">
+              <mat-icon class="sidenav-prefix-icon">search</mat-icon>
+              <p>Advanced Search</p>
+              <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
+            </span>
+          </mat-list-item>
+
+          <!-- Description Section -->
+          <mat-divider></mat-divider>
+          <mat-list-item
+            [ngClass]="{ 'active': listItemSelected === routeConstants.projectRelative + '/' + projectUuid }"
+            class="section-title"
+            (click)="open(routeConstants.project, projectUuid)">
+            <span matListItemTitle class="section-label">
+              <mat-icon class="sidenav-prefix-icon">description</mat-icon>
+              <p>Project Description</p>
+              <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
+            </span>
+          </mat-list-item>
+
+          <!-- Ontology Section -->
+          <mat-divider></mat-divider>
+          <mat-list-item
+            [ngClass]="{ 'active': listItemSelected === dataModelsRoute}"
+            class="section-title"
+            (click)="open(dataModelsRoute)">
+            <span matListItemTitle class="section-label">
+              <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
+              <p>Data Model</p>
+              <mat-icon>chevron_right</mat-icon>
+            </span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <!-- Project Ontologies -->
+          <mat-accordion
+            *ngFor="let onto of projectOntologies$ | async; trackBy: trackByFn; let first = first"
+            multi
+            [displayMode]="'flat'">
+            <mat-expansion-panel [expanded]="first">
+              <mat-expansion-panel-header>
+                <div class="sidenav-panel-header">
+                  <mat-panel-title class="mat-subtitle-1">
+                    <p
+                      #ontoTitle
+                      matTooltip="{{onto.label}}"
+                      matTooltipShowDelay="500"
+                      matTooltipPosition="right"
+                      [matTooltipDisabled]="compareElementHeights(ontoTitle)">
+                      {{onto.label}}
                     </p>
+                  </mat-panel-title>
                 </div>
-                <mat-list class="main-list">
-
-                    <!-- Description Section -->
-                    <mat-divider></mat-divider>
-                    <mat-list-item 
-                        [ngClass]="{ 'active': listItemSelected === routeConstants.advancedSearch}" class="section-title" (click)="open(routeConstants.advancedSearch)">
-                        <span matListItemTitle class="section-label">
-                            <mat-icon class="sidenav-prefix-icon">search</mat-icon>
-                            <p>Advanced Search</p>
-                            <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
-                        </span>
-
-                    </mat-list-item>
-
-                    <!-- Description Section -->
-                    <mat-divider></mat-divider>
-                    <mat-list-item [ngClass]="{ 'active': listItemSelected === routeConstants.projectRelative + '/' + projectUuid }"
-                        class="section-title" 
-                        (click)="open(routeConstants.project, projectUuid)"
-                    >
-                        <span matListItemTitle class="section-label">
-                            <mat-icon class="sidenav-prefix-icon">description</mat-icon>
-                            <p>Project Description</p>
-                            <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
-                        </span>
-
-                    </mat-list-item>
-
-                    <!-- Ontology Section -->
-                    <mat-divider></mat-divider>
-                    <mat-list-item [ngClass]="{ 'active': listItemSelected === dataModelsRoute}" class="section-title" (click)="open(dataModelsRoute)">
-                        <span matListItemTitle class="section-label">
-                            <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
-                            <p>Data Model</p>
-                            <mat-icon>chevron_right</mat-icon>
-                        </span>
-                    </mat-list-item>
-                    <mat-divider></mat-divider>
-
-                    <!-- Project Ontologies -->
-                    <mat-accordion *ngFor="let onto of projectOntologies$ | async; trackBy: trackByFn; let first = first"
-                        multi
-                        [displayMode]="'flat'">
-                        <mat-expansion-panel [expanded]="first">
-                            <mat-expansion-panel-header>
-                                <div class="sidenav-panel-header">
-                                    <mat-panel-title class="mat-subtitle-1">
-                                        <p #ontoTitle
-                                            matTooltip="{{onto.label}}"
-                                            matTooltipShowDelay="500"
-                                            matTooltipPosition="right"
-                                            [matTooltipDisabled]="compareElementHeights(ontoTitle)">{{onto.label}}</p>
-                                    </mat-panel-title>
-                                </div>
-                            </mat-expansion-panel-header>
-                            <!-- list of ontology classes -->
-                            <app-ontology-classes [resClasses]="getAllEntityDefinitionsAsArray(onto.classes)"
-                                [projectMember]="isAdmin$ | async">
-                            </app-ontology-classes>
-                        </mat-expansion-panel>
-                        <mat-divider></mat-divider>
-                    </mat-accordion>
-                    <div class="sidenav-footer"
-                        *ngIf="isAdmin$ | async">
-                        <mat-list-item [ngClass]="{ 'active': listItemSelected === settingsRoute}" class="section-title footer"
-                            (click)="open(settingsRoute)">
-                            <span matListItemTitle class="section-label">
-                                <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
-                                <div>Project Settings</div>
-                                <mat-icon>chevron_right</mat-icon>
-                            </span>
-                        </mat-list-item>
-                    </div>
-                </mat-list>
-
-            </div>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <div *ngIf="!sideNavOpened" class="sidenav-expand-btn">
-                <button mat-icon-button color="primary" class="expand-btn" (click)="toggleSidenav()" matTooltip="expand"
-                        matTooltipShowDelay="500" matTooltipPosition="right">
-                    <mat-icon>chevron_right</mat-icon>
-                </button>
-            </div>
-            <div class="main-content">
-                <dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
-                <router-outlet></router-outlet>
-            </div>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
-
+              </mat-expansion-panel-header>
+              <!-- list of ontology classes -->
+              <app-ontology-classes
+                [resClasses]="getAllEntityDefinitionsAsArray(onto.classes)"
+                [projectMember]="isAdmin$ | async">
+              </app-ontology-classes>
+            </mat-expansion-panel>
+            <mat-divider></mat-divider>
+          </mat-accordion>
+          <div class="sidenav-footer" *ngIf="isAdmin$ | async">
+            <mat-list-item
+              [ngClass]="{ 'active': listItemSelected === settingsRoute}"
+              class="section-title footer"
+              (click)="open(settingsRoute)">
+              <span matListItemTitle class="section-label">
+                <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
+                <div>Project Settings</div>
+                <mat-icon>chevron_right</mat-icon>
+              </span>
+            </mat-list-item>
+          </div>
+        </mat-list>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div *ngIf="!sideNavOpened" class="sidenav-expand-btn">
+        <button
+          mat-icon-button
+          color="primary"
+          class="expand-btn"
+          (click)="toggleSidenav()"
+          matTooltip="expand"
+          matTooltipShowDelay="500"
+          matTooltipPosition="right">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+      <div class="main-content">
+        <dasch-swiss-app-progress-indicator
+          *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
 
 <ng-template #StatusMsg>
-    <div class="content large middle">
-        <app-status *ngIf="hasLoadingErrors$ | async" [status]="404"></app-status>
-    </div>
+  <div class="content large middle">
+    <app-status *ngIf="hasLoadingErrors$ | async" [status]="404"></app-status>
+  </div>
 </ng-template>

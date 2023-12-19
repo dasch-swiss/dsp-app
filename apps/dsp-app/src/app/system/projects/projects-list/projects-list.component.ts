@@ -1,32 +1,46 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    EventEmitter,
-    Inject,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Constants, ReadProject, ReadUser, StoredProject, UpdateProjectRequest } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import {SortProp} from "@dsp-app/src/app/main/action/sort-button/sort-button.component";
-import {Observable, Subject, combineLatest} from "rxjs";
-import { map, take, takeUntil, tap } from 'rxjs/operators';
-import { Select } from '@ngxs/store';
-import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import {
+  Constants,
+  ReadProject,
+  ReadUser,
+  StoredProject,
+  UpdateProjectRequest,
+} from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
+import {
+  DspApiConnectionToken,
+  RouteConstants,
+} from '@dasch-swiss/vre/shared/app-config';
+import {
+  SortingService,
+  ProjectService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  ProjectsSelectors,
+  UserSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
+import { SortProp } from '@dsp-app/src/app/main/action/sort-button/sort-button.component';
+import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
+import { Select } from '@ngxs/store';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-projects-list',
   templateUrl: './projects-list.component.html',
-  styleUrls: ['./projects-list.component.scss']
+  styleUrls: ['./projects-list.component.scss'],
 })
 export class ProjectsListComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -49,7 +63,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   // list of default, dsp-specific projects, which are not able to be deleted or to be editied
   doNotDelete: string[] = [
     Constants.SystemProjectIRI,
-    Constants.DefaultSharedOntologyIRI
+    Constants.DefaultSharedOntologyIRI,
   ];
 
   // i18n plural mapping
@@ -57,41 +71,44 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     project: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       '=1': '1 Project',
-      other: '# Projects'
-    }
+      other: '# Projects',
+    },
   };
 
   // sort properties
   sortProps: SortProp[] = [
     {
       key: 'shortcode',
-      label: 'Short code'
+      label: 'Short code',
     },
     {
       key: 'shortname',
-      label: 'Short name'
+      label: 'Short name',
     },
     {
       key: 'longname',
-      label: 'Project name'
-    }
+      label: 'Project name',
+    },
   ];
 
   sortBy = 'longname'; // default sort by
 
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
+  @Select(UserSelectors.userProjectAdminGroups)
+  userProjectAdminGroups$: Observable<string[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
-  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<
+    ReadProject[]
+  >;
+  @Select(ProjectsSelectors.isProjectsLoading)
+  isProjectsLoading$: Observable<boolean>;
 
   constructor(
     private _projectApiService: ProjectApiService,
     private _dialog: MatDialog,
     private _router: Router,
-    private _sortingService: SortingService,
-  ) {
-  }
+    private _sortingService: SortingService
+  ) {}
 
   ngOnInit() {
     // sort list by defined key
@@ -111,13 +128,16 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
    * @param  projectId the iri of the project to be checked
    */
   userHasPermission$(projectIri: string): Observable<boolean> {
-    return combineLatest([this.user$, this.userProjectAdminGroups$])
-      .pipe(
-        takeUntil(this.ngUnsubscribe),
-        map(([user, userProjectGroups]) => {
-          return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
-        })
-      );
+    return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
+      takeUntil(this.ngUnsubscribe),
+      map(([user, userProjectGroups]) => {
+        return ProjectService.IsProjectAdminOrSysAdmin(
+          user,
+          userProjectGroups,
+          projectIri
+        );
+      })
+    );
   }
 
   /**
@@ -126,14 +146,13 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
    * @param  projectIri the iri of the project to be checked
    */
   userIsProjectAdmin$(projectIri: string): Observable<boolean> {
-    return combineLatest([this.user$, this.userProjectAdminGroups$])
-      .pipe(
-        takeUntil(this.ngUnsubscribe),
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        map(([user, userProjectGroups]) => {
-          return ProjectService.IsInProjectGroup(userProjectGroups, projectIri);
-        })
-      );
+    return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
+      takeUntil(this.ngUnsubscribe),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      map(([user, userProjectGroups]) => {
+        return ProjectService.IsInProjectGroup(userProjectGroups, projectIri);
+      })
+    );
   }
 
   /**
@@ -163,14 +182,14 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       width: '560px',
       maxHeight: '80vh',
       position: {
-        top: '112px'
+        top: '112px',
       },
-      data: { name: name, mode: mode, project: id }
+      data: { name: name, mode: mode, project: id },
     };
 
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-    dialogRef.afterClosed().subscribe((response) => {
+    dialogRef.afterClosed().subscribe(response => {
       if (response === true) {
         // get the mode
         switch (mode) {
@@ -187,7 +206,8 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   sortList(key: any) {
-    if (!this.list) { // guard
+    if (!this.list) {
+      // guard
       return;
     }
     this.list = this._sortingService.keySortByAlphabetical(this.list, key);
@@ -195,10 +215,11 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   deactivateProject(id: string) {
-    this._projectApiService.delete(id)
-      .pipe(tap(() => {
+    this._projectApiService.delete(id).pipe(
+      tap(() => {
         this.refreshParent.emit(); //TODO Soft or Hard refresh ?
-      }));
+      })
+    );
   }
 
   activateProject(id: string) {
@@ -206,10 +227,10 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     const data: UpdateProjectRequest = new UpdateProjectRequest();
     data.status = true;
 
-    this._projectApiService.update(id, data)
-      .pipe(
-        tap(() => {
-          this.refreshParent.emit();
-        }));
+    this._projectApiService.update(id, data).pipe(
+      tap(() => {
+        this.refreshParent.emit();
+      })
+    );
   }
 }

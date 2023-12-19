@@ -8,76 +8,76 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
-    DspApiConfigToken,
-    DspApiConnectionToken,
+  DspApiConfigToken,
+  DspApiConnectionToken,
 } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { TestConfig } from '@dsp-app/src/test.config';
+import { TranslateModule } from '@ngx-translate/core';
 import { AddUserComponent } from './add-user.component';
 
 describe('AddUserComponent', () => {
-    let component: AddUserComponent;
-    let fixture: ComponentFixture<AddUserComponent>;
+  let component: AddUserComponent;
+  let fixture: ComponentFixture<AddUserComponent>;
 
-    const appInitSpy = {
-        dspAppConfig: {
-            iriBase: 'http://rdfh.ch',
+  const appInitSpy = {
+    dspAppConfig: {
+      iriBase: 'http://rdfh.ch',
+    },
+  };
+
+  const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
+    'uuidToIri',
+  ]);
+
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [AddUserComponent, DialogComponent, StatusComponent],
+      imports: [
+        BrowserAnimationsModule,
+        MatAutocompleteModule,
+        MatDialogModule,
+        MatIconModule,
+        MatInputModule,
+        MatSnackBarModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        TranslateModule.forRoot(),
+      ],
+      providers: [
+        {
+          provide: AppConfigService,
+          useValue: appInitSpy,
         },
-    };
+        {
+          provide: ProjectService,
+          useValue: projectServiceSpy,
+        },
+        {
+          provide: DspApiConfigToken,
+          useValue: TestConfig.ApiConfig,
+        },
+        {
+          provide: DspApiConnectionToken,
+          useValue: new KnoraApiConnection(TestConfig.ApiConfig),
+        },
+      ],
+    }).compileComponents();
+  }));
 
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-        'uuidToIri',
-    ]);
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AddUserComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [AddUserComponent, DialogComponent, StatusComponent],
-            imports: [
-                BrowserAnimationsModule,
-                MatAutocompleteModule,
-                MatDialogModule,
-                MatIconModule,
-                MatInputModule,
-                MatSnackBarModule,
-                ReactiveFormsModule,
-                RouterTestingModule,
-                TranslateModule.forRoot(),
-            ],
-            providers: [
-                {
-                    provide: AppConfigService,
-                    useValue: appInitSpy,
-                },
-                {
-                    provide: ProjectService,
-                    useValue: projectServiceSpy,
-                },
-                {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig,
-                },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig),
-                },
-            ],
-        }).compileComponents();
-    }));
+  xit('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(AddUserComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
-    xit('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
-    // todo: check todo list of collaboration component
+  // todo: check todo list of collaboration component
 });

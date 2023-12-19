@@ -2,26 +2,26 @@
  * information about the current user
  */
 export interface CurrentUser {
-    // username
-    name: string;
+  // username
+  name: string;
 
-    // json web token
-    jwt?: string;
+  // json web token
+  jwt?: string;
 
-    // default language for ui
-    lang: string;
+  // default language for ui
+  lang: string;
 
-    // is system admin?
-    sysAdmin: boolean;
+  // is system admin?
+  sysAdmin: boolean;
 
-    // list of project shortcodes where the user is project admin
-    projectAdmin: string[];
+  // list of project shortcodes where the user is project admin
+  projectAdmin: string[];
 }
 
 /**
  * session with id (= login timestamp) and information about logged-in user
  */
 export interface Session {
-    id: number;
-    user: CurrentUser;
+  id: number;
+  user: CurrentUser;
 }

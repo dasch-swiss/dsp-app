@@ -1,66 +1,72 @@
 import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    EventEmitter,
-    Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import {
-    ApiResponseError,
-    CardinalityUtil,
-    Constants,
-    CountQueryResponse,
-    DeleteResource,
-    DeleteResourceResponse,
-    DeleteValue,
-    IHasPropertyWithPropertyDefinition,
-    KnoraApiConnection,
-    PermissionUtil,
-    PropertyDefinition,
-    ReadLinkValue,
-    ReadProject,
-    ReadResource,
-    ReadResourceSequence,
-    ReadTextValueAsXml,
-    ReadUser,
-    ReadValue,
-    ResourcePropertyDefinition,
-    UpdateResourceMetadata,
-    UpdateResourceMetadataResponse,
-    UserResponse
+  ApiResponseError,
+  CardinalityUtil,
+  Constants,
+  CountQueryResponse,
+  DeleteResource,
+  DeleteResourceResponse,
+  DeleteValue,
+  IHasPropertyWithPropertyDefinition,
+  KnoraApiConnection,
+  PermissionUtil,
+  PropertyDefinition,
+  ReadLinkValue,
+  ReadProject,
+  ReadResource,
+  ReadResourceSequence,
+  ReadTextValueAsXml,
+  ReadUser,
+  ReadValue,
+  ResourcePropertyDefinition,
+  UpdateResourceMetadata,
+  UpdateResourceMetadataResponse,
+  UserResponse,
 } from '@dasch-swiss/dsp-js';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ConfirmationWithComment, DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import {
-    ComponentCommunicationEventService,
-    EmitEvent,
-    Events as CommsEvents
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import {
+  ProjectService,
+  SortingService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import {
+  ConfirmationWithComment,
+  DialogComponent,
+} from '@dsp-app/src/app/main/dialog/dialog.component';
+import {
+  ComponentCommunicationEventService,
+  EmitEvent,
+  Events as CommsEvents,
+} from '@dsp-app/src/app/main/services/component-communication-event.service';
+import { forkJoin, Observable, Subscription } from 'rxjs';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 import { IncomingService } from '../services/incoming.service';
-import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ResourceService } from '../services/resource.service';
 import { UserService } from '../services/user.service';
 import {
-    AddedEventValue,
-    DeletedEventValue,
-    Events,
-    UpdatedEventValues,
-    ValueOperationEventService
+  AddedEventValue,
+  DeletedEventValue,
+  Events,
+  UpdatedEventValues,
+  ValueOperationEventService,
 } from '../services/value-operation-event.service';
 import { ValueService } from '../services/value.service';
-import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 
 // object of property information from ontology class, properties and property values
 export interface PropertyInfoValues {
@@ -73,7 +79,7 @@ export interface PropertyInfoValues {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-properties',
   templateUrl: './properties.component.html',
-  styleUrls: ['./properties.component.scss']
+  styleUrls: ['./properties.component.scss'],
 })
 export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   /**
@@ -132,8 +138,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   @Output() regionChanged: EventEmitter<ReadValue> =
     new EventEmitter<ReadValue>();
 
-  @Output() regionDeleted: EventEmitter<void> =
-    new EventEmitter<void>();
+  @Output() regionDeleted: EventEmitter<void> = new EventEmitter<void>();
 
   readonly amount_resources = 25;
 
@@ -181,8 +186,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     private _projectService: ProjectService,
     private _sortingService: SortingService,
     private _cd: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     // reset the page event
@@ -194,19 +198,15 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     if (this.resource.res) {
       // get user permissions
       const allPermissions = PermissionUtil.allUserPermissions(
-        this.resource.res.userHasPermission as
-          | 'RV'
-          | 'V'
-          | 'M'
-          | 'D'
-          | 'CR'
+        this.resource.res.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
       );
 
       // get last modification date
       this.lastModificationDate = this.resource.res.lastModificationDate;
 
       // if user has modify permissions, set addButtonIsVisible to true so the user see's the add button
-      this.userCanEdit = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
+      this.userCanEdit =
+        allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
 
       // if user has delete permissions
       this.userCanDelete =
@@ -223,8 +223,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
         Events.ValueAdded,
         (newValue: AddedEventValue) => {
           if (newValue) {
-            this.lastModificationDate =
-              newValue.addedValue.valueCreationDate;
+            this.lastModificationDate = newValue.addedValue.valueCreationDate;
             this.addValueToResource(newValue.addedValue);
             this.hideAddValueForm();
           }
@@ -261,23 +260,18 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
     // keep the information if the user wants to display all properties or not
     if (localStorage.getItem('showAllProps')) {
-      this.showAllProps = JSON.parse(
-        localStorage.getItem('showAllProps')
-      );
+      this.showAllProps = JSON.parse(localStorage.getItem('showAllProps'));
     } else {
-      localStorage.setItem(
-        'showAllProps',
-        JSON.stringify(this.showAllProps)
-      );
+      localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
     }
   }
 
   ngOnChanges(): void {
-    this._projectApiService.get(this.resource.res.attachedToProject)
-      .subscribe(
-        response => {
-          this.project = response.project;
-        });
+    this._projectApiService
+      .get(this.resource.res.attachedToProject)
+      .subscribe(response => {
+        this.project = response.project;
+      });
 
     // get user information
     this._userService
@@ -292,9 +286,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     // unsubscribe from the ValueOperationEventService when component is destroyed
     if (this.valueOperationEventSubscriptions !== undefined) {
-      this.valueOperationEventSubscriptions.forEach((sub) =>
-        sub.unsubscribe()
-      );
+      this.valueOperationEventSubscriptions.forEach(sub => sub.unsubscribe());
     }
   }
 
@@ -321,7 +313,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   handleIncomingLinkForward() {
-    if (this.allIncomingLinkResources.length / this.amount_resources > this.pageEvent.pageIndex + 1) {
+    if (
+      this.allIncomingLinkResources.length / this.amount_resources >
+      this.pageEvent.pageIndex + 1
+    ) {
       const newPage = new PageEvent();
       newPage.pageIndex = this.pageEvent.pageIndex + 1;
       this.goToPage(newPage);
@@ -334,7 +329,6 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
       newPage.pageIndex = this.pageEvent.pageIndex - 1;
       this.goToPage(newPage);
     }
-
   }
 
   /**
@@ -343,9 +337,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
    */
   openResource(linkValue: ReadLinkValue | string) {
     const iri =
-      typeof linkValue == 'string'
-        ? linkValue
-        : linkValue.linkedResourceIri;
+      typeof linkValue == 'string' ? linkValue : linkValue.linkedResourceIri;
     const path = this._resourceService.getResourcePath(iri);
     window.open('/resource' + path, '_blank');
   }
@@ -359,9 +351,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
       width: '560px',
       maxHeight: '80vh',
       position: {
-        top: '112px'
+        top: '112px',
       },
-      data: { mode: type + 'Resource', title: this.resource.res.label }
+      data: { mode: type + 'Resource', title: this.resource.res.label },
     };
 
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
@@ -376,65 +368,55 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
           const payload = new DeleteResource();
           payload.id = this.resource.res.id;
           payload.type = this.resource.res.type;
-          payload.deleteComment = answer.comment
-            ? answer.comment
-            : undefined;
+          payload.deleteComment = answer.comment ? answer.comment : undefined;
           payload.lastModificationDate = this.lastModificationDate;
           switch (type) {
             case 'delete':
               // delete the resource and refresh the view
-              this._dspApiConnection.v2.res
-                .deleteResource(payload)
-                .subscribe(
-                  (response: DeleteResourceResponse) => {
-                    // display notification and mark resource as 'deleted'
-                    this._notification.openSnackBar(
-                      `${response.result}: ${this.resource.res.label}`
-                    );
-                    this.deletedResource = true;
-                    this._componentCommsService.emit(
-                      new EmitEvent(
-                        CommsEvents.resourceDeleted
-                      )
-                    );
-                    if (this.isAnnotation) {
-                      this.regionDeleted.emit();
-                    }
-                    this._cd.markForCheck();
-                  },
-                  (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
+              this._dspApiConnection.v2.res.deleteResource(payload).subscribe(
+                (response: DeleteResourceResponse) => {
+                  // display notification and mark resource as 'deleted'
+                  this._notification.openSnackBar(
+                    `${response.result}: ${this.resource.res.label}`
+                  );
+                  this.deletedResource = true;
+                  this._componentCommsService.emit(
+                    new EmitEvent(CommsEvents.resourceDeleted)
+                  );
+                  if (this.isAnnotation) {
+                    this.regionDeleted.emit();
                   }
-                );
+                  this._cd.markForCheck();
+                },
+                (error: ApiResponseError) => {
+                  this._errorHandler.showMessage(error);
+                }
+              );
               break;
 
             case 'erase':
               // erase the resource and refresh the view
-              this._dspApiConnection.v2.res
-                .eraseResource(payload)
-                .subscribe(
-                  (response: DeleteResourceResponse) => {
-                    // display notification and mark resource as 'erased'
-                    this._notification.openSnackBar(
-                      `${response.result}: ${this.resource.res.label}`
-                    );
-                    this.deletedResource = true;
-                    this._componentCommsService.emit(
-                      new EmitEvent(
-                        CommsEvents.resourceDeleted
-                      )
-                    );
-                    // if it is an Annotation/Region which has been erases, we emit the
-                    // regionChanged event, in order to refresh the page
-                    if (this.isAnnotation) {
-                      this.regionDeleted.emit();
-                    }
-                    this._cd.markForCheck();
-                  },
-                  (error: ApiResponseError) => {
-                    this._errorHandler.showMessage(error);
+              this._dspApiConnection.v2.res.eraseResource(payload).subscribe(
+                (response: DeleteResourceResponse) => {
+                  // display notification and mark resource as 'erased'
+                  this._notification.openSnackBar(
+                    `${response.result}: ${this.resource.res.label}`
+                  );
+                  this.deletedResource = true;
+                  this._componentCommsService.emit(
+                    new EmitEvent(CommsEvents.resourceDeleted)
+                  );
+                  // if it is an Annotation/Region which has been erases, we emit the
+                  // regionChanged event, in order to refresh the page
+                  if (this.isAnnotation) {
+                    this.regionDeleted.emit();
                   }
-                );
+                  this._cd.markForCheck();
+                },
+                (error: ApiResponseError) => {
+                  this._errorHandler.showMessage(error);
+                }
+              );
               break;
           }
         } else {
@@ -447,20 +429,15 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                 const payload = new UpdateResourceMetadata();
                 payload.id = this.resource.res.id;
                 payload.type = this.resource.res.type;
-                payload.lastModificationDate =
-                  res.lastModificationDate;
+                payload.lastModificationDate = res.lastModificationDate;
                 payload.label = answer.comment;
 
                 this._dspApiConnection.v2.res
                   .updateResourceMetadata(payload)
                   .subscribe(
-                    (
-                      response: UpdateResourceMetadataResponse
-                    ) => {
-                      this.resource.res.label =
-                        payload.label;
-                      this.lastModificationDate =
-                        response.lastModificationDate;
+                    (response: UpdateResourceMetadataResponse) => {
+                      this.resource.res.label = payload.label;
+                      this.lastModificationDate = response.lastModificationDate;
                       // if annotations tab is active; a label of a region has been changed --> update regions
                       if (this.isAnnotation) {
                         this.regionChanged.emit();
@@ -468,9 +445,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                       this._cd.markForCheck();
                     },
                     (error: ApiResponseError) => {
-                      this._errorHandler.showMessage(
-                        error
-                      );
+                      this._errorHandler.showMessage(error);
                     }
                   );
               });
@@ -529,11 +504,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     // cardinality allows for a value to be added
     // value component does not already have an add value form open
     // user has write permissions
-    return (
-      isAllowed &&
-      this.propID !== prop.propDef.id &&
-      this.userCanEdit
-    );
+    return isAllowed && this.propID !== prop.propDef.id && this.userCanEdit;
   }
 
   /**
@@ -545,10 +516,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     if (this.resource.resProps) {
       this.resource.resProps
         .filter(
-          (propInfoValueArray) =>
+          propInfoValueArray =>
             propInfoValueArray.propDef.id === valueToAdd.property
         ) // filter to the correct property
-        .forEach((propInfoValue) => {
+        .forEach(propInfoValue => {
           propInfoValue.values.push(valueToAdd); // push new value to array
         });
 
@@ -574,17 +545,15 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     if (this.resource.resProps && updatedValue !== null) {
       this.resource.resProps
         .filter(
-          (propInfoValueArray) =>
-            propInfoValueArray.propDef.id ===
-            valueToReplace.property
+          propInfoValueArray =>
+            propInfoValueArray.propDef.id === valueToReplace.property
         ) // filter to the correct property
-        .forEach((filteredpropInfoValueArray) => {
+        .forEach(filteredpropInfoValueArray => {
           filteredpropInfoValueArray.values.forEach((val, index) => {
             // loop through each value of the current property
             if (val.id === valueToReplace.id) {
               // find the value that should be updated using the id of valueToReplace
-              filteredpropInfoValueArray.values[index] =
-                updatedValue; // replace value with the updated value
+              filteredpropInfoValueArray.values[index] = updatedValue; // replace value with the updated value
             }
           });
         });
@@ -612,11 +581,13 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
       this.resource.res.entityInfo.classes[this.resource.res.type]
     );
     if (!card) {
-      this.cantDeleteReason = 'This value can not be deleted because it is required.';
+      this.cantDeleteReason =
+        'This value can not be deleted because it is required.';
     }
 
     if (!this.userCanDelete) {
-      this.cantDeleteReason = 'You do not have teh permission to delete this value.';
+      this.cantDeleteReason =
+        'You do not have teh permission to delete this value.';
     }
 
     return card && this.userCanDelete;
@@ -639,7 +610,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
               valueToDelete.type
             )
         )
-        .forEach((filteredpropInfoValueArray) => {
+        .forEach(filteredpropInfoValueArray => {
           filteredpropInfoValueArray.values.forEach((val, index) => {
             // loop through each value of the current property
             if (val.id === valueToDelete.id) {
@@ -670,46 +641,62 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     if (this.pageEvent) {
       this.loading = true;
       this._incomingService
-        .getIncomingLinks(
-          this.resource.res.id,
-          0,
-          true
-        )
-        .subscribe((response: CountQueryResponse) => {
-          this.numberOffAllIncomingLinkRes = response.numberOfResults;
-          const round = this.numberOffAllIncomingLinkRes > this.amount_resources ?
-            Math.ceil(this.numberOffAllIncomingLinkRes / this.amount_resources) : 1;
+        .getIncomingLinks(this.resource.res.id, 0, true)
+        .subscribe(
+          (response: CountQueryResponse) => {
+            this.numberOffAllIncomingLinkRes = response.numberOfResults;
+            const round =
+              this.numberOffAllIncomingLinkRes > this.amount_resources
+                ? Math.ceil(
+                    this.numberOffAllIncomingLinkRes / this.amount_resources
+                  )
+                : 1;
 
-          const arr = new Array<Observable<ReadResourceSequence | CountQueryResponse | ApiResponseError>>(round);
+            const arr = new Array<
+              Observable<
+                ReadResourceSequence | CountQueryResponse | ApiResponseError
+              >
+            >(round);
 
-          for (let i = 0; i < round; i++) {
-            arr[i] = this._incomingService.getIncomingLinks(this.resource.res.id, i);
-          }
-
-          forkJoin(arr)
-            .subscribe((data: ReadResourceSequence[]) => {
-              const flattenIncomingRes = data.flatMap((a) => a.resources);
-              this.allIncomingLinkResources = this._sortingService.keySortByAlphabetical(
-                flattenIncomingRes,
-                'resourceClassLabel',
-                'label'
+            for (let i = 0; i < round; i++) {
+              arr[i] = this._incomingService.getIncomingLinks(
+                this.resource.res.id,
+                i
               );
+            }
 
-              this._getDisplayedIncomingLinkRes();
-              this.loading = false;
-              this._cd.markForCheck();
-            }, () => {
-              this.loading = false;
-            });
-        }, () => {
-          this.loading = false;
-        });
+            forkJoin(arr).subscribe(
+              (data: ReadResourceSequence[]) => {
+                const flattenIncomingRes = data.flatMap(a => a.resources);
+                this.allIncomingLinkResources =
+                  this._sortingService.keySortByAlphabetical(
+                    flattenIncomingRes,
+                    'resourceClassLabel',
+                    'label'
+                  );
+
+                this._getDisplayedIncomingLinkRes();
+                this.loading = false;
+                this._cd.markForCheck();
+              },
+              () => {
+                this.loading = false;
+              }
+            );
+          },
+          () => {
+            this.loading = false;
+          }
+        );
     }
   }
 
   private _getDisplayedIncomingLinkRes() {
     const startIndex = this.pageEvent.pageIndex * this.amount_resources;
-    this.displayedIncomingLinkResources = this.allIncomingLinkResources.slice(startIndex, startIndex + this.amount_resources);
+    this.displayedIncomingLinkResources = this.allIncomingLinkResources.slice(
+      startIndex,
+      startIndex + this.amount_resources
+    );
   }
 
   /**
@@ -754,23 +741,20 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
 
           this.resource.resProps
             .filter(
-              (resPropInfoVal) =>
-                resPropInfoVal.propDef.id ===
-                Constants.HasStandoffLinkToValue
+              resPropInfoVal =>
+                resPropInfoVal.propDef.id === Constants.HasStandoffLinkToValue
             )
-            .forEach((standoffLinkResPropInfoVal) => {
+            .forEach(standoffLinkResPropInfoVal => {
               // delete all the existing standoff link values
               standoffLinkResPropInfoVal.values = [];
               // push standoff link values retrieved for the resource
-              newStandoffLinkVals.forEach((standoffLinkVal) => {
-                standoffLinkResPropInfoVal.values.push(
-                  standoffLinkVal
-                );
+              newStandoffLinkVals.forEach(standoffLinkVal => {
+                standoffLinkResPropInfoVal.values.push(standoffLinkVal);
               });
             });
           this._cd.markForCheck();
         },
-        (err) => {
+        err => {
           console.error(err);
         }
       );
@@ -779,11 +763,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   private _getLastModificationDate(resId: string) {
     this._dspApiConnection.v2.res
       .getResource(resId)
-      .subscribe(
-        (res: ReadResource) => {
-          this.lastModificationDate = res.lastModificationDate;
-          this._cd.markForCheck();
-        }
-      );
+      .subscribe((res: ReadResource) => {
+        this.lastModificationDate = res.lastModificationDate;
+        this._cd.markForCheck();
+      });
   }
 }

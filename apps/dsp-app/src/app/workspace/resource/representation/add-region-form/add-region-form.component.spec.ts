@@ -8,29 +8,29 @@ import { TranslateModule } from '@ngx-translate/core';
  */
 @Component({ selector: 'app-add-region-form', template: '' })
 class MockAddRegionFromComponent {
-    @Input() resourceIri: string;
+  @Input() resourceIri: string;
 }
 
 // use test host component approach - create separate simple component in the test file and uses it instead the real one
 describe('AddRegionFormComponent', () => {
-    let component: MockAddRegionFromComponent;
-    let fixture: ComponentFixture<MockAddRegionFromComponent>;
+  let component: MockAddRegionFromComponent;
+  let fixture: ComponentFixture<MockAddRegionFromComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [MockAddRegionFromComponent],
-            imports: [TranslateModule.forRoot()],
-            providers: [UntypedFormBuilder],
-        }).compileComponents();
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [MockAddRegionFromComponent],
+      imports: [TranslateModule.forRoot()],
+      providers: [UntypedFormBuilder],
+    }).compileComponents();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(MockAddRegionFromComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(MockAddRegionFromComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

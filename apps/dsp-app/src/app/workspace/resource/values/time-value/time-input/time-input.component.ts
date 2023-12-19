@@ -3,354 +3,355 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { DatePipe } from '@angular/common';
-import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
 import {
-    Component,
-    DoCheck,
-    ElementRef,
-    HostBinding,
-    Input,
-    OnDestroy,
-    OnInit,
-    Optional,
-    Self,
+  Component,
+  DoCheck,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Self,
 } from '@angular/core';
 import {
-    AbstractControl,
-    ControlValueAccessor,
-    UntypedFormBuilder,
-    UntypedFormControl,
-    UntypedFormGroup,
-    FormGroupDirective,
-    NgControl,
-    NgForm,
-    ValidatorFn,
-    Validators,
+  AbstractControl,
+  ControlValueAccessor,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  FormGroupDirective,
+  NgControl,
+  NgForm,
+  ValidatorFn,
+  Validators,
 } from '@angular/forms';
 import {
-    CanUpdateErrorState,
-    ErrorStateMatcher,
-    mixinErrorState,
-    _AbstractConstructor,
-    _Constructor,
+  CanUpdateErrorState,
+  ErrorStateMatcher,
+  mixinErrorState,
+  _AbstractConstructor,
+  _Constructor,
 } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import {
-    CalendarDate,
-    CalendarPeriod,
-    GregorianCalendarDate,
+  CalendarDate,
+  CalendarPeriod,
+  GregorianCalendarDate,
 } from '@dasch-swiss/jdnconvertiblecalendar';
 import { Subject } from 'rxjs';
 import { CustomRegex } from '../../custom-regex';
+import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
 
 /** a valid time value must have both a date and a time, or both inputs must be null */
 export function dateTimeValidator(
-    otherControl: UntypedFormControl
+  otherControl: UntypedFormControl
 ): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-        // valid if both date and time are null or have values, excluding empty strings
-        const invalid = !(
-            (control.value === null && otherControl.value === null) ||
-            (control.value !== null &&
-                control.value !== '' &&
-                otherControl.value !== null &&
-                otherControl.value !== '')
-        );
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    // valid if both date and time are null or have values, excluding empty strings
+    const invalid = !(
+      (control.value === null && otherControl.value === null) ||
+      (control.value !== null &&
+        control.value !== '' &&
+        otherControl.value !== null &&
+        otherControl.value !== '')
+    );
 
-        return invalid
-            ? { validDateTimeRequired: { value: control.value } }
-            : null;
-    };
+    return invalid ? { validDateTimeRequired: { value: control.value } } : null;
+  };
 }
 
 type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> &
-    _AbstractConstructor<CanUpdateErrorState>;
+  _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
-    constructor(
-        public _defaultErrorStateMatcher: ErrorStateMatcher,
-        public _parentForm: NgForm,
-        public _parentFormGroup: FormGroupDirective,
-        public ngControl: NgControl,
-        public stateChanges: Subject<void>
-    ) {}
+  constructor(
+    public _defaultErrorStateMatcher: ErrorStateMatcher,
+    public _parentForm: NgForm,
+    public _parentFormGroup: FormGroupDirective,
+    public ngControl: NgControl,
+    public stateChanges: Subject<void>
+  ) {}
 }
 const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
-    mixinErrorState(MatInputBase);
+  mixinErrorState(MatInputBase);
 
 export class DateTime {
-    /**
-     * @param date DateTime's date.
-     * @param time DateTime's time.
-     */
-    constructor(public date: GregorianCalendarDate, public time: string) {}
+  /**
+   * @param date DateTime's date.
+   * @param time DateTime's time.
+   */
+  constructor(
+    public date: GregorianCalendarDate,
+    public time: string
+  ) {}
 }
 
 @Component({
-    selector: 'app-time-input',
-    templateUrl: './time-input.component.html',
-    styleUrls: ['./time-input.component.scss'],
-    providers: [
-        { provide: MatFormFieldControl, useExisting: TimeInputComponent },
-        { provide: Subject },
-    ],
+  selector: 'app-time-input',
+  templateUrl: './time-input.component.html',
+  styleUrls: ['./time-input.component.scss'],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: TimeInputComponent },
+    { provide: Subject },
+  ],
 })
 export class TimeInputComponent
-    extends _MatInputMixinBase
-    implements
-        ControlValueAccessor,
-        MatFormFieldControl<string>,
-        DoCheck,
-        CanUpdateErrorState,
-        OnDestroy,
-        OnInit
+  extends _MatInputMixinBase
+  implements
+    ControlValueAccessor,
+    MatFormFieldControl<string>,
+    DoCheck,
+    CanUpdateErrorState,
+    OnDestroy,
+    OnInit
 {
-    static nextId = 0;
+  static nextId = 0;
 
-    form: UntypedFormGroup;
-    @HostBinding() id = `app-time-input-${TimeInputComponent.nextId++}`;
-    focused = false;
-    errorState = false;
-    controlType = 'app-time-input';
-    matcher = new ValueErrorStateMatcher();
-    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-    onChange = (_: any) => {};
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    onTouched = () => {};
+  form: UntypedFormGroup;
+  @HostBinding() id = `app-time-input-${TimeInputComponent.nextId++}`;
+  focused = false;
+  errorState = false;
+  controlType = 'app-time-input';
+  matcher = new ValueErrorStateMatcher();
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+  onChange = (_: any) => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onTouched = () => {};
 
-    @Input() dateLabel = 'Date';
-    @Input() timeLabel = 'Time';
-    @Input() valueRequiredValidator = true;
+  @Input() dateLabel = 'Date';
+  @Input() timeLabel = 'Time';
+  @Input() valueRequiredValidator = true;
 
-    dateFormControl: UntypedFormControl;
-    timeFormControl: UntypedFormControl;
+  dateFormControl: UntypedFormControl;
+  timeFormControl: UntypedFormControl;
 
-    datePipe = new DatePipe('en-US');
+  datePipe = new DatePipe('en-US');
 
-    get empty() {
-        const userInput = this.form.value;
-        return !userInput.date && !userInput.time;
-    }
+  get empty() {
+    const userInput = this.form.value;
+    return !userInput.date && !userInput.time;
+  }
 
-    @HostBinding('class.floating')
-    get shouldLabelFloat() {
-        return this.focused || !this.empty;
-    }
+  @HostBinding('class.floating')
+  get shouldLabelFloat() {
+    return this.focused || !this.empty;
+  }
 
-    @Input()
-    get required() {
-        return this._required;
-    }
+  @Input()
+  get required() {
+    return this._required;
+  }
 
-    set required(req) {
-        this._required = coerceBooleanProperty(req);
-        this.stateChanges.next();
-    }
+  set required(req) {
+    this._required = coerceBooleanProperty(req);
+    this.stateChanges.next();
+  }
 
-    private _required = false;
+  private _required = false;
 
-    @Input()
-    get disabled(): boolean {
-        return this._disabled;
-    }
+  @Input()
+  get disabled(): boolean {
+    return this._disabled;
+  }
 
-    set disabled(value: boolean) {
-        this._disabled = coerceBooleanProperty(value);
-        this._disabled ? this.form.disable() : this.form.enable();
-        this.stateChanges.next();
-    }
+  set disabled(value: boolean) {
+    this._disabled = coerceBooleanProperty(value);
+    this._disabled ? this.form.disable() : this.form.enable();
+    this.stateChanges.next();
+  }
 
-    private _disabled = false;
+  private _disabled = false;
 
-    @Input()
-    get placeholder() {
-        return this._placeholder;
-    }
+  @Input()
+  get placeholder() {
+    return this._placeholder;
+  }
 
-    set placeholder(plh) {
-        this._placeholder = plh;
-        this.stateChanges.next();
-    }
+  set placeholder(plh) {
+    this._placeholder = plh;
+    this.stateChanges.next();
+  }
 
-    private _placeholder: string;
+  private _placeholder: string;
 
-    @HostBinding('attr.aria-describedby') describedBy = '';
+  @HostBinding('attr.aria-describedby') describedBy = '';
 
-    setDescribedByIds(ids: string[]) {
-        this.describedBy = ids.join(' ');
-    }
+  setDescribedByIds(ids: string[]) {
+    this.describedBy = ids.join(' ');
+  }
 
-    @Input()
-    get value(): string | null {
-        if (this.form.valid) {
-            try {
-                const userInput = new DateTime(
-                    this.form.value.date,
-                    this.form.value.time
-                );
-                return this.userInputToTimestamp(userInput);
-            } catch {
-                return null;
-            }
-        }
+  @Input()
+  get value(): string | null {
+    if (this.form.valid) {
+      try {
+        const userInput = new DateTime(
+          this.form.value.date,
+          this.form.value.time
+        );
+        return this.userInputToTimestamp(userInput);
+      } catch {
         return null;
+      }
     }
+    return null;
+  }
 
-    set value(timestamp: string | null) {
-        if (timestamp !== null) {
-            try {
-                const dateTime = this.convertTimestampToDateTime(timestamp);
-                this.form.setValue({
-                    date: dateTime.date,
-                    time: dateTime.time,
-                });
-            } catch {
-                this.form.setValue({ date: null, time: null });
-            }
-        } else {
-            this.form.setValue({ date: null, time: null });
-        }
-
-        this.dateFormControl.updateValueAndValidity();
-        this.timeFormControl.updateValueAndValidity();
-
-        this.stateChanges.next();
-    }
-
-    @Input() errorStateMatcher: ErrorStateMatcher;
-
-    constructor(
-        fb: UntypedFormBuilder,
-        @Optional() @Self() public ngControl: NgControl,
-        private _stateChanges: Subject<void>,
-        private _fm: FocusMonitor,
-        private _elRef: ElementRef<HTMLElement>,
-        @Optional() _parentForm: NgForm,
-        @Optional() _parentFormGroup: FormGroupDirective,
-        _defaultErrorStateMatcher: ErrorStateMatcher
-    ) {
-        super(
-            _defaultErrorStateMatcher,
-            _parentForm,
-            _parentFormGroup,
-            ngControl,
-            _stateChanges
-        );
-
-        this.dateFormControl = new UntypedFormControl(null);
-
-        this.timeFormControl = new UntypedFormControl(null);
-
-        this.form = fb.group({
-            date: this.dateFormControl,
-            time: this.timeFormControl,
+  set value(timestamp: string | null) {
+    if (timestamp !== null) {
+      try {
+        const dateTime = this.convertTimestampToDateTime(timestamp);
+        this.form.setValue({
+          date: dateTime.date,
+          time: dateTime.time,
         });
-
-        _fm.monitor(_elRef.nativeElement, true).subscribe((origin) => {
-            this.focused = !!origin;
-            this.stateChanges.next();
-        });
-
-        if (this.ngControl != null) {
-            this.ngControl.valueAccessor = this;
-        }
+      } catch {
+        this.form.setValue({ date: null, time: null });
+      }
+    } else {
+      this.form.setValue({ date: null, time: null });
     }
 
-    ngOnInit() {
-        if (this.valueRequiredValidator) {
-            this.dateFormControl.setValidators([
-                Validators.required,
-                dateTimeValidator(this.timeFormControl),
-            ]);
-            this.timeFormControl.setValidators([
-                Validators.required,
-                dateTimeValidator(this.dateFormControl),
-                Validators.pattern(CustomRegex.TIME_REGEX),
-            ]);
-        } else {
-            this.dateFormControl.setValidators(
-                dateTimeValidator(this.timeFormControl)
-            );
-            this.timeFormControl.setValidators([
-                dateTimeValidator(this.dateFormControl),
-                Validators.pattern(CustomRegex.TIME_REGEX),
-            ]);
-        }
+    this.dateFormControl.updateValueAndValidity();
+    this.timeFormControl.updateValueAndValidity();
 
-        this.dateFormControl.updateValueAndValidity();
-        this.timeFormControl.updateValueAndValidity();
+    this.stateChanges.next();
+  }
+
+  @Input() errorStateMatcher: ErrorStateMatcher;
+
+  constructor(
+    fb: UntypedFormBuilder,
+    @Optional() @Self() public ngControl: NgControl,
+    private _stateChanges: Subject<void>,
+    private _fm: FocusMonitor,
+    private _elRef: ElementRef<HTMLElement>,
+    @Optional() _parentForm: NgForm,
+    @Optional() _parentFormGroup: FormGroupDirective,
+    _defaultErrorStateMatcher: ErrorStateMatcher
+  ) {
+    super(
+      _defaultErrorStateMatcher,
+      _parentForm,
+      _parentFormGroup,
+      ngControl,
+      _stateChanges
+    );
+
+    this.dateFormControl = new UntypedFormControl(null);
+
+    this.timeFormControl = new UntypedFormControl(null);
+
+    this.form = fb.group({
+      date: this.dateFormControl,
+      time: this.timeFormControl,
+    });
+
+    _fm.monitor(_elRef.nativeElement, true).subscribe(origin => {
+      this.focused = !!origin;
+      this.stateChanges.next();
+    });
+
+    if (this.ngControl != null) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  ngOnInit() {
+    if (this.valueRequiredValidator) {
+      this.dateFormControl.setValidators([
+        Validators.required,
+        dateTimeValidator(this.timeFormControl),
+      ]);
+      this.timeFormControl.setValidators([
+        Validators.required,
+        dateTimeValidator(this.dateFormControl),
+        Validators.pattern(CustomRegex.TIME_REGEX),
+      ]);
+    } else {
+      this.dateFormControl.setValidators(
+        dateTimeValidator(this.timeFormControl)
+      );
+      this.timeFormControl.setValidators([
+        dateTimeValidator(this.dateFormControl),
+        Validators.pattern(CustomRegex.TIME_REGEX),
+      ]);
     }
 
-    ngDoCheck() {
-        if (this.ngControl) {
-            this.updateErrorState();
-        }
+    this.dateFormControl.updateValueAndValidity();
+    this.timeFormControl.updateValueAndValidity();
+  }
+
+  ngDoCheck() {
+    if (this.ngControl) {
+      this.updateErrorState();
     }
+  }
 
-    ngOnDestroy() {
-        this.stateChanges.complete();
+  ngOnDestroy() {
+    this.stateChanges.complete();
+  }
+
+  onContainerClick(event: MouseEvent) {
+    if ((event.target as Element).tagName.toLowerCase() !== 'input') {
+      this._elRef.nativeElement.querySelector('input').focus();
     }
+  }
 
-    onContainerClick(event: MouseEvent) {
-        if ((event.target as Element).tagName.toLowerCase() !== 'input') {
-            this._elRef.nativeElement.querySelector('input').focus();
-        }
-    }
+  writeValue(datetime: string | null): void {
+    this.value = datetime;
+  }
 
-    writeValue(datetime: string | null): void {
-        this.value = datetime;
-    }
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
 
-    registerOnChange(fn: any): void {
-        this.onChange = fn;
-    }
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
 
-    registerOnTouched(fn: any): void {
-        this.onTouched = fn;
-    }
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
 
-    setDisabledState(isDisabled: boolean): void {
-        this.disabled = isDisabled;
-    }
+  _handleInput(): void {
+    this.dateFormControl.updateValueAndValidity();
+    this.timeFormControl.updateValueAndValidity();
+    this.onChange(this.value);
+  }
 
-    _handleInput(): void {
-        this.dateFormControl.updateValueAndValidity();
-        this.timeFormControl.updateValueAndValidity();
-        this.onChange(this.value);
-    }
+  // return converted Date obj as a string without the milliseconds
+  userInputToTimestamp(userInput: DateTime): string {
+    const splitTime = userInput.time.split(':');
 
-    // return converted Date obj as a string without the milliseconds
-    userInputToTimestamp(userInput: DateTime): string {
-        const splitTime = userInput.time.split(':');
+    // in a Javascript Date, the month is 0-based so we need to subtract 1
+    const updateDate = new Date(
+      userInput.date.toCalendarPeriod().periodStart.year,
+      userInput.date.toCalendarPeriod().periodStart.month - 1,
+      userInput.date.toCalendarPeriod().periodStart.day,
+      Number(splitTime[0]),
+      Number(splitTime[1])
+    );
 
-        // in a Javascript Date, the month is 0-based so we need to subtract 1
-        const updateDate = new Date(
-            userInput.date.toCalendarPeriod().periodStart.year,
-            userInput.date.toCalendarPeriod().periodStart.month - 1,
-            userInput.date.toCalendarPeriod().periodStart.day,
-            Number(splitTime[0]),
-            Number(splitTime[1])
-        );
+    return updateDate.toISOString().split('.')[0] + 'Z';
+  }
 
-        return updateDate.toISOString().split('.')[0] + 'Z';
-    }
+  // converts and returns a unix timestamp string as an array consisting of a GregorianCalendarDate and a string
+  convertTimestampToDateTime(timestamp: string): DateTime {
+    const calendarDate = new CalendarDate(
+      Number(this.datePipe.transform(timestamp, 'y')),
+      Number(this.datePipe.transform(timestamp, 'M')),
+      Number(this.datePipe.transform(timestamp, 'd'))
+    );
 
-    // converts and returns a unix timestamp string as an array consisting of a GregorianCalendarDate and a string
-    convertTimestampToDateTime(timestamp: string): DateTime {
-        const calendarDate = new CalendarDate(
-            Number(this.datePipe.transform(timestamp, 'y')),
-            Number(this.datePipe.transform(timestamp, 'M')),
-            Number(this.datePipe.transform(timestamp, 'd'))
-        );
+    const date = new GregorianCalendarDate(
+      new CalendarPeriod(calendarDate, calendarDate)
+    );
 
-        const date = new GregorianCalendarDate(
-            new CalendarPeriod(calendarDate, calendarDate)
-        );
+    const time = this.datePipe.transform(timestamp, 'HH:mm');
 
-        const time = this.datePipe.transform(timestamp, 'HH:mm');
+    const dateTime = new DateTime(date, time);
 
-        const dateTime = new DateTime(date, time);
-
-        return dateTime;
-    }
+    return dateTime;
+  }
 }

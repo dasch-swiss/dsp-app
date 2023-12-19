@@ -8,38 +8,38 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import {
-    CountQueryResponse,
-    MockResource,
-    ReadResourceSequence,
-    SearchEndpointV2,
+  CountQueryResponse,
+  MockResource,
+  ReadResourceSequence,
+  SearchEndpointV2,
 } from '@dasch-swiss/dsp-js';
-import { of } from 'rxjs';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { ListViewComponent, SearchParams } from './list-view.component';
-import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { ListViewComponent, SearchParams } from './list-view.component';
 
 /**
  * test component to simulate child component, here resource-list.
  */
 @Component({
-    selector: 'app-resource-list',
-    template: '',
+  selector: 'app-resource-list',
+  template: '',
 })
 class TestResourceListComponent {
-    @Input() resources: ReadResourceSequence;
+  @Input() resources: ReadResourceSequence;
 
-    @Input() selectedResourceIdx: number;
+  @Input() selectedResourceIdx: number;
 
-    @Input() withMultipleSelection?: boolean = false;
+  @Input() withMultipleSelection?: boolean = false;
 }
 
 /**
  * test component to simulate child component, here progress-indicator from action module.
  */
 @Component({
-    selector: 'app-progress-indicator',
-    template: '',
+  selector: 'app-progress-indicator',
+  template: '',
 })
 class TestProgressIndicatorComponent {}
 
@@ -47,184 +47,184 @@ class TestProgressIndicatorComponent {}
  * test parent component to simulate integration of list-view component.
  */
 @Component({
-    template: ` <app-list-view
-            #listViewFulltext
-            [search]="fulltext"
-            (selectedResources)="openResource($event)"
-        ></app-list-view>
-        <app-list-view
-            #listViewGravsearch
-            [search]="gravsearch"
-            (selectedResources)="openResource($event)"
-        ></app-list-view>`,
+  template: ` <app-list-view
+      #listViewFulltext
+      [search]="fulltext"
+      (selectedResources)="openResource($event)"></app-list-view>
+    <app-list-view
+      #listViewGravsearch
+      [search]="gravsearch"
+      (selectedResources)="openResource($event)"></app-list-view>`,
 })
 class TestParentComponent implements OnInit {
-    @ViewChild('listViewFulltext') listViewFulltext: ListViewComponent;
-    @ViewChild('listViewGravsearch') listViewGravsearch: ListViewComponent;
+  @ViewChild('listViewFulltext') listViewFulltext: ListViewComponent;
+  @ViewChild('listViewGravsearch') listViewGravsearch: ListViewComponent;
 
-    fulltext: SearchParams;
-    gravsearch: SearchParams;
+  fulltext: SearchParams;
+  gravsearch: SearchParams;
 
-    resIri: string;
+  resIri: string;
 
-    ngOnInit() {
-        this.fulltext = {
-            query: 'fake query',
-            mode: 'fulltext',
-            filter: {
-                limitToProject: 'http://rdfh.ch/projects/0803',
-            },
-        };
+  ngOnInit() {
+    this.fulltext = {
+      query: 'fake query',
+      mode: 'fulltext',
+      filter: {
+        limitToProject: 'http://rdfh.ch/projects/0803',
+      },
+    };
 
-        this.gravsearch = {
-            query: 'fake query OFFSET 0',
-            mode: 'gravsearch',
-        };
-    }
+    this.gravsearch = {
+      query: 'fake query OFFSET 0',
+      mode: 'gravsearch',
+    };
+  }
 
-    openResource(id: string) {
-        this.resIri = id;
-    }
+  openResource(id: string) {
+    this.resIri = id;
+  }
 }
 
 describe('ListViewComponent', () => {
-    let testHostComponent: TestParentComponent;
-    let testHostFixture: ComponentFixture<TestParentComponent>;
+  let testHostComponent: TestParentComponent;
+  let testHostFixture: ComponentFixture<TestParentComponent>;
 
-    beforeEach(waitForAsync(() => {
-        const searchSpyObj = {
-            v2: {
-                search: jasmine.createSpyObj('search', [
-                    'doFulltextSearch',
-                    'doFulltextSearchCountQuery',
-                    'doExtendedSearch',
-                    'doExtendedSearchCountQuery',
-                ]),
+  beforeEach(waitForAsync(() => {
+    const searchSpyObj = {
+      v2: {
+        search: jasmine.createSpyObj('search', [
+          'doFulltextSearch',
+          'doFulltextSearchCountQuery',
+          'doExtendedSearch',
+          'doExtendedSearchCountQuery',
+        ]),
+      },
+    };
+
+    TestBed.configureTestingModule({
+      declarations: [
+        ListViewComponent,
+        TestParentComponent,
+        TestProgressIndicatorComponent,
+        TestResourceListComponent,
+      ],
+      imports: [
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatIconModule,
+        MatPaginatorModule,
+        MatSnackBarModule,
+      ],
+      providers: [
+        MockProvider(AppLoggingService),
+        {
+          provide: DspApiConnectionToken,
+          useValue: searchSpyObj,
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            parent: {
+              snapshot: {
+                url: [{ path: 'project' }],
+              },
             },
-        };
+          },
+        },
+      ],
+    }).compileComponents();
+  }));
 
-        TestBed.configureTestingModule({
-            declarations: [
-                ListViewComponent,
-                TestParentComponent,
-                TestProgressIndicatorComponent,
-                TestResourceListComponent,
-            ],
-            imports: [
-                BrowserAnimationsModule,
-                MatButtonModule,
-                MatDialogModule,
-                MatIconModule,
-                MatPaginatorModule,
-                MatSnackBarModule,
-            ],
-            providers: [
-                MockProvider(AppLoggingService),
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: searchSpyObj,
-                },
-                {
-                    provide: ActivatedRoute,
-                    useValue: {
-                        parent: {
-                            snapshot: {
-                                url: [{ path: 'project' }],
-                            },
-                        },
-                    },
-                },
-            ],
-        }).compileComponents();
-    }));
+  beforeEach(() => {
+    const searchSpy = TestBed.inject(DspApiConnectionToken);
 
-    beforeEach(() => {
-        const searchSpy = TestBed.inject(DspApiConnectionToken);
-
-        (
-            searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doFulltextSearchCountQuery.and.callFake(() => {
-            const num = new CountQueryResponse();
-            num.numberOfResults = 5;
-            return of(num);
-        });
-
-        (
-            searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doFulltextSearch.and.callFake(() => {
-            let resources: ReadResourceSequence;
-            // mock list of resourcses to simulate full-text search response
-            MockResource.getTestThings(5).subscribe((res) => {
-                resources = res;
-            });
-            if (resources.resources.length) {
-                return of(resources);
-            }
-        });
-
-        (
-            searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doExtendedSearchCountQuery.and.callFake(() => {
-            const num = new CountQueryResponse();
-            num.numberOfResults = 5;
-            return of(num);
-        });
-
-        (
-            searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-        ).doExtendedSearch.and.callFake(() => {
-            let resources: ReadResourceSequence;
-            // mock list of resourcses to simulate full-text search response
-            MockResource.getTestThings(5).subscribe((res) => {
-                resources = res;
-            });
-            if (resources.resources.length) {
-                return of(resources);
-            }
-        });
-
-        testHostFixture = TestBed.createComponent(TestParentComponent);
-        testHostComponent = testHostFixture.componentInstance;
-        testHostFixture.detectChanges();
-
-        expect(testHostComponent).toBeTruthy();
+    (
+      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
+    ).doFulltextSearchCountQuery.and.callFake(() => {
+      const num = new CountQueryResponse();
+      num.numberOfResults = 5;
+      return of(num);
     });
 
-    it('should do fulltext search', () => {
-        const searchSpy = TestBed.inject(DspApiConnectionToken);
-
-        // do fulltext search count query
-        expect(
-            searchSpy.v2.search.doFulltextSearchCountQuery
-        ).toHaveBeenCalledWith('fake query', 0, {
-            limitToProject: 'http://rdfh.ch/projects/0803',
-        });
-
-        // do fulltext search
-        expect(searchSpy.v2.search.doFulltextSearch).toHaveBeenCalledWith(
-            'fake query',
-            0,
-            { limitToProject: 'http://rdfh.ch/projects/0803' }
-        );
-        expect(
-            testHostComponent.listViewFulltext.resources.resources.length
-        ).toBe(5);
+    (
+      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
+    ).doFulltextSearch.and.callFake(() => {
+      let resources: ReadResourceSequence;
+      // mock list of resourcses to simulate full-text search response
+      MockResource.getTestThings(5).subscribe(res => {
+        resources = res;
+      });
+      if (resources.resources.length) {
+        return of(resources);
+      }
     });
 
-    it('should do advanced search', () => {
-        const searchSpy = TestBed.inject(DspApiConnectionToken);
-
-        // do advanced search count query
-        expect(
-            searchSpy.v2.search.doExtendedSearchCountQuery
-        ).toHaveBeenCalledWith('fake query OFFSET 0');
-
-        // do advanced search
-        expect(searchSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-            'fake query OFFSET 0'
-        );
-        expect(
-            testHostComponent.listViewGravsearch.resources.resources.length
-        ).toBe(5);
+    (
+      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
+    ).doExtendedSearchCountQuery.and.callFake(() => {
+      const num = new CountQueryResponse();
+      num.numberOfResults = 5;
+      return of(num);
     });
+
+    (
+      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
+    ).doExtendedSearch.and.callFake(() => {
+      let resources: ReadResourceSequence;
+      // mock list of resourcses to simulate full-text search response
+      MockResource.getTestThings(5).subscribe(res => {
+        resources = res;
+      });
+      if (resources.resources.length) {
+        return of(resources);
+      }
+    });
+
+    testHostFixture = TestBed.createComponent(TestParentComponent);
+    testHostComponent = testHostFixture.componentInstance;
+    testHostFixture.detectChanges();
+
+    expect(testHostComponent).toBeTruthy();
+  });
+
+  it('should do fulltext search', () => {
+    const searchSpy = TestBed.inject(DspApiConnectionToken);
+
+    // do fulltext search count query
+    expect(searchSpy.v2.search.doFulltextSearchCountQuery).toHaveBeenCalledWith(
+      'fake query',
+      0,
+      {
+        limitToProject: 'http://rdfh.ch/projects/0803',
+      }
+    );
+
+    // do fulltext search
+    expect(searchSpy.v2.search.doFulltextSearch).toHaveBeenCalledWith(
+      'fake query',
+      0,
+      { limitToProject: 'http://rdfh.ch/projects/0803' }
+    );
+    expect(testHostComponent.listViewFulltext.resources.resources.length).toBe(
+      5
+    );
+  });
+
+  it('should do advanced search', () => {
+    const searchSpy = TestBed.inject(DspApiConnectionToken);
+
+    // do advanced search count query
+    expect(searchSpy.v2.search.doExtendedSearchCountQuery).toHaveBeenCalledWith(
+      'fake query OFFSET 0'
+    );
+
+    // do advanced search
+    expect(searchSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
+      'fake query OFFSET 0'
+    );
+    expect(
+      testHostComponent.listViewGravsearch.resources.resources.length
+    ).toBe(5);
+  });
 });

@@ -1,32 +1,43 @@
-import { ConnectionPositionPair, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
+import {
+  ConnectionPositionPair,
+  Overlay,
+  OverlayConfig,
+  OverlayRef,
+  PositionStrategy,
+} from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
-    Output,
-    TemplateRef,
-    ViewChild,
-    ViewContainerRef
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { ApiResponseError, Constants, KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
-import { Subscription } from 'rxjs';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
-    ComponentCommunicationEventService,
-    Events
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { SearchParams } from '../../results/list-view/list-view.component';
-import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+  ApiResponseError,
+  Constants,
+  KnoraApiConnection,
+  ReadProject,
+} from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import {
+  ComponentCommunicationEventService,
+  Events,
+} from '@dsp-app/src/app/main/services/component-communication-event.service';
+import { Subscription } from 'rxjs';
+import { SearchParams } from '../../results/list-view/list-view.component';
 
 export interface PrevSearchItem {
   projectIri?: string;
@@ -39,7 +50,7 @@ const resolvedPromise = Promise.resolve(null);
 @Component({
   selector: 'app-fulltext-search',
   templateUrl: './fulltext-search.component.html',
-  styleUrls: ['./fulltext-search.component.scss']
+  styleUrls: ['./fulltext-search.component.scss'],
 })
 export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   /**
@@ -114,7 +125,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   // do not show the following projects: default system projects from knora
   hiddenProjects: string[] = [
     Constants.SystemProjectIRI,
-    Constants.DefaultSharedOntologyIRI
+    Constants.DefaultSharedOntologyIRI,
   ];
 
   // toggle phone panel
@@ -130,8 +141,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     private _sortingService: SortingService,
     private _viewContainerRef: ViewContainerRef,
     private _notification: NotificationService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     // on page refresh, split the url into an array of strings and assign the `searchQuery` to the last element of this array of strings
@@ -177,9 +187,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     // reset form
     resolvedPromise.then(() => {
       if (localStorage.getItem('currentProject') !== null) {
-        this.setProject(
-          JSON.parse(localStorage.getItem('currentProject'))
-        );
+        this.setProject(JSON.parse(localStorage.getItem('currentProject')));
       }
     });
   }
@@ -187,9 +195,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     // unsubscribe from all subscriptions incomponentCommsSubscriptions when component is destroyed
     if (this.componentCommsSubscriptions !== undefined) {
-      this.componentCommsSubscriptions.forEach((sub) =>
-        sub.unsubscribe()
-      );
+      this.componentCommsSubscriptions.forEach(sub => sub.unsubscribe());
     }
   }
 
@@ -198,17 +204,14 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
    */
   getAllProjects(): void {
     this._projectsApiService.list().subscribe(
-      (response) => {
+      response => {
         // filter out deactivated projects and system projects
         this.projects = response.projects.filter(
-          (p) =>
-            p.status === true && !this.hiddenProjects.includes(p.id)
+          p => p.status === true && !this.hiddenProjects.includes(p.id)
         );
 
         if (localStorage.getItem('currentProject') !== null) {
-          this.project = JSON.parse(
-            localStorage.getItem('currentProject')
-          );
+          this.project = JSON.parse(localStorage.getItem('currentProject'));
         }
         this.projects = this._sortingService.keySortByAlphabetical(
           this.projects,
@@ -227,11 +230,9 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
    * @param id Project Id
    */
   getProject(id: string): void {
-    this._projectsApiService.get(id)
-      .subscribe(
-        response => {
-          this.setProject(response.project);
-        });
+    this._projectsApiService.get(id).subscribe(response => {
+      this.setProject(response.project);
+    });
   }
 
   /**
@@ -264,7 +265,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
       hasBackdrop: true,
       backdropClass: 'cdk-overlay-transparent-backdrop',
       positionStrategy: this.getOverlayPosition(),
-      scrollStrategy: this._overlay.scrollStrategies.block()
+      scrollStrategy: this._overlay.scrollStrategies.block(),
     });
 
     this.overlayRef = this._overlay.create(config);
@@ -291,7 +292,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
       new ConnectionPositionPair(
         { originX: 'start', originY: 'top' },
         { overlayX: 'start', overlayY: 'bottom' }
-      )
+      ),
     ];
 
     // tslint:disable-next-line: max-line-length
@@ -346,23 +347,20 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
       // a search value is expected to have at least length of 3
       if (this.searchQuery.length > 2) {
         let currentQuery: PrevSearchItem = {
-          query: this.searchQuery
+          query: this.searchQuery,
         };
 
         if (this.projectIri) {
           currentQuery = {
             projectIri: this.projectIri,
             projectLabel: this.projectLabel,
-            query: this.searchQuery
+            query: this.searchQuery,
           };
         }
 
         existingPrevSearch.push(currentQuery);
 
-        localStorage.setItem(
-          'prevSearch',
-          JSON.stringify(existingPrevSearch)
-        );
+        localStorage.setItem('prevSearch', JSON.stringify(existingPrevSearch));
       }
 
       this.emitSearchParams();
@@ -464,12 +462,12 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   emitSearchParams() {
     const searchParams: SearchParams = {
       query: this.searchQuery,
-      mode: 'fulltext'
+      mode: 'fulltext',
     };
 
     if (this.projectIri !== undefined) {
       searchParams.filter = {
-        limitToProject: this.projectIri
+        limitToProject: this.projectIri,
       };
     }
 

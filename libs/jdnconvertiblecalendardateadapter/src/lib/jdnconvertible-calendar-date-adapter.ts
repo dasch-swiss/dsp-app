@@ -12,8 +12,8 @@ import {
   JDNConvertibleCalendar,
   JulianCalendarDate,
   IslamicCalendarDate,
-} from "@dasch-swiss/jdnconvertiblecalendar";
-import { JDNConvertibleCalendarNames } from '@dasch-swiss/jdnconvertiblecalendar';
+  JDNConvertibleCalendarNames,
+} from '@dasch-swiss/jdnconvertiblecalendar';
 import { ACTIVE_CALENDAR } from './active_calendar_token';
 
 /**
@@ -64,13 +64,17 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     );
 
     // get active calendar from token
-    this.activeCalendarToken.subscribe((activeCal: "Gregorian" | "Julian" | "Islamic") => {
-      if (JDNConvertibleCalendar.supportedCalendars.indexOf(activeCal) === -1) {
-        throw Error('Invalid value for token ACTIVE_CALENDAR: ' + activeCal);
-      }
+    this.activeCalendarToken.subscribe(
+      (activeCal: 'Gregorian' | 'Julian' | 'Islamic') => {
+        if (
+          JDNConvertibleCalendar.supportedCalendars.indexOf(activeCal) === -1
+        ) {
+          throw Error('Invalid value for token ACTIVE_CALENDAR: ' + activeCal);
+        }
 
-      this.activeCalendar = activeCal;
-    });
+        this.activeCalendar = activeCal;
+      }
+    );
   }
 
   /**

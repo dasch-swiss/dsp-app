@@ -3,18 +3,18 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 
-import { RepresentationService } from './representation.service';
-import { MockProvider } from 'ng-mocks';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import { MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { RepresentationService } from './representation.service';
 
 const appInitSpy = {
-    dspAppConfig: {
-        iriBase: 'http://rdfh.ch',
-    },
+  dspAppConfig: {
+    iriBase: 'http://rdfh.ch',
+  },
 };
 
 const knoraJson = `{
@@ -28,46 +28,38 @@ const knoraJson = `{
 }`;
 
 describe('RepresentationService', () => {
-    const httpClientSpyObj = jasmine.createSpyObj('HttpClient', ['get']);
-    let service: RepresentationService;
+  const httpClientSpyObj = jasmine.createSpyObj('HttpClient', ['get']);
+  let service: RepresentationService;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientTestingModule,
-                MatSnackBarModule,
-                MatDialogModule,
-            ],
-            providers: [
-                AppConfigService,
-                MockProvider(AppLoggingService),
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: appInitSpy,
-                },
-                {
-                    provide: HttpClient,
-                    useValue: httpClientSpyObj,
-                },
-            ],
-        });
-
-        service = TestBed.inject(RepresentationService);
-        expect(service).toBeTruthy();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, MatSnackBarModule, MatDialogModule],
+      providers: [
+        AppConfigService,
+        MockProvider(AppLoggingService),
+        {
+          provide: DspApiConnectionToken,
+          useValue: appInitSpy,
+        },
+        {
+          provide: HttpClient,
+          useValue: httpClientSpyObj,
+        },
+      ],
     });
 
-    it('should return the file info', () => {
-        const httpClientSpy = TestBed.inject(HttpClient);
-        (httpClientSpy as jasmine.SpyObj<HttpClient>).get.and.returnValue(
-            of(knoraJson)
-        );
+    service = TestBed.inject(RepresentationService);
+    expect(service).toBeTruthy();
+  });
 
-        service
-            .getFileInfo(
-                'http://0.0.0.0:1024/1111/7vpVORXYoFV-FkzJ5Fg4bkU.mp3/file'
-            )
-            .subscribe((data) =>
-                expect(data as unknown as string).toEqual(knoraJson)
-            );
-    });
+  it('should return the file info', () => {
+    const httpClientSpy = TestBed.inject(HttpClient);
+    (httpClientSpy as jasmine.SpyObj<HttpClient>).get.and.returnValue(
+      of(knoraJson)
+    );
+
+    service
+      .getFileInfo('http://0.0.0.0:1024/1111/7vpVORXYoFV-FkzJ5Fg4bkU.mp3/file')
+      .subscribe(data => expect(data as unknown as string).toEqual(knoraJson));
+  });
 });

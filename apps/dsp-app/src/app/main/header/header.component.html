@@ -1,58 +1,51 @@
 <mat-toolbar class="toolbar-header">
-    <span class="logo" routerLink="{{homeLink}}">
-        <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color"></mat-icon>
-        <div class="title-container">
-            <div class="title desktop-only">DaSCH Service Platform</div>
-            <div class="title phone-tablet-only">DSP</div>
-            <div class="mat-caption right">
-                <span *ngIf="dsp.production">{{ dsp.release }}</span>
-                <span *ngIf="!dsp.production" class="development badge">
-                    <span class="environment">{{ dsp.environment }}</span>
-                    <span class="release {{ dsp.color }}">{{dsp.release}}</span>
-                </span>
-            </div>
-        </div>
-    </span>
+  <span class="logo" routerLink="{{homeLink}}">
+    <mat-icon matPrefix svgIcon="dasch_mosaic_icon_color"></mat-icon>
+    <div class="title-container">
+      <div class="title desktop-only">DaSCH Service Platform</div>
+      <div class="title phone-tablet-only">DSP</div>
+      <div class="mat-caption right">
+        <span *ngIf="dsp.production">{{ dsp.release }}</span>
+        <span *ngIf="!dsp.production" class="development badge">
+          <span class="environment">{{ dsp.environment }}</span>
+          <span class="release {{ dsp.color }}">{{dsp.release}}</span>
+        </span>
+      </div>
+    </div>
+  </span>
 
-    <span class="fill-remaining-space"></span>
+  <span class="fill-remaining-space"></span>
 
-    <!-- search-panel (in desktop and tablet version) -->
-    <span class="action">
-        <!-- button to reactivate when dsp-app will be used as a research platform again: -->
-        <app-search-panel
-            [projectfilter]="true"
-            [advanced]="true"
-            [expert]="true"
-            (search)="doSearch($event)"
-        >
-        </app-search-panel>
-    </span>
+  <!-- search-panel (in desktop and tablet version) -->
+  <span class="action">
+    <!-- button to reactivate when dsp-app will be used as a research platform again: -->
+    <app-search-panel
+      [projectfilter]="true"
+      [advanced]="true"
+      [expert]="true"
+      (search)="doSearch($event)">
+    </app-search-panel>
+  </span>
 
-    <span class="fill-remaining-space desktop-only"></span>
+  <span class="fill-remaining-space desktop-only"></span>
 
-    <!-- action tools: info menu, select language, login button, user menu -->
-    <span class="action">
+  <!-- action tools: info menu, select language, login button, user menu -->
+  <span class="action">
+    <!-- navigation: help -->
+    <button mat-button [routerLink]="helpLink" class="main-toolbar-button help">
+      Help
+    </button>
 
-        <!-- navigation: help -->
-        <button
-            mat-button
-            [routerLink]="helpLink"
-            class="main-toolbar-button help"
-        >
-            Help
-        </button>
+    <!-- language selector; not ativated at the moment -->
+    <app-select-language />
 
-        <!-- language selector; not ativated at the moment -->
-        <app-select-language/>
-
-        <!-- user menu or login form -->
-        <app-user-menu/>
-    </span>
+    <!-- user menu or login form -->
+    <app-user-menu />
+  </span>
 </mat-toolbar>
 <mat-progress-bar
-    *ngIf="!dsp.production"
-    [color]="dsp.color"
-    mode="determinate"
-    value="100"
->
+  *ngIf="!dsp.production"
+  [color]="dsp.color"
+  mode="determinate"
+  value="100">
 </mat-progress-bar>

@@ -1,81 +1,78 @@
 <form
-    [formGroup]="form"
-    (ngSubmit)="submitData()"
-    class="form"
-    *ngIf="(usersProjects$ | async)?.length; else notProjectMember"
->
-    <!-- auto complete list to select resource classes -->
-    <div class="form-content">
-        <app-select-project
-            matTooltip="The link resource has to be added to a project. Please select one of yours."
-            [matTooltipPosition]="'above'"
-            [formGroup]="form"
-            [usersProjects]="usersProjects$ | async"
-            (projectSelected)="selectedProject = $event"
-        >
-        </app-select-project>
+  [formGroup]="form"
+  (ngSubmit)="submitData()"
+  class="form"
+  *ngIf="(usersProjects$ | async)?.length; else notProjectMember">
+  <!-- auto complete list to select resource classes -->
+  <div class="form-content">
+    <app-select-project
+      matTooltip="The link resource has to be added to a project. Please select one of yours."
+      [matTooltipPosition]="'above'"
+      [formGroup]="form"
+      [usersProjects]="usersProjects$ | async"
+      (projectSelected)="selectedProject = $event">
+    </app-select-project>
 
-        <mat-form-field class="large-field label">
-            <input
-                matInput
-                autocomplete="off"
-                [formControl]="form.controls['label']"
-                [placeholder]="'Collection label'"
-            />
-            <mat-hint *ngIf="formErrors.label" class="medium-field">
-                {{ formErrors.label }}
-            </mat-hint>
-        </mat-form-field>
+    <mat-form-field class="large-field label">
+      <input
+        matInput
+        autocomplete="off"
+        [formControl]="form.controls['label']"
+        [placeholder]="'Collection label'" />
+      <mat-hint *ngIf="formErrors.label" class="medium-field">
+        {{ formErrors.label }}
+      </mat-hint>
+    </mat-form-field>
 
-        <mat-form-field class="large-field ontology-comment">
-            <textarea
-                matInput
-                placeholder="Comment"
-                [formControl]="form.controls['comment']"
-                [cdkTextareaAutosize]="true"
-                [cdkAutosizeMinRows]="6"
-                [cdkAutosizeMaxRows]="12"
-            >
-            </textarea>
-        </mat-form-field>
+    <mat-form-field class="large-field ontology-comment">
+      <textarea
+        matInput
+        placeholder="Comment"
+        [formControl]="form.controls['comment']"
+        [cdkTextareaAutosize]="true"
+        [cdkAutosizeMinRows]="6"
+        [cdkAutosizeMaxRows]="12">
+      </textarea>
+    </mat-form-field>
 
-        <div class="resource-container">
-            <p>The following resources will be connected:</p>
-            <ul>
-                <li *ngFor="let res of resources.resInfo">{{ res.label }}</li>
-            </ul>
-        </div>
-
-        <div class="form-panel form-action">
-            <span>
-                <button mat-button type="button" (click)="closeDialog.emit()">
-                    {{ 'appLabels.form.action.cancel' | translate }}
-                </button>
-            </span>
-            <span class="fill-remaining-space"></span>
-            <span>
-                <button
-                    mat-raised-button
-                    type="submit"
-                    [color]="(hasLoadingErrors$ | async) ? 'warn' : 'primary'"
-                    [disabled]="!form.valid"
-                >
-                    <dasch-swiss-app-progress-indicator
-                        [color]="'white'"
-                        [status]="0"
-                        *ngIf="isLoading$ | async"
-                        class="submit-progress"
-                    >
-                    </dasch-swiss-app-progress-indicator>
-                    <mat-icon *ngIf="(hasLoadingErrors$ | async) && (isLoading$ | async) === false">close</mat-icon>
-                    {{ (hasLoadingErrors$ | async) === true ? 'Failed' : 'Create' }}
-                </button>
-            </span>
-        </div>
+    <div class="resource-container">
+      <p>The following resources will be connected:</p>
+      <ul>
+        <li *ngFor="let res of resources.resInfo">{{ res.label }}</li>
+      </ul>
     </div>
+
+    <div class="form-panel form-action">
+      <span>
+        <button mat-button type="button" (click)="closeDialog.emit()">
+          {{ 'appLabels.form.action.cancel' | translate }}
+        </button>
+      </span>
+      <span class="fill-remaining-space"></span>
+      <span>
+        <button
+          mat-raised-button
+          type="submit"
+          [color]="(hasLoadingErrors$ | async) ? 'warn' : 'primary'"
+          [disabled]="!form.valid">
+          <dasch-swiss-app-progress-indicator
+            [color]="'white'"
+            [status]="0"
+            *ngIf="isLoading$ | async"
+            class="submit-progress">
+          </dasch-swiss-app-progress-indicator>
+          <mat-icon
+            *ngIf="(hasLoadingErrors$ | async) && (isLoading$ | async) === false"
+            >close</mat-icon
+          >
+          {{ (hasLoadingErrors$ | async) === true ? 'Failed' : 'Create' }}
+        </button>
+      </span>
+    </div>
+  </div>
 </form>
 
 <ng-template #notProjectMember>
-    You have to be a member in at least one project to link the selected
-    resources.
+  You have to be a member in at least one project to link the selected
+  resources.
 </ng-template>

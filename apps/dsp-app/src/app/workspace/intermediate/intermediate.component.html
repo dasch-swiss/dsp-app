@@ -1,49 +1,45 @@
 <div class="card-container" *ngIf="resources">
-    <div class="card front">
-        <div class="mock title"></div>
-        <div class="mock title"></div>
-        <div class="mock content">
-            <p class="count">{{ resources.count }}</p>
-            <p class="text">
-                {{
-                    resources.count | i18nPlural : itemPluralMapping['resource']
-                }}
-                Selected
-            </p>
-        </div>
-        <div class="action">
-            <span class="fill-remaining-space"></span>
-            <span>
-                <!-- link button to create a link resource (linkObj) -->
-                <button
-                    mat-mini-fab
-                    color="primary"
-                    class="link"
-                    matTooltip="Create a link object from this selection"
-                    [matTooltipPosition]="'above'"
-                    [disabled]="resources.count < 2"
-                    (click)="openDialog('link', resources)"
-                >
-                    <mat-icon>link</mat-icon>
-                </button>
-                <!-- TODO: add more functionality for multiple resources: edit (only if same resource type), add to favorites, delete etc. -->
-                <!-- compare button to compare more than two resources -->
-                <button
-                    mat-mini-fab
-                    color="primary"
-                    class="compare"
-                    matTooltip="Compare the selected resources"
-                    [matTooltipPosition]="'above'"
-                    [disabled]="resources.count < 2"
-                    (click)="action.emit('compare')"
-                >
-                    <mat-icon>compare_arrows</mat-icon>
-                </button>
-            </span>
-            <span class="fill-remaining-space"></span>
-        </div>
+  <div class="card front">
+    <div class="mock title"></div>
+    <div class="mock title"></div>
+    <div class="mock content">
+      <p class="count">{{ resources.count }}</p>
+      <p class="text">
+        {{ resources.count | i18nPlural : itemPluralMapping['resource'] }}
+        Selected
+      </p>
     </div>
-    <div *ngIf="resources.count > 1" class="card background two"></div>
-    <div *ngIf="resources.count > 2" class="card background three"></div>
-    <div *ngIf="resources.count > 3" class="card background more"></div>
+    <div class="action">
+      <span class="fill-remaining-space"></span>
+      <span>
+        <!-- link button to create a link resource (linkObj) -->
+        <button
+          mat-mini-fab
+          color="primary"
+          class="link"
+          matTooltip="Create a link object from this selection"
+          [matTooltipPosition]="'above'"
+          [disabled]="resources.count < 2"
+          (click)="openDialog('link', resources)">
+          <mat-icon>link</mat-icon>
+        </button>
+        <!-- TODO: add more functionality for multiple resources: edit (only if same resource type), add to favorites, delete etc. -->
+        <!-- compare button to compare more than two resources -->
+        <button
+          mat-mini-fab
+          color="primary"
+          class="compare"
+          matTooltip="Compare the selected resources"
+          [matTooltipPosition]="'above'"
+          [disabled]="resources.count < 2"
+          (click)="action.emit('compare')">
+          <mat-icon>compare_arrows</mat-icon>
+        </button>
+      </span>
+      <span class="fill-remaining-space"></span>
+    </div>
+  </div>
+  <div *ngIf="resources.count > 1" class="card background two"></div>
+  <div *ngIf="resources.count > 2" class="card background three"></div>
+  <div *ngIf="resources.count > 3" class="card background more"></div>
 </div>

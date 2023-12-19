@@ -1,50 +1,61 @@
-<dasch-swiss-app-progress-indicator *ngIf="(username$ | async) === null"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator
+  *ngIf="(username$ | async) === null"></dasch-swiss-app-progress-indicator>
 <app-status *ngIf="error"></app-status>
 
 <div class="content large middle" *ngIf="username$ | async">
+  <div class="content-sidebar user-data">
+    <app-profile [loggedInUser]="true"></app-profile>
+  </div>
 
-    <div class="content-sidebar user-data">
-        <app-profile [loggedInUser]="true"></app-profile>
-    </div>
+  <div class="content-container">
+    <nav
+      mat-tab-nav-bar
+      mat-align-tabs="left"
+      class="tab-bar"
+      animationDuration="0ms"
+      [tabPanel]="tabPanel">
+      <span *ngFor="let link of navigation; let i = index">
+        <a
+          mat-tab-link
+          class="nav-link"
+          [routerLink]="link.route"
+          routerLinkActive="active-tab"
+          #rla="routerLinkActive"
+          [active]="rla.isActive">
+          <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
+          {{link.label}}
+        </a>
+        <!-- mobile version -->
+        <a
+          mat-tab-link
+          class="nav-link-mobile"
+          [routerLink]="link.route"
+          routerLinkActive="active-tab"
+          #rla="routerLinkActive"
+          [active]="rla.isActive">
+          {{link.shortLabel}}
+        </a>
+      </span>
+    </nav>
 
-    <div class="content-container">
-        <nav mat-tab-nav-bar mat-align-tabs="left" class="tab-bar" animationDuration="0ms" [tabPanel]="tabPanel">
-            <span *ngFor="let link of navigation; let i = index">
-                <a mat-tab-link class="nav-link" [routerLink]="link.route" routerLinkActive="active-tab"
-                    #rla="routerLinkActive" [active]="rla.isActive">
-                    <mat-icon class="tab-icon">{{link.icon}}</mat-icon>
-                    {{link.label}}
-                </a>
-                <!-- mobile version -->
-                <a mat-tab-link class="nav-link-mobile" [routerLink]="link.route"
-                    routerLinkActive="active-tab" #rla="routerLinkActive" [active]="rla.isActive">
-                    {{link.shortLabel}}
-                </a>
-            </span>
-        </nav>
+    <mat-tab-nav-panel #tabPanel>
+      <!-- main content: router outlet -->
+      <div class="content middle" [ngSwitch]="route" *ngIf="route">
+        <!-- user profile -->
+        <div *ngSwitchCase="'profile'" class="full-width">
+          <app-projects [username]="username$ | async"></app-projects>
+        </div>
 
-        <mat-tab-nav-panel #tabPanel>
-            <!-- main content: router outlet -->
-            <div class="content middle" [ngSwitch]="route" *ngIf="route">
+        <!-- edit user data -->
+        <div *ngSwitchCase="routeConstants.userAccount" class="full-width">
+          <app-account [username]="username$ | async"></app-account>
+        </div>
 
-                <!-- user profile -->
-                <div *ngSwitchCase="'profile'" class="full-width">
-                    <app-projects [username]="username$ | async"></app-projects>
-                </div>
-
-                <!-- edit user data -->
-                <div *ngSwitchCase="routeConstants.userAccount" class="full-width">
-                    <app-account [username]="username$ | async"></app-account>
-                </div>
-
-                <!-- user's projects -->
-                <div *ngSwitchCase="routeConstants.projects" class="full-width">
-                    <app-projects [username]="username$ | async"></app-projects>
-                </div>
-
-            </div>
-        </mat-tab-nav-panel>
-
-    </div>
-
+        <!-- user's projects -->
+        <div *ngSwitchCase="routeConstants.projects" class="full-width">
+          <app-projects [username]="username$ | async"></app-projects>
+        </div>
+      </div>
+    </mat-tab-nav-panel>
+  </div>
 </div>

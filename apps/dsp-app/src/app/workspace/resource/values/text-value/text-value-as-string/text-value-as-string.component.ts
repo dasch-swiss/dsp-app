@@ -1,111 +1,111 @@
 import {
-    Component,
-    Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-    OnInit,
+  Component,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import {
-    CreateTextValueAsString,
-    ReadTextValueAsString,
-    UpdateTextValueAsString,
+  CreateTextValueAsString,
+  ReadTextValueAsString,
+  UpdateTextValueAsString,
 } from '@dasch-swiss/dsp-js';
-import * as Editor from 'ckeditor5-custom-build';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import * as Editor from 'ckeditor5-custom-build';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
 import { ckEditor } from '../ck-editor';
 
 @Component({
-    selector: 'app-text-value-as-string',
-    templateUrl: './text-value-as-string.component.html',
-    styleUrls: ['./text-value-as-string.component.scss'],
+  selector: 'app-text-value-as-string',
+  templateUrl: './text-value-as-string.component.html',
+  styleUrls: ['./text-value-as-string.component.scss'],
 })
 export class TextValueAsStringComponent
-    extends BaseValueDirective
-    implements OnInit, OnChanges, OnDestroy
+  extends BaseValueDirective
+  implements OnInit, OnChanges, OnDestroy
 {
-    @Input() displayValue?: ReadTextValueAsString;
-    @Input() textArea?: boolean = false;
+  @Input() displayValue?: ReadTextValueAsString;
+  @Input() textArea?: boolean = false;
 
-    @Input() guiElement: 'simpleText' | 'textArea' | 'richText' = 'simpleText';
+  @Input() guiElement: 'simpleText' | 'textArea' | 'richText' = 'simpleText';
 
-    matcher = new ValueErrorStateMatcher();
-    customValidators = [];
+  matcher = new ValueErrorStateMatcher();
+  customValidators = [];
 
-    // https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/angular.html
-    editor: Editor;
-    editorConfig;
+  // https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/angular.html
+  editor: Editor;
+  editorConfig;
 
-    constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
-        super();
+  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
+    super();
+  }
+
+  getInitValue(): string | null {
+    if (this.displayValue !== undefined) {
+      return this.displayValue.text;
+    } else {
+      return null;
+    }
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
+
+    if (this.guiElement === 'richText') {
+      this.editor = Editor;
+      this.editorConfig = ckEditor.config;
+    }
+  }
+
+  ngOnChanges(): void {
+    // resets values and validators in form controls when input displayValue or mode changes
+    // at the first call of ngOnChanges, form control elements are not initialized yet
+    this.resetFormControl();
+  }
+
+  ngOnDestroy(): void {
+    super.ngOnDestroy();
+  }
+
+  getNewValue(): CreateTextValueAsString | false {
+    if (this.mode !== 'create' || !this.form.valid || this.isEmptyVal()) {
+      return false;
     }
 
-    getInitValue(): string | null {
-        if (this.displayValue !== undefined) {
-            return this.displayValue.text;
-        } else {
-            return null;
-        }
+    const newTextValue = new CreateTextValueAsString();
+
+    newTextValue.text = this.valueFormControl.value;
+
+    if (
+      this.commentFormControl.value !== null &&
+      this.commentFormControl.value !== ''
+    ) {
+      newTextValue.valueHasComment = this.commentFormControl.value;
     }
 
-    ngOnInit() {
-        super.ngOnInit();
+    return newTextValue;
+  }
 
-        if (this.guiElement === 'richText') {
-            this.editor = Editor;
-            this.editorConfig = ckEditor.config;
-        }
+  getUpdatedValue(): UpdateTextValueAsString | false {
+    if (this.mode !== 'update' || !this.form.valid) {
+      return false;
     }
 
-    ngOnChanges(): void {
-        // resets values and validators in form controls when input displayValue or mode changes
-        // at the first call of ngOnChanges, form control elements are not initialized yet
-        this.resetFormControl();
+    const updatedTextValue = new UpdateTextValueAsString();
+
+    updatedTextValue.id = this.displayValue.id;
+
+    updatedTextValue.text = this.valueFormControl.value;
+
+    if (
+      this.commentFormControl.value !== null &&
+      this.commentFormControl.value !== ''
+    ) {
+      updatedTextValue.valueHasComment = this.commentFormControl.value;
     }
 
-    ngOnDestroy(): void {
-        super.ngOnDestroy();
-    }
-
-    getNewValue(): CreateTextValueAsString | false {
-        if (this.mode !== 'create' || !this.form.valid || this.isEmptyVal()) {
-            return false;
-        }
-
-        const newTextValue = new CreateTextValueAsString();
-
-        newTextValue.text = this.valueFormControl.value;
-
-        if (
-            this.commentFormControl.value !== null &&
-            this.commentFormControl.value !== ''
-        ) {
-            newTextValue.valueHasComment = this.commentFormControl.value;
-        }
-
-        return newTextValue;
-    }
-
-    getUpdatedValue(): UpdateTextValueAsString | false {
-        if (this.mode !== 'update' || !this.form.valid) {
-            return false;
-        }
-
-        const updatedTextValue = new UpdateTextValueAsString();
-
-        updatedTextValue.id = this.displayValue.id;
-
-        updatedTextValue.text = this.valueFormControl.value;
-
-        if (
-            this.commentFormControl.value !== null &&
-            this.commentFormControl.value !== ''
-        ) {
-            updatedTextValue.valueHasComment = this.commentFormControl.value;
-        }
-
-        return updatedTextValue;
-    }
+    return updatedTextValue;
+  }
 }

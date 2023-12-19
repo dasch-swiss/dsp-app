@@ -1,4 +1,4 @@
 export interface CanDoResponse {
-    canDo: boolean;
-    cannotDoReason?: string;
+  canDo: boolean;
+  cannotDoReason?: string;
 }

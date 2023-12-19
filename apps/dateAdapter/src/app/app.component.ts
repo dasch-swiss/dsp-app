@@ -69,7 +69,7 @@ export class AppComponent {
       dateValue: [this.startDate, Validators.compose([Validators.required])],
     });
 
-    this.form.valueChanges.subscribe((data) => {
+    this.form.valueChanges.subscribe(data => {
       console.log(data.dateValue);
     });
 
@@ -77,7 +77,7 @@ export class AppComponent {
       dateValue2: [this.startDate2, Validators.compose([Validators.required])],
     });
 
-    this.form2.valueChanges.subscribe((data) => {
+    this.form2.valueChanges.subscribe(data => {
       console.log(data.dateValue2);
     });
 
@@ -85,7 +85,7 @@ export class AppComponent {
       dateValue3: [this.startDate3, Validators.compose([Validators.required])],
     });
 
-    this.form3.valueChanges.subscribe((data) => {
+    this.form3.valueChanges.subscribe(data => {
       console.log(data.dateValue3);
     });
 
@@ -93,7 +93,7 @@ export class AppComponent {
       dateValue4: [null, Validators.compose([Validators.required])],
     });
 
-    this.form4.valueChanges.subscribe((data) => {
+    this.form4.valueChanges.subscribe(data => {
       console.log(data.dateValue4);
     });
   }
@@ -137,7 +137,7 @@ export class HeaderComponent implements OnInit {
       });
 
       // update the selected calendar
-      this.form.valueChanges.subscribe((data) => {
+      this.form.valueChanges.subscribe(data => {
         this.convertCalendar(data.calendar);
       });
     }
@@ -169,7 +169,7 @@ const makeCalToken = () => {
 };
 
 @Directive({
-    // eslint-disable-next-line @angular-eslint/directive-selector
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'jdn-datepicker',
   providers: [
     { provide: ACTIVE_CALENDAR, useFactory: makeCalToken },

@@ -1,64 +1,61 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
-    <span class="rm-value">
-        <a
-            class="link"
-            target="_blank"
-            rel="noopener"
-            href="{{ valueFormControl.value }}"
-            >{{ label ? label : valueFormControl.value }}</a
-        >
-    </span>
-    <span class="rm-comment" *ngIf="shouldShowComment">{{
-        commentFormControl.value
-    }}</span>
+  <span class="rm-value">
+    <a
+      class="link"
+      target="_blank"
+      rel="noopener"
+      href="{{ valueFormControl.value }}"
+      >{{ label ? label : valueFormControl.value }}</a
+    >
+  </span>
+  <span class="rm-comment" *ngIf="shouldShowComment"
+    >{{ commentFormControl.value }}</span
+  >
 </span>
 <ng-template #showForm>
-    <span [formGroup]="form">
-        <mat-form-field
-            class="large-field child-value-component"
-            floatLabel="never"
-        >
-            <input
-                matInput
-                [formControlName]="'value'"
-                class="value"
-                placeholder="Uri value"
-                type="url"
-                [errorStateMatcher]="matcher"
-            />
-            <mat-error
-                *ngIf="
+  <span [formGroup]="form">
+    <mat-form-field
+      class="large-field child-value-component"
+      floatLabel="never">
+      <input
+        matInput
+        [formControlName]="'value'"
+        class="value"
+        placeholder="Uri value"
+        type="url"
+        [errorStateMatcher]="matcher" />
+      <mat-error
+        *ngIf="
                     valueFormControl.hasError('valueNotChanged') &&
                     (valueFormControl.touched || valueFormControl.dirty)
-                "
-            >
-                <span class="custom-error-message"
-                    >New value must be different than the current value.</span
-                >
-            </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('pattern')">
-                <span class="custom-error-message"
-                    >New value must be a valid URI.</span
-                >
-            </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('required') && mode !== 'update'">
-                A URI value is <strong>required</strong>.
-            </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('required') && mode === 'update'">
-                Empty values are not supported when updating a value. Consider using the delete button instead.
-            </mat-error>
-            <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
-                <span class="custom-error-message"
-                    >This value already exists for this property. Duplicate
-                    values are not allowed.</span
-                >
-            </mat-error>
-        </mat-form-field>
-        <app-comment-form
-            *ngIf="!commentDisabled && valueFormControl && commentFormControl"
-            [valueFormControlHasError]="hasError()"
-            [(commentFormControl)]="commentFormControl"
-            [valueFormControlValue]="valueFormControl.value"
-        ></app-comment-form>
-    </span>
+                ">
+        <span class="custom-error-message"
+          >New value must be different than the current value.</span
+        >
+      </mat-error>
+      <mat-error *ngIf="valueFormControl.hasError('pattern')">
+        <span class="custom-error-message">New value must be a valid URI.</span>
+      </mat-error>
+      <mat-error
+        *ngIf="valueFormControl.hasError('required') && mode !== 'update'">
+        A URI value is <strong>required</strong>.
+      </mat-error>
+      <mat-error
+        *ngIf="valueFormControl.hasError('required') && mode === 'update'">
+        Empty values are not supported when updating a value. Consider using the
+        delete button instead.
+      </mat-error>
+      <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
+        <span class="custom-error-message"
+          >This value already exists for this property. Duplicate values are not
+          allowed.</span
+        >
+      </mat-error>
+    </mat-form-field>
+    <app-comment-form
+      *ngIf="!commentDisabled && valueFormControl && commentFormControl"
+      [valueFormControlHasError]="hasError()"
+      [(commentFormControl)]="commentFormControl"
+      [valueFormControlValue]="valueFormControl.value"></app-comment-form>
+  </span>
 </ng-template>

@@ -1,68 +1,66 @@
-<dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator
+  *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
 <div class="content" *ngIf="(isProjectsLoading$ | async) === false">
-    <h4 class="mat-subtitle-2">
-        This user is member of
-        {{ (user$ | async)?.projects.length | i18nPlural : itemPluralMapping['project'] }}
-    </h4>
+  <h4 class="mat-subtitle-2">
+    This user is member of {{ (user$ | async)?.projects.length | i18nPlural :
+    itemPluralMapping['project'] }}
+  </h4>
 
-    <mat-list>
-        <!-- list of projects where the user is member of -->
-        <mat-list-item *ngFor="let project of (user$ | async)?.projects; trackBy: trackByFn;">
-            <div class='item-container'>
-                <mat-icon mat-list-icon>
-                    <span>assignment</span>
-                </mat-icon>
-                <h4 mat-line>{{project.longname}}
-                    ({{project.shortname}})</h4>
-                <p mat-line>
-                    <span *ngIf="userIsProjectAdmin((user$ | async)?.permissions, project.id)">
-                        User is <strong>Project admin</strong>
-                    </span>
-                </p>
-                <span class="fill-remaining-space"></span>
-                <button
-                    mat-icon-button
-                    color="warn"
-                    (click)="removeFromProject(project.id)"
-                    aria-label="Button to remove user from project"
-                    matTooltip="Remove user from project"
-                    matTooltipPosition="above"
-                >
-                    <mat-icon>delete_outline</mat-icon>
-                </button>
-            </div>
-        </mat-list-item>
-        <mat-divider class="more-space-top more-space-bottom"></mat-divider>
-        <!-- select another project to add user -->
-        <mat-list-item class="add-to-project">
-            <mat-form-field class="select-project">
-                <mat-select
-                    placeholder="Add user to project"
-                    [formControl]="newProject"
-                >
-                    <mat-option>Select Project to add user</mat-option>
-                    <mat-divider></mat-divider>
-                    <mat-option
-                        *ngFor="let project of projects$ | async; trackBy: trackByFn;"
-                        [value]="project?.iri"
-                    >
-                        {{ project?.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <span class="fill-remaining-space"></span>
-            <button
-                mat-stroked-button
-                color="primary"
-                (click)="addToProject(newProject.value)"
-                [disabled]="!newProject.value"
-                aria-label="Button to add user to project"
-                matTooltip="Add user to selected project"
-                matTooltipPosition="above"
-            >
-                <mat-icon>add</mat-icon>
-            </button>
-        </mat-list-item>
-    </mat-list>
+  <mat-list>
+    <!-- list of projects where the user is member of -->
+    <mat-list-item
+      *ngFor="let project of (user$ | async)?.projects; trackBy: trackByFn;">
+      <div class="item-container">
+        <mat-icon mat-list-icon>
+          <span>assignment</span>
+        </mat-icon>
+        <h4 mat-line>{{project.longname}} ({{project.shortname}})</h4>
+        <p mat-line>
+          <span
+            *ngIf="userIsProjectAdmin((user$ | async)?.permissions, project.id)">
+            User is <strong>Project admin</strong>
+          </span>
+        </p>
+        <span class="fill-remaining-space"></span>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="removeFromProject(project.id)"
+          aria-label="Button to remove user from project"
+          matTooltip="Remove user from project"
+          matTooltipPosition="above">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+    <mat-divider class="more-space-top more-space-bottom"></mat-divider>
+    <!-- select another project to add user -->
+    <mat-list-item class="add-to-project">
+      <mat-form-field class="select-project">
+        <mat-select
+          placeholder="Add user to project"
+          [formControl]="newProject">
+          <mat-option>Select Project to add user</mat-option>
+          <mat-divider></mat-divider>
+          <mat-option
+            *ngFor="let project of projects$ | async; trackBy: trackByFn;"
+            [value]="project?.iri">
+            {{ project?.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <span class="fill-remaining-space"></span>
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="addToProject(newProject.value)"
+        [disabled]="!newProject.value"
+        aria-label="Button to add user to project"
+        matTooltip="Add user to selected project"
+        matTooltipPosition="above">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-list-item>
+  </mat-list>
 </div>

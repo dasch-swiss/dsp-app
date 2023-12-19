@@ -5,18 +5,22 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
-import { ListNode, ListResponse, RepositionChildNodeRequest } from '@dasch-swiss/dsp-js';
-import { ListNodeOperation } from '../list-item-form/list-item-form.component';
-import { take } from 'rxjs/operators';
+import {
+  ListNode,
+  ListResponse,
+  RepositionChildNodeRequest,
+} from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
+import { take } from 'rxjs/operators';
+import { ListNodeOperation } from '../list-item-form/list-item-form.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-item',
   templateUrl: './list-item.component.html',
-  styleUrls: ['./list-item.component.scss']
+  styleUrls: ['./list-item.component.scss'],
 })
 export class ListItemComponent implements OnInit {
   @Input() list: ListNode[];
@@ -45,8 +49,7 @@ export class ListItemComponent implements OnInit {
   constructor(
     private _listApiService: ListApiService,
     private _cd: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     // in case of parent node: run the following request to get the entire list
@@ -54,15 +57,13 @@ export class ListItemComponent implements OnInit {
       this._listApiService
         .get(this.parentIri)
         .pipe(take(1))
-        .subscribe(
-          result => {
-            if (!(result instanceof ListResponse)) return;
+        .subscribe(result => {
+          if (!(result instanceof ListResponse)) return;
 
-            this.list = result.list.children;
-            this.language =
-              result.list.listinfo.labels[0].language;
-            this._cd.markForCheck();
-          });
+          this.list = result.list.children;
+          this.language = result.list.listinfo.labels[0].language;
+          this._cd.markForCheck();
+        });
     }
   }
 
@@ -101,7 +102,7 @@ export class ListItemComponent implements OnInit {
           if (firstNode) {
             // in case of new child node, we have to use the children from list
             const index: number = this.list.findIndex(
-              (item) => item.id === this.expandedNode
+              item => item.id === this.expandedNode
             );
             this.list[index].children.push(data.listNode);
           } else {
@@ -111,27 +112,23 @@ export class ListItemComponent implements OnInit {
         }
         case 'insert': {
           // get the corresponding list from the API again and reassign the local list with its response
-          this._listApiService
-            .get(this.parentIri)
-            .subscribe(response => {
-              if (response instanceof ListResponse) {
-                this.list = response.list.children; // root node
-              } else {
-                this.list = response.node.children; // child node
-              }
+          this._listApiService.get(this.parentIri).subscribe(response => {
+            if (response instanceof ListResponse) {
+              this.list = response.list.children; // root node
+            } else {
+              this.list = response.node.children; // child node
+            }
 
-              // emit the updated list of children to the parent node
-              this.refreshChildren.emit(this.list);
-              this._cd.markForCheck();
-            });
+            // emit the updated list of children to the parent node
+            this.refreshChildren.emit(this.list);
+            this._cd.markForCheck();
+          });
           break;
         }
         case 'update': {
           // use the position from the response from DSP-API to find the correct node to update
-          this.list[data.listNode.position].labels =
-            data.listNode.labels;
-          this.list[data.listNode.position].comments =
-            data.listNode.comments;
+          this.list[data.listNode.position].labels = data.listNode.labels;
+          this.list[data.listNode.position].comments = data.listNode.comments;
           break;
         }
         case 'delete': {
@@ -152,16 +149,12 @@ export class ListItemComponent implements OnInit {
           // since we don't have any way to know the parent IRI from the ListItemForm component, we need to do the API call here
           // --> TODO now we have the parent IRI within the ListItemForm component so we can move this logic there
           this._listApiService
-            .repositionChildNode(
-              data.listNode.id,
-              repositionRequest
-            )
+            .repositionChildNode(data.listNode.id, repositionRequest)
             .subscribe(response => {
-                this.list = response.node.children;
-                this.refreshChildren.emit(this.list);
-                this._cd.markForCheck();
-              }
-            );
+              this.list = response.node.children;
+              this.refreshChildren.emit(this.list);
+              this._cd.markForCheck();
+            });
           break;
         }
         default: {

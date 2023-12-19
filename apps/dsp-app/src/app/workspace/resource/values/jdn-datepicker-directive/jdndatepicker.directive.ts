@@ -1,62 +1,56 @@
-import {
-    Directive,
-    Inject,
-    Input,
-    OnChanges,
-    OnDestroy,
-} from '@angular/core';
+import { Directive, Inject, Input, OnChanges, OnDestroy } from '@angular/core';
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { JDNConvertibleCalendar } from '@dasch-swiss/jdnconvertiblecalendar';
 import {
-    ACTIVE_CALENDAR,
-    JDNConvertibleCalendarDateAdapter,
+  ACTIVE_CALENDAR,
+  JDNConvertibleCalendarDateAdapter,
 } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { BehaviorSubject } from 'rxjs';
 
 export function makeCalendarToken() {
-    return new BehaviorSubject('Gregorian');
+  return new BehaviorSubject('Gregorian');
 }
 
 @Directive({
-    // TODO this directive is used as a component. Disable this line in the
-    //  near future.
-    // eslint-disable-next-line @angular-eslint/directive-selector
-    selector: 'app-jdn-datepicker',
-    providers: [
-        {
-            provide: DateAdapter,
-            useClass: JDNConvertibleCalendarDateAdapter,
-            deps: [MAT_DATE_LOCALE, ACTIVE_CALENDAR],
-        },
-        { provide: ACTIVE_CALENDAR, useFactory: makeCalendarToken },
-    ],
+  // TODO this directive is used as a component. Disable this line in the
+  //  near future.
+  // eslint-disable-next-line @angular-eslint/directive-selector
+  selector: 'app-jdn-datepicker',
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: JDNConvertibleCalendarDateAdapter,
+      deps: [MAT_DATE_LOCALE, ACTIVE_CALENDAR],
+    },
+    { provide: ACTIVE_CALENDAR, useFactory: makeCalendarToken },
+  ],
 })
 export class JDNDatepickerDirective implements OnChanges, OnDestroy {
-    private _activeCalendar: 'Gregorian' | 'Julian' | 'Islamic';
+  private _activeCalendar: 'Gregorian' | 'Julian' | 'Islamic';
 
-    constructor(
-        @Inject(ACTIVE_CALENDAR) private _activeCalendarToken,
-        private _adapter: DateAdapter<JDNConvertibleCalendar>
-    ) {}
+  constructor(
+    @Inject(ACTIVE_CALENDAR) private _activeCalendarToken,
+    private _adapter: DateAdapter<JDNConvertibleCalendar>
+  ) {}
 
-    get activeCalendar() {
-        return this._activeCalendar;
+  get activeCalendar() {
+    return this._activeCalendar;
+  }
+
+  @Input()
+  set activeCalendar(value: 'Gregorian' | 'Julian' | 'Islamic' | null) {
+    if (value !== null && value !== undefined) {
+      this._activeCalendar = value;
+    } else {
+      this._activeCalendar = 'Gregorian';
     }
+  }
 
-    @Input()
-    set activeCalendar(value: 'Gregorian' | 'Julian' | 'Islamic' | null) {
-        if (value !== null && value !== undefined) {
-            this._activeCalendar = value;
-        } else {
-            this._activeCalendar = 'Gregorian';
-        }
-    }
+  ngOnChanges(): void {
+    this._activeCalendarToken.next(this.activeCalendar);
+  }
 
-    ngOnChanges(): void {
-        this._activeCalendarToken.next(this.activeCalendar);
-    }
-
-    ngOnDestroy(): void {
-        this._activeCalendarToken.complete();
-    }
+  ngOnDestroy(): void {
+    this._activeCalendarToken.complete();
+  }
 }

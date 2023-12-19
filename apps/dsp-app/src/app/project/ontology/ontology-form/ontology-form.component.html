@@ -1,77 +1,71 @@
 <form [formGroup]="ontologyForm" (ngSubmit)="submitData()" class="form">
-    <div class="form-content">
-        <h3 *ngIf="!iri">Create new ontology</h3>
-        <mat-form-field class="large-field ontology-name">
-            <input
-                matInput
-                class="ontology-name"
-                autocomplete="off"
-                [maxlength]="nameMaxLength"
-                [formControl]="ontologyForm.controls['name']"
-                [placeholder]="'Set a unique name'"
-            />
-            <mat-icon
-                matSuffix
-                [matTooltip]="ontologyNameInfo"
-                matTooltipPosition="above"
-                matTooltipClass="multi-line-tooltip"
-                >help</mat-icon
-            >
-            <mat-hint *ngIf="formErrors.name" class="medium-field">
-                {{ formErrors.name }}
-            </mat-hint>
-            <mat-hint align="end"
-                >{{ ontologyForm.controls['name'].value.length }} /
-                {{ nameMaxLength }}</mat-hint
-            >
-        </mat-form-field>
+  <div class="form-content">
+    <h3 *ngIf="!iri">Create new ontology</h3>
+    <mat-form-field class="large-field ontology-name">
+      <input
+        matInput
+        class="ontology-name"
+        autocomplete="off"
+        [maxlength]="nameMaxLength"
+        [formControl]="ontologyForm.controls['name']"
+        [placeholder]="'Set a unique name'" />
+      <mat-icon
+        matSuffix
+        [matTooltip]="ontologyNameInfo"
+        matTooltipPosition="above"
+        matTooltipClass="multi-line-tooltip"
+        >help</mat-icon
+      >
+      <mat-hint *ngIf="formErrors.name" class="medium-field">
+        {{ formErrors.name }}
+      </mat-hint>
+      <mat-hint align="end"
+        >{{ ontologyForm.controls['name'].value.length }} / {{ nameMaxLength
+        }}</mat-hint
+      >
+    </mat-form-field>
 
-        <mat-form-field class="large-field ontology-label">
-            <span *ngIf="!iri" matPrefix>{{ project.shortname }}:&nbsp;</span>
-            <input
-                matInput
-                placeholder="Label"
-                [formControl]="ontologyForm.controls['label']"
-                [value]="ontologyLabel"
-            />
-            <mat-hint *ngIf="formErrors.label">
-                {{ formErrors.label }}
-            </mat-hint>
-        </mat-form-field>
+    <mat-form-field class="large-field ontology-label">
+      <span *ngIf="!iri" matPrefix>{{ project.shortname }}:&nbsp;</span>
+      <input
+        matInput
+        placeholder="Label"
+        [formControl]="ontologyForm.controls['label']"
+        [value]="ontologyLabel" />
+      <mat-hint *ngIf="formErrors.label"> {{ formErrors.label }} </mat-hint>
+    </mat-form-field>
 
-        <mat-form-field class="large-field ontology-comment">
-            <textarea
-                matInput
-                placeholder="Comment"
-                [value]="ontologyComment"
-                [formControl]="ontologyForm.controls['comment']"
-                [cdkTextareaAutosize]="true"
-                [cdkAutosizeMinRows]="6"
-                [cdkAutosizeMaxRows]="12"
-            >
-            </textarea>
-        </mat-form-field>
+    <mat-form-field class="large-field ontology-comment">
+      <textarea
+        matInput
+        placeholder="Comment"
+        [value]="ontologyComment"
+        [formControl]="ontologyForm.controls['comment']"
+        [cdkTextareaAutosize]="true"
+        [cdkAutosizeMinRows]="6"
+        [cdkAutosizeMaxRows]="12">
+      </textarea>
+    </mat-form-field>
 
-        <div class="form-panel form-action">
-            <span class="fill-remaining-space"></span>
-            <span>
-                <button
-                    mat-raised-button
-                    type="submit"
-                    [color]="error ? 'warn' : 'primary'"
-                    [disabled]="!ontologyForm.valid"
-                >
-                    <div class="progress-button-content">
-                        <dasch-swiss-app-progress-indicator
-                        *ngIf="loading"
-                        [color]="'white'"
-                        [status]="0"
-                        class="submit-progress"/>
-                        <mat-icon *ngIf="error && !loading">close</mat-icon>
-                        <span>{{ error ? 'Failed' : iri ? 'Update' : 'Create' }}</span>
-                    </div>
-                </button>
-            </span>
-        </div>
+    <div class="form-panel form-action">
+      <span class="fill-remaining-space"></span>
+      <span>
+        <button
+          mat-raised-button
+          type="submit"
+          [color]="error ? 'warn' : 'primary'"
+          [disabled]="!ontologyForm.valid">
+          <div class="progress-button-content">
+            <dasch-swiss-app-progress-indicator
+              *ngIf="loading"
+              [color]="'white'"
+              [status]="0"
+              class="submit-progress" />
+            <mat-icon *ngIf="error && !loading">close</mat-icon>
+            <span>{{ error ? 'Failed' : iri ? 'Update' : 'Create' }}</span>
+          </div>
+        </button>
+      </span>
     </div>
+  </div>
 </form>

@@ -1,25 +1,23 @@
 <div class="deletion-dialog">
-    <mat-dialog-content>
-        <p class="title">
-            Are you sure you want to delete this value from
-            {{ data.value.propertyLabel }}?
-        </p>
-        <app-confirmation-message
-            #confirmMessage
-            [value]="data.value"
-        ></app-confirmation-message>
-    </mat-dialog-content>
-    <mat-dialog-actions class="action-buttons">
-        <button class="cancel" mat-raised-button mat-dialog-close>
-            {{ data.buttonTextCancel }}
-        </button>
-        <button
-            class="ok"
-            mat-raised-button
-            color="primary"
-            (click)="onConfirmClick()"
-        >
-            {{ data.buttonTextOk }}
-        </button>
-    </mat-dialog-actions>
+  <mat-dialog-content>
+    <p class="title">
+      Are you sure you want to delete this value from {{
+      data.value.propertyLabel }}?
+    </p>
+    <app-confirmation-message
+      #confirmMessage
+      [value]="data.value"></app-confirmation-message>
+  </mat-dialog-content>
+  <mat-dialog-actions class="action-buttons">
+    <button class="cancel" mat-raised-button mat-dialog-close>
+      {{ data.buttonTextCancel }}
+    </button>
+    <button
+      class="ok"
+      mat-raised-button
+      color="primary"
+      (click)="onConfirmClick()">
+      {{ data.buttonTextOk }}
+    </button>
+  </mat-dialog-actions>
 </div>

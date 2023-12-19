@@ -1,11 +1,11 @@
 import { Directive, HostListener } from '@angular/core';
 
 @Directive({
-    selector: '[appDisableContextMenu]',
+  selector: '[appDisableContextMenu]',
 })
 export class DisableContextMenuDirective {
-    @HostListener('contextmenu', ['$event'])
-    onRightClick(event: Event) {
-        event.preventDefault();
-    }
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event: Event) {
+    event.preventDefault();
+  }
 }

@@ -1,59 +1,50 @@
 <div class="parent-property-container">
-    <div class="form-fields-container">
-        <div class="dropdown-container">
-            <div class="content">
-                <p class="label">Select a data model</p>
-                <mat-form-field>
-                    <mat-select
-                        #ontologiesList
-                        (selectionChange)="onSelectedOntologyChanged()"
-                        name="ontologies"
-                        placeholder="Select a value"
-                        [compareWith]="compareApiDataObjects"
-                    >
-                        <mat-option *ngIf="ontologiesLoading" disabled="true"
-                            >Loading...</mat-option
-                        >
-                        <ng-container *ngIf="!ontologiesLoading">
-                            <mat-option
-                                *ngFor="let onto of ontologies"
-                                [value]="onto"
-                            >
-                                {{ onto.label }}
-                            </mat-option>
-                        </ng-container>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="dropdown-container">
-            <div class="content">
-                <p class="label">Select a resource class (optional)</p>
-                <mat-form-field>
-                    <mat-select
-                        #resourceClassesList
-                        (selectionChange)="onSelectedResourceClassChanged()"
-                        name="resourceClass"
-                        placeholder="Select a value"
-                        [compareWith]="compareApiDataObjects"
-                    >
-                        <mat-option *ngIf="resourceClassesLoading" disabled="true"
-                            >Loading...</mat-option
-                        >
-                        <ng-container *ngIf="!resourceClassesLoading">
-                            <mat-option>None</mat-option>
-                            <mat-option
-                                *ngFor="let class of resourceClasses"
-                                [value]="class"
-                            >
-                                {{ class.label }}
-                            </mat-option>
-                        </ng-container>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
+  <div class="form-fields-container">
+    <div class="dropdown-container">
+      <div class="content">
+        <p class="label">Select a data model</p>
+        <mat-form-field>
+          <mat-select
+            #ontologiesList
+            (selectionChange)="onSelectedOntologyChanged()"
+            name="ontologies"
+            placeholder="Select a value"
+            [compareWith]="compareApiDataObjects">
+            <mat-option *ngIf="ontologiesLoading" disabled="true"
+              >Loading...</mat-option
+            >
+            <ng-container *ngIf="!ontologiesLoading">
+              <mat-option *ngFor="let onto of ontologies" [value]="onto">
+                {{ onto.label }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
-    <div class="side-container">
+    <div class="dropdown-container">
+      <div class="content">
+        <p class="label">Select a resource class (optional)</p>
+        <mat-form-field>
+          <mat-select
+            #resourceClassesList
+            (selectionChange)="onSelectedResourceClassChanged()"
+            name="resourceClass"
+            placeholder="Select a value"
+            [compareWith]="compareApiDataObjects">
+            <mat-option *ngIf="resourceClassesLoading" disabled="true"
+              >Loading...</mat-option
+            >
+            <ng-container *ngIf="!resourceClassesLoading">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let class of resourceClasses" [value]="class">
+                {{ class.label }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
+  </div>
+  <div class="side-container"></div>
 </div>

@@ -4,8 +4,8 @@
  */
 
 import { InjectionToken } from '@angular/core';
-import { BuildTag } from './build-tag';
 import { Observable } from 'rxjs';
+import { BuildTag } from './build-tag';
 
 /**
  * The BuildTagToken is used to encapsulate build_tag
@@ -13,5 +13,5 @@ import { Observable } from 'rxjs';
  * As such, the structure of the loaded JSON is at this point not checked.
  */
 export const BuildTagToken = new InjectionToken<Observable<BuildTag>>(
-    'A stream with the current build tag'
+  'A stream with the current build tag'
 );

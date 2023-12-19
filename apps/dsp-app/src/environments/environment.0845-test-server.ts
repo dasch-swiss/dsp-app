@@ -7,9 +7,9 @@
 import packageJson from '../../../../package.json';
 
 export const environment = {
-    name: '0845-test-server',
-    production: false,
-    version: packageJson.version,
+  name: '0845-test-server',
+  production: false,
+  version: packageJson.version,
 };
 
 /*

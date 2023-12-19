@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import {
   ApiResponseError,
@@ -11,18 +19,18 @@ import {
   ReadResource,
   ResourceClassAndPropertyDefinitions,
   ResourceClassDefinition,
-  ResourcePropertyDefinition
+  ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { SelectPropertiesComponent } from '../../resource-instance-form/select-properties/select-properties.component';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
+import { SelectPropertiesComponent } from '../../resource-instance-form/select-properties/select-properties.component';
 
 @Component({
   selector: 'app-create-link-resource',
   templateUrl: './create-link-resource.component.html',
-  styleUrls: ['./create-link-resource.component.scss']
+  styleUrls: ['./create-link-resource.component.scss'],
 })
 export class CreateLinkResourceComponent implements OnInit {
   @Input() parentResource: ReadResource;
@@ -58,8 +66,7 @@ export class CreateLinkResourceComponent implements OnInit {
     private _projectApiService: ProjectApiService,
     private _fb: UntypedFormBuilder,
     private _errorHandler: AppErrorHandler
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.propertiesForm = this._fb.group({});
@@ -72,7 +79,7 @@ export class CreateLinkResourceComponent implements OnInit {
         this.properties = onto
           .getPropertyDefinitionsByType(ResourcePropertyDefinition)
           .filter(
-            (prop) =>
+            prop =>
               !prop.isLinkProperty &&
               prop.isEditable &&
               prop.id !== Constants.HasStillImageFileValue &&
@@ -103,7 +110,8 @@ export class CreateLinkResourceComponent implements OnInit {
 
   onSubmit() {
     if (this.propertiesForm.valid) {
-      this._projectApiService.get(this.resourceClassDef.split('/')[4], 'shortcode')
+      this._projectApiService
+        .get(this.resourceClassDef.split('/')[4], 'shortcode')
         .subscribe(response => {
           const createResource = new CreateResource();
 
@@ -118,9 +126,8 @@ export class CreateLinkResourceComponent implements OnInit {
           createResource.attachedToProject = response.project.id;
 
           this.selectPropertiesComponent.switchPropertiesComponent.forEach(
-            (child) => {
-              const createVal =
-                child.createValueComponent.getNewValue();
+            child => {
+              const createVal = child.createValueComponent.getNewValue();
               const iri = child.property.id;
               if (createVal instanceof CreateValue) {
                 if (this.propertiesObj[iri]) {
@@ -137,33 +144,34 @@ export class CreateLinkResourceComponent implements OnInit {
           if (this.fileValue) {
             switch (this.hasFileValue) {
               case 'stillImage':
-                this.propertiesObj[
-                  Constants.HasStillImageFileValue
-                  ] = [this.fileValue];
+                this.propertiesObj[Constants.HasStillImageFileValue] = [
+                  this.fileValue,
+                ];
                 break;
               case 'document':
-                this.propertiesObj[
-                  Constants.HasDocumentFileValue
-                  ] = [this.fileValue];
+                this.propertiesObj[Constants.HasDocumentFileValue] = [
+                  this.fileValue,
+                ];
                 break;
               case 'audio':
-                this.propertiesObj[
-                  Constants.HasAudioFileValue
-                  ] = [this.fileValue];
+                this.propertiesObj[Constants.HasAudioFileValue] = [
+                  this.fileValue,
+                ];
                 break;
               case 'movingImage':
-                this.propertiesObj[
-                  Constants.HasMovingImageFileValue
-                  ] = [this.fileValue];
+                this.propertiesObj[Constants.HasMovingImageFileValue] = [
+                  this.fileValue,
+                ];
                 break;
               case 'archive':
-                this.propertiesObj[
-                  Constants.HasArchiveFileValue
-                  ] = [this.fileValue];
+                this.propertiesObj[Constants.HasArchiveFileValue] = [
+                  this.fileValue,
+                ];
                 break;
               case 'text':
-                this.propertiesObj[Constants.HasTextFileValue] =
-                  [this.fileValue];
+                this.propertiesObj[Constants.HasTextFileValue] = [
+                  this.fileValue,
+                ];
             }
           }
 

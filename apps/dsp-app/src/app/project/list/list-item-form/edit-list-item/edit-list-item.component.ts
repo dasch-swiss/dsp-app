@@ -6,7 +6,7 @@ import {
   Inject,
   Input,
   OnInit,
-  Output
+  Output,
 } from '@angular/core';
 import {
   ApiResponseError,
@@ -15,18 +15,18 @@ import {
   List,
   ListNodeInfo,
   StringLiteral,
-  UpdateChildNodeRequest
+  UpdateChildNodeRequest,
 } from '@dasch-swiss/dsp-js';
+import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-edit-list-item',
   templateUrl: './edit-list-item.component.html',
-  styleUrls: ['./edit-list-item.component.scss']
+  styleUrls: ['./edit-list-item.component.scss'],
 })
 export class EditListItemComponent implements OnInit {
   @Input() iri: string;
@@ -59,8 +59,8 @@ export class EditListItemComponent implements OnInit {
    */
   formErrors = {
     label: {
-      required: 'A label is required.'
-    }
+      required: 'A label is required.',
+    },
   };
 
   /**
@@ -79,23 +79,19 @@ export class EditListItemComponent implements OnInit {
     private _errorHandler: AppErrorHandler,
     private _projectService: ProjectService,
     private _cd: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loading = true;
 
     // if updating a node, get the existing node info
     if (this.mode === 'update') {
-      this._listApiService
-        .getNodeInfo(this.iri)
-        .subscribe(
-          response => {
-            this.loading = false;
-            this.listNode = response.nodeinfo;
-            this.buildForm(response.nodeinfo);
-            this._cd.markForCheck();
-          });
+      this._listApiService.getNodeInfo(this.iri).subscribe(response => {
+        this.loading = false;
+        this.listNode = response.nodeinfo;
+        this.buildForm(response.nodeinfo);
+        this._cd.markForCheck();
+      });
     } else {
       this.labels = [];
       this.comments = [];
@@ -206,7 +202,10 @@ export class EditListItemComponent implements OnInit {
     createChildNodeRequest.position = this.position;
 
     this._listApiService
-      .createChildNode(createChildNodeRequest.parentNodeIri, createChildNodeRequest)
+      .createChildNode(
+        createChildNodeRequest.parentNodeIri,
+        createChildNodeRequest
+      )
       .subscribe(
         response => {
           this.loading = false;

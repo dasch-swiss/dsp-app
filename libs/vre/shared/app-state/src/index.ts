@@ -20,4 +20,4 @@ export * from './lib/ontologies/ontologies.state';
 export * from './lib/lists/lists.state';
 
 export * from './lib/model-interfaces';
-export * from './store.module'
+export * from './store.module';

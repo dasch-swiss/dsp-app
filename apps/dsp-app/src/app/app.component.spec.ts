@@ -15,32 +15,32 @@ import { AppComponent } from './app.component';
  * test component to simulate header component.
  */
 @Component({
-    selector: 'app-header',
-    template: '',
+  selector: 'app-header',
+  template: '',
 })
 class TestHeaderComponent {}
 
 describe('AppComponent', () => {
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [AppComponent, TestHeaderComponent],
-            imports: [
-                HttpClientTestingModule,
-                MatDialogModule,
-                MatIconModule,
-                MatListModule,
-                MatMenuModule,
-                MatSnackBarModule,
-                MatToolbarModule,
-                RouterTestingModule,
-                TranslateModule.forRoot(),
-            ],
-        }).compileComponents();
-    }));
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [AppComponent, TestHeaderComponent],
+      imports: [
+        HttpClientTestingModule,
+        MatDialogModule,
+        MatIconModule,
+        MatListModule,
+        MatMenuModule,
+        MatSnackBarModule,
+        MatToolbarModule,
+        RouterTestingModule,
+        TranslateModule.forRoot(),
+      ],
+    }).compileComponents();
+  }));
 
-    it('should create the app', () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.debugElement.componentInstance;
-        expect(app).toBeTruthy();
-    });
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.debugElement.componentInstance;
+    expect(app).toBeTruthy();
+  });
 });

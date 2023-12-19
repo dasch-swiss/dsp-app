@@ -13,45 +13,48 @@ import { Store } from '@ngxs/store';
  * With the predefined language, the pipe checks if a value exists in the array, otherwise it shows the first value.
  */
 @Pipe({
-    name: 'appStringifyStringLiteral',
+  name: 'appStringifyStringLiteral',
 })
 export class StringifyStringLiteralPipe implements PipeTransform {
-    constructor(private store: Store) {}
+  constructor(private store: Store) {}
 
-    transform(value: StringLiteral[], args?: string): string {
-        let stringified = '';
+  transform(value: StringLiteral[], args?: string): string {
+    let stringified = '';
 
-        let language: string;
+    let language: string;
 
-        if (!value || !value.length) {
-            return;
-        }
-
-        if (args === 'all') {
-            // show all values
-            let i = 0;
-            for (const sl of value) {
-                const delimiter = i > 0 ? ' / ' : '';
-                stringified += delimiter + sl.value + ' (' + sl.language + ')';
-
-                i++;
-            }
-            return stringified;
-        } else {
-            // show only one value, depending on default language
-            // the language is defined in user profile if a user is logged-in
-            // otherwise it takes the language from browser
-            const userLanguage = this.store.selectSnapshot(UserSelectors.language);
-            language = userLanguage != null ? userLanguage : navigator.language.substring(0, 2);
-
-            // does the defined language exists and does it have a value?
-            const index = value.findIndex((i) => i.language === language);
-
-            if (value[index] && value[index].value.length > 0) {
-                return value[index].value;
-            } else {
-                return value[0].value;
-            }
-        }
+    if (!value || !value.length) {
+      return;
     }
+
+    if (args === 'all') {
+      // show all values
+      let i = 0;
+      for (const sl of value) {
+        const delimiter = i > 0 ? ' / ' : '';
+        stringified += delimiter + sl.value + ' (' + sl.language + ')';
+
+        i++;
+      }
+      return stringified;
+    } else {
+      // show only one value, depending on default language
+      // the language is defined in user profile if a user is logged-in
+      // otherwise it takes the language from browser
+      const userLanguage = this.store.selectSnapshot(UserSelectors.language);
+      language =
+        userLanguage != null
+          ? userLanguage
+          : navigator.language.substring(0, 2);
+
+      // does the defined language exists and does it have a value?
+      const index = value.findIndex(i => i.language === language);
+
+      if (value[index] && value[index].value.length > 0) {
+        return value[index].value;
+      } else {
+        return value[0].value;
+      }
+    }
+  }
 }

@@ -11,69 +11,72 @@ import { filter, map } from 'rxjs/operators';
  * the emitting component and the listening component.
  */
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 }) // must be provided on component level, i.e. resource view component.
 export class ValueOperationEventService {
-    // create a subject to hold data which can be subscribed to.
-    // you only get the data after you subscribe.
-    private _subject$ = new Subject();
+  // create a subject to hold data which can be subscribed to.
+  // you only get the data after you subscribe.
+  private _subject$ = new Subject();
 
-    // used in the listening component.
-    // i.e. this.valueOperationEventSubscription = this._valueOperationEventService.on(Events.ValueAdded, () => doSomething());
-    on(event: Events, action: (value: EventValue) => void): Subscription {
-        return this._subject$
-            .pipe(
-                // filter down based on event name to any events that are emitted out of the subject from the emit method below.
-                filter((e: EmitEvent) => e.name === event),
-                map((e: EmitEvent) => e.value)
-            )
-            .subscribe(action); // subscribe to the subject to get the data.
-    }
+  // used in the listening component.
+  // i.e. this.valueOperationEventSubscription = this._valueOperationEventService.on(Events.ValueAdded, () => doSomething());
+  on(event: Events, action: (value: EventValue) => void): Subscription {
+    return this._subject$
+      .pipe(
+        // filter down based on event name to any events that are emitted out of the subject from the emit method below.
+        filter((e: EmitEvent) => e.name === event),
+        map((e: EmitEvent) => e.value)
+      )
+      .subscribe(action); // subscribe to the subject to get the data.
+  }
 
-    // used in the emitting component.
-    // i.e. this.valueOperationEventService.emit(new EmitEvent(Events.ValueAdded, new EventValues(new ReadValue()));
-    emit(event: EmitEvent) {
-        this._subject$.next(event);
-    }
+  // used in the emitting component.
+  // i.e. this.valueOperationEventService.emit(new EmitEvent(Events.ValueAdded, new EventValues(new ReadValue()));
+  emit(event: EmitEvent) {
+    this._subject$.next(event);
+  }
 }
 
 export class EmitEvent {
-    constructor(public name: Events, public value?: EventValue) {}
+  constructor(
+    public name: Events,
+    public value?: EventValue
+  ) {}
 }
 
 // possible events that can be emitted.
 export enum Events {
-    ValueAdded,
-    ValueDeleted,
-    ValueUpdated,
-    FileValueUpdated,
+  ValueAdded,
+  ValueDeleted,
+  ValueUpdated,
+  FileValueUpdated,
 }
 
 export abstract class EventValue {}
 
 export class AddedEventValue extends EventValue {
-    constructor(public addedValue: ReadValue) {
-        super();
-    }
+  constructor(public addedValue: ReadValue) {
+    super();
+  }
 }
 
 export class UpdatedEventValues extends EventValue {
-    constructor(
-        public currentValue: ReadValue,
-        public updatedValue: ReadValue
-    ) {
-        super();
-    }
+  constructor(
+    public currentValue: ReadValue,
+    public updatedValue: ReadValue
+  ) {
+    super();
+  }
 }
 
 export class DeletedEventValue extends EventValue {
-    constructor(public deletedValue: DeleteValue) {
-        super();
-    }
+  constructor(public deletedValue: DeleteValue) {
+    super();
+  }
 }
 
 export class UpdatedFileEventValue extends EventValue {
-    constructor(public updatedFileValue: ReadValue) {
-        super();
-    }
+  constructor(public updatedFileValue: ReadValue) {
+    super();
+  }
 }

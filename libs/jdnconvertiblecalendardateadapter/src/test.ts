@@ -5,9 +5,11 @@
 
 // This file is required by karma.conf.js and loads recursively all the .spec and framework files
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'zone.js';
 import 'zone.js/testing';
 import { getTestBed } from '@angular/core/testing';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,

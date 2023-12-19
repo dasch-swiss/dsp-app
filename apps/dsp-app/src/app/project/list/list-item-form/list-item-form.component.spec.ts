@@ -6,44 +6,43 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
-    MatDialogModule,
-    MatDialogRef,
-    MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-    ApiResponseData,
-    DeleteListNodeResponse,
-    ListsEndpointAdmin,
-    MockProjects,
-    ProjectResponse,
-    ReadProject,
-    StringLiteral,
+  ApiResponseData,
+  DeleteListNodeResponse,
+  ListsEndpointAdmin,
+  MockProjects,
+  ProjectResponse,
+  ReadProject,
+  StringLiteral,
 } from '@dasch-swiss/dsp-js';
-import { TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { AjaxResponse } from 'rxjs/ajax';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
+import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StringifyStringLiteralPipe } from '@dsp-app/src/app/main/pipes/string-transformation/stringify-string-literal.pipe';
 import { TruncatePipe } from '@dsp-app/src/app/main/pipes/string-transformation/truncate.pipe';
-import {
-    ListItemFormComponent,
-    ListNodeOperation,
-} from './list-item-form.component';
-import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
-import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
+import { TranslateModule } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
-import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
-
+import { of } from 'rxjs';
+import { AjaxResponse } from 'rxjs/ajax';
+import {
+  ListItemFormComponent,
+  ListNodeOperation,
+} from './list-item-form.component';
 
 @Component({
-    selector: 'dasch-swiss-app-progress-indicator',
-    template: '',
+  selector: 'dasch-swiss-app-progress-indicator',
+  template: '',
 })
 class MockProgressIndicatorComponent {}
 
@@ -51,41 +50,40 @@ class MockProgressIndicatorComponent {}
  * test host component to simulate parent component.
  */
 @Component({
-    template: ` <app-list-item-form
-        #listItemForm
-        [iri]="iri"
-        [language]="language"
-        (refreshParent)="updateView($event)"
-        [projectIri]="projectIri"
-        [projectUuid]="projectUuid"
-        [projectStatus]="true"
-        [labels]="labels"
-    >
-    </app-list-item-form>`,
+  template: ` <app-list-item-form
+    #listItemForm
+    [iri]="iri"
+    [language]="language"
+    (refreshParent)="updateView($event)"
+    [projectIri]="projectIri"
+    [projectUuid]="projectUuid"
+    [projectStatus]="true"
+    [labels]="labels">
+  </app-list-item-form>`,
 })
 class TestHostComponent implements OnInit {
-    @ViewChild('listItemForm') listItemForm: ListItemFormComponent;
+  @ViewChild('listItemForm') listItemForm: ListItemFormComponent;
 
-    iri = 'http://rdfh.ch/lists/0001/notUsedList01';
+  iri = 'http://rdfh.ch/lists/0001/notUsedList01';
 
-    language = 'en';
+  language = 'en';
 
-    projectIri = 'http://rdfh.ch/projects/0001';
+  projectIri = 'http://rdfh.ch/projects/0001';
 
-    projectUuid = '0001';
+  projectUuid = '0001';
 
-    labels: StringLiteral[];
+  labels: StringLiteral[];
 
-    constructor() {}
+  constructor() {}
 
-    ngOnInit() {
-        this.labels = [
-            {
-                value: 'node 1',
-                language: 'en',
-            },
-        ];
-    }
+  ngOnInit() {
+    this.labels = [
+      {
+        value: 'node 1',
+        language: 'en',
+      },
+    ];
+  }
 }
 
 /**
@@ -93,203 +91,195 @@ class TestHostComponent implements OnInit {
  */
 @Component({ selector: 'dasch-swiss-app-string-literal', template: '' })
 class MockStringLiteralInputComponent {
-    @Input() placeholder = 'Label';
-    @Input() language: string;
-    @Input() textarea: boolean;
-    @Input() value: StringLiteral[] = [];
-    @Input() disabled: boolean;
-    @Input() readonly: boolean;
-    constructor() {}
+  @Input() placeholder = 'Label';
+  @Input() language: string;
+  @Input() textarea: boolean;
+  @Input() value: StringLiteral[] = [];
+  @Input() disabled: boolean;
+  @Input() readonly: boolean;
+  constructor() {}
 }
 
 describe('ListItemFormComponent', () => {
-    let testHostComponent: TestHostComponent;
-    let testHostFixture: ComponentFixture<TestHostComponent>;
-    let rootLoader: HarnessLoader;
-    let overlayContainer: OverlayContainer;
+  let testHostComponent: TestHostComponent;
+  let testHostFixture: ComponentFixture<TestHostComponent>;
+  let rootLoader: HarnessLoader;
+  let overlayContainer: OverlayContainer;
 
-    beforeEach(waitForAsync(() => {
-        const listsEndpointSpyObj = {
-            admin: {
-                listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-                    'deleteListNode',
-                ]),
-            },
+  beforeEach(waitForAsync(() => {
+    const listsEndpointSpyObj = {
+      admin: {
+        listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
+          'deleteListNode',
+        ]),
+      },
+    };
+
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
+      'getSession',
+    ]);
+
+    const applicationStateServiceSpy = jasmine.createSpyObj(
+      'ApplicationStateService',
+      ['get']
+    );
+
+    TestBed.configureTestingModule({
+      declarations: [
+        ListItemFormComponent,
+        TestHostComponent,
+        DialogComponent,
+        DialogHeaderComponent,
+        StringifyStringLiteralPipe,
+        TruncatePipe,
+        MockStringLiteralInputComponent,
+        MockProgressIndicatorComponent,
+      ],
+      imports: [
+        BrowserAnimationsModule,
+        MatIconModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        TranslateModule.forRoot(),
+      ],
+      providers: [
+        MockProvider(AppLoggingService),
+        {
+          provide: DspApiConnectionToken,
+          useValue: listsEndpointSpyObj,
+        },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {},
+        },
+        {
+          provide: MatDialogRef,
+          useValue: {},
+        },
+        {
+          provide: SessionService,
+          useValue: sessionServiceSpy,
+        },
+        {
+          provide: ApplicationStateService,
+          useValue: applicationStateServiceSpy,
+        },
+      ],
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    // mock session service
+    const sessionSpy = TestBed.inject(SessionService);
+
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
+      () => {
+        const session: Session = {
+          id: 12345,
+          user: {
+            name: 'username',
+            jwt: 'myToken',
+            lang: 'en',
+            sysAdmin: true,
+            projectAdmin: [],
+          },
         };
 
-        const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-            'getSession',
-        ]);
+        return session;
+      }
+    );
 
-        const applicationStateServiceSpy = jasmine.createSpyObj(
-            'ApplicationStateService',
-            ['get']
-        );
+    // mock application state service
+    const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-        TestBed.configureTestingModule({
-            declarations: [
-                ListItemFormComponent,
-                TestHostComponent,
-                DialogComponent,
-                DialogHeaderComponent,
-                StringifyStringLiteralPipe,
-                TruncatePipe,
-                MockStringLiteralInputComponent,
-                MockProgressIndicatorComponent,
-            ],
-            imports: [
-                BrowserAnimationsModule,
-                MatIconModule,
-                MatDialogModule,
-                MatButtonModule,
-                MatSnackBarModule,
-                TranslateModule.forRoot(),
-            ],
-            providers: [
-                MockProvider(AppLoggingService),
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: listsEndpointSpyObj,
-                },
-                {
-                    provide: MAT_DIALOG_DATA,
-                    useValue: {},
-                },
-                {
-                    provide: MatDialogRef,
-                    useValue: {},
-                },
-                {
-                    provide: SessionService,
-                    useValue: sessionServiceSpy,
-                },
-                {
-                    provide: ApplicationStateService,
-                    useValue: applicationStateServiceSpy,
-                },
-            ],
-        }).compileComponents();
-    }));
+    (
+      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
+    ).get.and.callFake(() => {
+      const response: ProjectResponse = new ProjectResponse();
 
-    beforeEach(() => {
-        // mock session service
-        const sessionSpy = TestBed.inject(SessionService);
+      const mockProjects = MockProjects.mockProjects();
 
-        (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-            () => {
-                const session: Session = {
-                    id: 12345,
-                    user: {
-                        name: 'username',
-                        jwt: 'myToken',
-                        lang: 'en',
-                        sysAdmin: true,
-                        projectAdmin: [],
-                    },
-                };
+      response.project = mockProjects.body.projects[0];
 
-                return session;
-            }
-        );
-
-        // mock application state service
-        const applicationStateServiceSpy = TestBed.inject(
-            ApplicationStateService
-        );
-
-        (
-            applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-        ).get.and.callFake(() => {
-            const response: ProjectResponse = new ProjectResponse();
-
-            const mockProjects = MockProjects.mockProjects();
-
-            response.project = mockProjects.body.projects[0];
-
-            return of(response.project as ReadProject);
-        });
-
-        testHostFixture = TestBed.createComponent(TestHostComponent);
-        testHostComponent = testHostFixture.componentInstance;
-        testHostFixture.detectChanges();
-
-        expect(testHostComponent).toBeTruthy();
-
-        testHostComponent.listItemForm.showActionBubble = true;
-        testHostFixture.detectChanges();
-
-        overlayContainer = TestBed.inject(OverlayContainer);
-        rootLoader =
-            TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+      return of(response.project as ReadProject);
     });
 
-    afterEach(async () => {
-        const dialogs = await rootLoader.getAllHarnesses(MatDialogHarness);
-        await Promise.all(dialogs.map(async (d) => await d.close()));
+    testHostFixture = TestBed.createComponent(TestHostComponent);
+    testHostComponent = testHostFixture.componentInstance;
+    testHostFixture.detectChanges();
 
-        // angular won't call this for us so we need to do it ourselves to avoid leaks.
-        overlayContainer.ngOnDestroy();
+    expect(testHostComponent).toBeTruthy();
+
+    testHostComponent.listItemForm.showActionBubble = true;
+    testHostFixture.detectChanges();
+
+    overlayContainer = TestBed.inject(OverlayContainer);
+    rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+  });
+
+  afterEach(async () => {
+    const dialogs = await rootLoader.getAllHarnesses(MatDialogHarness);
+    await Promise.all(dialogs.map(async d => await d.close()));
+
+    // angular won't call this for us so we need to do it ourselves to avoid leaks.
+    overlayContainer.ngOnDestroy();
+  });
+
+  it('should show a dialog box when the delete button is clicked', async () => {
+    const deleteListNodeResponse: DeleteListNodeResponse =
+      new DeleteListNodeResponse();
+    deleteListNodeResponse.node.children = [];
+    deleteListNodeResponse.node.id = 'http://rdfh.ch/lists/0001/notUsedList';
+    deleteListNodeResponse.node.isRootNode = true;
+    deleteListNodeResponse.node.name = 'notUsedList';
+    deleteListNodeResponse.node.projectIri = 'http://rdfh.ch/projects/0001';
+
+    const listSpy = TestBed.inject(DspApiConnectionToken);
+
+    (
+      listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
+    ).deleteListNode.and.callFake(() => {
+      const response = deleteListNodeResponse;
+
+      return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
     });
 
-    it('should show a dialog box when the delete button is clicked', async () => {
-        const deleteListNodeResponse: DeleteListNodeResponse =
-            new DeleteListNodeResponse();
-        deleteListNodeResponse.node.children = [];
-        deleteListNodeResponse.node.id =
-            'http://rdfh.ch/lists/0001/notUsedList';
-        deleteListNodeResponse.node.isRootNode = true;
-        deleteListNodeResponse.node.name = 'notUsedList';
-        deleteListNodeResponse.node.projectIri = 'http://rdfh.ch/projects/0001';
+    spyOn(testHostComponent.listItemForm.refreshParent, 'emit');
 
-        const listSpy = TestBed.inject(DspApiConnectionToken);
+    const deleteButton = await rootLoader.getHarness(
+      MatButtonHarness.with({ selector: '.delete' })
+    );
+    await deleteButton.click();
 
-        (
-            listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-        ).deleteListNode.and.callFake(() => {
-            const response = deleteListNodeResponse;
+    const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
-            return of(
-                ApiResponseData.fromAjaxResponse({ response } as AjaxResponse)
-            );
-        });
+    expect(dialogHarnesses.length).toEqual(1);
 
-        spyOn(testHostComponent.listItemForm.refreshParent, 'emit');
+    const confirmButton = await rootLoader.getHarness(
+      MatButtonHarness.with({ selector: '.confirm-button' })
+    );
 
-        const deleteButton = await rootLoader.getHarness(
-            MatButtonHarness.with({ selector: '.delete' })
-        );
-        await deleteButton.click();
+    await confirmButton.click();
 
-        const dialogHarnesses = await rootLoader.getAllHarnesses(
-            MatDialogHarness
-        );
+    const listNodeOperation: ListNodeOperation = new ListNodeOperation();
+    listNodeOperation.listNode = deleteListNodeResponse.node;
+    listNodeOperation.operation = 'delete';
 
-        expect(dialogHarnesses.length).toEqual(1);
+    testHostFixture.whenStable().then(() => {
+      expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledWith(
+        testHostComponent.iri
+      );
+      expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledTimes(
+        1
+      );
 
-        const confirmButton = await rootLoader.getHarness(
-            MatButtonHarness.with({ selector: '.confirm-button' })
-        );
-
-        await confirmButton.click();
-
-        const listNodeOperation: ListNodeOperation = new ListNodeOperation();
-        listNodeOperation.listNode = deleteListNodeResponse.node;
-        listNodeOperation.operation = 'delete';
-
-        testHostFixture.whenStable().then(() => {
-            expect(
-                listSpy.admin.listsEndpoint.deleteListNode
-            ).toHaveBeenCalledWith(testHostComponent.iri);
-            expect(
-                listSpy.admin.listsEndpoint.deleteListNode
-            ).toHaveBeenCalledTimes(1);
-
-            expect(
-                testHostComponent.listItemForm.refreshParent.emit
-            ).toHaveBeenCalledWith(listNodeOperation);
-            expect(
-                testHostComponent.listItemForm.refreshParent.emit
-            ).toHaveBeenCalledTimes(1);
-        });
+      expect(
+        testHostComponent.listItemForm.refreshParent.emit
+      ).toHaveBeenCalledWith(listNodeOperation);
+      expect(
+        testHostComponent.listItemForm.refreshParent.emit
+      ).toHaveBeenCalledTimes(1);
     });
+  });
 });

@@ -1,4 +1,12 @@
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
@@ -8,20 +16,21 @@ import {
   ListNodeV2,
   ReadListValue,
   ResourcePropertyDefinition,
-  UpdateListValue
+  UpdateListValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 
 @Component({
   selector: 'app-list-value',
   templateUrl: './list-value.component.html',
-  styleUrls: ['./list-value.component.scss']
+  styleUrls: ['./list-value.component.scss'],
 })
 export class ListValueComponent
   extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy {
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input() displayValue?: ReadListValue;
   @Input() propertyDef: ResourcePropertyDefinition;
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
@@ -69,16 +78,14 @@ export class ListValueComponent
             7,
             rootNodeIri.length - 1
           );
-          this._dspApiConnection.v2.list
-            .getList(trimmedRootNodeIRI)
-            .subscribe(
-              (response: ListNodeV2) => {
-                this.listRootNode = response;
-              },
-              (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-              }
-            );
+          this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
+            (response: ListNodeV2) => {
+              this.listRootNode = response;
+            },
+            (error: ApiResponseError) => {
+              this._errorHandler.showMessage(error);
+            }
+          );
         }
       } else {
         this.valueFormControl.setValue(this.displayValue.listNodeLabel);
@@ -153,24 +160,22 @@ export class ListValueComponent
         7,
         rootNodeIri.length - 1
       );
-      this._dspApiConnection.v2.list
-        .getList(trimmedRootNodeIRI)
-        .subscribe(
-          (response: ListNodeV2) => {
-            if (!response.children.length) {
-              // this shouldn't happen since users cannot select the root node
-              this.selectedNodeHierarchy.push(response.label);
-            } else {
-              this.selectedNodeHierarchy = this._getHierarchy(
-                nodeIri,
-                response.children
-              );
-            }
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
+      this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
+        (response: ListNodeV2) => {
+          if (!response.children.length) {
+            // this shouldn't happen since users cannot select the root node
+            this.selectedNodeHierarchy.push(response.label);
+          } else {
+            this.selectedNodeHierarchy = this._getHierarchy(
+              nodeIri,
+              response.children
+            );
           }
-        );
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+        }
+      );
     }
   }
 
@@ -179,10 +184,7 @@ export class ListValueComponent
       const node = children[i];
       if (node.id !== selectedNodeIri) {
         if (node.children) {
-          const path = this._getHierarchy(
-            selectedNodeIri,
-            node.children
-          );
+          const path = this._getHierarchy(selectedNodeIri, node.children);
 
           if (path) {
             path.unshift(node.label);

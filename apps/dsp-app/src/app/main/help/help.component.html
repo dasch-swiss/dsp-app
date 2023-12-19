@@ -1,50 +1,51 @@
 <div class="help-page">
-    <section *ngIf="!dsp.production" class="info">
-        <div class="content medium middle development hint {{ dsp.color }}">
-            <p class="mat-subtitle-1 content medium middle">
-                This is a development version of DSP (release
-                <strong>{{ dsp.release }}</strong>
-                ) running in the environment
-                <strong>{{ dsp.environment }}</strong>
-            </p>
-        </div>
-    </section>
+  <section *ngIf="!dsp.production" class="info">
+    <div class="content medium middle development hint {{ dsp.color }}">
+      <p class="mat-subtitle-1 content medium middle">
+        This is a development version of DSP (release
+        <strong>{{ dsp.release }}</strong>
+        ) running in the environment
+        <strong>{{ dsp.environment }}</strong>
+      </p>
+    </div>
+  </section>
 
-    <section class="documentation">
-        <div class="content large middle">
-            <h1 class="mat-headline-4">Need help?</h1>
-            <h2 class="mat-headline-6">Read the user guide: Explore by topic</h2>
+  <section class="documentation">
+    <div class="content large middle">
+      <h1 class="mat-headline-4">Need help?</h1>
+      <h2 class="mat-headline-6">Read the user guide: Explore by topic</h2>
 
-            <app-grid id="app-grid-documentation" [list]="docs"></app-grid>
-        </div>
-    </section>
-    <section class="darken-bg software">
-        <div class="content large middle centered">
-            <h2 class="mat-headline-6">Explore our software products</h2>
-            <p class="mat-subtitle-1 content medium middle">
-                The DaSCH Service Platform (DSP) is our main product with the current release being
-                <br>
-                <strong>{{ dsp.release }}</strong>
-                <br>
-                <a [href]="releaseNotesUrl"
-                    >Click here to get the latest news about this main version
-                    <mat-icon class="suffix">launch</mat-icon></a
-                >
-                <br /><br />
-                If you are interested in more details about the individual
-                applications of DSP, take a look at the following software
-                products &mdash; all developed by the DaSCH team in Switzerland.
-            </p>
-            <app-grid id="app-grid-tools" [list]="tools"></app-grid>
-        </div>
-    </section>
+      <app-grid id="app-grid-documentation" [list]="docs"></app-grid>
+    </div>
+  </section>
+  <section class="darken-bg software">
+    <div class="content large middle centered">
+      <h2 class="mat-headline-6">Explore our software products</h2>
+      <p class="mat-subtitle-1 content medium middle">
+        The DaSCH Service Platform (DSP) is our main product with the current
+        release being
+        <br />
+        <strong>{{ dsp.release }}</strong>
+        <br />
+        <a [href]="releaseNotesUrl"
+          >Click here to get the latest news about this main version
+          <mat-icon class="suffix">launch</mat-icon></a
+        >
+        <br /><br />
+        If you are interested in more details about the individual applications
+        of DSP, take a look at the following software products &mdash; all
+        developed by the DaSCH team in Switzerland.
+      </p>
+      <app-grid id="app-grid-tools" [list]="tools"></app-grid>
+    </div>
+  </section>
 
-    <section class="support">
-        <div class="content large middle">
-            <h3 class="mat-headline-6">Get more support or help to improve</h3>
+  <section class="support">
+    <div class="content large middle">
+      <h3 class="mat-headline-6">Get more support or help to improve</h3>
 
-            <app-grid id="app-grid-tools" [list]="support"></app-grid>
-        </div>
-    </section>
-    <app-footer></app-footer>
+      <app-grid id="app-grid-tools" [list]="support"></app-grid>
+    </div>
+  </section>
+  <app-footer></app-footer>
 </div>

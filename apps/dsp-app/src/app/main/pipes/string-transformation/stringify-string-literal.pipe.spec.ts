@@ -5,124 +5,124 @@ import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { StringifyStringLiteralPipe } from './stringify-string-literal.pipe';
 
 describe('StringifyStringLiteralPipe', () => {
-    let pipe: StringifyStringLiteralPipe;
-    let labels: StringLiteral[];
-    let service: SessionService;
+  let pipe: StringifyStringLiteralPipe;
+  let labels: StringLiteral[];
+  let service: SessionService;
 
-    beforeEach(waitForAsync(() => {
-        // empty spy object to use in the providers for the SessionService injection
-        const dspConnSpy = {};
+  beforeEach(waitForAsync(() => {
+    // empty spy object to use in the providers for the SessionService injection
+    const dspConnSpy = {};
 
-        TestBed.configureTestingModule({
-            providers: [
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: dspConnSpy,
-                },
-                SessionService,
-            ],
-        });
-
-        service = TestBed.inject(SessionService);
-        pipe = new StringifyStringLiteralPipe(service);
-    }));
-
-    beforeEach(() => {
-        labels = [
-            {
-                value: 'Welt',
-                language: 'de',
-            },
-            {
-                value: 'World',
-                language: 'en',
-            },
-            {
-                value: 'Monde',
-                language: 'fr',
-            },
-            {
-                value: 'Mondo',
-                language: 'it',
-            },
-        ];
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: DspApiConnectionToken,
+          useValue: dspConnSpy,
+        },
+        SessionService,
+      ],
     });
 
-    // mock localStorage
-    beforeEach(() => {
-        let store = {};
+    service = TestBed.inject(SessionService);
+    pipe = new StringifyStringLiteralPipe(service);
+  }));
 
-        spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): string => store[key] || null
-        );
-        spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
-            delete store[key];
-        });
-        spyOn(localStorage, 'setItem').and.callFake(
-            (key: string, value: string): void => {
-                store[key] = value;
-            }
-        );
-        spyOn(localStorage, 'clear').and.callFake(() => {
-            store = {};
-        });
+  beforeEach(() => {
+    labels = [
+      {
+        value: 'Welt',
+        language: 'de',
+      },
+      {
+        value: 'World',
+        language: 'en',
+      },
+      {
+        value: 'Monde',
+        language: 'fr',
+      },
+      {
+        value: 'Mondo',
+        language: 'it',
+      },
+    ];
+  });
+
+  // mock localStorage
+  beforeEach(() => {
+    let store = {};
+
+    spyOn(localStorage, 'getItem').and.callFake(
+      (key: string): string => store[key] || null
+    );
+    spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
+      delete store[key];
     });
-
-    it('create an instance', () => {
-        expect(pipe).toBeTruthy();
+    spyOn(localStorage, 'setItem').and.callFake(
+      (key: string, value: string): void => {
+        store[key] = value;
+      }
+    );
+    spyOn(localStorage, 'clear').and.callFake(() => {
+      store = {};
     });
+  });
 
-    it('should return a string in English', () => {
-        const session: Session = {
-            id: 12345,
-            user: {
-                name: 'username',
-                jwt: 'myToken',
-                lang: 'en',
-                sysAdmin: false,
-                projectAdmin: [],
-            },
-        };
+  it('create an instance', () => {
+    expect(pipe).toBeTruthy();
+  });
 
-        // store session in localStorage
-        localStorage.setItem('session', JSON.stringify(session));
+  it('should return a string in English', () => {
+    const session: Session = {
+      id: 12345,
+      user: {
+        name: 'username',
+        jwt: 'myToken',
+        lang: 'en',
+        sysAdmin: false,
+        projectAdmin: [],
+      },
+    };
 
-        // since no argument is provided, the pipe should use the language stored in the session
-        const myString = pipe.transform(labels);
-        expect(myString).toEqual('World');
+    // store session in localStorage
+    localStorage.setItem('session', JSON.stringify(session));
 
-        // remove session
-        localStorage.removeItem('session');
-    });
+    // since no argument is provided, the pipe should use the language stored in the session
+    const myString = pipe.transform(labels);
+    expect(myString).toEqual('World');
 
-    it('should return a string in German', () => {
-        const session: Session = {
-            id: 12345,
-            user: {
-                name: 'username',
-                jwt: 'myToken',
-                lang: 'de',
-                sysAdmin: false,
-                projectAdmin: [],
-            },
-        };
+    // remove session
+    localStorage.removeItem('session');
+  });
 
-        // store session in localStorage
-        localStorage.setItem('session', JSON.stringify(session));
+  it('should return a string in German', () => {
+    const session: Session = {
+      id: 12345,
+      user: {
+        name: 'username',
+        jwt: 'myToken',
+        lang: 'de',
+        sysAdmin: false,
+        projectAdmin: [],
+      },
+    };
 
-        // since no argument is provided, the pipe should use the language stored in the session
-        const myString = pipe.transform(labels);
-        expect(myString).toEqual('Welt');
+    // store session in localStorage
+    localStorage.setItem('session', JSON.stringify(session));
 
-        // remove session
-        localStorage.removeItem('session');
-    });
+    // since no argument is provided, the pipe should use the language stored in the session
+    const myString = pipe.transform(labels);
+    expect(myString).toEqual('Welt');
 
-    it('should return a string with all languages of which the StringLiteral array contains', () => {
-        // since no argument is provided, the pipe should use the language stored in the session
-        const myString = pipe.transform(labels, 'all');
-        expect(myString).toEqual(
-            'Welt (de) / World (en) / Monde (fr) / Mondo (it)'
-        );
-    });
+    // remove session
+    localStorage.removeItem('session');
+  });
+
+  it('should return a string with all languages of which the StringLiteral array contains', () => {
+    // since no argument is provided, the pipe should use the language stored in the session
+    const myString = pipe.transform(labels, 'all');
+    expect(myString).toEqual(
+      'Welt (de) / World (en) / Monde (fr) / Mondo (it)'
+    );
+  });
 });

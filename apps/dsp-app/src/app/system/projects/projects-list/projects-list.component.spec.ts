@@ -10,103 +10,96 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import {
-    DspApiConfigToken,
-    DspApiConnectionToken,
+  DspApiConfigToken,
+  DspApiConnectionToken,
 } from '@dasch-swiss/vre/shared/app-config';
+import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { ProjectService } from '@dsp-app/src/app/workspace/resource/services/project.service';
 import { TestConfig } from '@dsp-app/src/test.config';
-import { ProjectsListComponent } from './projects-list.component';
 import { MockProvider } from 'ng-mocks';
-import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import { ProjectsListComponent } from './projects-list.component';
 
 describe('ProjectsListComponent', () => {
-    let component: ProjectsListComponent;
-    let fixture: ComponentFixture<ProjectsListComponent>;
+  let component: ProjectsListComponent;
+  let fixture: ComponentFixture<ProjectsListComponent>;
 
-    const appInitSpy = {
-        dspAppConfig: {
-            iriBase: 'http://rdfh.ch',
+  const appInitSpy = {
+    dspAppConfig: {
+      iriBase: 'http://rdfh.ch',
+    },
+  };
+
+  beforeEach(waitForAsync(() => {
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
+      'iriToUuid',
+    ]);
+
+    TestBed.configureTestingModule({
+      declarations: [ProjectsListComponent, DialogComponent, StatusComponent],
+      imports: [
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatDialogModule,
+        MatIconModule,
+        MatMenuModule,
+        MatSnackBarModule,
+        RouterTestingModule,
+      ],
+      providers: [
+        {
+          provide: AppConfigService,
+          useValue: appInitSpy,
         },
-    };
+        MockProvider(AppLoggingService),
+        {
+          provide: ProjectService,
+          useValue: projectServiceSpy,
+        },
+        {
+          provide: DspApiConfigToken,
+          useValue: TestConfig.ApiConfig,
+        },
+        {
+          provide: DspApiConnectionToken,
+          useValue: new KnoraApiConnection(TestConfig.ApiConfig),
+        },
+      ],
+    }).compileComponents();
+  }));
 
-    beforeEach(waitForAsync(() => {
-        const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-            'iriToUuid',
-        ]);
+  // mock localStorage
+  beforeEach(() => {
+    let store = {};
 
-        TestBed.configureTestingModule({
-            declarations: [
-                ProjectsListComponent,
-                DialogComponent,
-                StatusComponent,
-            ],
-            imports: [
-                BrowserAnimationsModule,
-                MatButtonModule,
-                MatChipsModule,
-                MatDialogModule,
-                MatIconModule,
-                MatMenuModule,
-                MatSnackBarModule,
-                RouterTestingModule,
-            ],
-            providers: [
-                {
-                    provide: AppConfigService,
-                    useValue: appInitSpy,
-                },
-                MockProvider(AppLoggingService),
-                {
-                    provide: ProjectService,
-                    useValue: projectServiceSpy,
-                },
-                {
-                    provide: DspApiConfigToken,
-                    useValue: TestConfig.ApiConfig,
-                },
-                {
-                    provide: DspApiConnectionToken,
-                    useValue: new KnoraApiConnection(TestConfig.ApiConfig),
-                },
-            ],
-        }).compileComponents();
-    }));
-
-    // mock localStorage
-    beforeEach(() => {
-        let store = {};
-
-        spyOn(localStorage, 'getItem').and.callFake(
-            (key: string): string => store[key] || null
-        );
-        spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
-            delete store[key];
-        });
-        spyOn(localStorage, 'setItem').and.callFake(
-            (key: string, value: string): string => (store[key] = <any>value)
-        );
-        spyOn(localStorage, 'clear').and.callFake(() => {
-            store = {};
-        });
+    spyOn(localStorage, 'getItem').and.callFake(
+      (key: string): string => store[key] || null
+    );
+    spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
+      delete store[key];
     });
-
-    beforeEach(() => {
-        localStorage.setItem(
-            'session',
-            JSON.stringify(TestConfig.CurrentSession)
-        );
-
-        fixture = TestBed.createComponent(ProjectsListComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    spyOn(localStorage, 'setItem').and.callFake(
+      (key: string, value: string): string => (store[key] = <any>value)
+    );
+    spyOn(localStorage, 'clear').and.callFake(() => {
+      store = {};
     });
+  });
 
-    it('should create', () => {
-        expect<any>(localStorage.getItem('session')).toBe(
-            JSON.stringify(TestConfig.CurrentSession)
-        );
-        expect(component).toBeTruthy();
-    });
+  beforeEach(() => {
+    localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
+
+    fixture = TestBed.createComponent(ProjectsListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect<any>(localStorage.getItem('session')).toBe(
+      JSON.stringify(TestConfig.CurrentSession)
+    );
+    expect(component).toBeTruthy();
+  });
 });

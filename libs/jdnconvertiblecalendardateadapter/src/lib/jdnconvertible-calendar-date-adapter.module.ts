@@ -9,9 +9,9 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
+import { ACTIVE_CALENDAR } from './active_calendar_token';
 import { JDNConvertibleCalendarDateAdapter } from './jdnconvertible-calendar-date-adapter';
 import { MAT_JDN_DATE_FORMATS } from './jdnconvertible-calendar-date-formats';
-import { ACTIVE_CALENDAR } from './active_calendar_token';
 
 @NgModule({
   providers: [

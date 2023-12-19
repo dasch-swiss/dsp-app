@@ -1,36 +1,55 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import {
-    ApiResponseError,
-    KnoraApiConnection,
-    Project,
-    ReadProject,
-    ReadUser,
-    StringLiteral,
-    UpdateProjectRequest
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import {
-    LoadProjectsAction, ProjectsSelectors,
-    UpdateProjectAction,
-    UserSelectors
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import {
+  ApiResponseError,
+  KnoraApiConnection,
+  Project,
+  ReadProject,
+  ReadUser,
+  StringLiteral,
+  UpdateProjectRequest,
+} from '@dasch-swiss/dsp-js';
+import {
+  ProjectApiService,
+  UserApiService,
+} from '@dasch-swiss/vre/shared/app-api';
+import {
+  DspApiConnectionToken,
+  RouteConstants,
+} from '@dasch-swiss/vre/shared/app-config';
+import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import {
+  LoadProjectsAction,
+  ProjectsSelectors,
+  UpdateProjectAction,
+  UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/shared/app-api';
+import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
+import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-project-form',
   templateUrl: './project-form.component.html',
-  styleUrls: ['./project-form.component.scss']
+  styleUrls: ['./project-form.component.scss'],
 })
 export class ProjectFormComponent implements OnInit {
   /**
@@ -50,12 +69,12 @@ export class ProjectFormComponent implements OnInit {
    * shortcode and shortname must be unique
    */
   existingShortNames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible')
+    new RegExp('anEmptyRegularExpressionWasntPossible'),
   ];
   shortnameRegex = /^[a-zA-Z]+\S*$/;
 
   existingShortcodes: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible')
+    new RegExp('anEmptyRegularExpressionWasntPossible'),
   ];
   shortcodeRegex = /^[0-9A-Fa-f]+$/;
 
@@ -89,7 +108,7 @@ export class ProjectFormComponent implements OnInit {
    */
   successMessage: any = {
     status: 200,
-    statusText: 'You have successfully updated the project data.'
+    statusText: 'You have successfully updated the project data.',
   };
 
   /**
@@ -102,7 +121,7 @@ export class ProjectFormComponent implements OnInit {
     longname: '',
     shortcode: '',
     description: '',
-    keywords: ''
+    keywords: '',
     // 'institution': ''
   };
 
@@ -118,11 +137,11 @@ export class ProjectFormComponent implements OnInit {
         this.shortnameMaxLength +
         ' characters long.',
       pattern:
-        'Short name shouldn\'t start with a number; Spaces are not allowed.',
-      existingName: 'This short name is already taken.'
+        "Short name shouldn't start with a number; Spaces are not allowed.",
+      existingName: 'This short name is already taken.',
     },
     longname: {
-      required: 'Project (long) name is required.'
+      required: 'Project (long) name is required.',
     },
     shortcode: {
       required: 'Shortcode is required',
@@ -135,18 +154,18 @@ export class ProjectFormComponent implements OnInit {
         this.shortcodeMinLength +
         ' characters long.',
       pattern: 'This is not a hexadecimal value!',
-      existingName: 'This shortcode is already taken.'
+      existingName: 'This shortcode is already taken.',
     },
     description: {
       required: 'A description is required.',
       maxlength:
         'Description cannot be more than ' +
         this.descriptionMaxLength +
-        ' characters long.'
+        ' characters long.',
     },
     keywords: {
-      required: 'At least one keyword is required.'
-    }
+      required: 'At least one keyword is required.',
+    },
     // 'institution': {}
   };
 
@@ -179,53 +198,47 @@ export class ProjectFormComponent implements OnInit {
       this.projectIri = this._projectService.uuidToIri(this.projectUuid);
       // edit existing project
       // get origin project data first
-      this._projectApiService.get(this.projectIri)
-        .subscribe(
-          (response) => {
-            // save the origin project data in case of reset
-            this.project = response.project;
+      this._projectApiService.get(this.projectIri).subscribe(
+        response => {
+          // save the origin project data in case of reset
+          this.project = response.project;
 
-            this.buildForm(this.project);
+          this.buildForm(this.project);
 
-            this.loading = false;
-            this._cd.markForCheck();
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
-          }
-        );
+          this.loading = false;
+          this._cd.markForCheck();
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+        }
+      );
     } else {
       // create new project
 
       // to avoid duplicate shortcodes or shortnames
       // we have to create a list of already exisiting short codes and names
-      this._projectApiService.list()
-        .subscribe(
-          response => {
-            for (const project of response.projects) {
-              this.existingShortNames.push(
+      this._projectApiService.list().subscribe(
+        response => {
+          for (const project of response.projects) {
+            this.existingShortNames.push(
+              new RegExp(
+                '(?:^|W)' + project.shortname.toLowerCase() + '(?:$|W)'
+              )
+            );
+
+            if (project.shortcode !== null) {
+              this.existingShortcodes.push(
                 new RegExp(
-                  '(?:^|W)' +
-                  project.shortname.toLowerCase() +
-                  '(?:$|W)'
+                  '(?:^|W)' + project.shortcode.toLowerCase() + '(?:$|W)'
                 )
               );
-
-              if (project.shortcode !== null) {
-                this.existingShortcodes.push(
-                  new RegExp(
-                    '(?:^|W)' +
-                    project.shortcode.toLowerCase() +
-                    '(?:$|W)'
-                  )
-                );
-              }
             }
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
           }
-        );
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+        }
+      );
 
       this.project = new ReadProject();
       this.project.status = true;
@@ -266,47 +279,47 @@ export class ProjectFormComponent implements OnInit {
       shortname: new UntypedFormControl(
         {
           value: project.shortname,
-          disabled: this.projectIri
+          disabled: this.projectIri,
         },
         [
           Validators.required,
           Validators.minLength(this.shortnameMinLength),
           Validators.maxLength(this.shortnameMaxLength),
           existingNamesValidator(this.existingShortNames),
-          Validators.pattern(this.shortnameRegex)
+          Validators.pattern(this.shortnameRegex),
         ]
       ),
       longname: new UntypedFormControl(
         {
           value: project.longname,
-          disabled: disabled
+          disabled: disabled,
         },
         [Validators.required]
       ),
       shortcode: new UntypedFormControl(
         {
           value: project.shortcode,
-          disabled: this.projectIri && project.shortcode !== null
+          disabled: this.projectIri && project.shortcode !== null,
         },
         [
           Validators.required,
           Validators.minLength(this.shortcodeMinLength),
           Validators.maxLength(this.shortcodeMaxLength),
           existingNamesValidator(this.existingShortcodes),
-          Validators.pattern(this.shortcodeRegex)
+          Validators.pattern(this.shortcodeRegex),
         ]
       ),
       logo: new UntypedFormControl({
         value: project.logo,
-        disabled: disabled
+        disabled: disabled,
       }),
       status: [true],
       selfjoin: [false],
       keywords: new UntypedFormControl({
         // must be empty (even in edit mode), because of the mat-chip-list
         value: [],
-        disabled: disabled
-      })
+        disabled: disabled,
+      }),
     });
 
     if (!this.projectIri) {
@@ -328,12 +341,12 @@ export class ProjectFormComponent implements OnInit {
 
     const form = this.form;
 
-    Object.keys(this.formErrors).map((field) => {
+    Object.keys(this.formErrors).map(field => {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map((key) => {
+        Object.keys(control.errors).map(key => {
           this.formErrors[field] += messages[key] + ' ';
         });
       }
@@ -406,18 +419,24 @@ export class ProjectFormComponent implements OnInit {
       }
 
       // edit / update project data
-      this._store.dispatch(new UpdateProjectAction(this.project.id, projectData));
-      this._actions$.pipe(ofActionSuccessful(LoadProjectsAction))
+      this._store.dispatch(
+        new UpdateProjectAction(this.project.id, projectData)
+      );
+      this._actions$
+        .pipe(ofActionSuccessful(LoadProjectsAction))
         .subscribe(() => {
-
-            this.success = true;
-             this.project =
-            this._store.selectSnapshot(ProjectsSelectors.currentProject);
-            this._notification.openSnackBar('You have successfully updated the project information.');
-            this._router.navigate([`${RouteConstants.projectRelative}/${this.projectUuid}`]);
-            this.loading = false;
-          }
-        );
+          this.success = true;
+          this.project = this._store.selectSnapshot(
+            ProjectsSelectors.currentProject
+          );
+          this._notification.openSnackBar(
+            'You have successfully updated the project information.'
+          );
+          this._router.navigate([
+            `${RouteConstants.projectRelative}/${this.projectUuid}`,
+          ]);
+          this.loading = false;
+        });
     } else {
       // create new project
       const projectData: Project = new Project();
@@ -445,25 +464,27 @@ export class ProjectFormComponent implements OnInit {
 
           // add logged-in user to the project
           // who am I?
-          const user = this._store.selectSnapshot(UserSelectors.user) as ReadUser;
+          const user = this._store.selectSnapshot(
+            UserSelectors.user
+          ) as ReadUser;
           this._userApiService
-            .addToProjectMembership(
-              user.id,
-              projectResponse.project.id
-            )
-            .subscribe(
-              () => {
-                const uuid = this._projectService.iriToUuid(projectResponse.project.id);
-                this.loading = false;
-                // redirect to project page
-                this._router.navigateByUrl(`${RouteConstants.projectRelative}`, {
-                  skipLocationChange:
-                    true
+            .addToProjectMembership(user.id, projectResponse.project.id)
+            .subscribe(() => {
+              const uuid = this._projectService.iriToUuid(
+                projectResponse.project.id
+              );
+              this.loading = false;
+              // redirect to project page
+              this._router
+                .navigateByUrl(`${RouteConstants.projectRelative}`, {
+                  skipLocationChange: true,
                 })
-                  .then(() =>
-                    this._router.navigate([`${RouteConstants.projectRelative}/${uuid}`])
-                  );
-              });
+                .then(() =>
+                  this._router.navigate([
+                    `${RouteConstants.projectRelative}/${uuid}`,
+                  ])
+                );
+            });
         },
         (error: ApiResponseError) => {
           this._errorHandler.showMessage(error);

@@ -1,4 +1,4 @@
 export interface StringLiteralV2 {
-    '@language'?: string;
-    '@value': string;
+  '@language'?: string;
+  '@value': string;
 }

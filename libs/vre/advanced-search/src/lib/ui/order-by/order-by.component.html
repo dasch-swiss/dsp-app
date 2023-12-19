@@ -1,57 +1,51 @@
 <div>
-    <!-- This button triggers the overlay and is it's origin -->
-    <button
-        mat-button
-        cdkOverlayOrigin
-        #trigger="cdkOverlayOrigin"
-        class="order-by-button"
-        type="button"
-        [disabled]="orderByDisabled"
-        (click)="isOpen = !isOpen"
-    >
-        <p class="label-icon-container">
-            <span class="label">Order by</span>
-            <span class="icon">
-                <mat-icon>expand_more</mat-icon>
-            </span>
-        </p>
-    </button>
+  <!-- This button triggers the overlay and is it's origin -->
+  <button
+    mat-button
+    cdkOverlayOrigin
+    #trigger="cdkOverlayOrigin"
+    class="order-by-button"
+    type="button"
+    [disabled]="orderByDisabled"
+    (click)="isOpen = !isOpen">
+    <p class="label-icon-container">
+      <span class="label">Order by</span>
+      <span class="icon">
+        <mat-icon>expand_more</mat-icon>
+      </span>
+    </p>
+  </button>
 
-    <!-- This template displays the overlay content and is connected to the button -->
-    <ng-template
-        cdkConnectedOverlay
-        [cdkConnectedOverlayOrigin]="trigger"
-        [cdkConnectedOverlayOpen]="isOpen"
-        [cdkConnectedOverlayHasBackdrop]="true"
-        [cdkConnectedOverlayBackdropClass]="[
+  <!-- This template displays the overlay content and is connected to the button -->
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="isOpen"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayBackdropClass]="[
             'cdk-overlay-transparent-backdrop'
         ]"
-        (backdropClick)="isOpen = false"
-    >
-        <mat-selection-list
-            #sortOrderSelectionList
-            cdkDropList
-            class="sort-list"
-            (cdkDropListDropped)="drop($event)"
-            (selectionChange)="onSelectionChange($event)"
-        >
-            <mat-list-option
-                *ngFor="let item of orderByList"
-                class="sort-item"
-                [selected]="item.orderBy"
-                [value]="item.id"
-                [disabled]="item.disabled"
-                [matTooltip]="tooltipText"
-                [matTooltipDisabled]="!item.disabled"
-                cdkDrag
-            >
-                <span cdkDragHandle matListItemIcon class="drag-handle">
-                    <mat-icon>drag_indicator</mat-icon>
-                </span>
-                <span matListItemTitle>
-                    {{ item.label }}
-                </span>
-            </mat-list-option>
-        </mat-selection-list>
-    </ng-template>
+    (backdropClick)="isOpen = false">
+    <mat-selection-list
+      #sortOrderSelectionList
+      cdkDropList
+      class="sort-list"
+      (cdkDropListDropped)="drop($event)"
+      (selectionChange)="onSelectionChange($event)">
+      <mat-list-option
+        *ngFor="let item of orderByList"
+        class="sort-item"
+        [selected]="item.orderBy"
+        [value]="item.id"
+        [disabled]="item.disabled"
+        [matTooltip]="tooltipText"
+        [matTooltipDisabled]="!item.disabled"
+        cdkDrag>
+        <span cdkDragHandle matListItemIcon class="drag-handle">
+          <mat-icon>drag_indicator</mat-icon>
+        </span>
+        <span matListItemTitle> {{ item.label }} </span>
+      </mat-list-option>
+    </mat-selection-list>
+  </ng-template>
 </div>

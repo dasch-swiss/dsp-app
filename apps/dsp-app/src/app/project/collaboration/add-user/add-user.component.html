@@ -2,83 +2,78 @@
 
 <!-- header toolbar -->
 <div class="app-toolbar transparent more-space-bottom">
-    <div class="app-toolbar-row toolbar-subtitle">
-        <h3 class="mat-body subtitle">Increase your team</h3>
-    </div>
-    <div class="app-toolbar-row toolbar-form">
-        <h2 class="mat-headline-6">
-            {{ 'appLabels.form.user.title.add2project' | translate }}
-        </h2>
+  <div class="app-toolbar-row toolbar-subtitle">
+    <h3 class="mat-body subtitle">Increase your team</h3>
+  </div>
+  <div class="app-toolbar-row toolbar-form">
+    <h2 class="mat-headline-6">
+      {{ 'appLabels.form.user.title.add2project' | translate }}
+    </h2>
 
-        <span class="fill-remaining-space"></span>
+    <span class="fill-remaining-space"></span>
 
-        <span class="app-toolbar-action select-form">
-            <form [formGroup]="selectUserForm" class="form" *ngIf="!loading">
-                <!-- auto complete list to select user -->
-                <div class="form-content">
-                    <mat-form-field class="large-field select-user">
-                        <input
-                            matInput
-                            [matAutocomplete]="user"
-                            [formControl]="selectUserForm.controls['username']"
-                            [placeholder]="
+    <span class="app-toolbar-action select-form">
+      <form [formGroup]="selectUserForm" class="form" *ngIf="!loading">
+        <!-- auto complete list to select user -->
+        <div class="form-content">
+          <mat-form-field class="large-field select-user">
+            <input
+              matInput
+              [matAutocomplete]="user"
+              [formControl]="selectUserForm.controls['username']"
+              [placeholder]="
                                 'appLabels.form.user.title.select' | translate
-                            "
-                        />
+                            " />
 
-                        <button
-                            class = "reset-button"
-                            mat-icon-button
-                            matSuffix
-                            *ngIf="selectUserForm.controls['username'].value"
-                            (click)="resetInput($event)"
-                            type="button"
-                        >
-                            <mat-icon>close</mat-icon>
-                        </button>
-
-                        <mat-autocomplete
-                            #user="matAutocomplete"
-                            (optionSelected)="addUser($event.option.value)"
-                        >
-                            <mat-option
-                                *ngFor="let user of filteredUsers | async"
-                                [value]="user?.name"
-                            >
-                                {{ user?.label }}
-                            </mat-option>
-                        </mat-autocomplete>
-
-                        <mat-hint *ngIf="selectUserErrors.username">
-                            {{ selectUserErrors.username }}
-                        </mat-hint>
-                    </mat-form-field>
-                </div>
-            </form>
-        </span>
-
-        <span class="fill-remaining-space"></span>
-
-        <span class="app-toolbar-action select-form">
             <button
-                mat-raised-button
-                color="primary"
-                [disabled]="!selectUserForm.valid"
-                class="add-new create-user-btn"
-                (click)="openDialog('createUser')"
-            >
-                New user
+              class="reset-button"
+              mat-icon-button
+              matSuffix
+              *ngIf="selectUserForm.controls['username'].value"
+              (click)="resetInput($event)"
+              type="button">
+              <mat-icon>close</mat-icon>
             </button>
-            <button
-                mat-button
-                [disabled]="!selectUserForm.valid"
-                class="add-new-mobile create-user-btn"
-                (click)="openDialog('createUser')"
-            >
-                <mat-icon>add_circle_outline</mat-icon>
-            </button>
-        </span>
-    </div>
+
+            <mat-autocomplete
+              #user="matAutocomplete"
+              (optionSelected)="addUser($event.option.value)">
+              <mat-option
+                *ngFor="let user of filteredUsers | async"
+                [value]="user?.name">
+                {{ user?.label }}
+              </mat-option>
+            </mat-autocomplete>
+
+            <mat-hint *ngIf="selectUserErrors.username">
+              {{ selectUserErrors.username }}
+            </mat-hint>
+          </mat-form-field>
+        </div>
+      </form>
+    </span>
+
+    <span class="fill-remaining-space"></span>
+
+    <span class="app-toolbar-action select-form">
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!selectUserForm.valid"
+        class="add-new create-user-btn"
+        (click)="openDialog('createUser')">
+        New user
+      </button>
+      <button
+        mat-button
+        [disabled]="!selectUserForm.valid"
+        class="add-new-mobile create-user-btn"
+        (click)="openDialog('createUser')">
+        <mat-icon>add_circle_outline</mat-icon>
+      </button>
+    </span>
+  </div>
 </div>
 
-<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator
+  *ngIf="loading"></dasch-swiss-app-progress-indicator>

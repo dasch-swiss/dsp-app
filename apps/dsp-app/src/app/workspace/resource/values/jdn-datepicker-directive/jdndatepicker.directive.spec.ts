@@ -1,117 +1,114 @@
-import { JDNDatepickerDirective } from './jdndatepicker.directive';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { DateAdapter } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ACTIVE_CALENDAR } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
-import { DateAdapter } from '@angular/material/core';
+import { JDNDatepickerDirective } from './jdndatepicker.directive';
 
 /**
  * test host component to simulate parent component.
  */
 @Component({
-    template: ` <app-jdn-datepicker
-        #activeCalDir
-        [activeCalendar]="activeCalendar"
-    ></app-jdn-datepicker>`,
+  template: ` <app-jdn-datepicker
+    #activeCalDir
+    [activeCalendar]="activeCalendar"></app-jdn-datepicker>`,
 })
 class TestHostComponent implements OnInit {
-    @ViewChild(JDNDatepickerDirective) jdnDir;
+  @ViewChild(JDNDatepickerDirective) jdnDir;
 
-    activeCalendar: string;
+  activeCalendar: string;
 
-    ngOnInit() {
-        this.activeCalendar = 'Gregorian';
-    }
+  ngOnInit() {
+    this.activeCalendar = 'Gregorian';
+  }
 }
 
 describe('JDNDatepickerDirective', () => {
-    let testHostComponent: TestHostComponent;
-    let testHostFixture: ComponentFixture<TestHostComponent>;
+  let testHostComponent: TestHostComponent;
+  let testHostFixture: ComponentFixture<TestHostComponent>;
 
-    let testBehaviourSubject;
-    let setCompleteSpy;
+  let testBehaviourSubject;
+  let setCompleteSpy;
 
-    let testBehaviourSubjSpy;
+  let testBehaviourSubjSpy;
 
-    beforeEach(waitForAsync(() => {
-        testBehaviourSubject = jasmine.createSpyObj('ACTIVE_CALENDAR', [
-            'next',
-            'complete',
-        ]);
+  beforeEach(waitForAsync(() => {
+    testBehaviourSubject = jasmine.createSpyObj('ACTIVE_CALENDAR', [
+      'next',
+      'complete',
+    ]);
 
-        setCompleteSpy = testBehaviourSubject.complete.and.stub();
+    setCompleteSpy = testBehaviourSubject.complete.and.stub();
 
-        // overrides the injection token defined in JDNDatepickerDirective's metadat
-        TestBed.overrideProvider(ACTIVE_CALENDAR, {
-            useValue: testBehaviourSubject,
-        });
-        TestBed.overrideProvider(DateAdapter, { useValue: {} });
-
-        TestBed.configureTestingModule({
-            declarations: [JDNDatepickerDirective, TestHostComponent],
-            providers: [
-                {
-                    provide: DateAdapter,
-                    useValue: {},
-                },
-                {
-                    provide: ACTIVE_CALENDAR,
-                    useValue: testBehaviourSubject,
-                },
-            ],
-            imports: [BrowserAnimationsModule],
-        }).compileComponents();
-
-        testBehaviourSubjSpy = TestBed.inject(ACTIVE_CALENDAR);
-    }));
-
-    beforeEach(() => {
-        testHostFixture = TestBed.createComponent(TestHostComponent);
-        testHostComponent = testHostFixture.componentInstance;
-        testHostFixture.detectChanges();
-
-        expect(testHostComponent).toBeTruthy();
-        expect(testHostComponent.jdnDir).toBeTruthy();
+    // overrides the injection token defined in JDNDatepickerDirective's metadat
+    TestBed.overrideProvider(ACTIVE_CALENDAR, {
+      useValue: testBehaviourSubject,
     });
+    TestBed.overrideProvider(DateAdapter, { useValue: {} });
 
-    it('should create an instance', () => {
-        expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(1);
-        expect(testBehaviourSubjSpy.next).toHaveBeenCalledWith('Gregorian');
-    });
+    TestBed.configureTestingModule({
+      declarations: [JDNDatepickerDirective, TestHostComponent],
+      providers: [
+        {
+          provide: DateAdapter,
+          useValue: {},
+        },
+        {
+          provide: ACTIVE_CALENDAR,
+          useValue: testBehaviourSubject,
+        },
+      ],
+      imports: [BrowserAnimationsModule],
+    }).compileComponents();
 
-    it('should update the calendar when the input changes', () => {
-        testHostComponent.activeCalendar = 'Julian';
-        testHostFixture.detectChanges();
+    testBehaviourSubjSpy = TestBed.inject(ACTIVE_CALENDAR);
+  }));
 
-        expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(2);
+  beforeEach(() => {
+    testHostFixture = TestBed.createComponent(TestHostComponent);
+    testHostComponent = testHostFixture.componentInstance;
+    testHostFixture.detectChanges();
 
-        expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual([
-            'Gregorian',
-        ]);
-        expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual([
-            'Julian',
-        ]);
-    });
+    expect(testHostComponent).toBeTruthy();
+    expect(testHostComponent.jdnDir).toBeTruthy();
+  });
 
-    it('should set the calendar to Gregorian when called with null', () => {
-        testHostComponent.activeCalendar = null;
-        testHostFixture.detectChanges();
+  it('should create an instance', () => {
+    expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(1);
+    expect(testBehaviourSubjSpy.next).toHaveBeenCalledWith('Gregorian');
+  });
 
-        expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(2);
+  it('should update the calendar when the input changes', () => {
+    testHostComponent.activeCalendar = 'Julian';
+    testHostFixture.detectChanges();
 
-        expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual([
-            'Gregorian',
-        ]);
-        expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual([
-            'Gregorian',
-        ]);
-    });
+    expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(2);
 
-    it('should complete the BehaviourSubject when destroyed', () => {
-        expect(setCompleteSpy).toHaveBeenCalledTimes(0);
+    expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual([
+      'Gregorian',
+    ]);
+    expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual(['Julian']);
+  });
 
-        testHostComponent.jdnDir.ngOnDestroy();
+  it('should set the calendar to Gregorian when called with null', () => {
+    testHostComponent.activeCalendar = null;
+    testHostFixture.detectChanges();
 
-        expect(setCompleteSpy).toHaveBeenCalledTimes(1);
-    });
+    expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(2);
+
+    expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual([
+      'Gregorian',
+    ]);
+    expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual([
+      'Gregorian',
+    ]);
+  });
+
+  it('should complete the BehaviourSubject when destroyed', () => {
+    expect(setCompleteSpy).toHaveBeenCalledTimes(0);
+
+    testHostComponent.jdnDir.ngOnDestroy();
+
+    expect(setCompleteSpy).toHaveBeenCalledTimes(1);
+  });
 });
