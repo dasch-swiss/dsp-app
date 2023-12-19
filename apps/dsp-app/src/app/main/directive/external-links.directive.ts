@@ -17,7 +17,8 @@ export class ExternalLinksDirective implements OnChanges {
   // to check if we are running on the server, give a token value
   constructor(
     @Inject(PLATFORM_ID) private platformId: string,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private location: Location
   ) {}
 
   ngOnChanges() {
@@ -37,7 +38,7 @@ export class ExternalLinksDirective implements OnChanges {
   private _isLinkExternal() {
     return (
       // get a token value from platformId to run the code only on the client and prevents errors
-      isPlatformBrowser(this.platformId) && !this.href.includes(location.hostname)
+      isPlatformBrowser(this.platformId) && !this.href.includes(this.location.hostname)
     );
   }
 }

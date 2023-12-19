@@ -88,14 +88,16 @@ export class PasswordFormComponent implements OnInit {
       if (usernameFromState === this.user.username) {
         // update own password
         this.updateOwn = true;
-      } else {
+      } else if (userFromState.systemAdmin) {
         // update not own password, if logged-in user is system admin
-        if (userFromState.systemAdmin) {
-          this.updateOwn = false;
-        }
+        this.updateOwn = false;
       }
       this.showPasswordForm = this.updateOwn;
-      this.updateOwn ? this.buildForm() : this.buildConfirmForm();
+      if (this.updateOwn) {
+        this.buildForm();
+      } else {
+        this.buildConfirmForm();
+      }
     } else {
       // create new password
       this.updateOwn = false;
@@ -185,13 +187,13 @@ export class PasswordFormComponent implements OnInit {
   onValueChanged(form: UntypedFormGroup) {
     // const form = this.userPasswordForm;
 
-    Object.keys(this.formErrors).map(field => {
+    Object.keys(this.formErrors).forEach(field => {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map(key => {
-          this.formErrors[field] += messages[key] + ' ';
+        Object.keys(control.errors).forEach(key => {
+          this.formErrors[field] += `${messages[key]} `;
         });
       }
     });
@@ -235,7 +237,7 @@ export class PasswordFormComponent implements OnInit {
 
     this._userApiService.updatePassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
       () => {
-        const successResponse = 'You have successfully updated ' + (this.updateOwn ? 'your' : "user's") + ' password.';
+        const successResponse = `You have successfully updated ${this.updateOwn ? 'your' : "user's"} password.`;
         this._notification.openSnackBar(successResponse);
         this.closeDialog.emit();
         this.form.reset();

@@ -54,7 +54,7 @@ export class AccountComponent implements OnInit {
         position: {
           top: '112px',
         },
-        data: { name: name, mode: mode },
+        data: { name, mode },
       })
       .afterClosed()
       .subscribe(response => {

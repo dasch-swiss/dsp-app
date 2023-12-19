@@ -3,6 +3,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  */
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace TypeDefinitionsModule {
   /**
    * Type alias for a Julian Day Number (JDN).

@@ -289,7 +289,7 @@ export class TimeInputComponent
       Number(splitTime[1])
     );
 
-    return updateDate.toISOString().split('.')[0] + 'Z';
+    return `${updateDate.toISOString().split('.')[0]}Z`;
   }
 
   // converts and returns a unix timestamp string as an array consisting of a GregorianCalendarDate and a string

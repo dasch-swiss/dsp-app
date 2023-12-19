@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiData } from '../../../data-access/advanced-search-service/advanced-search.service';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
 import { MatAutocompleteOptionsScrollDirective } from '../../directives/mat-autocomplete-options-scroll.directive';
+
 @Component({
   selector: 'dasch-swiss-property-form-link-value',
   standalone: true,

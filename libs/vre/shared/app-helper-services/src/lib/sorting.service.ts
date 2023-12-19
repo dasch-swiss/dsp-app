@@ -22,18 +22,16 @@ export class SortingService {
         return -1;
       } else if (String(a[firstSortKey]).toLowerCase() > String(b[firstSortKey]).toLowerCase()) {
         return 1;
-      } else {
-        if (secondSortKey) {
-          if (String(a[secondSortKey]).toLowerCase() < String(b[secondSortKey]).toLowerCase()) {
-            return -1;
-          } else if (String(a[secondSortKey]).toLowerCase() > String(b[secondSortKey]).toLowerCase()) {
-            return 1;
-          } else {
-            return 0;
-          }
+      } else if (secondSortKey) {
+        if (String(a[secondSortKey]).toLowerCase() < String(b[secondSortKey]).toLowerCase()) {
+          return -1;
+        } else if (String(a[secondSortKey]).toLowerCase() > String(b[secondSortKey]).toLowerCase()) {
+          return 1;
         } else {
           return 0;
         }
+      } else {
+        return 0;
       }
     });
     return sortedArray;

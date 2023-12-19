@@ -88,8 +88,12 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
         if (typeof searchTerm === 'string' && searchTerm.length >= 3) {
           // console.log('searching for ' + searchTerm);
           this._geonameService.searchPlace(searchTerm).subscribe(
-            places => (this.places = places),
-            () => (this.places = [])
+            places => {
+              this.places = places;
+            },
+            () => {
+              this.places = [];
+            }
           );
         } else {
           this.places = [];

@@ -158,13 +158,13 @@ export class DisplayEditComponent implements OnInit {
       .getPropertyDefinitionsByType(ResourcePropertyDefinition)
       .filter((propDef: ResourcePropertyDefinition) => propDef.id === this.displayValue.property);
 
-    if (resPropDef[0].guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
+    if (resPropDef[0].guiElement === `${Constants.SalsahGui + Constants.HashDelimiter}Textarea`) {
       this.textArea = true;
     }
 
     if (resPropDef.length !== 1) {
       // this should never happen because we always have the property info for the given value
-      throw new Error('Resource Property Definition could not be found: ' + this.displayValue.property);
+      throw new Error(`Resource Property Definition could not be found: ${this.displayValue.property}`);
     }
 
     this.readOnlyValue = this._valueService.isReadOnly(this.valueTypeOrClass, this.displayValue, resPropDef[0]);
@@ -178,9 +178,9 @@ export class DisplayEditComponent implements OnInit {
   }
 
   getTooltipText(): string {
-    const creationDate = 'Creation date: ' + this.displayValue.valueCreationDate;
+    const creationDate = `Creation date: ${this.displayValue.valueCreationDate}`;
 
-    const creatorInfo = this.user ? '\n Value creator: ' + this.user?.givenName + ' ' + this.user?.familyName : '';
+    const creatorInfo = this.user ? `\n Value creator: ${this.user?.givenName} ${this.user?.familyName}` : '';
 
     return creationDate + creatorInfo;
   }

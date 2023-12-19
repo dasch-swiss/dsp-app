@@ -118,7 +118,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     username: {
       required: 'Username is required.',
       pattern: 'Spaces and special characters are not allowed in username',
-      minlength: 'Username must be at least ' + this.usernameMinLength + ' characters long.',
+      minlength: `Username must be at least ${this.usernameMinLength} characters long.`,
       existingName: 'This user exists already. If you want to edit it, ask a system administrator.',
       member: 'This user is already a member of the project.',
     },
@@ -175,10 +175,10 @@ export class UserFormComponent implements OnInit, OnChanges {
         for (const user of allUsers) {
           // email address of the user should be unique.
           // therefore we create a list of existing email addresses to avoid multiple use of user names
-          this.existingEmails.push(new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)'));
+          this.existingEmails.push(new RegExp(`(?:^|W)${user.email.toLowerCase()}(?:$|W)`));
           // username should also be unique.
           // therefore we create a list of existingUsernames to avoid multiple use of user names
-          this.existingUsernames.push(new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)'));
+          this.existingUsernames.push(new RegExp(`(?:^|W)${user.username.toLowerCase()}(?:$|W)`));
         }
 
         const newUser: ReadUser = new ReadUser();
@@ -283,13 +283,13 @@ export class UserFormComponent implements OnInit, OnChanges {
 
     const form = this.userForm;
 
-    Object.keys(this.formErrors).map(field => {
+    Object.keys(this.formErrors).forEach(field => {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map(key => {
-          this.formErrors[field] += messages[key] + ' ';
+        Object.keys(control.errors).forEach(key => {
+          this.formErrors[field] += `${messages[key]} `;
         });
       }
     });

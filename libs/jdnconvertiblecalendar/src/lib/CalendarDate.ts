@@ -34,10 +34,10 @@ export class CalendarDate {
   ) {
     // check validity of daytime
     if (daytime !== undefined && daytime >= 1)
-      throw new JDNConvertibleCalendarError('Invalid daytime: ' + daytime + ', valid range: 0 - 0.9…');
+      throw new JDNConvertibleCalendarError(`Invalid daytime: ${daytime}, valid range: 0 - 0.9…`);
 
     // TODO: When other calendar than Gregorian or Julian are implemented, this may have to be changed
     if (dayOfWeek !== undefined && (!Utils.isInteger(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6))
-      throw new JDNConvertibleCalendarError('Invalid day of week: ' + dayOfWeek);
+      throw new JDNConvertibleCalendarError(`Invalid day of week: ${dayOfWeek}`);
   }
 }

@@ -69,7 +69,7 @@ export class ProjectsSelectors {
   @Selector([ProjectsState, RouterSelectors.params])
   static currentProject(state: ProjectsStateModel, params: Params): ReadProject | undefined {
     const uuid = params[`${RouteConstants.uuidParameter}`];
-    const project = state.readProjects.find(project => ProjectService.IriToUuid(project.id) === uuid);
+    const project = state.readProjects.find(p => ProjectService.IriToUuid(p.id) === uuid);
     return project;
   }
 

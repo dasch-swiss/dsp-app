@@ -43,20 +43,18 @@ export class AdvancedSearchContainerComponent implements OnInit {
   logProperties(propFormList: PropertyFormItem[]): void {
     // strip any irrelevant data from the PropertyFormList for logging
     const logObject = propFormList.map(propertyForm => {
-      let valueObject: object | undefined = undefined;
+      let valueObject: object | undefined;
       if (Array.isArray(propertyForm.searchValue)) {
-        valueObject = propertyForm.searchValue.map(v => {
-          return {
-            property: v.selectedProperty,
-            operator: v.selectedOperator,
-            value: v.searchValue,
-          };
-        });
+        valueObject = propertyForm.searchValue.map(v => ({
+          property: v.selectedProperty,
+          operator: v.selectedOperator,
+          value: v.searchValue,
+        }));
       }
       return {
         property: propertyForm.selectedProperty,
         operator: propertyForm.selectedOperator,
-        value: valueObject ? valueObject : propertyForm.searchValue,
+        value: valueObject || propertyForm.searchValue,
       };
     });
 

@@ -245,7 +245,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
         top: '112px',
       },
       data: {
-        mode: mode,
+        mode,
         title: resClass.label,
         id: iri,
         parentResource: this.parentResource,

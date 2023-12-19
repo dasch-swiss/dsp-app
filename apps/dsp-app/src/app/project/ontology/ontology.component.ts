@@ -138,9 +138,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
   get isLoading$(): Observable<boolean> {
     return combineLatest([this.isOntologiesLoading$, this.isProjectsLoading$]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(([isOntologiesLoading, isProjectsLoading]) => {
-        return isOntologiesLoading === true || isProjectsLoading === true;
-      })
+      map(([isOntologiesLoading, isProjectsLoading]) => isOntologiesLoading === true || isProjectsLoading === true)
     );
   }
 
@@ -439,8 +437,8 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
         top: '112px',
       },
       data: {
-        mode: mode,
-        title: title,
+        mode,
+        title,
         id: iri,
         project: uuid,
         existing: existingOntologyNames,
@@ -470,7 +468,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
         id: resClassInfo.iri,
         title: resClassInfo.label,
         subtitle: 'Customize resource class',
-        mode: mode,
+        mode,
       },
     };
 
@@ -491,7 +489,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
   openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
     const title = propertyInfo.propDef
       ? propertyInfo.propDef.label
-      : propertyInfo.propType.group + ': ' + propertyInfo.propType.label;
+      : `${propertyInfo.propType.group}: ${propertyInfo.propType.label}`;
 
     const dialogConfig: MatDialogConfig = {
       width: '640px',
@@ -501,9 +499,9 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       },
       data: {
         propInfo: propertyInfo,
-        title: title,
+        title,
         subtitle: 'Customize property',
-        mode: mode,
+        mode,
       },
     };
 
@@ -534,7 +532,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       position: {
         top: '112px',
       },
-      data: { mode: 'delete' + mode, title: info.label },
+      data: { mode: `delete${mode}`, title: info.label },
     };
 
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

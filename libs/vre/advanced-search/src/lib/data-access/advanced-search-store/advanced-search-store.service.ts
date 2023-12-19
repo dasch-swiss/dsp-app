@@ -197,9 +197,7 @@ export class AdvancedSearchStoreService extends ComponentStore<AdvancedSearchSta
     if (Array.isArray(prop.searchValue)) {
       if (!prop.searchValue.length) return true;
 
-      return prop.searchValue.some(childProp => {
-        return this.isPropertyFormItemListInvalid(childProp);
-      });
+      return prop.searchValue.some(childProp => this.isPropertyFormItemListInvalid(childProp));
     }
 
     // selected operator is NOT 'exists' or 'does not exist' AND

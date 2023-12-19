@@ -3,6 +3,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  */
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Utils {
   /**
    * Checks if a given number is an integer.
@@ -10,8 +11,7 @@ export namespace Utils {
    * @param num number to check for.
    * @returns true if the given number is an integer, returns false otherwise.
    */
-  export const isInteger = (num: number): boolean => {
+  export const isInteger = (num: number): boolean =>
     // https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-float-or-integer
-    return num % 1 === 0;
-  };
+    num % 1 === 0;
 }

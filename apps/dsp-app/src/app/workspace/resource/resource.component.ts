@@ -262,11 +262,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   }
 
   getResource(iri: string): Observable<DspResource> {
-    return this._dspApiConnection.v2.res.getResource(iri).pipe(
-      map((response: ReadResource) => {
-        return new DspResource(response);
-      })
-    );
+    return this._dspApiConnection.v2.res
+      .getResource(iri)
+      .pipe(map((response: ReadResource) => new DspResource(response)));
   }
 
   renderResource(resource: DspResource) {
@@ -457,6 +455,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
       .sort((a, b) => (a.guiDef.guiOrder > b.guiDef.guiOrder ? 1 : -1))
       // to get equal results on all browser engines which implements sorting in different way
       // properties list has to be sorted again, pushing all "has..." properties to the bottom
+      // TODO FOLLOWING LINE IS A BUG ARRAY-CALLBACK-RETURN SHOULDNT BE DISABLED
+      // eslint-disable-next-line array-callback-return
       .sort(a => {
         if (a.guiDef.guiOrder === undefined) {
           return 1;

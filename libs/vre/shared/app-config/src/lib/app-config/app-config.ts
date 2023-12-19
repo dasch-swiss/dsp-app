@@ -23,6 +23,7 @@ export const Datadog = z.discriminatedUnion('enabled', [
     service: z.string().optional(),
   }),
 ]);
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Datadog = z.infer<typeof Datadog>;
 
 /**
@@ -36,6 +37,7 @@ export const Rollbar = z.discriminatedUnion('enabled', [
   }),
   z.object({ enabled: z.literal(false), accessToken: z.string().optional() }),
 ]);
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Rollbar = z.infer<typeof Rollbar>;
 
 export const Instrumentation = z.object({
@@ -97,4 +99,5 @@ export const AppConfig = z.object({
 /**
  * Definition of the AppConfig type, which can be inferred from the schema.
  */
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppConfig = z.infer<typeof AppConfig>;

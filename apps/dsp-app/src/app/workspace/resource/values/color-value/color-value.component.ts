@@ -95,9 +95,7 @@ export class ColorValueComponent extends BaseValueDirective implements OnInit, O
 
     // convert hexadicemal color value into rgb color value
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-      return r + r + g + g + b + b;
-    });
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
 
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     const rgb: { r: number; g: number; b: number } = result
@@ -109,9 +107,9 @@ export class ColorValueComponent extends BaseValueDirective implements OnInit, O
       : null;
 
     // calculate luminance
-    const a = [rgb.r, rgb.g, rgb.b].map(function (v) {
+    const a = [rgb.r, rgb.g, rgb.b].map(v => {
       v /= 255;
-      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
     });
     const luminance = a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
 

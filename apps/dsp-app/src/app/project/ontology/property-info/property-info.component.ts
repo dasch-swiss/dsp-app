@@ -188,7 +188,7 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
           const propOfClass: ShortInfo = {
             id: resClass.id,
             label: resClass.label,
-            comment: onto.label + (resClass.comment ? ': ' + resClass.comment : ''),
+            comment: onto.label + (resClass.comment ? `: ${resClass.comment}` : ''),
           };
           this.resClasses.push(propOfClass);
         }

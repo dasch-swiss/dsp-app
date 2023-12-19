@@ -65,9 +65,9 @@ export class AuthService {
         // the internal session has expired
         // check if the api credentials are still valid
         return this._dspApiConnection.v2.auth.checkCredentials().pipe(
-          map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) => {
-            return this._updateSessionId(credentials);
-          }),
+          map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) =>
+            this._updateSessionId(credentials)
+          ),
           catchError(() => {
             // if there is any error checking the credentials (mostly a 401 for after
             // switching the server where this session/the credentials are unknown), we destroy the session
@@ -132,23 +132,20 @@ export class AuthService {
       switchMap((response: ApiResponseData<LoginResponse> | ApiResponseError) => {
         if (response instanceof ApiResponseData) {
           return of(true);
+        } else if (response.status === 401 || response.status === 403) {
+          // wrong credentials
+          return throwError(<LoginError>{
+            type: 'login',
+            status: response.status,
+            msg: 'Wrong credentials',
+          });
         } else {
-          // error handling
-          if (response.status === 401 || response.status === 403) {
-            // wrong credentials
-            return throwError(<LoginError>{
-              type: 'login',
-              status: response.status,
-              msg: 'Wrong credentials',
-            });
-          } else {
-            // server error
-            return throwError(<ServerError>{
-              type: 'server',
-              status: response.status,
-              msg: 'Server error',
-            });
-          }
+          // server error
+          return throwError(<ServerError>{
+            type: 'server',
+            status: response.status,
+            msg: 'Server error',
+          });
         }
       })
     );
@@ -170,9 +167,7 @@ export class AuthService {
       .logout()
       .pipe(
         take(1),
-        catchError((error: ApiResponseError) => {
-          return of(error?.status === 200);
-        })
+        catchError((error: ApiResponseError) => of(error?.status === 200))
       )
       .subscribe((response: any) => {
         if (!(response instanceof ApiResponseData)) {

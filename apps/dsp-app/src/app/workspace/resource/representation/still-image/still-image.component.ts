@@ -320,11 +320,11 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
 
       // collect all geometries belonging to this page
       const geometries: GeometryForRegion[] = [];
-      image.annotations.map(reg => {
+      image.annotations.forEach(reg => {
         this._regions[reg.regionResource.id] = [];
         const geoms = reg.getGeometries();
 
-        geoms.map(geom => {
+        geoms.forEach(geom => {
           const geomForReg = new GeometryForRegion(geom.geometry, reg.regionResource);
 
           geometries.push(geomForReg);
@@ -512,18 +512,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
     const x2 = Math.max(Math.min(endPoint.x, imageSize.x), 0) / imageSize.x;
     const y1 = Math.max(Math.min(startPoint.y, imageSize.y), 0) / imageSize.y;
     const y2 = Math.max(Math.min(endPoint.y, imageSize.y), 0) / imageSize.y;
-    const geomStr =
-      '{"status":"active","lineColor":"' +
-      color +
-      '","lineWidth":2,"points":[{"x":' +
-      x1.toString() +
-      ',"y":' +
-      y1.toString() +
-      '},{"x":' +
-      x2.toString() +
-      ',"y":' +
-      y2.toString() +
-      '}],"type":"rectangle"}';
+    const geomStr = `{"status":"active","lineColor":"${color}","lineWidth":2,"points":[{"x":${x1.toString()},"y":${y1.toString()}},{"x":${x2.toString()},"y":${y2.toString()}}],"type":"rectangle"}`;
     const createResource = new CreateResource();
     createResource.label = label;
     createResource.type = Constants.Region;
@@ -561,6 +550,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
    * set up function for the region drawer
    */
   private _addRegionDrawer() {
+    // eslint-disable-next-line no-new
     new OpenSeadragon.MouseTracker({
       element: this._viewer.canvas,
       pressHandler: event => {
@@ -572,7 +562,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
         const viewportPos = this._viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position);
         this._viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
         this._regionDragInfo = {
-          overlayElement: overlayElement,
+          overlayElement,
           startPos: viewportPos,
         };
       },
@@ -727,7 +717,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
     // let i = 0;
 
     for (const image of images) {
-      const sipiBasePath = image.iiifBaseUrl + '/' + image.filename;
+      const sipiBasePath = `${image.iiifBaseUrl}/${image.filename}`;
       const width = image.dimX;
       const height = image.dimY;
       // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
@@ -737,8 +727,8 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
           // eslint-disable-next-line @typescript-eslint/naming-convention
           '@context': 'http://iiif.io/api/image/3/context.json',
           id: sipiBasePath,
-          height: height,
-          width: width,
+          height,
+          width,
           profile: ['level2'],
           protocol: 'http://iiif.io/api/image',
           tiles: [
@@ -780,9 +770,9 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
     const lineWidth = geometry.lineWidth;
 
     const regEle: HTMLElement = this._renderer.createElement('div');
-    regEle.id = 'region-overlay-' + Math.random() * 10000;
+    regEle.id = `region-overlay-${Math.random() * 10000}`;
     regEle.className = 'region';
-    regEle.setAttribute('style', 'outline: solid ' + lineColor + ' ' + lineWidth + 'px;');
+    regEle.setAttribute('style', `outline: solid ${lineColor} ${lineWidth}px;`);
 
     const diffX = geometry.points[1].x - geometry.points[0].x;
     const diffY = geometry.points[1].y - geometry.points[0].y;
@@ -794,7 +784,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
       Math.abs(diffY * aspectRatio)
     );
 
-    loc.y = loc.y * aspectRatio;
+    loc.y *= aspectRatio;
 
     this._viewer.addOverlay({
       element: regEle,
@@ -809,7 +799,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
     regEle.append(comEle);
 
     regEle.addEventListener('mousemove', (event: MouseEvent) => {
-      comEle.setAttribute('style', 'display: block; left: ' + event.clientX + 'px; top: ' + event.clientY + 'px');
+      comEle.setAttribute('style', `display: block; left: ${event.clientX}px; top: ${event.clientY}px`);
     });
     regEle.addEventListener('mouseleave', () => {
       comEle.setAttribute('style', 'display: none');

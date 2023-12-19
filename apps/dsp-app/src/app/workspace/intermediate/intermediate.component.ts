@@ -35,7 +35,7 @@ export class IntermediateComponent {
    * @param data
    */
   openDialog(type: 'link', data: FilteredResources) {
-    const title = 'Create a collection of ' + data.count + ' resources';
+    const title = `Create a collection of ${data.count} resources`;
 
     const dialogConfig: MatDialogConfig = {
       width: '640px',
@@ -45,7 +45,7 @@ export class IntermediateComponent {
       },
       data: {
         mode: 'linkResources',
-        title: title,
+        title,
         selectedResources: data,
       },
     };

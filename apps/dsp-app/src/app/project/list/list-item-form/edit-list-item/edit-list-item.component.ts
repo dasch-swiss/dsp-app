@@ -178,11 +178,9 @@ export class EditListItemComponent implements OnInit {
    */
   insertChildNode() {
     const createChildNodeRequest: CreateChildNodeRequest = new CreateChildNodeRequest();
-    createChildNodeRequest.name =
-      this._projectService.iriToUuid(this.projectIri) +
-      '-' +
-      Math.random().toString(36).substring(2) +
-      Math.random().toString(36).substring(2);
+    createChildNodeRequest.name = `${this._projectService.iriToUuid(this.projectIri)}-${Math.random()
+      .toString(36)
+      .substring(2)}${Math.random().toString(36).substring(2)}`;
     createChildNodeRequest.parentNodeIri = this.parentIri;
     createChildNodeRequest.labels = this.labels;
     createChildNodeRequest.comments = this.comments.length > 0 ? this.comments : undefined;

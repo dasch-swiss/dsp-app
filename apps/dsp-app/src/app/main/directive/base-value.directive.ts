@@ -116,6 +116,7 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    * @param initComment Initially given comment.
    * @param commentFormControl FormControl of the current comment.
    */
+
   standardValidatorFunc: (val: any, comment: string, commentCtrl: FormControl) => ValidatorFn =
     (initValue: any, initComment: string, commentFormControl: FormControl): ValidatorFn =>
     (control: AbstractControl): { [key: string]: any } | null => {
@@ -162,13 +163,10 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
             this.standardValidatorFunc(initialValue, initialComment, this.commentFormControl),
           ].concat(this.customValidators)
         );
+      } else if (this.valueRequiredValidator) {
+        this.valueFormControl.setValidators([Validators.required].concat(this.customValidators));
       } else {
-        // console.log('reset read/create validators');
-        if (this.valueRequiredValidator) {
-          this.valueFormControl.setValidators([Validators.required].concat(this.customValidators));
-        } else {
-          this.valueFormControl.setValidators(this.customValidators);
-        }
+        this.valueFormControl.setValidators(this.customValidators);
       }
 
       this.valueFormControl.updateValueAndValidity();

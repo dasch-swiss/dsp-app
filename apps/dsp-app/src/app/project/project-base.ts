@@ -73,12 +73,10 @@ export class ProjectBase implements OnInit, OnDestroy {
       // get current project data, project members and project groups
       // and set the project state here
       this.loadProject();
-    } else {
-      if (!this.isOntologiesAvailable()) {
-        this.isProjectsLoading$.pipe(takeWhile(isLoading => isLoading === false)).subscribe((isLoading: boolean) => {
-          this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
-        });
-      }
+    } else if (!this.isOntologiesAvailable()) {
+      this.isProjectsLoading$.pipe(takeWhile(isLoading => isLoading === false)).subscribe((isLoading: boolean) => {
+        this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
+      });
     }
   }
 

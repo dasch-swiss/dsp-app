@@ -391,7 +391,7 @@ export class AppDatePickerComponent
 
   leftPadding(value: number | undefined): string {
     if (value !== undefined) {
-      return ('0' + value).slice(-2);
+      return `0${value}`.slice(-2);
     } else {
       return '';
     }
@@ -403,10 +403,10 @@ export class AppDatePickerComponent
     switch (options) {
       case 'era':
         // displays date with era; era only in case of BCE
-        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ' ' + date.era : '');
+        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ` ${date.era}` : '');
       case 'calendar':
         // displays date without era but with calendar type
-        return value + ' ' + this.titleCase(date.calendar);
+        return `${value} ${this.titleCase(date.calendar)}`;
       case 'calendarOnly':
         // displays only the selected calendar type without any data
         return this.titleCase(date.calendar);
@@ -414,15 +414,12 @@ export class AppDatePickerComponent
         // GREGORIAN:2023-8-2
         // CE is default era so no need to add it
         era = date.era === 'BCE' ? ' BCE' : '';
-        return date.calendar + ':' + value + era;
+        return `${date.calendar}:${value}${era}`;
       case 'all':
         // displays date with era (only as BCE) and selected calendar type
-        return (
-          value +
-          (date.era === 'noEra' ? '' : date.era === 'BCE' ? ' ' + date.era : '') +
-          ' ' +
-          this.titleCase(date.calendar)
-        );
+        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this.titleCase(
+          date.calendar
+        )}`;
       default:
         return '';
     }
@@ -516,13 +513,13 @@ export class AppDatePickerComponent
 
     const form = this.form;
 
-    Object.keys(this.formErrors).map((field: string) => {
+    Object.keys(this.formErrors).forEach((field: string) => {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid && control.errors !== null) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map((key: string) => {
-          this.formErrors[field] += messages[key] + ' ';
+        Object.keys(control.errors).forEach((key: string) => {
+          this.formErrors[field] += `${messages[key]} `;
         });
       }
     });
@@ -539,7 +536,7 @@ export class AppDatePickerComponent
         this.era,
         this.form.controls['year'].value,
         this.form.controls['month'].value ? this.form.controls['month'].value : undefined,
-        day ? day : undefined
+        day || undefined
       );
 
       this.value = this.date;
@@ -587,7 +584,7 @@ export class AppDatePickerComponent
         // found solution and formula here:
         // https://sciencing.com/convert-julian-date-calender-date-6017669.html
         julianDate = new Date();
-        difference = parseInt((julianDate.getFullYear() + '').substring(0, 2), 10) * 0.75 - 1.25;
+        difference = parseInt(`${julianDate.getFullYear()}`.substring(0, 2), 10) * 0.75 - 1.25;
         julianDate.setDate(julianDate.getDate() - Math.floor(difference));
         day = julianDate.getDate();
         month = julianDate.getMonth() + 1;
@@ -662,7 +659,7 @@ export class AppDatePickerComponent
       const calDate = new IslamicCalendarDate(new CalendarPeriod(date, date));
       return calDate.daysInMonth(date);
     } else {
-      throw Error('Unknown calendar ' + calendar);
+      throw Error(`Unknown calendar ${calendar}`);
     }
   }
 

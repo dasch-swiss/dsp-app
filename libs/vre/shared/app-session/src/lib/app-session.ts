@@ -66,7 +66,7 @@ export class SessionService {
    * @param type 'email' or 'username'
    */
   setSession(jwt: string, identifier: string, type: 'email' | 'username'): Observable<boolean> {
-    this._dspApiConnection.v2.jsonWebToken = jwt ? jwt : '';
+    this._dspApiConnection.v2.jsonWebToken = jwt || '';
 
     // get user information
     return this._userApiService.get(identifier, type).pipe(
@@ -98,9 +98,9 @@ export class SessionService {
         // check if the api credentials are still valid
 
         return this._dspApiConnection.v2.auth.checkCredentials().pipe(
-          map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) => {
-            return this._updateSessionId(credentials, session, tsNow);
-          }),
+          map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) =>
+            this._updateSessionId(credentials, session, tsNow)
+          ),
           catchError(() => {
             // if there is any error checking the credentials (mostly a 401 for after
             // switching the server where this session/the credentials are unknown), we destroy the session
@@ -169,10 +169,10 @@ export class SessionService {
       id: this._setTimestamp(),
       user: {
         name: response.user.username,
-        jwt: jwt,
+        jwt,
         lang: response.user.lang,
-        sysAdmin: sysAdmin,
-        projectAdmin: projectAdmin,
+        sysAdmin,
+        projectAdmin,
       },
     };
 

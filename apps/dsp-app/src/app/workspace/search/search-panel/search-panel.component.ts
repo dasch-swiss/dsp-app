@@ -75,7 +75,7 @@ export class SearchPanelComponent {
       const uuid = params.get('uuid');
 
       const navigationExtras = {
-        state: { uuid: uuid },
+        state: { uuid },
       };
 
       this._router.navigate(['advanced-search'], navigationExtras);

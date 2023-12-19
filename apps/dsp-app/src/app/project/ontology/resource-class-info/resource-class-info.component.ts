@@ -296,7 +296,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     const propertyAssignment: PropertyAssignment = {
       resClass: this.resourceClass,
       property: {
-        propType: propType,
+        propType,
       },
     };
     this.assignProperty(propertyAssignment, currentOntologyPropertiesToDisplay);
@@ -344,13 +344,13 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     const classLabel = propertyAssignment.resClass.label;
 
     let mode: 'createProperty' | 'editProperty' = 'createProperty';
-    let propLabel = propertyAssignment.property.propType.group + ': ' + propertyAssignment.property.propType.label;
-    let title = 'Add new property of type "' + propLabel + '" to class "' + classLabel + '"';
+    let propLabel = `${propertyAssignment.property.propType.group}: ${propertyAssignment.property.propType.label}`;
+    let title = `Add new property of type "${propLabel}" to class "${classLabel}"`;
     if (propertyAssignment.property.propDef) {
       // the property already exists. To assign an existing property simply open the dialog in edit mode
       mode = 'editProperty';
       propLabel = propertyAssignment.property.propDef.label;
-      title = 'Add existing property "' + propLabel + '" to class "' + classLabel + '"';
+      title = `Add existing property "${propLabel}" to class "${classLabel}"`;
     }
 
     const dialogConfig: MatDialogConfig = {
@@ -361,9 +361,9 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
       },
       data: {
         propInfo: propertyAssignment.property,
-        title: title,
+        title,
         subtitle: 'Customize property and cardinality',
-        mode: mode,
+        mode,
         parentIri: propertyAssignment.resClass.id,
         position: currentOntologyPropertiesToDisplay.length + 1,
       },
@@ -489,7 +489,7 @@ OFFSET 0`;
     const existingProperties: PropToAdd[] = [];
     const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
     ontoProperties.forEach((op: OntologyProperties, i: number) => {
-      const onto = currentProjectOntologies.find(i => i?.id === op.ontology);
+      const onto = currentProjectOntologies.find(j => j?.id === op.ontology);
       existingProperties.push({
         ontologyId: op.ontology,
         ontologyLabel: onto?.label,
@@ -509,7 +509,7 @@ OFFSET 0`;
         });
 
         const propToAdd: PropertyInfoObject = {
-          propType: propType,
+          propType,
           propDef: availableProp,
         };
 

@@ -51,8 +51,12 @@ export class TextComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
-      res => (this.originalFilename = res['originalFilename']),
-      () => (this.failedToLoad = true)
+      res => {
+        this.originalFilename = res['originalFilename'];
+      },
+      () => {
+        this.failedToLoad = true;
+      }
     );
   }
 
@@ -111,9 +115,9 @@ export class TextComponent implements OnInit, AfterViewInit {
           this.src.fileValue.filename = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).filename;
           this.src.fileValue.strval = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).strval;
 
-          this._rs
-            .getFileInfo(this.src.fileValue.fileUrl)
-            .subscribe(res => (this.originalFilename = res['originalFilename']));
+          this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
+            this.originalFilename = res['originalFilename'];
+          });
 
           this._valueOperationEventService.emit(
             new EmitEvent(

@@ -42,9 +42,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
   get instanceId$(): Observable<string> {
     return this._route.params.pipe(
       takeUntil(this.ngUnsubscribe),
-      map(params => {
-        return params[RouteConstants.instanceParameter];
-      })
+      map(params => params[RouteConstants.instanceParameter])
     );
   }
 
@@ -159,10 +157,8 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
 
     if (!res || res.count <= 1) {
       this.viewMode = 'single';
-    } else {
-      if (this.viewMode !== 'compare') {
-        this.viewMode = res && res.count > 0 ? 'intermediate' : 'single';
-      }
+    } else if (this.viewMode !== 'compare') {
+      this.viewMode = res && res.count > 0 ? 'intermediate' : 'single';
     }
     this._cdr.detectChanges();
   }

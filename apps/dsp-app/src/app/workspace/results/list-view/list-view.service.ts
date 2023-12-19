@@ -64,10 +64,9 @@ export class ListViewService {
       };
     } else {
       // else condition when single resource is clicked for viewing
-
       // unselect checkboxes if any
       if (resChecks) {
-        resChecks.forEach(function (ckb) {
+        resChecks.forEach(ckb => {
           if (ckb.checked) {
             ckb.checked = false;
           }

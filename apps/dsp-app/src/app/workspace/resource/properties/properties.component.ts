@@ -266,7 +266,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
    */
   openProject(project: ReadProject) {
     const uuid = this._projectService.iriToUuid(project.id);
-    window.open('/project/' + uuid, '_blank');
+    window.open(`/project/${uuid}`, '_blank');
   }
 
   previewProject() {
@@ -305,7 +305,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   openResource(linkValue: ReadLinkValue | string) {
     const iri = typeof linkValue == 'string' ? linkValue : linkValue.linkedResourceIri;
     const path = this._resourceService.getResourcePath(iri);
-    window.open('/resource' + path, '_blank');
+    window.open(`/resource${path}`, '_blank');
   }
 
   previewResource() {
@@ -319,7 +319,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
       position: {
         top: '112px',
       },
-      data: { mode: type + 'Resource', title: this.resource.res.label },
+      data: { mode: `${type}Resource`, title: this.resource.res.label },
     };
 
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
@@ -377,33 +377,31 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
               );
               break;
           }
-        } else {
+        } else if (this.resource.res.label !== answer.comment) {
           // update resource's label if it has changed
-          if (this.resource.res.label !== answer.comment) {
-            // get the correct lastModificationDate from the resource
-            this._dspApiConnection.v2.res.getResource(this.resource.res.id).subscribe((res: ReadResource) => {
-              const payload = new UpdateResourceMetadata();
-              payload.id = this.resource.res.id;
-              payload.type = this.resource.res.type;
-              payload.lastModificationDate = res.lastModificationDate;
-              payload.label = answer.comment;
+          // get the correct lastModificationDate from the resource
+          this._dspApiConnection.v2.res.getResource(this.resource.res.id).subscribe((res: ReadResource) => {
+            const payload = new UpdateResourceMetadata();
+            payload.id = this.resource.res.id;
+            payload.type = this.resource.res.type;
+            payload.lastModificationDate = res.lastModificationDate;
+            payload.label = answer.comment;
 
-              this._dspApiConnection.v2.res.updateResourceMetadata(payload).subscribe(
-                (response: UpdateResourceMetadataResponse) => {
-                  this.resource.res.label = payload.label;
-                  this.lastModificationDate = response.lastModificationDate;
-                  // if annotations tab is active; a label of a region has been changed --> update regions
-                  if (this.isAnnotation) {
-                    this.regionChanged.emit();
-                  }
-                  this._cd.markForCheck();
-                },
-                (error: ApiResponseError) => {
-                  this._errorHandler.showMessage(error);
+            this._dspApiConnection.v2.res.updateResourceMetadata(payload).subscribe(
+              (response: UpdateResourceMetadataResponse) => {
+                this.resource.res.label = payload.label;
+                this.lastModificationDate = response.lastModificationDate;
+                // if annotations tab is active; a label of a region has been changed --> update regions
+                if (this.isAnnotation) {
+                  this.regionChanged.emit();
                 }
-              );
-            });
-          }
+                this._cd.markForCheck();
+              },
+              (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+              }
+            );
+          });
         }
       }
     });

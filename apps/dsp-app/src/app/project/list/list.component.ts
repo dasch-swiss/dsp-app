@@ -111,7 +111,7 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
         top: '112px',
       },
       data: {
-        mode: mode,
+        mode,
         title: name,
         id: iri,
         project: this.projectUuid,

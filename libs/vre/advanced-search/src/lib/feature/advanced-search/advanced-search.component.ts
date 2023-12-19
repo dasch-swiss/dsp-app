@@ -90,7 +90,7 @@ export class AdvancedSearchComponent implements OnInit {
       ontologiesLoading: false,
       resourceClasses: [],
       resourceClassesLoading: false,
-      selectedProject: this.uuid ? 'http://rdfh.ch/projects/' + this.uuid : undefined,
+      selectedProject: this.uuid ? `http://rdfh.ch/projects/${this.uuid}` : undefined,
       selectedOntology: undefined,
       selectedResourceClass: undefined,
       propertyFormList: [],

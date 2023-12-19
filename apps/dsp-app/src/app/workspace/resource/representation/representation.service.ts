@@ -41,9 +41,9 @@ export class RepresentationService {
 
     if (imageFilename) {
       const index = url.indexOf(imageFilename);
-      pathToJson = url.substring(0, index + imageFilename.length) + '/knora.json';
+      pathToJson = `${url.substring(0, index + imageFilename.length)}/knora.json`;
     } else {
-      pathToJson = url.substring(0, url.lastIndexOf('/')) + '/knora.json';
+      pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     }
 
     return this._http.get(pathToJson, requestOptions).pipe(

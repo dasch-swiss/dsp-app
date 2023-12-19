@@ -25,6 +25,7 @@ export class AppComponent {
   form3: UntypedFormGroup;
   form4: UntypedFormGroup;
 
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   headerComponent = HeaderComponent;
 
   // October 13 1729 (Julian calendar)

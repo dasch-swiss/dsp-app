@@ -106,8 +106,8 @@ export class ProjectFormComponent implements OnInit {
   validationMessages = {
     shortname: {
       required: 'Short name is required.',
-      minlength: 'Short name must be at least ' + this.shortnameMinLength + ' characters long.',
-      maxlength: 'Short name cannot be more than ' + this.shortnameMaxLength + ' characters long.',
+      minlength: `Short name must be at least ${this.shortnameMinLength} characters long.`,
+      maxlength: `Short name cannot be more than ${this.shortnameMaxLength} characters long.`,
       pattern: "Short name shouldn't start with a number; Spaces are not allowed.",
       existingName: 'This short name is already taken.',
     },
@@ -116,14 +116,14 @@ export class ProjectFormComponent implements OnInit {
     },
     shortcode: {
       required: 'Shortcode is required',
-      maxlength: 'Shortcode cannot be more than ' + this.shortcodeMaxLength + ' characters long.',
-      minlength: 'Shortcode cannot be less than ' + this.shortcodeMinLength + ' characters long.',
+      maxlength: `Shortcode cannot be more than ${this.shortcodeMaxLength} characters long.`,
+      minlength: `Shortcode cannot be less than ${this.shortcodeMinLength} characters long.`,
       pattern: 'This is not a hexadecimal value!',
       existingName: 'This shortcode is already taken.',
     },
     description: {
       required: 'A description is required.',
-      maxlength: 'Description cannot be more than ' + this.descriptionMaxLength + ' characters long.',
+      maxlength: `Description cannot be more than ${this.descriptionMaxLength} characters long.`,
     },
     keywords: {
       required: 'At least one keyword is required.',
@@ -182,10 +182,10 @@ export class ProjectFormComponent implements OnInit {
       this._projectApiService.list().subscribe(
         response => {
           for (const project of response.projects) {
-            this.existingShortNames.push(new RegExp('(?:^|W)' + project.shortname.toLowerCase() + '(?:$|W)'));
+            this.existingShortNames.push(new RegExp(`(?:^|W)${project.shortname.toLowerCase()}(?:$|W)`));
 
             if (project.shortcode !== null) {
-              this.existingShortcodes.push(new RegExp('(?:^|W)' + project.shortcode.toLowerCase() + '(?:$|W)'));
+              this.existingShortcodes.push(new RegExp(`(?:^|W)${project.shortcode.toLowerCase()}(?:$|W)`));
             }
           }
         },
@@ -246,7 +246,7 @@ export class ProjectFormComponent implements OnInit {
       longname: new UntypedFormControl(
         {
           value: project.longname,
-          disabled: disabled,
+          disabled,
         },
         [Validators.required]
       ),
@@ -265,14 +265,14 @@ export class ProjectFormComponent implements OnInit {
       ),
       logo: new UntypedFormControl({
         value: project.logo,
-        disabled: disabled,
+        disabled,
       }),
       status: [true],
       selfjoin: [false],
       keywords: new UntypedFormControl({
         // must be empty (even in edit mode), because of the mat-chip-list
         value: [],
-        disabled: disabled,
+        disabled,
       }),
     });
 
@@ -295,13 +295,13 @@ export class ProjectFormComponent implements OnInit {
 
     const form = this.form;
 
-    Object.keys(this.formErrors).map(field => {
+    Object.keys(this.formErrors).forEach(field => {
       this.formErrors[field] = '';
       const control = form.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map(key => {
-          this.formErrors[field] += messages[key] + ' ';
+        Object.keys(control.errors).forEach(key => {
+          this.formErrors[field] += `${messages[key]} `;
         });
       }
     });

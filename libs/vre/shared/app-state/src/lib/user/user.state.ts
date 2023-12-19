@@ -14,7 +14,7 @@ import {
   LoadUsersAction,
   LogUserOutAction,
   RemoveUserAction,
-  ResetUsersAction as ResetUsersAction,
+  ResetUsersAction,
   SetUserAction,
   SetUserProjectGroupsAction,
 } from './user.actions';

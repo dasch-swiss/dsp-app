@@ -67,7 +67,7 @@ export class ResourceListComponent implements OnInit {
   openResource(linkValue: ReadLinkValue | string) {
     const iri = typeof linkValue == 'string' ? linkValue : linkValue.linkedResourceIri;
     const path = this._resourceService.getResourcePath(iri);
-    window.open('/resource' + path, '_blank');
+    window.open(`/resource${path}`, '_blank');
   }
 
   selectResource(status: CheckboxUpdate) {

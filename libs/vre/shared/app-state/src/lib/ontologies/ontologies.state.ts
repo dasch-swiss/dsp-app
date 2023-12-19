@@ -109,9 +109,7 @@ export class OntologiesState {
     // get all project ontologies
     return this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).pipe(
       take(1),
-      map((response: OntologiesMetadata | ApiResponseError) => {
-        return response as OntologiesMetadata;
-      }),
+      map((response: OntologiesMetadata | ApiResponseError) => response as OntologiesMetadata),
       tap({
         next: (ontoMeta: OntologiesMetadata) => {
           if (!ontoMeta.ontologies.length) {
@@ -164,14 +162,12 @@ export class OntologiesState {
   @Action(LoadOntologyAction)
   loadOntologyAction(
     ctx: StateContext<OntologiesStateModel>,
-    { ontologyIri: ontologyIri, projectUuid, stopLoadingWhenCompleted }: LoadOntologyAction
+    { ontologyIri, projectUuid, stopLoadingWhenCompleted }: LoadOntologyAction
   ) {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.v2.onto.getOntology(ontologyIri, true).pipe(
       take(1),
-      map((response: ReadOntology | ApiResponseError) => {
-        return response as ReadOntology;
-      }),
+      map((response: ReadOntology | ApiResponseError) => response as ReadOntology),
       tap({
         next: (ontology: ReadOntology) => {
           const projectIri = this._projectService.uuidToIri(projectUuid);
@@ -210,9 +206,7 @@ export class OntologiesState {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.v2.onto.updateOntology(ontologyMetadata).pipe(
       take(1),
-      map((response: OntologyMetadata | ApiResponseError) => {
-        return response as OntologyMetadata;
-      }),
+      map((response: OntologyMetadata | ApiResponseError) => response as OntologyMetadata),
       tap({
         next: () => {
           const projectIri = this._projectService.uuidToIri(projectUuid);
@@ -382,9 +376,7 @@ export class OntologiesState {
 
     return this._dspApiConnection.v2.onto.canDeleteOntology(state.currentOntology.id).pipe(
       take(1),
-      map((response: CanDoResponse | ApiResponseError) => {
-        return response as CanDoResponse;
-      }),
+      map((response: CanDoResponse | ApiResponseError) => response as CanDoResponse),
       tap({
         next: (response: CanDoResponse) => {
           ctx.setState({

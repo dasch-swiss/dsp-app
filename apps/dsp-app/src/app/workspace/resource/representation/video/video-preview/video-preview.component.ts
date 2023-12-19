@@ -106,7 +106,7 @@ export class VideoPreviewComponent implements OnChanges {
       x = i * this.matrixFrameWidth;
       y = j * this.matrixFrameHeight;
 
-      cssParams = '-' + x + 'px -' + y + 'px';
+      cssParams = `-${x}px -${y}px`;
       this.frame.nativeElement.style['background-position'] = cssParams;
 
       i++;
@@ -172,10 +172,10 @@ export class VideoPreviewComponent implements OnChanges {
         this.frameHeight = Math.round(this.matrixFrameHeight / this.proportion);
 
         // set the size of the matrix file
-        this.frame.nativeElement.style['background-image'] = 'url(' + this.matrix + ')';
-        this.frame.nativeElement.style['background-size'] = Math.round(this.matrixWidth / this.proportion) + 'px auto';
-        this.frame.nativeElement.style['width'] = this.frameWidth + 'px';
-        this.frame.nativeElement.style['height'] = this.frameHeight + 'px';
+        this.frame.nativeElement.style['background-image'] = `url(${this.matrix})`;
+        this.frame.nativeElement.style['background-size'] = `${Math.round(this.matrixWidth / this.proportion)}px auto`;
+        this.frame.nativeElement.style['width'] = `${this.frameWidth}px`;
+        this.frame.nativeElement.style['height'] = `${this.frameHeight}px`;
         this.loaded.emit(true);
       },
       () => {
@@ -240,9 +240,9 @@ export class VideoPreviewComponent implements OnChanges {
       // calculate current line and column number in the matrix and get current frame / preview image position
       const curLineNr: number = Math.floor(curFrameNr / 6);
       const curColNr: number = Math.floor(curFrameNr - curLineNr * 6);
-      const cssParams: string = '-' + curColNr * this.frameWidth + 'px -' + curLineNr * this.frameHeight + 'px';
+      const cssParams: string = `-${curColNr * this.frameWidth}px -${curLineNr * this.frameHeight}px`;
 
-      this.frame.nativeElement.style['background-image'] = 'url(' + this.matrix + ')';
+      this.frame.nativeElement.style['background-image'] = `url(${this.matrix})`;
       this.frame.nativeElement.style['background-position'] = cssParams;
     }
   }
@@ -262,8 +262,7 @@ export class VideoPreviewComponent implements OnChanges {
     // => 5AiQkeJNbQn-ClrXWkJVFvB
     const fileName = basePath.substring(basePath.lastIndexOf('/') + 1);
 
-    const matrixUrl = basePath + '/' + fileName + '_m_' + fileNumber + '.jpg/file';
-
+    const matrixUrl = `${basePath}/${fileName}_m_${fileNumber}.jpg/file`;
     // if the new matrix url is different than the current one, the current one will be replaced
     if (this.matrix !== matrixUrl) {
       this.matrix = matrixUrl;

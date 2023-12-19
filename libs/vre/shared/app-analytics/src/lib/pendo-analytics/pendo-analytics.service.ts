@@ -30,7 +30,7 @@ export class PendoAnalyticsService {
     // @ts-ignore
     pendo.initialize({
       visitor: {
-        id: id, // Required if user is logged in, default creates anonymous ID
+        id, // Required if user is logged in, default creates anonymous ID
         environment: this.environment,
         // email:        // Recommended if using Pendo Feedback, or NPS Email
         // full_name:    // Recommended if using Pendo Feedback
@@ -41,7 +41,7 @@ export class PendoAnalyticsService {
       },
 
       account: {
-        id: id, // Required if using Pendo Feedback, default uses the value 'ACCOUNT-UNIQUE-ID'
+        id, // Required if using Pendo Feedback, default uses the value 'ACCOUNT-UNIQUE-ID'
         environment: this.environment,
         // name:         // Optional
         // is_paying:    // Recommended if using Pendo Feedback

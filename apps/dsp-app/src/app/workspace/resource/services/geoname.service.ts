@@ -58,11 +58,7 @@ export class GeonameService {
   resolveGeonameID(id: string): Observable<DisplayPlace> {
     return this._http
       .get<object>(
-        'https://ws.geonames.net/getJSON?geonameId=' +
-          id +
-          '&username=' +
-          this._appConfigService.dspAppConfig.geonameToken +
-          '&style=short'
+        `https://ws.geonames.net/getJSON?geonameId=${id}&username=${this._appConfigService.dspAppConfig.geonameToken}&style=short`
       )
       .pipe(
         map(
@@ -82,8 +78,9 @@ export class GeonameService {
             }
 
             return {
-              displayName:
-                geo.name + (geo.adminName1 !== undefined ? ', ' + geo.adminName1 : '') + ', ' + geo.countryName,
+              displayName: `${geo.name + (geo.adminName1 !== undefined ? `, ${geo.adminName1}` : '')}, ${
+                geo.countryName
+              }`,
               name: geo.name,
               administrativeName: geo.adminName1,
               country: geo.countryName,
@@ -114,22 +111,20 @@ export class GeonameService {
     }&lang=en&style=full&maxRows=12&name_startsWith=${encodeURIComponent(searchString)}`;
 
     return this._http.get<GeonameResponse>(url).pipe(
-      map(response => {
-        return response.geonames
+      map(response =>
+        response.geonames
           .filter(geo => geo.geonameId && geo.name && geo.countryName && geo.fclName) // only map those with required properties to avoid duplicates
-          .map(geo => {
-            return {
-              id: geo.geonameId.toString(),
-              displayName: `${geo.name}${geo.adminName1 ? ', ' + geo.adminName1 : ''}${
-                geo.countryName ? ', ' + geo.countryName : ''
-              }`,
-              name: geo.name,
-              administrativeName: geo.adminName1,
-              country: geo.countryName,
-              locationType: geo.fclName,
-            };
-          });
-      }),
+          .map(geo => ({
+            id: geo.geonameId.toString(),
+            displayName: `${geo.name}${geo.adminName1 ? `, ${geo.adminName1}` : ''}${
+              geo.countryName ? `, ${geo.countryName}` : ''
+            }`,
+            name: geo.name,
+            administrativeName: geo.adminName1,
+            country: geo.countryName,
+            locationType: geo.fclName,
+          }))
+      ),
       catchError(error => throwError(error))
     );
   }

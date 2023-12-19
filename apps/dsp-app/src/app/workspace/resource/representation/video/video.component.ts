@@ -294,7 +294,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
     }
 
     // set preview positon on x axis
-    this.preview.nativeElement.style.left = leftPosition + 'px';
+    this.preview.nativeElement.style.left = `${leftPosition}px`;
   }
 
   /**

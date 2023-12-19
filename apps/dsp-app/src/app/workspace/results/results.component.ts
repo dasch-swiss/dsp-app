@@ -47,12 +47,10 @@ export class ResultsComponent implements AfterViewChecked {
     const params$ = this._route.paramMap;
 
     const combinedParams$ = combineLatest([parentParams$, params$]).pipe(
-      map(([parentParams, params]) => {
-        return {
-          parentParams: parentParams,
-          params: params,
-        };
-      })
+      map(([parentParams, params]) => ({
+        parentParams,
+        params,
+      }))
     );
 
     combinedParams$.subscribe(data => {
@@ -62,7 +60,7 @@ export class ResultsComponent implements AfterViewChecked {
       this._handleParentParams(parentParams);
       this._handleSearchParams(params);
 
-      this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
+      this._titleService.setTitle(`Search results for ${this.searchParams.mode} search`);
     });
   }
 
@@ -76,10 +74,8 @@ export class ResultsComponent implements AfterViewChecked {
 
     if (!res || res.count <= 1) {
       this.viewMode = 'single';
-    } else {
-      if (this.viewMode !== 'compare') {
-        this.viewMode = res && res.count > 0 ? 'intermediate' : 'single';
-      }
+    } else if (this.viewMode !== 'compare') {
+      this.viewMode = res && res.count > 0 ? 'intermediate' : 'single';
     }
   }
 

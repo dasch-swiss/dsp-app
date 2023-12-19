@@ -21,7 +21,7 @@ export class CustomRouterStateSerializer implements RouterStateSerializer<Router
 
     let params = route.params;
     params = route.pathFromRoot.filter(v => Object.keys(v.params).length).map(v => v.params)[0];
-    params = params ? params : route.params;
+    params = params || route.params;
 
     return { url, params, queryParams, data };
   }

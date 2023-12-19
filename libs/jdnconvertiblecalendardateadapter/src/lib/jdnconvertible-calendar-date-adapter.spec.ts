@@ -37,7 +37,7 @@ describe('JDNConvertibleCalendarDateAdapter', () => {
 
     assertValidDate = (d: JDNConvertibleCalendar | null, valid: boolean) => {
       expect(adapter.isDateInstance(d)).withContext(`Expected ${d} to be a date instance`).not.toBeNull();
-      expect(adapter.isValid(d!))
+      expect(adapter.isValid())
         .withContext(`Expected ${d} to be ${valid ? 'valid' : 'invalid'},` + ` but was ${valid ? 'invalid' : 'valid'}`)
         .toBe(valid);
     };

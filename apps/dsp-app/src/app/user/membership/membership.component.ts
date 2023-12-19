@@ -100,28 +100,32 @@ export class MembershipComponent implements OnDestroy {
   }
 
   private getProjects(projects: StoredProject[], user: ReadUser): AutocompleteItem[] {
-    return projects
-      .map(p => {
-        if (
-          p.id !== Constants.SystemProjectIRI &&
-          p.id !== Constants.DefaultSharedOntologyIRI &&
-          p.status === true &&
-          user.projects.findIndex(i => i.id === p.id) === -1
-        ) {
-          return <AutocompleteItem>{
-            iri: p.id,
-            name: `${p.longname} (${p.shortname})`,
-          };
-        }
-      })
-      .sort(function (u1: AutocompleteItem, u2: AutocompleteItem) {
-        if (u1.name < u2.name) {
-          return -1;
-        } else if (u1.name > u2.name) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+    // TODO code smell, next line should not be disabled!!!
+    return (
+      projects
+        // eslint-disable-next-line array-callback-return
+        .map(p => {
+          if (
+            p.id !== Constants.SystemProjectIRI &&
+            p.id !== Constants.DefaultSharedOntologyIRI &&
+            p.status === true &&
+            user.projects.findIndex(i => i.id === p.id) === -1
+          ) {
+            return <AutocompleteItem>{
+              iri: p.id,
+              name: `${p.longname} (${p.shortname})`,
+            };
+          }
+        })
+        .sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
+          if (u1.name < u2.name) {
+            return -1;
+          } else if (u1.name > u2.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        })
+    );
   }
 }

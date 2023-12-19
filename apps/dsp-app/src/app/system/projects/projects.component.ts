@@ -59,7 +59,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.username ? this._titleService.setTitle('Your projects') : this._titleService.setTitle('All projects from DSP');
+    if (this.username) {
+      this._titleService.setTitle('Your projects');
+    } else {
+      this._titleService.setTitle('All projects from DSP');
+    }
 
     if (this._store.selectSnapshot(ProjectsSelectors.allProjects).length === 0) {
       this.refresh();

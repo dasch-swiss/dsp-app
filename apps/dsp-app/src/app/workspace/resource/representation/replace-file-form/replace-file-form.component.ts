@@ -63,7 +63,7 @@ export class ReplaceFileFormComponent implements OnInit {
 
     const capitalized = repType[0].toUpperCase() + repType.substring(1).toLowerCase();
 
-    this.warningMessages.push(capitalized + ' will be replaced.');
-    this.warningMessages.push('Please note that you are about to replace the ' + repType + '.');
+    this.warningMessages.push(`${capitalized} will be replaced.`);
+    this.warningMessages.push(`Please note that you are about to replace the ${repType}.`);
   }
 }

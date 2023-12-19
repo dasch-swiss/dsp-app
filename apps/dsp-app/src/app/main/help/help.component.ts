@@ -102,9 +102,9 @@ export class HelpComponent implements OnInit {
   ngOnInit() {
     this.dsp = this._appConfigService.dspConfig;
 
-    this.support[0].url += this.dsp.environment + ': ' + this.dsp.release;
+    this.support[0].url += `${this.dsp.environment}: ${this.dsp.release}`;
 
-    this.releaseNotesUrl = 'https://github.com/dasch-swiss/dsp-das/releases/tag/v' + this.appVersion;
+    this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-das/releases/tag/v${this.appVersion}`;
 
     this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(
       (response: ApiResponseData<VersionResponse>) => {

@@ -110,9 +110,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   userHasPermission$(projectIri: string): Observable<boolean> {
     return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(([user, userProjectGroups]) => {
-        return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
-      })
+      map(([user, userProjectGroups]) => ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri))
     );
   }
 
@@ -125,9 +123,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
       takeUntil(this.ngUnsubscribe),
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      map(([user, userProjectGroups]) => {
-        return ProjectService.IsInProjectGroup(userProjectGroups, projectIri);
-      })
+      map(([user, userProjectGroups]) => ProjectService.IsInProjectGroup(userProjectGroups, projectIri))
     );
   }
 
@@ -160,7 +156,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       position: {
         top: '112px',
       },
-      data: { name: name, mode: mode, project: id },
+      data: { name, mode, project: id },
     };
 
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);

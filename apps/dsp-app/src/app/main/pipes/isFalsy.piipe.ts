@@ -6,6 +6,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class IsFalsyPipe implements PipeTransform {
   transform(value: any): any {
-    return value ? false : true;
+    return !value;
   }
 }

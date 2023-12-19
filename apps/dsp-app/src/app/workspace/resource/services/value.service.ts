@@ -157,7 +157,7 @@ export class ValueService {
       const calDate = new IslamicCalendarDate(new CalendarPeriod(date, date));
       return calDate.daysInMonth(date);
     } else {
-      throw Error('Unknown calendar ' + calendar);
+      throw Error(`Unknown calendar ${calendar}`);
     }
   }
 

@@ -24,11 +24,11 @@ export class NotificationService {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: type ? type : 'error',
+      panelClass: type || 'error',
     };
 
     if (notification instanceof ApiResponseError) {
-      conf.panelClass = type ? type : 'error';
+      conf.panelClass = type || 'error';
       notification = notification as ApiResponseError;
       if (
         notification.error &&
@@ -51,7 +51,7 @@ export class NotificationService {
         }
       }
     } else {
-      conf.panelClass = type ? type : 'success';
+      conf.panelClass = type || 'success';
       if (notification instanceof HttpErrorResponse) {
         message = notification.message;
         // sipi error

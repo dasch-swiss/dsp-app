@@ -132,8 +132,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
 
           // set label from resource class
           const defaultClassLabel = this.defaultClasses.find(i => i.iri === this.resourceClass.subClassOf[0]);
-          this.resourceLabel =
-            this.resourceClass.label + (defaultClassLabel ? ' (' + defaultClassLabel.label + ')' : '');
+          this.resourceLabel = this.resourceClass.label + (defaultClassLabel ? ` (${defaultClassLabel.label})` : '');
 
           // filter out all props that cannot be edited or are link props but also the hasFileValue props
           this.properties = onto.getPropertyDefinitionsByType(ResourcePropertyDefinition).filter(

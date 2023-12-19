@@ -36,7 +36,7 @@ export class ResourceService {
    * @returns resource iri --> http://rdfh.ch/082B/SQkTPdHdTzq_gqbwj6QR-A
    */
   getResourceIri(shortcode: string, uuid: string): string {
-    return this.iriBase + '/' + shortcode + '/' + uuid;
+    return `${this.iriBase}/${shortcode}/${uuid}`;
   }
 
   /**

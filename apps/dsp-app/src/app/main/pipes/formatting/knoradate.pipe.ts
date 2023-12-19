@@ -23,7 +23,7 @@ export class KnoraDatePipe implements PipeTransform {
   // ensures that day and month are always two digits
   leftPadding(value: number): string {
     if (value !== undefined) {
-      return ('0' + value).slice(-2);
+      return `0${value}`.slice(-2);
     } else {
       return null;
     }
@@ -34,21 +34,18 @@ export class KnoraDatePipe implements PipeTransform {
     switch (options) {
       case 'era':
         // displays date with era; era only in case of BCE
-        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ' ' + date.era : '');
+        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ` ${date.era}` : '');
       case 'calendar':
         // displays date without era but with calendar type
-        return value + ' ' + this._titleCase(date.calendar);
+        return `${value} ${this._titleCase(date.calendar)}`;
       case 'calendarOnly':
         // displays only the selected calendar type without any data
         return this._titleCase(date.calendar);
       case 'all':
         // displays date with era (only as BCE) and selected calendar type
-        return (
-          value +
-          (date.era === 'noEra' ? '' : date.era === 'BCE' ? ' ' + date.era : '') +
-          ' ' +
-          this._titleCase(date.calendar)
-        );
+        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this._titleCase(
+          date.calendar
+        )}`;
     }
   }
 

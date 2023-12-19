@@ -62,7 +62,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     // get active calendar from token
     this.activeCalendarToken.subscribe((activeCal: 'Gregorian' | 'Julian' | 'Islamic') => {
       if (JDNConvertibleCalendar.supportedCalendars.indexOf(activeCal) === -1) {
-        throw Error('Invalid value for token ACTIVE_CALENDAR: ' + activeCal);
+        throw Error(`Invalid value for token ACTIVE_CALENDAR: ${activeCal}`);
       }
 
       this.activeCalendar = activeCal;
@@ -403,7 +403,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     return obj instanceof JDNConvertibleCalendar;
   }
 
-  isValid(date: JDNConvertibleCalendar): boolean {
+  isValid(): boolean {
     // TODO: implement this properly
 
     return true;

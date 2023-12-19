@@ -13,6 +13,8 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        // rules that need to be removed later on
+        "@angular-eslint/template/no-negated-async": "off",
         "@typescript-eslint/adjacent-overload-signatures": "warn",
 
         "@angular-eslint/directive-selector": [

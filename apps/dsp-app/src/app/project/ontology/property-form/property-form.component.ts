@@ -201,13 +201,13 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
       // set list of all existing resource property names to avoid same name twice
       resourceProperties.forEach((resProp: PropertyDefinition) => {
         const name = this._os.getNameFromIri(resProp.id);
-        this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
+        this.existingNames.push(new RegExp(`(?:^|W)${name.toLowerCase()}(?:$|W)`));
       });
 
       // add all resource classes to the same list
       getAllEntityDefinitionsAsArray(response.classes).forEach((resClass: ClassDefinition) => {
         const name = this._os.getNameFromIri(resClass.id);
-        this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
+        this.existingNames.push(new RegExp(`(?:^|W)${name.toLowerCase()}(?:$|W)`));
       });
     });
 
@@ -336,13 +336,13 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    Object.keys(this.formErrors).map(field => {
+    Object.keys(this.formErrors).forEach(field => {
       this.formErrors[field] = '';
       const control = this.propertyForm.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map(key => {
-          this.formErrors[field] += messages[key] + ' ';
+        Object.keys(control.errors).forEach(key => {
+          this.formErrors[field] += `${messages[key]} `;
         });
       }
     });
@@ -806,21 +806,21 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
 
     switch (this.propertyInfo.propType.guiEle) {
       case Constants.GuiColorPicker:
-        guiAttributes = ['ncolors=' + guiAttr];
+        guiAttributes = [`ncolors=${guiAttr}`];
         break;
       case Constants.GuiList:
       case Constants.GuiPulldown:
       case Constants.GuiRadio:
-        guiAttributes = ['hlist=<' + guiAttr + '>'];
+        guiAttributes = [`hlist=<${guiAttr}>`];
         break;
       case Constants.GuiSimpleText:
         // --> TODO could have two guiAttr fields: size and maxlength
         // we suggest to use default value for size; we do not support this guiAttr in DSP-App
-        guiAttributes = ['maxlength=' + guiAttr];
+        guiAttributes = [`maxlength=${guiAttr}`];
         break;
       case Constants.GuiSpinbox:
         // --> TODO could have two guiAttr fields: min and max
-        guiAttributes = ['min=' + guiAttr, 'max=' + guiAttr];
+        guiAttributes = [`min=${guiAttr}`, `max=${guiAttr}`];
         break;
       case Constants.GuiTextarea:
         // --> TODO could have four guiAttr fields: width, cols, rows, wrap
@@ -845,17 +845,13 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
       if (this.targetGuiCardinality.key === 'multiple' && this.targetGuiCardinality.value === false) {
         // there are instances which have that property multiple times and do not allow to set multiple to false
         reason.detail = `At least one ${classLabel} has multiple ${pLabel} properties in your data.`;
-        reason.hint =
-          `In order to change the data model and set the property ${pLabel} from multiple to ` +
-          `single, every ${classLabel} must have only one ${pLabel} in the data.`;
+        reason.hint = `In order to change the data model and set the property ${pLabel} from multiple to single, every ${classLabel} must have only one ${pLabel} in the data.`;
       }
       if (this.targetGuiCardinality.key === 'required' && this.targetGuiCardinality.value === true) {
         // setting from multiple to single is not possible because there are instances which have that property
         // multiple times and do not allow to set multiple to false
         reason.detail = `At least one ${classLabel} does not have a ${pLabel} property in your data.`;
-        reason.hint =
-          `In order to change the data model and set the property ${pLabel} to required ` +
-          `every ${classLabel} needs to have a ${pLabel} in the data.`;
+        reason.hint = `In order to change the data model and set the property ${pLabel} to required every ${classLabel} needs to have a ${pLabel} in the data.`;
       }
     }
     return reason;

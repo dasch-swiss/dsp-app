@@ -33,18 +33,14 @@ export class OntologyService {
     if (label && type) {
       // build name from label
       // normalize and replace spaces and special chars
-      return (
-        type +
-        '-' +
-        label
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/[\u00a0-\u024f]/g, '')
-          .replace(/[\])}[{(]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/\//g, '-')
-          .toLowerCase()
-      );
+      return `${type}-${label
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\u00a0-\u024f]/g, '')
+        .replace(/[\])}[{(]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/\//g, '-')
+        .toLowerCase()}`;
     } else {
       // build randomized name
       // the name starts with the three first character of ontology iri to avoid a start with a number followed by randomized string
@@ -142,7 +138,7 @@ export class OntologyService {
       }
     }
 
-    return superPropIri ? superPropIri : undefined;
+    return superPropIri || undefined;
   }
 
   /**
@@ -160,24 +156,22 @@ export class OntologyService {
             propType = group.elements.find(
               (i: DefaultProperty) => i.guiEle === property.guiElement && i.subPropOf === subProp
             );
+          } else if (property.objectType === Constants.IntValue && subProp === Constants.SeqNum) {
+            // if the property is of type number, but sub property of SeqNum,
+            // select the correct default prop params
+            propType = group.elements.find(
+              (i: DefaultProperty) => i.objectType === property.objectType && i.subPropOf === Constants.SeqNum
+            );
+          } else if (property.objectType === Constants.TextValue) {
+            // if the property is of type text value, we have to check the gui element
+            // to get the correct default prop params
+            propType = group.elements.find(
+              (i: DefaultProperty) => i.guiEle === property.guiElement && i.objectType === property.objectType
+            );
           } else {
-            if (property.objectType === Constants.IntValue && subProp === Constants.SeqNum) {
-              // if the property is of type number, but sub property of SeqNum,
-              // select the correct default prop params
-              propType = group.elements.find(
-                (i: DefaultProperty) => i.objectType === property.objectType && i.subPropOf === Constants.SeqNum
-              );
-            } else if (property.objectType === Constants.TextValue) {
-              // if the property is of type text value, we have to check the gui element
-              // to get the correct default prop params
-              propType = group.elements.find(
-                (i: DefaultProperty) => i.guiEle === property.guiElement && i.objectType === property.objectType
-              );
-            } else {
-              // in all other cases the gui-element resp. the subProp is not relevant
-              // because the object type is unique
-              propType = group.elements.find((i: DefaultProperty) => i.objectType === property.objectType);
-            }
+            // in all other cases the gui-element resp. the subProp is not relevant
+            // because the object type is unique
+            propType = group.elements.find((i: DefaultProperty) => i.objectType === property.objectType);
           }
           if (propType) {
             break;
@@ -210,11 +204,8 @@ export class OntologyService {
    * TODO: move to DSP-JS-Lib similar to `get ApiUrl`
    */
   getIriBaseUrl(): string {
-    return (
-      'http://' +
-      this._dspApiConfig.apiHost +
-      (this._dspApiConfig.apiPort !== null ? ':' + this._dspApiConfig.apiPort : '') +
-      this._dspApiConfig.apiPath
-    );
+    return `http://${this._dspApiConfig.apiHost}${
+      this._dspApiConfig.apiPort !== null ? `:${this._dspApiConfig.apiPort}` : ''
+    }${this._dspApiConfig.apiPath}`;
   }
 }

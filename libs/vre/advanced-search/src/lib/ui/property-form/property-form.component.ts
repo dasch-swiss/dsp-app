@@ -206,28 +206,28 @@ export class PropertyFormComponent implements AfterViewInit {
   onRemoveChildPropertyFormClicked(childProperty: PropertyFormItem) {
     this.emitRemoveChildPropertyForm.emit({
       parentProperty: this.propertyFormItem,
-      childProperty: childProperty,
+      childProperty,
     });
   }
 
   onChildSelectedPropertyChanged(childProperty: PropertyFormItem): void {
     this.emitChildSelectedPropertyChanged.emit({
       parentProperty: this.propertyFormItem,
-      childProperty: childProperty,
+      childProperty,
     });
   }
 
   onChildSelectedOperatorChanged(childProperty: PropertyFormItem): void {
     this.emitChildSelectedOperatorChanged.emit({
       parentProperty: this.propertyFormItem,
-      childProperty: childProperty,
+      childProperty,
     });
   }
 
   onChildValueChanged(childProperty: PropertyFormItem): void {
     this.emitChildValueChanged.emit({
       parentProperty: this.propertyFormItem,
-      childProperty: childProperty,
+      childProperty,
     });
   }
 

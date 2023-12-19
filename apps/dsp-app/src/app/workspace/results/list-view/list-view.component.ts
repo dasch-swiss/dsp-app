@@ -328,7 +328,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
             // build the gravsearch query
             let gravsearch = this.search.query;
             gravsearch = gravsearch.substring(0, gravsearch.search('OFFSET'));
-            gravsearch = gravsearch + 'OFFSET ' + index;
+            gravsearch = `${gravsearch}OFFSET ${index}`;
 
             this._dspApiConnection.v2.search
               .doExtendedSearch(gravsearch)

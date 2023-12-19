@@ -32,8 +32,8 @@ export class DspIiifConfig {
    * the full IIIF URL
    */
   get iiifUrl(): string {
-    return (
-      this.iiifProtocol + '://' + this.iiifHost + (this.iiifPort !== null ? ':' + this.iiifPort : '') + this.iiifPath
-    );
+    return `${this.iiifProtocol}://${this.iiifHost}${this.iiifPort !== null ? `:${this.iiifPort}` : ''}${
+      this.iiifPath
+    }`;
   }
 }

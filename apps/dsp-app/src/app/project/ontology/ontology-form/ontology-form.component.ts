@@ -83,15 +83,15 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
   validationMessages = {
     name: {
       required: 'Name is required.',
-      minlength: 'Name must be at least ' + this.nameMinLength + ' characters long.',
-      maxlength: 'Name cannot be more than ' + this.nameMaxLength + ' characters long.',
+      minlength: `Name must be at least ${this.nameMinLength} characters long.`,
+      maxlength: `Name cannot be more than ${this.nameMaxLength} characters long.`,
       pattern:
         "Name shouldn't start with a number or v + number and spaces or special characters (except dash, dot and underscore) are not allowed.",
       existingName: 'This name is not allowed or exists already.',
     },
     label: {
       required: 'Label is required.',
-      minlength: 'Label must be at least ' + this.nameMinLength + ' characters long.',
+      minlength: `Label must be at least ${this.nameMinLength} characters long.`,
     },
   };
 
@@ -172,7 +172,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
     // name has to be unique; if it already exists
     // show an error message
     for (const name of this.existingOntologyNames) {
-      this.existingNames.push(new RegExp('(?:^|W)' + name + '(?:$|W)'));
+      this.existingNames.push(new RegExp(`(?:^|W)${name}(?:$|W)`));
     }
 
     for (const name of this.forbiddenNames) {
@@ -222,13 +222,13 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    Object.keys(this.formErrors).map(field => {
+    Object.keys(this.formErrors).forEach(field => {
       this.formErrors[field] = '';
       const control = this.ontologyForm.get(field);
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
-        Object.keys(control.errors).map(key => {
-          this.formErrors[field] += messages[key] + ' ';
+        Object.keys(control.errors).forEach(key => {
+          this.formErrors[field] += `${messages[key]} `;
         });
       }
     });
@@ -265,7 +265,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
     } else {
       // create mode
       const ontologyData = new CreateOntology();
-      ontologyData.label = this.project.shortname + ': ' + this.ontologyForm.controls['label'].value;
+      ontologyData.label = `${this.project.shortname}: ${this.ontologyForm.controls['label'].value}`;
       ontologyData.name = this.ontologyForm.controls['name'].value;
       ontologyData.comment = this.ontologyForm.controls['comment'].value;
       ontologyData.attachedToProject = this.project.id;
@@ -285,7 +285,7 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
           },
           (error: ApiResponseError) => {
             // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
-            this.formErrors['name'] += this.validationMessages['name']['existingName'] + ' ';
+            this.formErrors['name'] += `${this.validationMessages['name']['existingName']} `;
             this.loading = false;
 
             this._errorHandler.showMessage(error);

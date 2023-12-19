@@ -82,7 +82,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )}`;
 
       if (this.searchParams.filter && this.searchParams.filter.limitToProject) {
-        doSearchRoute += '/' + encodeURIComponent(this.searchParams.filter.limitToProject);
+        doSearchRoute += `/${encodeURIComponent(this.searchParams.filter.limitToProject)}`;
       }
 
       this._router.navigate([doSearchRoute]);
@@ -96,7 +96,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       position: {
         top: '112px',
       },
-      data: { mode: mode, title: name, id: iri },
+      data: { mode, title: name, id: iri },
     };
 
     this._dialog.open(DialogComponent, dialogConfig);

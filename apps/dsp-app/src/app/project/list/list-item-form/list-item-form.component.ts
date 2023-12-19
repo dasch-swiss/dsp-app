@@ -161,8 +161,9 @@ export class ListItemFormComponent implements OnInit {
     const childNode: CreateChildNodeRequest = new CreateChildNodeRequest();
     childNode.parentNodeIri = this.parentIri;
     childNode.projectIri = this.projectIri;
-    childNode.name =
-      this.projectUuid + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+    childNode.name = `${this.projectUuid}-${Math.random().toString(36).substring(2)}${Math.random()
+      .toString(36)
+      .substring(2)}`;
 
     // initialize labels
     let i = 0;
@@ -235,7 +236,7 @@ export class ListItemFormComponent implements OnInit {
         top: '112px',
       },
       data: {
-        mode: mode,
+        mode,
         title: mode === 'editListNode' || mode === 'deleteListNode' ? name : '',
         id: iri,
         project: this.projectIri,

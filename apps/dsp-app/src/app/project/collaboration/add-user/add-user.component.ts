@@ -152,9 +152,9 @@ export class AddUserComponent implements OnInit {
 
             // if the user is already member of the project
             // add the email to the list of existing
-            this.existingEmailInProject.push(new RegExp('(?:^|W)' + m.email.toLowerCase() + '(?:$|W)'));
+            this.existingEmailInProject.push(new RegExp(`(?:^|W)${m.email.toLowerCase()}(?:$|W)`));
             // add username to the list of existing
-            this.existingUsernameInProject.push(new RegExp('(?:^|W)' + m.username.toLowerCase() + '(?:$|W)'));
+            this.existingUsernameInProject.push(new RegExp(`(?:^|W)${m.username.toLowerCase()}(?:$|W)`));
           }
         }
 
@@ -162,9 +162,9 @@ export class AddUserComponent implements OnInit {
         for (const u of response.body.users) {
           // if the user is already member of the project
           // add the email to the list of existing
-          this.existingEmails.push(new RegExp('(?:^|W)' + u.email.toLowerCase() + '(?:$|W)'));
+          this.existingEmails.push(new RegExp(`(?:^|W)${u.email.toLowerCase()}(?:$|W)`));
           // add username to the list of existing
-          this.existingUsernames.push(new RegExp('(?:^|W)' + u.username.toLowerCase() + '(?:$|W)'));
+          this.existingUsernames.push(new RegExp(`(?:^|W)${u.username.toLowerCase()}(?:$|W)`));
 
           let existsInProject = '';
 
@@ -175,12 +175,12 @@ export class AddUserComponent implements OnInit {
           this.users[i] = {
             iri: u.id,
             name: u.username,
-            label: existsInProject + u.username + ' | ' + u.email + ' | ' + u.givenName + ' ' + u.familyName,
+            label: `${existsInProject + u.username} | ${u.email} | ${u.givenName} ${u.familyName}`,
           };
           i++;
         }
 
-        this.users.sort(function (u1: AutocompleteItem, u2: AutocompleteItem) {
+        this.users.sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
           if (u1.label < u2.label) {
             return -1;
           } else if (u1.label > u2.label) {
@@ -245,14 +245,14 @@ export class AddUserComponent implements OnInit {
     this.selectedUser = undefined;
 
     // check if the form is valid
-    Object.keys(this.selectUserErrors).map(field => {
+    Object.keys(this.selectUserErrors).forEach(field => {
       this.selectUserErrors[field] = '';
       const control = this.selectUserForm.get(field);
       if (control.value.length >= 2) {
         if (control && control.dirty && !control.valid) {
           const messages = this.validationMessages[field];
-          Object.keys(control.errors).map(key => {
-            this.selectUserErrors[field] += messages[key] + ' ';
+          Object.keys(control.errors).forEach(key => {
+            this.selectUserErrors[field] += `${messages[key]} `;
           });
         }
       }
@@ -321,7 +321,7 @@ export class AddUserComponent implements OnInit {
       data: {
         project: this.projectUuid,
         name: this.selectUserForm.controls['username'].value,
-        mode: mode,
+        mode,
       },
     };
 

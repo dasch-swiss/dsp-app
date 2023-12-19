@@ -165,7 +165,7 @@ export class ListInfoFormComponent implements OnInit {
   resetLists(ev: Event, list?: ListNodeInfo) {
     ev.preventDefault();
 
-    list = list ? list : new ListNodeInfo();
+    list = list || new ListNodeInfo();
 
     this.buildLists(list);
   }

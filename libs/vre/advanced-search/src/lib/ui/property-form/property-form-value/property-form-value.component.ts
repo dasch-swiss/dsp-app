@@ -11,6 +11,25 @@ import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ResourceLabel } from '../../../data-access/advanced-search-service/advanced-search.service';
 import { PropertyFormItem } from '../../../data-access/advanced-search-store/advanced-search-store.service';
+
+class CustomRegex {
+  public static readonly INT_REGEX = /^-?\d+$/;
+
+  public static readonly DECIMAL_REGEX = /^[-+]?[0-9]*\.?[0-9]*$/;
+
+  public static readonly URI_REGEX =
+    /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/;
+}
+
+class ValueErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null): boolean {
+    if (!control) {
+      return false;
+    }
+    return control && control.invalid && (control.dirty || control.touched);
+  }
+}
+
 @Component({
   selector: 'dasch-swiss-property-form-value',
   standalone: true,
@@ -74,7 +93,7 @@ export class PropertyFormValueComponent implements OnInit, AfterViewInit {
     const [datePart, eraPart] = dateAndEra.split(' ');
     const [year, month, day] = datePart.split('-').map(part => parseInt(part));
 
-    era = eraPart ? eraPart : 'CE';
+    era = eraPart || 'CE';
 
     if (day) {
       return new KnoraDate(calendar, era, year, month, day);
@@ -111,22 +130,4 @@ export class PropertyFormValueComponent implements OnInit, AfterViewInit {
       this.emitValueChanged.emit(value.toString().trim());
     else this.emitValueChanged.emit(undefined);
   }
-}
-
-class ValueErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null): boolean {
-    if (!control) {
-      return false;
-    }
-    return control && control.invalid && (control.dirty || control.touched);
-  }
-}
-
-class CustomRegex {
-  public static readonly INT_REGEX = /^-?\d+$/;
-
-  public static readonly DECIMAL_REGEX = /^[-+]?[0-9]*\.?[0-9]*$/;
-
-  public static readonly URI_REGEX =
-    /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/;
 }

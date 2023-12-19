@@ -32,7 +32,7 @@ export class StringifyStringLiteralPipe implements PipeTransform {
       let i = 0;
       for (const sl of value) {
         const delimiter = i > 0 ? ' / ' : '';
-        stringified += delimiter + sl.value + ' (' + sl.language + ')';
+        stringified += `${delimiter + sl.value} (${sl.language})`;
 
         i++;
       }

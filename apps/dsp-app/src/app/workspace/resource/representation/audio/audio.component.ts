@@ -54,8 +54,12 @@ export class AudioComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(
-      res => (this.originalFilename = res['originalFilename']),
-      () => (this.failedToLoad = true)
+      res => {
+        this.originalFilename = res['originalFilename'];
+      },
+      () => {
+        this.failedToLoad = true;
+      }
     );
     this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
   }
@@ -85,20 +89,20 @@ export class AudioComponent implements OnInit, AfterViewInit {
   }
 
   parseTime(time) {
-    if (isNaN(time)) {
+    if (Number.isNaN(time)) {
       return '00:00';
     }
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time - minutes * 60);
     let minutesString = minutes.toString();
     if (minutes < 10) {
-      minutesString = '0' + minutesString;
+      minutesString = `0${minutesString}`;
     }
     let secondsString = seconds.toString();
     if (seconds < 10) {
-      secondsString = '0' + secondsString;
+      secondsString = `0${secondsString}`;
     }
-    return minutesString + ':' + secondsString;
+    return `${minutesString}:${secondsString}`;
   }
 
   openReplaceFileDialog() {
@@ -183,9 +187,9 @@ export class AudioComponent implements OnInit, AfterViewInit {
 
           this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
 
-          this._rs
-            .getFileInfo(this.src.fileValue.fileUrl)
-            .subscribe(res => (this.originalFilename = res['originalFilename']));
+          this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
+            this.originalFilename = res['originalFilename'];
+          });
 
           this._valueOperationEventService.emit(
             new EmitEvent(

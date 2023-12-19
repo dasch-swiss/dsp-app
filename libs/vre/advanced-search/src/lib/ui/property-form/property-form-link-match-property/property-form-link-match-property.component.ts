@@ -138,8 +138,8 @@ export class PropertyFormLinkMatchPropertyComponent implements AfterViewInit {
       const objectType = this.values[index].selectedProperty?.objectType;
       if (objectType) {
         this.emitResourceSearchValueChanged.emit({
-          value: value,
-          objectType: objectType,
+          value,
+          objectType,
         });
       }
     }
@@ -150,8 +150,8 @@ export class PropertyFormLinkMatchPropertyComponent implements AfterViewInit {
       const objectType = this.values[index].selectedProperty?.objectType;
       if (objectType) {
         this.emitLoadMoreSearchResults.emit({
-          value: value,
-          objectType: objectType,
+          value,
+          objectType,
         });
       }
     }
