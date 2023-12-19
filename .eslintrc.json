@@ -82,10 +82,6 @@
         "key-spacing": "off",
         "linebreak-style": "off",
         "max-classes-per-file": "off",
-        "max-len": [
-          "off",
-          120
-        ],
         "new-parens": "off",
         "no-confusing-arrow": "off",
         "no-case-declarations": "warn",
@@ -105,16 +101,13 @@
         "no-restricted-properties": "off",
         "no-restricted-syntax": "off",
         "no-return-assign": "off",
-        "no-trailing-spaces": "off",
         "no-undef": "off",
         "no-undef-init": "off",
         "no-underscore-dangle": "off",
         "no-unneeded-ternary": "off",
-        "no-unreachable": "off",
         "no-unsafe-optional-chaining": "off",
         "no-unused-vars": "off",
         "no-useless-rename": "off",
-        "no-useless-return": "off",
         "no-useless-escape": "warn",
         "nonblock-statement-body-position": "off",
         "object-curly-newline": "off",
@@ -128,13 +121,9 @@
         "prefer-template": "off",
         "prefer-destructuring": "off",
         "radix": "off",
-        "space-in-parens": "off",
-        "spaced-comment": "off",
-        "semi-spacing": "off",
         "simple-import-sort/exports": "off",
         "space-unary-ops": "off",
         // eslint-plugin-unused-imports rules
-        "unused-imports/no-unused-imports": "off",
         "unused-imports/no-unused-vars": [
           "off",
           {
@@ -149,14 +138,8 @@
         "@typescript-eslint/comma-dangle": "off",
         "@typescript-eslint/comma-spacing": "off",
         "@typescript-eslint/dot-notation": "off",
-        "@typescript-eslint/indent": "off",
         "@typescript-eslint/brace-style": "off",
-        "@typescript-eslint/keyword-spacing": "off",
         "@typescript-eslint/lines-between-class-members": "off",
-        "@typescript-eslint/quotes": [
-          "off",
-          "single"
-        ],
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-shadow": "off",
         "@typescript-eslint/no-explicit-any": "off",
@@ -165,12 +148,7 @@
         "@typescript-eslint/no-throw-literal": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-unused-expressions": "off",
-        "@typescript-eslint/no-use-before-define": "off",
-        "@typescript-eslint/no-useless-constructor": "off",
-        "@typescript-eslint/object-curly-spacing": "off",
-        "@typescript-eslint/semi": "off",
-        "@typescript-eslint/space-before-blocks": "off",
-        "@typescript-eslint/space-infix-ops": "off"
+        "@typescript-eslint/no-use-before-define": "off"
       },
       "parserOptions": {
         "project": "./tsconfig.eslint.json"

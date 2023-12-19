@@ -161,9 +161,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     private _cdr: ChangeDetectorRef
   ) {
     this._route.params.subscribe(params => {
-      this.projectCode = params['project'];
-      this.resourceUuid = params['resource'];
-      this.valueUuid = params['value'];
+      this.projectCode = params.project;
+      this.resourceUuid = params.resource;
+      this.valueUuid = params.value;
       if (this.projectCode && this.resourceUuid) {
         this.resourceIri = this._resourceService.getResourceIri(
           this.projectCode,

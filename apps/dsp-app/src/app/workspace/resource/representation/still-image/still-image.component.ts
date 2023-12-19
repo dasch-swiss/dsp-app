@@ -198,17 +198,17 @@ export class StillImageComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['images'] && changes['images'].isFirstChange()) {
+    if (changes.images && changes.images.isFirstChange()) {
       this._setupViewer();
       this.loadImages();
     }
     // only if the image changed
     if (
-      changes['images'] &&
-      changes['images'].previousValue &&
-      changes['images'].currentValue &&
-      changes['images'].currentValue[0].fileValue.fileUrl !==
-        changes['images'].previousValue[0].fileValue.fileUrl
+      changes.images &&
+      changes.images.previousValue &&
+      changes.images.currentValue &&
+      changes.images.currentValue[0].fileValue.fileUrl !==
+        changes.images.previousValue[0].fileValue.fileUrl
     ) {
       this.loadImages();
     }
@@ -219,7 +219,7 @@ export class StillImageComponent
     if (this.activateRegion !== undefined) {
       this._highlightRegion(this.activateRegion);
     }
-    if (changes['activateRegion']) {
+    if (changes.activateRegion) {
       this._unhighlightAllRegions();
     }
   }
@@ -255,8 +255,8 @@ export class StillImageComponent
         this.images[0].fileValue.filename
       )
       .subscribe(
-        res => {
-          this.originalFilename = res['originalFilename'];
+        (res: { originalFilename: string }) => {
+          this.originalFilename = res.originalFilename;
           this._openImages();
           this._unhighlightAllRegions();
         },
@@ -493,8 +493,8 @@ export class StillImageComponent
               this.images[0].fileValue.fileUrl,
               this.images[0].fileValue.filename
             )
-            .subscribe(res => {
-              this.originalFilename = res['originalFilename'];
+            .subscribe((res: { originalFilename: string }) => {
+              this.originalFilename = res.originalFilename;
             });
         },
         (error: ApiResponseError) => {

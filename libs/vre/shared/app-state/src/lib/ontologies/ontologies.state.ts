@@ -80,7 +80,7 @@ export class OntologiesState {
     private _notification: NotificationService
   ) {}
 
-  //TODO Remove this action when all actions containing this usage is implemented
+  // TODO Remove this action when all actions containing this usage is implemented
   @Action(SetOntologiesLoadingAction)
   setOntologiesLoadingAction(
     ctx: StateContext<OntologiesStateModel>,
@@ -155,10 +155,10 @@ export class OntologiesState {
               },
             };
             ctx.setState({ ...ctx.getState(), projectOntologies });
-            //TODO should load ontologies as a batch with dedicated endpoint, not one by one
+            // TODO should load ontologies as a batch with dedicated endpoint, not one by one
             ctx
               .dispatch(
-                //dispatch all actions except the last one to keep the loading state
+                // dispatch all actions except the last one to keep the loading state
                 ontoMeta.ontologies
                   .slice(0, ontoMeta.ontologies.length - 1)
                   .map(
@@ -182,7 +182,7 @@ export class OntologiesState {
                   .pipe(ofActionSuccessful(LoadOntologyAction))
                   .pipe(take(1))
                   .subscribe(() =>
-                    //last action dispatched
+                    // last action dispatched
                     ctx.dispatch(new LoadListsInProjectAction(projectIri))
                   )
               );
@@ -226,7 +226,7 @@ export class OntologiesState {
           projectReadOntologies = projectReadOntologies.sort((o1, o2) =>
             this._compareOntologies(o1, o2)
           );
-          //this._sortingService.keySortByAlphabetical(projectReadOntologies, 'label');
+          // this._sortingService.keySortByAlphabetical(projectReadOntologies, 'label');
           projectOntologiesState[projectIri].readOntologies =
             projectReadOntologies;
 
@@ -375,7 +375,7 @@ export class OntologiesState {
         ),
         tap({
           next: () => {
-            //ctx.dispatch(new SetCurrentOntologyPropertiesToDisplayAction(currentOntologyPropertiesToDisplay));
+            // ctx.dispatch(new SetCurrentOntologyPropertiesToDisplayAction(currentOntologyPropertiesToDisplay));
             ctx.setState({ ...state, isLoading: false });
             this._notification.openSnackBar(
               `You have successfully removed "${property.label}" from "${resourceClass.label}".`

@@ -120,14 +120,12 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
       this._router.navigate([route, encodeURIComponent(listName)], {
         relativeTo: this._route.parent,
       });
-      return;
     } else if (route === 'docs') {
       // route to the external docs
       window.open(
         'https://docs.dasch.swiss/latest/DSP-APP/user-guide/project/#data-model',
         '_blank'
       );
-      return;
     } else {
       // default routing
       this._router.navigate([route], { relativeTo: this._route.parent });

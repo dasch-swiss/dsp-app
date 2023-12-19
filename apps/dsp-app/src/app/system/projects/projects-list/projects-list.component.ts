@@ -217,7 +217,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   deactivateProject(id: string) {
     this._projectApiService.delete(id).pipe(
       tap(() => {
-        this.refreshParent.emit(); //TODO Soft or Hard refresh ?
+        this.refreshParent.emit(); // TODO Soft or Hard refresh ?
       })
     );
   }

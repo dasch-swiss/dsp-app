@@ -1001,7 +1001,6 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
     if (!this.resClassIri && !!this.propertyInfo.propDef) {
       // in properties context and with an existing property
       this.editMode = 'editProperty';
-      return;
     }
   }
 

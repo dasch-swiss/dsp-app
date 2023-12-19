@@ -27,7 +27,7 @@ export const DEVTOOLS_REDUX_CONFIG: NgxsDevtoolsOptions = {
    * import { environment } from '@env';
    *
    */
-  disabled: false, //environment.production
+  disabled: false, // environment.production
 };
 
 export const LOGGER_CONFIG: NgxsLoggerPluginOptions = {

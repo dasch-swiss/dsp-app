@@ -370,7 +370,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     property: DefaultClass,
     currentOntologyPropertiesToDisplay: PropToDisplay[]
   ) {
-    //TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after following subscription is triggered
+    // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after following subscription is triggered
     this.updatePropertyAssignment
       .pipe(take(1))
       .subscribe(() => this.updatePropertyAssignment$.next());
@@ -386,8 +386,8 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
       .pipe(ofActionSuccessful(RemovePropertyAction))
       .pipe(take(1))
       .subscribe(res => {
-        //TODO should be the same as ontology lastModificationDate ? if yes remove commented line, otherwise add additional lastModificationDate property to the state
-        //this.lastModificationDate = res.lastModificationDate;
+        // TODO should be the same as ontology lastModificationDate ? if yes remove commented line, otherwise add additional lastModificationDate property to the state
+        // this.lastModificationDate = res.lastModificationDate;
         this.updatePropertyAssignment.emit(this.ontology.id);
       });
   }
@@ -396,7 +396,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
    * assignProperty: Open the dialogue in order to add an existing property to a class or to create a new
    * property and add it to the class
    * @param propertyAssignment information about the link of a property to a class
-   **/
+   * */
   assignProperty(
     propertyAssignment: PropertyAssignment,
     currentOntologyPropertiesToDisplay: PropToDisplay[]
@@ -451,7 +451,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
    * changeCardinalities: Open the dialogue in order to change the currentCardinality of an existing property and
    * class combination
    * @param cardRequest information about the property, its type and its new cardinalities to be set
-   **/
+   * */
   changeCardinalities(
     cardRequest: {
       prop: PropToDisplay;
@@ -486,7 +486,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   /**
    * openEditDialog: Open the dialogue in order assign a property or change cardinalities
    * @param dialogConfig the MatDialogConfig
-   **/
+   * */
   openEditDialog(dialogConfig: MatDialogConfig) {
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
@@ -507,7 +507,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   ) {
     // set sort order for child component
     moveItemInArray(
-      currentOntologyPropertiesToDisplay, //TODO items should be updated in state if LoadProjectOntologiesAction is not executed after this
+      currentOntologyPropertiesToDisplay, // TODO items should be updated in state if LoadProjectOntologiesAction is not executed after this
       event.previousIndex,
       event.currentIndex
     );

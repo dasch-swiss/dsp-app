@@ -35,7 +35,6 @@ export class TextValueHtmlLinkDirective {
       this.internalLinkClicked.emit(targetElement.href);
       // prevent the default action for internal links
       event.preventDefault();
-      return;
     } else {
       // left mouse clicks on external links
       // open in a new tab

@@ -132,7 +132,7 @@ export class UserState {
 
       for (const key of groupsPerProjectKeys) {
         if (key === Constants.SystemProjectIRI) {
-          //is sysAdmin
+          // is sysAdmin
           isMemberOfSystemAdminGroup =
             groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
         }
@@ -140,7 +140,7 @@ export class UserState {
         if (
           groupsPerProject[key].indexOf(Constants.ProjectAdminGroupIRI) > -1
         ) {
-          //projectAdmin
+          // projectAdmin
           userProjectGroups.push(key);
         }
       }

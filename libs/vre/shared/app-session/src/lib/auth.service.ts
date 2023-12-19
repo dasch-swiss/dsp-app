@@ -194,7 +194,7 @@ export class AuthService {
   }
 
   logout() {
-    //TODO ? logout by access token missing ?
+    // TODO ? logout by access token missing ?
     this._dspApiConnection.v2.auth
       .logout()
       .pipe(
@@ -245,7 +245,7 @@ export class AuthService {
 
   private storeToken(token: string) {
     localStorage.setItem(Auth.AccessToken, token);
-    //localStorage.setItem(this.REFRESH_TOKEN, token);
+    // localStorage.setItem(this.REFRESH_TOKEN, token);
     this.startTokenRefresh();
   }
 

@@ -19,7 +19,7 @@ export class ProjectBase implements OnInit, OnDestroy {
   destroyed: Subject<void> = new Subject<void>();
 
   projectUuid: string;
-  project: ReadProject; //TODO use project$ instead
+  project: ReadProject; // TODO use project$ instead
 
   // permissions of logged-in user
   get isAdmin$(): Observable<boolean> {
@@ -96,7 +96,7 @@ export class ProjectBase implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //this._store.dispatch([new ClearCurrentProjectAction(), new ClearProjectOntologiesAction(this.projectUuid)]);
+    // this._store.dispatch([new ClearCurrentProjectAction(), new ClearProjectOntologiesAction(this.projectUuid)]);
     this.destroyed.next();
     this.destroyed.complete();
   }

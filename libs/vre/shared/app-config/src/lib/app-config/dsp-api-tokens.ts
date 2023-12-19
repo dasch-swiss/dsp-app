@@ -32,7 +32,7 @@ export const DspInstrumentationToken =
     'DSP instrumentation configuration'
   );
 
-//TODO make this method accessible from api. All object methods is lost when it is stored to the state
+// TODO make this method accessible from api. All object methods is lost when it is stored to the state
 export const getAllEntityDefinitionsAsArray = <
   T extends EntityDefinition,
 >(entityDefs: {

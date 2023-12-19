@@ -32,10 +32,6 @@ export class TextValueAsHtmlComponent
   htmlFromKnora: string;
   comment: string;
 
-  constructor() {
-    super();
-  }
-
   ngOnInit() {
     this.htmlFromKnora = this.getInitValue();
     this.comment = this.getInitComment();

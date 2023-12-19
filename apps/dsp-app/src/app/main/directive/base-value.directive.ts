@@ -75,7 +75,7 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    */
   abstract customValidators: ValidatorFn[];
 
-  protected constructor(protected _fb?: FormBuilder) {}
+  constructor(protected _fb?: FormBuilder) {}
 
   ngOnInit() {
     // initialize form control elements

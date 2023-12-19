@@ -232,8 +232,8 @@ export class OntologyComponent
         this.initProjectOntologies(project);
       });
 
-    //TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after child component
-    //subscription responsible for emitting event is triggered
+    // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after child component
+    // subscription responsible for emitting event is triggered
     this.updatePropertyAssignment$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
@@ -282,7 +282,7 @@ export class OntologyComponent
 
     // set the page title
     this.setTitle();
-    //this.initOntologiesList();
+    // this.initOntologiesList();
 
     this.ontologyForm = this._fb.group({
       ontology: new UntypedFormControl({
@@ -443,7 +443,7 @@ export class OntologyComponent
     const ontology = this._store.selectSnapshot(
       OntologiesSelectors.currentOntology
     );
-    //TODO reload or just update lastModificationDate in the state?
+    // TODO reload or just update lastModificationDate in the state?
     this._store.dispatch(
       new LoadOntologyAction(ontology.id, this.projectUuid, true)
     );

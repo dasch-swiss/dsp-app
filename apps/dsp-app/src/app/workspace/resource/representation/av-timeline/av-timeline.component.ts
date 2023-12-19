@@ -238,8 +238,6 @@ export class AvTimelineComponent implements OnChanges {
 
     if (this.timelineDimension?.width !== newDimension.width) {
       return newDimension;
-    } else {
-      return;
     }
   }
 }

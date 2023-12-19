@@ -20,7 +20,7 @@ export interface IProjectOntologiesKeyValuePairs {
 
 /**
  * contains the information about the assignment of a property to a class
- **/
+ * */
 export interface PropertyAssignment {
   resClass: ClassDefinition;
   property: PropertyInfoObject;

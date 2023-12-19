@@ -45,7 +45,6 @@ export class HintComponent implements OnInit {
                         <code class="">Example: <i>"Lorem ipsum"</i> will find texts with exact content <i>Lorem ipsum</i></code>
                     </li>
                 </ul>`;
-        break;
       default:
         return `There's no hint implemented for the topic <strong>${topic}<strong>.`;
     }
