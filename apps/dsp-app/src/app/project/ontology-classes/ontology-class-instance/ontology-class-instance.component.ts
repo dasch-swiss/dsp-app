@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceClassDefinition, StoredProject } from '@dasch-swiss/dsp-js';
-import { AppConfigService, getAllEntityDefinitionsAsArray, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, RouteConstants, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { IProjectOntologiesKeyValuePairs, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { FilteredResources, SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, takeWhile, takeUntil } from 'rxjs/operators';
+import { map, takeUntil, takeWhile } from 'rxjs/operators';
 import { ProjectBase } from '../../project-base';
 
 @Component({
@@ -91,11 +91,12 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
 
   // id (iri) or resource instance
   get resourceIri$(): Observable<string> {
-    return this.instanceId$.pipe(
+    return combineLatest([this.instanceId$, this.project$]).pipe(
+      takeWhile(([project]) => project !== undefined),
       takeUntil(this.ngUnsubscribe),
-      map(instanceId =>
+      map(([instanceId, project]) =>
         instanceId !== RouteConstants.addClassInstance
-          ? `${this._acs.dspAppConfig.iriBase}/${this.projectUuid}/${instanceId}`
+          ? `${this._acs.dspAppConfig.iriBase}/${project.shortcode}/${instanceId}`
           : ''
       )
     );

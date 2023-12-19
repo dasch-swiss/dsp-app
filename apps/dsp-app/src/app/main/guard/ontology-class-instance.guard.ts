@@ -29,16 +29,15 @@ export class OntologyClassInstanceGuard implements CanActivate {
     return combineLatest([this.isLoggedIn$, this.isSysAdmin$, this.userProjects$]).pipe(
       map(([isLoggedIn, isSysAdmin, userProjects]) => {
         const projectUuid = activatedRoute.parent.params[RouteConstants.uuidParameter];
-        if (!isLoggedIn && instanceId === RouteConstants.addClassInstance) {
+        const isAddInstance = instanceId === RouteConstants.addClassInstance;
+
+        if (!isLoggedIn && isAddInstance) {
           this.router.navigateByUrl(`/${RouteConstants.project}/${projectUuid}`);
           return false;
         }
 
-        return (
-          instanceId === RouteConstants.addClassInstance &&
-          (userProjects?.some(p => p.id === this.projectService.uuidToIri(projectUuid)) || // project member
-            isSysAdmin) // system admin
-        );
+        const isProjectMember = userProjects?.some(p => p.id === this.projectService.uuidToIri(projectUuid));
+        return !isAddInstance || isProjectMember || isSysAdmin;
       })
     );
   }
