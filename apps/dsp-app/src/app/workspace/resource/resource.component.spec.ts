@@ -5,10 +5,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { MockProvider } from 'ng-mocks';
@@ -27,12 +24,7 @@ describe('ResourceComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ResourceComponent],
-      imports: [
-        MatDialogModule,
-        MatIconModule,
-        MatSnackBarModule,
-        RouterTestingModule,
-      ],
+      imports: [MatDialogModule, MatIconModule, MatSnackBarModule, RouterTestingModule],
       providers: [
         AppConfigService,
         MockProvider(AppLoggingService),

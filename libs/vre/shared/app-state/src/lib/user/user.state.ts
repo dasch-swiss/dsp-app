@@ -57,19 +57,14 @@ export class UserState {
   }
 
   @Action(LoadUserContentByIriAction)
-  loadUserContentByIriAction(
-    ctx: StateContext<UserStateModel>,
-    { iri }: LoadUserContentByIriAction
-  ) {
+  loadUserContentByIriAction(ctx: StateContext<UserStateModel>, { iri }: LoadUserContentByIriAction) {
     ctx.patchState({ isLoading: true });
     return this._userApiService.get(iri).pipe(
       take(1),
       tap({
         next: response => {
           const state = ctx.getState();
-          const userIndex = state.allUsers.findIndex(
-            u => u.id === response.user.id
-          );
+          const userIndex = state.allUsers.findIndex(u => u.id === response.user.id);
           if (userIndex > -1) {
             state.allUsers[userIndex] = response.user;
           }
@@ -99,10 +94,7 @@ export class UserState {
     }
 
     ctx.setState({ ...state, isLoading: false });
-    ctx.dispatch([
-      new SetUserProjectGroupsAction(user),
-      new SetProjectMemberAction(user),
-    ]);
+    ctx.dispatch([new SetUserProjectGroupsAction(user), new SetProjectMemberAction(user)]);
   }
 
   @Action(RemoveUserAction)
@@ -117,10 +109,7 @@ export class UserState {
   }
 
   @Action(SetUserProjectGroupsAction)
-  setUserProjectGroupsData(
-    ctx: StateContext<UserStateModel>,
-    { user }: SetUserProjectGroupsAction
-  ) {
+  setUserProjectGroupsData(ctx: StateContext<UserStateModel>, { user }: SetUserProjectGroupsAction) {
     let isMemberOfSystemAdminGroup = false;
     const userProjectGroups: string[] = [];
 
@@ -133,13 +122,10 @@ export class UserState {
       for (const key of groupsPerProjectKeys) {
         if (key === Constants.SystemProjectIRI) {
           // is sysAdmin
-          isMemberOfSystemAdminGroup =
-            groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
+          isMemberOfSystemAdminGroup = groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
         }
 
-        if (
-          groupsPerProject[key].indexOf(Constants.ProjectAdminGroupIRI) > -1
-        ) {
+        if (groupsPerProject[key].indexOf(Constants.ProjectAdminGroupIRI) > -1) {
           // projectAdmin
           userProjectGroups.push(key);
         }
@@ -166,10 +152,7 @@ export class UserState {
   }
 
   @Action(LoadUsersAction)
-  loadUsersAction(
-    ctx: StateContext<UserStateModel>,
-    { loadFullUserData }: LoadUsersAction
-  ) {
+  loadUsersAction(ctx: StateContext<UserStateModel>, { loadFullUserData }: LoadUsersAction) {
     ctx.patchState({ isLoading: true });
     return this._userApiService.list().pipe(
       take(1),
@@ -181,9 +164,7 @@ export class UserState {
           });
 
           if (loadFullUserData) {
-            response.users.map(u =>
-              ctx.dispatch(new LoadUserContentByIriAction(u.id))
-            );
+            response.users.map(u => ctx.dispatch(new LoadUserContentByIriAction(u.id)));
           }
         },
         error: error => {
@@ -199,10 +180,7 @@ export class UserState {
   }
 
   @Action(CreateUserAction)
-  createUserAction(
-    ctx: StateContext<UserStateModel>,
-    { userData }: CreateUserAction
-  ) {
+  createUserAction(ctx: StateContext<UserStateModel>, { userData }: CreateUserAction) {
     ctx.patchState({ isLoading: true });
     return this._userApiService.create(userData).pipe(
       take(1),

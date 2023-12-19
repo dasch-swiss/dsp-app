@@ -30,16 +30,12 @@ export class OntologyV2ApiService extends BaseApi {
 
   get(ontologyIri: string, allLanguages = false) {
     return this._http.get<ReadOntology>(
-      `${this.baseUri}/allentities/${encodeURIComponent(ontologyIri)}${
-        allLanguages ? '?allLanguages=true' : ''
-      }`
+      `${this.baseUri}/allentities/${encodeURIComponent(ontologyIri)}${allLanguages ? '?allLanguages=true' : ''}`
     );
   }
 
   getByProject(iri: string) {
-    return this._http.get<Graph<OntologyMetadata>>(
-      `${this.baseUri}/metadata/${encodeURIComponent(iri)}`
-    );
+    return this._http.get<Graph<OntologyMetadata>>(`${this.baseUri}/metadata/${encodeURIComponent(iri)}`);
   }
 
   create(ontology: CreateOntology) {
@@ -47,17 +43,11 @@ export class OntologyV2ApiService extends BaseApi {
   }
 
   canDelete(iri: string) {
-    return this._http.get<CanDoResponse>(
-      `${this.baseUri}/candeleteontology/${encodeURIComponent(iri)}`
-    );
+    return this._http.get<CanDoResponse>(`${this.baseUri}/candeleteontology/${encodeURIComponent(iri)}`);
   }
 
   delete(iri: string, lastModificationDate: string) {
-    return this._http.get(
-      `${this.baseUri}/${encodeURIComponent(
-        iri
-      )}?lastModificationDate=${lastModificationDate}`
-    );
+    return this._http.get(`${this.baseUri}/${encodeURIComponent(iri)}?lastModificationDate=${lastModificationDate}`);
   }
 
   update() {
@@ -66,88 +56,59 @@ export class OntologyV2ApiService extends BaseApi {
 
   deleteComment(iri: string, lastModificationDate: string) {
     return this._http.delete(
-      `${this.baseUri}/comment/${encodeURIComponent(
-        iri
-      )}?lastModificationDate=${lastModificationDate}`
+      `${this.baseUri}/comment/${encodeURIComponent(iri)}?lastModificationDate=${lastModificationDate}`
     );
   }
 
   createResourceClass(resourceClass: CreateResourceClassPayload) {
-    return this._http.post<ResourceClassDefinitionWithAllLanguages>(
-      `${this.baseUri}/classes`,
-      resourceClass
-    );
+    return this._http.post<ResourceClassDefinitionWithAllLanguages>(`${this.baseUri}/classes`, resourceClass);
   }
 
   updateResourceClass(resourceClass: UpdateResourceClass) {
-    return this._http.put<ResourceClassDefinitionWithAllLanguages>(
-      `${this.baseUri}/classes`,
-      resourceClass
-    );
+    return this._http.put<ResourceClassDefinitionWithAllLanguages>(`${this.baseUri}/classes`, resourceClass);
   }
 
   updateResourceProperty(updateProperty: UpdateResourceProperty) {
-    return this._http.put<UpdateResourcePropertyResponse>(
-      `${this.baseUri}/properties`,
-      updateProperty
-    );
+    return this._http.put<UpdateResourcePropertyResponse>(`${this.baseUri}/properties`, updateProperty);
   }
 
   canDeleteResourceClass(iri: string) {
-    return this._http.get<CanDoResponse>(
-      `${this.baseUri}/candeleteclass/${iri}`
-    );
+    return this._http.get<CanDoResponse>(`${this.baseUri}/candeleteclass/${iri}`);
   }
 
   deleteResourceClass(iri: string, lastModificationDate: string) {
     return this._http.delete(
-      `${this.baseUri}/classes/${encodeURIComponent(
-        iri
-      )}?lastModificationDate=${lastModificationDate}`
+      `${this.baseUri}/classes/${encodeURIComponent(iri)}?lastModificationDate=${lastModificationDate}`
     );
   }
 
   deleteResourceClassComment(iri: string, lastModificationDate: string) {
     return this._http.delete<ResourceClassDefinitionWithAllLanguages>(
-      `${this.baseUri}/classes/comment/${encodeURIComponent(
-        iri
-      )}?lastModificationDate=${lastModificationDate}`
+      `${this.baseUri}/classes/comment/${encodeURIComponent(iri)}?lastModificationDate=${lastModificationDate}`
     );
   }
 
   createResourceProperty(resource: CreateResourceProperty) {
-    return this._http.post<ResourcePropertyDefinitionWithAllLanguages>(
-      `${this.baseUri}/properties`,
-      resource
-    );
+    return this._http.post<ResourcePropertyDefinitionWithAllLanguages>(`${this.baseUri}/properties`, resource);
   }
 
   replaceGuiElementOfProperty(payload: UpdateResourcePropertyGuiElement) {
-    return this._http.put<ResourcePropertyDefinitionWithAllLanguages>(
-      `${this.baseUri}/properties/guielement`,
-      payload
-    );
+    return this._http.put<ResourcePropertyDefinitionWithAllLanguages>(`${this.baseUri}/properties/guielement`, payload);
   }
 
   canDeleteResourceProperty(iri: string) {
-    return this._http.get<CanDoResponse>(
-      `${this.baseUri}/candeleteproperty/${encodeURIComponent(iri)}`
-    );
+    return this._http.get<CanDoResponse>(`${this.baseUri}/candeleteproperty/${encodeURIComponent(iri)}`);
   }
 
   deleteResourceProperty(iri: string, lastModificationDate: string) {
     return this._http.delete(
-      `${this.baseUri}/properties/${encodeURIComponent(
-        iri
-      )}?lastModificationDate=${lastModificationDate}`
+      `${this.baseUri}/properties/${encodeURIComponent(iri)}?lastModificationDate=${lastModificationDate}`
     );
   }
 
   deleteResourcePropertyComment(iri: string, lastModificationDate: string) {
     return this._http.delete(
-      `${this.baseUri}/properties/comment/${encodeURIComponent(
-        iri
-      )}?lastModificationDate=${lastModificationDate}`
+      `${this.baseUri}/properties/comment/${encodeURIComponent(iri)}?lastModificationDate=${lastModificationDate}`
     );
   }
 
@@ -156,67 +117,38 @@ export class OntologyV2ApiService extends BaseApi {
   }
 
   canReplaceCardinalityOfResourceClass(iri: string) {
-    return this._http.get(
-      `${this.baseUri}/canreplacecardinalities/${encodeURIComponent(iri)}`
-    );
+    return this._http.get(`${this.baseUri}/canreplacecardinalities/${encodeURIComponent(iri)}`);
   }
 
-  canReplaceCardinalityOfResourceClassWith(
-    resourceClassIri: string,
-    propertyIri: string,
-    newCardinality: string
-  ) {
+  canReplaceCardinalityOfResourceClassWith(resourceClassIri: string, propertyIri: string, newCardinality: string) {
     return this._http.get(
-      `${this.baseUri}/canreplacecardinalities/${encodeURIComponent(
-        resourceClassIri
-      )}?propertyIri=${encodeURIComponent(
+      `${this.baseUri}/canreplacecardinalities/${encodeURIComponent(resourceClassIri)}?propertyIri=${encodeURIComponent(
         propertyIri
       )}&newCardinality=${newCardinality}`
     );
   }
 
-  replaceCardinalityOfResourceClass(
-    cardinalities: Graph<{ cardinalities: IHasProperty[] }>
-  ) {
-    return this._http.put<ResourceClassDefinitionWithAllLanguages>(
-      `${this.baseUri}/cardinalities`,
-      cardinalities
-    );
+  replaceCardinalityOfResourceClass(cardinalities: Graph<{ cardinalities: IHasProperty[] }>) {
+    return this._http.put<ResourceClassDefinitionWithAllLanguages>(`${this.baseUri}/cardinalities`, cardinalities);
   }
 
-  canDeleteCardinalityFromResourceClass(
-    cardinalities: Graph<{ cardinalities: Cardinality[] }>
-  ) {
-    return this._http.post<CanDoResponse>(
-      `${this.baseUri}/candeletecardinalities`,
-      cardinalities
-    );
+  canDeleteCardinalityFromResourceClass(cardinalities: Graph<{ cardinalities: Cardinality[] }>) {
+    return this._http.post<CanDoResponse>(`${this.baseUri}/candeletecardinalities`, cardinalities);
   }
 
-  deleteCardinalityFromResourceClass(
-    payload: Graph<{ cardinalities: Cardinality[] }>
-  ) {
+  deleteCardinalityFromResourceClass(payload: Graph<{ cardinalities: Cardinality[] }>) {
     return this._http.patch(`${this.baseUri}/cardinalities`, payload);
   }
 
   replaceGuiOrderOfCardinalities(payload) {
-    return this._http.put<ResourcePropertyDefinitionWithAllLanguages>(
-      `${this.baseUri}/guiorder`,
-      payload
-    );
+    return this._http.put<ResourcePropertyDefinitionWithAllLanguages>(`${this.baseUri}/guiorder`, payload);
   }
 
   private _updateMetadata(ontologyMetadata: OntologyMetadata) {
-    return this._http.put<OntologyMetadata>(
-      `${this.baseUri} / metadata`,
-      ontologyMetadata
-    );
+    return this._http.put<OntologyMetadata>(`${this.baseUri} / metadata`, ontologyMetadata);
   }
 
   private _update(iri: string, ontologyMetaData: OntologyMetadata) {
-    return this._http.put<OntologyMetadata>(
-      `${this.baseUri} /${encodeURIComponent(iri)}`,
-      ontologyMetaData
-    );
+    return this._http.put<OntologyMetadata>(`${this.baseUri} /${encodeURIComponent(iri)}`, ontologyMetaData);
   }
 }

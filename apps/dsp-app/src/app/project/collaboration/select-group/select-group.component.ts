@@ -11,10 +11,7 @@ import {
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { ReadGroup } from '@dasch-swiss/dsp-js';
-import {
-  IKeyValuePairs,
-  ProjectsSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { IKeyValuePairs, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/operator';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -69,9 +66,7 @@ export class SelectGroupComponent implements OnDestroy, AfterViewInit {
   // send data only, when the selection has changed
   sendData = false;
 
-  @Select(ProjectsSelectors.projectGroups) allProjectGroups$: Observable<
-    IKeyValuePairs<ReadGroup>[]
-  >;
+  @Select(ProjectsSelectors.projectGroups) allProjectGroups$: Observable<IKeyValuePairs<ReadGroup>[]>;
 
   constructor(private _cd: ChangeDetectorRef) {}
 
@@ -86,8 +81,7 @@ export class SelectGroupComponent implements OnDestroy, AfterViewInit {
     this.ngUnsubscribe.complete();
   }
 
-  trackByFn = (index: number, item: AutocompleteItem) =>
-    `${index}-${item.label}`;
+  trackByFn = (index: number, item: AutocompleteItem) => `${index}-${item.label}`;
 
   onGroupChange() {
     // get the selected values onOpen and onClose

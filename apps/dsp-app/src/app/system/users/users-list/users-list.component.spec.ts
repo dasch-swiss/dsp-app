@@ -44,21 +44,13 @@ describe('UsersListComponent', () => {
   beforeEach(waitForAsync(() => {
     const apiSpyObj = {
       admin: {
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByShortcode',
-        ]),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByShortcode']),
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-      'setSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession', 'setSession']);
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -122,9 +114,7 @@ describe('UsersListComponent', () => {
     // mock application state service
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: ProjectResponse = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -137,36 +127,34 @@ describe('UsersListComponent', () => {
     // mock session service
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: true,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: true,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByShortcode.and.callFake(() => {
-      const response = new ProjectResponse();
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+      () => {
+        const response = new ProjectResponse();
 
-      const mockProjects = MockProjects.mockProjects();
+        const mockProjects = MockProjects.mockProjects();
 
-      response.project = mockProjects.body.projects[0];
+        response.project = mockProjects.body.projects[0];
 
-      return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-    });
+        return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+      }
+    );
 
     fixture = TestBed.createComponent(TestHostUsersListComponent);
     component = fixture.componentInstance;

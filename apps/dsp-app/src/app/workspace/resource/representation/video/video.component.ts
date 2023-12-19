@@ -127,9 +127,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
     private _valueOperationEventService: ValueOperationEventService
   ) {}
 
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(
-    event: KeyboardEvent
-  ) {
+  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     if (event.key === 'Escape' && this.cinemaMode) {
       this.cinemaMode = false;
     }
@@ -139,15 +137,11 @@ export class VideoComponent implements OnChanges, AfterViewInit {
     this.videoError = '';
     // set the file info first bc. browsers might queue and block requests
     // if there are already six ongoing requests
-    this._rs
-      .getFileInfo(this.src.fileValue.fileUrl)
-      .subscribe((file: MovingImageSidecar) => {
-        this.fileInfo = file;
-      });
+    this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe((file: MovingImageSidecar) => {
+      this.fileInfo = file;
+    });
 
-    this.video = this._sanitizer.bypassSecurityTrustUrl(
-      this.src.fileValue.fileUrl
-    );
+    this.video = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
   }
 
   ngAfterViewInit() {
@@ -192,17 +186,12 @@ export class VideoComponent implements OnChanges, AfterViewInit {
     this.currentTime = this.videoEle.nativeElement.currentTime;
 
     // buffer progress
-    this.currentBuffer =
-      (this.videoEle.nativeElement.buffered.end(0) / this.duration) * 100;
+    this.currentBuffer = (this.videoEle.nativeElement.buffered.end(0) / this.duration) * 100;
 
     let range = 0;
     const bf = this.videoEle.nativeElement.buffered;
 
-    while (
-      !(
-        bf.start(range) <= this.currentTime && this.currentTime <= bf.end(range)
-      )
-    ) {
+    while (!(bf.start(range) <= this.currentTime && this.currentTime <= bf.end(range))) {
       range += 1;
     }
 
@@ -292,8 +281,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
     this.previewTime = Math.round(ev.time);
 
     // position from left:
-    let leftPosition: number =
-      ev.position - this.timelineDimension.x - this.halfFrameWidth;
+    let leftPosition: number = ev.position - this.timelineDimension.x - this.halfFrameWidth;
 
     // prevent overflow of preview image on the left
     if (leftPosition <= 8) {
@@ -327,9 +315,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
 
   async downloadVideo(url: string) {
     try {
-      const res = await this._http
-        .get(url, { responseType: 'blob', withCredentials: true })
-        .toPromise();
+      const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
       this.downloadFile(res);
     } catch (e) {
       this._errorHandler.showMessage(e);
@@ -358,8 +344,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
    *
    */
   openReplaceFileDialog() {
-    const propId =
-      this.parentResource.properties[Constants.HasMovingImageFileValue][0].id;
+    const propId = this.parentResource.properties[Constants.HasMovingImageFileValue][0].id;
 
     const dialogConfig: MatDialogConfig = {
       width: '800px',
@@ -403,11 +388,8 @@ export class VideoComponent implements OnChanges, AfterViewInit {
    * @param ev
    */
   private _calcPreviewTime(ev: MouseEvent) {
-    this.previewTime = Math.round(
-      (ev.offsetX / this.timeline.nativeElement.clientWidth) * this.duration
-    );
-    this.previewTime =
-      this.previewTime > this.duration ? this.duration : this.previewTime;
+    this.previewTime = Math.round((ev.offsetX / this.timeline.nativeElement.clientWidth) * this.duration);
+    this.previewTime = this.previewTime > this.duration ? this.duration : this.previewTime;
     this.previewTime = this.previewTime < 0 ? 0 : this.previewTime;
   }
 
@@ -428,28 +410,19 @@ export class VideoComponent implements OnChanges, AfterViewInit {
       .updateValue(updateRes as UpdateResource<UpdateValue>)
       .pipe(
         mergeMap((res: WriteValueResponse) =>
-          this._dspApiConnection.v2.values.getValue(
-            this.parentResource.id,
-            res.uuid
-          )
+          this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
       .subscribe(
         (res2: ReadResource) => {
           this.src.fileValue.fileUrl = (
-            res2.properties[
-              Constants.HasMovingImageFileValue
-            ][0] as ReadMovingImageFileValue
+            res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
           ).fileUrl;
           this.src.fileValue.filename = (
-            res2.properties[
-              Constants.HasMovingImageFileValue
-            ][0] as ReadMovingImageFileValue
+            res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
           ).filename;
           this.src.fileValue.strval = (
-            res2.properties[
-              Constants.HasMovingImageFileValue
-            ][0] as ReadMovingImageFileValue
+            res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
           ).strval;
 
           this.ngOnChanges();
@@ -459,9 +432,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
           this._valueOperationEventService.emit(
             new EmitEvent(
               Events.FileValueUpdated,
-              new UpdatedFileEventValue(
-                res2.properties[Constants.HasMovingImageFileValue][0]
-              )
+              new UpdatedFileEventValue(res2.properties[Constants.HasMovingImageFileValue][0])
             )
           );
         },

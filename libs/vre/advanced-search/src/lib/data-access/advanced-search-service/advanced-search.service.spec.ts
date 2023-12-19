@@ -10,10 +10,7 @@ import {
   ResourceClassDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { of } from 'rxjs';
 import { AdvancedSearchService } from './advanced-search.service';
 
@@ -29,9 +26,7 @@ describe('AdvancedSearchService', () => {
         },
         {
           provide: DspApiConnectionToken,
-          useValue: new KnoraApiConnection(
-            new KnoraApiConfig('http', '0.0.0.0', 3333)
-          ),
+          useValue: new KnoraApiConnection(new KnoraApiConfig('http', '0.0.0.0', 3333)),
         },
       ],
     });
@@ -63,16 +58,13 @@ describe('AdvancedSearchService', () => {
       const mockDspApiConnection = {
         v2: {
           onto: {
-            getOntologiesMetadata: jest
-              .fn()
-              .mockReturnValue(of(mockOntologiesResponse)),
+            getOntologiesMetadata: jest.fn().mockReturnValue(of(mockOntologiesResponse)),
           },
         },
       };
 
       // Use type assertion to bypass type checking for the mock connection
-      service['_dspApiConnection'] =
-        mockDspApiConnection as unknown as KnoraApiConnection;
+      service['_dspApiConnection'] = mockDspApiConnection as unknown as KnoraApiConnection;
 
       service.allOntologiesList().subscribe(ontologies => {
         expect(ontologies).toEqual([
@@ -103,9 +95,7 @@ describe('AdvancedSearchService', () => {
       const mockDspApiConnection = {
         v2: {
           onto: {
-            getOntologiesByProjectIri: jest
-              .fn()
-              .mockReturnValue(of(mockOntologiesResponse)),
+            getOntologiesByProjectIri: jest.fn().mockReturnValue(of(mockOntologiesResponse)),
           },
         },
       };
@@ -113,8 +103,7 @@ describe('AdvancedSearchService', () => {
       const projectIri = 'project1';
 
       // Use type assertion to bypass type checking for the mock connection
-      service['_dspApiConnection'] =
-        mockDspApiConnection as unknown as KnoraApiConnection;
+      service['_dspApiConnection'] = mockDspApiConnection as unknown as KnoraApiConnection;
 
       service.ontologiesInProjectList(projectIri).subscribe(ontologies => {
         expect(ontologies).toEqual([
@@ -161,8 +150,7 @@ describe('AdvancedSearchService', () => {
       };
 
       // Use type assertion to bypass type checking for the mock connection
-      service['_dspApiConnection'] =
-        mockDspApiConnection as unknown as KnoraApiConnection;
+      service['_dspApiConnection'] = mockDspApiConnection as unknown as KnoraApiConnection;
 
       service.resourceClassesList(ontologyIri).subscribe(resourceClasses => {
         expect(resourceClasses).toEqual([
@@ -189,8 +177,7 @@ describe('AdvancedSearchService', () => {
       const propDef2 = new ResourcePropertyDefinition();
       propDef2.id = 'prop2';
       propDef2.label = 'Property 2';
-      propDef2.objectType =
-        'http://0.0.0.0:3333/ontology/0801/newton/v2#letter';
+      propDef2.objectType = 'http://0.0.0.0:3333/ontology/0801/newton/v2#letter';
       propDef2.isEditable = true;
       propDef2.isLinkValueProperty = false;
 
@@ -201,9 +188,7 @@ describe('AdvancedSearchService', () => {
       propDef3.objectType = Constants.ListValue;
       propDef3.isEditable = true;
       propDef3.isLinkValueProperty = false;
-      propDef3.guiAttributes = [
-        'hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>',
-      ];
+      propDef3.guiAttributes = ['hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>'];
 
       // should be filtered out
       const propDef4 = new ResourcePropertyDefinition();
@@ -243,9 +228,7 @@ describe('AdvancedSearchService', () => {
 
       // Mock the API call using a mock value
       const mockOntologyCache = {
-        getOntology: jest
-          .fn()
-          .mockReturnValue(of(new Map([[ontologyIri, ontology]]))),
+        getOntology: jest.fn().mockReturnValue(of(new Map([[ontologyIri, ontology]]))),
       };
 
       // Set the mock ontology cache in the service
@@ -292,8 +275,7 @@ describe('AdvancedSearchService', () => {
       const propDef2 = new ResourcePropertyDefinition();
       propDef2.id = 'prop2';
       propDef2.label = 'Property 2';
-      propDef2.objectType =
-        'http://0.0.0.0:3333/ontology/0801/newton/v2#letter';
+      propDef2.objectType = 'http://0.0.0.0:3333/ontology/0801/newton/v2#letter';
       propDef2.isEditable = true;
       propDef2.isLinkValueProperty = false;
 
@@ -304,9 +286,7 @@ describe('AdvancedSearchService', () => {
       propDef3.objectType = Constants.ListValue;
       propDef3.isEditable = true;
       propDef3.isLinkValueProperty = false;
-      propDef3.guiAttributes = [
-        'hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>',
-      ];
+      propDef3.guiAttributes = ['hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>'];
 
       // should be filtered out
       const propDef4 = new ResourcePropertyDefinition();
@@ -386,8 +366,7 @@ describe('AdvancedSearchService', () => {
   describe('resource search', () => {
     it('should return count of the resources', done => {
       const searchValue = 'searchQuery';
-      const resourceClassIri =
-        'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test';
+      const resourceClassIri = 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test';
 
       const mockCountQueryResponse = {
         numberOfResults: 123,
@@ -395,9 +374,7 @@ describe('AdvancedSearchService', () => {
 
       // Mock the API call using a mock value
       const mockSearchService = {
-        doSearchByLabelCountQuery: jest
-          .fn()
-          .mockReturnValue(of(mockCountQueryResponse)),
+        doSearchByLabelCountQuery: jest.fn().mockReturnValue(of(mockCountQueryResponse)),
       };
 
       // Set the mock search service in the service
@@ -405,12 +382,10 @@ describe('AdvancedSearchService', () => {
         v2: { search: mockSearchService },
       } as unknown as KnoraApiConnection;
 
-      service
-        .getResourcesListCount(searchValue, resourceClassIri)
-        .subscribe(count => {
-          expect(count).toEqual(123);
-          done();
-        });
+      service.getResourcesListCount(searchValue, resourceClassIri).subscribe(count => {
+        expect(count).toEqual(123);
+        done();
+      });
     });
 
     it('should return a list of resources', done => {
@@ -439,15 +414,13 @@ describe('AdvancedSearchService', () => {
         v2: { search: mockSearchService },
       } as unknown as KnoraApiConnection;
 
-      service
-        .getResourcesList(searchValue, resourceClassIri)
-        .subscribe(resources => {
-          expect(resources).toEqual([
-            { iri: 'resource1', label: 'Resource 1' },
-            { iri: 'resource2', label: 'Resource 2' },
-          ]);
-          done();
-        });
+      service.getResourcesList(searchValue, resourceClassIri).subscribe(resources => {
+        expect(resources).toEqual([
+          { iri: 'resource1', label: 'Resource 1' },
+          { iri: 'resource2', label: 'Resource 2' },
+        ]);
+        done();
+      });
     });
   });
 

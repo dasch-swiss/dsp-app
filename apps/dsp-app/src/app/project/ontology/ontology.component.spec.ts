@@ -36,10 +36,7 @@ import {
   UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
@@ -113,15 +110,9 @@ describe('OntologyComponent', () => {
   beforeEach(waitForAsync(() => {
     const apiSpyObj = {
       admin: {
-        listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-          'getListsInProject',
-        ]),
-        usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
-          'getUserByUsername',
-        ]),
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByIri',
-        ]),
+        listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject']),
+        usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername']),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri']),
       },
       v2: {
         onto: jasmine.createSpyObj('onto', [
@@ -135,15 +126,9 @@ describe('OntologyComponent', () => {
       },
     };
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get', 'set']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get', 'set']);
 
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-      'iriToUuid',
-      'uuidToIri',
-    ]);
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid', 'uuidToIri']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -222,15 +207,11 @@ describe('OntologyComponent', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): string => (store[key] = <any>value)
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): string => (store[key] = <any>value));
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -242,14 +223,10 @@ describe('OntologyComponent', () => {
 
     // mock application state service for currentOntology
     const cacheSpyOnto = TestBed.inject(ApplicationStateService);
-    (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get
-      .withArgs('currentOntology')
-      .and.callFake(() => {
-        const response: ReadOntology = MockOntology.mockReadOntology(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-        return of(response);
-      });
+    (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get.withArgs('currentOntology').and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+      return of(response);
+    });
 
     // mock application state service for currentProjectOntologies
     const cacheSpyProjOnto = TestBed.inject(ApplicationStateService);
@@ -257,16 +234,8 @@ describe('OntologyComponent', () => {
       .withArgs('currentProjectOntologies')
       .and.callFake(() => {
         const ontologies: ReadOntology[] = [];
-        ontologies.push(
-          MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2'
-          )
-        );
-        ontologies.push(
-          MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/minimal/v2'
-          )
-        );
+        ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
+        ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
         const response: ReadOntology[] = ontologies;
         return of(response);
       });
@@ -340,9 +309,7 @@ describe('OntologyComponent', () => {
 
     // can delete ontology request
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).canDeleteOntology.and.callFake(() => {
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canDeleteOntology.and.callFake(() => {
       const deleteResClass: CanDoResponse = {
         canDo: false,
       };
@@ -350,26 +317,17 @@ describe('OntologyComponent', () => {
       return of(deleteResClass);
     });
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).getOntologiesByProjectIri.and.callFake(() => {
-      const response: OntologiesMetadata =
-        MockOntology.mockOntologiesMetadata();
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntologiesByProjectIri.and.callFake(() => {
+      const response: OntologiesMetadata = MockOntology.mockOntologiesMetadata();
       return of(response);
     });
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).getOntology.and.callFake(() => {
-      const response: ReadOntology = MockOntology.mockReadOntology(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2'
-      );
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntology.and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
       return of(response);
     });
 
-    (
-      dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-    ).getListsInProject.and.callFake(() => {
+    (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(() => {
       const response = new ListsResponse();
 
       response.lists = new Array<ListNodeInfo>();
@@ -393,17 +351,13 @@ describe('OntologyComponent', () => {
       return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
     });
 
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUserByUsername.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(() => {
       const loggedInUser = MockUsers.mockUser();
       return of(loggedInUser);
     });
 
     // mock projects endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByIri.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(() => {
       const response = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -419,9 +373,7 @@ describe('OntologyComponent', () => {
   });
 
   it('should create', () => {
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
     expect(component).toBeTruthy();
   });
 });

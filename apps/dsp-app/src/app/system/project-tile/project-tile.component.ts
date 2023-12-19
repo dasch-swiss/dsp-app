@@ -25,11 +25,6 @@ export class ProjectTileComponent {
 
   navigateToSettings(id: string) {
     const uuid = this._projectService.iriToUuid(id);
-    this._router.navigate([
-      RouteConstants.project,
-      uuid,
-      RouteConstants.settings,
-      RouteConstants.collaboration,
-    ]);
+    this._router.navigate([RouteConstants.project, uuid, RouteConstants.settings, RouteConstants.collaboration]);
   }
 }

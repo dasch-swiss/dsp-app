@@ -9,12 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  MockProjects,
-  MockUsers,
-  ProjectsEndpointAdmin,
-  UsersEndpointAdmin,
-} from '@dasch-swiss/dsp-js';
+import { MockProjects, MockUsers, ProjectsEndpointAdmin, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
@@ -38,10 +33,7 @@ describe('MembershipComponent', () => {
   beforeEach(waitForAsync(() => {
     const adminEndpointSpyObj = {
       admin: {
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjects',
-          'getProjectMembersByIri',
-        ]),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjects', 'getProjectMembersByIri']),
         usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
           'getUserByUsername',
           'addUserToProjectMembership',
@@ -50,9 +42,7 @@ describe('MembershipComponent', () => {
       },
     };
 
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-      'iriToUuid',
-    ]);
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
 
     TestBed.configureTestingModule({
       declarations: [MembershipComponent, DialogComponent, StatusComponent],
@@ -89,16 +79,12 @@ describe('MembershipComponent', () => {
   beforeEach(() => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUserByUsername.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(() => {
       const loggedInUser = MockUsers.mockUser();
       return of(loggedInUser);
     });
 
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjects.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjects.and.callFake(() => {
       const projects = MockProjects.mockProjects();
       return of(projects);
     });

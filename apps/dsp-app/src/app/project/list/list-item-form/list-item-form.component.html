@@ -25,11 +25,7 @@
 </div>
 
 <!-- node item -->
-<div
-  class="list-item medium-field"
-  *ngIf="!newNode"
-  (mouseenter)="mouseEnter()"
-  (mouseleave)="mouseLeave()">
+<div class="list-item medium-field" *ngIf="!newNode" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
   <dasch-swiss-app-string-literal
     class="list-item-label"
     [placeholder]="labels | appStringifyStringLiteral:'all' | appTruncate: 128"
@@ -38,10 +34,7 @@
     (dataChanged)="handleData($event)"
     [language]="language">
   </dasch-swiss-app-string-literal>
-  <div
-    class="action-bubble"
-    *ngIf="showActionBubble && projectStatus"
-    [@simpleFadeAnimation]="'in'">
+  <div class="action-bubble" *ngIf="showActionBubble && projectStatus" [@simpleFadeAnimation]="'in'">
     <div class="button-container">
       <button
         mat-button

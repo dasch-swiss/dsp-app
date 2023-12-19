@@ -1,8 +1,4 @@
-import {
-  ClassDefinition,
-  ReadOntology,
-  UpdateOntologyMetadata,
-} from '@dasch-swiss/dsp-js';
+import { ClassDefinition, ReadOntology, UpdateOntologyMetadata } from '@dasch-swiss/dsp-js';
 import { DefaultClass } from '@dasch-swiss/vre/shared/app-helper-services';
 import { PropToDisplay } from '../model-interfaces';
 

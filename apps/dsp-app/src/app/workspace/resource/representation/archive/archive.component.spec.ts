@@ -16,8 +16,7 @@ import { RepresentationService } from '../representation.service';
 import { ArchiveComponent } from './archive.component';
 
 const archiveFileValue = {
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/0123/6c=f69h6Ss6GXPME565EqAS/dDHcFHlwQ9K46255QfUGrQ8',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/0123/6c=f69h6Ss6GXPME565EqAS/dDHcFHlwQ9K46255QfUGrQ8',
   attachedToUser: 'http://rdfh.ch/users/root',
   fileUrl: 'http://0.0.0.0:1024/0123/Eu71soNXOAL-DVweVgODkFh.zip/file',
   filename: 'Eu71soNXOAL-DVweVgODkFh.zip',
@@ -72,13 +71,7 @@ class MockStatusComponent {
 
   @Input() comment?: string;
   @Input() url?: string;
-  @Input() representation?:
-    | 'archive'
-    | 'audio'
-    | 'document'
-    | 'still-image'
-    | 'video'
-    | 'text';
+  @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
 
   constructor() {}
 }
@@ -88,19 +81,11 @@ describe('ArchiveComponent', () => {
   let testHostFixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async () => {
-    const representationServiceSpyObj = jasmine.createSpyObj(
-      'RepresentationService',
-      ['getFileInfo']
-    );
+    const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo']);
 
     TestBed.configureTestingModule({
       declarations: [ArchiveComponent, TestHostComponent, MockStatusComponent],
-      imports: [
-        MatDialogModule,
-        MatSnackBarModule,
-        MatMenuModule,
-        MatIconModule,
-      ],
+      imports: [MatDialogModule, MatSnackBarModule, MatMenuModule, MatIconModule],
       providers: [
         AppConfigService,
         MockProvider(AppLoggingService),
@@ -118,9 +103,7 @@ describe('ArchiveComponent', () => {
 
   beforeEach(() => {
     const representationServiceSpy = TestBed.inject(RepresentationService);
-    (
-      representationServiceSpy as jasmine.SpyObj<RepresentationService>
-    ).getFileInfo.and.callFake(() =>
+    (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(() =>
       of(knoraJson).pipe(map((response: any) => response as object))
     );
 
@@ -131,8 +114,8 @@ describe('ArchiveComponent', () => {
   });
 
   it('should have a file url', () => {
-    expect(
-      testHostComponent.archiveFileRepresentation.fileValue.fileUrl
-    ).toEqual('http://0.0.0.0:1024/0123/Eu71soNXOAL-DVweVgODkFh.zip/file');
+    expect(testHostComponent.archiveFileRepresentation.fileValue.fileUrl).toEqual(
+      'http://0.0.0.0:1024/0123/Eu71soNXOAL-DVweVgODkFh.zip/file'
+    );
   });
 });

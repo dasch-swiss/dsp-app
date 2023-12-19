@@ -1,11 +1,7 @@
 <div class="player" appDisableContextMenu [class.cinema]="cinemaMode">
   <div class="container">
     <!-- in case of an error -->
-    <app-status
-      [comment]="videoError"
-      [url]="src.fileValue.fileUrl"
-      [representation]="'video'"
-      *ngIf="videoError">
+    <app-status [comment]="videoError" [url]="src.fileValue.fileUrl" [representation]="'video'" *ngIf="videoError">
     </app-status>
 
     <div class="video-container">
@@ -26,9 +22,7 @@
       <div class="overlay">
         <div>
           <mat-icon (click)="updateTimeFromButton(-10)">replay_10</mat-icon>
-          <mat-icon (click)="togglePlay()"
-            >{{ reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow' }}
-          </mat-icon>
+          <mat-icon (click)="togglePlay()">{{ reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow' }} </mat-icon>
           <mat-icon (click)="updateTimeFromButton(10)">forward_10</mat-icon>
         </div>
       </div>
@@ -41,11 +35,7 @@
     <div class="preview-line">
       <!-- preview image -->
       <div class="preview" #preview>
-        <app-video-preview
-          [src]="src"
-          [time]="previewTime"
-          [fileInfo]="fileInfo"
-          (loaded)="displayPreview(!$event)">
+        <app-video-preview [src]="src" [time]="previewTime" [fileInfo]="fileInfo" (loaded)="displayPreview(!$event)">
         </app-video-preview>
       </div>
     </div>
@@ -74,10 +64,7 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #more="matMenu" class="representation-menu">
-        <button
-          mat-menu-item
-          class="menu-content"
-          (click)="openVideoInNewTab(this.src.fileValue.fileUrl)">
+        <button mat-menu-item class="menu-content" (click)="openVideoInNewTab(this.src.fileValue.fileUrl)">
           Open video in new tab
         </button>
         <button
@@ -87,18 +74,10 @@
           (click)="openSnackBar('URL copied to clipboard!')">
           Copy video URL to clipboard
         </button>
-        <button
-          mat-menu-item
-          class="menu-content"
-          (click)="downloadVideo(this.src.fileValue.fileUrl)">
+        <button mat-menu-item class="menu-content" (click)="downloadVideo(this.src.fileValue.fileUrl)">
           Download video
         </button>
-        <button
-          mat-menu-item
-          class="menu-content"
-          (click)="openReplaceFileDialog()">
-          Replace file
-        </button>
+        <button mat-menu-item class="menu-content" (click)="openReplaceFileDialog()">Replace file</button>
       </mat-menu>
       <button
         mat-icon-button
@@ -116,10 +95,7 @@
                 "
         [matTooltipPosition]="matTooltipPos"
         [disabled]="!videoEle">
-        <mat-icon
-          >{{ reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow'
-          }}</mat-icon
-        >
+        <mat-icon>{{ reachedTheEnd ? 'replay' : play ? 'pause' : 'play_arrow' }}</mat-icon>
       </button>
 
       <span class="empty-space"></span>

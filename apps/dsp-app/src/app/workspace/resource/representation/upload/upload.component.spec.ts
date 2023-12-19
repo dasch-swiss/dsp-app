@@ -1,10 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -21,10 +17,7 @@ import { UploadComponent } from './upload.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-upload
-    #upload
-    [representation]="representation"
-    [parentForm]="form"></app-upload>`,
+  template: ` <app-upload #upload [representation]="representation" [parentForm]="form"></app-upload>`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild('upload') uploadComp: UploadComponent;
@@ -49,26 +42,13 @@ describe('UploadComponent', () => {
   let testHostFixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(waitForAsync(() => {
-    const uploadServiceSpy = jasmine.createSpyObj('UploadFileService', [
-      'upload',
-    ]);
-    const notificationServiceMock = jasmine.createSpyObj(
-      'NotificationService',
-      ['openSnackBar']
-    );
-    const errorHandlerMock = jasmine.createSpyObj('AppErrorHandler', [
-      'handleError',
-    ]);
+    const uploadServiceSpy = jasmine.createSpyObj('UploadFileService', ['upload']);
+    const notificationServiceMock = jasmine.createSpyObj('NotificationService', ['openSnackBar']);
+    const errorHandlerMock = jasmine.createSpyObj('AppErrorHandler', ['handleError']);
 
     TestBed.configureTestingModule({
       declarations: [UploadComponent, TestHostComponent, SplitPipe],
-      imports: [
-        MatDialogModule,
-        MatInputModule,
-        MatSnackBarModule,
-        ReactiveFormsModule,
-        MatIconModule,
-      ],
+      imports: [MatDialogModule, MatInputModule, MatSnackBarModule, ReactiveFormsModule, MatIconModule],
       providers: [
         {
           provide: UploadFileService,
@@ -141,27 +121,14 @@ describe('UploadComponent', () => {
       fileTypes = fileTypes.concat(fileTypeVariations);
 
       for (const type of fileTypes) {
-        expect(
-          testHostComponent.uploadComp['_isFileTypeSupported'](type)
-        ).toBeTruthy();
+        expect(testHostComponent.uploadComp['_isFileTypeSupported'](type)).toBeTruthy();
       }
     });
 
     it('should return false for unsupported image files', () => {
-      const fileTypes = [
-        'gif',
-        'bmp',
-        'psd',
-        'raw',
-        'pdf',
-        'eps',
-        'ai',
-        'indd',
-      ];
+      const fileTypes = ['gif', 'bmp', 'psd', 'raw', 'pdf', 'eps', 'ai', 'indd'];
       for (const type of fileTypes) {
-        expect(
-          testHostComponent.uploadComp['_isFileTypeSupported'](type)
-        ).toBeFalsy();
+        expect(testHostComponent.uploadComp['_isFileTypeSupported'](type)).toBeFalsy();
       }
     });
   });
@@ -170,17 +137,13 @@ describe('UploadComponent', () => {
     it('should return false for one file array', () => {
       const filesArray: File[] = [];
       filesArray.push(mockFile);
-      expect(
-        testHostComponent.uploadComp['_isMoreThanOneFile'](filesArray)
-      ).toBeFalsy();
+      expect(testHostComponent.uploadComp['_isMoreThanOneFile'](filesArray)).toBeFalsy();
     });
 
     it('should return false for more than one file', () => {
       const filesArray: File[] = [];
       filesArray.push(mockFile, mockFile, mockFile);
-      expect(
-        testHostComponent.uploadComp['_isMoreThanOneFile'](filesArray)
-      ).toBeTruthy();
+      expect(testHostComponent.uploadComp['_isMoreThanOneFile'](filesArray)).toBeTruthy();
     });
   });
 
@@ -188,17 +151,14 @@ describe('UploadComponent', () => {
     it('should make a request to Sipi when a file is added', () => {
       expect(testHostComponent.uploadComp.form.valid).toBe(false);
 
-      const uploadService = TestBed.inject(
-        UploadFileService
-      ) as jasmine.SpyObj<UploadFileService>;
+      const uploadService = TestBed.inject(UploadFileService) as jasmine.SpyObj<UploadFileService>;
 
       uploadService.upload.and.returnValue(
         of({
           uploadedFiles: [
             {
               fileType: 'image',
-              temporaryUrl:
-                'http://localhost:1024/tmp/8oDdefPSkaz-EG187srxBFZ.jp2',
+              temporaryUrl: 'http://localhost:1024/tmp/8oDdefPSkaz-EG187srxBFZ.jp2',
               originalFilename: 'beaver.jpg',
               internalFilename: '8oDdefPSkaz-EG187srxBFZ.jp2',
             },
@@ -220,9 +180,7 @@ describe('UploadComponent', () => {
       const createFileVal = testHostComponent.uploadComp.getNewValue();
 
       expect(createFileVal instanceof CreateStillImageFileValue).toBe(true);
-      expect((createFileVal as CreateStillImageFileValue).filename).toEqual(
-        '8oDdefPSkaz-EG187srxBFZ.jp2'
-      );
+      expect((createFileVal as CreateStillImageFileValue).filename).toEqual('8oDdefPSkaz-EG187srxBFZ.jp2');
 
       const expectedFormData = new FormData();
       expectedFormData.append(mockFile.name, mockFile);

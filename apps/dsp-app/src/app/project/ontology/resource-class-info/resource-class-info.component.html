@@ -1,28 +1,17 @@
-<mat-card
-  appearance="outlined"
-  class="resource-class"
-  cdkDrag
-  cdkDragBoundary=".drag-drop-stop">
+<mat-card appearance="outlined" class="resource-class" cdkDrag cdkDragBoundary=".drag-drop-stop">
   <!-- class card header -->
   <mat-card-header class="resource-class-header" cdkDragHandle>
     <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
     <!-- <mat-icon mat-card-avatar>{{resourceClass.icon}}</mat-icon> -->
-    <mat-card-title
-      [matTooltip]="(resourceClass.comment ? resourceClass.comment : '')"
-      matTooltipPosition="above">
+    <mat-card-title [matTooltip]="(resourceClass.comment ? resourceClass.comment : '')" matTooltipPosition="above">
       {{resourceClass.label | appTruncate: 24}}
     </mat-card-title>
     <mat-card-subtitle>
-      <span
-        [matTooltip]="'id: ' + resourceClass.id"
-        matTooltipPosition="above"
-        matTooltipClass="wide-tooltip">
+      <span [matTooltip]="'id: ' + resourceClass.id" matTooltipPosition="above" matTooltipClass="wide-tooltip">
         {{resourceClass.id | split: '#':1}}
       </span>
       <span>&nbsp;&middot;&nbsp;</span>
-      <span matTooltip="subclass of" matTooltipPosition="above">
-        {{subClassOfLabel}}
-      </span>
+      <span matTooltip="subclass of" matTooltipPosition="above"> {{subClassOfLabel}} </span>
     </mat-card-subtitle>
     <span class="resource-class-header-action">
       <span
@@ -38,9 +27,7 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
       </span>
-      <span
-        class="resource-class-size"
-        [matTooltip]="(expanded ? 'Collapse class' : 'Expand class')">
+      <span class="resource-class-size" [matTooltip]="(expanded ? 'Collapse class' : 'Expand class')">
         <button mat-icon-button (click)="expanded = !expanded">
           <mat-icon>{{expanded ? "expand_less" : "expand_more"}}</mat-icon>
         </button>
@@ -58,10 +45,7 @@
       <span
         [matTooltip]="(classCanBeDeleted ? 'This class doesn\'t have any instances yet' : null)"
         matTooltipPosition="before">
-        <button
-          mat-menu-item
-          (click)="openResourceInstances(resourceClass.id)"
-          [disabled]="classCanBeDeleted">
+        <button mat-menu-item (click)="openResourceInstances(resourceClass.id)" [disabled]="classCanBeDeleted">
           Open resource instances
         </button>
       </span>
@@ -96,8 +80,7 @@
         <div class="drag-n-drop-placeholder" *cdkDragPlaceholder></div>
         <mat-list-item class="property" [disabled]="loadProperty">
           <span cdkDragHandle matListItemIcon class="list-icon gui-order">
-            <span
-              [class.hide-on-hover]="canChangeGuiOrder && (lastModificationDate$ | async) && userCanEdit">
+            <span [class.hide-on-hover]="canChangeGuiOrder && (lastModificationDate$ | async) && userCanEdit">
               {{i + 1}})
             </span>
             <span
@@ -141,19 +124,12 @@
     </mat-list>
 
     <mat-menu #addPropertyMenu="matMenu" xPosition="after">
-      <button mat-menu-item [matMenuTriggerFor]="newFromPropType">
-        Create new from type
-      </button>
-      <button mat-menu-item [matMenuTriggerFor]="addExistingProp">
-        Add existing property
-      </button>
+      <button mat-menu-item [matMenuTriggerFor]="newFromPropType">Create new from type</button>
+      <button mat-menu-item [matMenuTriggerFor]="addExistingProp">Add existing property</button>
     </mat-menu>
     <mat-menu #newFromPropType="matMenu">
-      <ng-container
-        *ngFor="let type of defaultProperties; trackBy: trackByPropCategoryFn">
-        <button mat-menu-item [matMenuTriggerFor]="sub_menu">
-          {{type.group}}
-        </button>
+      <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropCategoryFn">
+        <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
         <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
           <button
             mat-menu-item
@@ -168,12 +144,8 @@
       </ng-container>
     </mat-menu>
     <mat-menu #addExistingProp="matMenu" class="default-nested-sub-menu">
-      <ng-container
-        *ngFor="let onto of existingProperties$ | async; trackBy: trackByPropToAddFn">
-        <button
-          mat-menu-item
-          [disabled]="!onto.properties.length"
-          [matMenuTriggerFor]="sub_menu">
+      <ng-container *ngFor="let onto of existingProperties$ | async; trackBy: trackByPropToAddFn">
+        <button mat-menu-item [disabled]="!onto.properties.length" [matMenuTriggerFor]="sub_menu">
           {{ onto.ontologyLabel }}
         </button>
         <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">

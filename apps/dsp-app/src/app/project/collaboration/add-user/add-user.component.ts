@@ -8,17 +8,12 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
   ApiResponseData,
   ApiResponseError,
   KnoraApiConnection,
-  MembersResponse,
   ReadUser,
   UserResponse,
   UsersResponse,
@@ -74,8 +69,7 @@ export class AddUserComponent implements OnInit {
    */
   validationMessages = {
     username: {
-      existingName:
-        "This user is already a member of the project. You can't add him / her.",
+      existingName: "This user is already a member of the project. You can't add him / her.",
     },
   };
 
@@ -92,29 +86,21 @@ export class AddUserComponent implements OnInit {
   /**
    * list of usernames to prevent duplicate entries
    */
-  existingUsernames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingUsernames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
   /**
    * list of usernames of project members to prevent duplicate entries
    */
-  existingUsernameInProject: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingUsernameInProject: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
 
   /**
    * list of emails to prevent duplicate entries
    */
-  existingEmails: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingEmails: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
 
   /**
    * list of emails of project members to prevent duplicate entries
    */
-  existingEmailInProject: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingEmailInProject: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
 
   /**
    * selected user object
@@ -159,22 +145,16 @@ export class AddUserComponent implements OnInit {
         const members: string[] = [];
 
         // get all members of this project
-        const projectMembers = this._store.selectSnapshot(
-          ProjectsSelectors.projectMembers
-        );
+        const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers);
         if (projectMembers[this.projectIri]) {
           for (const m of projectMembers[this.projectIri].value) {
             members.push(m.id);
 
             // if the user is already member of the project
             // add the email to the list of existing
-            this.existingEmailInProject.push(
-              new RegExp('(?:^|W)' + m.email.toLowerCase() + '(?:$|W)')
-            );
+            this.existingEmailInProject.push(new RegExp('(?:^|W)' + m.email.toLowerCase() + '(?:$|W)'));
             // add username to the list of existing
-            this.existingUsernameInProject.push(
-              new RegExp('(?:^|W)' + m.username.toLowerCase() + '(?:$|W)')
-            );
+            this.existingUsernameInProject.push(new RegExp('(?:^|W)' + m.username.toLowerCase() + '(?:$|W)'));
           }
         }
 
@@ -182,13 +162,9 @@ export class AddUserComponent implements OnInit {
         for (const u of response.body.users) {
           // if the user is already member of the project
           // add the email to the list of existing
-          this.existingEmails.push(
-            new RegExp('(?:^|W)' + u.email.toLowerCase() + '(?:$|W)')
-          );
+          this.existingEmails.push(new RegExp('(?:^|W)' + u.email.toLowerCase() + '(?:$|W)'));
           // add username to the list of existing
-          this.existingUsernames.push(
-            new RegExp('(?:^|W)' + u.username.toLowerCase() + '(?:$|W)')
-          );
+          this.existingUsernames.push(new RegExp('(?:^|W)' + u.username.toLowerCase() + '(?:$|W)'));
 
           let existsInProject = '';
 
@@ -199,15 +175,7 @@ export class AddUserComponent implements OnInit {
           this.users[i] = {
             iri: u.id,
             name: u.username,
-            label:
-              existsInProject +
-              u.username +
-              ' | ' +
-              u.email +
-              ' | ' +
-              u.givenName +
-              ' ' +
-              u.familyName,
+            label: existsInProject + u.username + ' | ' + u.email + ' | ' + u.givenName + ' ' + u.familyName,
           };
           i++;
         }
@@ -245,9 +213,7 @@ export class AddUserComponent implements OnInit {
       ),
     });
 
-    this.filteredUsers = this.selectUserForm.controls[
-      'username'
-    ].valueChanges.pipe(
+    this.filteredUsers = this.selectUserForm.controls['username'].valueChanges.pipe(
       startWith(''),
       map(user => (user.length >= 2 ? this.filter(this.users, user) : []))
     );
@@ -264,9 +230,7 @@ export class AddUserComponent implements OnInit {
    * @returns Filtered list of options
    */
   filter(list: AutocompleteItem[], name: string) {
-    return list.filter(user =>
-      user.label.toLowerCase().includes(name.toLowerCase())
-    );
+    return list.filter(user => user.label.toLowerCase().includes(name.toLowerCase()));
   }
 
   /**
@@ -309,9 +273,7 @@ export class AddUserComponent implements OnInit {
         this.selectedUser = response.body.user;
 
         // the following request should never start
-        this.isAlreadyMember = !!response.body.user.projects.find(
-          p => p.id === this.projectIri
-        );
+        this.isAlreadyMember = !!response.body.user.projects.find(p => p.id === this.projectIri);
 
         if (!this.isAlreadyMember) {
           this.loading = true;

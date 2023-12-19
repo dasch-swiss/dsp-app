@@ -1,10 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import {
-  BuildTag,
-  BuildTagToken,
-  DspInstrumentationToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { BuildTag, BuildTagToken, DspInstrumentationToken } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { MockProvider } from 'ng-mocks';
 import { BehaviorSubject, Observable } from 'rxjs';

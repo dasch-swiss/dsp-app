@@ -23,10 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
-import {
-  NgxsStoreModule,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { NgxsStoreModule, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { Store } from '@ngxs/store';
 
@@ -98,9 +95,7 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
    *
    * @emits {StringLiteral[]} dataChanged
    */
-  @Output() dataChanged: EventEmitter<StringLiteral[]> = new EventEmitter<
-    StringLiteral[]
-  >();
+  @Output() dataChanged: EventEmitter<StringLiteral[]> = new EventEmitter<StringLiteral[]>();
 
   /**
    * returns (output) true when the field was touched. This can be used to validate data, e.g. in case a value is required
@@ -137,12 +132,8 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
   ) {
     // set selected language, if it's not defined yet
     if (!this.language) {
-      const usersLanguage = this._store.selectSnapshot(
-        UserSelectors.language
-      ) as string;
-      this.language = usersLanguage
-        ? usersLanguage
-        : navigator.language.substring(0, 2); // get default language from browser
+      const usersLanguage = this._store.selectSnapshot(UserSelectors.language) as string;
+      this.language = usersLanguage ? usersLanguage : navigator.language.substring(0, 2); // get default language from browser
     }
 
     // does the defined language exists in our supported languages list?
@@ -203,10 +194,7 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
   setLanguage(lang: string) {
     if (this.language !== lang) {
       // clean stringLIteral value for previous language, if text field is empty
-      this.updateStringLiterals(
-        this.language,
-        this.form.controls['text'].value
-      );
+      this.updateStringLiterals(this.language, this.form.controls['text'].value);
 
       this.language = lang;
       // update form field value / reset in case of no value
@@ -221,11 +209,7 @@ export class AppStringLiteralComponent implements OnInit, OnChanges {
    */
   switchFocus() {
     // close the menu
-    if (
-      !this.textarea &&
-      this.btnToSelectLanguage &&
-      this.btnToSelectLanguage.menuOpen
-    ) {
+    if (!this.textarea && this.btnToSelectLanguage && this.btnToSelectLanguage.menuOpen) {
       this.btnToSelectLanguage.closeMenu();
     }
 

@@ -9,10 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
 import { TestConfig } from '@dsp-app/src/test.config';
@@ -30,12 +27,7 @@ describe('ProfileComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ProfileComponent,
-        DialogComponent,
-        StatusComponent,
-        MockProgressIndicatorComponent,
-      ],
+      declarations: [ProfileComponent, DialogComponent, StatusComponent, MockProgressIndicatorComponent],
       imports: [
         BrowserAnimationsModule,
         MatButtonModule,

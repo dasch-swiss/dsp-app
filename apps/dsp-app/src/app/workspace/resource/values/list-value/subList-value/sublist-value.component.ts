@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 
@@ -16,8 +10,7 @@ import { ListNodeV2 } from '@dasch-swiss/dsp-js';
 export class SublistValueComponent {
   @Input() children: ListNodeV2[];
 
-  @Output() selectedNode: EventEmitter<ListNodeV2> =
-    new EventEmitter<ListNodeV2>();
+  @Output() selectedNode: EventEmitter<ListNodeV2> = new EventEmitter<ListNodeV2>();
 
   @ViewChild('childMenu', { static: true }) public childMenu: MatMenu;
   setValue(item: ListNodeV2) {

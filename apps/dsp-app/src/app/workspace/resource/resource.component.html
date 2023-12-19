@@ -1,14 +1,7 @@
-<div
-  class="restricted-message"
-  *ngIf="resource?.res?.userHasPermission === 'RV' && showRestrictedMessage">
+<div class="restricted-message" *ngIf="resource?.res?.userHasPermission === 'RV' && showRestrictedMessage">
   <mat-icon>report_problem</mat-icon>
-  <p>
-    This resource is restricted, file representations may be of lower quality
-    and some properties may be hidden.
-  </p>
-  <mat-icon class="close" (click)="showRestrictedMessage = false"
-    >clear</mat-icon
-  >
+  <p>This resource is restricted, file representations may be of lower quality and some properties may be hidden.</p>
+  <mat-icon class="close" (click)="showRestrictedMessage = false">clear</mat-icon>
 </div>
 <div class="content large middle">
   <div class="resource-view" *ngIf="resource">
@@ -84,8 +77,7 @@
       </app-text>
 
       <span *ngSwitchDefault>
-        The file representation type
-        "{{representationsToDisplay[0].fileValue.type}}" is not yet implemented
+        The file representation type "{{representationsToDisplay[0].fileValue.type}}" is not yet implemented
       </span>
 
       <!-- TODO: here we'll add more viewers and players dsp-moving-image, dsp-audio etc. -->
@@ -98,8 +90,7 @@
         [(selectedIndex)]="selectedTab"
         (selectedTabChange)="tabChanged($event)">
         <!-- first tab for the main resource e.g. book -->
-        <mat-tab
-          [label]="resource.res.entityInfo?.classes[resource.res.type].label">
+        <mat-tab [label]="resource.res.entityInfo?.classes[resource.res.type].label">
           <app-properties
             *ngIf="resource.res"
             [resource]="resource"
@@ -163,17 +154,14 @@
       </ng-template>
     </div>
     <!-- progress indicator -->
-    <dasch-swiss-app-progress-indicator
-      *ngIf="loading"></dasch-swiss-app-progress-indicator>
+    <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
   </div>
 
   <!-- resource not found  -->
   <div *ngIf="!resource && !loading" class="no-results">
     <p>
       The resource
-      <span *ngIf="resourceIri"
-        >&mdash; <strong> {{resourceIri}}</strong> &mdash;</span
-      >
+      <span *ngIf="resourceIri">&mdash; <strong> {{resourceIri}}</strong> &mdash;</span>
       could not be found.
     </p>
     <p>Reasons:</p>

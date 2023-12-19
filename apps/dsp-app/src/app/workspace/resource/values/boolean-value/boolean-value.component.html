@@ -1,13 +1,10 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
   <span class="rm-value">
-    <mat-icon
-      [ngClass]="valueFormControl.value ? 'toggle-icon-on': 'toggle-icon-off'"
+    <mat-icon [ngClass]="valueFormControl.value ? 'toggle-icon-on': 'toggle-icon-off'"
       >{{ valueFormControl.value? 'toggle_on' : 'toggle_off' }}</mat-icon
     >
   </span>
-  <span class="rm-comment" *ngIf="shouldShowComment"
-    >{{ commentFormControl.value }}</span
-  >
+  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <span *ngIf="mode === 'create'">
@@ -29,14 +26,8 @@
         class="value boolValue child-value-component"
         [class.more-space]="moreSpace">
       </mat-slide-toggle>
-      <span
-        class="right-align"
-        *ngIf="!boolValIsUnset && newResource && !valueRequiredValidator">
-        <button
-          mat-icon-button
-          class="value-action cancel"
-          title="cancel"
-          (click)="boolValIsUnset = true">
+      <span class="right-align" *ngIf="!boolValIsUnset && newResource && !valueRequiredValidator">
+        <button mat-icon-button class="value-action cancel" title="cancel" (click)="boolValIsUnset = true">
           <mat-icon>cancel</mat-icon>
         </button>
       </span>
@@ -46,9 +37,7 @@
                 valueFormControl.hasError('valueNotChanged') &&
                 valueFormControl.dirty
             ">
-      <span class="custom-error-message"
-        >New value must be different than the current value.</span
-      >
+      <span class="custom-error-message">New value must be different than the current value.</span>
     </mat-error>
     <app-comment-form
       [valueFormControlHasError]="hasError()"

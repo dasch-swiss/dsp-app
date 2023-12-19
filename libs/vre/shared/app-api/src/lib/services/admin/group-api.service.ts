@@ -1,10 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  CreateGroupRequest,
-  GroupsResponse,
-  UpdateGroupRequest,
-} from '@dasch-swiss/dsp-js';
+import { CreateGroupRequest, GroupsResponse, UpdateGroupRequest } from '@dasch-swiss/dsp-js';
 import { BaseApi } from '../base-api';
 
 @Injectable({

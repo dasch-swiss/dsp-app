@@ -1,9 +1,4 @@
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -54,10 +49,7 @@ class TestSelectPropertiesParentComponent implements OnInit {
       'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
     );
 
-    this.selectedResourceClass =
-      this.ontoInfo.classes[
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-      ];
+    this.selectedResourceClass = this.ontoInfo.classes['http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'];
 
     this.properties = this.ontoInfo
       .getPropertyDefinitionsByType(ResourcePropertyDefinition)
@@ -73,11 +65,7 @@ describe('SelectPropertiesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        SelectPropertiesComponent,
-        SwitchPropertiesComponent,
-        TestSelectPropertiesParentComponent,
-      ],
+      declarations: [SelectPropertiesComponent, SwitchPropertiesComponent, TestSelectPropertiesParentComponent],
       imports: [BrowserAnimationsModule, MatTooltipModule],
       providers: [UntypedFormBuilder],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -85,26 +73,20 @@ describe('SelectPropertiesComponent', () => {
   }));
 
   beforeEach(() => {
-    testHostFixture = TestBed.createComponent(
-      TestSelectPropertiesParentComponent
-    );
+    testHostFixture = TestBed.createComponent(TestSelectPropertiesParentComponent);
     testHostComponent = testHostFixture.componentInstance;
     testHostFixture.detectChanges();
     expect(testHostComponent).toBeTruthy();
   });
 
   it('should create a value component for each property', () => {
-    expect(
-      testHostComponent.selectPropertiesComponent.switchPropertiesComponent
-        .length
-    ).toEqual(18);
+    expect(testHostComponent.selectPropertiesComponent.switchPropertiesComponent.length).toEqual(18);
   });
 
   it('should create a key value pair object', () => {
     const propsArray = [];
 
-    const keyValuePair =
-      testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair;
+    const keyValuePair = testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair;
     for (const propIri in keyValuePair) {
       if (propIri in keyValuePair) {
         propsArray.push(keyValuePair[propIri]);
@@ -120,23 +102,17 @@ describe('SelectPropertiesComponent', () => {
     let selectPropertiesComponentDe;
 
     beforeEach(() => {
-      testHostFixture = TestBed.createComponent(
-        TestSelectPropertiesParentComponent
-      );
+      testHostFixture = TestBed.createComponent(TestSelectPropertiesParentComponent);
       testHostComponent = testHostFixture.componentInstance;
       hostComponentDe = testHostFixture.debugElement;
-      selectPropertiesComponentDe = hostComponentDe.query(
-        By.directive(SelectPropertiesComponent)
-      );
+      selectPropertiesComponentDe = hostComponentDe.query(By.directive(SelectPropertiesComponent));
       testHostFixture.detectChanges();
 
       expect(testHostComponent).toBeTruthy();
     });
 
     it('should add a new form to the value when the add button is clicked', () => {
-      const addButtons = selectPropertiesComponentDe.queryAll(
-        By.css('.create')
-      );
+      const addButtons = selectPropertiesComponentDe.queryAll(By.css('.create'));
       const addButtonNativeElement = addButtons[0].nativeElement;
 
       // keep in mind that this element may not correspond to the first property as it simply grabs the first occurance of a plus button.
@@ -148,25 +124,22 @@ describe('SelectPropertiesComponent', () => {
 
       // if this fails, that likely means the property has a cardinality of 0-1 and thus could not add another value.
       expect(
-        testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[
-          testHostComponent.properties[1].id
-        ].length
+        testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.properties[1].id]
+          .length
       ).toEqual(2);
     });
 
     it('should delete a form from the value when the delete button is clicked', () => {
-      testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[
-        testHostComponent.properties[1].id
-      ] = [0, 1];
+      testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.properties[1].id] = [
+        0, 1,
+      ];
       testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[
         testHostComponent.properties[1].id + '-filtered'
       ] = [0, 1];
 
       testHostFixture.detectChanges();
 
-      let deleteButtons = selectPropertiesComponentDe.queryAll(
-        By.css('.delete')
-      );
+      let deleteButtons = selectPropertiesComponentDe.queryAll(By.css('.delete'));
 
       const deleteButtonNativeElement = deleteButtons[0].nativeElement;
 
@@ -179,9 +152,7 @@ describe('SelectPropertiesComponent', () => {
       const expectedArray = [undefined, 1];
 
       expect(
-        testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[
-          testHostComponent.properties[1].id
-        ]
+        testHostComponent.selectPropertiesComponent.propertyValuesKeyValuePair[testHostComponent.properties[1].id]
       ).toEqual(expectedArray);
 
       deleteButtons = selectPropertiesComponentDe.queryAll(By.css('.delete'));

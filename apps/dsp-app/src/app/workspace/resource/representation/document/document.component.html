@@ -1,10 +1,6 @@
 <div *ngIf="fileType === 'pdf'" class="pdf-container">
   <!-- in case of an error -->
-  <app-status
-    [status]="404"
-    [url]="src.fileValue.fileUrl"
-    [representation]="'document'"
-    *ngIf="failedToLoad">
+  <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'document'" *ngIf="failedToLoad">
   </app-status>
 
   <pdf-viewer
@@ -26,18 +22,8 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
-          <button
-            class="menu-content"
-            mat-menu-item
-            (click)="download(src.fileValue.fileUrl)">
-            Download file
-          </button>
-          <button
-            class="menu-content"
-            mat-menu-item
-            (click)="openReplaceFileDialog()">
-            Replace file
-          </button>
+          <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)">Download file</button>
+          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
         </mat-menu>
       </span>
 
@@ -123,19 +109,10 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #more="matMenu" class="mat-menu-custom-black">
-        <button
-          class="menu-content"
-          mat-menu-item
-          (click)="download(src.fileValue.fileUrl)"
-          [disabled]="failedToLoad">
+        <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)" [disabled]="failedToLoad">
           Download file
         </button>
-        <button
-          class="menu-content"
-          mat-menu-item
-          (click)="openReplaceFileDialog()">
-          Replace file
-        </button>
+        <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
       </mat-menu>
     </div>
   </div>

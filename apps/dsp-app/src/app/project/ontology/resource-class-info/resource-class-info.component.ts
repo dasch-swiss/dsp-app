@@ -20,10 +20,7 @@ import {
   ReadOntology,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   DefaultClass,
@@ -45,10 +42,7 @@ import {
   RemovePropertyAction,
   ReplacePropertyAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import {
-  DialogComponent,
-  DialogEvent,
-} from '@dsp-app/src/app/main/dialog/dialog.component';
+import { DialogComponent, DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -84,19 +78,15 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
 
   // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
-  @Output() ontoPropertiesChange: EventEmitter<PropertyDefinition[]> =
-    new EventEmitter<PropertyDefinition[]>();
+  @Output() ontoPropertiesChange: EventEmitter<PropertyDefinition[]> = new EventEmitter<PropertyDefinition[]>();
 
   // to update the resource class itself (edit or delete)
-  @Output() editResourceClass: EventEmitter<DefaultClass> =
-    new EventEmitter<DefaultClass>();
-  @Output() deleteResourceClass: EventEmitter<DefaultClass> =
-    new EventEmitter<DefaultClass>();
+  @Output() editResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
+  @Output() deleteResourceClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
   // to update the assignment of a property to a class we need the information about property (incl. propType)
   // and resource class
-  @Output() updatePropertyAssignment: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() updatePropertyAssignment: EventEmitter<string> = new EventEmitter<string>();
 
   @Input() updatePropertyAssignment$: Subject<any>;
 
@@ -121,12 +111,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   get currentOntologyPropertiesToDisplay$(): Observable<PropToDisplay[]> {
     return this.currentProjectOntologyProperties$.pipe(
       takeUntil(this.ngUnsubscribe),
-      map(ontoProperties =>
-        this.getPropsToDisplay(
-          [...this.resourceClass.propertiesList],
-          [...ontoProperties]
-        )
-      )
+      map(ontoProperties => this.getPropsToDisplay([...this.resourceClass.propertiesList], [...ontoProperties]))
     );
   }
 
@@ -134,12 +119,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   get existingProperties$(): Observable<PropToAdd[]> {
     return this.currentProjectOntologyProperties$.pipe(
       takeUntil(this.ngUnsubscribe),
-      map(ontoProperties =>
-        this.getExistingProperties(
-          [...this.resourceClass.propertiesList],
-          [...ontoProperties]
-        )
-      )
+      map(ontoProperties => this.getExistingProperties([...this.resourceClass.propertiesList], [...ontoProperties]))
     );
   }
 
@@ -162,9 +142,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.ontology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
+    this.ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     // translate iris from "subclass of" array
     this.translateSubClassOfIri(this.resourceClass.subClassOf);
     // check if the class can be deleted
@@ -176,20 +154,15 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  trackByPropToAddFn = (index: number, item: PropToAdd) =>
-    `${index}-${item.ontologyId}`;
+  trackByPropToAddFn = (index: number, item: PropToAdd) => `${index}-${item.ontologyId}`;
 
-  trackByPropCategoryFn = (index: number, item: PropertyCategory) =>
-    `${index}-${item.group}`;
+  trackByPropCategoryFn = (index: number, item: PropertyCategory) => `${index}-${item.group}`;
 
-  trackByDefaultPropertyFn = (index: number, item: DefaultProperty) =>
-    `${index}-${item.label}`;
+  trackByDefaultPropertyFn = (index: number, item: DefaultProperty) => `${index}-${item.label}`;
 
-  trackByPropFn = (index: number, item: PropertyInfoObject) =>
-    `${index}-${item.propDef?.id}`;
+  trackByPropFn = (index: number, item: PropertyInfoObject) => `${index}-${item.propDef?.id}`;
 
-  trackByPropToDisplayFn = (index: number, item: PropToDisplay) =>
-    `${index}-${item.propertyIndex}`;
+  trackByPropToDisplayFn = (index: number, item: PropToDisplay) => `${index}-${item.propertyIndex}`;
 
   /**
    * prepares props to display
@@ -198,10 +171,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
    *
    * @param classProps
    */
-  private getPropsToDisplay(
-    classProps: PropToDisplay[],
-    ontoProperties: OntologyProperties[]
-  ): PropToDisplay[] {
+  private getPropsToDisplay(classProps: PropToDisplay[], ontoProperties: OntologyProperties[]): PropToDisplay[] {
     if (classProps.length === 0 || ontoProperties.length === 0) {
       return [];
     }
@@ -213,16 +183,12 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
       // ignore http://api.knora.org/ontology/knora-api/v2 and ignore  http://www.w3.org/2000/01/rdf-schema
       if (ontoIri !== Constants.KnoraApiV2 && ontoIri !== Constants.Rdfs) {
         // get property definition from list of project ontologies
-        const index = ontoProperties.findIndex(
-          (item: OntologyProperties) => item.ontology === ontoIri
-        );
+        const index = ontoProperties.findIndex((item: OntologyProperties) => item.ontology === ontoIri);
         remainingProperties = [...ontoProperties[index].properties];
         hasProp.propDef = remainingProperties.find(
           (obj: ResourcePropertyDefinitionWithAllLanguages) =>
             obj.id === hasProp.propertyIndex &&
-            ((obj.subjectType &&
-              !obj.subjectType.includes('Standoff') &&
-              obj.objectType !== Constants.LinkValue) ||
+            ((obj.subjectType && !obj.subjectType.includes('Standoff') && obj.objectType !== Constants.LinkValue) ||
               !obj.isLinkValueProperty)
         );
 
@@ -298,47 +264,35 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     });
   }
 
-  initOntoProperties(
-    allOntoProperties: PropertyDefinition[]
-  ): PropertyDefinition[] {
+  initOntoProperties(allOntoProperties: PropertyDefinition[]): PropertyDefinition[] {
     // reset the ontology properties
     const listOfProperties = [];
 
     // display only the properties which are not a subjectType of Standoff
     allOntoProperties.forEach(resProp => {
-      const standoff = resProp.subjectType
-        ? resProp.subjectType.includes('Standoff')
-        : false;
+      const standoff = resProp.subjectType ? resProp.subjectType.includes('Standoff') : false;
       if (resProp.objectType !== Constants.LinkValue && !standoff) {
         listOfProperties.push(resProp);
       }
     });
     // sort properties by label
     // --> TODO: add sort functionallity to the gui
-    return this._sortingService.keySortByAlphabetical(
-      listOfProperties,
-      'label'
-    );
+    return this._sortingService.keySortByAlphabetical(listOfProperties, 'label');
   }
 
   canBeDeleted() {
     // check if the class can be deleted
-    this._dspApiConnection.v2.onto
-      .canDeleteResourceClass(this.resourceClass.id)
-      .subscribe(
-        (response: CanDoResponse) => {
-          this.classCanBeDeleted = response.canDo;
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+    this._dspApiConnection.v2.onto.canDeleteResourceClass(this.resourceClass.id).subscribe(
+      (response: CanDoResponse) => {
+        this.classCanBeDeleted = response.canDo;
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
-  addNewProperty(
-    propType: DefaultProperty,
-    currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {
+  addNewProperty(propType: DefaultProperty, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
     const propertyAssignment: PropertyAssignment = {
       resClass: this.resourceClass,
       property: {
@@ -348,10 +302,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     this.assignProperty(propertyAssignment, currentOntologyPropertiesToDisplay);
   }
 
-  addExistingProperty(
-    prop: PropertyInfoObject,
-    currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {
+  addExistingProperty(prop: PropertyInfoObject, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
     const propertyAssignment: PropertyAssignment = {
       resClass: this.resourceClass,
       property: {
@@ -366,22 +317,11 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
    * removes property from resource class
    * @param property
    */
-  removeProperty(
-    property: DefaultClass,
-    currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {
+  removeProperty(property: DefaultClass, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
     // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after following subscription is triggered
-    this.updatePropertyAssignment
-      .pipe(take(1))
-      .subscribe(() => this.updatePropertyAssignment$.next());
+    this.updatePropertyAssignment.pipe(take(1)).subscribe(() => this.updatePropertyAssignment$.next());
 
-    this._store.dispatch(
-      new RemovePropertyAction(
-        property,
-        this.resourceClass,
-        currentOntologyPropertiesToDisplay
-      )
-    );
+    this._store.dispatch(new RemovePropertyAction(property, this.resourceClass, currentOntologyPropertiesToDisplay));
     this._actions$
       .pipe(ofActionSuccessful(RemovePropertyAction))
       .pipe(take(1))
@@ -397,36 +337,20 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
    * property and add it to the class
    * @param propertyAssignment information about the link of a property to a class
    * */
-  assignProperty(
-    propertyAssignment: PropertyAssignment,
-    currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {
+  assignProperty(propertyAssignment: PropertyAssignment, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
     if (!propertyAssignment) {
       return;
     }
     const classLabel = propertyAssignment.resClass.label;
 
     let mode: 'createProperty' | 'editProperty' = 'createProperty';
-    let propLabel =
-      propertyAssignment.property.propType.group +
-      ': ' +
-      propertyAssignment.property.propType.label;
-    let title =
-      'Add new property of type "' +
-      propLabel +
-      '" to class "' +
-      classLabel +
-      '"';
+    let propLabel = propertyAssignment.property.propType.group + ': ' + propertyAssignment.property.propType.label;
+    let title = 'Add new property of type "' + propLabel + '" to class "' + classLabel + '"';
     if (propertyAssignment.property.propDef) {
       // the property already exists. To assign an existing property simply open the dialog in edit mode
       mode = 'editProperty';
       propLabel = propertyAssignment.property.propDef.label;
-      title =
-        'Add existing property "' +
-        propLabel +
-        '" to class "' +
-        classLabel +
-        '"';
+      title = 'Add existing property "' + propLabel + '" to class "' + classLabel + '"';
     }
 
     const dialogConfig: MatDialogConfig = {
@@ -501,10 +425,7 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
   /**
    * drag and drop property line
    */
-  drop(
-    event: CdkDragDrop<string[]>,
-    currentOntologyPropertiesToDisplay: PropToDisplay[]
-  ) {
+  drop(event: CdkDragDrop<string[]>, currentOntologyPropertiesToDisplay: PropToDisplay[]) {
     // set sort order for child component
     moveItemInArray(
       currentOntologyPropertiesToDisplay, // TODO items should be updated in state if LoadProjectOntologiesAction is not executed after this
@@ -513,18 +434,11 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     );
 
     if (event.previousIndex !== event.currentIndex) {
-      this.updatePropertyAssignment
-        .pipe(take(1))
-        .subscribe(() => this.updatePropertyAssignment$.next());
+      this.updatePropertyAssignment.pipe(take(1)).subscribe(() => this.updatePropertyAssignment$.next());
       // the dropped property item has a new index (= gui order)
       // send the new gui-order to the api by
       // preparing the UpdateOntology object first
-      this._store.dispatch(
-        new ReplacePropertyAction(
-          this.resourceClass,
-          currentOntologyPropertiesToDisplay
-        )
-      );
+      this._store.dispatch(new ReplacePropertyAction(this.resourceClass, currentOntologyPropertiesToDisplay));
       this._actions$
         .pipe(ofActionSuccessful(ReplacePropertyAction))
         .pipe(take(1))
@@ -563,24 +477,17 @@ CONSTRUCT {
 
 OFFSET 0`;
 
-    const doSearchRoute = `/${RouteConstants.search}/${
-      RouteConstants.gravSearch
-    }/${encodeURIComponent(gravsearch)}`;
+    const doSearchRoute = `/${RouteConstants.search}/${RouteConstants.gravSearch}/${encodeURIComponent(gravsearch)}`;
     window.open(doSearchRoute, '_blank');
   }
 
-  private getExistingProperties(
-    classProps: PropToDisplay[],
-    ontoProperties: OntologyProperties[]
-  ): PropToAdd[] {
+  private getExistingProperties(classProps: PropToDisplay[], ontoProperties: OntologyProperties[]): PropToAdd[] {
     if (classProps.length === 0 || ontoProperties.length === 0) {
       return [];
     }
 
     const existingProperties: PropToAdd[] = [];
-    const currentProjectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectOntologies
-    );
+    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
     ontoProperties.forEach((op: OntologyProperties, i: number) => {
       const onto = currentProjectOntologies.find(i => i?.id === op.ontology);
       existingProperties.push({
@@ -589,37 +496,27 @@ OFFSET 0`;
         properties: [],
       });
 
-      op.properties.forEach(
-        (availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
-          const superProp = this._ontoService.getSuperProperty(
-            availableProp,
-            currentProjectOntologies
-          );
-          if (
-            superProp &&
-            availableProp.subPropertyOf.indexOf(superProp) === -1
-          ) {
-            availableProp.subPropertyOf.push(superProp);
-          }
-
-          let propType: DefaultProperty;
-          // find corresponding default property to have more prop info
-          this._ontoService
-            .getDefaultPropType(availableProp)
-            .subscribe((prop: DefaultProperty) => {
-              propType = prop;
-            });
-
-          const propToAdd: PropertyInfoObject = {
-            propType: propType,
-            propDef: availableProp,
-          };
-
-          if (this.isPropertyToAdd(classProps, availableProp)) {
-            existingProperties[i].properties.push(propToAdd);
-          }
+      op.properties.forEach((availableProp: ResourcePropertyDefinitionWithAllLanguages) => {
+        const superProp = this._ontoService.getSuperProperty(availableProp, currentProjectOntologies);
+        if (superProp && availableProp.subPropertyOf.indexOf(superProp) === -1) {
+          availableProp.subPropertyOf.push(superProp);
         }
-      );
+
+        let propType: DefaultProperty;
+        // find corresponding default property to have more prop info
+        this._ontoService.getDefaultPropType(availableProp).subscribe((prop: DefaultProperty) => {
+          propType = prop;
+        });
+
+        const propToAdd: PropertyInfoObject = {
+          propType: propType,
+          propDef: availableProp,
+        };
+
+        if (this.isPropertyToAdd(classProps, availableProp)) {
+          existingProperties[i].properties.push(propToAdd);
+        }
+      });
     });
 
     return existingProperties;

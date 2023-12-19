@@ -9,9 +9,7 @@ import { PendoAnalyticsService } from './pendo-analytics.service';
 describe('PendoAnalyticsService', () => {
   let service: PendoAnalyticsService;
 
-  const isSessionValidResult: Observable<boolean> | null = new BehaviorSubject(
-    true
-  ).asObservable();
+  const isSessionValidResult: Observable<boolean> | null = new BehaviorSubject(true).asObservable();
 
   beforeEach(() => {
     TestBed.configureTestingModule({

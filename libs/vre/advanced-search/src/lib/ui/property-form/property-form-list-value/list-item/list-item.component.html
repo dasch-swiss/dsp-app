@@ -1,12 +1,7 @@
 <mat-menu #childMenu="matMenu" [overlapTrigger]="false">
   <span *ngFor="let child of children">
     <span *ngIf="child.children && child.children.length > 0">
-      <button
-        mat-menu-item
-        [matMenuTriggerFor]="menu.childMenu"
-        (click)="setValue(child)">
-        {{ child.label }}
-      </button>
+      <button mat-menu-item [matMenuTriggerFor]="menu.childMenu" (click)="setValue(child)">{{ child.label }}</button>
       <dasch-swiss-list-item
         #menu
         [children]="child.children"

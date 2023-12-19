@@ -2,12 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSelectHarness } from '@angular/material/select/testing';
@@ -55,13 +50,7 @@ describe('SelectOntologyComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SelectOntologyComponent, TestHostComponent],
-      imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-      ],
+      imports: [ReactiveFormsModule, FormsModule, BrowserAnimationsModule, MatFormFieldModule, MatSelectModule],
     }).compileComponents();
   }));
 
@@ -87,12 +76,8 @@ describe('SelectOntologyComponent', () => {
   }));
 
   it('should initialise the ontologies metadata', () => {
-    expect(
-      testHostComponent.selectOntology.ontologiesMetadata.ontologies
-    ).toBeDefined();
-    expect(
-      testHostComponent.selectOntology.ontologiesMetadata.ontologies.length
-    ).toEqual(15);
+    expect(testHostComponent.selectOntology.ontologiesMetadata.ontologies).toBeDefined();
+    expect(testHostComponent.selectOntology.ontologiesMetadata.ontologies.length).toEqual(15);
   });
 
   it('should init the MatSelect and MatOptions correctly', async () => {
@@ -132,20 +117,14 @@ describe('SelectOntologyComponent', () => {
 
     await options[0].click();
 
-    expect(testHostComponent.selectedOntoIri).toEqual(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2'
-    );
+    expect(testHostComponent.selectedOntoIri).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2');
   });
 
   it('should unsubscribe from from changes on destruction', () => {
-    expect(
-      testHostComponent.selectOntology.ontologyChangesSubscription.closed
-    ).toBe(false);
+    expect(testHostComponent.selectOntology.ontologyChangesSubscription.closed).toBe(false);
 
     testHostFixture.destroy();
 
-    expect(
-      testHostComponent.selectOntology.ontologyChangesSubscription.closed
-    ).toBe(true);
+    expect(testHostComponent.selectOntology.ontologyChangesSubscription.closed).toBe(true);
   });
 });

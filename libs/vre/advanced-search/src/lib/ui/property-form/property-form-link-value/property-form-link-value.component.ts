@@ -1,18 +1,7 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
-} from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiData } from '../../../data-access/advanced-search-service/advanced-search.service';
@@ -48,11 +37,9 @@ export class PropertyFormLinkValueComponent implements OnInit, AfterViewInit {
   inputControl = new FormControl();
 
   ngOnInit() {
-    this.inputControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe(value => {
-        this.emitResourceSearchValueChanged.emit(value);
-      });
+    this.inputControl.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      this.emitResourceSearchValueChanged.emit(value);
+    });
   }
 
   ngAfterViewInit(): void {

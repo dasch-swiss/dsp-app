@@ -108,9 +108,7 @@ export class PermissionInfoComponent implements OnInit {
         // split by space
         const unit = section.split(' ');
 
-        const allPermissions = PermissionUtil.allUserPermissions(
-          unit[0] as 'RV' | 'V' | 'M' | 'D' | 'CR'
-        );
+        const allPermissions = PermissionUtil.allUserPermissions(unit[0] as 'RV' | 'V' | 'M' | 'D' | 'CR');
 
         // a section could look like CR knora-admin:Creator
         // but also like CR knora-admin:Creator,knora-admin:ProjectAdmin --> in this case we have to split the section again
@@ -128,9 +126,7 @@ export class PermissionInfoComponent implements OnInit {
       // bring the list of group permissions into correct order: from high to low user group
       this.defaultGroups.forEach((group, i) => {
         // current index
-        const currentIndex = this.listOfPermissions.findIndex(
-          e => e.group === group
-        );
+        const currentIndex = this.listOfPermissions.findIndex(e => e.group === group);
 
         if (currentIndex !== -1) {
           // new index = i
@@ -153,12 +149,7 @@ export class PermissionInfoComponent implements OnInit {
   toggleMenu() {
     this.isOpen = !this.isOpen;
 
-    const pos: ConnectionPositionPair = new ConnectionPositionPair(
-      this._originPos,
-      this._overlayPos,
-      0,
-      0
-    );
+    const pos: ConnectionPositionPair = new ConnectionPositionPair(this._originPos, this._overlayPos, 0, 0);
 
     this.infoBoxPositions = [pos];
   }
@@ -170,9 +161,7 @@ export class PermissionInfoComponent implements OnInit {
    * @returns true if permission value is set
    */
   getStatus(restriction: string, listOfRestrictions: number[]): boolean {
-    return (
-      listOfRestrictions.indexOf(PermissionUtil.Permissions[restriction]) !== -1
-    );
+    return listOfRestrictions.indexOf(PermissionUtil.Permissions[restriction]) !== -1;
   }
 
   /**
@@ -193,17 +182,12 @@ export class PermissionInfoComponent implements OnInit {
    * @param group
    * @param restriction
    */
-  pushToListOfPermissions(
-    group: string,
-    restriction: PermissionUtil.Permissions[]
-  ) {
+  pushToListOfPermissions(group: string, restriction: PermissionUtil.Permissions[]) {
     // in API v17.5.1 (and all prev versions) the default string could look like:
     // "CR knora-admin:ProjectAdmin|D knora-admin:ProjectAdmin|M knora-admin:ProjectAdmin|V knora-admin:ProjectAdmin|RV knora-admin:ProjectAdmin"
     // in this case we should display this user group only once but with the highest permission only
 
-    const index = this.listOfPermissions.findIndex(
-      (object: PermissionGroup) => object.group === group
-    );
+    const index = this.listOfPermissions.findIndex((object: PermissionGroup) => object.group === group);
     const permission: PermissionGroup = {
       group: group,
       restriction: restriction,
@@ -214,9 +198,7 @@ export class PermissionInfoComponent implements OnInit {
       this.listOfPermissions.push(permission);
     } else {
       // if it exists, compare the permission level and replace if it's higher
-      if (
-        this.listOfPermissions[index].restriction.length < restriction.length
-      ) {
+      if (this.listOfPermissions[index].restriction.length < restriction.length) {
         this.listOfPermissions[index] = permission;
       }
     }

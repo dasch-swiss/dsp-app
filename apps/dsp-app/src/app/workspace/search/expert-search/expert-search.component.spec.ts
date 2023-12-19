@@ -9,25 +9,17 @@ import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { SearchParams } from '../../results/list-view/list-view.component';
-import {
-  GravsearchSearchParams,
-  SearchParamsService,
-} from '../services/search-params.service';
+import { GravsearchSearchParams, SearchParamsService } from '../services/search-params.service';
 import { ExpertSearchComponent } from './expert-search.component';
 
 /**
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-expert-search
-    #expSearch
-    (search)="gravsearchQuery($event)"></app-expert-search>`,
+  template: ` <app-expert-search #expSearch (search)="gravsearchQuery($event)"></app-expert-search>`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild('expSearch') expertSearch: ExpertSearchComponent;
@@ -50,9 +42,7 @@ describe('ExpertSearchComponent', () => {
   let gravsearchSearchParams: GravsearchSearchParams;
 
   beforeEach(waitForAsync(() => {
-    const spy = jasmine.createSpyObj('SearchParamsService', [
-      'changeSearchParamsMsg',
-    ]);
+    const spy = jasmine.createSpyObj('SearchParamsService', ['changeSearchParamsMsg']);
 
     TestBed.configureTestingModule({
       declarations: [ExpertSearchComponent, TestHostComponent],
@@ -87,14 +77,10 @@ describe('ExpertSearchComponent', () => {
     testHostFixture = TestBed.createComponent(TestHostComponent);
     testHostComponent = testHostFixture.componentInstance;
 
-    searchParamsServiceSpy = TestBed.inject(
-      SearchParamsService
-    ) as jasmine.SpyObj<SearchParamsService>;
-    searchParamsServiceSpy.changeSearchParamsMsg.and.callFake(
-      (searchParams: GravsearchSearchParams) => {
-        gravsearchSearchParams = searchParams;
-      }
-    );
+    searchParamsServiceSpy = TestBed.inject(SearchParamsService) as jasmine.SpyObj<SearchParamsService>;
+    searchParamsServiceSpy.changeSearchParamsMsg.and.callFake((searchParams: GravsearchSearchParams) => {
+      gravsearchSearchParams = searchParams;
+    });
 
     testHostFixture.detectChanges();
 
@@ -108,9 +94,7 @@ describe('ExpertSearchComponent', () => {
 
   it('should reset the form', () => {
     const resetBtn = hostCompDe.query(By.css('button.reset'));
-    const textarea = hostCompDe.query(
-      By.css('textarea.textarea-field-content')
-    );
+    const textarea = hostCompDe.query(By.css('textarea.textarea-field-content'));
 
     const resetEle = resetBtn.nativeElement;
     const textareaEle = textarea.nativeElement;
@@ -130,9 +114,7 @@ describe('ExpertSearchComponent', () => {
     // if no query is entered
     expect(testHostComponent.expertSearch.expertSearchForm.valid).toBeFalsy();
 
-    const textarea = hostCompDe.query(
-      By.css('textarea.textarea-field-content')
-    );
+    const textarea = hostCompDe.query(By.css('textarea.textarea-field-content'));
     const textareaEle = textarea.nativeElement;
 
     expect(textareaEle.value).toBe('');

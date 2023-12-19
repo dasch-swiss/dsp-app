@@ -1,29 +1,12 @@
-import {
-  Component,
-  DebugElement,
-  forwardRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  CreateTimeValue,
-  MockResource,
-  ReadTimeValue,
-  UpdateTimeValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateTimeValue, MockResource, ReadTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
 import { Subject } from 'rxjs';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { TimeValueComponent } from './time-value.component';
@@ -40,9 +23,7 @@ import { TimeValueComponent } from './time-value.component';
     { provide: MatFormFieldControl, useExisting: TestTimeInputComponent },
   ],
 })
-class TestTimeInputComponent
-  implements ControlValueAccessor, MatFormFieldControl<any>
-{
+class TestTimeInputComponent implements ControlValueAccessor, MatFormFieldControl<any> {
   @Input() value;
   @Input() disabled: boolean;
   @Input() empty: boolean;
@@ -86,10 +67,7 @@ class TestTimeInputComponent
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-time-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"></app-time-value>`,
+  template: ` <app-time-value #inputVal [displayValue]="displayInputVal" [mode]="mode"></app-time-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: TimeValueComponent;
@@ -132,10 +110,7 @@ class TestHostCreateValueComponent implements OnInit {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-time-value
-    #inputVal
-    [mode]="mode"
-    [valueRequiredValidator]="false"></app-time-value>`,
+  template: ` <app-time-value #inputVal [mode]="mode" [valueRequiredValidator]="false"></app-time-value>`,
 })
 class TestHostCreateValueNoValueRequiredComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: TimeValueComponent;
@@ -184,21 +159,15 @@ describe('TimeValueComponent', () => {
       const hostCompDe = testHostFixture.debugElement;
 
       valueComponentDe = hostCompDe.query(By.directive(TimeValueComponent));
-      dateReadModeDebugElement = valueComponentDe.query(
-        By.css('.rm-value.date')
-      );
+      dateReadModeDebugElement = valueComponentDe.query(By.css('.rm-value.date'));
       dateReadModeNativeElement = dateReadModeDebugElement.nativeElement;
 
-      timeReadModeDebugElement = valueComponentDe.query(
-        By.css('.rm-value.time')
-      );
+      timeReadModeDebugElement = valueComponentDe.query(By.css('.rm-value.time'));
       timeReadModeNativeElement = timeReadModeDebugElement.nativeElement;
     });
 
     it('should display an existing value', () => {
-      expect(testHostComponent.inputValueComponent.displayValue.time).toEqual(
-        '2019-08-30T10:45:20.173572Z'
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.time).toEqual('2019-08-30T10:45:20.173572Z');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -217,31 +186,23 @@ describe('TimeValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual('2019-08-30T10:45:20.173572Z');
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual('2019-08-30T10:45:20.173572Z');
 
-      testHostComponent.inputValueComponent.timeInputComponent.value =
-        '2019-06-30T00:00:00Z';
+      testHostComponent.inputValueComponent.timeInputComponent.value = '2019-06-30T00:00:00Z';
 
       testHostComponent.inputValueComponent.timeInputComponent._handleInput();
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toBeTruthy();
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toBeTruthy();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateTimeValue).toBeTruthy();
 
-      expect((updatedValue as UpdateTimeValue).time).toEqual(
-        '2019-06-30T00:00:00Z'
-      );
+      expect((updatedValue as UpdateTimeValue).time).toEqual('2019-06-30T00:00:00Z');
     });
 
     it('should validate an existing value with han added comment', () => {
@@ -251,23 +212,18 @@ describe('TimeValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual('2019-08-30T10:45:20.173572Z');
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual('2019-08-30T10:45:20.173572Z');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy(); // because no value nor the comment changed
 
       // set a comment value
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy(); // now the form must be valid, hence the comment changed
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateTimeValue).toBeTruthy();
     });
@@ -288,8 +244,7 @@ describe('TimeValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -303,25 +258,18 @@ describe('TimeValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual('2019-08-30T10:45:20.173572Z');
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual('2019-08-30T10:45:20.173572Z');
 
-      testHostComponent.inputValueComponent.timeInputComponent.value =
-        '2019-06-30T00:00:00Z';
+      testHostComponent.inputValueComponent.timeInputComponent.value = '2019-06-30T00:00:00Z';
       testHostComponent.inputValueComponent.timeInputComponent._handleInput();
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual('2019-06-30T00:00:00Z');
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual('2019-06-30T00:00:00Z');
 
       testHostComponent.inputValueComponent.resetFormControl();
 
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual('2019-08-30T10:45:20.173572Z');
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual('2019-08-30T10:45:20.173572Z');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
     });
@@ -357,12 +305,9 @@ describe('TimeValueComponent', () => {
     });
 
     it('should create a value', () => {
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual(null);
 
-      testHostComponent.inputValueComponent.timeInputComponent.value =
-        '2019-01-01T11:00:00.000Z';
+      testHostComponent.inputValueComponent.timeInputComponent.value = '2019-01-01T11:00:00.000Z';
       testHostComponent.inputValueComponent.timeInputComponent._handleInput();
 
       testHostFixture.detectChanges();
@@ -375,14 +320,11 @@ describe('TimeValueComponent', () => {
 
       expect(newValue instanceof CreateTimeValue).toBeTruthy();
 
-      expect((newValue as CreateTimeValue).time).toEqual(
-        '2019-01-01T11:00:00.000Z'
-      );
+      expect((newValue as CreateTimeValue).time).toEqual('2019-01-01T11:00:00.000Z');
     });
 
     it('should reset form after cancellation', () => {
-      testHostComponent.inputValueComponent.timeInputComponent.value =
-        '2019-06-30T00:00:00Z';
+      testHostComponent.inputValueComponent.timeInputComponent.value = '2019-06-30T00:00:00Z';
       testHostComponent.inputValueComponent.timeInputComponent._handleInput();
 
       testHostFixture.detectChanges();
@@ -397,9 +339,7 @@ describe('TimeValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.timeInputComponent.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.timeInputComponent.value).toEqual(null);
     });
   });
 
@@ -408,9 +348,7 @@ describe('TimeValueComponent', () => {
     let testHostFixture: ComponentFixture<TestHostCreateValueNoValueRequiredComponent>;
 
     beforeEach(() => {
-      testHostFixture = TestBed.createComponent(
-        TestHostCreateValueNoValueRequiredComponent
-      );
+      testHostFixture = TestBed.createComponent(TestHostCreateValueNoValueRequiredComponent);
       testHostComponent = testHostFixture.componentInstance;
       testHostFixture.detectChanges();
 
@@ -423,9 +361,7 @@ describe('TimeValueComponent', () => {
     });
 
     it('should propagate valueRequiredValidator to child component', () => {
-      expect(testHostComponent.inputValueComponent.valueRequiredValidator).toBe(
-        false
-      );
+      expect(testHostComponent.inputValueComponent.valueRequiredValidator).toBe(false);
     });
   });
 });

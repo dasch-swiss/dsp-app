@@ -1,18 +1,6 @@
-import {
-  Component,
-  OnInit,
-  OnChanges,
-  OnDestroy,
-  ViewChild,
-  Input,
-  Inject,
-} from '@angular/core';
+import { Component, OnInit, OnChanges, OnDestroy, ViewChild, Input, Inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-  ReadTimeValue,
-  CreateTimeValue,
-  UpdateTimeValue,
-} from '@dasch-swiss/dsp-js';
+import { ReadTimeValue, CreateTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { TimeInputComponent } from './time-input/time-input.component';
@@ -22,10 +10,7 @@ import { TimeInputComponent } from './time-input/time-input.component';
   templateUrl: './time-value.component.html',
   styleUrls: ['./time-value.component.scss'],
 })
-export class TimeValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class TimeValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @ViewChild('timeInput') timeInputComponent: TimeInputComponent;
 
   @Input() displayValue?: ReadTimeValue;
@@ -68,10 +53,7 @@ export class TimeValueComponent
 
     newTimeValue.time = this.valueFormControl.value;
 
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       newTimeValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -89,10 +71,7 @@ export class TimeValueComponent
     updatedTimeValue.time = this.valueFormControl.value;
 
     // add the submitted comment to updatedTimeValue only if user has added a comment
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedTimeValue.valueHasComment = this.commentFormControl.value;
     }
 

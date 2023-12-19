@@ -8,28 +8,18 @@ import { ReplaceFileFormComponent } from './replace-file-form.component';
 
 @Component({
   template: `
-    <app-replace-file-form
-      #replaceFileForm
-      [representation]="representation"
-      [propId]="propId"></app-replace-file-form>
+    <app-replace-file-form #replaceFileForm [representation]="representation" [propId]="propId"></app-replace-file-form>
   `,
 })
 class TestHostComponent implements OnInit {
   @ViewChild('replaceFileForm') replaceFileFormComp: ReplaceFileFormComponent;
 
-  representation:
-    | 'stillImage'
-    | 'movingImage'
-    | 'audio'
-    | 'document'
-    | 'text'
-    | 'archive';
+  representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
   propId: string;
 
   ngOnInit(): void {
     this.representation = 'stillImage';
-    this.propId =
-      'http://rdfh.ch/0123/yryzB6ROTaGER3F9kMZoUA/values/mEm67WJiSAqaWf572GzA9Q';
+    this.propId = 'http://rdfh.ch/0123/yryzB6ROTaGER3F9kMZoUA/values/mEm67WJiSAqaWf572GzA9Q';
   }
 }
 
@@ -40,13 +30,7 @@ class TestHostComponent implements OnInit {
 class TestUploadComponent {
   @Input() parentForm?: UntypedFormGroup;
 
-  @Input() representation:
-    | 'stillImage'
-    | 'movingImage'
-    | 'audio'
-    | 'document'
-    | 'text'
-    | 'archive';
+  @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
 
   @Input() formName: string;
 }
@@ -57,11 +41,7 @@ describe('ReplaceFileFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        TestHostComponent,
-        TestUploadComponent,
-        ReplaceFileFormComponent,
-      ],
+      declarations: [TestHostComponent, TestUploadComponent, ReplaceFileFormComponent],
       imports: [MatButtonModule, MatIconModule, TranslateModule.forRoot()],
     }).compileComponents();
   });
@@ -74,9 +54,7 @@ describe('ReplaceFileFormComponent', () => {
   });
 
   it('generate the error messages for a still image file representation', () => {
-    expect(testHostComponent.replaceFileFormComp.warningMessages[0]).toEqual(
-      'Image will be replaced.'
-    );
+    expect(testHostComponent.replaceFileFormComp.warningMessages[0]).toEqual('Image will be replaced.');
     expect(testHostComponent.replaceFileFormComp.warningMessages[1]).toEqual(
       'Please note that you are about to replace the image.'
     );

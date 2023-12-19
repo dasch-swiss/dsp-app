@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -16,13 +10,7 @@ import { ListItemComponent } from './list-item/list-item.component';
 @Component({
   selector: 'dasch-swiss-property-form-list-value',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    ListItemComponent,
-  ],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, ListItemComponent],
   templateUrl: './property-form-list-value.component.html',
   styleUrls: ['./property-form-list-value.component.scss'],
 })

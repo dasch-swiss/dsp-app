@@ -26,12 +26,7 @@ describe('SortingService', () => {
     });
 
     it('should reverse an array', () => {
-      expect(service.reverseArray(data)).toEqual([
-        'Hermann',
-        'Goldbach',
-        'Euler',
-        'Bernouilli',
-      ]);
+      expect(service.reverseArray(data)).toEqual(['Hermann', 'Goldbach', 'Euler', 'Bernouilli']);
     });
   });
 

@@ -2,15 +2,7 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   UntypedFormBuilder,
@@ -20,11 +12,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -112,11 +100,9 @@ class TestLinkValueComponent {
 
   @Input() mode;
 
-  @Output() referredResourceClicked: EventEmitter<ReadLinkValue> =
-    new EventEmitter();
+  @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter();
 
-  @Output() referredResourceHovered: EventEmitter<ReadLinkValue> =
-    new EventEmitter();
+  @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter();
 }
 
 @Component({
@@ -138,11 +124,9 @@ class TestTextValueAsXmlComponent {
 
   @Input() displayValue;
 
-  @Output() internalLinkClicked: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() internalLinkClicked: EventEmitter<string> = new EventEmitter<string>();
 
-  @Output() internalLinkHovered: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() internalLinkHovered: EventEmitter<string> = new EventEmitter<string>();
 }
 
 @Component({
@@ -280,9 +264,7 @@ class TestConfirmationMessageComponent {
     [propArray]="propArray"
     [canDelete]="deleteIsAllowed"
     (referredResourceClicked)="internalLinkClicked($event)"
-    (referredResourceHovered)="
-      internalLinkHovered($event)
-    "></app-display-edit>`,
+    (referredResourceHovered)="internalLinkHovered($event)"></app-display-edit>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('displayEditVal')
@@ -330,17 +312,14 @@ class TestHostDisplayValueComponent implements OnInit {
       standoffLinkVal.linkedResourceIri = 'testIri';
 
       const propDefinition =
-        this.readResource.entityInfo.properties[
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
-        ];
+        this.readResource.entityInfo.properties['http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'];
       propDefinition.id = Constants.HasStandoffLinkToValue;
 
       const guiDefinition = this.readResource.entityInfo.classes[
         'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
       ].propertiesList.filter(
         propDefForGui =>
-          propDefForGui.propertyIndex ===
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
+          propDefForGui.propertyIndex === 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
       );
 
       guiDefinition[0].propertyIndex = Constants.HasStandoffLinkToValue;
@@ -374,17 +353,11 @@ describe('DisplayEditComponent', () => {
   beforeEach(waitForAsync(() => {
     const valuesSpyObj = {
       v2: {
-        values: jasmine.createSpyObj('values', [
-          'updateValue',
-          'getValue',
-          'deleteValue',
-        ]),
+        values: jasmine.createSpyObj('values', ['updateValue', 'getValue', 'deleteValue']),
       },
     };
 
-    const eventSpy = jasmine.createSpyObj('ValueOperationEventService', [
-      'emit',
-    ]);
+    const eventSpy = jasmine.createSpyObj('ValueOperationEventService', ['emit']);
 
     const userServiceSpy = jasmine.createSpyObj('UserService', ['getUser']);
 
@@ -395,13 +368,7 @@ describe('DisplayEditComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [
-        BrowserAnimationsModule,
-        MatIconModule,
-        MatDialogModule,
-        MatTooltipModule,
-        ReactiveFormsModule,
-      ],
+      imports: [BrowserAnimationsModule, MatIconModule, MatDialogModule, MatTooltipModule, ReactiveFormsModule],
       declarations: [
         DisplayEditComponent,
         ConfirmationDialogComponent,
@@ -468,26 +435,19 @@ describe('DisplayEditComponent', () => {
     const valueService = new ValueService();
 
     // spy for getValueTypeOrClass
-    (
-      valueServiceSpy as jasmine.SpyObj<ValueService>
-    ).getValueTypeOrClass.and.callFake((value: ReadValue) =>
+    (valueServiceSpy as jasmine.SpyObj<ValueService>).getValueTypeOrClass.and.callFake((value: ReadValue) =>
       valueService.getValueTypeOrClass(value)
     );
 
     // spy for getTextValueGuiEle
-    (
-      valueServiceSpy as jasmine.SpyObj<ValueService>
-    ).getTextValueGuiEle.and.callFake((guiEle: string) =>
+    (valueServiceSpy as jasmine.SpyObj<ValueService>).getTextValueGuiEle.and.callFake((guiEle: string) =>
       valueService.getTextValueGuiEle(guiEle)
     );
 
     // spy for isReadOnly
     (valueServiceSpy as jasmine.SpyObj<ValueService>).isReadOnly.and.callFake(
-      (
-        typeOrClass: string,
-        value: ReadValue,
-        propDef: ResourcePropertyDefinition
-      ) => valueService.isReadOnly(typeOrClass, value, propDef)
+      (typeOrClass: string, value: ReadValue, propDef: ResourcePropertyDefinition) =>
+        valueService.isReadOnly(typeOrClass, value, propDef)
     );
 
     testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -501,22 +461,16 @@ describe('DisplayEditComponent', () => {
     it('should choose the apt component for a plain text value in the template', () => {
       const valueServiceSpy = TestBed.inject(ValueService);
 
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasText'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasText');
       testHostFixture.detectChanges();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestTextValueAsStringComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestTextValueAsStringComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadTextValueAsString
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadTextValueAsString
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
 
       // make sure the value service has been called as expected on initialization
 
@@ -540,48 +494,35 @@ describe('DisplayEditComponent', () => {
     });
 
     it('should choose the apt component for an XML value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext');
       testHostFixture.detectChanges();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestTextValueAsXmlComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestTextValueAsXmlComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadTextValueAsXml
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadTextValueAsXml
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should react to clicking on a standoff link', () => {
       // assign value also updates the standoff link in propArray
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.linkValClicked).toEqual('init');
 
       (
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent as unknown as TestTextValueAsXmlComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestTextValueAsXmlComponent
       ).internalLinkClicked.emit('testIri');
 
-      expect(
-        (testHostComponent.linkValClicked as ReadLinkValue).linkedResourceIri
-      ).toEqual('testIri');
+      expect((testHostComponent.linkValClicked as ReadLinkValue).linkedResourceIri).toEqual('testIri');
     });
 
     it('should not react to clicking on a standoff link when there is no corresponding standoff link value', () => {
       // assign value also updates the standoff link in propArray
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext');
 
       // simulate situation
       // where the standoff link was not updated
@@ -592,8 +533,7 @@ describe('DisplayEditComponent', () => {
       expect(testHostComponent.linkValClicked).toEqual('init');
 
       (
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent as unknown as TestTextValueAsXmlComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestTextValueAsXmlComponent
       ).internalLinkClicked.emit('testIri');
 
       expect(testHostComponent.linkValClicked).toEqual('init');
@@ -601,28 +541,21 @@ describe('DisplayEditComponent', () => {
 
     it('should react to hovering on a standoff link', () => {
       // assign value also updates the standoff link in propArray
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.linkValHovered).toEqual('init');
 
       (
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent as unknown as TestTextValueAsXmlComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestTextValueAsXmlComponent
       ).internalLinkHovered.emit('testIri');
 
-      expect(
-        (testHostComponent.linkValHovered as ReadLinkValue).linkedResourceIri
-      ).toEqual('testIri');
+      expect((testHostComponent.linkValHovered as ReadLinkValue).linkedResourceIri).toEqual('testIri');
     });
 
     it('should not react to hovering on a standoff link when there is no corresponding standoff link value', () => {
       // assign value also updates the standoff link in propArray
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext');
 
       // simulate situation
       // where the standoff link was not updated
@@ -633,8 +566,7 @@ describe('DisplayEditComponent', () => {
       expect(testHostComponent.linkValHovered).toEqual('init');
 
       (
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent as unknown as TestTextValueAsXmlComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestTextValueAsXmlComponent
       ).internalLinkHovered.emit('testIri');
 
       expect(testHostComponent.linkValHovered).toEqual('init');
@@ -643,8 +575,7 @@ describe('DisplayEditComponent', () => {
     it('should choose the apt component for an HTML text value in the template', () => {
       const inputVal: ReadTextValueAsHtml = new ReadTextValueAsHtml();
 
-      inputVal.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext';
+      inputVal.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext';
       inputVal.hasPermissions =
         'CR knora-admin:Creator|M knora-admin:ProjectMember|V knora-admin:KnownUser|RV knora-admin:UnknownUser';
       inputVal.userHasPermission = 'CR';
@@ -658,274 +589,191 @@ describe('DisplayEditComponent', () => {
       testHostFixture.detectChanges();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestTextValueAsHtmlComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestTextValueAsHtmlComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadTextValueAsHtml
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadTextValueAsHtml
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for an integer value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestIntValueComponent).toBe(
+        true
+      );
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestIntValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadIntValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadIntValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a boolean value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasBoolean'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasBoolean');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestBooleanValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestBooleanValueComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadBooleanValue
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadBooleanValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a URI value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasUri'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasUri');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestUriValueComponent).toBe(
+        true
+      );
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestUriValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadUriValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadUriValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a decimal value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasDecimal'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasDecimal');
       testHostFixture.detectChanges();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestDecimalValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestDecimalValueComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadDecimalValue
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadDecimalValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a color value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasColor'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasColor');
       testHostFixture.detectChanges();
 
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestColorValueComponent).toBe(
+        true
+      );
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestColorValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadColorValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadColorValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for an interval value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInterval'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInterval');
       testHostFixture.detectChanges();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestIntervalValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestIntervalValueComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadIntervalValue
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadIntervalValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a time value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasTimeStamp'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasTimeStamp');
       testHostFixture.detectChanges();
 
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestTimeValueComponent).toBe(
+        true
+      );
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestTimeValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadTimeValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadTimeValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a link value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue');
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestLinkValueComponent
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadLinkValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
-      expect(
-        (
-          testHostComponent.displayEditValueComponent
-            .displayValueComponent as unknown as TestLinkValueComponent
-        ).parentResource instanceof ReadResource
-      ).toBe(true);
-      expect(
-        (
-          testHostComponent.displayEditValueComponent
-            .displayValueComponent as unknown as TestLinkValueComponent
-        ).propIri
-      ).toEqual(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestLinkValueComponent).toBe(
+        true
       );
+      expect(
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadLinkValue
+      ).toBe(true);
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
+      expect(
+        (testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent)
+          .parentResource instanceof ReadResource
+      ).toBe(true);
+      expect(
+        (testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent).propIri
+      ).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue');
 
       const userServiceSpy = TestBed.inject(UserService);
 
       expect(userServiceSpy.getUser).toHaveBeenCalledTimes(1);
-      expect(userServiceSpy.getUser).toHaveBeenCalledWith(
-        'http://rdfh.ch/users/BhkfBc3hTeS_IDo-JgXRbQ'
-      );
+      expect(userServiceSpy.getUser).toHaveBeenCalledWith('http://rdfh.ch/users/BhkfBc3hTeS_IDo-JgXRbQ');
     });
 
     it('should choose the apt component for a link value in the template and react to a click event', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.linkValClicked).toEqual('init');
 
       (
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent as unknown as TestLinkValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent
       ).referredResourceClicked.emit(
-        (
-          testHostComponent.displayEditValueComponent
-            .displayValueComponent as unknown as TestLinkValueComponent
-        ).displayValue
+        (testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent)
+          .displayValue
       );
 
-      expect(
-        (testHostComponent.linkValClicked as ReadLinkValue).linkedResourceIri
-      ).toEqual('http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ');
+      expect((testHostComponent.linkValClicked as ReadLinkValue).linkedResourceIri).toEqual(
+        'http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ'
+      );
     });
 
     it('should choose the apt component for a link value in the template and react to a hover event', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.linkValHovered).toEqual('init');
 
       (
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent as unknown as TestLinkValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent
       ).referredResourceHovered.emit(
-        (
-          testHostComponent.displayEditValueComponent
-            .displayValueComponent as unknown as TestLinkValueComponent
-        ).displayValue
+        (testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent)
+          .displayValue
       );
 
-      expect(
-        (testHostComponent.linkValHovered as ReadLinkValue).linkedResourceIri
-      ).toEqual('http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ');
+      expect((testHostComponent.linkValHovered as ReadLinkValue).linkedResourceIri).toEqual(
+        'http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ'
+      );
     });
 
     it('should choose the apt component for a link value (standoff link) in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue');
       testHostComponent.readValue.property = Constants.HasStandoffLinkToValue;
-      testHostComponent.readValue.attachedToUser =
-        'http://www.knora.org/ontology/knora-admin#SystemUser'; // sstandoff links are managed by the system
+      testHostComponent.readValue.attachedToUser = 'http://www.knora.org/ontology/knora-admin#SystemUser'; // sstandoff links are managed by the system
       testHostFixture.detectChanges();
 
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestLinkValueComponent).toBe(
+        true
+      );
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestLinkValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadLinkValue
+      ).toBe(true);
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
+      expect(
+        (testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent)
+          .parentResource instanceof ReadResource
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadLinkValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
-      expect(
-        (
-          testHostComponent.displayEditValueComponent
-            .displayValueComponent as unknown as TestLinkValueComponent
-        ).parentResource instanceof ReadResource
-      ).toBe(true);
-      expect(
-        (
-          testHostComponent.displayEditValueComponent
-            .displayValueComponent as unknown as TestLinkValueComponent
-        ).propIri
+        (testHostComponent.displayEditValueComponent.displayValueComponent as unknown as TestLinkValueComponent).propIri
       ).toEqual(Constants.HasStandoffLinkToValue);
 
       const userServiceSpy = TestBed.inject(UserService);
@@ -935,45 +783,33 @@ describe('DisplayEditComponent', () => {
     });
 
     it('should choose the apt component for a list value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestListValueComponent).toBe(
+        true
+      );
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestListValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadListValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadListValue
-      ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
 
     it('should choose the apt component for a geoname value in the template', () => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasGeoname'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasGeoname');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
       expect(
-        testHostComponent.displayEditValueComponent
-          .displayValueComponent instanceof TestGeonameValueComponent
+        testHostComponent.displayEditValueComponent.displayValueComponent instanceof TestGeonameValueComponent
       ).toBe(true);
       expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue instanceof ReadGeonameValue
+        testHostComponent.displayEditValueComponent.displayValueComponent.displayValue instanceof ReadGeonameValue
       ).toBe(true);
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.mode
-      ).toEqual('read');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.mode).toEqual('read');
     });
   });
 
@@ -982,58 +818,39 @@ describe('DisplayEditComponent', () => {
     let displayEditComponentDe;
 
     beforeEach(() => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
       hostCompDe = testHostFixture.debugElement;
-      displayEditComponentDe = hostCompDe.query(
-        By.directive(DisplayEditComponent)
-      );
+      displayEditComponentDe = hostCompDe.query(By.directive(DisplayEditComponent));
 
       testHostComponent.displayEditValueComponent.showActionBubble = true;
       testHostFixture.detectChanges();
     });
 
     it('should display an edit button if the user has the necessary permissions', () => {
-      expect(
-        testHostComponent.displayEditValueComponent.canModify
-      ).toBeTruthy();
-      expect(
-        testHostComponent.displayEditValueComponent.editModeActive
-      ).toBeFalsy();
+      expect(testHostComponent.displayEditValueComponent.canModify).toBeTruthy();
+      expect(testHostComponent.displayEditValueComponent.editModeActive).toBeFalsy();
 
-      const editButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.edit')
-      );
+      const editButtonDebugElement = displayEditComponentDe.query(By.css('button.edit'));
 
       expect(editButtonDebugElement).toBeTruthy();
       expect(editButtonDebugElement.nativeElement).toBeTruthy();
     });
 
     it('should switch to edit mode when the edit button is clicked', () => {
-      const editButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.edit')
-      );
+      const editButtonDebugElement = displayEditComponentDe.query(By.css('button.edit'));
       const editButtonNativeElement = editButtonDebugElement.nativeElement;
 
       editButtonNativeElement.click();
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.displayEditValueComponent.editModeActive
-      ).toBeTruthy();
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent.form
-          .valid
-      ).toBeFalsy();
+      expect(testHostComponent.displayEditValueComponent.editModeActive).toBeTruthy();
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.form.valid).toBeFalsy();
 
-      const saveButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.save')
-      );
+      const saveButtonDebugElement = displayEditComponentDe.query(By.css('button.save'));
       const saveButtonNativeElement = saveButtonDebugElement.nativeElement;
 
       expect(saveButtonNativeElement.disabled).toBeTruthy();
@@ -1044,13 +861,9 @@ describe('DisplayEditComponent', () => {
 
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valueEventSpy as jasmine.SpyObj<ValueOperationEventService>
-      ).emit.and.stub();
+      (valueEventSpy as jasmine.SpyObj<ValueOperationEventService>).emit.and.stub();
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).updateValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).updateValue.and.callFake(() => {
         const response = new WriteValueResponse();
 
         response.id = 'newID';
@@ -1060,9 +873,7 @@ describe('DisplayEditComponent', () => {
         return of(response);
       });
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).getValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).getValue.and.callFake(() => {
         const updatedVal = new ReadIntValue();
 
         updatedVal.id = 'newID';
@@ -1072,9 +883,7 @@ describe('DisplayEditComponent', () => {
 
         resource.properties = {
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [
-            updatedVal,
-          ],
+          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [updatedVal],
         };
 
         return of(resource);
@@ -1089,9 +898,7 @@ describe('DisplayEditComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const saveButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.save')
-      );
+      const saveButtonDebugElement = displayEditComponentDe.query(By.css('button.save'));
       const saveButtonNativeElement = saveButtonDebugElement.nativeElement;
 
       expect(saveButtonNativeElement.disabled).toBeFalsy();
@@ -1103,47 +910,31 @@ describe('DisplayEditComponent', () => {
       const expectedUpdateResource = new UpdateResource<UpdateValue>();
 
       expectedUpdateResource.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw';
-      expectedUpdateResource.type =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
-      expectedUpdateResource.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
+      expectedUpdateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+      expectedUpdateResource.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
 
       const expectedUpdateVal = new UpdateIntValue();
-      expectedUpdateVal.id =
-        'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
+      expectedUpdateVal.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
       expectedUpdateVal.int = 1;
 
       expectedUpdateResource.value = expectedUpdateVal;
 
-      expect(valuesSpy.v2.values.updateValue).toHaveBeenCalledWith(
-        expectedUpdateResource
-      );
+      expect(valuesSpy.v2.values.updateValue).toHaveBeenCalledWith(expectedUpdateResource);
       expect(valuesSpy.v2.values.updateValue).toHaveBeenCalledTimes(1);
 
       expect(valueEventSpy.emit).toHaveBeenCalledTimes(1);
       expect(valueEventSpy.emit).toHaveBeenCalledWith(
         new EmitEvent(
           Events.ValueUpdated,
-          new UpdatedEventValues(
-            testHostComponent.readValue,
-            testHostComponent.displayEditValueComponent.displayValue
-          )
+          new UpdatedEventValues(testHostComponent.readValue, testHostComponent.displayEditValueComponent.displayValue)
         )
       );
 
       expect(valuesSpy.v2.values.getValue).toHaveBeenCalledTimes(1);
-      expect(valuesSpy.v2.values.getValue).toHaveBeenCalledWith(
-        testHostComponent.readResource.id,
-        'uuid'
-      );
+      expect(valuesSpy.v2.values.getValue).toHaveBeenCalledWith(testHostComponent.readResource.id, 'uuid');
 
-      expect(
-        testHostComponent.displayEditValueComponent.displayValue.id
-      ).toEqual('newID');
-      expect(
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .displayValue.id
-      ).toEqual('newID');
+      expect(testHostComponent.displayEditValueComponent.displayValue.id).toEqual('newID');
+      expect(testHostComponent.displayEditValueComponent.displayValueComponent.displayValue.id).toEqual('newID');
       expect(testHostComponent.displayEditValueComponent.mode).toEqual('read');
     });
 
@@ -1154,9 +945,7 @@ describe('DisplayEditComponent', () => {
 
       error.status = 400;
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).updateValue.and.returnValue(throwError(error));
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).updateValue.and.returnValue(throwError(error));
 
       testHostComponent.displayEditValueComponent.canModify = true;
       testHostComponent.displayEditValueComponent.editModeActive = true;
@@ -1167,9 +956,7 @@ describe('DisplayEditComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const saveButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.save')
-      );
+      const saveButtonDebugElement = displayEditComponentDe.query(By.css('button.save'));
       const saveButtonNativeElement = saveButtonDebugElement.nativeElement;
 
       expect(saveButtonNativeElement.disabled).toBeFalsy();
@@ -1178,9 +965,7 @@ describe('DisplayEditComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const formErrors =
-        testHostComponent.displayEditValueComponent.displayValueComponent
-          .valueFormControl.errors;
+      const formErrors = testHostComponent.displayEditValueComponent.displayValueComponent.valueFormControl.errors;
 
       const expectedErrors = {
         duplicateValue: true,
@@ -1197,8 +982,7 @@ describe('DisplayEditComponent', () => {
     it('should not display the edit button', () => {
       const inputVal: ReadTextValueAsHtml = new ReadTextValueAsHtml();
 
-      inputVal.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext';
+      inputVal.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext';
       inputVal.hasPermissions =
         'CR knora-admin:Creator|M knora-admin:ProjectMember|V knora-admin:KnownUser|RV knora-admin:UnknownUser';
       inputVal.userHasPermission = 'CR';
@@ -1214,13 +998,9 @@ describe('DisplayEditComponent', () => {
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
       hostCompDe = testHostFixture.debugElement;
-      displayEditComponentDe = hostCompDe.query(
-        By.directive(DisplayEditComponent)
-      );
+      displayEditComponentDe = hostCompDe.query(By.directive(DisplayEditComponent));
 
-      const editButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.edit')
-      );
+      const editButtonDebugElement = displayEditComponentDe.query(By.css('button.edit'));
       expect(editButtonDebugElement).toBe(null);
     });
   });
@@ -1230,34 +1010,23 @@ describe('DisplayEditComponent', () => {
     let displayEditComponentDe;
 
     beforeEach(() => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger',
-        'comment'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger', 'comment');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
 
       hostCompDe = testHostFixture.debugElement;
-      displayEditComponentDe = hostCompDe.query(
-        By.directive(DisplayEditComponent)
-      );
+      displayEditComponentDe = hostCompDe.query(By.directive(DisplayEditComponent));
 
       testHostComponent.displayEditValueComponent.showActionBubble = true;
       testHostFixture.detectChanges();
     });
 
     it('should display a comment button if the value has a comment', () => {
-      expect(
-        testHostComponent.displayEditValueComponent.editModeActive
-      ).toBeFalsy();
-      expect(
-        testHostComponent.displayEditValueComponent.shouldShowCommentToggle
-      ).toBeTruthy();
+      expect(testHostComponent.displayEditValueComponent.editModeActive).toBeFalsy();
+      expect(testHostComponent.displayEditValueComponent.shouldShowCommentToggle).toBeTruthy();
 
-      const commentButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.comment-toggle')
-      );
+      const commentButtonDebugElement = displayEditComponentDe.query(By.css('button.comment-toggle'));
 
       expect(commentButtonDebugElement).toBeTruthy();
       expect(commentButtonDebugElement.nativeElement).toBeTruthy();
@@ -1266,9 +1035,7 @@ describe('DisplayEditComponent', () => {
     it('should not display a comment button if the comment is deleted', () => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).updateValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).updateValue.and.callFake(() => {
         const response = new WriteValueResponse();
 
         response.id = 'newID';
@@ -1278,9 +1045,7 @@ describe('DisplayEditComponent', () => {
         return of(response);
       });
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).getValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).getValue.and.callFake(() => {
         const updatedVal = new ReadIntValue();
 
         updatedVal.id = 'newID';
@@ -1291,9 +1056,7 @@ describe('DisplayEditComponent', () => {
 
         resource.properties = {
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [
-            updatedVal,
-          ],
+          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [updatedVal],
         };
 
         return of(resource);
@@ -1308,13 +1071,9 @@ describe('DisplayEditComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.displayEditValueComponent.shouldShowCommentToggle
-      ).toBeTruthy();
+      expect(testHostComponent.displayEditValueComponent.shouldShowCommentToggle).toBeTruthy();
 
-      const saveButtonDebugElement = displayEditComponentDe.query(
-        By.css('button.save')
-      );
+      const saveButtonDebugElement = displayEditComponentDe.query(By.css('button.save'));
       const saveButtonNativeElement = saveButtonDebugElement.nativeElement;
 
       expect(saveButtonNativeElement.disabled).toBeFalsy();
@@ -1326,39 +1085,25 @@ describe('DisplayEditComponent', () => {
       const expectedUpdateResource = new UpdateResource<UpdateValue>();
 
       expectedUpdateResource.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw';
-      expectedUpdateResource.type =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
-      expectedUpdateResource.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
+      expectedUpdateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+      expectedUpdateResource.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
 
       const expectedUpdateVal = new UpdateIntValue();
-      expectedUpdateVal.id =
-        'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
+      expectedUpdateVal.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
       expectedUpdateVal.int = 1;
 
       expectedUpdateResource.value = expectedUpdateVal;
 
-      expect(valuesSpy.v2.values.updateValue).toHaveBeenCalledWith(
-        expectedUpdateResource
-      );
+      expect(valuesSpy.v2.values.updateValue).toHaveBeenCalledWith(expectedUpdateResource);
       expect(valuesSpy.v2.values.updateValue).toHaveBeenCalledTimes(1);
 
       expect(valuesSpy.v2.values.getValue).toHaveBeenCalledTimes(1);
-      expect(valuesSpy.v2.values.getValue).toHaveBeenCalledWith(
-        testHostComponent.readResource.id,
-        'uuid'
-      );
+      expect(valuesSpy.v2.values.getValue).toHaveBeenCalledWith(testHostComponent.readResource.id, 'uuid');
 
-      expect(
-        testHostComponent.displayEditValueComponent.displayValue.id
-      ).toEqual('newID');
-      expect(
-        testHostComponent.displayEditValueComponent.displayValue.valueHasComment
-      ).toEqual('');
+      expect(testHostComponent.displayEditValueComponent.displayValue.id).toEqual('newID');
+      expect(testHostComponent.displayEditValueComponent.displayValue.valueHasComment).toEqual('');
 
-      expect(
-        testHostComponent.displayEditValueComponent.shouldShowCommentToggle
-      ).toBeFalsy();
+      expect(testHostComponent.displayEditValueComponent.shouldShowCommentToggle).toBeFalsy();
       expect(testHostComponent.displayEditValueComponent.mode).toEqual('read');
     });
   });
@@ -1368,9 +1113,7 @@ describe('DisplayEditComponent', () => {
     let overlayContainer: OverlayContainer;
 
     beforeEach(() => {
-      testHostComponent.assignValue(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
-      );
+      testHostComponent.assignValue('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger');
       testHostFixture.detectChanges();
 
       expect(testHostComponent.displayEditValueComponent).toBeTruthy();
@@ -1379,8 +1122,7 @@ describe('DisplayEditComponent', () => {
       testHostFixture.detectChanges();
 
       overlayContainer = TestBed.inject(OverlayContainer);
-      rootLoader =
-        TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+      rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
     });
 
     afterEach(async () => {
@@ -1396,13 +1138,9 @@ describe('DisplayEditComponent', () => {
 
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valueEventSpy as jasmine.SpyObj<ValueOperationEventService>
-      ).emit.and.stub();
+      (valueEventSpy as jasmine.SpyObj<ValueOperationEventService>).emit.and.stub();
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).deleteValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).deleteValue.and.callFake(() => {
         const response = new DeleteValueResponse();
 
         response.result = 'success';
@@ -1410,42 +1148,32 @@ describe('DisplayEditComponent', () => {
         return of(response);
       });
 
-      const deleteButton = await rootLoader.getHarness(
-        MatButtonHarness.with({ selector: '.delete' })
-      );
+      const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
       await deleteButton.click();
 
-      const dialogHarnesses =
-        await rootLoader.getAllHarnesses(MatDialogHarness);
+      const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
       expect(dialogHarnesses.length).toEqual(1);
 
-      const okButton = await rootLoader.getHarness(
-        MatButtonHarness.with({ selector: '.ok' })
-      );
+      const okButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.ok' }));
 
       await okButton.click();
 
       const expectedUpdateResource = new UpdateResource<DeleteValue>();
 
       expectedUpdateResource.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw';
-      expectedUpdateResource.type =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
-      expectedUpdateResource.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
+      expectedUpdateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+      expectedUpdateResource.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
 
       const deleteVal = new DeleteValue();
-      deleteVal.id =
-        'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
+      deleteVal.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
       deleteVal.type = 'http://api.knora.org/ontology/knora-api/v2#IntValue';
       deleteVal.deleteComment = undefined;
 
       expectedUpdateResource.value = deleteVal;
 
       testHostFixture.whenStable().then(() => {
-        expect(valuesSpy.v2.values.deleteValue).toHaveBeenCalledWith(
-          expectedUpdateResource
-        );
+        expect(valuesSpy.v2.values.deleteValue).toHaveBeenCalledWith(expectedUpdateResource);
         expect(valuesSpy.v2.values.deleteValue).toHaveBeenCalledTimes(1);
 
         expect(valueEventSpy.emit).toHaveBeenCalledTimes(1);
@@ -1460,13 +1188,9 @@ describe('DisplayEditComponent', () => {
 
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valueEventSpy as jasmine.SpyObj<ValueOperationEventService>
-      ).emit.and.stub();
+      (valueEventSpy as jasmine.SpyObj<ValueOperationEventService>).emit.and.stub();
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).deleteValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).deleteValue.and.callFake(() => {
         const response = new DeleteValueResponse();
 
         response.result = 'success';
@@ -1474,30 +1198,23 @@ describe('DisplayEditComponent', () => {
         return of(response);
       });
 
-      testHostComponent.displayEditValueComponent.deleteValue(
-        'my deletion comment'
-      );
+      testHostComponent.displayEditValueComponent.deleteValue('my deletion comment');
 
       const expectedUpdateResource = new UpdateResource<DeleteValue>();
 
       expectedUpdateResource.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw';
-      expectedUpdateResource.type =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
-      expectedUpdateResource.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
+      expectedUpdateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+      expectedUpdateResource.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
 
       const deleteVal = new DeleteValue();
-      deleteVal.id =
-        'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
+      deleteVal.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/dJ1ES8QTQNepFKF5-EAqdg';
       deleteVal.type = 'http://api.knora.org/ontology/knora-api/v2#IntValue';
       deleteVal.deleteComment = 'my deletion comment';
 
       expectedUpdateResource.value = deleteVal;
 
       testHostFixture.whenStable().then(() => {
-        expect(valuesSpy.v2.values.deleteValue).toHaveBeenCalledWith(
-          expectedUpdateResource
-        );
+        expect(valuesSpy.v2.values.deleteValue).toHaveBeenCalledWith(expectedUpdateResource);
         expect(valuesSpy.v2.values.deleteValue).toHaveBeenCalledTimes(1);
       });
     });
@@ -1507,9 +1224,7 @@ describe('DisplayEditComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const deleteButton = await rootLoader.getHarness(
-        MatButtonHarness.with({ selector: '.delete' })
-      );
+      const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
       expect(deleteButton.isDisabled).toBeTruthy;
     });
   });

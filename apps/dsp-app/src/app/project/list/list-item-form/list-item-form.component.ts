@@ -1,10 +1,4 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -102,8 +96,7 @@ export class ListItemFormComponent implements OnInit {
 
   @Input() newNode = false;
 
-  @Output() refreshParent: EventEmitter<ListNodeOperation> =
-    new EventEmitter<ListNodeOperation>();
+  @Output() refreshParent: EventEmitter<ListNodeOperation> = new EventEmitter<ListNodeOperation>();
 
   @Input() isAdmin = false;
 
@@ -169,10 +162,7 @@ export class ListItemFormComponent implements OnInit {
     childNode.parentNodeIri = this.parentIri;
     childNode.projectIri = this.projectIri;
     childNode.name =
-      this.projectUuid +
-      '-' +
-      Math.random().toString(36).substring(2) +
-      Math.random().toString(36).substring(2);
+      this.projectUuid + '-' + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
 
     // initialize labels
     let i = 0;
@@ -188,20 +178,18 @@ export class ListItemFormComponent implements OnInit {
     const listNodeOperation: ListNodeOperation = new ListNodeOperation();
 
     // send payload to dsp-api's api
-    this._listApiService
-      .createChildNode(childNode.parentNodeIri, childNode)
-      .subscribe(response => {
-        // this needs to return a ListNode as opposed to a ListNodeInfo, so we make one
-        listNodeOperation.listNode = new ListNode();
-        listNodeOperation.listNode.hasRootNode = response.nodeinfo.hasRootNode;
-        listNodeOperation.listNode.id = response.nodeinfo.id;
-        listNodeOperation.listNode.labels = response.nodeinfo.labels;
-        listNodeOperation.listNode.name = response.nodeinfo.name;
-        listNodeOperation.listNode.position = response.nodeinfo.position;
-        listNodeOperation.operation = 'create';
-        this.refreshParent.emit(listNodeOperation);
-        this.loading = false;
-      });
+    this._listApiService.createChildNode(childNode.parentNodeIri, childNode).subscribe(response => {
+      // this needs to return a ListNode as opposed to a ListNodeInfo, so we make one
+      listNodeOperation.listNode = new ListNode();
+      listNodeOperation.listNode.hasRootNode = response.nodeinfo.hasRootNode;
+      listNodeOperation.listNode.id = response.nodeinfo.id;
+      listNodeOperation.listNode.labels = response.nodeinfo.labels;
+      listNodeOperation.listNode.name = response.nodeinfo.name;
+      listNodeOperation.listNode.position = response.nodeinfo.position;
+      listNodeOperation.operation = 'create';
+      this.refreshParent.emit(listNodeOperation);
+      this.loading = false;
+    });
   }
 
   /**
@@ -279,11 +267,7 @@ export class ListItemFormComponent implements OnInit {
         // emit data to parent to update the view
         this.refreshParent.emit(listNodeOperation);
         this.labels = (data as ChildNodeInfo).labels;
-      } else if (
-        mode === 'deleteListNode' &&
-        typeof data === 'boolean' &&
-        data === true
-      ) {
+      } else if (mode === 'deleteListNode' && typeof data === 'boolean' && data === true) {
         // delete
         // delete the node
         this._listApiService.deleteListNode(iri).subscribe(

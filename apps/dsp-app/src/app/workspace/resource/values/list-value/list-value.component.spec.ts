@@ -53,9 +53,7 @@ class TestHostDisplayValueComponent implements OnInit {
       this.mode = 'read';
     });
     this.propertyDef = new ResourcePropertyDefinition();
-    this.propertyDef.guiAttributes.push(
-      'hlist=<http://rdfh.ch/lists/0001/treeList>'
-    );
+    this.propertyDef.guiAttributes.push('hlist=<http://rdfh.ch/lists/0001/treeList>');
   }
 }
 
@@ -63,10 +61,7 @@ class TestHostDisplayValueComponent implements OnInit {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-list-value
-    #inputVal
-    [mode]="mode"
-    [propertyDef]="propertyDef"></app-list-value>`,
+  template: ` <app-list-value #inputVal [mode]="mode" [propertyDef]="propertyDef"></app-list-value>`,
 })
 class TestHostCreateValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: ListValueComponent;
@@ -77,9 +72,7 @@ class TestHostCreateValueComponent implements OnInit {
   ngOnInit() {
     this.mode = 'create';
     this.propertyDef = new ResourcePropertyDefinition();
-    this.propertyDef.guiAttributes.push(
-      'hlist=<http://rdfh.ch/lists/0001/treeList>'
-    );
+    this.propertyDef.guiAttributes.push('hlist=<http://rdfh.ch/lists/0001/treeList>');
   }
 }
 
@@ -87,11 +80,7 @@ describe('ListValueComponent', () => {
   beforeEach(waitForAsync(() => {
     const valuesSpyObj = {
       v2: {
-        values: jasmine.createSpyObj('values', [
-          'updateValue',
-          'getValue',
-          'setValue',
-        ]),
+        values: jasmine.createSpyObj('values', ['updateValue', 'getValue', 'setValue']),
         list: jasmine.createSpyObj('list', ['getList']),
       },
     };
@@ -132,9 +121,7 @@ describe('ListValueComponent', () => {
 
     beforeEach(() => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
-      (
-        valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-      ).getList.and.callFake(() => {
+      (valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>).getList.and.callFake(() => {
         const res = new ListNodeV2();
         res.id = 'http://rdfh.ch/lists/0001/treeList01';
         res.label = 'Tree list node 01';
@@ -158,12 +145,10 @@ describe('ListValueComponent', () => {
     });
 
     it('should display an existing value', () => {
-      expect(
-        testHostComponent.inputValueComponent.displayValue.listNode
-      ).toMatch('http://rdfh.ch/lists/0001/treeList01');
-      expect(
-        testHostComponent.inputValueComponent.displayValue.listNodeLabel
-      ).toMatch('Tree list node 01');
+      expect(testHostComponent.inputValueComponent.displayValue.listNode).toMatch(
+        'http://rdfh.ch/lists/0001/treeList01'
+      );
+      expect(testHostComponent.inputValueComponent.displayValue.listNodeLabel).toMatch('Tree list node 01');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -174,9 +159,7 @@ describe('ListValueComponent', () => {
 
     it('should make list value editable as button', () => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
-      (
-        valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-      ).getList.and.callFake(() => {
+      (valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>).getList.and.callFake(() => {
         const res = new ListNodeV2();
         res.id = 'http://rdfh.ch/lists/0001/treeList';
         res.label = 'Listenwurzel';
@@ -189,32 +172,22 @@ describe('ListValueComponent', () => {
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
       expect(valuesSpy.v2.list.getList).toHaveBeenCalledTimes(3);
-      expect(valuesSpy.v2.list.getList).toHaveBeenCalledWith(
-        'http://rdfh.ch/lists/0001/treeList'
-      );
-      expect(
-        testHostComponent.inputValueComponent.listRootNode.children.length
-      ).toEqual(0);
+      expect(valuesSpy.v2.list.getList).toHaveBeenCalledWith('http://rdfh.ch/lists/0001/treeList');
+      expect(testHostComponent.inputValueComponent.listRootNode.children.length).toEqual(0);
 
       const dropdownDe = valueComponentDe.query(By.css('.dropdown'));
       const dropdownLabel = valueComponentDe.query(By.css('.label'));
 
       expect(dropdownDe).toBeTruthy();
 
-      expect(dropdownLabel.nativeElement.textContent.trim()).toBe(
-        'Tree list node 01'
-      );
+      expect(dropdownLabel.nativeElement.textContent.trim()).toBe('Tree list node 01');
 
-      expect(testHostComponent.inputValueComponent.selectedNode.label).toBe(
-        'Tree list node 01'
-      );
+      expect(testHostComponent.inputValueComponent.selectedNode.label).toBe('Tree list node 01');
     });
 
     it('should validate an existing value with an added comment', () => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
-      (
-        valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-      ).getList.and.callFake(() => {
+      (valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>).getList.and.callFake(() => {
         const res = new ListNodeV2();
         res.id = 'http://rdfh.ch/lists/0001/treeList';
         res.label = 'Listenwurzel';
@@ -229,22 +202,17 @@ describe('ListValueComponent', () => {
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
       // set a comment value
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'this is a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateListValue).toBeTruthy();
 
-      expect((updatedValue as UpdateListValue).valueHasComment).toEqual(
-        'this is a comment'
-      );
+      expect((updatedValue as UpdateListValue).valueHasComment).toEqual('this is a comment');
     });
   });
   describe('create a list value', () => {
@@ -254,9 +222,7 @@ describe('ListValueComponent', () => {
     beforeEach(() => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>
-      ).getList.and.callFake(() => {
+      (valuesSpy.v2.list as jasmine.SpyObj<ListsEndpointV2>).getList.and.callFake(() => {
         const res = new ListNodeV2();
         res.id = 'http://rdfh.ch/lists/0001/treeList';
         res.label = 'Listenwurzel';
@@ -278,18 +244,14 @@ describe('ListValueComponent', () => {
 
     it('should create a value', () => {
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
-        'http://rdfh.ch/lists/0001/treeList01'
-      );
+      testHostComponent.inputValueComponent.valueFormControl.setValue('http://rdfh.ch/lists/0001/treeList01');
       testHostFixture.detectChanges();
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
       const newValue = testHostComponent.inputValueComponent.getNewValue();
 
       expect(newValue instanceof CreateListValue).toBeTruthy();
 
-      expect((newValue as CreateListValue).listNode).toEqual(
-        'http://rdfh.ch/lists/0001/treeList01'
-      );
+      expect((newValue as CreateListValue).listNode).toEqual('http://rdfh.ch/lists/0001/treeList01');
     });
 
     it('should reset form after cancellation', () => {
@@ -308,13 +270,9 @@ describe('ListValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(null);
 
-      expect(
-        testHostComponent.inputValueComponent.commentFormControl.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual(null);
     });
   });
 });

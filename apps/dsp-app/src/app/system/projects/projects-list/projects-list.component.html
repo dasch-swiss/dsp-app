@@ -20,29 +20,17 @@
           (sortKeyChange)="sortList($event)">
         </app-sort-button>
       </span>
-      <h2 class="mat-headline-6">
-        {{ list.length | i18nPlural : itemPluralMapping['project'] }}
-      </h2>
+      <h2 class="mat-headline-6">{{ list.length | i18nPlural : itemPluralMapping['project'] }}</h2>
       <span class="fill-remaining-space"></span>
-      <span
-        class="app-toolbar-action button right"
-        *ngIf="status && createNew && (isSysAdmin$ | async) === true">
-        <button
-          mat-flat-button
-          [color]="'primary'"
-          (click)="createNewProject()">
-          Create new
-        </button>
+      <span class="app-toolbar-action button right" *ngIf="status && createNew && (isSysAdmin$ | async) === true">
+        <button mat-flat-button [color]="'primary'" (click)="createNewProject()">Create new</button>
       </span>
     </div>
   </div>
 
   <!-- content: list -->
   <table class="table more-space-bottom" [class.deactivated]="!status">
-    <tr
-      class="table-entry"
-      *ngFor="let project of list; let last = last"
-      [class.no-border]="last">
+    <tr class="table-entry" *ngFor="let project of list; let last = last" [class.no-border]="last">
       <!-- logo -->
       <td class="avatar-cell">
         <mat-icon mat-list-icon>
@@ -52,11 +40,7 @@
       </td>
       <td class="table-info">
         <!-- Longname hidden on phone devices -->
-        <h5
-          class="mat-subtitle-1 link info-longname"
-          (click)="openProjectPage(project.id)">
-          {{ project.longname }}
-        </h5>
+        <h5 class="mat-subtitle-1 link info-longname" (click)="openProjectPage(project.id)">{{ project.longname }}</h5>
         <p class="mat-subtitle-2 link" (click)="openProjectPage(project.id)">
           {{ project.shortcode }} | {{ project.shortname }}
         </p>
@@ -75,12 +59,7 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-          <button
-            mat-menu-item
-            *ngIf="status"
-            (click)="editProject(project.id)">
-            Edit project information
-          </button>
+          <button mat-menu-item *ngIf="status" (click)="editProject(project.id)">Edit project information</button>
           <button
             mat-menu-item
             *ngIf="status"

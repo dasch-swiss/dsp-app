@@ -11,20 +11,14 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  ExistingNameDirective,
-  existingNamesValidator,
-} from './existing-name.directive';
+import { ExistingNameDirective, existingNamesValidator } from './existing-name.directive';
 
 @Component({
   template: `
     <div>
       <form [formGroup]="form">
         <mat-form-field>
-          <input
-            matInput
-            [formControl]="form.controls['name']"
-            [placeholder]="'Name (should be unique)'" />
+          <input matInput [formControl]="form.controls['name']" [placeholder]="'Name (should be unique)'" />
           <mat-hint *ngIf="formErrors.name">
             {{ formErrors.name }}
           </mat-hint>
@@ -40,15 +34,7 @@ import {
   `,
 })
 class TestHostComponent implements OnInit {
-  dataMock: string[] = [
-    'Ben',
-    'Tobias',
-    'André',
-    'Flavie',
-    'Ivan',
-    'Lucas',
-    'Mike',
-  ];
+  dataMock: string[] = ['Ben', 'Tobias', 'André', 'Flavie', 'Ivan', 'Lucas', 'Mike'];
 
   existingNames: [RegExp] = [new RegExp('user')];
 
@@ -71,9 +57,7 @@ class TestHostComponent implements OnInit {
     // create a list of existing names
     let i = 1;
     for (const user of this.dataMock) {
-      this.existingNames[i] = new RegExp(
-        '(?:^|W)' + user.toLowerCase() + '(?:$|W)'
-      );
+      this.existingNames[i] = new RegExp('(?:^|W)' + user.toLowerCase() + '(?:$|W)');
 
       i++;
     }
@@ -117,26 +101,12 @@ class TestHostComponent implements OnInit {
 describe('ExistingNameDirective', () => {
   let component: TestHostComponent;
   let fixture: ComponentFixture<TestHostComponent>;
-  const existingNamesList: string[] = [
-    'Ben',
-    'Tobias',
-    'André',
-    'Flavie',
-    'Ivan',
-    'Lucas',
-    'Mike',
-  ];
+  const existingNamesList: string[] = ['Ben', 'Tobias', 'André', 'Flavie', 'Ivan', 'Lucas', 'Mike'];
   const existingNames: [RegExp] = [new RegExp('user')];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
       declarations: [ExistingNameDirective, TestHostComponent],
     });
 
@@ -226,8 +196,6 @@ describe('ExistingNameDirective', () => {
     expect(component.form.valid).toBeFalsy();
     expect(errors['required']).toBeFalsy();
     expect(existingNamesValidator(existingNames)).toBeTruthy();
-    expect(component.form.controls.name.errors.existingName.name).toEqual(
-      'ben'
-    );
+    expect(component.form.controls.name.errors.existingName.name).toEqual('ben');
   });
 });

@@ -10,26 +10,11 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {
-  Constants,
-  ReadProject,
-  ReadUser,
-  StoredProject,
-  UpdateProjectRequest,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadProject, ReadUser, StoredProject, UpdateProjectRequest } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
-import {
-  SortingService,
-  ProjectService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  ProjectsSelectors,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { SortingService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { SortProp } from '@dsp-app/src/app/main/action/sort-button/sort-button.component';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { Select } from '@ngxs/store';
@@ -61,10 +46,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   loading: boolean;
 
   // list of default, dsp-specific projects, which are not able to be deleted or to be editied
-  doNotDelete: string[] = [
-    Constants.SystemProjectIRI,
-    Constants.DefaultSharedOntologyIRI,
-  ];
+  doNotDelete: string[] = [Constants.SystemProjectIRI, Constants.DefaultSharedOntologyIRI];
 
   // i18n plural mapping
   itemPluralMapping = {
@@ -97,9 +79,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   @Select(UserSelectors.userProjectAdminGroups)
   userProjectAdminGroups$: Observable<string[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<
-    ReadProject[]
-  >;
+  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
   @Select(ProjectsSelectors.isProjectsLoading)
   isProjectsLoading$: Observable<boolean>;
 
@@ -131,11 +111,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
       takeUntil(this.ngUnsubscribe),
       map(([user, userProjectGroups]) => {
-        return ProjectService.IsProjectAdminOrSysAdmin(
-          user,
-          userProjectGroups,
-          projectIri
-        );
+        return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
       })
     );
   }

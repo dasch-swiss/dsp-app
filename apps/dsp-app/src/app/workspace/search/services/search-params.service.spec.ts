@@ -1,9 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import {
-  GravsearchSearchParams,
-  SearchParamsService,
-} from './search-params.service';
+import { GravsearchSearchParams, SearchParamsService } from './search-params.service';
 
 describe('SearchParamsService', () => {
   let service: SearchParamsService;

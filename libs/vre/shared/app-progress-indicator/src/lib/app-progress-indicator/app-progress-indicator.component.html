@@ -1,28 +1,17 @@
 <!-- this is the progress indicator for forms -->
-<div
-  class="app-progress-indicator submit"
-  *ngIf="status !== undefined; else isLoading">
+<div class="app-progress-indicator submit" *ngIf="status !== undefined; else isLoading">
   <!-- spinner while on load / on submit -->
   <div class="on-submit" *ngIf="status === 0">
-    <div
-      class="spinner"
-      [style.border-top-color]="color"
-      [style.border-left-color]="color"></div>
+    <div class="spinner" [style.border-top-color]="color" [style.border-left-color]="color"></div>
   </div>
 
   <div>
     <!-- bullet point before submit -->
-    <mat-icon *ngIf="status === -1" class="before-submit"
-      >keyboard_arrow_right</mat-icon
-    >
+    <mat-icon *ngIf="status === -1" class="before-submit">keyboard_arrow_right</mat-icon>
     <!-- icon 'check' when done -->
-    <mat-icon *ngIf="status === 1" class="after-submit" [style.color]="color"
-      >done</mat-icon
-    >
+    <mat-icon *ngIf="status === 1" class="after-submit" [style.color]="color">done</mat-icon>
     <!-- in case of an error -->
-    <mat-icon *ngIf="status === 400" class="submit-error"
-      >not_interested</mat-icon
-    >
+    <mat-icon *ngIf="status === 400" class="submit-error">not_interested</mat-icon>
   </div>
 </div>
 

@@ -23,10 +23,7 @@ import {
   ReadOntology,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { SplitPipe } from '@dsp-app/src/app/main/pipes/split.pipe';
@@ -62,33 +59,25 @@ class HostComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this._applicationStateService
-      .get('currentOntology')
-      .subscribe((response: ReadOntology) => {
-        this.ontology = response;
+    this._applicationStateService.get('currentOntology').subscribe((response: ReadOntology) => {
+      this.ontology = response;
 
-        const allOntoClasses = response.getAllClassDefinitions();
-        // reset the ontology classes
-        let classesToDisplay = [];
+      const allOntoClasses = response.getAllClassDefinitions();
+      // reset the ontology classes
+      let classesToDisplay = [];
 
-        // display only the classes which are not a subClass of Standoff
-        allOntoClasses.forEach(resClass => {
-          if (resClass.subClassOf.length) {
-            const splittedSubClass = resClass.subClassOf[0].split('#');
-            if (
-              !splittedSubClass[0].includes(Constants.StandoffOntology) &&
-              !splittedSubClass[1].includes('Standoff')
-            ) {
-              classesToDisplay.push(resClass);
-            }
+      // display only the classes which are not a subClass of Standoff
+      allOntoClasses.forEach(resClass => {
+        if (resClass.subClassOf.length) {
+          const splittedSubClass = resClass.subClassOf[0].split('#');
+          if (!splittedSubClass[0].includes(Constants.StandoffOntology) && !splittedSubClass[1].includes('Standoff')) {
+            classesToDisplay.push(resClass);
           }
-        });
-        classesToDisplay = this._sortingService.keySortByAlphabetical(
-          classesToDisplay,
-          'label'
-        );
-        this.resourceClass = classesToDisplay[0];
+        }
       });
+      classesToDisplay = this._sortingService.keySortByAlphabetical(classesToDisplay, 'label');
+      this.resourceClass = classesToDisplay[0];
+    });
 
     this.userCanEdit = true;
   }
@@ -109,18 +98,10 @@ describe('ResourceClassInfoComponent', () => {
       },
     };
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     TestBed.configureTestingModule({
-      declarations: [
-        HostComponent,
-        ResourceClassInfoComponent,
-        SplitPipe,
-        TruncatePipe,
-      ],
+      declarations: [HostComponent, ResourceClassInfoComponent, SplitPipe, TruncatePipe],
       imports: [
         BrowserAnimationsModule,
         MatAutocompleteModule,
@@ -158,39 +139,25 @@ describe('ResourceClassInfoComponent', () => {
   beforeEach(() => {
     // mock application state service for currentOntology
     const cacheSpyOnto = TestBed.inject(ApplicationStateService);
-    (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get
-      .withArgs('currentOntology')
-      .and.callFake(() => {
-        const response: ReadOntology = MockOntology.mockReadOntology(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-        return of(response);
-      });
+    (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get.withArgs('currentOntology').and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+      return of(response);
+    });
 
     const cacheSpyProjOnto = TestBed.inject(ApplicationStateService);
     (cacheSpyProjOnto as jasmine.SpyObj<ApplicationStateService>).get
       .withArgs('currentProjectOntologies')
       .and.callFake(() => {
         const ontologies: ReadOntology[] = [];
-        ontologies.push(
-          MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2'
-          )
-        );
-        ontologies.push(
-          MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/minimal/v2'
-          )
-        );
+        ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
+        ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
         const response: ReadOntology[] = ontologies;
         return of(response);
       });
 
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).canDeleteResourceClass.and.callFake(() => {
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canDeleteResourceClass.and.callFake(() => {
       const deleteResClass: CanDoResponse = {
         canDo: false,
       };
@@ -198,15 +165,15 @@ describe('ResourceClassInfoComponent', () => {
       return of(deleteResClass);
     });
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).canReplaceCardinalityOfResourceClass.and.callFake(() => {
-      const replaceCardinalityOfResClass: CanDoResponse = {
-        canDo: false,
-      };
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canReplaceCardinalityOfResourceClass.and.callFake(
+      () => {
+        const replaceCardinalityOfResClass: CanDoResponse = {
+          canDo: false,
+        };
 
-      return of(replaceCardinalityOfResClass);
-    });
+        return of(replaceCardinalityOfResClass);
+      }
+    );
 
     hostFixture = TestBed.createComponent(HostComponent);
     hostComponent = hostFixture.componentInstance;
@@ -217,9 +184,7 @@ describe('ResourceClassInfoComponent', () => {
 
   it('expect title to be "Audio Sequence Thing", id name "AudioSequenceThing" and subclass of "Thing"', () => {
     expect(hostComponent.resourceClassInfoComponent).toBeTruthy();
-    expect(
-      hostComponent.resourceClassInfoComponent.resourceClass
-    ).toBeDefined();
+    expect(hostComponent.resourceClassInfoComponent.resourceClass).toBeDefined();
 
     const hostCompDe = hostFixture.debugElement;
 
@@ -227,9 +192,7 @@ describe('ResourceClassInfoComponent', () => {
 
     expect(title.nativeElement.innerText).toEqual('Audio Sequence Thing');
 
-    const subtitle: DebugElement = hostCompDe.query(
-      By.css('mat-card-subtitle')
-    );
+    const subtitle: DebugElement = hostCompDe.query(By.css('mat-card-subtitle'));
 
     expect(subtitle.nativeElement.innerText).toContain('AudioSequenceThing');
     expect(subtitle.nativeElement.innerText).toContain('Thing');
@@ -237,18 +200,14 @@ describe('ResourceClassInfoComponent', () => {
 
   it('expect delete res class button should be disabled', () => {
     expect(hostComponent.resourceClassInfoComponent).toBeTruthy();
-    expect(
-      hostComponent.resourceClassInfoComponent.resourceClass
-    ).toBeDefined();
+    expect(hostComponent.resourceClassInfoComponent.resourceClass).toBeDefined();
 
     const hostCompDe = hostFixture.debugElement;
 
     const moreBtn: DebugElement = hostCompDe.query(By.css('.res-class-menu'));
     moreBtn.nativeElement.click();
 
-    const deleteBtn: DebugElement = hostCompDe.query(
-      By.css('.res-class-delete')
-    );
+    const deleteBtn: DebugElement = hostCompDe.query(By.css('.res-class-delete'));
     expect(deleteBtn.nativeElement.disabled).toBeTruthy();
   });
 });

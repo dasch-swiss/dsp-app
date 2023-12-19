@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { ShortResInfo } from '../results/list-view/list-view.component';
 import { SplitSize } from '../results/results.component';
 
@@ -43,9 +38,7 @@ export class ComparisonComponent implements OnChanges {
 
     if (!this.noOfResources) {
       this.noOfResources =
-        this.resourceIds && this.resourceIds.length
-          ? this.resourceIds.length
-          : this.resources.length;
+        this.resourceIds && this.resourceIds.length ? this.resourceIds.length : this.resources.length;
     }
 
     // if number of resources are more than 3, divide it into 2 rows

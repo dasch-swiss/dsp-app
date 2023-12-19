@@ -1,31 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceClassDefinition, StoredProject } from '@dasch-swiss/dsp-js';
-import {
-  AppConfigService,
-  getAllEntityDefinitionsAsArray,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
-import {
-  OntologyService,
-  ProjectService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  IProjectOntologiesKeyValuePairs,
-  OntologiesSelectors,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
-import {
-  FilteredResources,
-  SearchParams,
-} from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
+import { AppConfigService, getAllEntityDefinitionsAsArray, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { IProjectOntologiesKeyValuePairs, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { FilteredResources, SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
@@ -38,10 +18,7 @@ import { ProjectBase } from '../../project-base';
   templateUrl: './ontology-class-instance.component.html',
   styleUrls: ['./ontology-class-instance.component.scss'],
 })
-export class OntologyClassInstanceComponent
-  extends ProjectBase
-  implements OnInit, OnDestroy
-{
+export class OntologyClassInstanceComponent extends ProjectBase implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   routeConstants = RouteConstants;
@@ -92,38 +69,23 @@ export class OntologyClassInstanceComponent
       this.isSysAdmin$,
     ]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(
-        ([
-          projectOntologies,
-          classId,
-          ontoId,
-          instanceId,
-          userProjects,
-          isSysAdmin,
-        ]) => {
-          if (
-            instanceId !== RouteConstants.addClassInstance ||
-            (instanceId === RouteConstants.addClassInstance &&
-              !(
-                userProjects?.some(p => p.id === this.projectIri) || isSysAdmin
-              )) ||
-            !projectOntologies[this.projectIri]
-          ) {
-            return;
-          }
-
-          const ontology = projectOntologies[
-            this.projectIri
-          ].readOntologies.find(onto => onto.id === ontoId);
-          if (ontology) {
-            // find ontology of current resource class to get the class label
-            const classes = getAllEntityDefinitionsAsArray(ontology.classes);
-            return <ResourceClassDefinition>(
-              classes[classes.findIndex(res => res.id === classId)]
-            );
-          }
+      map(([projectOntologies, classId, ontoId, instanceId, userProjects, isSysAdmin]) => {
+        if (
+          instanceId !== RouteConstants.addClassInstance ||
+          (instanceId === RouteConstants.addClassInstance &&
+            !(userProjects?.some(p => p.id === this.projectIri) || isSysAdmin)) ||
+          !projectOntologies[this.projectIri]
+        ) {
+          return;
         }
-      )
+
+        const ontology = projectOntologies[this.projectIri].readOntologies.find(onto => onto.id === ontoId);
+        if (ontology) {
+          // find ontology of current resource class to get the class label
+          const classes = getAllEntityDefinitionsAsArray(ontology.classes);
+          return <ResourceClassDefinition>classes[classes.findIndex(res => res.id === classId)];
+        }
+      })
     );
   }
 
@@ -165,9 +127,7 @@ export class OntologyClassInstanceComponent
   @Select(OntologiesSelectors.projectOntologies)
   projectOntologies$: Observable<IProjectOntologiesKeyValuePairs>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.userProjects) userProjects$: Observable<
-    StoredProject[]
-  >;
+  @Select(UserSelectors.userProjects) userProjects$: Observable<StoredProject[]>;
 
   constructor(
     private _acs: AppConfigService,
@@ -185,9 +145,7 @@ export class OntologyClassInstanceComponent
 
   ngOnInit() {
     // waits for current project data to be loaded to the state if not already loaded
-    this.project$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => this._cdr.markForCheck());
+    this.project$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => this._cdr.markForCheck());
   }
 
   ngOnDestroy() {

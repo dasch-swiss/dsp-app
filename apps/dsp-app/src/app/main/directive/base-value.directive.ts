@@ -1,12 +1,5 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CreateValue, ReadValue, UpdateValue } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -88,10 +81,9 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
     });
     this.resetFormControl();
     // subscribing to comment changes and revalidate. Enables changing of comments and saving values even if the valueFormControls value did not change.
-    this.commentChangesSubscription =
-      this.commentFormControl.valueChanges.subscribe(() => {
-        this.valueFormControl.updateValueAndValidity();
-      });
+    this.commentChangesSubscription = this.commentFormControl.valueChanges.subscribe(() => {
+      this.valueFormControl.updateValueAndValidity();
+    });
     resolvedPromise.then(() => {
       // add form to the parent form group
       this.addToParentFormGroup(this.formName, this.form);
@@ -124,21 +116,12 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    * @param initComment Initially given comment.
    * @param commentFormControl FormControl of the current comment.
    */
-  standardValidatorFunc: (
-    val: any,
-    comment: string,
-    commentCtrl: FormControl
-  ) => ValidatorFn =
-    (
-      initValue: any,
-      initComment: string,
-      commentFormControl: FormControl
-    ): ValidatorFn =>
+  standardValidatorFunc: (val: any, comment: string, commentCtrl: FormControl) => ValidatorFn =
+    (initValue: any, initComment: string, commentFormControl: FormControl): ValidatorFn =>
     (control: AbstractControl): { [key: string]: any } | null => {
       const invalid =
         this.standardValueComparisonFunc(initValue, control.value) &&
-        (initComment === commentFormControl.value ||
-          (initComment === null && commentFormControl.value === ''));
+        (initComment === commentFormControl.value || (initComment === null && commentFormControl.value === ''));
 
       return invalid ? { valueNotChanged: { value: control.value } } : null;
     };
@@ -148,10 +131,7 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    * Returns null if no value comment was given.
    */
   getInitComment(): string | null {
-    if (
-      this.displayValue !== undefined &&
-      this.displayValue.valueHasComment !== undefined
-    ) {
+    if (this.displayValue !== undefined && this.displayValue.valueHasComment !== undefined) {
       return this.displayValue.valueHasComment;
     } else {
       return null;
@@ -164,10 +144,7 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    * Depending on the mode, validators are reset.
    */
   resetFormControl(): void {
-    if (
-      this.valueFormControl !== undefined &&
-      this.commentFormControl !== undefined
-    ) {
+    if (this.valueFormControl !== undefined && this.commentFormControl !== undefined) {
       const initialValue = this.getInitValue();
       const initialComment = this.getInitComment();
       this.valueFormControl.reset();
@@ -182,19 +159,13 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
         this.valueFormControl.setValidators(
           [
             Validators.required,
-            this.standardValidatorFunc(
-              initialValue,
-              initialComment,
-              this.commentFormControl
-            ),
+            this.standardValidatorFunc(initialValue, initialComment, this.commentFormControl),
           ].concat(this.customValidators)
         );
       } else {
         // console.log('reset read/create validators');
         if (this.valueRequiredValidator) {
-          this.valueFormControl.setValidators(
-            [Validators.required].concat(this.customValidators)
-          );
+          this.valueFormControl.setValidators([Validators.required].concat(this.customValidators));
         } else {
           this.valueFormControl.setValidators(this.customValidators);
         }
@@ -240,19 +211,14 @@ export abstract class BaseValueDirective implements OnInit, OnDestroy {
    * checks if the value is empty.
    */
   isEmptyVal(): boolean {
-    return (
-      this.valueFormControl.value === null || this.valueFormControl.value === ''
-    );
+    return this.valueFormControl.value === null || this.valueFormControl.value === '';
   }
 
   /**
    * returns true if there is no property value but one required or an invalid property value in the valueFormControl
    */
   hasError() {
-    return (
-      this.valueFormControl.hasError('pattern') ||
-      this.valueFormControl.hasError('required')
-    );
+    return this.valueFormControl.hasError('pattern') || this.valueFormControl.hasError('required');
   }
 
   /**

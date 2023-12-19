@@ -69,9 +69,7 @@ knora-api:hasColor knora-api:objectType knora-api:Color .
 
     service.getIncomingRegions('http://rdfh.ch/0801/letter', 0);
 
-    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-      expectedQuery
-    );
+    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(expectedQuery);
   });
 
   it('should get incoming StillImageRepresentations ', () => {
@@ -110,14 +108,9 @@ knora-api:hasStillImageFile knora-api:objectType knora-api:File .
 OFFSET 1
 `;
 
-    service.getStillImageRepresentationsForCompoundResource(
-      'http://rdfh.ch/0801/letter',
-      1
-    );
+    service.getStillImageRepresentationsForCompoundResource('http://rdfh.ch/0801/letter', 1);
 
-    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-      expectedQuery
-    );
+    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(expectedQuery);
   });
 
   it('should get incoming Links', () => {
@@ -158,8 +151,6 @@ FILTER NOT EXISTS {
 
     service.getIncomingLinksForResource('http://rdfh.ch/0801/letter', 0);
 
-    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-      expectedQuery
-    );
+    expect(dspSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(expectedQuery);
   });
 });

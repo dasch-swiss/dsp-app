@@ -1,10 +1,4 @@
-import {
-  ConnectionPositionPair,
-  Overlay,
-  OverlayConfig,
-  OverlayRef,
-  PositionStrategy,
-} from '@angular/cdk/overlay';
+import { ConnectionPositionPair, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Component,
@@ -101,9 +95,7 @@ export class SearchPanelComponent {
     });
 
     this.overlayRef = this._overlay.create(config);
-    this.overlayRef.attach(
-      new TemplatePortal(this.searchMenu, this._viewContainerRef)
-    );
+    this.overlayRef.attach(new TemplatePortal(this.searchMenu, this._viewContainerRef));
     this.overlayRef.backdropClick().subscribe(() => {
       this.showAdvanced = false;
       this.showExpert = false;
@@ -114,14 +106,8 @@ export class SearchPanelComponent {
 
   getOverlayPosition(): PositionStrategy {
     const positions = [
-      new ConnectionPositionPair(
-        { originX: 'start', originY: 'bottom' },
-        { overlayX: 'start', overlayY: 'top' }
-      ),
-      new ConnectionPositionPair(
-        { originX: 'start', originY: 'top' },
-        { overlayX: 'start', overlayY: 'bottom' }
-      ),
+      new ConnectionPositionPair({ originX: 'start', originY: 'bottom' }, { overlayX: 'start', overlayY: 'top' }),
+      new ConnectionPositionPair({ originX: 'start', originY: 'top' }, { overlayX: 'start', overlayY: 'bottom' }),
     ];
 
     // tslint:disable-next-line: max-line-length

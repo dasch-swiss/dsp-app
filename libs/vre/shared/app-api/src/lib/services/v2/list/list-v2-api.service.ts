@@ -12,14 +12,10 @@ export class ListV2ApiService extends BaseApi {
   }
 
   getNode(nodeIri: string) {
-    return this._http.get<ListNode>(
-      `${this.baseUri}/node/${encodeURIComponent(nodeIri)}`
-    );
+    return this._http.get<ListNode>(`${this.baseUri}/node/${encodeURIComponent(nodeIri)}`);
   }
 
   getListWithInterface(nodeIri: string) {
-    return this._http.get<ListNode>(
-      `${this.baseUri}/lists/${encodeURIComponent(nodeIri)}`
-    );
+    return this._http.get<ListNode>(`${this.baseUri}/lists/${encodeURIComponent(nodeIri)}`);
   }
 }

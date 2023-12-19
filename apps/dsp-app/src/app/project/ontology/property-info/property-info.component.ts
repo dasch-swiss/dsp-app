@@ -1,19 +1,5 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
-import {
-  AfterContentInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnChanges,
-  Output,
-} from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
 import {
   ApiResponseError,
   CanDoResponse,
@@ -22,10 +8,7 @@ import {
   ReadProject,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  getAllEntityDefinitionsAsArray,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   DefaultClass,
@@ -35,10 +18,7 @@ import {
   PropertyInfoObject,
   OntologyService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  ListsSelectors,
-  OntologiesSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 
 // property data structure
@@ -50,14 +30,7 @@ export class Property {
   required: boolean;
   guiAttr: string;
 
-  constructor(
-    iri?: string,
-    label?: string,
-    type?: any,
-    multiple?: boolean,
-    required?: boolean,
-    guiAttr?: string
-  ) {
+  constructor(iri?: string, label?: string, type?: any, multiple?: boolean, required?: boolean, guiAttr?: string) {
     this.iri = iri;
     this.label = label;
     this.type = type;
@@ -113,17 +86,13 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
   @Input() userCanEdit: boolean; // is user a project admin or sys admin?
 
   // event emitter when the lastModificationDate changed; bidirectional binding with lastModificationDate parameter
-  @Output() lastModificationDateChange: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() lastModificationDateChange: EventEmitter<string> = new EventEmitter<string>();
 
-  @Output() editResourceProperty: EventEmitter<PropertyInfoObject> =
-    new EventEmitter<PropertyInfoObject>();
-  @Output() deleteResourceProperty: EventEmitter<DefaultClass> =
-    new EventEmitter<DefaultClass>();
+  @Output() editResourceProperty: EventEmitter<PropertyInfoObject> = new EventEmitter<PropertyInfoObject>();
+  @Output() deleteResourceProperty: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
   // submit res class iri to open res class (not yet implemented)
-  @Output() clickedOnClass: EventEmitter<ShortInfo> =
-    new EventEmitter<ShortInfo>();
+  @Output() clickedOnClass: EventEmitter<ShortInfo> = new EventEmitter<ShortInfo>();
 
   propInfo: Property = new Property();
 
@@ -153,15 +122,10 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
   ) {}
 
   ngOnChanges(): void {
-    const currentProjectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectOntologies
-    );
+    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
     // get info about subproperties, if they are not a subproperty of knora base ontology
     // in this case add it to the list of subproperty iris
-    const superProp = this._ontoService.getSuperProperty(
-      this.propDef,
-      currentProjectOntologies
-    );
+    const superProp = this._ontoService.getSuperProperty(this.propDef, currentProjectOntologies);
     if (superProp) {
       if (this.propDef.subPropertyOf.indexOf(superProp) === -1) {
         this.propDef.subPropertyOf.push(superProp);
@@ -169,21 +133,15 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     }
 
     // get the default property type for this property
-    this._ontoService
-      .getDefaultPropType(this.propDef)
-      .subscribe((prop: DefaultProperty) => {
-        this.propType = prop;
-      });
+    this._ontoService.getDefaultPropType(this.propDef).subscribe((prop: DefaultProperty) => {
+      this.propType = prop;
+    });
   }
 
   ngAfterContentInit() {
-    const currentProjectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectOntologies
-    );
+    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
     if (this.propDef.isLinkProperty) {
-      const ontology = this._store.selectSnapshot(
-        OntologiesSelectors.currentOntology
-      );
+      const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
       // this property is a link property to another resource class
       // get current ontology to get linked res class information
 
@@ -196,32 +154,24 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
           this.propAttribute = 'Region';
         } else {
           this.propAttribute = onto.classes[this.propDef.objectType].label;
-          this.propAttributeComment =
-            onto.classes[this.propDef.objectType].comment;
+          this.propAttributeComment = onto.classes[this.propDef.objectType].comment;
         }
       } else {
         this.propAttribute = ontology.classes[this.propDef.objectType].label;
-        this.propAttributeComment =
-          ontology.classes[this.propDef.objectType].comment;
+        this.propAttributeComment = ontology.classes[this.propDef.objectType].comment;
       }
     }
 
     if (this.propDef.objectType === Constants.ListValue) {
-      const currentOntologyLists = this._store.selectSnapshot(
-        ListsSelectors.listsInProject
-      );
+      const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
       // this property is a list property
       // get current ontology lists to get linked list information
       const re = /\<([^)]+)\>/;
       const listIri = this.propDef.guiAttributes[0].match(re)[1];
-      const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(
-        listIri
-      )}`;
+      const listUrl = `/project/${this.projectUuid}/lists/${encodeURIComponent(listIri)}`;
       const list = currentOntologyLists.find(i => i.id === listIri);
       this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
-      this.propAttributeComment = list.comments.length
-        ? list.comments[0].value
-        : null;
+      this.propAttributeComment = list.comments.length ? list.comments[0].value : null;
     }
 
     // get all classes where the property is used
@@ -233,17 +183,12 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
     currentProjectOntologies.forEach(onto => {
       const classes = getAllEntityDefinitionsAsArray(onto.classes);
       classes.forEach(resClass => {
-        if (
-          resClass.propertiesList.find(
-            prop => prop.propertyIndex === this.propDef.id
-          )
-        ) {
+        if (resClass.propertiesList.find(prop => prop.propertyIndex === this.propDef.id)) {
           // build own resClass object with id, label and comment
           const propOfClass: ShortInfo = {
             id: resClass.id,
             label: resClass.label,
-            comment:
-              onto.label + (resClass.comment ? ': ' + resClass.comment : ''),
+            comment: onto.label + (resClass.comment ? ': ' + resClass.comment : ''),
           };
           this.resClasses.push(propOfClass);
         }
@@ -258,16 +203,14 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
    */
   canBeDeleted(): void {
     // check if the property can be deleted
-    this._dspApiConnection.v2.onto
-      .canDeleteResourceProperty(this.propDef.id)
-      .subscribe(
-        (canDoRes: CanDoResponse) => {
-          this.propCanBeDeleted = canDoRes.canDo;
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+    this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe(
+      (canDoRes: CanDoResponse) => {
+        this.propCanBeDeleted = canDoRes.canDo;
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
   /**

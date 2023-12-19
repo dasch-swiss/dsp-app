@@ -8,11 +8,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConfigToken } from '@dasch-swiss/vre/shared/app-config';
 import { Observable, of } from 'rxjs';
-import {
-  DefaultProperties,
-  DefaultProperty,
-  PropertyCategory,
-} from './default-data/default-properties';
+import { DefaultProperties, DefaultProperty, PropertyCategory } from './default-data/default-properties';
 
 /**
  * helper methods for the ontology editor
@@ -24,9 +20,7 @@ export class OntologyService {
   // list of default property types
   defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
-  constructor(
-    @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig
-  ) {}
+  constructor(@Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig) {}
 
   /**
    * create a unique name (id) for resource classes or properties;
@@ -35,11 +29,7 @@ export class OntologyService {
    * @param [label]
    * @returns unique name
    */
-  setUniqueName(
-    ontologyIri: string,
-    label?: string,
-    type?: 'class' | 'prop'
-  ): string {
+  setUniqueName(ontologyIri: string, label?: string, type?: 'class' | 'prop'): string {
     if (label && type) {
       // build name from label
       // normalize and replace spaces and special chars
@@ -142,9 +132,7 @@ export class OntologyService {
         if (baseOntoIri !== Constants.KnoraApiV2) {
           // the property is not a subproperty of knora base ontology
           // get property iri from another ontology
-          const onto = currentProjectOntologies.find(
-            i => i?.id === baseOntoIri
-          );
+          const onto = currentProjectOntologies.find(i => i?.id === baseOntoIri);
           superPropIri = onto?.properties[subProp].subPropertyOf[0];
         }
 
@@ -160,9 +148,7 @@ export class OntologyService {
   /**
    * get default property information for a certain ontology property
    */
-  getDefaultPropertyType(
-    property: ResourcePropertyDefinitionWithAllLanguages
-  ): DefaultProperty {
+  getDefaultPropertyType(property: ResourcePropertyDefinitionWithAllLanguages): DefaultProperty {
     let propType: DefaultProperty | undefined;
 
     for (const group of this.defaultProperties) {
@@ -170,40 +156,27 @@ export class OntologyService {
         for (const subProp of property.subPropertyOf) {
           // if subProp is of type "link to" or "part of" we have to check the subproperty;
           // otherwise we get the necessary property info from the objectType
-          if (
-            subProp === Constants.HasLinkTo ||
-            subProp === Constants.IsPartOf
-          ) {
+          if (subProp === Constants.HasLinkTo || subProp === Constants.IsPartOf) {
             propType = group.elements.find(
-              (i: DefaultProperty) =>
-                i.guiEle === property.guiElement && i.subPropOf === subProp
+              (i: DefaultProperty) => i.guiEle === property.guiElement && i.subPropOf === subProp
             );
           } else {
-            if (
-              property.objectType === Constants.IntValue &&
-              subProp === Constants.SeqNum
-            ) {
+            if (property.objectType === Constants.IntValue && subProp === Constants.SeqNum) {
               // if the property is of type number, but sub property of SeqNum,
               // select the correct default prop params
               propType = group.elements.find(
-                (i: DefaultProperty) =>
-                  i.objectType === property.objectType &&
-                  i.subPropOf === Constants.SeqNum
+                (i: DefaultProperty) => i.objectType === property.objectType && i.subPropOf === Constants.SeqNum
               );
             } else if (property.objectType === Constants.TextValue) {
               // if the property is of type text value, we have to check the gui element
               // to get the correct default prop params
               propType = group.elements.find(
-                (i: DefaultProperty) =>
-                  i.guiEle === property.guiElement &&
-                  i.objectType === property.objectType
+                (i: DefaultProperty) => i.guiEle === property.guiElement && i.objectType === property.objectType
               );
             } else {
               // in all other cases the gui-element resp. the subProp is not relevant
               // because the object type is unique
-              propType = group.elements.find(
-                (i: DefaultProperty) => i.objectType === property.objectType
-              );
+              propType = group.elements.find((i: DefaultProperty) => i.objectType === property.objectType);
             }
           }
           if (propType) {
@@ -228,9 +201,8 @@ export class OntologyService {
     return propType;
   }
 
-  getDefaultPropType = (
-    property: ResourcePropertyDefinitionWithAllLanguages
-  ): Observable<DefaultProperty> => of(this.getDefaultPropertyType(property));
+  getDefaultPropType = (property: ResourcePropertyDefinitionWithAllLanguages): Observable<DefaultProperty> =>
+    of(this.getDefaultPropertyType(property));
 
   /**
    * get the IRI base url without configured api protocol.
@@ -241,9 +213,7 @@ export class OntologyService {
     return (
       'http://' +
       this._dspApiConfig.apiHost +
-      (this._dspApiConfig.apiPort !== null
-        ? ':' + this._dspApiConfig.apiPort
-        : '') +
+      (this._dspApiConfig.apiPort !== null ? ':' + this._dspApiConfig.apiPort : '') +
       this._dspApiConfig.apiPath
     );
   }

@@ -1,9 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  KnoraApiConnection,
-  UserCache,
-  UserResponse,
-} from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, UserCache, UserResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Observable } from 'rxjs';
 

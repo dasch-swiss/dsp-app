@@ -1,13 +1,4 @@
-import {
-  Component,
-  DebugElement,
-  Inject,
-  Input,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
+import { Component, DebugElement, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
   UntypedFormBuilder,
@@ -232,16 +223,10 @@ describe('ResourceInstanceFormComponent', () => {
   beforeEach(waitForAsync(() => {
     const dspConnSpy = {
       admin: {
-        usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
-          'getUserByUsername',
-        ]),
+        usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername']),
       },
       v2: {
-        onto: jasmine.createSpyObj('onto', [
-          'getOntologiesByProjectIri',
-          'getOntology',
-          'getResourceClassDefinition',
-        ]),
+        onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri', 'getOntology', 'getResourceClassDefinition']),
         ontologyCache: jasmine.createSpyObj('ontologyCache', [
           'getOntology',
           'getResourceClassDefinition',
@@ -251,14 +236,9 @@ describe('ResourceInstanceFormComponent', () => {
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     const appInitSpy = {
       dspAppConfig: {
@@ -317,12 +297,7 @@ describe('ResourceInstanceFormComponent', () => {
               },
             },
             snapshot: {
-              url: [
-                { path: 'ontology' },
-                { path: 'anything' },
-                { path: 'thing' },
-                { path: 'add' },
-              ],
+              url: [{ path: 'ontology' }, { path: 'anything' }, { path: 'thing' }, { path: 'add' }],
             },
           },
         },
@@ -338,28 +313,24 @@ describe('ResourceInstanceFormComponent', () => {
   beforeEach(() => {
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: false,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: false,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: UserResponse = new UserResponse();
 
       const project = MockProjects.mockProject();
@@ -373,54 +344,36 @@ describe('ResourceInstanceFormComponent', () => {
 
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-    ).getResourceClassDefinition.and.callFake(() =>
-      of(
-        MockOntology.mockIResourceClassAndPropertyDefinitions(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-        )
-      )
+    (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(() =>
+      of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
     );
 
-    (
-      dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-    ).reloadCachedItem.and.callFake(() => {
-      const response: ReadOntology = MockOntology.mockReadOntology(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2'
-      );
+    (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).reloadCachedItem.and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
       return of(response);
     });
 
     // mock router
     const routerSpy = TestBed.inject(Router);
 
-    (routerSpy as jasmine.SpyObj<Router>).navigate.and.returnValue(
-      Promise.resolve(true)
-    );
+    (routerSpy as jasmine.SpyObj<Router>).navigate.and.returnValue(Promise.resolve(true));
 
     testHostFixture = TestBed.createComponent(TestHostComponent);
     testHostComponent = testHostFixture.componentInstance;
     testHostFixture.detectChanges();
 
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUserByUsername.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(() => {
       const loggedInUser = MockUsers.mockUser();
       return of(loggedInUser);
     });
 
     const hostCompDe = testHostFixture.debugElement;
 
-    resourceInstanceFormComponentDe = hostCompDe.query(
-      By.directive(ResourceInstanceFormComponent)
-    );
+    resourceInstanceFormComponentDe = hostCompDe.query(By.directive(ResourceInstanceFormComponent));
   });
 
   it('should show the select-properties component', () => {
-    const selectPropertiesComp = resourceInstanceFormComponentDe.query(
-      By.directive(MockSelectPropertiesComponent)
-    );
+    const selectPropertiesComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectPropertiesComponent));
 
     expect(selectPropertiesComp).toBeTruthy();
   });
@@ -428,9 +381,7 @@ describe('ResourceInstanceFormComponent', () => {
   it('should submit the form', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>
-    ).createResource.and.callFake(() => {
+    (dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>).createResource.and.callFake(() => {
       let resource = new ReadResource();
 
       MockResource.getTestThing().subscribe(res => {
@@ -440,37 +391,25 @@ describe('ResourceInstanceFormComponent', () => {
       return of(resource);
     });
 
-    const anythingOnto = MockOntology.mockReadOntology(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2'
-    );
+    const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
 
     // get resource class definitions
-    const resourceClasses = anythingOnto.getClassDefinitionsByType(
-      ResourceClassDefinition
-    );
+    const resourceClasses = anythingOnto.getClassDefinitionsByType(ResourceClassDefinition);
 
-    testHostComponent.resourceInstanceFormComponent.resourceClass =
-      resourceClasses[1];
+    testHostComponent.resourceInstanceFormComponent.resourceClass = resourceClasses[1];
 
     testHostComponent.resourceInstanceFormComponent.resourceLabel = 'My Label';
 
-    testHostComponent.resourceInstanceFormComponent.properties =
-      new Array<ResourcePropertyDefinition>();
+    testHostComponent.resourceInstanceFormComponent.properties = new Array<ResourcePropertyDefinition>();
 
     MockResource.getTestThing().subscribe(res => {
-      const resourcePropDef = (
-        res.entityInfo as ResourceClassAndPropertyDefinitions
-      ).getAllPropertyDefinitions()[9];
-      testHostComponent.resourceInstanceFormComponent.properties.push(
-        resourcePropDef as ResourcePropertyDefinition
-      );
+      const resourcePropDef = (res.entityInfo as ResourceClassAndPropertyDefinitions).getAllPropertyDefinitions()[9];
+      testHostComponent.resourceInstanceFormComponent.properties.push(resourcePropDef as ResourcePropertyDefinition);
     });
 
     testHostFixture.detectChanges();
 
-    const selectPropertiesComp = resourceInstanceFormComponentDe.query(
-      By.directive(MockSelectPropertiesComponent)
-    );
+    const selectPropertiesComp = resourceInstanceFormComponentDe.query(By.directive(MockSelectPropertiesComponent));
 
     expect(selectPropertiesComp).toBeTruthy();
 
@@ -480,14 +419,11 @@ describe('ResourceInstanceFormComponent', () => {
     const props = {};
     const createVal = new CreateIntValue();
     createVal.int = 123;
-    props['http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'] = [
-      createVal,
-    ];
+    props['http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'] = [createVal];
 
     const expectedCreateResource = new CreateResource();
     expectedCreateResource.label = 'My Label';
-    expectedCreateResource.type =
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+    expectedCreateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
     expectedCreateResource.properties = props;
 
     // --> TODO create a Router spy to mock the navigation

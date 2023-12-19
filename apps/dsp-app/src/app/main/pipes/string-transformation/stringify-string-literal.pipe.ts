@@ -42,10 +42,7 @@ export class StringifyStringLiteralPipe implements PipeTransform {
       // the language is defined in user profile if a user is logged-in
       // otherwise it takes the language from browser
       const userLanguage = this.store.selectSnapshot(UserSelectors.language);
-      language =
-        userLanguage != null
-          ? userLanguage
-          : navigator.language.substring(0, 2);
+      language = userLanguage != null ? userLanguage : navigator.language.substring(0, 2);
 
       // does the defined language exists and does it have a value?
       const index = value.findIndex(i => i.language === language);

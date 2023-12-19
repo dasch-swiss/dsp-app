@@ -68,9 +68,7 @@ export class Region {
    *
    */
   getGeometries() {
-    return this.regionResource.properties[
-      Constants.HasGeometry
-    ] as ReadGeomValue[];
+    return this.regionResource.properties[Constants.HasGeometry] as ReadGeomValue[];
   }
 }
 
@@ -116,9 +114,7 @@ interface PolygonsForRegion {
   templateUrl: './still-image.component.html',
   styleUrls: ['./still-image.component.scss'],
 })
-export class StillImageComponent
-  implements OnChanges, OnDestroy, AfterViewInit
-{
+export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit {
   @Input() images: FileRepresentation[];
   @Input() imageCaption?: string;
   @Input() resourceIri: string;
@@ -170,9 +166,7 @@ export class StillImageComponent
     // own draw region icon; because it does not exist in the material icons
     this._matIconRegistry.addSvgIcon(
       'draw_region_icon',
-      this._domSanitizer.bypassSecurityTrustResourceUrl(
-        '/assets/images/draw-region-icon.svg'
-      )
+      this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/draw-region-icon.svg')
     );
   }
   /**
@@ -187,12 +181,8 @@ export class StillImageComponent
       return 0;
     }
 
-    const w =
-      Math.max(geom.points[0].x, geom.points[1].x) -
-      Math.min(geom.points[0].x, geom.points[1].x);
-    const h =
-      Math.max(geom.points[0].y, geom.points[1].y) -
-      Math.min(geom.points[0].y, geom.points[1].y);
+    const w = Math.max(geom.points[0].x, geom.points[1].x) - Math.min(geom.points[0].x, geom.points[1].x);
+    const h = Math.max(geom.points[0].y, geom.points[1].y) - Math.min(geom.points[0].y, geom.points[1].y);
 
     return w * h;
   }
@@ -207,8 +197,7 @@ export class StillImageComponent
       changes.images &&
       changes.images.previousValue &&
       changes.images.currentValue &&
-      changes.images.currentValue[0].fileValue.fileUrl !==
-        changes.images.previousValue[0].fileValue.fileUrl
+      changes.images.currentValue[0].fileValue.fileUrl !== changes.images.previousValue[0].fileValue.fileUrl
     ) {
       this.loadImages();
     }
@@ -250,10 +239,7 @@ export class StillImageComponent
       this.imagesSub.unsubscribe();
     }
     this.imagesSub = this._rs
-      .getFileInfo(
-        this.images[0].fileValue.fileUrl,
-        this.images[0].fileValue.filename
-      )
+      .getFileInfo(this.images[0].fileValue.fileUrl, this.images[0].fileValue.filename)
       .subscribe(
         (res: { originalFilename: string }) => {
           this.originalFilename = res.originalFilename;
@@ -307,20 +293,10 @@ export class StillImageComponent
      * @param geom1 first region.
      * @param geom2 second region.
      */
-    const sortRectangularRegion = (
-      geom1: GeometryForRegion,
-      geom2: GeometryForRegion
-    ) => {
-      if (
-        geom1.geometry.type === 'rectangle' &&
-        geom2.geometry.type === 'rectangle'
-      ) {
-        const surf1 = StillImageComponent.surfaceOfRectangularRegion(
-          geom1.geometry
-        );
-        const surf2 = StillImageComponent.surfaceOfRectangularRegion(
-          geom2.geometry
-        );
+    const sortRectangularRegion = (geom1: GeometryForRegion, geom2: GeometryForRegion) => {
+      if (geom1.geometry.type === 'rectangle' && geom2.geometry.type === 'rectangle') {
+        const surf1 = StillImageComponent.surfaceOfRectangularRegion(geom1.geometry);
+        const surf2 = StillImageComponent.surfaceOfRectangularRegion(geom2.geometry);
 
         // if reg1 is smaller than reg2, return 1
         // reg1 then comes after reg2 and thus is rendered later
@@ -349,10 +325,7 @@ export class StillImageComponent
         const geoms = reg.getGeometries();
 
         geoms.map(geom => {
-          const geomForReg = new GeometryForRegion(
-            geom.geometry,
-            reg.regionResource
-          );
+          const geomForReg = new GeometryForRegion(geom.geometry, reg.regionResource);
 
           geometries.push(geomForReg);
         });
@@ -365,9 +338,7 @@ export class StillImageComponent
       for (const geom of geometries) {
         const geometry = geom.geometry;
 
-        const colorValues: ReadColorValue[] = geom.region.properties[
-          Constants.HasColor
-        ] as ReadColorValue[];
+        const colorValues: ReadColorValue[] = geom.region.properties[Constants.HasColor] as ReadColorValue[];
 
         // if the geometry has a color property, use that value as the color for the line
         if (colorValues && colorValues.length) {
@@ -379,14 +350,7 @@ export class StillImageComponent
           : '';
 
         if (!this.failedToLoad) {
-          this._createSVGOverlay(
-            geom.region.id,
-            geometry,
-            aspectRatio,
-            imageXOffset,
-            geom.region.label,
-            commentValue
-          );
+          this._createSVGOverlay(geom.region.id, geometry, aspectRatio, imageXOffset, geom.region.label, commentValue);
         }
 
         imageXOffset++;
@@ -425,8 +389,7 @@ export class StillImageComponent
   }
 
   openReplaceFileDialog() {
-    const propId =
-      this.parentResource.properties[Constants.HasStillImageFileValue][0].id;
+    const propId = this.parentResource.properties[Constants.HasStillImageFileValue][0].id;
 
     const dialogConfig: MatDialogConfig = {
       width: '800px',
@@ -471,10 +434,7 @@ export class StillImageComponent
       .updateValue(updateRes as UpdateResource<UpdateValue>)
       .pipe(
         mergeMap((res: WriteValueResponse) =>
-          this._dspApiConnection.v2.values.getValue(
-            this.parentResource.id,
-            res.uuid
-          )
+          this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
       .subscribe(
@@ -482,17 +442,12 @@ export class StillImageComponent
           this._valueOperationEventService.emit(
             new EmitEvent(
               Events.FileValueUpdated,
-              new UpdatedFileEventValue(
-                res2.properties[Constants.HasStillImageFileValue][0]
-              )
+              new UpdatedFileEventValue(res2.properties[Constants.HasStillImageFileValue][0])
             )
           );
 
           this._rs
-            .getFileInfo(
-              this.images[0].fileValue.fileUrl,
-              this.images[0].fileValue.filename
-            )
+            .getFileInfo(this.images[0].fileValue.fileUrl, this.images[0].fileValue.filename)
             .subscribe((res: { originalFilename: string }) => {
               this.originalFilename = res.originalFilename;
             });
@@ -510,12 +465,7 @@ export class StillImageComponent
    * @param imageSize the image size for calculations
    * @param overlay the overlay element that represents the region
    */
-  private _openRegionDialog(
-    startPoint: Point2D,
-    endPoint: Point2D,
-    imageSize: Point2D,
-    overlay: Element
-  ): void {
+  private _openRegionDialog(startPoint: Point2D, endPoint: Point2D, imageSize: Point2D, overlay: Element): void {
     const dialogConfig: MatDialogConfig = {
       width: '560px',
       maxHeight: '80vh',
@@ -537,14 +487,7 @@ export class StillImageComponent
       this._viewer.removeOverlay(overlay);
       if (data) {
         // data is null if the cancel button was clicked
-        this._uploadRegion(
-          startPoint,
-          endPoint,
-          imageSize,
-          data.color,
-          data.comment,
-          data.label
-        );
+        this._uploadRegion(startPoint, endPoint, imageSize, data.color, data.comment, data.label);
       }
     });
   }
@@ -626,13 +569,8 @@ export class StillImageComponent
         }
         const overlayElement = this._renderer.createElement('div');
         overlayElement.style.background = 'rgba(255,0,0,0.3)';
-        const viewportPos = this._viewer.viewport.pointFromPixel(
-          (event as OpenSeadragon.ViewerEvent).position
-        );
-        this._viewer.addOverlay(
-          overlayElement,
-          new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0)
-        );
+        const viewportPos = this._viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position);
+        this._viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
         this._regionDragInfo = {
           overlayElement: overlayElement,
           startPos: viewportPos,
@@ -642,45 +580,25 @@ export class StillImageComponent
         if (!this._regionDragInfo) {
           return;
         }
-        const viewPortPos = this._viewer.viewport.pointFromPixel(
-          (event as OpenSeadragon.ViewerEvent).position
-        );
+        const viewPortPos = this._viewer.viewport.pointFromPixel((event as OpenSeadragon.ViewerEvent).position);
         const diffX = viewPortPos.x - this._regionDragInfo.startPos.x;
         const diffY = viewPortPos.y - this._regionDragInfo.startPos.y;
         const location = new OpenSeadragon.Rect(
-          Math.min(
-            this._regionDragInfo.startPos.x,
-            this._regionDragInfo.startPos.x + diffX
-          ),
-          Math.min(
-            this._regionDragInfo.startPos.y,
-            this._regionDragInfo.startPos.y + diffY
-          ),
+          Math.min(this._regionDragInfo.startPos.x, this._regionDragInfo.startPos.x + diffX),
+          Math.min(this._regionDragInfo.startPos.y, this._regionDragInfo.startPos.y + diffY),
           Math.abs(diffX),
           Math.abs(diffY)
         );
 
-        this._viewer.updateOverlay(
-          this._regionDragInfo.overlayElement,
-          location
-        );
+        this._viewer.updateOverlay(this._regionDragInfo.overlayElement, location);
         this._regionDragInfo.endPos = viewPortPos;
       },
       releaseHandler: () => {
         if (this.regionDrawMode) {
           const imageSize = this._viewer.world.getItemAt(0).getContentSize();
-          const startPoint = this._viewer.viewport.viewportToImageCoordinates(
-            this._regionDragInfo.startPos
-          );
-          const endPoint = this._viewer.viewport.viewportToImageCoordinates(
-            this._regionDragInfo.endPos
-          );
-          this._openRegionDialog(
-            startPoint,
-            endPoint,
-            imageSize,
-            this._regionDragInfo.overlayElement
-          );
+          const startPoint = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.startPos);
+          const endPoint = this._viewer.viewport.viewportToImageCoordinates(this._regionDragInfo.endPos);
+          this._openRegionDialog(startPoint, endPoint, imageSize, this._regionDragInfo.overlayElement);
           this._regionDragInfo = null;
           this.regionDrawMode = false;
           this._viewer.setMouseNavEnabled(true);
@@ -722,8 +640,7 @@ export class StillImageComponent
    * initializes the OpenSeadragon _viewer
    */
   private _setupViewer(): void {
-    const viewerContainer =
-      this._elementRef.nativeElement.getElementsByClassName('osd-container')[0];
+    const viewerContainer = this._elementRef.nativeElement.getElementsByClassName('osd-container')[0];
     const osdOptions = {
       element: viewerContainer,
       sequenceMode: false,
@@ -778,8 +695,7 @@ export class StillImageComponent
     const fileValues: ReadFileValue[] = this.images.map(img => img.fileValue);
 
     // display only the defined range of this.images
-    const tileSources: object[] =
-      this._prepareTileSourcesFromFileValues(fileValues);
+    const tileSources: object[] = this._prepareTileSourcesFromFileValues(fileValues);
 
     this.removeOverlays();
     this._viewer.addOnceHandler('open', args => {
@@ -801,9 +717,7 @@ export class StillImageComponent
    * @param imagesToDisplay the given file values to de displayed.
    * @returns the tile sources to be passed to OSD _viewer.
    */
-  private _prepareTileSourcesFromFileValues(
-    imagesToDisplay: ReadFileValue[]
-  ): object[] {
+  private _prepareTileSourcesFromFileValues(imagesToDisplay: ReadFileValue[]): object[] {
     const images = imagesToDisplay as ReadStillImageFileValue[];
 
     let imageXOffset = 0;
@@ -868,10 +782,7 @@ export class StillImageComponent
     const regEle: HTMLElement = this._renderer.createElement('div');
     regEle.id = 'region-overlay-' + Math.random() * 10000;
     regEle.className = 'region';
-    regEle.setAttribute(
-      'style',
-      'outline: solid ' + lineColor + ' ' + lineWidth + 'px;'
-    );
+    regEle.setAttribute('style', 'outline: solid ' + lineColor + ' ' + lineWidth + 'px;');
 
     const diffX = geometry.points[1].x - geometry.points[0].x;
     const diffY = geometry.points[1].y - geometry.points[0].y;
@@ -898,14 +809,7 @@ export class StillImageComponent
     regEle.append(comEle);
 
     regEle.addEventListener('mousemove', (event: MouseEvent) => {
-      comEle.setAttribute(
-        'style',
-        'display: block; left: ' +
-          event.clientX +
-          'px; top: ' +
-          event.clientY +
-          'px'
-      );
+      comEle.setAttribute('style', 'display: block; left: ' + event.clientX + 'px; top: ' + event.clientY + 'px');
     });
     regEle.addEventListener('mouseleave', () => {
       comEle.setAttribute('style', 'display: none');

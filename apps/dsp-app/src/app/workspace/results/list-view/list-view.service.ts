@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatCheckbox } from '@angular/material/checkbox';
-import {
-  CheckboxUpdate,
-  FilteredResources,
-  ShortResInfo,
-} from './list-view.component';
+import { CheckboxUpdate, FilteredResources, ShortResInfo } from './list-view.component';
 
 @Injectable({
   providedIn: 'root',
@@ -49,18 +45,14 @@ export class ListViewService {
         }
       } else {
         // remove resource from the selected resources list
-        let index = this.selectedResourcesList.findIndex(
-          d => d.id === status.resId
-        );
+        let index = this.selectedResourcesList.findIndex(d => d.id === status.resId);
         this.selectedResourcesList.splice(index, 1);
 
         // decrease the count of selected resources
         this.selectedResourcesCount -= 1;
 
         // remove resource list index from the selected index list
-        index = this.selectedResourceIdxMultiple.findIndex(
-          d => d === status.resIndex
-        );
+        index = this.selectedResourceIdxMultiple.findIndex(d => d === status.resIndex);
         this.selectedResourceIdxMultiple.splice(index, 1);
       }
       // selectedResourceIdx = selectedResourceIdxMultiple;

@@ -26,10 +26,7 @@ export class TextValueHtmlLinkDirective {
       // only handle left mouse click events on links, all other events are ignored here
       return;
     }
-    if (
-      targetElement?.className.toLowerCase().indexOf(Constants.SalsahLink) !==
-      -1
-    ) {
+    if (targetElement?.className.toLowerCase().indexOf(Constants.SalsahLink) !== -1) {
       // if it is an internal link, override all behaviour, so also second mouse button clicks, hence the iris
       // like "rdfh.ch/ ..." can not be dereferenced outside the app by a browser
       this.internalLinkClicked.emit(targetElement.href);
@@ -61,10 +58,7 @@ export class TextValueHtmlLinkDirective {
 
     // handle middle mouse and second mouse clicks here
     if (event.button === 1 || event.button === 2) {
-      if (
-        targetElement.className.toLowerCase().indexOf(Constants.SalsahLink) !==
-        -1
-      ) {
+      if (targetElement.className.toLowerCase().indexOf(Constants.SalsahLink) !== -1) {
         this.internalLinkClicked.emit(targetElement.href);
         event.preventDefault();
       }

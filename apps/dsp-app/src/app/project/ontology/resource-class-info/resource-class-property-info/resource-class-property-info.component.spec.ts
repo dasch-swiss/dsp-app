@@ -3,11 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, DebugElement, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
@@ -29,10 +25,7 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogHeaderComponent } from '@dsp-app/src/app/main/dialog/dialog-header/dialog-header.component';
@@ -100,8 +93,7 @@ class LinkHostComponent {
   propertyInfoComponent: ResourceClassPropertyInfoComponent;
 
   propertyCardinality: IHasProperty = {
-    propertyIndex:
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThing',
+    propertyIndex: 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThing',
     cardinality: 2,
     guiOrder: 1,
     isInherited: false,
@@ -213,10 +205,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
   let overlayContainer: OverlayContainer;
 
   beforeEach(waitForAsync(() => {
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     const ontologyEndpointSpyObj = {
       v2: {
@@ -275,9 +264,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
 
   beforeEach(() => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).canDeleteResourceProperty.and.callFake(() => {
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).canDeleteResourceProperty.and.callFake(() => {
       const deleteResProp: CanDoResponse = {
         canDo: false,
       };
@@ -290,12 +277,8 @@ describe('ResourceClassPropertyInfoComponent', () => {
     // mock application state service for currentOntology
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
-      const response: ReadOntology = MockOntology.mockReadOntology(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2'
-      );
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
       return of(response);
     });
 
@@ -306,9 +289,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
     expect(simpleTextHostComponent).toBeTruthy();
 
     overlayContainer = TestBed.inject(OverlayContainer);
-    rootLoader = TestbedHarnessEnvironment.documentRootLoader(
-      simpleTextHostFixture
-    );
+    rootLoader = TestbedHarnessEnvironment.documentRootLoader(simpleTextHostFixture);
 
     linkHostFixture = TestBed.createComponent(LinkHostComponent);
     linkHostComponent = linkHostFixture.componentInstance;
@@ -321,9 +302,7 @@ describe('ResourceClassPropertyInfoComponent', () => {
     // mock application state service for currentOntologyLists
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: ListNodeInfo[] = [
         {
           comments: [],
@@ -405,21 +384,13 @@ describe('ResourceClassPropertyInfoComponent', () => {
 
   it('expect cardinality 0 = only one but required value (1)', () => {
     expect(simpleTextHostComponent.propertyInfoComponent).toBeTruthy();
-    expect(
-      simpleTextHostComponent.propertyInfoComponent.propCard
-    ).toBeDefined();
-    expect(
-      simpleTextHostComponent.propertyInfoComponent.propCard.cardinality
-    ).toBe(0);
+    expect(simpleTextHostComponent.propertyInfoComponent.propCard).toBeDefined();
+    expect(simpleTextHostComponent.propertyInfoComponent.propCard.cardinality).toBe(0);
 
     const hostCompDe = simpleTextHostFixture.debugElement;
 
-    const multipleToggle: DebugElement = hostCompDe.query(
-      By.css('mat-slide-toggle[data-name="multiple"]')
-    );
-    const requiredToggle: DebugElement = hostCompDe.query(
-      By.css('mat-slide-toggle[data-name="required"]')
-    );
+    const multipleToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="multiple"]'));
+    const requiredToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="required"]'));
 
     function isChecked(toggle: DebugElement): boolean {
       return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';
@@ -434,9 +405,9 @@ describe('ResourceClassPropertyInfoComponent', () => {
   it('expect property type "text" and gui element "simple input"', () => {
     expect(simpleTextHostComponent.propertyInfoComponent).toBeTruthy();
     expect(simpleTextHostComponent.propertyInfoComponent.propDef).toBeDefined();
-    expect(
-      simpleTextHostComponent.propertyInfoComponent.propDef.guiElement
-    ).toBe(Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText');
+    expect(simpleTextHostComponent.propertyInfoComponent.propDef.guiElement).toBe(
+      Constants.SalsahGui + Constants.HashDelimiter + 'SimpleText'
+    );
 
     const hostCompDe = simpleTextHostFixture.debugElement;
 
@@ -480,12 +451,8 @@ describe('ResourceClassPropertyInfoComponent', () => {
 
     expect(hostCompDe).toBeTruthy();
 
-    const multipleToggle: DebugElement = hostCompDe.query(
-      By.css('mat-slide-toggle[data-name="multiple"]')
-    );
-    const requiredToggle: DebugElement = hostCompDe.query(
-      By.css('mat-slide-toggle[data-name="required"]')
-    );
+    const multipleToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="multiple"]'));
+    const requiredToggle: DebugElement = hostCompDe.query(By.css('mat-slide-toggle[data-name="required"]'));
 
     function isChecked(toggle: DebugElement): boolean {
       return toggle.nativeElement.getAttribute('ng-reflect-checked') === 'true';

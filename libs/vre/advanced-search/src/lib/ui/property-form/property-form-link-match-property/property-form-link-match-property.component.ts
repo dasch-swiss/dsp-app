@@ -13,11 +13,7 @@ import {
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import {
-  MatSelect,
-  MatSelectChange,
-  MatSelectModule,
-} from '@angular/material/select';
+import { MatSelect, MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Constants } from '@dasch-swiss/dsp-js';
 import {
   ApiData,
@@ -161,17 +157,12 @@ export class PropertyFormLinkMatchPropertyComponent implements AfterViewInit {
     }
   }
 
-  compareObjects(
-    object1: PropertyData | ApiData,
-    object2: PropertyData | ApiData
-  ) {
+  compareObjects(object1: PropertyData | ApiData, object2: PropertyData | ApiData) {
     return object1 && object2 && object1.iri == object2.iri;
   }
 
   // Type guard function to check if the value adheres to ApiData interface
   _isApiData(value: any): value is ApiData {
-    return (
-      value && typeof value === 'object' && 'iri' in value && 'label' in value
-    );
+    return value && typeof value === 'object' && 'iri' in value && 'label' in value;
   }
 }

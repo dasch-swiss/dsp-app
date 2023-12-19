@@ -1,12 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
@@ -27,10 +19,7 @@ import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.d
   templateUrl: './list-value.component.html',
   styleUrls: ['./list-value.component.scss'],
 })
-export class ListValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class ListValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadListValue;
   @Input() propertyDef: ResourcePropertyDefinition;
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
@@ -74,10 +63,7 @@ export class ListValueComponent
       if (this.mode !== 'read') {
         const rootNodeIris = this.propertyDef.guiAttributes;
         for (const rootNodeIri of rootNodeIris) {
-          const trimmedRootNodeIRI = rootNodeIri.substring(
-            7,
-            rootNodeIri.length - 1
-          );
+          const trimmedRootNodeIRI = rootNodeIri.substring(7, rootNodeIri.length - 1);
           this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
             (response: ListNodeV2) => {
               this.listRootNode = response;
@@ -113,10 +99,7 @@ export class ListValueComponent
     const newListValue = new CreateListValue();
     newListValue.listNode = this.valueFormControl.value;
 
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       newListValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -136,10 +119,7 @@ export class ListValueComponent
     } else {
       updatedListValue.listNode = this.displayValue.listNode;
     }
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedListValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -156,20 +136,14 @@ export class ListValueComponent
   getReadModeValue(nodeIri: string): void {
     const rootNodeIris = this.propertyDef.guiAttributes;
     for (const rootNodeIri of rootNodeIris) {
-      const trimmedRootNodeIRI = rootNodeIri.substring(
-        7,
-        rootNodeIri.length - 1
-      );
+      const trimmedRootNodeIRI = rootNodeIri.substring(7, rootNodeIri.length - 1);
       this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
         (response: ListNodeV2) => {
           if (!response.children.length) {
             // this shouldn't happen since users cannot select the root node
             this.selectedNodeHierarchy.push(response.label);
           } else {
-            this.selectedNodeHierarchy = this._getHierarchy(
-              nodeIri,
-              response.children
-            );
+            this.selectedNodeHierarchy = this._getHierarchy(nodeIri, response.children);
           }
         },
         (error: ApiResponseError) => {

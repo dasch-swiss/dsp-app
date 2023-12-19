@@ -61,22 +61,13 @@ describe('UsersComponent', () => {
 
   const apiSpyObj = {
     admin: {
-      usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
-        'getUserByIri',
-        'getUsers',
-      ]),
+      usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByIri', 'getUsers']),
     },
   };
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        UsersComponent,
-        TestHostComponent,
-        MockUsersListComponent,
-        DialogComponent,
-        StatusComponent,
-      ],
+      declarations: [UsersComponent, TestHostComponent, MockUsersListComponent, DialogComponent, StatusComponent],
       imports: [
         BrowserAnimationsModule,
         MatButtonModule,
@@ -102,16 +93,12 @@ describe('UsersComponent', () => {
 
   beforeEach(() => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUsers.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUsers.and.callFake(() => {
       const allUsers: ApiResponseData<UsersResponse> = MockUsers.mockUsers();
       return of(allUsers);
     });
 
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUserByIri.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByIri.and.callFake(() => {
       const user: ApiResponseData<UserResponse> = MockUsers.mockUser();
       return of(user);
     });

@@ -1,12 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import {
-  Directive,
-  HostBinding,
-  Inject,
-  Input,
-  OnChanges,
-  PLATFORM_ID,
-} from '@angular/core';
+import { Directive, HostBinding, Inject, Input, OnChanges, PLATFORM_ID } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 /* eslint-disable */
@@ -44,8 +37,7 @@ export class ExternalLinksDirective implements OnChanges {
   private _isLinkExternal() {
     return (
       // get a token value from platformId to run the code only on the client and prevents errors
-      isPlatformBrowser(this.platformId) &&
-      !this.href.includes(location.hostname)
+      isPlatformBrowser(this.platformId) && !this.href.includes(location.hostname)
     );
   }
 }

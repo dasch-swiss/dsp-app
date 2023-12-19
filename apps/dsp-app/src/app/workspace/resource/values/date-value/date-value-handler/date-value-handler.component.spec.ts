@@ -13,10 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatOptionModule } from '@angular/material/core';
-import {
-  MatFormFieldControl,
-  MatFormFieldModule,
-} from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -32,9 +29,7 @@ import { DateValueHandlerComponent } from './date-value-handler.component';
  */
 @Component({
   template: ` <div [formGroup]="form">
-    <app-date-value-handler
-      #dateValueHandler
-      [formControlName]="'date'"></app-date-value-handler>
+    <app-date-value-handler #dateValueHandler [formControlName]="'date'"></app-date-value-handler>
   </div>`,
 })
 class TestHostComponent implements OnInit {
@@ -57,10 +52,7 @@ class TestHostComponent implements OnInit {
  */
 @Component({
   template: ` <div [formGroup]="form">
-    <app-date-value-handler
-      #dateValueHandler
-      [formControlName]="'date'"
-      [valueRequiredValidator]="false">
+    <app-date-value-handler #dateValueHandler [formControlName]="'date'" [valueRequiredValidator]="false">
     </app-date-value-handler>
   </div>`,
 })
@@ -92,9 +84,7 @@ class NoValueRequiredTestHostComponent implements OnInit {
     { provide: MatFormFieldControl, useExisting: TestDatePickerComponent },
   ],
 })
-class TestDatePickerComponent
-  implements ControlValueAccessor, MatFormFieldControl<any>
-{
+class TestDatePickerComponent implements ControlValueAccessor, MatFormFieldControl<any> {
   @Input() disableCalendarSelector: boolean;
 
   @Input() value;
@@ -142,11 +132,7 @@ describe('DateValueHandlerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        DateValueHandlerComponent,
-        TestDatePickerComponent,
-        TestHostComponent,
-      ],
+      declarations: [DateValueHandlerComponent, TestDatePickerComponent, TestHostComponent],
       imports: [
         BrowserAnimationsModule,
         MatButtonModule,
@@ -172,53 +158,36 @@ describe('DateValueHandlerComponent', () => {
       new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
     );
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.isPeriodControl.value
-    ).toBeFalse();
+    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeFalse();
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.endDate.value
-    ).toBeNull();
+    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toBeNull();
 
     const hostCompDe = testHostFixture.debugElement;
-    const datePickerComponentDe = hostCompDe.query(
-      By.directive(TestDatePickerComponent)
-    );
+    const datePickerComponentDe = hostCompDe.query(By.directive(TestDatePickerComponent));
 
-    expect(
-      (datePickerComponentDe.componentInstance as TestDatePickerComponent).value
-    ).toEqual(new KnoraDate('JULIAN', 'CE', 2018, 5, 19));
+    expect((datePickerComponentDe.componentInstance as TestDatePickerComponent).value).toEqual(
+      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
+    );
 
     expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.value instanceof KnoraDate
-    ).toBe(true);
+    expect(testHostComponent.dateValueHandlerComponent.value instanceof KnoraDate).toBe(true);
 
-    expect(testHostComponent.dateValueHandlerComponent.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
-    );
+    expect(testHostComponent.dateValueHandlerComponent.value).toEqual(new KnoraDate('JULIAN', 'CE', 2018, 5, 19));
   });
 
   it('should initialize a period correctly', async () => {
     testHostComponent.form.controls.date.setValue(
-      new KnoraPeriod(
-        new KnoraDate('JULIAN', 'CE', 2018, 5, 19),
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-      )
+      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2018, 5, 19), new KnoraDate('JULIAN', 'CE', 2019, 5, 19))
     );
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.calendarControl.value
-    ).toEqual('JULIAN');
+    expect(testHostComponent.dateValueHandlerComponent.calendarControl.value).toEqual('JULIAN');
 
     expect(testHostComponent.dateValueHandlerComponent.startDate.value).toEqual(
       new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
     );
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.isPeriodControl.value
-    ).toBeTrue();
+    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
 
     expect(testHostComponent.dateValueHandlerComponent.endDate.value).toEqual(
       new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
@@ -232,36 +201,26 @@ describe('DateValueHandlerComponent', () => {
 
     const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
 
-    expect(
-      (startDateEditComponentDe.componentInstance as TestDatePickerComponent)
-        .value
-    ).toEqual(new KnoraDate('JULIAN', 'CE', 2018, 5, 19));
+    expect((startDateEditComponentDe.componentInstance as TestDatePickerComponent).value).toEqual(
+      new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
+    );
 
-    expect(
-      (endDateEditComponentDe.componentInstance as TestDatePickerComponent)
-        .value
-    ).toEqual(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
+    expect((endDateEditComponentDe.componentInstance as TestDatePickerComponent).value).toEqual(
+      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
+    );
 
     expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.value instanceof KnoraPeriod
-    ).toBe(true);
+    expect(testHostComponent.dateValueHandlerComponent.value instanceof KnoraPeriod).toBe(true);
 
     expect(testHostComponent.dateValueHandlerComponent.value).toEqual(
-      new KnoraPeriod(
-        new KnoraDate('JULIAN', 'CE', 2018, 5, 19),
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-      )
+      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2018, 5, 19), new KnoraDate('JULIAN', 'CE', 2019, 5, 19))
     );
   });
 
   it('should react correctly to changing the calendar for a period', () => {
     testHostComponent.form.controls.date.setValue(
-      new KnoraPeriod(
-        new KnoraDate('JULIAN', 'CE', 2018, 5, 19),
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-      )
+      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2018, 5, 19), new KnoraDate('JULIAN', 'CE', 2019, 5, 19))
     );
 
     // expect(testHostComponent.dateValueHandlerComponent.calendarControl.value).toEqual('JULIAN');
@@ -270,9 +229,7 @@ describe('DateValueHandlerComponent', () => {
       new KnoraDate('JULIAN', 'CE', 2018, 5, 19)
     );
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.isPeriodControl.value
-    ).toBeTrue();
+    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
 
     expect(testHostComponent.dateValueHandlerComponent.endDate.value).toEqual(
       new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
@@ -284,33 +241,19 @@ describe('DateValueHandlerComponent', () => {
 
     const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
 
-    expect(
-      (startDateEditComponentDe.componentInstance as TestDatePickerComponent)
-        .value.calendar
-    ).toEqual('JULIAN');
+    expect((startDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('JULIAN');
 
     const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
 
-    expect(
-      (endDateEditComponentDe.componentInstance as TestDatePickerComponent)
-        .value.calendar
-    ).toEqual('JULIAN');
+    expect((endDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('JULIAN');
 
-    testHostComponent.dateValueHandlerComponent.startDate.setValue(
-      new KnoraDate('GREGORIAN', 'CE', 2018, 5, 19)
-    );
+    testHostComponent.dateValueHandlerComponent.startDate.setValue(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 19));
 
     testHostFixture.detectChanges();
 
-    expect(
-      (startDateEditComponentDe.componentInstance as TestDatePickerComponent)
-        .value.calendar
-    ).toEqual('GREGORIAN');
+    expect((startDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('GREGORIAN');
 
-    expect(
-      (endDateEditComponentDe.componentInstance as TestDatePickerComponent)
-        .value.calendar
-    ).toEqual('GREGORIAN');
+    expect((endDateEditComponentDe.componentInstance as TestDatePickerComponent).value.calendar).toEqual('GREGORIAN');
   });
 
   it('should propagate changes made by the user for a single date', async () => {
@@ -318,20 +261,16 @@ describe('DateValueHandlerComponent', () => {
 
     const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
 
-    (
-      startDateEditComponentDe.componentInstance as TestDatePickerComponent
-    ).writeValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
-    (
-      startDateEditComponentDe.componentInstance as TestDatePickerComponent
-    )._handleInput();
+    (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
+      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
+    );
+    (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
 
     await testHostFixture.whenStable();
 
     expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
 
-    expect(testHostComponent.form.controls.date.value).toEqual(
-      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
-    );
+    expect(testHostComponent.form.controls.date.value).toEqual(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
   });
 
   it('should propagate changes made by the user for a period', async () => {
@@ -343,23 +282,19 @@ describe('DateValueHandlerComponent', () => {
 
     const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
 
-    (
-      startDateEditComponentDe.componentInstance as TestDatePickerComponent
-    ).writeValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
-    (
-      startDateEditComponentDe.componentInstance as TestDatePickerComponent
-    )._handleInput();
+    (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
+      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
+    );
+    (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
 
     testHostFixture.detectChanges();
 
     const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
 
-    (
-      endDateEditComponentDe.componentInstance as TestDatePickerComponent
-    ).writeValue(new KnoraDate('JULIAN', 'CE', 2020, 5, 19));
-    (
-      endDateEditComponentDe.componentInstance as TestDatePickerComponent
-    )._handleInput();
+    (endDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
+      new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
+    );
+    (endDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
 
     testHostFixture.detectChanges();
 
@@ -368,30 +303,21 @@ describe('DateValueHandlerComponent', () => {
     expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
 
     expect(testHostComponent.form.controls.date.value).toEqual(
-      new KnoraPeriod(
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 19),
-        new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
-      )
+      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2019, 5, 19), new KnoraDate('JULIAN', 'CE', 2020, 5, 19))
     );
 
     // access private _subscriptions property and ensure that each subscription is still open
-    testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach(
-      sub => {
-        expect(sub.closed).toBeFalse();
-      }
-    );
+    testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach(sub => {
+      expect(sub.closed).toBeFalse();
+    });
   });
 
   it('should return "null" for an invalid user input (start date greater than end date)', async () => {
     testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
 
-    testHostComponent.dateValueHandlerComponent.startDate.setValue(
-      new KnoraDate('JULIAN', 'CE', 2021, 5, 19)
-    );
+    testHostComponent.dateValueHandlerComponent.startDate.setValue(new KnoraDate('JULIAN', 'CE', 2021, 5, 19));
 
-    testHostComponent.dateValueHandlerComponent.endDate.setValue(
-      new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
-    );
+    testHostComponent.dateValueHandlerComponent.endDate.setValue(new KnoraDate('JULIAN', 'CE', 2020, 5, 19));
 
     await testHostFixture.whenStable();
 
@@ -403,13 +329,9 @@ describe('DateValueHandlerComponent', () => {
   it('should return "null" for an invalid user input (start date greater than end date) 2', async () => {
     testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
 
-    testHostComponent.dateValueHandlerComponent.startDate.setValue(
-      new KnoraDate('JULIAN', 'CE', 2021, 5, 19)
-    );
+    testHostComponent.dateValueHandlerComponent.startDate.setValue(new KnoraDate('JULIAN', 'CE', 2021, 5, 19));
 
-    testHostComponent.dateValueHandlerComponent.endDate.setValue(
-      new KnoraDate('JULIAN', 'BCE', 2022, 5, 19)
-    );
+    testHostComponent.dateValueHandlerComponent.endDate.setValue(new KnoraDate('JULIAN', 'BCE', 2022, 5, 19));
 
     await testHostFixture.whenStable();
 
@@ -421,18 +343,10 @@ describe('DateValueHandlerComponent', () => {
   it('should initialize the date with an empty value', () => {
     testHostComponent.form.controls.date.setValue(null);
 
-    expect(testHostComponent.dateValueHandlerComponent.startDate.value).toBe(
-      null
-    );
-    expect(
-      testHostComponent.dateValueHandlerComponent.isPeriodControl.value
-    ).toBe(false);
-    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toBe(
-      null
-    );
-    expect(
-      testHostComponent.dateValueHandlerComponent.calendarControl.value
-    ).toEqual('GREGORIAN');
+    expect(testHostComponent.dateValueHandlerComponent.startDate.value).toBe(null);
+    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBe(false);
+    expect(testHostComponent.dateValueHandlerComponent.endDate.value).toBe(null);
+    expect(testHostComponent.dateValueHandlerComponent.calendarControl.value).toEqual('GREGORIAN');
 
     expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(false);
   });
@@ -455,11 +369,7 @@ describe('DateValueHandlerComponent (no validator required)', () => {
         MatIconModule,
         BrowserAnimationsModule,
       ],
-      declarations: [
-        DateValueHandlerComponent,
-        TestDatePickerComponent,
-        NoValueRequiredTestHostComponent,
-      ],
+      declarations: [DateValueHandlerComponent, TestDatePickerComponent, NoValueRequiredTestHostComponent],
     }).compileComponents();
   }));
 
@@ -472,15 +382,11 @@ describe('DateValueHandlerComponent (no validator required)', () => {
   });
 
   it('should propagate changes made by the user for a period', async () => {
-    expect(
-      testHostComponent.dateValueHandlerComponent.isPeriodControl.value
-    ).toBeFalse();
+    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeFalse();
 
     testHostComponent.dateValueHandlerComponent.isPeriodControl.setValue(true);
 
-    expect(
-      testHostComponent.dateValueHandlerComponent.isPeriodControl.value
-    ).toBeTrue();
+    expect(testHostComponent.dateValueHandlerComponent.isPeriodControl.value).toBeTrue();
 
     testHostFixture.detectChanges();
 
@@ -488,23 +394,19 @@ describe('DateValueHandlerComponent (no validator required)', () => {
 
     const startDateEditComponentDe = hostCompDe.query(By.css('.start-date'));
 
-    (
-      startDateEditComponentDe.componentInstance as TestDatePickerComponent
-    ).writeValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 19));
-    (
-      startDateEditComponentDe.componentInstance as TestDatePickerComponent
-    )._handleInput();
+    (startDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
+      new KnoraDate('JULIAN', 'CE', 2019, 5, 19)
+    );
+    (startDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
 
     testHostFixture.detectChanges();
 
     const endDateEditComponentDe = hostCompDe.query(By.css('.end-date'));
 
-    (
-      endDateEditComponentDe.componentInstance as TestDatePickerComponent
-    ).writeValue(new KnoraDate('JULIAN', 'CE', 2020, 5, 19));
-    (
-      endDateEditComponentDe.componentInstance as TestDatePickerComponent
-    )._handleInput();
+    (endDateEditComponentDe.componentInstance as TestDatePickerComponent).writeValue(
+      new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
+    );
+    (endDateEditComponentDe.componentInstance as TestDatePickerComponent)._handleInput();
 
     testHostFixture.detectChanges();
 
@@ -513,24 +415,17 @@ describe('DateValueHandlerComponent (no validator required)', () => {
     expect(testHostComponent.dateValueHandlerComponent.form.valid).toBe(true);
 
     expect(testHostComponent.form.controls.date.value).toEqual(
-      new KnoraPeriod(
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 19),
-        new KnoraDate('JULIAN', 'CE', 2020, 5, 19)
-      )
+      new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 2019, 5, 19), new KnoraDate('JULIAN', 'CE', 2020, 5, 19))
     );
 
     // access private _subscriptions property and ensure that each subscription is still open
-    testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach(
-      sub => {
-        expect(sub.closed).toBeFalse();
-      }
-    );
+    testHostComponent.dateValueHandlerComponent['_subscriptions'].forEach(sub => {
+      expect(sub.closed).toBeFalse();
+    });
   });
 
   it('should not receive the propagated valueRequiredValidator from the parent component', () => {
-    expect(
-      testHostComponent.dateValueHandlerComponent.valueRequiredValidator
-    ).toBe(false);
+    expect(testHostComponent.dateValueHandlerComponent.valueRequiredValidator).toBe(false);
   });
 
   it("should mark the form's validity correctly", () => {

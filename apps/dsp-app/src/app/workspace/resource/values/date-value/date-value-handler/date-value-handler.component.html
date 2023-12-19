@@ -20,9 +20,7 @@
       <mat-icon *ngIf="isPeriodControl.value">remove</mat-icon>
     </button>
 
-    <div
-      *ngIf="isPeriodControl.value && startDate.value"
-      class="date-form-field">
+    <div *ngIf="isPeriodControl.value && startDate.value" class="date-form-field">
       <dasch-swiss-app-date-picker
         class="end-date"
         [formControlName]="'endDate'"
@@ -34,19 +32,13 @@
 
   <div class="date-form-error">
     <mat-error *ngIf="startDate.hasError('required') && pickerClosed">
-      <span class="custom-error-message"
-        >One date is <strong>required</strong></span
-      >
+      <span class="custom-error-message">One date is <strong>required</strong></span>
     </mat-error>
     <mat-error *ngIf="endDate.hasError('required') && pickerClosed">
-      <span class="custom-error-message"
-        >End date is <strong>required</strong></span
-      >
+      <span class="custom-error-message">End date is <strong>required</strong></span>
     </mat-error>
     <mat-error *ngIf="startDate.hasError('periodStartEnd')">
-      <span class="custom-error-message"
-        >End date must be after start date.</span
-      >
+      <span class="custom-error-message">End date must be after start date.</span>
     </mat-error>
   </div>
 </div>

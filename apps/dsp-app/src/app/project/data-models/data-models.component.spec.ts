@@ -47,36 +47,20 @@ describe('DataModelsComponent', () => {
   beforeEach(async () => {
     const dspConnSpyObj = {
       admin: {
-        listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-          'getListsInProject',
-        ]),
+        listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject']),
       },
       v2: {
         onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri']),
       },
     };
 
-    const ontoServiceSpy = jasmine.createSpyObj('OntologyService', [
-      'getOntologyName',
-    ]);
+    const ontoServiceSpy = jasmine.createSpyObj('OntologyService', ['getOntologyName']);
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
 
     await TestBed.configureTestingModule({
-      declarations: [
-        DataModelsTestHostComponent,
-        DataModelsComponent,
-        StringifyStringLiteralPipe,
-      ],
-      imports: [
-        MatDialogModule,
-        MatIconModule,
-        MatSnackBarModule,
-        MatTooltipModule,
-        RouterTestingModule,
-      ],
+      declarations: [DataModelsTestHostComponent, DataModelsComponent, StringifyStringLiteralPipe],
+      imports: [MatDialogModule, MatIconModule, MatSnackBarModule, MatTooltipModule, RouterTestingModule],
       providers: [
         {
           provide: AppConfigService,
@@ -112,16 +96,12 @@ describe('DataModelsComponent', () => {
     // mock API
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).getOntologiesByProjectIri.and.callFake(() => {
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntologiesByProjectIri.and.callFake(() => {
       const anythingOnto = MockOntology.mockOntologiesMetadata();
       return of(anythingOnto);
     });
 
-    (
-      dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-    ).getListsInProject.and.callFake(() => {
+    (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(() => {
       const response = new ListsResponse();
 
       response.lists = new Array<ListNodeInfo>();
@@ -148,22 +128,20 @@ describe('DataModelsComponent', () => {
     // mock session service
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: true,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: true,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     fixture = TestBed.createComponent(DataModelsTestHostComponent);
     component = fixture.componentInstance;
@@ -173,16 +151,12 @@ describe('DataModelsComponent', () => {
   });
 
   it('should list the projects data models', () => {
-    const dataModels = fixture.debugElement.queryAll(
-      By.css('.projectOntos .list .list-item')
-    );
+    const dataModels = fixture.debugElement.queryAll(By.css('.projectOntos .list .list-item'));
     expect(dataModels.length).toEqual(15);
   });
 
   it('should list the projects lists', () => {
-    const dataModels = fixture.debugElement.queryAll(
-      By.css('.projectLists .list .list-item')
-    );
+    const dataModels = fixture.debugElement.queryAll(By.css('.projectLists .list .list-item'));
     expect(dataModels.length).toEqual(2);
   });
 });

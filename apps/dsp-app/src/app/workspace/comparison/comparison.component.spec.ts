@@ -21,8 +21,7 @@ class TestResourceComponent {
  */
 @Component({
   selector: 'app-comparison-host-component',
-  template:
-    '<app-comparison #comparison [noOfResources]="noOfResources" [resourceIds]="resourceIds"></app-comparison>',
+  template: '<app-comparison #comparison [noOfResources]="noOfResources" [resourceIds]="resourceIds"></app-comparison>',
 })
 class TestHostComparisonComponent {
   @ViewChild('comparison') comparison: ComparisonComponent;
@@ -43,11 +42,7 @@ describe('ComparisonComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        ComparisonComponent,
-        TestHostComparisonComponent,
-        TestResourceComponent,
-      ],
+      declarations: [ComparisonComponent, TestHostComparisonComponent, TestResourceComponent],
       imports: [AngularSplitModule],
     }).compileComponents();
   }));

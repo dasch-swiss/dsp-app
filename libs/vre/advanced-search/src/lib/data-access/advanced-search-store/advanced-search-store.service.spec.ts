@@ -3,11 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Constants, KnoraApiConnection, ListNodeV2 } from '@dasch-swiss/dsp-js';
 import { Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
-import {
-  AdvancedSearchService,
-  ApiData,
-  PropertyData,
-} from '../advanced-search-service/advanced-search.service';
+import { AdvancedSearchService, ApiData, PropertyData } from '../advanced-search-service/advanced-search.service';
 import { GravsearchService } from '../gravsearch-service/gravsearch.service';
 import {
   AdvancedSearchStoreService,
@@ -17,9 +13,7 @@ import {
   PropertyFormListOperations,
 } from './advanced-search-store.service';
 
-export const DspApiConnectionToken = new InjectionToken<KnoraApiConnection>(
-  'DspApiConnectionToken'
-);
+export const DspApiConnectionToken = new InjectionToken<KnoraApiConnection>('DspApiConnectionToken');
 
 export class MockKnoraApiConnection {}
 
@@ -35,10 +29,7 @@ export class MockAdvancedSearchService {
     return of(new ListNodeV2());
   }
 
-  resourceClassesList(
-    ontologyIri: string,
-    restrictToClass?: string
-  ): Observable<ApiData[]> {
+  resourceClassesList(ontologyIri: string, restrictToClass?: string): Observable<ApiData[]> {
     return of([
       {
         iri: 'testIri',
@@ -58,18 +49,11 @@ export class MockAdvancedSearchService {
     ]);
   }
 
-  getResourcesListCount(
-    searchTerm: string,
-    objectType: string
-  ): Observable<number> {
+  getResourcesListCount(searchTerm: string, objectType: string): Observable<number> {
     return of(1);
   }
 
-  getResourcesList(
-    searchTerm: string,
-    objectType: string,
-    offset?: number
-  ): Observable<ApiData[]> {
+  getResourcesList(searchTerm: string, objectType: string, offset?: number): Observable<ApiData[]> {
     return of([
       {
         iri: 'testIri',
@@ -143,9 +127,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeTruthy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeTruthy();
     });
 
     it('should return false if selectedOperator is exists or not exists', () => {
@@ -163,15 +145,11 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeFalsy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeFalsy();
 
       propertyFormItem.selectedOperator = Operators.NotExists;
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeFalsy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeFalsy();
     });
 
     it('should return true if the value is an empty array', () => {
@@ -180,8 +158,7 @@ describe('AdvancedSearchStoreService', () => {
         selectedProperty: {
           iri: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#linkToTest',
           label: 'Link to Test',
-          objectType:
-            'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
+          objectType: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
           isLinkedResourceProperty: true,
         },
         selectedOperator: Operators.Equals,
@@ -190,9 +167,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeTruthy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeTruthy();
     });
 
     it('should return true if the value is an array that contains an invalid item', () => {
@@ -201,8 +176,7 @@ describe('AdvancedSearchStoreService', () => {
         selectedProperty: {
           iri: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#linkToTest',
           label: 'Link to Test',
-          objectType:
-            'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
+          objectType: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
           isLinkedResourceProperty: true,
         },
         selectedOperator: Operators.Equals,
@@ -212,8 +186,7 @@ describe('AdvancedSearchStoreService', () => {
             selectedProperty: {
               iri: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#hasFirstName',
               label: 'hasFirstName',
-              objectType:
-                'http://api.knora.org/ontology/knora-api/v2#TextValue',
+              objectType: 'http://api.knora.org/ontology/knora-api/v2#TextValue',
               isLinkedResourceProperty: false,
             },
             selectedOperator: Operators.Equals,
@@ -226,9 +199,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeTruthy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeTruthy();
     });
 
     it('should return false if the value is an array that contains all valid items', () => {
@@ -237,8 +208,7 @@ describe('AdvancedSearchStoreService', () => {
         selectedProperty: {
           iri: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#linkToTest',
           label: 'Link to Test',
-          objectType:
-            'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
+          objectType: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
           isLinkedResourceProperty: true,
         },
         selectedOperator: Operators.Equals,
@@ -248,8 +218,7 @@ describe('AdvancedSearchStoreService', () => {
             selectedProperty: {
               iri: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#hasFirstName',
               label: 'hasFirstName',
-              objectType:
-                'http://api.knora.org/ontology/knora-api/v2#TextValue',
+              objectType: 'http://api.knora.org/ontology/knora-api/v2#TextValue',
               isLinkedResourceProperty: false,
             },
             selectedOperator: Operators.Equals,
@@ -262,9 +231,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeFalsy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeFalsy();
     });
 
     it('should return true if the value is undefined or an empty string', () => {
@@ -282,15 +249,11 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeTruthy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeTruthy();
 
       propertyFormItem.searchValue = '';
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeTruthy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeTruthy();
     });
 
     it('should return false if the value is a string', () => {
@@ -308,9 +271,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      expect(
-        service.isPropertyFormItemListInvalid(propertyFormItem)
-      ).toBeFalsy();
+      expect(service.isPropertyFormItemListInvalid(propertyFormItem)).toBeFalsy();
     });
   });
 
@@ -326,9 +287,7 @@ describe('AdvancedSearchStoreService', () => {
       service.selectedOntology$.pipe(take(1)).subscribe(onto => {
         expect(onto).not.toBeUndefined();
         if (onto) {
-          expect(onto.iri).toEqual(
-            'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2'
-          );
+          expect(onto.iri).toEqual('http://api.test.dasch.swiss/ontology/0420/eric-onto/v2');
           expect(onto.label).toEqual("Eric's Test Project");
         }
       });
@@ -380,9 +339,7 @@ describe('AdvancedSearchStoreService', () => {
       service.selectedResourceClass$.pipe(take(1)).subscribe(rc => {
         expect(rc).not.toBeUndefined();
         if (rc) {
-          expect(rc.iri).toEqual(
-            'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#Person'
-          );
+          expect(rc.iri).toEqual('http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#Person');
           expect(rc.label).toEqual('Person');
         }
       });
@@ -449,10 +406,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      service.updatePropertyFormList(
-        PropertyFormListOperations.Add,
-        propertyFormItem
-      );
+      service.updatePropertyFormList(PropertyFormListOperations.Add, propertyFormItem);
 
       service.propertyFormList$.pipe(take(1)).subscribe(pfl => {
         expect(pfl).not.toBeUndefined();
@@ -472,10 +426,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      service.updatePropertyFormList(
-        PropertyFormListOperations.Add,
-        propertyFormItem
-      );
+      service.updatePropertyFormList(PropertyFormListOperations.Add, propertyFormItem);
 
       service.propertyFormList$.pipe(take(1)).subscribe(pfl => {
         expect(pfl).not.toBeUndefined();
@@ -499,10 +450,7 @@ describe('AdvancedSearchStoreService', () => {
         }
       });
 
-      service.updatePropertyFormList(
-        PropertyFormListOperations.Delete,
-        propertyFormItem
-      );
+      service.updatePropertyFormList(PropertyFormListOperations.Delete, propertyFormItem);
 
       service.propertyFormList$.pipe(take(1)).subscribe(pfl => {
         expect(pfl).not.toBeUndefined();
@@ -531,10 +479,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      service.updatePropertyFormList(
-        PropertyFormListOperations.Add,
-        propertyFormItem
-      );
+      service.updatePropertyFormList(PropertyFormListOperations.Add, propertyFormItem);
 
       service.propertyFormList$.pipe(take(1)).subscribe(pfl => {
         expect(pfl).not.toBeUndefined();
@@ -567,10 +512,7 @@ describe('AdvancedSearchStoreService', () => {
         list: undefined,
       };
 
-      service.updatePropertyFormList(
-        PropertyFormListOperations.Add,
-        propertyFormItem
-      );
+      service.updatePropertyFormList(PropertyFormListOperations.Add, propertyFormItem);
 
       service.addChildPropertyFormList(propertyFormItem);
 
@@ -735,9 +677,7 @@ describe('AdvancedSearchStoreService', () => {
         expect(pfl).not.toBeUndefined();
         expect(Array.isArray(pfl[0].searchValue)).toBeTruthy();
         if (pfl && Array.isArray(pfl[0].searchValue)) {
-          expect(pfl[0].searchValue[0].selectedProperty).toEqual(
-            updatedSelectedProp
-          );
+          expect(pfl[0].searchValue[0].selectedProperty).toEqual(updatedSelectedProp);
         }
       });
     });
@@ -782,9 +722,7 @@ describe('AdvancedSearchStoreService', () => {
 
       service.updateChildSelectedProperty(parentChildPair);
 
-      expect(getList).toHaveBeenCalledWith(
-        childPropFormItem.selectedProperty.listIri
-      );
+      expect(getList).toHaveBeenCalledWith(childPropFormItem.selectedProperty.listIri);
 
       service.propertyFormList$.pipe(take(1)).subscribe(pfl => {
         expect(pfl).not.toBeUndefined();
@@ -860,10 +798,7 @@ describe('AdvancedSearchStoreService', () => {
       };
 
       // spy on the filteredPropertiesList method
-      const filteredPropertiesList = jest.spyOn(
-        advancedSearchService,
-        'filteredPropertiesList'
-      );
+      const filteredPropertiesList = jest.spyOn(advancedSearchService, 'filteredPropertiesList');
 
       service.patchState({ propertyFormList: [propFormItem] });
 
@@ -905,17 +840,11 @@ describe('AdvancedSearchStoreService', () => {
       propFormItem.selectedOperator = Operators.Matches;
 
       // spy on the resourceClassesList method
-      const resourceClassesList = jest.spyOn(
-        advancedSearchService,
-        'resourceClassesList'
-      );
+      const resourceClassesList = jest.spyOn(advancedSearchService, 'resourceClassesList');
 
       service.updateSelectedOperator(propFormItem);
 
-      expect(resourceClassesList).toHaveBeenCalledWith(
-        'ontoIri',
-        'linkedResourceIri'
-      );
+      expect(resourceClassesList).toHaveBeenCalledWith('ontoIri', 'linkedResourceIri');
 
       // fix this
       service.propertyFormList$.pipe(take(1)).subscribe(pfl => {
@@ -956,16 +885,11 @@ describe('AdvancedSearchStoreService', () => {
       };
 
       // spy on the filteredPropertiesList method
-      const filteredPropertiesList = jest.spyOn(
-        advancedSearchService,
-        'filteredPropertiesList'
-      );
+      const filteredPropertiesList = jest.spyOn(advancedSearchService, 'filteredPropertiesList');
 
       service.updateSelectedMatchPropertyResourceClass(propFormItem);
 
-      expect(filteredPropertiesList).toHaveBeenCalledWith(
-        'matchPropResClassIri'
-      );
+      expect(filteredPropertiesList).toHaveBeenCalledWith('matchPropResClassIri');
     });
   });
 
@@ -1006,9 +930,7 @@ describe('AdvancedSearchStoreService', () => {
         expect(pfl).not.toBeUndefined();
         expect(Array.isArray(pfl[0].searchValue)).toBeTruthy();
         if (pfl && Array.isArray(pfl[0].searchValue)) {
-          expect(pfl[0].searchValue[0].selectedOperator).toEqual(
-            Operators.Equals
-          );
+          expect(pfl[0].searchValue[0].selectedOperator).toEqual(Operators.Equals);
         }
       });
     });
@@ -1130,28 +1052,16 @@ describe('AdvancedSearchStoreService', () => {
       };
 
       // spy on the getResourcesList method
-      const getResourcesListCountSpy = jest.spyOn(
-        advancedSearchService,
-        'getResourcesListCount'
-      );
+      const getResourcesListCountSpy = jest.spyOn(advancedSearchService, 'getResourcesListCount');
 
       // spy on the getResourcesList method
-      const getResourcesListSpy = jest.spyOn(
-        advancedSearchService,
-        'getResourcesList'
-      );
+      const getResourcesListSpy = jest.spyOn(advancedSearchService, 'getResourcesList');
 
       service.updateResourcesSearchResults(searchItem);
 
-      expect(getResourcesListCountSpy).toBeCalledWith(
-        searchItem.value,
-        searchItem.objectType
-      );
+      expect(getResourcesListCountSpy).toBeCalledWith(searchItem.value, searchItem.objectType);
 
-      expect(getResourcesListSpy).toBeCalledWith(
-        searchItem.value,
-        searchItem.objectType
-      );
+      expect(getResourcesListSpy).toBeCalledWith(searchItem.value, searchItem.objectType);
 
       service.resourcesSearchResultsCount$.pipe(take(1)).subscribe(rsrc => {
         expect(rsrc).not.toBeUndefined();
@@ -1189,18 +1099,11 @@ describe('AdvancedSearchStoreService', () => {
       };
 
       // spy on the getResourcesList method
-      const getResourcesListSpy = jest.spyOn(
-        advancedSearchService,
-        'getResourcesList'
-      );
+      const getResourcesListSpy = jest.spyOn(advancedSearchService, 'getResourcesList');
 
       service.loadMoreResourcesSearchResults(searchItem);
 
-      expect(getResourcesListSpy).toBeCalledWith(
-        searchItem.value,
-        searchItem.objectType,
-        1
-      );
+      expect(getResourcesListSpy).toBeCalledWith(searchItem.value, searchItem.objectType, 1);
 
       service.resourcesSearchResults$.pipe(take(1)).subscribe(rsr => {
         expect(rsr).not.toBeUndefined();

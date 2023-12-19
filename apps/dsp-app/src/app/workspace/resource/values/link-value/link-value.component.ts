@@ -1,14 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -26,20 +16,13 @@ import {
   UpdateLinkValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DialogComponent,
-  DialogEvent,
-} from '@dsp-app/src/app/main/dialog/dialog.component';
+import { DialogComponent, DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 export function resourceValidator(control: AbstractControl) {
-  const invalid = !(
-    control.value === null ||
-    control.value === '' ||
-    control.value instanceof ReadResource
-  );
+  const invalid = !(control.value === null || control.value === '' || control.value instanceof ReadResource);
   return invalid ? { invalidType: { value: control.value } } : null;
 }
 
@@ -48,19 +31,14 @@ export function resourceValidator(control: AbstractControl) {
   templateUrl: './link-value.component.html',
   styleUrls: ['./link-value.component.scss'],
 })
-export class LinkValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class LinkValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadLinkValue;
   @Input() parentResource: ReadResource;
   @Input() propIri: string;
   @Input() currentOntoIri: string;
 
-  @Output() referredResourceClicked: EventEmitter<ReadLinkValue> =
-    new EventEmitter();
-  @Output() referredResourceHovered: EventEmitter<ReadLinkValue> =
-    new EventEmitter();
+  @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter();
+  @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter();
 
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
@@ -135,77 +113,59 @@ export class LinkValueComponent
     }
   }
 
-  standardValueComparisonFunc(
-    initValue: ReadResource,
-    curValue: ReadResource | string | null
-  ): boolean {
+  standardValueComparisonFunc(initValue: ReadResource, curValue: ReadResource | string | null): boolean {
     return curValue instanceof ReadResource && initValue.id === curValue.id;
   }
 
   ngOnInit() {
     // in case the resource is referencing itself, assign the parent resource to linkedResource
-    if (
-      this.displayValue &&
-      this.displayValue.linkedResourceIri === this.parentResource.id
-    ) {
+    if (this.displayValue && this.displayValue.linkedResourceIri === this.parentResource.id) {
       this.displayValue.linkedResource = this.parentResource;
     }
 
-    const linkType =
-      this.parentResource.getLinkPropertyIriFromLinkValuePropertyIri(
-        this.propIri
-      );
-    this.restrictToResourceClass =
-      this.parentResource.entityInfo.properties[linkType].objectType;
+    const linkType = this.parentResource.getLinkPropertyIriFromLinkValuePropertyIri(this.propIri);
+    this.restrictToResourceClass = this.parentResource.entityInfo.properties[linkType].objectType;
 
     // get label of resource class
     this._dspApiConnection.v2.ontologyCache
       .getResourceClassDefinition(this.restrictToResourceClass)
       .subscribe((onto: ResourceClassAndPropertyDefinitions) => {
-        this.resourceClassLabel =
-          onto.classes[this.restrictToResourceClass].label;
+        this.resourceClassLabel = onto.classes[this.restrictToResourceClass].label;
       });
 
-    this._dspApiConnection.v2.ontologyCache
-      .getOntology(this.currentOntoIri)
-      .subscribe(
-        (ontoMap: Map<string, ReadOntology>) => {
-          // filter out knorabase ontology
-          const filteredOntoMap = new Map(
-            Array.from(ontoMap).filter(([key]) => key !== Constants.KnoraApiV2)
+    this._dspApiConnection.v2.ontologyCache.getOntology(this.currentOntoIri).subscribe(
+      (ontoMap: Map<string, ReadOntology>) => {
+        // filter out knorabase ontology
+        const filteredOntoMap = new Map(Array.from(ontoMap).filter(([key]) => key !== Constants.KnoraApiV2));
+
+        let resClasses = [];
+
+        // loop through each ontology in the project and create an array of ResourceClassDefinitions
+        filteredOntoMap.forEach(onto => {
+          resClasses = resClasses.concat(
+            filteredOntoMap.get(onto.id).getClassDefinitionsByType(ResourceClassDefinition)
           );
+        });
 
-          let resClasses = [];
+        // add the superclass to the list of resource classes
+        this.resourceClasses = resClasses.filter(
+          (resClassDef: ResourceClassDefinition) => resClassDef.id === this.restrictToResourceClass
+        );
 
-          // loop through each ontology in the project and create an array of ResourceClassDefinitions
-          filteredOntoMap.forEach(onto => {
-            resClasses = resClasses.concat(
-              filteredOntoMap
-                .get(onto.id)
-                .getClassDefinitionsByType(ResourceClassDefinition)
-            );
-          });
+        // recursively loop through all of the superclass's subclasses, including nested subclasses
+        // and add them to the list of resource classes
+        this.resourceClasses = this.resourceClasses.concat(
+          this._getSubclasses(resClasses, this.restrictToResourceClass)
+        );
 
-          // add the superclass to the list of resource classes
-          this.resourceClasses = resClasses.filter(
-            (resClassDef: ResourceClassDefinition) =>
-              resClassDef.id === this.restrictToResourceClass
-          );
-
-          // recursively loop through all of the superclass's subclasses, including nested subclasses
-          // and add them to the list of resource classes
-          this.resourceClasses = this.resourceClasses.concat(
-            this._getSubclasses(resClasses, this.restrictToResourceClass)
-          );
-
-          this.properties = filteredOntoMap
-            .get(this.currentOntoIri)
-            .getPropertyDefinitionsByType(ResourcePropertyDefinition);
-        },
-        error => {
-          console.error(error);
-        }
-      );
+        this.properties = filteredOntoMap
+          .get(this.currentOntoIri)
+          .getPropertyDefinitionsByType(ResourcePropertyDefinition);
+      },
+      error => {
+        console.error(error);
+      }
+    );
 
     super.ngOnInit();
 
@@ -276,12 +236,7 @@ export class LinkValueComponent
     this.referredResourceHovered.emit(this.displayValue);
   }
 
-  openDialog(
-    mode: string,
-    ev: Event,
-    iri?: string,
-    resClass?: ResourceClassDefinition
-  ): void {
+  openDialog(mode: string, ev: Event, iri?: string, resClass?: ResourceClassDefinition): void {
     ev.preventDefault();
     const dialogConfig: MatDialogConfig = {
       width: '840px',
@@ -336,8 +291,7 @@ export class LinkValueComponent
   ): ResourceClassDefinition[] {
     // filter list by the provided IRI to find all subclasses of the provided IRI
     const subclasses = resClasses.filter(
-      (resClassDef: ResourceClassDefinition) =>
-        resClassDef.subClassOf.indexOf(resClassRestrictionIri) > -1
+      (resClassDef: ResourceClassDefinition) => resClassDef.subClassOf.indexOf(resClassRestrictionIri) > -1
     );
 
     // add the filtered list to the list of all subclasses

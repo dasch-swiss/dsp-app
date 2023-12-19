@@ -8,17 +8,8 @@ import {
   Output,
 } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import {
-  CreateListRequest,
-  List,
-  ListNodeInfo,
-  StringLiteral,
-  UpdateListInfoRequest,
-} from '@dasch-swiss/dsp-js';
-import {
-  ListApiService,
-  ProjectApiService,
-} from '@dasch-swiss/vre/shared/app-api';
+import { CreateListRequest, List, ListNodeInfo, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
+import { ListApiService, ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
@@ -40,8 +31,7 @@ export class ListInfoFormComponent implements OnInit {
 
   @Input() projectIri: string;
 
-  @Output() closeDialog: EventEmitter<List | ListNodeInfo> =
-    new EventEmitter<List>();
+  @Output() closeDialog: EventEmitter<List | ListNodeInfo> = new EventEmitter<List>();
 
   loading: boolean;
 
@@ -84,11 +74,9 @@ export class ListInfoFormComponent implements OnInit {
       this._route.parent.paramMap.subscribe((params: Params) => {
         this.projectUuid = params.get('uuid');
 
-        this._projectApiService
-          .get(this._projectService.uuidToIri(this.projectUuid))
-          .subscribe(response => {
-            this.projectIri = response.project.id;
-          });
+        this._projectApiService.get(this._projectService.uuidToIri(this.projectUuid)).subscribe(response => {
+          this.projectIri = response.project.id;
+        });
       });
     }
     // in case of edit
@@ -98,11 +86,9 @@ export class ListInfoFormComponent implements OnInit {
       this._route.firstChild.paramMap.subscribe((params: Params) => {
         this.projectUuid = params.get('uuid');
 
-        this._projectApiService
-          .get(this._projectService.uuidToIri(this.projectUuid))
-          .subscribe(response => {
-            this.projectIri = response.project.id;
-          });
+        this._projectApiService.get(this._projectService.uuidToIri(this.projectUuid)).subscribe(response => {
+          this.projectIri = response.project.id;
+        });
       });
     }
   }
@@ -141,20 +127,17 @@ export class ListInfoFormComponent implements OnInit {
 
     if (this.mode === 'update') {
       // edit mode: update list info
-      const listInfoUpdateData: UpdateListInfoRequest =
-        new UpdateListInfoRequest();
+      const listInfoUpdateData: UpdateListInfoRequest = new UpdateListInfoRequest();
       listInfoUpdateData.projectIri = this.projectIri;
       listInfoUpdateData.listIri = this.iri;
       listInfoUpdateData.labels = this.labels;
       listInfoUpdateData.comments = this.comments;
 
-      this._listApiService
-        .updateInfo(listInfoUpdateData.listIri, listInfoUpdateData)
-        .subscribe(response => {
-          this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
-          this.loading = false;
-          this.closeDialog.emit(response.listinfo);
-        });
+      this._listApiService.updateInfo(listInfoUpdateData.listIri, listInfoUpdateData).subscribe(response => {
+        this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
+        this.loading = false;
+        this.closeDialog.emit(response.listinfo);
+      });
     } else {
       // new: create list
       const listInfoData: CreateListRequest = new CreateListRequest();
@@ -191,16 +174,12 @@ export class ListInfoFormComponent implements OnInit {
     switch (type) {
       case 'labels':
         this.labels = data;
-        this.labelInvalidMessage = data.length
-          ? null
-          : this.labelErrors.label.required;
+        this.labelInvalidMessage = data.length ? null : this.labelErrors.label.required;
         break;
 
       case 'comments':
         this.comments = data;
-        this.commentInvalidMessage = data.length
-          ? null
-          : this.labelErrors.comment.required;
+        this.commentInvalidMessage = data.length ? null : this.labelErrors.comment.required;
         break;
     }
 

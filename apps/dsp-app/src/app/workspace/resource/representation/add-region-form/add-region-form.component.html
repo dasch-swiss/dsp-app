@@ -9,8 +9,7 @@
   </mat-form-field>
   <mat-form-field class="large-field without-border color-field">
     <mat-label>Color *</mat-label>
-    <app-color-picker #colorInput [formControlName]="'color'" class="value">
-    </app-color-picker>
+    <app-color-picker #colorInput [formControlName]="'color'" class="value"> </app-color-picker>
   </mat-form-field>
   <mat-form-field class="hidden">
     <mat-label>Is Region Of</mat-label>
@@ -19,9 +18,7 @@
   <!-- Further inputs would be status, lineColor and lineWidth if we want to have these options-->
   <div class="form-action form-panel medium-field">
     <span>
-      <button mat-button type="button" mat-dialog-close>
-        {{ 'appLabels.form.action.cancel' | translate }}
-      </button>
+      <button mat-button type="button" mat-dialog-close>{{ 'appLabels.form.action.cancel' | translate }}</button>
     </span>
     <span class="fill-remaining-space"></span>
     <span>

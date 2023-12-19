@@ -2,17 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import {
-  Component,
-  DoCheck,
-  ElementRef,
-  HostBinding,
-  Input,
-  OnDestroy,
-  OnInit,
-  Optional,
-  Self,
-} from '@angular/core';
+import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -51,23 +41,14 @@ export class Interval {
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class IntervalInputErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
-    );
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
 
 /** interval must have a start and end of the same type, either both numbers or both null */
-export function startEndSameTypeValidator(
-  otherInterval: UntypedFormControl
-): ValidatorFn {
+export function startEndSameTypeValidator(otherInterval: UntypedFormControl): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
     // valid if both start and end are null or have values
     const invalid = !(
@@ -75,14 +56,11 @@ export function startEndSameTypeValidator(
       (control.value !== null && otherInterval.value !== null)
     );
 
-    return invalid
-      ? { startEndSameTypeRequired: { value: control.value } }
-      : null;
+    return invalid ? { startEndSameTypeRequired: { value: control.value } } : null;
   };
 }
 
-type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> &
-  _AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
   constructor(
@@ -93,28 +71,18 @@ class MatInputBase {
     public stateChanges: Subject<void>
   ) {}
 }
-const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
-  mixinErrorState(MatInputBase);
+const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
 // https://material.angular.io/guide/creating-a-custom-form-field-control
 @Component({
   selector: 'app-interval-input',
   templateUrl: './interval-input.component.html',
   styleUrls: ['./interval-input.component.scss'],
-  providers: [
-    { provide: MatFormFieldControl, useExisting: IntervalInputComponent },
-    { provide: Subject },
-  ],
+  providers: [{ provide: MatFormFieldControl, useExisting: IntervalInputComponent }, { provide: Subject }],
 })
 export class IntervalInputComponent
   extends _MatInputMixinBase
-  implements
-    ControlValueAccessor,
-    MatFormFieldControl<Interval>,
-    DoCheck,
-    CanUpdateErrorState,
-    OnDestroy,
-    OnInit
+  implements ControlValueAccessor, MatFormFieldControl<Interval>, DoCheck, CanUpdateErrorState, OnDestroy, OnInit
 {
   static nextId = 0;
 
@@ -223,13 +191,7 @@ export class IntervalInputComponent
     @Optional() _parentFormGroup: FormGroupDirective,
     _defaultErrorStateMatcher: ErrorStateMatcher
   ) {
-    super(
-      _defaultErrorStateMatcher,
-      _parentForm,
-      _parentFormGroup,
-      ngControl,
-      _stateChanges
-    );
+    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
     this.startIntervalControl = new UntypedFormControl(null);
     this.endIntervalControl = new UntypedFormControl(null);
@@ -260,12 +222,8 @@ export class IntervalInputComponent
         startEndSameTypeValidator(this.startIntervalControl),
       ]);
     } else {
-      this.startIntervalControl.setValidators(
-        startEndSameTypeValidator(this.endIntervalControl)
-      );
-      this.endIntervalControl.setValidators(
-        startEndSameTypeValidator(this.startIntervalControl)
-      );
+      this.startIntervalControl.setValidators(startEndSameTypeValidator(this.endIntervalControl));
+      this.endIntervalControl.setValidators(startEndSameTypeValidator(this.startIntervalControl));
     }
 
     this.startIntervalControl.updateValueAndValidity();

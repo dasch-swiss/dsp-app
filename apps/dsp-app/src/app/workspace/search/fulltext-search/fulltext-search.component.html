@@ -19,12 +19,7 @@
     </button>
     <mat-menu #selectProject="matMenu">
       <div class="app-project-filter-menu">
-        <button
-          mat-menu-item
-          class="center"
-          (click)="setProject(); changeFocus()">
-          {{ defaultProjectLabel }}
-        </button>
+        <button mat-menu-item class="center" (click)="setProject(); changeFocus()">{{ defaultProjectLabel }}</button>
         <mat-divider></mat-divider>
         <span *ngFor="let project of projects">
           <button
@@ -39,9 +34,7 @@
       </div>
     </mat-menu>
   </div>
-  <div
-    class="app-fulltext-search-field"
-    [class.with-project-filter]="projectfilter">
+  <div class="app-fulltext-search-field" [class.with-project-filter]="projectfilter">
     <input
       #fulltextSearchInput
       class="app-fulltext-search-input"
@@ -54,10 +47,7 @@
       (keyup.esc)="resetSearch()"
       (keyup.enter)="doSearch()"
       (click)="setFocus()" />
-    <button
-      class="app-fulltext-search-button suffix"
-      (click)="doSearch()"
-      type="submit">
+    <button class="app-fulltext-search-button suffix" (click)="doSearch()" type="submit">
       <mat-icon>search</mat-icon>
     </button>
   </div>
@@ -70,10 +60,7 @@
       <mat-list class="app-previous-search-list">
         <div *ngFor="let item of prevSearch; let i = index">
           <mat-list-item *ngIf="i < 10">
-            <span
-              (click)="doPrevSearch(item)"
-              class="app-previous-search-item"
-              matListItemTitle>
+            <span (click)="doPrevSearch(item)" class="app-previous-search-item" matListItemTitle>
               <div
                 class="app-project-filter-label"
                 [class.not-empty]="item.projectIri"
@@ -84,16 +71,10 @@
                                 ">
                 <span *ngIf="item.projectIri">[{{ item.projectLabel }}]</span>
               </div>
-              <div
-                class="app-previous-search-query"
-                [class.fix-width]="projectfilter">
-                {{ item.query }}
-              </div>
+              <div class="app-previous-search-query" [class.fix-width]="projectfilter">{{ item.query }}</div>
               <div>
                 <button mat-icon-button (click)="resetPrevSearch(item)">
-                  <mat-icon class="mat-list-close-icon" aria-label="close"
-                    >close</mat-icon
-                  >
+                  <mat-icon class="mat-list-close-icon" aria-label="close">close</mat-icon>
                 </button>
               </div>
             </span>
@@ -103,13 +84,7 @@
 
       <div class="app-menu-action" *ngIf="prevSearch">
         <mat-divider></mat-divider>
-        <button
-          mat-button
-          color="primary"
-          class="center clear-list-btn"
-          (click)="resetPrevSearch()">
-          Clear list
-        </button>
+        <button mat-button color="primary" class="center clear-list-btn" (click)="resetPrevSearch()">Clear list</button>
       </div>
     </div>
   </div>
@@ -141,25 +116,16 @@
       </button>
       <mat-menu #selectProject="matMenu">
         <div class="app-project-filter-menu">
-          <button
-            mat-menu-item
-            class="center"
-            (click)="setProject(); changeFocus()">
-            {{ defaultProjectLabel }}
-          </button>
+          <button mat-menu-item class="center" (click)="setProject(); changeFocus()">{{ defaultProjectLabel }}</button>
           <mat-divider></mat-divider>
           <span *ngFor="let project of projects">
-            <button mat-menu-item (click)="setProject(project); changeFocus()">
-              {{ project.shortname }}
-            </button>
+            <button mat-menu-item (click)="setProject(project); changeFocus()">{{ project.shortname }}</button>
           </span>
         </div>
       </mat-menu>
     </div>
 
-    <div
-      class="app-fulltext-search-field"
-      [class.with-project-filter]="projectfilter">
+    <div class="app-fulltext-search-field" [class.with-project-filter]="projectfilter">
       <input
         #fulltextSearchInputMobile
         class="app-fulltext-search-input"
@@ -172,12 +138,7 @@
         (click)="setFocus()"
         (keyup.esc)="resetSearch()"
         (keyup.enter)="doSearch()" />
-      <button
-        mat-button
-        color="primary"
-        class="app-fulltext-search-button"
-        (click)="doSearch()"
-        type="submit">
+      <button mat-button color="primary" class="app-fulltext-search-button" (click)="doSearch()" type="submit">
         Search
       </button>
     </div>
@@ -189,10 +150,7 @@
         <mat-list class="app-previous-search-list">
           <div *ngFor="let item of prevSearch; let i = index">
             <mat-list-item *ngIf="i < 10">
-              <h4
-                mat-line
-                (click)="doPrevSearch(item)"
-                class="app-previous-search-item">
+              <h4 mat-line (click)="doPrevSearch(item)" class="app-previous-search-item">
                 <div
                   class="app-project-filter-label"
                   [class.not-empty]="item.projectIri"
@@ -203,16 +161,10 @@
                                     ">
                   <span *ngIf="item.projectIri">{{ item.projectLabel }}</span>
                 </div>
-                <div
-                  class="app-previous-search-query"
-                  [class.fix-width]="projectfilter">
-                  {{ item.query }}
-                </div>
+                <div class="app-previous-search-query" [class.fix-width]="projectfilter">{{ item.query }}</div>
               </h4>
               <button mat-icon-button (click)="resetPrevSearch(item)">
-                <mat-icon class="mat-list-close-icon" aria-label="close"
-                  >close</mat-icon
-                >
+                <mat-icon class="mat-list-close-icon" aria-label="close">close</mat-icon>
               </button>
             </mat-list-item>
           </div>
@@ -220,13 +172,7 @@
       </div>
       <div class="app-menu-action">
         <mat-divider></mat-divider>
-        <button
-          mat-button
-          color="primary"
-          class="center clear-list-btn"
-          (click)="togglePhonePanel()">
-          Cancel
-        </button>
+        <button mat-button color="primary" class="center clear-list-btn" (click)="togglePhonePanel()">Cancel</button>
       </div>
     </div>
   </div>

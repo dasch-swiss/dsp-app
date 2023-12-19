@@ -30,36 +30,28 @@ describe('ValueService', () => {
     it('should return type of int', () => {
       const readIntValue = new ReadIntValue();
       readIntValue.type = 'http://api.knora.org/ontology/knora-api/v2#IntValue';
-      expect(service.getValueTypeOrClass(readIntValue)).toEqual(
-        'http://api.knora.org/ontology/knora-api/v2#IntValue'
-      );
+      expect(service.getValueTypeOrClass(readIntValue)).toEqual('http://api.knora.org/ontology/knora-api/v2#IntValue');
     });
 
     it('should return class of ReadTextValueAsString', () => {
       const readTextValueAsString = new ReadTextValueAsString();
-      readTextValueAsString.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
-      expect(service.getValueTypeOrClass(readTextValueAsString)).toEqual(
-        'ReadTextValueAsString'
-      );
+      readTextValueAsString.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      expect(service.getValueTypeOrClass(readTextValueAsString)).toEqual('ReadTextValueAsString');
     });
   });
 
   describe('isTextEditable', () => {
     it('should determine if a given text with the standard mapping is editable', () => {
       const readTextValueAsXml = new ReadTextValueAsXml();
-      readTextValueAsXml.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      readTextValueAsXml.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
       readTextValueAsXml.mapping = Constants.StandardMapping;
       expect(service.isTextEditable(readTextValueAsXml)).toBeTruthy();
     });
 
     it('should determine if a given text with a custom mapping is editable', () => {
       const readTextValueAsXml = new ReadTextValueAsXml();
-      readTextValueAsXml.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
-      readTextValueAsXml.mapping =
-        'http://rdfh.ch/standoff/mappings/CustomMapping';
+      readTextValueAsXml.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      readTextValueAsXml.mapping = 'http://rdfh.ch/standoff/mappings/CustomMapping';
       expect(service.isTextEditable(readTextValueAsXml)).toBeFalsy();
     });
   });
@@ -73,82 +65,64 @@ describe('ValueService', () => {
       resPropDef.isEditable = true;
 
       const valueClass = service.getValueTypeOrClass(readIntValue);
-      expect(
-        service.isReadOnly(valueClass, readIntValue, resPropDef)
-      ).toBeFalsy();
+      expect(service.isReadOnly(valueClass, readIntValue, resPropDef)).toBeFalsy();
     });
 
     it('should not mark ReadTextValueAsString as ReadOnly', () => {
       const readTextValueAsString = new ReadTextValueAsString();
-      readTextValueAsString.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      readTextValueAsString.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
 
       const resPropDef = new ResourcePropertyDefinition();
       resPropDef.isEditable = true;
 
       const valueClass = service.getValueTypeOrClass(readTextValueAsString);
-      expect(
-        service.isReadOnly(valueClass, readTextValueAsString, resPropDef)
-      ).toBeFalsy();
+      expect(service.isReadOnly(valueClass, readTextValueAsString, resPropDef)).toBeFalsy();
     });
 
     it('should mark ReadTextValueAsHtml as ReadOnly', () => {
       const readTextValueAsHtml = new ReadTextValueAsHtml();
-      readTextValueAsHtml.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      readTextValueAsHtml.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
 
       const resPropDef = new ResourcePropertyDefinition();
       resPropDef.isEditable = true;
 
       const valueClass = service.getValueTypeOrClass(readTextValueAsHtml);
-      expect(
-        service.isReadOnly(valueClass, readTextValueAsHtml, resPropDef)
-      ).toBeTruthy();
+      expect(service.isReadOnly(valueClass, readTextValueAsHtml, resPropDef)).toBeTruthy();
     });
 
     it('should not mark ReadTextValueAsXml with standard mapping as ReadOnly', () => {
       const readTextValueAsXml = new ReadTextValueAsXml();
-      readTextValueAsXml.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      readTextValueAsXml.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
       readTextValueAsXml.mapping = Constants.StandardMapping;
 
       const resPropDef = new ResourcePropertyDefinition();
       resPropDef.isEditable = true;
 
       const valueClass = service.getValueTypeOrClass(readTextValueAsXml);
-      expect(
-        service.isReadOnly(valueClass, readTextValueAsXml, resPropDef)
-      ).toBeFalsy();
+      expect(service.isReadOnly(valueClass, readTextValueAsXml, resPropDef)).toBeFalsy();
     });
 
     it('should mark ReadTextValueAsXml with custom mapping as ReadOnly', () => {
       const readTextValueAsXml = new ReadTextValueAsXml();
-      readTextValueAsXml.type =
-        'http://api.knora.org/ontology/knora-api/v2#TextValue';
-      readTextValueAsXml.mapping =
-        'http://rdfh.ch/standoff/mappings/CustomMapping';
+      readTextValueAsXml.type = 'http://api.knora.org/ontology/knora-api/v2#TextValue';
+      readTextValueAsXml.mapping = 'http://rdfh.ch/standoff/mappings/CustomMapping';
 
       const resPropDef = new ResourcePropertyDefinition();
       resPropDef.isEditable = true;
 
       const valueClass = service.getValueTypeOrClass(readTextValueAsXml);
-      expect(
-        service.isReadOnly(valueClass, readTextValueAsXml, resPropDef)
-      ).toBeTruthy();
+      expect(service.isReadOnly(valueClass, readTextValueAsXml, resPropDef)).toBeTruthy();
     });
 
     it('should mark a standoff link value as ReadOnly', () => {
       const readStandoffLinkValue = new ReadLinkValue();
-      readStandoffLinkValue.type =
-        'http://api.knora.org/ontology/knora-api/v2#LinkValue';
+      readStandoffLinkValue.type = 'http://api.knora.org/ontology/knora-api/v2#LinkValue';
 
       const resPropDef = new ResourcePropertyDefinition();
       resPropDef.isEditable = false;
 
       const valueClass = service.getValueTypeOrClass(readStandoffLinkValue);
-      expect(
-        service.isReadOnly(valueClass, readStandoffLinkValue, resPropDef)
-      ).toBeTruthy();
+      expect(service.isReadOnly(valueClass, readStandoffLinkValue, resPropDef)).toBeTruthy();
     });
 
     it('should not mark ReadDateValue with supported era as ReadOnly', done => {
@@ -262,9 +236,7 @@ describe('ValueService', () => {
 
   describe('createJDNCalendarDateFromKnoraDate', () => {
     it('should create a JDN calendar date from a Knora date with day precision in the Gregorian calendar', () => {
-      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(
-        new KnoraDate('GREGORIAN', 'CE', 2021, 3, 15)
-      );
+      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(new KnoraDate('GREGORIAN', 'CE', 2021, 3, 15));
 
       const period = calDateJDN.toJDNPeriod();
 
@@ -273,9 +245,7 @@ describe('ValueService', () => {
     });
 
     it('should create a JDN calendar date from a Knora date BCE with day precision in the Gregorian calendar', () => {
-      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(
-        new KnoraDate('GREGORIAN', 'BCE', 1, 1, 1)
-      );
+      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(new KnoraDate('GREGORIAN', 'BCE', 1, 1, 1));
 
       const period = calDateJDN.toJDNPeriod();
 
@@ -284,9 +254,7 @@ describe('ValueService', () => {
     });
 
     it('should create a JDN calendar date from a Knora date with day precision in the Julian calendar', () => {
-      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(
-        new KnoraDate('JULIAN', 'CE', 2021, 3, 15)
-      );
+      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(new KnoraDate('JULIAN', 'CE', 2021, 3, 15));
 
       const period = calDateJDN.toJDNPeriod();
 
@@ -295,9 +263,7 @@ describe('ValueService', () => {
     });
 
     it('should create a JDN calendar date from a Knora date with month precision in the Gregorian calendar', () => {
-      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(
-        new KnoraDate('GREGORIAN', 'CE', 2021, 3)
-      );
+      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(new KnoraDate('GREGORIAN', 'CE', 2021, 3));
 
       const period = calDateJDN.toJDNPeriod();
 
@@ -306,9 +272,7 @@ describe('ValueService', () => {
     });
 
     it('should create a JDN calendar date from a Knora date with year precision in the Gregorian calendar', () => {
-      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(
-        new KnoraDate('GREGORIAN', 'CE', 2021)
-      );
+      const calDateJDN = service.createJDNCalendarDateFromKnoraDate(new KnoraDate('GREGORIAN', 'CE', 2021));
 
       const period = calDateJDN.toJDNPeriod();
 
@@ -319,27 +283,19 @@ describe('ValueService', () => {
 
   describe('convertHistoricalYearToAstronomicalYear', () => {
     it('should convert the year 1 BCE to its astronomical representation', () => {
-      expect(service.convertHistoricalYearToAstronomicalYear(1, 'BCE')).toEqual(
-        0
-      );
+      expect(service.convertHistoricalYearToAstronomicalYear(1, 'BCE')).toEqual(0);
     });
 
     it('should convert the year 2 BCE to its astronomical representation', () => {
-      expect(service.convertHistoricalYearToAstronomicalYear(2, 'BCE')).toEqual(
-        -1
-      );
+      expect(service.convertHistoricalYearToAstronomicalYear(2, 'BCE')).toEqual(-1);
     });
 
     it('should convert the year 1 CE to its astronomical representation', () => {
-      expect(service.convertHistoricalYearToAstronomicalYear(1, 'CE')).toEqual(
-        1
-      );
+      expect(service.convertHistoricalYearToAstronomicalYear(1, 'CE')).toEqual(1);
     });
 
     it('should convert the year 1 in the Islamic to its astronomical representation', () => {
-      expect(
-        service.convertHistoricalYearToAstronomicalYear(1, 'noEra')
-      ).toEqual(1);
+      expect(service.convertHistoricalYearToAstronomicalYear(1, 'noEra')).toEqual(1);
     });
   });
 });

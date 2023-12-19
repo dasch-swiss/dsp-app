@@ -1,12 +1,8 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
   <div class="rm-value" [style.background-color]="valueFormControl.value">
-    <span *ngIf="showHexCode" class="hexcode" [style.color]="textColor"
-      >{{ valueFormControl.value }}</span
-    >
+    <span *ngIf="showHexCode" class="hexcode" [style.color]="textColor">{{ valueFormControl.value }}</span>
   </div>
-  <span class="rm-comment" *ngIf="shouldShowComment">
-    {{ commentFormControl.value }}
-  </span>
+  <span class="rm-comment" *ngIf="shouldShowComment"> {{ commentFormControl.value }} </span>
 </span>
 <ng-template #showForm>
   <span [formGroup]="form">
@@ -14,22 +10,15 @@
       <!-- empty label so that the mat-label in the child component appears -->
       <!-- it's a bit hacky but so is this entire component -->
       <mat-label *ngIf="valueFormControl.value"></mat-label>
-      <app-color-picker
-        #colorInput
-        [formControlName]="'value'"
-        class="value"
-        [errorStateMatcher]="matcher">
+      <app-color-picker #colorInput [formControlName]="'value'" class="value" [errorStateMatcher]="matcher">
       </app-color-picker>
       <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
         New value must be different than the current value.
       </mat-error>
-      <mat-error *ngIf="valueFormControl.hasError('pattern')">
-        Please enter a hex color value.
-      </mat-error>
+      <mat-error *ngIf="valueFormControl.hasError('pattern')"> Please enter a hex color value. </mat-error>
       <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
         <span class="custom-error-message"
-          >This value already exists for this property. Duplicate values are not
-          allowed.</span
+          >This value already exists for this property. Duplicate values are not allowed.</span
         >
       </mat-error>
     </mat-form-field>

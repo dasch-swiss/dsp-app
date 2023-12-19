@@ -29,9 +29,7 @@
         A time value in precision HH:MM is <strong>required</strong>.
       </mat-error>
       <mat-error *ngIf="form.controls.time.hasError('pattern')">
-        <span class="custom-error-message"
-          >Time should be given in precision HH:MM.</span
-        >
+        <span class="custom-error-message">Time should be given in precision HH:MM.</span>
       </mat-error>
     </mat-form-field>
   </div>
@@ -44,8 +42,7 @@
                     timeFormControl.hasError('validDateTimeRequired'))
             ">
       <span class="custom-error-message"
-        >A time value must have a <strong>date</strong> and
-        <strong>time</strong>.</span
+        >A time value must have a <strong>date</strong> and <strong>time</strong>.</span
       >
     </mat-error>
   </div>

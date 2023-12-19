@@ -1,17 +1,6 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import {
-  CreateUriValue,
-  ReadUriValue,
-  UpdateUriValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateUriValue, ReadUriValue, UpdateUriValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { CustomRegex } from '../custom-regex';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -21,10 +10,7 @@ import { ValueErrorStateMatcher } from '../value-error-state-matcher';
   templateUrl: './uri-value.component.html',
   styleUrls: ['./uri-value.component.scss'],
 })
-export class UriValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class UriValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadUriValue;
   @Input() label?: string;
 

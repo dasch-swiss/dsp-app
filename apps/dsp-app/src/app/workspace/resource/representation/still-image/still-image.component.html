@@ -65,10 +65,7 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #more="matMenu" class="representation-menu">
-      <button
-        class="menu-content"
-        mat-menu-item
-        (click)="openImageInNewTab(images[0].fileValue.fileUrl)">
+      <button class="menu-content" mat-menu-item (click)="openImageInNewTab(images[0].fileValue.fileUrl)">
         Open IIIF URL in new tab
       </button>
       <button
@@ -78,18 +75,8 @@
         (click)="openSnackBar('IIIF URL copied to clipboard!')">
         Copy IIIF URL to clipboard
       </button>
-      <button
-        class="menu-content"
-        mat-menu-item
-        (click)="download(images[0].fileValue.fileUrl)">
-        Download image
-      </button>
-      <button
-        class="menu-content"
-        mat-menu-item
-        (click)="openReplaceFileDialog()">
-        Replace file
-      </button>
+      <button class="menu-content" mat-menu-item (click)="download(images[0].fileValue.fileUrl)">Download image</button>
+      <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
     </mat-menu>
     <!-- empty placeholder to simulate two buttons; this helps to have the zoom buttons centered with fill-remaining-space setup -->
     <span class="empty-space"></span>
@@ -99,11 +86,7 @@
 
     <!-- navigation in case of compound object: first page and previous page -->
     <span class="compound-nav" *ngIf="compoundNavigation">
-      <button
-        mat-icon-button
-        [disabled]="compoundNavigation.page <= 1"
-        matTooltip="First page"
-        (click)="openPage(1)">
+      <button mat-icon-button [disabled]="compoundNavigation.page <= 1" matTooltip="First page" (click)="openPage(1)">
         <mat-icon>first_page</mat-icon>
       </button>
       <button
@@ -117,25 +100,13 @@
 
     <!-- zoom buttons: zoom out, home/reset, zoom in -->
     <span>
-      <button
-        mat-icon-button
-        id="DSP_OSD_ZOOM_OUT"
-        matTooltip="Zoom out"
-        [disabled]="failedToLoad">
+      <button mat-icon-button id="DSP_OSD_ZOOM_OUT" matTooltip="Zoom out" [disabled]="failedToLoad">
         <mat-icon>remove_circle_outline</mat-icon>
       </button>
-      <button
-        mat-icon-button
-        id="DSP_OSD_HOME"
-        matTooltip="Reset zoom"
-        [disabled]="failedToLoad">
+      <button mat-icon-button id="DSP_OSD_HOME" matTooltip="Reset zoom" [disabled]="failedToLoad">
         <mat-icon>adjust</mat-icon>
       </button>
-      <button
-        mat-icon-button
-        id="DSP_OSD_ZOOM_IN"
-        matTooltip="Zoom in"
-        [disabled]="failedToLoad">
+      <button mat-icon-button id="DSP_OSD_ZOOM_IN" matTooltip="Zoom in" [disabled]="failedToLoad">
         <mat-icon>add_circle_outline</mat-icon>
       </button>
     </span>
@@ -175,11 +146,7 @@
         [class.active]="regionDrawMode">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
       </button>
-      <button
-        mat-icon-button
-        id="DSP_OSD_FULL_PAGE"
-        matTooltip="Open in fullscreen"
-        [disabled]="failedToLoad">
+      <button mat-icon-button id="DSP_OSD_FULL_PAGE" matTooltip="Open in fullscreen" [disabled]="failedToLoad">
         <mat-icon>fullscreen</mat-icon>
       </button>
     </span>

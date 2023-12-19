@@ -1,12 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnChanges,
-  Output,
-} from '@angular/core';
+import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
 import {
   ApiResponseError,
   CanDoResponse,
@@ -19,15 +11,8 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-  DefaultClass,
-  DefaultProperty,
-  OntologyService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  ListsSelectors,
-  OntologiesSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 
 // property data structure
@@ -39,14 +24,7 @@ export class Property {
   required: boolean;
   guiAttr: string;
 
-  constructor(
-    iri?: string,
-    label?: string,
-    type?: any,
-    multiple?: boolean,
-    required?: boolean,
-    guiAttr?: string
-  ) {
+  constructor(iri?: string, label?: string, type?: any, multiple?: boolean, required?: boolean, guiAttr?: string) {
     this.iri = iri;
     this.label = label;
     this.type = type;
@@ -68,9 +46,7 @@ type CardinalityKey = 'multiple' | 'required';
   templateUrl: './resource-class-property-info.component.html',
   styleUrls: ['./resource-class-property-info.component.scss'],
 })
-export class ResourceClassPropertyInfoComponent
-  implements OnChanges, AfterContentInit
-{
+export class ResourceClassPropertyInfoComponent implements OnChanges, AfterContentInit {
   @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
   @Input() propCard: IHasProperty;
@@ -83,8 +59,7 @@ export class ResourceClassPropertyInfoComponent
 
   @Input() userCanEdit: boolean; // is user a project admin or sys admin?
 
-  @Output() removePropertyFromClass: EventEmitter<DefaultClass> =
-    new EventEmitter<DefaultClass>();
+  @Output() removePropertyFromClass: EventEmitter<DefaultClass> = new EventEmitter<DefaultClass>();
 
   @Output() changeCardinalities: EventEmitter<{
     prop: IHasProperty;
@@ -115,21 +90,14 @@ export class ResourceClassPropertyInfoComponent
 
   ngOnChanges(): void {
     // set the cardinality values in the class view
-    const cards = this._ontoService.getCardinalityGuiValues(
-      this.propCard.cardinality
-    );
+    const cards = this._ontoService.getCardinalityGuiValues(this.propCard.cardinality);
     this.propInfo.multiple = cards.multiple;
     this.propInfo.required = cards.required;
-    const currentProjectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectOntologies
-    );
+    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
 
     // get info about subproperties, if they are not a subproperty of knora base ontology
     // in this case add it to the list of subproperty iris
-    const superProp = this._ontoService.getSuperProperty(
-      this.propDef,
-      currentProjectOntologies
-    );
+    const superProp = this._ontoService.getSuperProperty(this.propDef, currentProjectOntologies);
     if (superProp) {
       if (this.propDef.subPropertyOf.indexOf(superProp) === -1) {
         this.propDef.subPropertyOf.push(superProp);
@@ -137,21 +105,15 @@ export class ResourceClassPropertyInfoComponent
     }
 
     // get the default property type for this property
-    this._ontoService
-      .getDefaultPropType(this.propDef)
-      .subscribe((prop: DefaultProperty) => {
-        this.propType = prop;
-      });
+    this._ontoService.getDefaultPropType(this.propDef).subscribe((prop: DefaultProperty) => {
+      this.propType = prop;
+    });
   }
 
   ngAfterContentInit() {
     // get current ontology to get linked res class information
-    const ontology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
-    const currentProjectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectOntologies
-    );
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
     if (ontology && currentProjectOntologies && this.propDef.isLinkProperty) {
       // this property is a link property to another resource class
       // get the base ontology of object type
@@ -165,35 +127,24 @@ export class ResourceClassPropertyInfoComponent
           } // else no ontology found
         } else {
           this.propAttribute = onto.classes[this.propDef.objectType].label;
-          this.propAttributeComment =
-            onto.classes[this.propDef.objectType].comment;
+          this.propAttributeComment = onto.classes[this.propDef.objectType].comment;
         }
       } else {
         this.propAttribute = ontology.classes[this.propDef.objectType].label;
-        this.propAttributeComment =
-          ontology.classes[this.propDef.objectType].comment;
+        this.propAttributeComment = ontology.classes[this.propDef.objectType].comment;
       }
     }
 
     // get current ontology lists to get linked list information
-    const currentOntologyLists = this._store.selectSnapshot(
-      ListsSelectors.listsInProject
-    );
-    if (
-      currentOntologyLists &&
-      this.propDef.objectType === Constants.ListValue
-    ) {
+    const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
+    if (currentOntologyLists && this.propDef.objectType === Constants.ListValue) {
       // this property is a list property
       const re = /\<([^)]+)\>/;
       const listIri = this.propDef.guiAttributes[0].match(re)[1];
-      const listUrl = `/project/${this.projectUuid}/list/${listIri
-        .split('/')
-        .pop()}`;
+      const listUrl = `/project/${this.projectUuid}/list/${listIri.split('/').pop()}`;
       const list = currentOntologyLists.find(i => i.id === listIri);
       this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
-      this.propAttributeComment = list.comments.length
-        ? list.comments[0].value
-        : null;
+      this.propAttributeComment = list.comments.length ? list.comments[0].value : null;
     }
   }
 
@@ -217,9 +168,7 @@ export class ResourceClassPropertyInfoComponent
 
     onto.lastModificationDate = this.lastModificationDate;
 
-    const ontology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     onto.id = ontology.id;
 
     const delCard = new UpdateResourceClassCardinality();
@@ -231,16 +180,14 @@ export class ResourceClassPropertyInfoComponent
     delCard.cardinalities = [this.propCard];
     onto.entity = delCard;
 
-    this._dspApiConnection.v2.onto
-      .canDeleteCardinalityFromResourceClass(onto)
-      .subscribe(
-        (canDoRes: CanDoResponse) => {
-          this.propCanBeRemovedFromClass = canDoRes.canDo;
-        },
-        // open snackbar displaying the error
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+    this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe(
+      (canDoRes: CanDoResponse) => {
+        this.propCanBeRemovedFromClass = canDoRes.canDo;
+      },
+      // open snackbar displaying the error
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 }

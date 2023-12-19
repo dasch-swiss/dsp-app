@@ -1,18 +1,5 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ResourceClassDefinition } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -23,9 +10,7 @@ const resolvedPromise = Promise.resolve(null);
   templateUrl: './select-resource-class.component.html',
   styleUrls: ['./select-resource-class.component.scss'],
 })
-export class SelectResourceClassComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class SelectResourceClassComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() formGroup: UntypedFormGroup;
 
   @Input() resourceClassDefinitions: ResourceClassDefinition[];
@@ -40,8 +25,7 @@ export class SelectResourceClassComponent
 
   form: UntypedFormGroup;
 
-  checkPattern =
-    '^d*[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF_]+( [a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF@_.]+)*$';
+  checkPattern = '^d*[a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF_]+( [a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF@_.]+)*$';
 
   resourceChangesSubscription: Subscription;
 
@@ -55,12 +39,11 @@ export class SelectResourceClassComponent
     });
 
     // emit Iri of the resource when selected
-    this.resourceChangesSubscription =
-      this.form.controls.resources.valueChanges.subscribe(data => {
-        this.resourceClassSelected.emit(data);
-        this.formGroup.removeControl('resources');
-        this.formGroup.addControl('resources', this.form);
-      });
+    this.resourceChangesSubscription = this.form.controls.resources.valueChanges.subscribe(data => {
+      this.resourceClassSelected.emit(data);
+      this.formGroup.removeControl('resources');
+      this.formGroup.addControl('resources', this.form);
+    });
 
     resolvedPromise.then(() => {
       // add form to the parent form group
@@ -77,11 +60,7 @@ export class SelectResourceClassComponent
     // if there is only one Resource Class Definition to choose from, select it automatically
     // more info: https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error
     if (this.resourceClassDefinitions.length === 1) {
-      Promise.resolve(null).then(() =>
-        this.form.controls.resources.setValue(
-          this.resourceClassDefinitions[0].id
-        )
-      );
+      Promise.resolve(null).then(() => this.form.controls.resources.setValue(this.resourceClassDefinitions[0].id));
     }
   }
 

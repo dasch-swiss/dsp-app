@@ -1,13 +1,4 @@
-import {
-  Component,
-  Directive,
-  EventEmitter,
-  OnInit,
-  Output,
-  Pipe,
-  PipeTransform,
-  ViewChild,
-} from '@angular/core';
+import { Component, Directive, EventEmitter, OnInit, Output, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -61,11 +52,7 @@ class TestHostDisplayValueComponent implements OnInit {
 describe('TextValueAsHtmlComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        MockPipe,
-        TestHostDisplayValueComponent,
-        TextValueAsHtmlComponent,
-      ],
+      declarations: [MockPipe, TestHostDisplayValueComponent, TextValueAsHtmlComponent],
       imports: [ReactiveFormsModule, MatInputModule, BrowserAnimationsModule],
       providers: [],
     }).compileComponents();
@@ -103,9 +90,7 @@ describe('TextValueAsHtmlComponent', () => {
 
       expect(testHostComponent.inputValueComponent).toBeTruthy();
 
-      const valueComponentDe = hostCompDe.query(
-        By.directive(TextValueAsHtmlComponent)
-      );
+      const valueComponentDe = hostCompDe.query(By.directive(TextValueAsHtmlComponent));
 
       const valueParagraph = valueComponentDe.query(By.css('div.value'));
       const valueParagraphNativeElement = valueParagraph.nativeElement;
@@ -138,9 +123,7 @@ describe('TextValueAsHtmlComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const valueComponentDe = hostCompDe.query(
-        By.directive(TextValueAsHtmlComponent)
-      );
+      const valueComponentDe = hostCompDe.query(By.directive(TextValueAsHtmlComponent));
 
       const valueParagraph = valueComponentDe.query(By.css('div.value'));
       const valueParagraphNativeElement = valueParagraph.nativeElement;

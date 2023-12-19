@@ -52,17 +52,13 @@ describe('StringifyStringLiteralPipe', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): void => {
-        store[key] = value;
-      }
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): void => {
+      store[key] = value;
+    });
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -121,8 +117,6 @@ describe('StringifyStringLiteralPipe', () => {
   it('should return a string with all languages of which the StringLiteral array contains', () => {
     // since no argument is provided, the pipe should use the language stored in the session
     const myString = pipe.transform(labels, 'all');
-    expect(myString).toEqual(
-      'Welt (de) / World (en) / Monde (fr) / Mondo (it)'
-    );
+    expect(myString).toEqual('Welt (de) / World (en) / Monde (fr) / Mondo (it)');
   });
 });

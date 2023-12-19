@@ -1,7 +1,4 @@
-import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DisplayPlace, GeonameService } from './geoname.service';
@@ -335,14 +332,10 @@ describe('GeonameService', () => {
 
   describe('Method resolveGeonameID', () => {
     it('should resolve a given geoname id', done => {
-      service
-        .resolveGeonameID('2661604')
-        .subscribe((displayPlace: DisplayPlace) => {
-          expect(displayPlace.displayName).toEqual(
-            'Zürich Enge, Zurich, Switzerland'
-          );
-          done();
-        });
+      service.resolveGeonameID('2661604').subscribe((displayPlace: DisplayPlace) => {
+        expect(displayPlace.displayName).toEqual('Zürich Enge, Zurich, Switzerland');
+        done();
+      });
 
       const httpRequest = httpTestingController.expectOne(
         'https://ws.geonames.net/getJSON?geonameId=2661604&username=token&style=short'

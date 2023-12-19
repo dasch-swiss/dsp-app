@@ -76,24 +76,14 @@ export class GeonameService {
           }) => {
             // assertions for TS compiler
 
-            if (
-              !(
-                'name' in geo &&
-                'countryName' in geo &&
-                'lat' in geo &&
-                'lng' in geo
-              )
-            ) {
+            if (!('name' in geo && 'countryName' in geo && 'lat' in geo && 'lng' in geo)) {
               // at least one of the expected properties is not present
               throw new Error('required property missing in geonames response');
             }
 
             return {
               displayName:
-                geo.name +
-                (geo.adminName1 !== undefined ? ', ' + geo.adminName1 : '') +
-                ', ' +
-                geo.countryName,
+                geo.name + (geo.adminName1 !== undefined ? ', ' + geo.adminName1 : '') + ', ' + geo.countryName,
               name: geo.name,
               administrativeName: geo.adminName1,
               country: geo.countryName,
@@ -121,22 +111,18 @@ export class GeonameService {
   searchPlace(searchString: string): Observable<SearchPlace[]> {
     const url = `https://ws.geonames.net/searchJSON?userName=${
       this._appConfigService.dspAppConfig.geonameToken
-    }&lang=en&style=full&maxRows=12&name_startsWith=${encodeURIComponent(
-      searchString
-    )}`;
+    }&lang=en&style=full&maxRows=12&name_startsWith=${encodeURIComponent(searchString)}`;
 
     return this._http.get<GeonameResponse>(url).pipe(
       map(response => {
         return response.geonames
-          .filter(
-            geo => geo.geonameId && geo.name && geo.countryName && geo.fclName
-          ) // only map those with required properties to avoid duplicates
+          .filter(geo => geo.geonameId && geo.name && geo.countryName && geo.fclName) // only map those with required properties to avoid duplicates
           .map(geo => {
             return {
               id: geo.geonameId.toString(),
-              displayName: `${geo.name}${
-                geo.adminName1 ? ', ' + geo.adminName1 : ''
-              }${geo.countryName ? ', ' + geo.countryName : ''}`,
+              displayName: `${geo.name}${geo.adminName1 ? ', ' + geo.adminName1 : ''}${
+                geo.countryName ? ', ' + geo.countryName : ''
+              }`,
               name: geo.name,
               administrativeName: geo.adminName1,
               country: geo.countryName,

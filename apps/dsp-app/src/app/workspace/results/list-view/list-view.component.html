@@ -1,7 +1,5 @@
 <!-- header / toolbar to select view and pagination -->
-<div
-  *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources?.length)"
-  class="list-view-header">
+<div *ngIf="!loading && (numberOfAllResults > 0 && resources?.resources?.length)" class="list-view-header">
   <div
     *ngIf="search.mode === 'gravsearch' && search.projectUuid && (numberOfAllResults > 0 && resources.resources.length)"
     class="back">
@@ -11,18 +9,12 @@
     </button>
   </div>
   <div class="navigation">
-    <button
-      mat-button
-      class="pagination-button previous"
-      [disabled]="0 >= currentIndex"
-      (click)="goToPage('previous')">
+    <button mat-button class="pagination-button previous" [disabled]="0 >= currentIndex" (click)="goToPage('previous')">
       <mat-icon>west</mat-icon>
       <span>Previous</span>
     </button>
     <span class="fill-remaining-space"></span>
-    <div class="range">
-      {{currentRangeStart}} - {{currentRangeEnd}} of {{numberOfAllResults}}
-    </div>
+    <div class="range">{{currentRangeStart}} - {{currentRangeEnd}} of {{numberOfAllResults}}</div>
     <span class="fill-remaining-space"></span>
     <button
       mat-button
@@ -37,11 +29,8 @@
 
 <!-- container with search results -->
 <div class="list-view-container">
-  <dasch-swiss-app-progress-indicator
-    *ngIf="loading"></dasch-swiss-app-progress-indicator>
-  <div
-    class="list-view"
-    *ngIf="!loading && (numberOfAllResults > 0 && resources)">
+  <dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+  <div class="list-view" *ngIf="!loading && (numberOfAllResults > 0 && resources)">
     <app-resource-list
       [withMultipleSelection]="true"
       [resources]="resources"
@@ -51,20 +40,14 @@
   </div>
 
   <!-- In case of 0 result -->
-  <div
-    class="list-view no-results"
-    *ngIf="!loading && (numberOfAllResults >= 0 && !resources?.resources.length)">
+  <div class="list-view no-results" *ngIf="!loading && (numberOfAllResults >= 0 && !resources?.resources.length)">
     <!-- Case A: user did a fulltext search -->
     <div *ngIf="search.mode === 'fulltext'">
-      <p>
-        Your search - <strong> {{search.query}}</strong> - did not match any
-        documents.
-      </p>
+      <p>Your search - <strong> {{search.query}}</strong> - did not match any documents.</p>
       <p>Suggestions:</p>
       <ul>
         <li *ngIf="numberOfAllResults > 0">
-          Make sure that you are logged in and you have all the needed
-          permissions.
+          Make sure that you are logged in and you have all the needed permissions.
         </li>
         <li>Make sure that all words are spelled correctly.</li>
         <li>Try different keywords.</li>
@@ -76,13 +59,8 @@
     </div>
     <!-- Case B: user clicked on the class item -->
     <div *ngIf="search.mode !== 'fulltext'">
-      <div
-        *ngIf="search.mode === 'gravsearch' && search.projectUuid"
-        class="back">
-        <button
-          mat-button
-          class="back-button"
-          (click)="handleBackButtonClicked()">
+      <div *ngIf="search.mode === 'gravsearch' && search.projectUuid" class="back">
+        <button mat-button class="back-button" (click)="handleBackButtonClicked()">
           <span>Go Back to Search Form</span>
           <mat-icon iconPositionEnd>chevron_right</mat-icon>
         </button>
@@ -97,8 +75,7 @@
         <mat-icon>warning</mat-icon>
         <div>
           It seems like you don’t have the necessary permissions.<br />
-          Check with a project admin if you have the necessary permission or if
-          you are logged in.
+          Check with a project admin if you have the necessary permission or if you are logged in.
         </div>
       </div>
     </div>

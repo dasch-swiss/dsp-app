@@ -1,11 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -50,11 +44,7 @@ describe('SearchPanelComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        SearchPanelComponent,
-        TestHostComponent,
-        TestFulltextSearchComponent,
-      ],
+      declarations: [SearchPanelComponent, TestHostComponent, TestFulltextSearchComponent],
       imports: [OverlayModule, MatMenuModule, MatIconModule],
       providers: [
         {

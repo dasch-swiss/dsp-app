@@ -1,10 +1,6 @@
 <div class="controls">
   <!-- in case of an error -->
-  <app-status
-    [status]="404"
-    [url]="src.fileValue.fileUrl"
-    [representation]="'audio'"
-    *ngIf="failedToLoad">
+  <app-status [status]="404" [url]="src.fileValue.fileUrl" [representation]="'audio'" *ngIf="failedToLoad">
   </app-status>
 
   <div class="file-representation">
@@ -13,9 +9,7 @@
         <div class="icon">
           <mat-icon> audio_file </mat-icon>
         </div>
-        <div *ngIf="failedToLoad">
-          Your browser does not support the audio element.
-        </div>
+        <div *ngIf="failedToLoad">Your browser does not support the audio element.</div>
         <div *ngIf="audio" class="audio-player">
           <audio id="audio" preload="auto">
             <source [src]="audio" type="audio/mpeg" />
@@ -31,27 +25,12 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #more="matMenu" class="representation-menu">
-          <button class="menu-content" mat-menu-item (click)="openIIIFnewTab()">
-            Open audio in new tab
-          </button>
-          <button
-            class="menu-content"
-            mat-menu-item
-            [cdkCopyToClipboard]="src.fileValue.fileUrl">
+          <button class="menu-content" mat-menu-item (click)="openIIIFnewTab()">Open audio in new tab</button>
+          <button class="menu-content" mat-menu-item [cdkCopyToClipboard]="src.fileValue.fileUrl">
             Copy audio URL to clipboard
           </button>
-          <button
-            class="menu-content"
-            mat-menu-item
-            (click)="download(src.fileValue.fileUrl)">
-            Download audio
-          </button>
-          <button
-            class="menu-content"
-            mat-menu-item
-            (click)="openReplaceFileDialog()">
-            Replace file
-          </button>
+          <button class="menu-content" mat-menu-item (click)="download(src.fileValue.fileUrl)">Download audio</button>
+          <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
         </mat-menu>
         <button mat-icon-button (click)="togglePlay()" *ngIf="isPaused()">
           <mat-icon> play_circle </mat-icon>
@@ -60,17 +39,10 @@
           <mat-icon> pause_circle </mat-icon>
         </button>
         <div class="current-time-span">
-          <span>
-            {{ parseTime(currentTime) }} / {{ parseTime(getDuration()) }}
-          </span>
+          <span> {{ parseTime(currentTime) }} / {{ parseTime(getDuration()) }} </span>
         </div>
         <div class="time-slider-container fill-remaining-space">
-          <mat-slider
-            class="time-slider"
-            min="0"
-            [max]="getDuration()"
-            step="1"
-            #ngSlider
+          <mat-slider class="time-slider" min="0" [max]="getDuration()" step="1" #ngSlider
             ><input
               matSliderThumb
               [value]="currentTime"

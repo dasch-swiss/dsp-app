@@ -31,15 +31,11 @@ describe('SystemComponent', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): string => (store[key] = <any>value)
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): string => (store[key] = <any>value));
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -54,9 +50,7 @@ describe('SystemComponent', () => {
   });
 
   it('should create', () => {
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
     expect(component).toBeTruthy();
   });
 

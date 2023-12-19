@@ -19,11 +19,7 @@
   <!-- search-panel (in desktop and tablet version) -->
   <span class="action">
     <!-- button to reactivate when dsp-app will be used as a research platform again: -->
-    <app-search-panel
-      [projectfilter]="true"
-      [advanced]="true"
-      [expert]="true"
-      (search)="doSearch($event)">
+    <app-search-panel [projectfilter]="true" [advanced]="true" [expert]="true" (search)="doSearch($event)">
     </app-search-panel>
   </span>
 
@@ -32,9 +28,7 @@
   <!-- action tools: info menu, select language, login button, user menu -->
   <span class="action">
     <!-- navigation: help -->
-    <button mat-button [routerLink]="helpLink" class="main-toolbar-button help">
-      Help
-    </button>
+    <button mat-button [routerLink]="helpLink" class="main-toolbar-button help">Help</button>
 
     <!-- language selector; not ativated at the moment -->
     <app-select-language />
@@ -43,9 +37,4 @@
     <app-user-menu />
   </span>
 </mat-toolbar>
-<mat-progress-bar
-  *ngIf="!dsp.production"
-  [color]="dsp.color"
-  mode="determinate"
-  value="100">
-</mat-progress-bar>
+<mat-progress-bar *ngIf="!dsp.production" [color]="dsp.color" mode="determinate" value="100"> </mat-progress-bar>

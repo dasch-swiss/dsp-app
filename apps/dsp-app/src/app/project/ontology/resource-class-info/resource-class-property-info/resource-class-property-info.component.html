@@ -26,10 +26,7 @@
     </div>
     <div class="edit-menu">
       <span class="menu-icon">
-        <mat-icon
-          [matMenuTriggerFor]="classInfoMenu"
-          class="menu-icon-button"
-          (click)="canBeRemovedFromClass()"
+        <mat-icon [matMenuTriggerFor]="classInfoMenu" class="menu-icon-button" (click)="canBeRemovedFromClass()"
           >more_vert</mat-icon
         >
       </span>
@@ -51,9 +48,7 @@
                         'min-width' : '16em'
                     }">
             </ngx-skeleton-loader>
-            <span *ngIf="propCanBeRemovedFromClass !== undefined"
-              >remove property from class</span
-            >
+            <span *ngIf="propCanBeRemovedFromClass !== undefined">remove property from class</span>
           </button>
         </div>
       </mat-menu>

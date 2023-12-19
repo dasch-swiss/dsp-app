@@ -9,10 +9,7 @@ import { OntologyClassesComponent } from './ontology-classes.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: `
-    <app-ontology-classess #ontoClasses [resClass]="resClass">
-    </app-ontology-classess>
-  `,
+  template: ` <app-ontology-classess #ontoClasses [resClass]="resClass"> </app-ontology-classess> `,
 })
 class TestHostComponent {
   @ViewChild('ontoClasses') ontoClasses: OntologyClassesComponent;
@@ -30,8 +27,7 @@ class TestHostComponent {
           isInherited: true,
         },
         {
-          propertyIndex:
-            'http://api.knora.org/ontology/knora-api/v2#attachedToProject',
+          propertyIndex: 'http://api.knora.org/ontology/knora-api/v2#attachedToProject',
           cardinality: 0,
           isInherited: true,
         },

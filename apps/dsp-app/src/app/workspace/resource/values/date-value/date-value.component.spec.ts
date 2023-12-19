@@ -1,18 +1,6 @@
-import {
-  Component,
-  DebugElement,
-  forwardRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  ControlValueAccessor,
-  NgControl,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -43,9 +31,7 @@ import { DateValueComponent } from './date-value.component';
     { provide: MatFormFieldControl, useExisting: TestDateInputComponent },
   ],
 })
-class TestDateInputComponent
-  implements ControlValueAccessor, MatFormFieldControl<any>
-{
+class TestDateInputComponent implements ControlValueAccessor, MatFormFieldControl<any> {
   @Input() value;
   @Input() disabled: boolean;
   @Input() empty: boolean;
@@ -87,10 +73,7 @@ class TestDateInputComponent
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-date-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"></app-date-value>`,
+  template: ` <app-date-value #inputVal [displayValue]="displayInputVal" [mode]="mode"></app-date-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: DateValueComponent;
@@ -133,10 +116,7 @@ class TestHostCreateValueComponent implements OnInit {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-date-value
-    #inputVal
-    [mode]="mode"
-    [valueRequiredValidator]="false"></app-date-value>`,
+  template: ` <app-date-value #inputVal [mode]="mode" [valueRequiredValidator]="false"></app-date-value>`,
 })
 class TestHostCreateValueNoValueRequiredComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: DateValueComponent;
@@ -196,9 +176,7 @@ describe('DateValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('read');
 
-      expect(valueReadModeNativeElement.innerText).toEqual(
-        'Gregorian\n13.05.2018'
-      );
+      expect(valueReadModeNativeElement.innerText).toEqual('Gregorian\n13.05.2018');
     });
 
     it('should make an existing value editable', () => {
@@ -213,14 +191,11 @@ describe('DateValueComponent', () => {
       // simulate user input
       const newKnoraDate = new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13);
 
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
-        newKnoraDate
-      );
+      testHostComponent.inputValueComponent.valueFormControl.setValue(newKnoraDate);
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateDateValue).toBeTruthy();
 
@@ -245,14 +220,11 @@ describe('DateValueComponent', () => {
       // simulate user input (equivalent date)
       const newKnoraDate = new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13);
 
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
-        newKnoraDate
-      );
+      testHostComponent.inputValueComponent.valueFormControl.setValue(newKnoraDate);
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBe(false);
     });
@@ -271,16 +243,13 @@ describe('DateValueComponent', () => {
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy(); // because no value nor the comment changed
 
       // set a comment value
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy(); // now the form must be valid, hence the comment changed
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateDateValue).toBeTruthy();
     });
@@ -298,8 +267,7 @@ describe('DateValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -315,19 +283,17 @@ describe('DateValueComponent', () => {
 
       // simulate user input
 
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
+      testHostComponent.inputValueComponent.valueFormControl.setValue(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
+
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(
         new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13)
       );
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toEqual(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
-
       testHostComponent.inputValueComponent.resetFormControl();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toEqual(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13));
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(
+        new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13)
+      );
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
     });
@@ -347,13 +313,11 @@ describe('DateValueComponent', () => {
 
         testHostFixture.detectChanges();
 
-        expect(
-          testHostComponent.inputValueComponent.valueFormControl.value
-        ).toEqual(new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13));
-
-        expect(valueReadModeNativeElement.innerText).toEqual(
-          'Gregorian\n13.05.2019'
+        expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(
+          new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13)
         );
+
+        expect(valueReadModeNativeElement.innerText).toEqual('Gregorian\n13.05.2019');
 
         expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -386,8 +350,7 @@ describe('DateValueComponent', () => {
 
     it('should compare the existing version of a date to the user input', () => {
       // knoraDate('GREGORIAN', 'CE', 2018, 5, 13)
-      const initValue: KnoraDate | KnoraPeriod =
-        testHostComponent.inputValueComponent.getInitValue();
+      const initValue: KnoraDate | KnoraPeriod = testHostComponent.inputValueComponent.getInitValue();
 
       expect(
         testHostComponent.inputValueComponent.standardValueComparisonFunc(
@@ -403,20 +366,12 @@ describe('DateValueComponent', () => {
         )
       ).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          null
-        )
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, null)).toBeFalsy();
 
       expect(
         testHostComponent.inputValueComponent.standardValueComparisonFunc(
           initValue,
-          new KnoraPeriod(
-            new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13),
-            new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13)
-          )
+          new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 2018, 5, 13), new KnoraDate('GREGORIAN', 'CE', 2019, 5, 13))
         )
       ).toBeFalsy();
     });
@@ -463,10 +418,7 @@ describe('DateValueComponent', () => {
 
       const updateVal = new UpdateDateValue();
 
-      testHostComponent.inputValueComponent.populateValue(
-        updateVal,
-        new KnoraPeriod(dateStart, dateEnd)
-      );
+      testHostComponent.inputValueComponent.populateValue(updateVal, new KnoraPeriod(dateStart, dateEnd));
 
       expect(updateVal.calendar).toEqual('GREGORIAN');
       expect(updateVal.startEra).toEqual('CE');
@@ -485,10 +437,7 @@ describe('DateValueComponent', () => {
 
       const updateVal = new UpdateDateValue();
 
-      testHostComponent.inputValueComponent.populateValue(
-        updateVal,
-        new KnoraPeriod(dateStart, dateEnd)
-      );
+      testHostComponent.inputValueComponent.populateValue(updateVal, new KnoraPeriod(dateStart, dateEnd));
 
       expect(updateVal.calendar).toEqual('GREGORIAN');
       expect(updateVal.startEra).toEqual('BCE');
@@ -507,10 +456,7 @@ describe('DateValueComponent', () => {
 
       const updateVal = new UpdateDateValue();
 
-      testHostComponent.inputValueComponent.populateValue(
-        updateVal,
-        new KnoraPeriod(dateStart, dateEnd)
-      );
+      testHostComponent.inputValueComponent.populateValue(updateVal, new KnoraPeriod(dateStart, dateEnd));
 
       expect(updateVal.calendar).toEqual('ISLAMIC');
       expect(updateVal.startEra).toBeUndefined();
@@ -539,9 +485,7 @@ describe('DateValueComponent', () => {
 
     it('should create a value', () => {
       // simulate user input
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 13)
-      );
+      testHostComponent.inputValueComponent.valueFormControl.setValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 13));
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('create');
 
@@ -563,9 +507,7 @@ describe('DateValueComponent', () => {
 
     it('should reset form after cancellation', async () => {
       // simulate user input
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
-        new KnoraDate('JULIAN', 'CE', 2019, 5, 13)
-      );
+      testHostComponent.inputValueComponent.valueFormControl.setValue(new KnoraDate('JULIAN', 'CE', 2019, 5, 13));
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('create');
 
@@ -575,9 +517,7 @@ describe('DateValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(null);
     });
   });
 
@@ -586,9 +526,7 @@ describe('DateValueComponent', () => {
     let testHostFixture: ComponentFixture<TestHostCreateValueNoValueRequiredComponent>;
 
     beforeEach(() => {
-      testHostFixture = TestBed.createComponent(
-        TestHostCreateValueNoValueRequiredComponent
-      );
+      testHostFixture = TestBed.createComponent(TestHostCreateValueNoValueRequiredComponent);
       testHostComponent = testHostFixture.componentInstance;
       testHostFixture.detectChanges();
 
@@ -602,9 +540,7 @@ describe('DateValueComponent', () => {
     });
 
     it('should propagate valueRequiredValidator to child component', () => {
-      expect(testHostComponent.inputValueComponent.valueRequiredValidator).toBe(
-        false
-      );
+      expect(testHostComponent.inputValueComponent.valueRequiredValidator).toBe(false);
     });
   });
 });

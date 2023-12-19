@@ -36,8 +36,7 @@ export interface GravsearchPropertyString {
   whereString: string;
 }
 
-export const ResourceLabel =
-  Constants.KnoraApiV2 + Constants.HashDelimiter + 'ResourceLabel';
+export const ResourceLabel = Constants.KnoraApiV2 + Constants.HashDelimiter + 'ResourceLabel';
 
 // objectType is manually set so that it uses the KnoraApiV2 string for boolean checks later
 export const ResourceLabelObject = {
@@ -65,10 +64,7 @@ export class AdvancedSearchService {
     return this._ontologyV2Api.getMetadata().pipe(
       map(response =>
         response['@graph']
-          .filter(
-            onto =>
-              onto['knora-api:attachedToProject'] !== Constants.SystemProjectIRI
-          )
+          .filter(onto => onto['knora-api:attachedToProject'] !== Constants.SystemProjectIRI)
           .map(onto => {
             return { iri: onto['@id'], label: onto['rdfs:label'] };
           })
@@ -78,52 +74,41 @@ export class AdvancedSearchService {
 
   // API call to get the list of ontologies within the specified project iri
   ontologiesInProjectList = (projectIri: string): Observable<ApiData[]> => {
-    return this._dspApiConnection.v2.onto
-      .getOntologiesByProjectIri(projectIri)
-      .pipe(
-        map((response: OntologiesMetadata | ApiResponseError) => {
-          if (response instanceof ApiResponseError) {
-            throw response; // caught by catchError operator
-          }
-          return response.ontologies.map(
-            (onto: { id: string; label: string }) => {
-              return { iri: onto.id, label: onto.label };
-            }
-          );
-        }),
-        catchError(err => {
-          this._handleError(err);
-          return []; // return an empty array on error
-        })
-      );
+    return this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).pipe(
+      map((response: OntologiesMetadata | ApiResponseError) => {
+        if (response instanceof ApiResponseError) {
+          throw response; // caught by catchError operator
+        }
+        return response.ontologies.map((onto: { id: string; label: string }) => {
+          return { iri: onto.id, label: onto.label };
+        });
+      }),
+      catchError(err => {
+        this._handleError(err);
+        return []; // return an empty array on error
+      })
+    );
   };
 
   // API call to get the list of resource classes
-  resourceClassesList = (
-    ontologyIri: string,
-    restrictToClass?: string
-  ): Observable<ApiData[]> => {
+  resourceClassesList = (ontologyIri: string, restrictToClass?: string): Observable<ApiData[]> => {
     return this._dspApiConnection.v2.onto.getOntology(ontologyIri).pipe(
       map((response: ApiResponseError | ReadOntology) => {
         if (response instanceof ApiResponseError) {
           throw response; // caught by catchError operator
         }
 
-        let resClasses = response.getClassDefinitionsByType(
-          ResourceClassDefinition
-        );
+        let resClasses = response.getClassDefinitionsByType(ResourceClassDefinition);
 
         let resClassesFiltered: ResourceClassDefinition[] = [];
 
         // filter the list of resource classes by the restrictToClass parameter
         if (restrictToClass) {
           resClassesFiltered = resClasses.filter(
-            (resClassDef: ResourceClassDefinition) =>
-              resClassDef.id === restrictToClass
+            (resClassDef: ResourceClassDefinition) => resClassDef.id === restrictToClass
           );
           const subclasses = resClasses.filter(
-            (resClassDef: ResourceClassDefinition) =>
-              resClassDef.subClassOf.indexOf(restrictToClass) > -1
+            (resClassDef: ResourceClassDefinition) => resClassDef.subClassOf.indexOf(restrictToClass) > -1
           );
 
           resClassesFiltered = resClassesFiltered.concat(subclasses);
@@ -152,152 +137,124 @@ export class AdvancedSearchService {
 
   // API call to get the list of properties
   propertiesList = (ontologyIri: string): Observable<PropertyData[]> => {
-    return this._dspApiConnection.v2.ontologyCache
-      .getOntology(ontologyIri)
-      .pipe(
-        map((onto: Map<string, ReadOntology>) => {
-          const ontology = onto.get(ontologyIri);
+    return this._dspApiConnection.v2.ontologyCache.getOntology(ontologyIri).pipe(
+      map((onto: Map<string, ReadOntology>) => {
+        const ontology = onto.get(ontologyIri);
 
-          if (!ontology) return [];
+        if (!ontology) return [];
 
-          // get props and filter out properties that shouldn't be able to be selected
-          const props = ontology
-            .getPropertyDefinitionsByType(ResourcePropertyDefinition)
-            .filter(
-              propDef => propDef.isEditable && !propDef.isLinkValueProperty
-            );
+        // get props and filter out properties that shouldn't be able to be selected
+        const props = ontology
+          .getPropertyDefinitionsByType(ResourcePropertyDefinition)
+          .filter(propDef => propDef.isEditable && !propDef.isLinkValueProperty);
 
-          return props
-            .sort(
-              (a: ResourcePropertyDefinition, b: ResourcePropertyDefinition) =>
-                (a.label || '').localeCompare(b.label || '')
-            )
-            .map((propDef: ResourcePropertyDefinition) => {
-              // label can be undefined
-              const label = propDef.label || '';
+        return props
+          .sort((a: ResourcePropertyDefinition, b: ResourcePropertyDefinition) =>
+            (a.label || '').localeCompare(b.label || '')
+          )
+          .map((propDef: ResourcePropertyDefinition) => {
+            // label can be undefined
+            const label = propDef.label || '';
 
-              // objectType can be undefined but it really never should be
-              const objectType = propDef.objectType || '';
+            // objectType can be undefined but it really never should be
+            const objectType = propDef.objectType || '';
 
-              const linkProperty = !propDef.objectType?.includes(
-                Constants.KnoraApiV2
-              );
+            const linkProperty = !propDef.objectType?.includes(Constants.KnoraApiV2);
 
-              if (objectType === Constants.ListValue) {
-                const guiAttr = propDef.guiAttributes;
-                if (guiAttr.length === 1 && guiAttr[0].startsWith('hlist=')) {
-                  // get list node iri from gui attribute
-                  // i.e. hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>
-                  const listNodeIri = guiAttr[0].substring(
-                    7,
-                    guiAttr[0].length - 1
-                  );
-                  return {
-                    iri: propDef.id,
-                    label: label,
-                    objectType: objectType,
-                    isLinkedResourceProperty: linkProperty,
-                    listIri: listNodeIri,
-                  };
-                } else {
-                  console.error('No root node Iri given for property', guiAttr);
-                }
+            if (objectType === Constants.ListValue) {
+              const guiAttr = propDef.guiAttributes;
+              if (guiAttr.length === 1 && guiAttr[0].startsWith('hlist=')) {
+                // get list node iri from gui attribute
+                // i.e. hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>
+                const listNodeIri = guiAttr[0].substring(7, guiAttr[0].length - 1);
+                return {
+                  iri: propDef.id,
+                  label: label,
+                  objectType: objectType,
+                  isLinkedResourceProperty: linkProperty,
+                  listIri: listNodeIri,
+                };
+              } else {
+                console.error('No root node Iri given for property', guiAttr);
               }
+            }
 
-              return {
-                iri: propDef.id,
-                label: label,
-                objectType: objectType,
-                isLinkedResourceProperty: linkProperty,
-              };
-            });
-        }),
-        catchError(err => {
-          this._handleError(err);
-          return []; // return an empty array on error
-        })
-      );
+            return {
+              iri: propDef.id,
+              label: label,
+              objectType: objectType,
+              isLinkedResourceProperty: linkProperty,
+            };
+          });
+      }),
+      catchError(err => {
+        this._handleError(err);
+        return []; // return an empty array on error
+      })
+    );
   };
 
   // API call to get the list of properties filtered by resource class
-  filteredPropertiesList = (
-    resourceClassIri: string
-  ): Observable<PropertyData[]> => {
-    return this._dspApiConnection.v2.ontologyCache
-      .getResourceClassDefinition(resourceClassIri)
-      .pipe(
-        map((onto: ResourceClassAndPropertyDefinitions) => {
-          // filter out properties that shouldn't be able to be selected
-          // this is a bit different than how the propertiesList method does it
-          // because the getResourceClassDefintion method return more props
-          // that should be filtered out
-          const props = this._filterProperties(onto);
+  filteredPropertiesList = (resourceClassIri: string): Observable<PropertyData[]> => {
+    return this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).pipe(
+      map((onto: ResourceClassAndPropertyDefinitions) => {
+        // filter out properties that shouldn't be able to be selected
+        // this is a bit different than how the propertiesList method does it
+        // because the getResourceClassDefintion method return more props
+        // that should be filtered out
+        const props = this._filterProperties(onto);
 
-          return props
-            .sort(
-              (a: ResourcePropertyDefinition, b: ResourcePropertyDefinition) =>
-                (a.label || '').localeCompare(b.label || '')
-            )
-            .map((propDef: ResourcePropertyDefinition) => {
-              // label can be undefined
-              const label = propDef.label || '';
+        return props
+          .sort((a: ResourcePropertyDefinition, b: ResourcePropertyDefinition) =>
+            (a.label || '').localeCompare(b.label || '')
+          )
+          .map((propDef: ResourcePropertyDefinition) => {
+            // label can be undefined
+            const label = propDef.label || '';
 
-              // objectType can be undefined
-              const objectType = propDef.objectType || '';
+            // objectType can be undefined
+            const objectType = propDef.objectType || '';
 
-              const linkProperty = !propDef.objectType?.includes(
-                Constants.KnoraApiV2
-              );
+            const linkProperty = !propDef.objectType?.includes(Constants.KnoraApiV2);
 
-              if (objectType === Constants.ListValue) {
-                const guiAttr = propDef.guiAttributes;
-                if (guiAttr.length === 1 && guiAttr[0].startsWith('hlist=')) {
-                  // get list node iri from gui attribute
-                  // i.e. hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>
-                  const listNodeIri = guiAttr[0].substring(
-                    7,
-                    guiAttr[0].length - 1
-                  );
-                  return {
-                    iri: propDef.id,
-                    label: label,
-                    objectType: objectType,
-                    isLinkedResourceProperty: linkProperty,
-                    listIri: listNodeIri,
-                  };
-                } else {
-                  console.error('No root node Iri given for property', guiAttr);
-                }
+            if (objectType === Constants.ListValue) {
+              const guiAttr = propDef.guiAttributes;
+              if (guiAttr.length === 1 && guiAttr[0].startsWith('hlist=')) {
+                // get list node iri from gui attribute
+                // i.e. hlist=<http://rdfh.ch/lists/0420/6-Vp0F_1TfSS-DS_9q-Ucw>
+                const listNodeIri = guiAttr[0].substring(7, guiAttr[0].length - 1);
+                return {
+                  iri: propDef.id,
+                  label: label,
+                  objectType: objectType,
+                  isLinkedResourceProperty: linkProperty,
+                  listIri: listNodeIri,
+                };
+              } else {
+                console.error('No root node Iri given for property', guiAttr);
               }
+            }
 
-              return {
-                iri: propDef.id,
-                label: label,
-                objectType: objectType,
-                isLinkedResourceProperty: linkProperty,
-              };
-            });
-        }),
-        catchError(err => {
-          this._handleError(err);
-          return []; // return an empty array on error
-        })
-      );
+            return {
+              iri: propDef.id,
+              label: label,
+              objectType: objectType,
+              isLinkedResourceProperty: linkProperty,
+            };
+          });
+      }),
+      catchError(err => {
+        this._handleError(err);
+        return []; // return an empty array on error
+      })
+    );
   };
 
-  getResourcesListCount(
-    searchValue: string,
-    resourceClassIri: string
-  ): Observable<number> {
+  getResourcesListCount(searchValue: string, resourceClassIri: string): Observable<number> {
     // Cancel the previous count request
     this.cancelPreviousCountRequest$.next();
 
-    if (
-      !searchValue ||
-      searchValue.length <= 2 ||
-      typeof searchValue !== 'string'
-    )
-      return of(0);
+    if (!searchValue || searchValue.length <= 2 || typeof searchValue !== 'string') return of(0);
 
     return this._dspApiConnection.v2.search
       .doSearchByLabelCountQuery(searchValue, {
@@ -318,11 +275,7 @@ export class AdvancedSearchService {
       );
   }
 
-  getResourcesList(
-    searchValue: string,
-    resourceClassIri: string,
-    offset = 0
-  ): Observable<ApiData[]> {
+  getResourcesList(searchValue: string, resourceClassIri: string, offset = 0): Observable<ApiData[]> {
     // Cancel the previous search request
     this.cancelPreviousSearchRequest$.next();
 
@@ -367,9 +320,7 @@ export class AdvancedSearchService {
     );
   }
 
-  private _filterProperties(
-    resPropDefs: ResourceClassAndPropertyDefinitions
-  ): ResourcePropertyDefinition[] {
+  private _filterProperties(resPropDefs: ResourceClassAndPropertyDefinitions): ResourcePropertyDefinition[] {
     return resPropDefs
       .getPropertyDefinitionsByType(ResourcePropertyDefinition)
       .filter(

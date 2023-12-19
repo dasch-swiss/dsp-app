@@ -5,17 +5,10 @@
   <ng-container *ngIf="(user$ | async) as user">
     <!-- own user profile (logged-in user) -->
     <div class="user-profile">
-      <img
-        appAdminImage
-        [image]="user.email"
-        [type]="'user'"
-        alt="user profile"
-        class="user-profile-image" />
+      <img appAdminImage [image]="user.email" [type]="'user'" alt="user profile" class="user-profile-image" />
       <div class="user-profile-headline">
         <!-- user names -->
-        <h2 class="mat-headline-6">
-          {{ user.givenName }} <br />{{ user.familyName }}
-        </h2>
+        <h2 class="mat-headline-6">{{ user.givenName }} <br />{{ user.familyName }}</h2>
         <h3 class="mat-body subtitle">{{ user.username }}</h3>
 
         <mat-divider></mat-divider>
@@ -40,29 +33,18 @@
       <mat-divider></mat-divider>
       <br />
       <!-- edit button -->
-      <button
-        mat-button
-        [color]="'primary'"
-        (click)="openDialog('editUser', user)"
-        style="width: 100%">
+      <button mat-button [color]="'primary'" (click)="openDialog('editUser', user)" style="width: 100%">
         Edit my profile
       </button>
     </div>
 
     <!-- phone view -->
     <div class="user-profile-mobile">
-      <img
-        appAdminImage
-        [image]="user.email"
-        [type]="'user'"
-        alt="user profile"
-        class="user-profile-image" />
+      <img appAdminImage [image]="user.email" [type]="'user'" alt="user profile" class="user-profile-image" />
 
       <div class="user-profile-headline">
         <!-- user names -->
-        <h2 class="mat-headline-6">
-          {{ user.givenName }} {{ user.familyName }}
-        </h2>
+        <h2 class="mat-headline-6">{{ user.givenName }} {{ user.familyName }}</h2>
         <h3 class="mat-body subtitle">{{ user.username }}</h3>
 
         <!-- user profile lang -->
@@ -80,11 +62,7 @@
         </div>
 
         <!-- edit button -->
-        <button
-          mat-button
-          class="user-profile-edit"
-          [color]="'primary'"
-          (click)="openDialog('editUser', user)">
+        <button mat-button class="user-profile-edit" [color]="'primary'" (click)="openDialog('editUser', user)">
           <mat-icon>edit</mat-icon>
         </button>
       </div>

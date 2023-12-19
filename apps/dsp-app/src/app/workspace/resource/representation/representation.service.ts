@@ -41,8 +41,7 @@ export class RepresentationService {
 
     if (imageFilename) {
       const index = url.indexOf(imageFilename);
-      pathToJson =
-        url.substring(0, index + imageFilename.length) + '/knora.json';
+      pathToJson = url.substring(0, index + imageFilename.length) + '/knora.json';
     } else {
       pathToJson = url.substring(0, url.lastIndexOf('/')) + '/knora.json';
     }
@@ -66,9 +65,7 @@ export class RepresentationService {
     let originalFilename;
 
     try {
-      const res = await this._http
-        .get(url, { responseType: 'blob', withCredentials: true })
-        .toPromise();
+      const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
 
       await this.getFileInfo(url, imageFilename).subscribe(response => {
         originalFilename = response['originalFilename'];

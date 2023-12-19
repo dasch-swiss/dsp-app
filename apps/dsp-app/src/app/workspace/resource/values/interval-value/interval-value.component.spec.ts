@@ -1,29 +1,12 @@
-import {
-  Component,
-  DebugElement,
-  forwardRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  CreateIntervalValue,
-  MockResource,
-  ReadIntervalValue,
-  UpdateIntervalValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateIntervalValue, MockResource, ReadIntervalValue, UpdateIntervalValue } from '@dasch-swiss/dsp-js';
 import { Subject } from 'rxjs';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { Interval } from './interval-input/interval-input.component';
@@ -44,9 +27,7 @@ import { IntervalValueComponent } from './interval-value.component';
     },
   ],
 })
-class TestIntervalInputComponent
-  implements ControlValueAccessor, MatFormFieldControl<any>
-{
+class TestIntervalInputComponent implements ControlValueAccessor, MatFormFieldControl<any> {
   @Input() value;
   @Input() disabled: boolean;
   @Input() empty: boolean;
@@ -88,10 +69,7 @@ class TestIntervalInputComponent
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-interval-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"></app-interval-value>`,
+  template: ` <app-interval-value #inputVal [displayValue]="displayInputVal" [mode]="mode"></app-interval-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: IntervalValueComponent;
@@ -118,9 +96,7 @@ class TestHostDisplayValueComponent implements OnInit {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-interval-value
-    #inputVal
-    [mode]="mode"></app-interval-value>`,
+  template: ` <app-interval-value #inputVal [mode]="mode"></app-interval-value>`,
 })
 class TestHostCreateValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: IntervalValueComponent;
@@ -136,10 +112,7 @@ class TestHostCreateValueComponent implements OnInit {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-interval-value
-    #inputVal
-    [mode]="mode"
-    [valueRequiredValidator]="false"></app-interval-value>`,
+  template: ` <app-interval-value #inputVal [mode]="mode" [valueRequiredValidator]="false"></app-interval-value>`,
 })
 class TestHostCreateValueNoValueRequiredComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: IntervalValueComponent;
@@ -187,27 +160,17 @@ describe('IntervalValueComponent', () => {
       const hostCompDe = testHostFixture.debugElement;
 
       valueComponentDe = hostCompDe.query(By.directive(IntervalValueComponent));
-      intervalStartReadModeDebugElement = valueComponentDe.query(
-        By.css('.rm-value.interval-start')
-      );
-      intervalStartReadModeNativeElement =
-        intervalStartReadModeDebugElement.nativeElement;
+      intervalStartReadModeDebugElement = valueComponentDe.query(By.css('.rm-value.interval-start'));
+      intervalStartReadModeNativeElement = intervalStartReadModeDebugElement.nativeElement;
 
-      intervalEndReadModeDebugElement = valueComponentDe.query(
-        By.css('.rm-value.interval-end')
-      );
-      intervalEndReadModeNativeElement =
-        intervalEndReadModeDebugElement.nativeElement;
+      intervalEndReadModeDebugElement = valueComponentDe.query(By.css('.rm-value.interval-end'));
+      intervalEndReadModeNativeElement = intervalEndReadModeDebugElement.nativeElement;
     });
 
     it('should display an existing value', () => {
-      expect(testHostComponent.inputValueComponent.displayValue.start).toEqual(
-        0
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.start).toEqual(0);
 
-      expect(testHostComponent.inputValueComponent.displayValue.end).toEqual(
-        216000
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.end).toEqual(216000);
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -227,13 +190,9 @@ describe('IntervalValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.intervalInputComponent.value.start
-      ).toEqual(0);
+      expect(testHostComponent.inputValueComponent.intervalInputComponent.value.start).toEqual(0);
 
-      expect(
-        testHostComponent.inputValueComponent.intervalInputComponent.value.end
-      ).toEqual(216000);
+      expect(testHostComponent.inputValueComponent.intervalInputComponent.value.end).toEqual(216000);
 
       // simulate user input
       const newInterval = {
@@ -241,20 +200,16 @@ describe('IntervalValueComponent', () => {
         end: 200,
       };
 
-      testHostComponent.inputValueComponent.intervalInputComponent.value =
-        newInterval;
+      testHostComponent.inputValueComponent.intervalInputComponent.value = newInterval;
       testHostComponent.inputValueComponent.intervalInputComponent._handleInput();
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toBeTruthy();
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toBeTruthy();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateIntervalValue).toBeTruthy();
 
@@ -264,43 +219,25 @@ describe('IntervalValueComponent', () => {
 
     it('should compare the existing version of an interval to the user input', () => {
       // interval 0, 216000
-      const initValue: Interval =
-        testHostComponent.inputValueComponent.getInitValue();
+      const initValue: Interval = testHostComponent.inputValueComponent.getInitValue();
 
       expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          new Interval(0, 216000)
-        )
+        testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, new Interval(0, 216000))
       ).toBeTruthy();
 
       expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          new Interval(1, 216000)
-        )
+        testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, new Interval(1, 216000))
       ).toBeFalsy();
 
       expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          new Interval(2, 21)
-        )
+        testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, new Interval(2, 21))
       ).toBeFalsy();
 
       expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          new Interval(0, 21600)
-        )
+        testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, new Interval(0, 21600))
       ).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          null
-        )
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, null)).toBeFalsy();
     });
 
     it('should validate an existing value with an added comment', () => {
@@ -310,27 +247,20 @@ describe('IntervalValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
-      expect(testHostComponent.inputValueComponent.displayValue.start).toEqual(
-        0
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.start).toEqual(0);
 
-      expect(testHostComponent.inputValueComponent.displayValue.end).toEqual(
-        216000
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.end).toEqual(216000);
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
       // set a comment value
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateIntervalValue).toBeTruthy();
     });
@@ -351,8 +281,7 @@ describe('IntervalValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -372,29 +301,20 @@ describe('IntervalValueComponent', () => {
         end: 200,
       };
 
-      testHostComponent.inputValueComponent.intervalInputComponent.value =
-        newInterval;
+      testHostComponent.inputValueComponent.intervalInputComponent.value = newInterval;
       testHostComponent.inputValueComponent.intervalInputComponent._handleInput();
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value.start
-      ).toEqual(100);
+      expect(testHostComponent.inputValueComponent.valueFormControl.value.start).toEqual(100);
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value.end
-      ).toEqual(200);
+      expect(testHostComponent.inputValueComponent.valueFormControl.value.end).toEqual(200);
 
       testHostComponent.inputValueComponent.resetFormControl();
 
-      expect(
-        testHostComponent.inputValueComponent.intervalInputComponent.value.start
-      ).toEqual(0);
+      expect(testHostComponent.inputValueComponent.intervalInputComponent.value.start).toEqual(0);
 
-      expect(
-        testHostComponent.inputValueComponent.intervalInputComponent.value.end
-      ).toEqual(216000);
+      expect(testHostComponent.inputValueComponent.intervalInputComponent.value.end).toEqual(216000);
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
     });
@@ -410,9 +330,7 @@ describe('IntervalValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(intervalStartReadModeNativeElement.innerText).toEqual(
-        'Start: 300'
-      );
+      expect(intervalStartReadModeNativeElement.innerText).toEqual('Start: 300');
 
       expect(intervalEndReadModeNativeElement.innerText).toEqual('End: 500');
 
@@ -434,9 +352,7 @@ describe('IntervalValueComponent', () => {
     });
 
     it('should create a value', () => {
-      expect(
-        testHostComponent.inputValueComponent.intervalInputComponent.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.intervalInputComponent.value).toEqual(null);
 
       // simulate user input
       const newInterval = {
@@ -444,8 +360,7 @@ describe('IntervalValueComponent', () => {
         end: 200,
       };
 
-      testHostComponent.inputValueComponent.intervalInputComponent.value =
-        newInterval;
+      testHostComponent.inputValueComponent.intervalInputComponent.value = newInterval;
       testHostComponent.inputValueComponent.intervalInputComponent._handleInput();
 
       testHostFixture.detectChanges();
@@ -469,8 +384,7 @@ describe('IntervalValueComponent', () => {
         end: 200,
       };
 
-      testHostComponent.inputValueComponent.intervalInputComponent.value =
-        newInterval;
+      testHostComponent.inputValueComponent.intervalInputComponent.value = newInterval;
       testHostComponent.inputValueComponent.intervalInputComponent._handleInput();
 
       testHostFixture.detectChanges();
@@ -485,9 +399,7 @@ describe('IntervalValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.intervalInputComponent.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.intervalInputComponent.value).toEqual(null);
     });
   });
 
@@ -496,9 +408,7 @@ describe('IntervalValueComponent', () => {
     let testHostFixture: ComponentFixture<TestHostCreateValueNoValueRequiredComponent>;
 
     beforeEach(() => {
-      testHostFixture = TestBed.createComponent(
-        TestHostCreateValueNoValueRequiredComponent
-      );
+      testHostFixture = TestBed.createComponent(TestHostCreateValueNoValueRequiredComponent);
       testHostComponent = testHostFixture.componentInstance;
       testHostFixture.detectChanges();
 
@@ -511,9 +421,7 @@ describe('IntervalValueComponent', () => {
     });
 
     it('should propagate valueRequiredValidator to child component', () => {
-      expect(testHostComponent.inputValueComponent.valueRequiredValidator).toBe(
-        false
-      );
+      expect(testHostComponent.inputValueComponent.valueRequiredValidator).toBe(false);
     });
   });
 });

@@ -12,10 +12,7 @@ import { DragDropDirective } from './drag-drop.directive';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <div
-    appDragDrop
-    class="dd-container"
-    (fileDropped)="filesDropped($event)"></div>`,
+  template: ` <div appDragDrop class="dd-container" (fileDropped)="filesDropped($event)"></div>`,
 })
 class TestHostComponent {
   files: FileList;
@@ -33,13 +30,7 @@ describe('DragDropDirective', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DragDropDirective, TestHostComponent],
-      imports: [
-        BrowserAnimationsModule,
-        MatIconModule,
-        MatInputModule,
-        MatSnackBarModule,
-        ReactiveFormsModule,
-      ],
+      imports: [BrowserAnimationsModule, MatIconModule, MatInputModule, MatSnackBarModule, ReactiveFormsModule],
     }).compileComponents();
   }));
 

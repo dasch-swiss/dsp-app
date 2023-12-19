@@ -1,11 +1,5 @@
 import { Params } from '@angular/router';
-import {
-  Constants,
-  ReadGroup,
-  ReadProject,
-  ReadUser,
-  StoredProject,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadGroup, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Selector } from '@ngxs/store';
@@ -18,14 +12,9 @@ import { ProjectsStateModel } from './projects.state-model';
 export class ProjectsSelectors {
   // get list of all projects the user is NOT a member of
   @Selector([ProjectsState, UserSelectors.userActiveProjects])
-  static otherProjects(
-    state: ProjectsStateModel,
-    userActiveProjects: StoredProject[]
-  ): StoredProject[] {
+  static otherProjects(state: ProjectsStateModel, userActiveProjects: StoredProject[]): StoredProject[] {
     return state.allProjects.filter(
-      project =>
-        userActiveProjects.findIndex(userProj => userProj.id === project.id) ===
-        -1
+      project => userActiveProjects.findIndex(userProj => userProj.id === project.id) === -1
     );
   }
 
@@ -73,30 +62,18 @@ export class ProjectsSelectors {
   static allNotSystemProjects(state: ProjectsStateModel): StoredProject[] {
     return state.allProjects.filter(
       project =>
-        project.status &&
-        project.id !== Constants.SystemProjectIRI &&
-        project.id !== Constants.DefaultSharedOntologyIRI
+        project.status && project.id !== Constants.SystemProjectIRI && project.id !== Constants.DefaultSharedOntologyIRI
     );
   }
 
   @Selector([ProjectsState, RouterSelectors.params])
-  static currentProject(
-    state: ProjectsStateModel,
-    params: Params
-  ): ReadProject | undefined {
+  static currentProject(state: ProjectsStateModel, params: Params): ReadProject | undefined {
     const uuid = params[`${RouteConstants.uuidParameter}`];
-    const project = state.readProjects.find(
-      project => ProjectService.IriToUuid(project.id) === uuid
-    );
+    const project = state.readProjects.find(project => ProjectService.IriToUuid(project.id) === uuid);
     return project;
   }
 
-  @Selector([
-    ProjectsState,
-    UserSelectors.user,
-    UserSelectors.userProjectAdminGroups,
-    RouterSelectors.params,
-  ])
+  @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
   static isCurrentProjectAdmin(
     state: ProjectsStateModel,
     user: ReadUser,
@@ -104,20 +81,11 @@ export class ProjectsSelectors {
     params: Params
   ): boolean | undefined {
     const projectId = params[`${RouteConstants.uuidParameter}`];
-    const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(
-      user,
-      userProjectGroups,
-      projectId
-    );
+    const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectId);
     return isProjectAdmin;
   }
 
-  @Selector([
-    ProjectsState,
-    UserSelectors.user,
-    UserSelectors.userProjectAdminGroups,
-    RouterSelectors.params,
-  ])
+  @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
   static isCurrentProjectMember(
     state: ProjectsStateModel,
     user: ReadUser,
@@ -125,11 +93,7 @@ export class ProjectsSelectors {
     params: Params
   ): boolean | undefined {
     const projectId = params[`${RouteConstants.uuidParameter}`];
-    const isProjectMember = ProjectService.IsProjectMember(
-      user,
-      userProjectGroups,
-      projectId
-    );
+    const isProjectMember = ProjectService.IsProjectMember(user, userProjectGroups, projectId);
     return isProjectMember;
   }
 }

@@ -3,11 +3,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import {
-  AppConfigService,
-  RouteConstants,
-  DspConfig,
-} from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, RouteConstants, DspConfig } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import {
@@ -46,21 +42,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // create own logo icon to use them in mat-icons
     this._matIconRegistry.addSvgIcon(
       'dasch_mosaic_icon_color',
-      this._domSanitizer.bypassSecurityTrustResourceUrl(
-        '/assets/images/dasch-mosaic-icon-color.svg'
-      )
+      this._domSanitizer.bypassSecurityTrustResourceUrl('/assets/images/dasch-mosaic-icon-color.svg')
     );
 
     this.dsp = this._appConfigService.dspConfig;
   }
 
   ngOnInit() {
-    this.componentCommsSubscription = this._componentCommsService.on(
-      Events.loginSuccess,
-      () => {
-        this._notification.openSnackBar('Login successful');
-      }
-    );
+    this.componentCommsSubscription = this._componentCommsService.on(Events.loginSuccess, () => {
+      this._notification.openSnackBar('Login successful');
+    });
   }
 
   ngOnDestroy() {
@@ -86,13 +77,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.searchParams = search;
 
     if (this.searchParams.mode && this.searchParams.query) {
-      let doSearchRoute = `/${RouteConstants.search}/${
-        this.searchParams.mode
-      }/${encodeURIComponent(this.searchParams.query)}`;
+      let doSearchRoute = `/${RouteConstants.search}/${this.searchParams.mode}/${encodeURIComponent(
+        this.searchParams.query
+      )}`;
 
       if (this.searchParams.filter && this.searchParams.filter.limitToProject) {
-        doSearchRoute +=
-          '/' + encodeURIComponent(this.searchParams.filter.limitToProject);
+        doSearchRoute += '/' + encodeURIComponent(this.searchParams.filter.limitToProject);
       }
 
       this._router.navigate([doSearchRoute]);

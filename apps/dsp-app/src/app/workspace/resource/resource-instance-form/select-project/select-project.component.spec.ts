@@ -2,12 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSelectHarness } from '@angular/material/select/testing';
@@ -53,13 +48,7 @@ describe('SelectProjectComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SelectProjectComponent, TestHostComponent],
-      imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-      ],
+      imports: [ReactiveFormsModule, FormsModule, BrowserAnimationsModule, MatFormFieldModule, MatSelectModule],
     }).compileComponents();
   }));
 
@@ -124,20 +113,14 @@ describe('SelectProjectComponent', () => {
 
     await options[0].click();
 
-    expect(testHostComponent.selectedProjIri).toEqual(
-      'http://rdfh.ch/projects/0001'
-    );
+    expect(testHostComponent.selectedProjIri).toEqual('http://rdfh.ch/projects/0001');
   });
 
   it('should unsubscribe from from changes on destruction', () => {
-    expect(
-      testHostComponent.selectProject.projectChangesSubscription.closed
-    ).toBe(false);
+    expect(testHostComponent.selectProject.projectChangesSubscription.closed).toBe(false);
 
     testHostFixture.destroy();
 
-    expect(
-      testHostComponent.selectProject.projectChangesSubscription.closed
-    ).toBe(true);
+    expect(testHostComponent.selectProject.projectChangesSubscription.closed).toBe(true);
   });
 });

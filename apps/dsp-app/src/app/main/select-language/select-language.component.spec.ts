@@ -11,11 +11,7 @@ describe('SelectLanguageComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SelectLanguageComponent],
-      imports: [
-        HttpClientTestingModule,
-        MatMenuModule,
-        TranslateModule.forRoot(),
-      ],
+      imports: [HttpClientTestingModule, MatMenuModule, TranslateModule.forRoot()],
       providers: [TranslateService],
     }).compileComponents();
   }));

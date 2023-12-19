@@ -1,17 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { StoredProject } from '@dasch-swiss/dsp-js';
-import {
-  UserSelectors,
-  ProjectsSelectors,
-  LoadProjectsAction,
-} from '@dasch-swiss/vre/shared/app-state';
+import { UserSelectors, ProjectsSelectors, LoadProjectsAction } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -37,26 +27,16 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   @Input() username?: string;
 
   get activeProjects$(): Observable<StoredProject[]> {
-    return combineLatest([
-      this.userActiveProjects$,
-      this.allActiveProjects$,
-    ]).pipe(
+    return combineLatest([this.userActiveProjects$, this.allActiveProjects$]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(([userActiveProjects, allActiveProjects]) =>
-        this.username ? userActiveProjects : allActiveProjects
-      )
+      map(([userActiveProjects, allActiveProjects]) => (this.username ? userActiveProjects : allActiveProjects))
     );
   }
 
   get inactiveProjects$(): Observable<StoredProject[]> {
-    return combineLatest([
-      this.userInactiveProjects$,
-      this.allInactiveProjects$,
-    ]).pipe(
+    return combineLatest([this.userInactiveProjects$, this.allInactiveProjects$]).pipe(
       takeUntil(this.ngUnsubscribe),
-      map(([userInactiveProjects, allInactiveProjects]) =>
-        this.username ? userInactiveProjects : allInactiveProjects
-      )
+      map(([userInactiveProjects, allInactiveProjects]) => (this.username ? userInactiveProjects : allInactiveProjects))
     );
   }
 
@@ -65,15 +45,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
    * where this user is member of;
    * otherwise show all projects
    */
-  @Select(UserSelectors.userActiveProjects) userActiveProjects$: Observable<
-    StoredProject[]
-  >;
-  @Select(UserSelectors.userInactiveProjects) userInactiveProjects$: Observable<
-    StoredProject[]
-  >;
-  @Select(ProjectsSelectors.allActiveProjects) allActiveProjects$: Observable<
-    StoredProject[]
-  >;
+  @Select(UserSelectors.userActiveProjects) userActiveProjects$: Observable<StoredProject[]>;
+  @Select(UserSelectors.userInactiveProjects) userInactiveProjects$: Observable<StoredProject[]>;
+  @Select(ProjectsSelectors.allActiveProjects) allActiveProjects$: Observable<StoredProject[]>;
   @Select(ProjectsSelectors.allInactiveProjects)
   allInactiveProjects$: Observable<StoredProject[]>;
   @Select(ProjectsSelectors.isProjectsLoading)
@@ -85,13 +59,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.username
-      ? this._titleService.setTitle('Your projects')
-      : this._titleService.setTitle('All projects from DSP');
+    this.username ? this._titleService.setTitle('Your projects') : this._titleService.setTitle('All projects from DSP');
 
-    if (
-      this._store.selectSnapshot(ProjectsSelectors.allProjects).length === 0
-    ) {
+    if (this._store.selectSnapshot(ProjectsSelectors.allProjects).length === 0) {
       this.refresh();
     }
   }

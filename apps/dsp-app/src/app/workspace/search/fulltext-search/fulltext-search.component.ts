@@ -1,10 +1,4 @@
-import {
-  ConnectionPositionPair,
-  Overlay,
-  OverlayConfig,
-  OverlayRef,
-  PositionStrategy,
-} from '@angular/cdk/overlay';
+import { ConnectionPositionPair, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   Component,
@@ -21,12 +15,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import {
-  ApiResponseError,
-  Constants,
-  KnoraApiConnection,
-  ReadProject,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseError, Constants, KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
@@ -123,10 +112,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   overlayRef: OverlayRef;
 
   // do not show the following projects: default system projects from knora
-  hiddenProjects: string[] = [
-    Constants.SystemProjectIRI,
-    Constants.DefaultSharedOntologyIRI,
-  ];
+  hiddenProjects: string[] = [Constants.SystemProjectIRI, Constants.DefaultSharedOntologyIRI];
 
   // toggle phone panel
   displayPhonePanel = false;
@@ -206,17 +192,12 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     this._projectsApiService.list().subscribe(
       response => {
         // filter out deactivated projects and system projects
-        this.projects = response.projects.filter(
-          p => p.status === true && !this.hiddenProjects.includes(p.id)
-        );
+        this.projects = response.projects.filter(p => p.status === true && !this.hiddenProjects.includes(p.id));
 
         if (localStorage.getItem('currentProject') !== null) {
           this.project = JSON.parse(localStorage.getItem('currentProject'));
         }
-        this.projects = this._sortingService.keySortByAlphabetical(
-          this.projects,
-          'shortname'
-        );
+        this.projects = this._sortingService.keySortByAlphabetical(this.projects, 'shortname');
       },
       (error: ApiResponseError) => {
         this.error = error;
@@ -269,9 +250,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.overlayRef = this._overlay.create(config);
-    this.overlayRef.attach(
-      new TemplatePortal(this.searchMenu, this._viewContainerRef)
-    );
+    this.overlayRef.attach(new TemplatePortal(this.searchMenu, this._viewContainerRef));
     this.overlayRef.backdropClick().subscribe(() => {
       this.searchPanelFocus = false;
       if (this.overlayRef) {
@@ -285,14 +264,8 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
    */
   getOverlayPosition(): PositionStrategy {
     const positions = [
-      new ConnectionPositionPair(
-        { originX: 'start', originY: 'bottom' },
-        { overlayX: 'start', overlayY: 'top' }
-      ),
-      new ConnectionPositionPair(
-        { originX: 'start', originY: 'top' },
-        { overlayX: 'start', overlayY: 'bottom' }
-      ),
+      new ConnectionPositionPair({ originX: 'start', originY: 'bottom' }, { overlayX: 'start', overlayY: 'top' }),
+      new ConnectionPositionPair({ originX: 'start', originY: 'top' }, { overlayX: 'start', overlayY: 'bottom' }),
     ];
 
     // tslint:disable-next-line: max-line-length
@@ -315,10 +288,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (this.searchQuery.length < 3) {
         // show the error message if the user entered at least 1 character
         if (this.searchQuery !== '') {
-          this._notification.openSnackBar(
-            'Search query must be at least 3 characters long.',
-            'error'
-          );
+          this._notification.openSnackBar('Search query must be at least 3 characters long.', 'error');
         }
 
         return;
@@ -326,19 +296,14 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
 
       // push the search query into the local storage prevSearch array (previous search)
       // to have a list of recent search requests
-      let existingPrevSearch: PrevSearchItem[] = JSON.parse(
-        localStorage.getItem('prevSearch')
-      );
+      let existingPrevSearch: PrevSearchItem[] = JSON.parse(localStorage.getItem('prevSearch'));
       if (existingPrevSearch === null) {
         existingPrevSearch = [];
       }
       let i = 0;
       for (const entry of existingPrevSearch) {
         // remove entry, if exists already
-        if (
-          this.searchQuery === entry.query &&
-          this.projectIri === entry.projectIri
-        ) {
+        if (this.searchQuery === entry.query && this.projectIri === entry.projectIri) {
           existingPrevSearch.splice(i, 1);
         }
         i++;
@@ -394,9 +359,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
    */
   setFocus(): void {
     if (localStorage.getItem('prevSearch') !== null) {
-      this.prevSearch = this._sortingService.reverseArray(
-        JSON.parse(localStorage.getItem('prevSearch'))
-      );
+      this.prevSearch = this._sortingService.reverseArray(JSON.parse(localStorage.getItem('prevSearch')));
     } else {
       this.prevSearch = [];
     }

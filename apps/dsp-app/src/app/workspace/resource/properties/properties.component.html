@@ -1,12 +1,7 @@
 <!-- toolbar -->
-<div
-  class="toolbar"
-  *ngIf="project"
-  [class.deleted]="deletedResource || resource.res.isDeleted">
+<div class="toolbar" *ngIf="project" [class.deleted]="deletedResource || resource.res.isDeleted">
   <!-- resource info -->
-  <h3 class="label mat-headline-6">
-    {{resource.res.label}} <span *ngIf="deletedResource">(deleted)</span>
-  </h3>
+  <h3 class="label mat-headline-6">{{resource.res.label}} <span *ngIf="deletedResource">(deleted)</span></h3>
 
   <span class="fill-remaining-space"></span>
 
@@ -127,12 +122,8 @@
 <!-- additional line with project and user information -->
 <div class="infobar mat-caption" *ngIf="project && user">
   <span *ngIf="displayProjectInfo"
-    >This resource {{ resource.res.isDeleted ? 'belonged' : 'belongs' }} to the
-    project
-    <span
-      class="project link"
-      (click)="openProject(project)"
-      (mouseover)="previewProject()">
+    >This resource {{ resource.res.isDeleted ? 'belonged' : 'belongs' }} to the project
+    <span class="project link" (click)="openProject(project)" (mouseover)="previewProject()">
       <strong>{{project?.shortname}}</strong>
       <mat-icon inline>open_in_new</mat-icon>
     </span>
@@ -140,21 +131,14 @@
   <span class="fill-remaining-space desktop-only"></span>
   <span *ngIf="user || resource.res.creationDate">
     Created
-    <span *ngIf="user"
-      >by {{(user.username ? user.username : user.givenName + ' ' +
-      user.familyName)}}</span
-    >
-    <span *ngIf="resource.res.creationDate">
-      on {{resource.res.creationDate | date}}</span
-    >
+    <span *ngIf="user">by {{(user.username ? user.username : user.givenName + ' ' + user.familyName)}}</span>
+    <span *ngIf="resource.res.creationDate"> on {{resource.res.creationDate | date}}</span>
   </span>
 </div>
 
 <!-- list of properties -->
 <div class="properties-container" *ngIf="!loading">
-  <div
-    class="properties"
-    *ngIf="resource.resProps.length > 0; else noProperties">
+  <div class="properties" *ngIf="resource.resProps.length > 0; else noProperties">
     <!-- list of properties -->
     <div *ngFor="let prop of resource.resProps; let last = last">
       <!-- show property; all in case of showAll === true or only the ones with prop.values -->
@@ -202,8 +186,7 @@
             </app-display-edit>
           </div>
           <!-- Add value form -->
-          <div
-            *ngIf="addValueFormIsVisible && propID === prop.propDef.id && project?.status">
+          <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id && project?.status">
             <app-add-value
               #addValue
               class="add-value"
@@ -232,20 +215,15 @@
                 class="link link-value"
                 *ngFor="let inRes of displayedIncomingLinkResources"
                 (click)="openResource(inRes.id)"
-                >{{inRes.resourceClassLabel}}:
-                <strong>{{inRes.label}}</strong></a
+                >{{inRes.resourceClassLabel}}: <strong>{{inRes.label}}</strong></a
               >
               <!-- <mat-paginator *ngIf="numberOffAllIncomingLinkRes > amount_resources" [length]=numberOffAllIncomingLinkRes
                                            [pageSize]="amount_resources" [hidePageSize]="true" [pageIndex]="pageEvent.pageIndex"
                                            (page)="goToPage($event)">
                             </mat-paginator> -->
-              <div
-                class="pagination"
-                *ngIf="allIncomingLinkResources.length > amount_resources">
+              <div class="pagination" *ngIf="allIncomingLinkResources.length > amount_resources">
                 <p>Show more</p>
-                <button
-                  [disabled]="pageEvent.pageIndex < 1"
-                  (click)="handleIncomingLinkBackward()">
+                <button [disabled]="pageEvent.pageIndex < 1" (click)="handleIncomingLinkBackward()">
                   <mat-icon>chevron_left</mat-icon>
                 </button>
                 <button
@@ -285,12 +263,9 @@
         <div class="property-label">
           <h3 class="label mat-subtitle-2">Info</h3>
         </div>
-        <div class="property-value">
-          This resource has no defined properties.
-        </div>
+        <div class="property-value">This resource has no defined properties.</div>
       </div>
     </div>
   </ng-template>
 </div>
-<dasch-swiss-app-progress-indicator
-  *ngIf="loading"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>

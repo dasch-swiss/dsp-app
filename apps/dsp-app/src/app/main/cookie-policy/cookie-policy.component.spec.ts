@@ -1,10 +1,5 @@
 import { Location } from '@angular/common';
-import {
-  waitForAsync,
-  ComponentFixture,
-  inject,
-  TestBed,
-} from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,11 +38,8 @@ describe('CookiePolicyComponent', () => {
     expect(h1.textContent).toEqual('Cookie Policy for DSP-API web application');
   });
 
-  it('should have goBack method and should call location.back', inject(
-    [Location],
-    (loc: Location) => {
-      component.goBack();
-      expect(loc.back).toHaveBeenCalledTimes(1);
-    }
-  ));
+  it('should have goBack method and should call location.back', inject([Location], (loc: Location) => {
+    component.goBack();
+    expect(loc.back).toHaveBeenCalledTimes(1);
+  }));
 });

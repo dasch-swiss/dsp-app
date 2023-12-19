@@ -8,13 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  MockProjects,
-  MockUsers,
-  ProjectsEndpointAdmin,
-  StoredProject,
-  UsersEndpointAdmin,
-} from '@dasch-swiss/dsp-js';
+import { MockProjects, MockUsers, ProjectsEndpointAdmin, StoredProject, UsersEndpointAdmin } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
@@ -50,19 +44,12 @@ describe('ProjectsComponent', () => {
   beforeEach(waitForAsync(() => {
     const dspConnSpy = {
       admin: {
-        usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
-          'getUserByUsername',
-        ]),
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjects',
-        ]),
+        usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername']),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjects']),
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-      'setSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession', 'setSession']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -105,15 +92,11 @@ describe('ProjectsComponent', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): string => (store[key] = <any>value)
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): string => (store[key] = <any>value));
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -125,23 +108,17 @@ describe('ProjectsComponent', () => {
 
     localStorage.setItem('session', JSON.stringify(session));
 
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
 
     // mock getProjects response
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjects.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjects.and.callFake(() => {
       const projects = MockProjects.mockProjects();
       return of(projects);
     });
 
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUserByUsername.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(() => {
       const loggedInUser = MockUsers.mockUser();
 
       // recreate anything project

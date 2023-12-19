@@ -16,9 +16,7 @@ export class OntologyClassInstanceGuard implements CanActivate {
   isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
 
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(UserSelectors.userProjects) userProjects$: Observable<
-    StoredProject[]
-  >;
+  @Select(UserSelectors.userProjects) userProjects$: Observable<StoredProject[]>;
 
   constructor(
     private authService: AuthService,
@@ -28,26 +26,17 @@ export class OntologyClassInstanceGuard implements CanActivate {
 
   canActivate(activatedRoute: ActivatedRouteSnapshot): Observable<boolean> {
     const instanceId = activatedRoute.params[RouteConstants.instanceParameter];
-    return combineLatest([
-      this.isLoggedIn$,
-      this.isSysAdmin$,
-      this.userProjects$,
-    ]).pipe(
+    return combineLatest([this.isLoggedIn$, this.isSysAdmin$, this.userProjects$]).pipe(
       map(([isLoggedIn, isSysAdmin, userProjects]) => {
-        const projectUuid =
-          activatedRoute.parent.params[RouteConstants.uuidParameter];
+        const projectUuid = activatedRoute.parent.params[RouteConstants.uuidParameter];
         if (!isLoggedIn && instanceId === RouteConstants.addClassInstance) {
-          this.router.navigateByUrl(
-            `/${RouteConstants.project}/${projectUuid}`
-          );
+          this.router.navigateByUrl(`/${RouteConstants.project}/${projectUuid}`);
           return false;
         }
 
         return (
           instanceId === RouteConstants.addClassInstance &&
-          (userProjects?.some(
-            p => p.id === this.projectService.uuidToIri(projectUuid)
-          ) || // project member
+          (userProjects?.some(p => p.id === this.projectService.uuidToIri(projectUuid)) || // project member
             isSysAdmin) // system admin
         );
       })

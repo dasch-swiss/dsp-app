@@ -22,15 +22,9 @@ export class DspIiifConfig {
     public iiifPath: string = ''
   ) {
     // remove port in case it's the default one
-    if (
-      iiifProtocol === DspIiifConfig.PROTOCOL_HTTP &&
-      iiifPort === DspIiifConfig.DEFAULT_PORT_HTTP
-    ) {
+    if (iiifProtocol === DspIiifConfig.PROTOCOL_HTTP && iiifPort === DspIiifConfig.DEFAULT_PORT_HTTP) {
       this.iiifPort = null;
-    } else if (
-      iiifProtocol === DspIiifConfig.PROTOCOL_HTTPS &&
-      iiifPort === DspIiifConfig.DEFAULT_PORT_HTTPS
-    ) {
+    } else if (iiifProtocol === DspIiifConfig.PROTOCOL_HTTPS && iiifPort === DspIiifConfig.DEFAULT_PORT_HTTPS) {
       this.iiifPort = null;
     }
   }
@@ -39,11 +33,7 @@ export class DspIiifConfig {
    */
   get iiifUrl(): string {
     return (
-      this.iiifProtocol +
-      '://' +
-      this.iiifHost +
-      (this.iiifPort !== null ? ':' + this.iiifPort : '') +
-      this.iiifPath
+      this.iiifProtocol + '://' + this.iiifHost + (this.iiifPort !== null ? ':' + this.iiifPort : '') + this.iiifPath
     );
   }
 }

@@ -1,5 +1,4 @@
-<div
-  *ngIf="list && (((isProjectsLoading$ | async) === false) && ((isUsersLoading$ | async) === false))">
+<div *ngIf="list && (((isProjectsLoading$ | async) === false) && ((isUsersLoading$ | async) === false))">
   <!-- header toolbar -->
   <div class="app-toolbar" *ngIf="list.length > 0">
     <div class="app-toolbar-row">
@@ -22,41 +21,22 @@
         </app-sort-button>
       </span>
       <h2 class="mat-headline-6">
-        <span *ngIf="projectUuid"
-          >{{ list.length | i18nPlural : itemPluralMapping['member'] }}</span
-        >
-        <span *ngIf="!projectUuid"
-          >{{ list.length | i18nPlural : itemPluralMapping['user'] }}</span
-        >
+        <span *ngIf="projectUuid">{{ list.length | i18nPlural : itemPluralMapping['member'] }}</span>
+        <span *ngIf="!projectUuid">{{ list.length | i18nPlural : itemPluralMapping['user'] }}</span>
       </h2>
       <span class="fill-remaining-space"></span>
-      <span
-        class="app-toolbar-action button right"
-        *ngIf="status && createNew && (isSysAdmin$ | async)">
-        <button
-          mat-flat-button
-          [color]="'primary'"
-          (click)="openDialog('createUser')">
-          Create new
-        </button>
+      <span class="app-toolbar-action button right" *ngIf="status && createNew && (isSysAdmin$ | async)">
+        <button mat-flat-button [color]="'primary'" (click)="openDialog('createUser')">Create new</button>
       </span>
     </div>
   </div>
 
   <!-- content: list -->
   <table class="table more-space-bottom" [class.deactivated]="!status">
-    <tr
-      class="table-entry"
-      *ngFor="let user of list; trackBy:trackByFn; let last = last"
-      [class.no-border]="last">
+    <tr class="table-entry" *ngFor="let user of list; trackBy:trackByFn; let last = last" [class.no-border]="last">
       <!-- avatar -->
       <td class="avatar-cell">
-        <img
-          appAdminImage
-          [image]="user.email"
-          [type]="'user'"
-          alt="avatar"
-          class="avatar-image" />
+        <img appAdminImage [image]="user.email" [type]="'user'" alt="avatar" class="avatar-image" />
       </td>
 
       <!-- name and e-mail address -->
@@ -76,14 +56,9 @@
       <!-- admin: only in project view -->
       <td class="table-admin-chip">
         <mat-chip-listbox *ngIf="projectUuid">
-          <mat-chip
-            class="admin-chip"
-            *ngIf="userIsProjectAdmin(user.permissions)"
-            >Admin</mat-chip
-          >
+          <mat-chip class="admin-chip" *ngIf="userIsProjectAdmin(user.permissions)">Admin</mat-chip>
         </mat-chip-listbox>
-        <mat-chip-listbox
-          *ngIf="!projectUuid && userIsSystemAdmin(user.permissions)">
+        <mat-chip-listbox *ngIf="!projectUuid && userIsSystemAdmin(user.permissions)">
           <mat-chip class="sys-admin-chip">System Admin</mat-chip>
         </mat-chip-listbox>
       </td>
@@ -104,10 +79,7 @@
 
       <!-- action: menu with edit, remove, etc. -->
       <td class="table-action">
-        <button
-          mat-icon-button
-          [matMenuTriggerFor]="projectUserMenu"
-          [disabled]="disableMenu()">
+        <button mat-icon-button [matMenuTriggerFor]="projectUserMenu" [disabled]="disableMenu()">
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #projectUserMenu="matMenu" xPosition="before" class="menu">
@@ -145,18 +117,11 @@
             <span>as system admin</span>
           </button>
           <!-- update user's profile data; only for system admin -->
-          <button
-            mat-menu-item
-            *ngIf="(isSysAdmin$ | async) && user.status"
-            (click)="openDialog('editUser', user)">
+          <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="openDialog('editUser', user)">
             {{ projectUuid ? 'Edit member' : 'Edit user' }}
           </button>
-          <button
-            mat-menu-item
-            *ngIf="(isSysAdmin$ | async) && user.status"
-            (click)="openDialog('editPassword', user)">
-            {{ projectUuid ? "Change member's password" : "Change user's
-            password" }}
+          <button mat-menu-item *ngIf="(isSysAdmin$ | async) && user.status" (click)="openDialog('editPassword', user)">
+            {{ projectUuid ? "Change member's password" : "Change user's password" }}
           </button>
           <!-- remove user from project; only in project view -->
           <button

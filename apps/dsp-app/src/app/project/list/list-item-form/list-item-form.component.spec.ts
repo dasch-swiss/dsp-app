@@ -5,11 +5,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -35,10 +31,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
-import {
-  ListItemFormComponent,
-  ListNodeOperation,
-} from './list-item-form.component';
+import { ListItemFormComponent, ListNodeOperation } from './list-item-form.component';
 
 @Component({
   selector: 'dasch-swiss-app-progress-indicator',
@@ -109,20 +102,13 @@ describe('ListItemFormComponent', () => {
   beforeEach(waitForAsync(() => {
     const listsEndpointSpyObj = {
       admin: {
-        listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-          'deleteListNode',
-        ]),
+        listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['deleteListNode']),
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -173,29 +159,25 @@ describe('ListItemFormComponent', () => {
     // mock session service
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: true,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: true,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     // mock application state service
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: ProjectResponse = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -227,8 +209,7 @@ describe('ListItemFormComponent', () => {
   });
 
   it('should show a dialog box when the delete button is clicked', async () => {
-    const deleteListNodeResponse: DeleteListNodeResponse =
-      new DeleteListNodeResponse();
+    const deleteListNodeResponse: DeleteListNodeResponse = new DeleteListNodeResponse();
     deleteListNodeResponse.node.children = [];
     deleteListNodeResponse.node.id = 'http://rdfh.ch/lists/0001/notUsedList';
     deleteListNodeResponse.node.isRootNode = true;
@@ -237,9 +218,7 @@ describe('ListItemFormComponent', () => {
 
     const listSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-    ).deleteListNode.and.callFake(() => {
+    (listSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).deleteListNode.and.callFake(() => {
       const response = deleteListNodeResponse;
 
       return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
@@ -247,18 +226,14 @@ describe('ListItemFormComponent', () => {
 
     spyOn(testHostComponent.listItemForm.refreshParent, 'emit');
 
-    const deleteButton = await rootLoader.getHarness(
-      MatButtonHarness.with({ selector: '.delete' })
-    );
+    const deleteButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.delete' }));
     await deleteButton.click();
 
     const dialogHarnesses = await rootLoader.getAllHarnesses(MatDialogHarness);
 
     expect(dialogHarnesses.length).toEqual(1);
 
-    const confirmButton = await rootLoader.getHarness(
-      MatButtonHarness.with({ selector: '.confirm-button' })
-    );
+    const confirmButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.confirm-button' }));
 
     await confirmButton.click();
 
@@ -267,19 +242,11 @@ describe('ListItemFormComponent', () => {
     listNodeOperation.operation = 'delete';
 
     testHostFixture.whenStable().then(() => {
-      expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledWith(
-        testHostComponent.iri
-      );
-      expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledTimes(
-        1
-      );
+      expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledWith(testHostComponent.iri);
+      expect(listSpy.admin.listsEndpoint.deleteListNode).toHaveBeenCalledTimes(1);
 
-      expect(
-        testHostComponent.listItemForm.refreshParent.emit
-      ).toHaveBeenCalledWith(listNodeOperation);
-      expect(
-        testHostComponent.listItemForm.refreshParent.emit
-      ).toHaveBeenCalledTimes(1);
+      expect(testHostComponent.listItemForm.refreshParent.emit).toHaveBeenCalledWith(listNodeOperation);
+      expect(testHostComponent.listItemForm.refreshParent.emit).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,32 +1,12 @@
-import {
-  Component,
-  DebugElement,
-  forwardRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, DebugElement, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  ControlValueAccessor,
-  NgControl,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import {
-  MatFormFieldControl,
-  MatFormFieldModule,
-} from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MockResource,
-  ReadColorValue,
-  UpdateColorValue,
-  CreateColorValue,
-} from '@dasch-swiss/dsp-js';
+import { MockResource, ReadColorValue, UpdateColorValue, CreateColorValue } from '@dasch-swiss/dsp-js';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { Subject } from 'rxjs';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
@@ -44,9 +24,7 @@ import { ColorValueComponent } from './color-value.component';
     { provide: MatFormFieldControl, useExisting: TestColorPickerComponent },
   ],
 })
-class TestColorPickerComponent
-  implements ControlValueAccessor, MatFormFieldControl<any>
-{
+class TestColorPickerComponent implements ControlValueAccessor, MatFormFieldControl<any> {
   @Input() value;
   @Input() disabled: boolean;
   @Input() empty: boolean;
@@ -133,13 +111,7 @@ class TestHostCreateValueComponent implements OnInit {
 describe('ColorValueComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        ColorPickerModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, ColorPickerModule, BrowserAnimationsModule],
       declarations: [
         CommentFormComponent,
         ColorValueComponent,
@@ -174,17 +146,13 @@ describe('ColorValueComponent', () => {
     });
 
     it('should display an existing value without a hex color code', () => {
-      expect(testHostComponent.colorValueComponent.displayValue.color).toEqual(
-        '#ff3333'
-      );
+      expect(testHostComponent.colorValueComponent.displayValue.color).toEqual('#ff3333');
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy();
 
       expect(testHostComponent.colorValueComponent.mode).toEqual('read');
 
-      expect(
-        valueReadModeNativeElement.style.backgroundColor
-      ).not.toBeUndefined();
+      expect(valueReadModeNativeElement.style.backgroundColor).not.toBeUndefined();
 
       expect(valueReadModeNativeElement.innerText).toEqual('');
     });
@@ -194,17 +162,13 @@ describe('ColorValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(testHostComponent.colorValueComponent.displayValue.color).toEqual(
-        '#ff3333'
-      );
+      expect(testHostComponent.colorValueComponent.displayValue.color).toEqual('#ff3333');
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy();
 
       expect(testHostComponent.colorValueComponent.mode).toEqual('read');
 
-      expect(
-        valueReadModeNativeElement.style.backgroundColor
-      ).not.toBeUndefined();
+      expect(valueReadModeNativeElement.style.backgroundColor).not.toBeUndefined();
 
       expect(valueReadModeNativeElement.innerText).toEqual('#ff3333');
     });
@@ -218,27 +182,21 @@ describe('ColorValueComponent', () => {
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.colorValueComponent.colorPickerComponent.value
-      ).toEqual('#ff3333');
+      expect(testHostComponent.colorValueComponent.colorPickerComponent.value).toEqual('#ff3333');
 
       // simulate user input
       const newColor = '#b1b1b1';
 
-      testHostComponent.colorValueComponent.colorPickerComponent.value =
-        newColor;
+      testHostComponent.colorValueComponent.colorPickerComponent.value = newColor;
       testHostComponent.colorValueComponent.colorPickerComponent._handleInput();
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.colorValueComponent.valueFormControl.value
-      ).toBeTruthy();
+      expect(testHostComponent.colorValueComponent.valueFormControl.value).toBeTruthy();
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.colorValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.colorValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateColorValue).toBeTruthy();
 
@@ -252,21 +210,16 @@ describe('ColorValueComponent', () => {
 
       expect(testHostComponent.colorValueComponent.mode).toEqual('update');
 
-      expect(testHostComponent.colorValueComponent.displayValue.color).toEqual(
-        '#ff3333'
-      );
+      expect(testHostComponent.colorValueComponent.displayValue.color).toEqual('#ff3333');
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy(); // because no value or comment changed
 
       // set a comment value
-      testHostComponent.colorValueComponent.commentFormControl.setValue(
-        'a comment'
-      );
+      testHostComponent.colorValueComponent.commentFormControl.setValue('a comment');
       testHostFixture.detectChanges();
       expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy(); // because now the comment changed
 
-      const updatedValue =
-        testHostComponent.colorValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.colorValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateColorValue).toBeTruthy();
     });
@@ -289,8 +242,7 @@ describe('ColorValueComponent', () => {
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.colorValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.colorValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -307,21 +259,16 @@ describe('ColorValueComponent', () => {
       // simulate user input
       const newColor = '#g7g7g7';
 
-      testHostComponent.colorValueComponent.colorPickerComponent.value =
-        newColor;
+      testHostComponent.colorValueComponent.colorPickerComponent.value = newColor;
       testHostComponent.colorValueComponent.colorPickerComponent._handleInput();
 
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.colorValueComponent.valueFormControl.value
-      ).toEqual('#g7g7g7');
+      expect(testHostComponent.colorValueComponent.valueFormControl.value).toEqual('#g7g7g7');
 
       testHostComponent.colorValueComponent.resetFormControl();
 
-      expect(
-        testHostComponent.colorValueComponent.colorPickerComponent.value
-      ).toEqual('#ff3333');
+      expect(testHostComponent.colorValueComponent.colorPickerComponent.value).toEqual('#ff3333');
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy();
     });
@@ -336,9 +283,7 @@ describe('ColorValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(
-        valueReadModeNativeElement.style.backgroundColor
-      ).not.toBeUndefined();
+      expect(valueReadModeNativeElement.style.backgroundColor).not.toBeUndefined();
 
       expect(valueReadModeNativeElement.innerText).toEqual('');
 
@@ -355,9 +300,7 @@ describe('ColorValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(
-        valueReadModeNativeElement.style.backgroundColor
-      ).not.toBeUndefined();
+      expect(valueReadModeNativeElement.style.backgroundColor).not.toBeUndefined();
 
       expect(valueReadModeNativeElement.innerText).toEqual('');
       expect(testHostComponent.colorValueComponent.form.valid).toBeTruthy();
@@ -375,9 +318,7 @@ describe('ColorValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(
-        valueReadModeNativeElement.style.backgroundColor
-      ).not.toBeUndefined();
+      expect(valueReadModeNativeElement.style.backgroundColor).not.toBeUndefined();
 
       expect(valueReadModeNativeElement.innerText).toEqual('#d8d8d8');
 
@@ -385,15 +326,11 @@ describe('ColorValueComponent', () => {
     });
 
     it('should unsubscribe when destroyed', () => {
-      expect(
-        testHostComponent.colorValueComponent.commentChangesSubscription.closed
-      ).toBeFalsy();
+      expect(testHostComponent.colorValueComponent.commentChangesSubscription.closed).toBeFalsy();
 
       testHostComponent.colorValueComponent.ngOnDestroy();
 
-      expect(
-        testHostComponent.colorValueComponent.commentChangesSubscription.closed
-      ).toBeTruthy();
+      expect(testHostComponent.colorValueComponent.commentChangesSubscription.closed).toBeTruthy();
     });
   });
 
@@ -411,15 +348,12 @@ describe('ColorValueComponent', () => {
     });
 
     it('should create a value', () => {
-      expect(
-        testHostComponent.colorValueComponent.colorPickerComponent.value
-      ).toEqual(null);
+      expect(testHostComponent.colorValueComponent.colorPickerComponent.value).toEqual(null);
 
       // simulate user input
       const newColor = '#f5f5f5';
 
-      testHostComponent.colorValueComponent.colorPickerComponent.value =
-        newColor;
+      testHostComponent.colorValueComponent.colorPickerComponent.value = newColor;
       testHostComponent.colorValueComponent.colorPickerComponent._handleInput();
 
       testHostFixture.detectChanges();
@@ -439,8 +373,7 @@ describe('ColorValueComponent', () => {
       // simulate user input
       const newColor = '#f8f8f8';
 
-      testHostComponent.colorValueComponent.colorPickerComponent.value =
-        newColor;
+      testHostComponent.colorValueComponent.colorPickerComponent.value = newColor;
       testHostComponent.colorValueComponent.colorPickerComponent._handleInput();
 
       testHostFixture.detectChanges();
@@ -455,9 +388,7 @@ describe('ColorValueComponent', () => {
 
       expect(testHostComponent.colorValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.colorValueComponent.colorPickerComponent.value
-      ).toEqual(null);
+      expect(testHostComponent.colorValueComponent.colorPickerComponent.value).toEqual(null);
     });
   });
 });

@@ -18,10 +18,7 @@ import {
   ApiResponseError,
   Constants,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -37,9 +34,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './ontology-class-item.component.html',
   styleUrls: ['./ontology-class-item.component.scss'],
 })
-export class OntologyClassItemComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() resClass: ClassDefinition;
 
   @Input() projectMember: boolean;
@@ -103,9 +98,7 @@ export class OntologyClassItemComponent
   }
 
   ngAfterViewInit(): void {
-    this.tooltipDisabled = !this.isTextOverflowing(
-      this.resClassLabel.nativeElement
-    );
+    this.tooltipDisabled = !this.isTextOverflowing(this.resClassLabel.nativeElement);
     this._cdr.detectChanges();
   }
 
@@ -166,17 +159,15 @@ export class OntologyClassItemComponent
   }
 
   private _getSearchCount() {
-    this._dspApiConnection.v2.search
-      .doExtendedSearchCountQuery(this.gravsearch)
-      .subscribe(
-        (res: CountQueryResponse) => {
-          this.results = res.numberOfResults;
-          this._cdr.markForCheck();
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+    this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.gravsearch).subscribe(
+      (res: CountQueryResponse) => {
+        this.results = res.numberOfResults;
+        this._cdr.markForCheck();
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
   getAddClassInstanceLink(): string {

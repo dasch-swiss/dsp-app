@@ -1,7 +1,5 @@
 <span *ngIf="form" [formGroup]="form">
-  <mat-form-field
-    *ngIf="usersProjects.length === 1"
-    class="large-field selected-project">
+  <mat-form-field *ngIf="usersProjects.length === 1" class="large-field selected-project">
     <mat-label>Select a project *</mat-label>
     <input
       matInput
@@ -11,14 +9,9 @@
             }}"
       class="project-label" />
   </mat-form-field>
-  <mat-form-field
-    *ngIf="usersProjects.length > 1"
-    class="large-field selected-projects">
+  <mat-form-field *ngIf="usersProjects.length > 1" class="large-field selected-projects">
     <mat-label>Select a project</mat-label>
-    <mat-select
-      placeholder="Select a project"
-      formControlName="projects"
-      class="select-project">
+    <mat-select placeholder="Select a project" formControlName="projects" class="select-project">
       <mat-option *ngFor="let project of usersProjects" [value]="project.id">
         {{ project.shortcode }} | {{ project.shortname }}
       </mat-option>

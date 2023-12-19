@@ -1,17 +1,6 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-  CreateTextValueAsString,
-  ReadTextValueAsString,
-  UpdateTextValueAsString,
-} from '@dasch-swiss/dsp-js';
+import { CreateTextValueAsString, ReadTextValueAsString, UpdateTextValueAsString } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import * as Editor from 'ckeditor5-custom-build';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
@@ -22,10 +11,7 @@ import { ckEditor } from '../ck-editor';
   templateUrl: './text-value-as-string.component.html',
   styleUrls: ['./text-value-as-string.component.scss'],
 })
-export class TextValueAsStringComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class TextValueAsStringComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadTextValueAsString;
   @Input() textArea?: boolean = false;
 
@@ -78,10 +64,7 @@ export class TextValueAsStringComponent
 
     newTextValue.text = this.valueFormControl.value;
 
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       newTextValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -99,10 +82,7 @@ export class TextValueAsStringComponent
 
     updatedTextValue.text = this.valueFormControl.value;
 
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedTextValue.valueHasComment = this.commentFormControl.value;
     }
 

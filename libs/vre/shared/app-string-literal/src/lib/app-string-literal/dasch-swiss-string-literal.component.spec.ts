@@ -85,9 +85,7 @@ describe('AppStringLiteralComponent', () => {
 
   it('should display the correct value for a language input', () => {
     // Get the input element from the template
-    const inputElement: HTMLInputElement = fixture.debugElement.query(
-      By.css('.inputValue')
-    ).nativeElement;
+    const inputElement: HTMLInputElement = fixture.debugElement.query(By.css('.inputValue')).nativeElement;
     expect(inputElement.value).toBe('Mund'); // even if the component.language === en
   });
 
@@ -97,9 +95,7 @@ describe('AppStringLiteralComponent', () => {
     fixture.detectChanges();
 
     // Get the input element from the template
-    const inputElement: HTMLInputElement = fixture.debugElement.query(
-      By.css('.inputValue')
-    ).nativeElement;
+    const inputElement: HTMLInputElement = fixture.debugElement.query(By.css('.inputValue')).nativeElement;
 
     // Check the value of the input element
     expect(inputElement.value).toBe('Welt');
@@ -111,9 +107,7 @@ describe('AppStringLiteralComponent', () => {
     fixture.detectChanges();
 
     // Get the input element from the template and set a new value
-    const inputElement: HTMLInputElement = fixture.debugElement.query(
-      By.css('.inputValue')
-    ).nativeElement;
+    const inputElement: HTMLInputElement = fixture.debugElement.query(By.css('.inputValue')).nativeElement;
     inputElement.value = 'Neue Welt';
     inputElement.dispatchEvent(new Event('input')); // Dispatch the input event to update the form control
 

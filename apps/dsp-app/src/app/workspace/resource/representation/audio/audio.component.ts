@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {
@@ -65,9 +57,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
       res => (this.originalFilename = res['originalFilename']),
       () => (this.failedToLoad = true)
     );
-    this.audio = this._sanitizer.bypassSecurityTrustUrl(
-      this.src.fileValue.fileUrl
-    );
+    this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
   }
 
   ngAfterViewInit() {
@@ -112,8 +102,7 @@ export class AudioComponent implements OnInit, AfterViewInit {
   }
 
   openReplaceFileDialog() {
-    const propId =
-      this.parentResource.properties[Constants.HasAudioFileValue][0].id;
+    const propId = this.parentResource.properties[Constants.HasAudioFileValue][0].id;
 
     const dialogConfig: MatDialogConfig = {
       width: '800px',
@@ -178,51 +167,30 @@ export class AudioComponent implements OnInit, AfterViewInit {
       .updateValue(updateRes as UpdateResource<UpdateValue>)
       .pipe(
         mergeMap((res: WriteValueResponse) =>
-          this._dspApiConnection.v2.values.getValue(
-            this.parentResource.id,
-            res.uuid
-          )
+          this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
       .subscribe(
         (res2: ReadResource) => {
-          this.src.fileValue.fileUrl = (
-            res2.properties[
-              Constants.HasAudioFileValue
-            ][0] as ReadAudioFileValue
-          ).fileUrl;
+          this.src.fileValue.fileUrl = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).fileUrl;
           this.src.fileValue.filename = (
-            res2.properties[
-              Constants.HasAudioFileValue
-            ][0] as ReadAudioFileValue
+            res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue
           ).filename;
-          this.src.fileValue.strval = (
-            res2.properties[
-              Constants.HasAudioFileValue
-            ][0] as ReadAudioFileValue
-          ).strval;
+          this.src.fileValue.strval = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).strval;
           this.src.fileValue.valueCreationDate = (
-            res2.properties[
-              Constants.HasAudioFileValue
-            ][0] as ReadAudioFileValue
+            res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue
           ).valueCreationDate;
 
-          this.audio = this._sanitizer.bypassSecurityTrustUrl(
-            this.src.fileValue.fileUrl
-          );
+          this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
 
           this._rs
             .getFileInfo(this.src.fileValue.fileUrl)
-            .subscribe(
-              res => (this.originalFilename = res['originalFilename'])
-            );
+            .subscribe(res => (this.originalFilename = res['originalFilename']));
 
           this._valueOperationEventService.emit(
             new EmitEvent(
               Events.FileValueUpdated,
-              new UpdatedFileEventValue(
-                res2.properties[Constants.HasAudioFileValue][0]
-              )
+              new UpdatedFileEventValue(res2.properties[Constants.HasAudioFileValue][0])
             )
           );
 

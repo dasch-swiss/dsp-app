@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -83,8 +75,7 @@ export class AdvancedSearchComponent implements OnInit {
   resourcesSearchResultsLoading$ = this.store.resourcesSearchResultsLoading$;
   resourcesSearchResultsCount$ = this.store.resourcesSearchResultsCount$;
   resourcesSearchNoResults$ = this.store.resourcesSearchNoResults$;
-  resourcesSearchResultsPageNumber$ =
-    this.store.resourcesSearchResultsPageNumber$;
+  resourcesSearchResultsPageNumber$ = this.store.resourcesSearchResultsPageNumber$;
   resourcesSearchResults$ = this.store.resourcesSearchResults$;
   orderByButtonDisabled$ = this.store.orderByButtonDisabled$;
 
@@ -99,9 +90,7 @@ export class AdvancedSearchComponent implements OnInit {
       ontologiesLoading: false,
       resourceClasses: [],
       resourceClassesLoading: false,
-      selectedProject: this.uuid
-        ? 'http://rdfh.ch/projects/' + this.uuid
-        : undefined,
+      selectedProject: this.uuid ? 'http://rdfh.ch/projects/' + this.uuid : undefined,
       selectedOntology: undefined,
       selectedResourceClass: undefined,
       propertyFormList: [],
@@ -125,9 +114,7 @@ export class AdvancedSearchComponent implements OnInit {
 
     this.store.filteredPropertiesList(this.selectedResourceClass$);
 
-    this.previousSearchObject = localStorage.getItem(
-      'advanced-search-previous-search'
-    );
+    this.previousSearchObject = localStorage.getItem('advanced-search-previous-search');
   }
 
   // pass-through method to notify the store to update the state of the selected ontology
@@ -154,10 +141,7 @@ export class AdvancedSearchComponent implements OnInit {
   }
 
   handleRemovePropertyForm(property: PropertyFormItem): void {
-    this.store.updatePropertyFormList(
-      PropertyFormListOperations.Delete,
-      property
-    );
+    this.store.updatePropertyFormList(PropertyFormListOperations.Delete, property);
   }
 
   handleSelectedPropertyChanged(property: PropertyFormItem): void {
@@ -175,9 +159,7 @@ export class AdvancedSearchComponent implements OnInit {
     this.store.updateSelectedOperator(property);
   }
 
-  handleSelectedMatchPropertyResourceClassChanged(
-    property: PropertyFormItem
-  ): void {
+  handleSelectedMatchPropertyResourceClassChanged(property: PropertyFormItem): void {
     this.store.updateSelectedMatchPropertyResourceClass(property);
   }
 
@@ -245,9 +227,7 @@ export class AdvancedSearchComponent implements OnInit {
   loadPreviousSearch(): void {
     if (!this.previousSearchObject) return;
 
-    const prevSearchObject: AdvancedSearchStateSnapshot = JSON.parse(
-      this.previousSearchObject
-    );
+    const prevSearchObject: AdvancedSearchStateSnapshot = JSON.parse(this.previousSearchObject);
 
     this.store.setState({
       ontologies: prevSearchObject.ontologies,

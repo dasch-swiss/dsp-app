@@ -7,14 +7,10 @@
     <div *ngIf="!loading" class="center more-space-top">
       <!-- name -->
       <mat-form-field class="large-field ontology-form-field">
-        <span matPrefix class="ontology-prefix-icon">
-          <mat-icon>fingerprint</mat-icon>&nbsp;
-        </span>
+        <span matPrefix class="ontology-prefix-icon"> <mat-icon>fingerprint</mat-icon>&nbsp; </span>
         <mat-label>Class name</mat-label>
         <input matInput formControlName="name" />
-        <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name">
-          {{ formErrors.name }}
-        </mat-hint>
+        <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name"> {{ formErrors.name }} </mat-hint>
       </mat-form-field>
 
       <!-- label -->
@@ -26,9 +22,7 @@
           (touched)="resourceClassLabelsTouched = $event"
           (dataChanged)="handleData($event, 'label')">
         </dasch-swiss-app-string-literal>
-        <mat-hint class="string-literal-error" *ngIf="formErrors.label">
-          {{ formErrors.label }}
-        </mat-hint>
+        <mat-hint class="string-literal-error" *ngIf="formErrors.label"> {{ formErrors.label }} </mat-hint>
       </div>
 
       <!-- description -->
@@ -46,9 +40,7 @@
     <!-- action buttons -->
     <div class="form-panel form-action">
       <span>
-        <button mat-button type="button" (click)="onCancel()">
-          {{ 'appLabels.form.action.cancel' | translate }}
-        </button>
+        <button mat-button type="button" (click)="onCancel()">{{ 'appLabels.form.action.cancel' | translate }}</button>
       </span>
       <span class="fill-remaining-space"></span>
       <span>
@@ -74,11 +66,7 @@
                         (resourceClassForm.enabled && !resourceClassForm.valid)
                     "
           (click)="submitData()">
-          <dasch-swiss-app-progress-indicator
-            [color]="'white'"
-            [status]="0"
-            *ngIf="loading"
-            class="submit-progress">
+          <dasch-swiss-app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
           </dasch-swiss-app-progress-indicator>
           <mat-icon *ngIf="error && !loading">close</mat-icon>
           {{ error ? 'Failed' : 'Update' }}
@@ -92,26 +80,14 @@
     display message
  -->
 <ng-template #missingLastModificationDate>
-  <p class="note warning center">
-    The resource class can't be edited because of missing
-    "lastModificationDate"!
-  </p>
+  <p class="note warning center">The resource class can't be edited because of missing "lastModificationDate"!</p>
 
-  <app-resource-class-info
-    [resourceClass]="ontology.classes[iri]"
-    [expanded]="true"
-    [projectUuid]="projectUuid">
+  <app-resource-class-info [resourceClass]="ontology.classes[iri]" [expanded]="true" [projectUuid]="projectUuid">
   </app-resource-class-info>
 
   <mat-dialog-actions>
     <span class="fill-remaining-space"></span>
-    <button
-      mat-button
-      mat-dialog-close
-      class="cancel-button center"
-      [mat-dialog-close]="false">
-      close
-    </button>
+    <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">close</button>
     <span class="fill-remaining-space"></span>
   </mat-dialog-actions>
 </ng-template>

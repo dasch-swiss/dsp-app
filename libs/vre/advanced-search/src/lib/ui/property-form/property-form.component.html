@@ -10,16 +10,10 @@
             placeholder="Select a value"
             name="properties"
             [compareWith]="compareObjects">
-            <mat-option *ngIf="propertiesLoading" disabled="true"
-              >Loading...</mat-option
-            >
+            <mat-option *ngIf="propertiesLoading" disabled="true">Loading...</mat-option>
             <ng-container *ngIf="!propertiesLoading">
-              <mat-option [value]="resourceLabelObj"
-                >{{ resourceLabelObj.label }}</mat-option
-              >
-              <mat-option *ngFor="let prop of properties" [value]="prop">
-                {{ prop.label }}
-              </mat-option>
+              <mat-option [value]="resourceLabelObj">{{ resourceLabelObj.label }}</mat-option>
+              <mat-option *ngFor="let prop of properties" [value]="prop"> {{ prop.label }} </mat-option>
             </ng-container>
           </mat-select>
         </mat-form-field>
@@ -34,9 +28,7 @@
             (selectionChange)="onSelectedOperatorChanged($event)"
             placeholder="Select a value"
             name="operators">
-            <mat-option
-              *ngFor="let operator of propertyFormItem?.operators"
-              [value]="operator">
+            <mat-option *ngFor="let operator of propertyFormItem?.operators" [value]="operator">
               {{ operator }}
             </mat-option>
           </mat-select>
@@ -61,9 +53,7 @@
             placeholder="Select a value"
             name="resource-classes"
             [compareWith]="compareObjects">
-            <mat-option *ngIf="matchResourceClassesLoading" disabled="true"
-              >Loading...</mat-option
-            >
+            <mat-option *ngIf="matchResourceClassesLoading" disabled="true">Loading...</mat-option>
             <ng-container *ngIf="!matchResourceClassesLoading">
               <mat-option
                 *ngFor="

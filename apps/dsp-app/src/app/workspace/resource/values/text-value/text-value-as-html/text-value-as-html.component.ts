@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  Input,
-  EventEmitter,
-  Output,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 
@@ -14,17 +7,12 @@ import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.d
   templateUrl: './text-value-as-html.component.html',
   styleUrls: ['./text-value-as-html.component.scss'],
 })
-export class TextValueAsHtmlComponent
-  extends BaseValueDirective
-  implements OnInit, OnDestroy
-{
+export class TextValueAsHtmlComponent extends BaseValueDirective implements OnInit, OnDestroy {
   @Input() displayValue?: ReadTextValueAsHtml;
 
-  @Output() internalLinkClicked: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() internalLinkClicked: EventEmitter<string> = new EventEmitter<string>();
 
-  @Output() internalLinkHovered: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() internalLinkHovered: EventEmitter<string> = new EventEmitter<string>();
 
   customValidators = [];
 

@@ -1,19 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, StringLiteral } from '@dasch-swiss/dsp-js';
-import {
-  AppConfigService,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   DeleteListNodeAction,
@@ -60,17 +50,11 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
   disableContent = false;
 
   get list$(): Observable<ListNodeInfo> {
-    return this.listsInProject$.pipe(
-      map(lists =>
-        this.listIri ? lists.find(i => i.id === this.listIri) : null
-      )
-    );
+    return this.listsInProject$.pipe(map(lists => (this.listIri ? lists.find(i => i.id === this.listIri) : null)));
   }
 
   @Select(ListsSelectors.isListsLoading) isListsLoading$: Observable<boolean>;
-  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<
-    ListNodeInfo[]
-  >;
+  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
 
   constructor(
     private _acs: AppConfigService,
@@ -83,15 +67,7 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
     protected _cd: ChangeDetectorRef,
     protected _actions$: Actions
   ) {
-    super(
-      _store,
-      _route,
-      _projectService,
-      _titleService,
-      _router,
-      _cd,
-      _actions$
-    );
+    super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
   }
 
   @HostListener('window:resize', ['$event']) onWindowResize() {
@@ -158,14 +134,8 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
               .pipe(ofActionSuccessful(DeleteListNodeAction))
               .pipe(take(1))
               .subscribe(() => {
-                this._store.dispatch(
-                  new LoadListsInProjectAction(this.projectIri)
-                );
-                this._router.navigate([
-                  RouteConstants.project,
-                  this.projectUuid,
-                  RouteConstants.dataModels,
-                ]);
+                this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
+                this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
               });
           }
           break;
@@ -175,11 +145,7 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
   }
 
   private _setPageTitle() {
-    const project = this._store.selectSnapshot(
-      ProjectsSelectors.currentProject
-    );
-    this._titleService.setTitle(
-      `Project ${project?.shortname} | List${this.listIri ? '' : 's'}`
-    );
+    const project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
+    this._titleService.setTitle(`Project ${project?.shortname} | List${this.listIri ? '' : 's'}`);
   }
 }

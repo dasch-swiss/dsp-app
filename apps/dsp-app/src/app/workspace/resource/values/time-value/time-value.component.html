@@ -1,11 +1,7 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
   <span class="rm-value date">Date: {{ valueFormControl.value | date }}</span>
-  <span class="rm-value time"
-    >Time: {{ valueFormControl.value | date : 'HH:mm' }}</span
-  >
-  <span class="rm-comment" *ngIf="shouldShowComment"
-    >{{ commentFormControl.value }}</span
-  >
+  <span class="rm-value time">Time: {{ valueFormControl.value | date : 'HH:mm' }}</span>
+  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <span [formGroup]="form" class="parent-component-wrapper">
@@ -22,14 +18,11 @@
                     valueFormControl.hasError('valueNotChanged') &&
                     (valueFormControl.touched || valueFormControl.dirty)
                 ">
-        <span class="custom-error-message"
-          >New value must be different than the current value.</span
-        >
+        <span class="custom-error-message">New value must be different than the current value.</span>
       </mat-error>
       <mat-error *ngIf="valueFormControl.hasError('duplicateValue')">
         <span class="custom-error-message"
-          >This value already exists for this property. Duplicate values are not
-          allowed.</span
+          >This value already exists for this property. Duplicate values are not allowed.</span
         >
       </mat-error>
     </mat-form-field>

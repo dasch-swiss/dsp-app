@@ -8,10 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { By } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { MockProvider } from 'ng-mocks';
@@ -22,8 +19,7 @@ import { IntermediateComponent } from './intermediate.component';
  * test host component to simulate parent component
  */
 @Component({
-  template:
-    '<app-intermediate #intermediateView [resources]="resources"></app-intermediate>',
+  template: '<app-intermediate #intermediateView [resources]="resources"></app-intermediate>',
 })
 class OneSelectedResourcesComponent {
   @ViewChild('intermediateView') intermediateComponent: IntermediateComponent;
@@ -47,8 +43,7 @@ class OneSelectedResourcesComponent {
  * test host component to simulate parent component
  */
 @Component({
-  template:
-    '<app-intermediate #intermediateView [resources]="resources"></app-intermediate>',
+  template: '<app-intermediate #intermediateView [resources]="resources"></app-intermediate>',
 })
 class ThreeSelectedResourcesComponent {
   @ViewChild('intermediateView') intermediateComponent: IntermediateComponent;
@@ -85,18 +80,8 @@ describe('IntermediateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        IntermediateComponent,
-        OneSelectedResourcesComponent,
-        ThreeSelectedResourcesComponent,
-      ],
-      imports: [
-        MatButtonModule,
-        MatDialogModule,
-        MatIconModule,
-        MatSnackBarModule,
-        MatTooltipModule,
-      ],
+      declarations: [IntermediateComponent, OneSelectedResourcesComponent, ThreeSelectedResourcesComponent],
+      imports: [MatButtonModule, MatDialogModule, MatIconModule, MatSnackBarModule, MatTooltipModule],
       providers: [
         AppConfigService,
         MockProvider(AppLoggingService),

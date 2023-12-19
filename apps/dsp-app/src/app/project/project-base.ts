@@ -31,14 +31,8 @@ export class ProjectBase implements OnInit, OnDestroy {
     ]).pipe(
       takeUntil(this.destroyed),
       map(([user, userProjectGroups, params, parentParams]) => {
-        const projectIri = this._projectService.uuidToIri(
-          params.uuid ? params.uuid : parentParams.uuid
-        );
-        return ProjectService.IsProjectAdminOrSysAdmin(
-          user,
-          userProjectGroups,
-          projectIri
-        );
+        const projectIri = this._projectService.uuidToIri(params.uuid ? params.uuid : parentParams.uuid);
+        return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, projectIri);
       })
     );
   }
@@ -75,22 +69,15 @@ export class ProjectBase implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
-    if (
-      this.projectUuid &&
-      (!this.project || this.project.id !== this.projectIri)
-    ) {
+    if (this.projectUuid && (!this.project || this.project.id !== this.projectIri)) {
       // get current project data, project members and project groups
       // and set the project state here
       this.loadProject();
     } else {
       if (!this.isOntologiesAvailable()) {
-        this.isProjectsLoading$
-          .pipe(takeWhile(isLoading => isLoading === false))
-          .subscribe((isLoading: boolean) => {
-            this._store.dispatch(
-              new LoadProjectOntologiesAction(this.projectUuid)
-            );
-          });
+        this.isProjectsLoading$.pipe(takeWhile(isLoading => isLoading === false)).subscribe((isLoading: boolean) => {
+          this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
+        });
       }
     }
   }
@@ -135,9 +122,7 @@ export class ProjectBase implements OnInit, OnDestroy {
   }
 
   private isOntologiesAvailable(): boolean {
-    const currentProjectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectOntologies
-    );
+    const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
     let result = true;
 
     this.project.ontologies.forEach(ontoIri => {

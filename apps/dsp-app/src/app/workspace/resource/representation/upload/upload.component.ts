@@ -1,18 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {
   CreateArchiveFileValue,
@@ -45,18 +32,11 @@ const resolvedPromise = Promise.resolve(null);
 export class UploadComponent implements OnInit {
   @Input() parentForm?: UntypedFormGroup;
 
-  @Input() representation:
-    | 'stillImage'
-    | 'movingImage'
-    | 'audio'
-    | 'document'
-    | 'text'
-    | 'archive';
+  @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
 
   @Input() formName: string;
 
-  @Output() fileInfo: EventEmitter<CreateFileValue> =
-    new EventEmitter<CreateFileValue>();
+  @Output() fileInfo: EventEmitter<CreateFileValue> = new EventEmitter<CreateFileValue>();
 
   @Output() forceReload = new EventEmitter<void>();
 
@@ -122,9 +102,7 @@ export class UploadComponent implements OnInit {
               case 'stillImage':
                 const temporaryUrl = res.uploadedFiles[0].temporaryUrl;
                 const thumbnailUri = '/full/256,/0/default.jpg';
-                this.thumbnailUrl = this._sanitizer.bypassSecurityTrustUrl(
-                  temporaryUrl + thumbnailUri
-                );
+                this.thumbnailUrl = this._sanitizer.bypassSecurityTrustUrl(temporaryUrl + thumbnailUri);
                 break;
 
               case 'document':

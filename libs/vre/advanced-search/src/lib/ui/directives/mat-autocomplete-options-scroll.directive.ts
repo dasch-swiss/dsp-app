@@ -1,10 +1,4 @@
-import {
-  Directive,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  Output,
-} from '@angular/core';
+import { Directive, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { Subject } from 'rxjs';
 import { tap, takeUntil } from 'rxjs/operators';
@@ -24,8 +18,7 @@ export class MatAutocompleteOptionsScrollDirective implements OnDestroy {
   @Input() thresholdPercent = 0.8;
 
   // eslint-disable-next-line @angular-eslint/no-output-rename
-  @Output('optionsScroll') scrollEvent =
-    new EventEmitter<IAutoCompleteScrollEvent>();
+  @Output('optionsScroll') scrollEvent = new EventEmitter<IAutoCompleteScrollEvent>();
   _onDestroy = new Subject();
   constructor(public autoComplete: MatAutocomplete) {
     this.autoComplete.opened
@@ -39,10 +32,7 @@ export class MatAutocompleteOptionsScrollDirective implements OnDestroy {
           setTimeout(() => {
             // Note: remove listner just for safety, in case the close event is skipped.
             this.removeScrollEventListener();
-            this.autoComplete.panel.nativeElement.addEventListener(
-              'scroll',
-              this.onScroll.bind(this)
-            );
+            this.autoComplete.panel.nativeElement.addEventListener('scroll', this.onScroll.bind(this));
           }, 500);
         }),
         takeUntil(this._onDestroy)
@@ -59,10 +49,7 @@ export class MatAutocompleteOptionsScrollDirective implements OnDestroy {
 
   private removeScrollEventListener() {
     if (this.autoComplete?.panel) {
-      this.autoComplete.panel.nativeElement.removeEventListener(
-        'scroll',
-        this.onScroll
-      );
+      this.autoComplete.panel.nativeElement.removeEventListener('scroll', this.onScroll);
     }
   }
 

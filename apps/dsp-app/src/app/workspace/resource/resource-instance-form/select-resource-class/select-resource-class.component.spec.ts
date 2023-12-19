@@ -2,12 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -92,12 +87,8 @@ describe('SelectResourceClassComponent', () => {
   }));
 
   it('should initialise the resource classes', () => {
-    expect(
-      testHostComponent.selectResource.resourceClassDefinitions
-    ).toBeDefined();
-    expect(
-      testHostComponent.selectResource.resourceClassDefinitions.length
-    ).toEqual(12);
+    expect(testHostComponent.selectResource.resourceClassDefinitions).toBeDefined();
+    expect(testHostComponent.selectResource.resourceClassDefinitions.length).toEqual(12);
   });
 
   it('should init the MatSelect and MatOptions correctly', async () => {
@@ -135,20 +126,14 @@ describe('SelectResourceClassComponent', () => {
 
     await options[0].click();
 
-    expect(testHostComponent.selectedResourceIri).toEqual(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#BlueThing'
-    );
+    expect(testHostComponent.selectedResourceIri).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2#BlueThing');
   });
 
   it('should unsubscribe from from changes on destruction', () => {
-    expect(
-      testHostComponent.selectResource.resourceChangesSubscription.closed
-    ).toBe(false);
+    expect(testHostComponent.selectResource.resourceChangesSubscription.closed).toBe(false);
 
     testHostFixture.destroy();
 
-    expect(
-      testHostComponent.selectResource.resourceChangesSubscription.closed
-    ).toBe(true);
+    expect(testHostComponent.selectResource.resourceChangesSubscription.closed).toBe(true);
   });
 });

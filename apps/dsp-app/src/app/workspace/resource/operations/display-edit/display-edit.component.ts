@@ -1,20 +1,5 @@
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   ApiResponseError,
@@ -98,11 +83,9 @@ export class DisplayEditComponent implements OnInit {
 
   @Input() valueUuidToHighlight: string;
 
-  @Output() referredResourceClicked: EventEmitter<ReadLinkValue> =
-    new EventEmitter<ReadLinkValue>();
+  @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
-  @Output() referredResourceHovered: EventEmitter<ReadLinkValue> =
-    new EventEmitter<ReadLinkValue>();
+  @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
   constants = Constants;
 
@@ -163,68 +146,41 @@ export class DisplayEditComponent implements OnInit {
       this.displayValue.userHasPermission as 'RV' | 'V' | 'M' | 'D' | 'CR'
     );
 
-    this.canModify =
-      allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
+    this.canModify = allPermissions.indexOf(PermissionUtil.Permissions.M) !== -1;
 
     // check if comment toggle button should be shown
     this.checkCommentToggleVisibility();
 
-    this.valueTypeOrClass = this._valueService.getValueTypeOrClass(
-      this.displayValue
-    );
+    this.valueTypeOrClass = this._valueService.getValueTypeOrClass(this.displayValue);
 
     // get the resource property definition
     const resPropDef = this.parentResource.entityInfo
       .getPropertyDefinitionsByType(ResourcePropertyDefinition)
-      .filter(
-        (propDef: ResourcePropertyDefinition) =>
-          propDef.id === this.displayValue.property
-      );
+      .filter((propDef: ResourcePropertyDefinition) => propDef.id === this.displayValue.property);
 
-    if (
-      resPropDef[0].guiElement ===
-      Constants.SalsahGui + Constants.HashDelimiter + 'Textarea'
-    ) {
+    if (resPropDef[0].guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
       this.textArea = true;
     }
 
     if (resPropDef.length !== 1) {
       // this should never happen because we always have the property info for the given value
-      throw new Error(
-        'Resource Property Definition could not be found: ' +
-          this.displayValue.property
-      );
+      throw new Error('Resource Property Definition could not be found: ' + this.displayValue.property);
     }
 
-    this.readOnlyValue = this._valueService.isReadOnly(
-      this.valueTypeOrClass,
-      this.displayValue,
-      resPropDef[0]
-    );
+    this.readOnlyValue = this._valueService.isReadOnly(this.valueTypeOrClass, this.displayValue, resPropDef[0]);
 
     // prevent getting info about system user (standoff link values are managed by the system)
-    if (
-      this.displayValue.attachedToUser !==
-      'http://www.knora.org/ontology/knora-admin#SystemUser'
-    ) {
-      this._userService
-        .getUser(this.displayValue.attachedToUser)
-        .subscribe(user => {
-          this.user = user.user;
-        });
+    if (this.displayValue.attachedToUser !== 'http://www.knora.org/ontology/knora-admin#SystemUser') {
+      this._userService.getUser(this.displayValue.attachedToUser).subscribe(user => {
+        this.user = user.user;
+      });
     }
   }
 
   getTooltipText(): string {
-    const creationDate =
-      'Creation date: ' + this.displayValue.valueCreationDate;
+    const creationDate = 'Creation date: ' + this.displayValue.valueCreationDate;
 
-    const creatorInfo = this.user
-      ? '\n Value creator: ' +
-        this.user?.givenName +
-        ' ' +
-        this.user?.familyName
-      : '';
+    const creatorInfo = this.user ? '\n Value creator: ' + this.user?.givenName + ' ' + this.user?.familyName : '';
 
     return creationDate + creatorInfo;
   }
@@ -236,8 +192,7 @@ export class DisplayEditComponent implements OnInit {
    */
   standoffLinkClicked(resIri: string): void {
     // find the corresponding standoff link value
-    const referredResStandoffLinkVal: ReadLinkValue[] =
-      this._getStandoffLinkValueForResource(resIri);
+    const referredResStandoffLinkVal: ReadLinkValue[] = this._getStandoffLinkValueForResource(resIri);
 
     // only emit an event if the corresponding standoff link value could be found
     if (referredResStandoffLinkVal.length === 1) {
@@ -252,8 +207,7 @@ export class DisplayEditComponent implements OnInit {
    */
   standoffLinkHovered(resIri: string): void {
     // find the corresponding standoff link value
-    const referredResStandoffLinkVal: ReadLinkValue[] =
-      this._getStandoffLinkValueForResource(resIri);
+    const referredResStandoffLinkVal: ReadLinkValue[] = this._getStandoffLinkValueForResource(resIri);
 
     // only emit an event if the corresponding standoff link value could be found
     if (referredResStandoffLinkVal.length === 1) {
@@ -299,10 +253,7 @@ export class DisplayEditComponent implements OnInit {
         .updateValue(updateRes as UpdateResource<UpdateValue>)
         .pipe(
           mergeMap((res: WriteValueResponse) =>
-            this._dspApiConnection.v2.values.getValue(
-              this.parentResource.id,
-              res.uuid
-            )
+            this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
           )
         )
         .subscribe(
@@ -310,10 +261,7 @@ export class DisplayEditComponent implements OnInit {
             this._valueOperationEventService.emit(
               new EmitEvent(
                 Events.ValueUpdated,
-                new UpdatedEventValues(
-                  this.displayValue,
-                  res2.getValues(this.displayValue.property)[0]
-                )
+                new UpdatedEventValues(this.displayValue, res2.getValues(this.displayValue.property)[0])
               )
             );
 
@@ -344,10 +292,7 @@ export class DisplayEditComponent implements OnInit {
                 });
                 break;
               default:
-                console.error(
-                  'There was an error processing your request. Details: ',
-                  error
-                );
+                console.error('There was an error processing your request. Details: ', error);
                 break;
             }
             this._cd.markForCheck();
@@ -370,18 +315,16 @@ export class DisplayEditComponent implements OnInit {
     dialogData.buttonTextOk = 'Yes, delete the value';
     dialogData.buttonTextCancel = 'No, keep the value';
 
-    const dialogRef = this._dialog.open<
+    const dialogRef = this._dialog.open<ConfirmationDialogComponent, ConfirmationDialogData>(
       ConfirmationDialogComponent,
-      ConfirmationDialogData
-    >(ConfirmationDialogComponent, { data: dialogData });
+      { data: dialogData }
+    );
 
-    dialogRef
-      .afterClosed()
-      .subscribe((payload: ConfirmationDialogValueDeletionPayload) => {
-        if (payload && payload.confirmed) {
-          this.deleteValue(payload.deletionComment);
-        }
-      });
+    dialogRef.afterClosed().subscribe((payload: ConfirmationDialogValueDeletionPayload) => {
+      if (payload && payload.confirmed) {
+        this.deleteValue(payload.deletionComment);
+      }
+    });
   }
 
   /**
@@ -405,9 +348,7 @@ export class DisplayEditComponent implements OnInit {
       .pipe(
         mergeMap((res: DeleteValueResponse) => {
           // emit a ValueDeleted event to the listeners in resource-view component to trigger an update of the UI
-          this._valueOperationEventService.emit(
-            new EmitEvent(Events.ValueDeleted, new DeletedEventValue(deleteVal))
-          );
+          this._valueOperationEventService.emit(new EmitEvent(Events.ValueDeleted, new DeletedEventValue(deleteVal)));
           return res.result;
         })
       )
@@ -471,11 +412,7 @@ export class DisplayEditComponent implements OnInit {
    * @returns true if the provided uuid matches the uuid of the displayValue and edit mode is not active, false otherwise
    */
   shouldHighlightValue(uuid: string): boolean {
-    if (
-      uuid !== undefined &&
-      uuid === this.displayValue.uuid &&
-      !this.editModeActive
-    ) {
+    if (uuid !== undefined && uuid === this.displayValue.uuid && !this.editModeActive) {
       return true;
     }
     return false;
@@ -489,20 +426,16 @@ export class DisplayEditComponent implements OnInit {
    */
   private _getStandoffLinkValueForResource(resIri: string): ReadLinkValue[] {
     // find the PropertyInfoValues for the standoff link value
-    const standoffLinkPropInfoVals: PropertyInfoValues[] =
-      this.propArray.filter(
-        resPropInfoVal =>
-          resPropInfoVal.propDef.id === Constants.HasStandoffLinkToValue
-      );
+    const standoffLinkPropInfoVals: PropertyInfoValues[] = this.propArray.filter(
+      resPropInfoVal => resPropInfoVal.propDef.id === Constants.HasStandoffLinkToValue
+    );
 
     if (standoffLinkPropInfoVals.length === 1) {
       // find the corresponding standoff link value
-      const referredResStandoffLinkVal: ReadValue[] =
-        standoffLinkPropInfoVals[0].values.filter(
-          (standoffLinkVal: ReadValue) =>
-            standoffLinkVal instanceof ReadLinkValue &&
-            (standoffLinkVal as ReadLinkValue).linkedResourceIri === resIri
-        );
+      const referredResStandoffLinkVal: ReadValue[] = standoffLinkPropInfoVals[0].values.filter(
+        (standoffLinkVal: ReadValue) =>
+          standoffLinkVal instanceof ReadLinkValue && (standoffLinkVal as ReadLinkValue).linkedResourceIri === resIri
+      );
 
       // if no corresponding standoff link value was found,
       // this array is empty

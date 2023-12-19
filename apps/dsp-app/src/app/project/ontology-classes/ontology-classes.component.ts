@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
 import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 
@@ -27,18 +22,12 @@ export class OntologyClassesComponent implements OnInit {
     this.resClasses.forEach(resClass => {
       if (resClass.subClassOf.length) {
         const splittedSubClass = resClass.subClassOf[0].split('#');
-        if (
-          !splittedSubClass[0].includes(Constants.StandoffOntology) &&
-          !splittedSubClass[1].includes('Standoff')
-        ) {
+        if (!splittedSubClass[0].includes(Constants.StandoffOntology) && !splittedSubClass[1].includes('Standoff')) {
           this.classesToDisplay.push(resClass);
         }
       }
     });
-    this.classesToDisplay = this._sortingService.keySortByAlphabetical(
-      this.classesToDisplay,
-      'label'
-    );
+    this.classesToDisplay = this._sortingService.keySortByAlphabetical(this.classesToDisplay, 'label');
   }
 
   trackByFn = (index: number, item: ClassDefinition) => `${index}-${item.id}`;

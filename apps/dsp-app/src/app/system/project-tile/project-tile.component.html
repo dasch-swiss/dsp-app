@@ -10,11 +10,7 @@
         </div>
       </div>
       <div *ngIf="sysAdmin" class="settings">
-        <button
-          color="primary"
-          class="settings-button"
-          mat-icon-button
-          (click)="navigateToSettings(project.id)">
+        <button color="primary" class="settings-button" mat-icon-button (click)="navigateToSettings(project.id)">
           <mat-icon>settings</mat-icon>
         </button>
       </div>
@@ -29,11 +25,7 @@
     </div>
 
     <div class="workspace-button-container">
-      <button
-        class="workspace-button"
-        mat-flat-button
-        [color]="'primary'"
-        (click)="navigateToProject(project.id)">
+      <button class="workspace-button" mat-flat-button [color]="'primary'" (click)="navigateToProject(project.id)">
         Browse Data
       </button>
     </div>

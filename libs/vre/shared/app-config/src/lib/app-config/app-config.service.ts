@@ -10,11 +10,7 @@ import { AppConfigToken } from './dsp-api-tokens';
 import { DspAppConfig } from './dsp-app-config';
 import { DspConfig } from './dsp-config';
 import { DspIiifConfig } from './dsp-iiif-config';
-import {
-  DspDataDogConfig,
-  DspInstrumentationConfig,
-  DspRollbarConfig,
-} from './dsp-instrumentation-config';
+import { DspDataDogConfig, DspInstrumentationConfig, DspRollbarConfig } from './dsp-instrumentation-config';
 
 @Injectable({
   providedIn: 'root',
@@ -49,12 +45,7 @@ export class AppConfigService {
       }
     }
 
-    this._dspConfig = new DspConfig(
-      c.dspRelease,
-      c.instrumentation.environment,
-      prodMode,
-      color
-    );
+    this._dspConfig = new DspConfig(c.dspRelease, c.instrumentation.environment, prodMode, color);
 
     this._dspApiConfig = new KnoraApiConfig(
       c.apiProtocol,
@@ -66,12 +57,7 @@ export class AppConfigService {
     );
 
     // init iiif configuration
-    this._dspIiifConfig = new DspIiifConfig(
-      c.iiifProtocol,
-      c.iiifHost,
-      c.iiifPort,
-      c.iiifPath
-    );
+    this._dspIiifConfig = new DspIiifConfig(c.iiifProtocol, c.iiifHost, c.iiifPort, c.iiifPath);
 
     // init dsp app extended configuration
     this._dspAppConfig = new DspAppConfig(c.geonameToken, c.iriBase);
@@ -86,10 +72,7 @@ export class AppConfigService {
         c.instrumentation.dataDog.site,
         c.instrumentation.dataDog.service
       ),
-      new DspRollbarConfig(
-        c.instrumentation.rollbar.enabled,
-        c.instrumentation.rollbar.accessToken
-      )
+      new DspRollbarConfig(c.instrumentation.rollbar.enabled, c.instrumentation.rollbar.accessToken)
     );
   }
 

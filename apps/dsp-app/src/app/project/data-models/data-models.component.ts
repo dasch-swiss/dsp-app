@@ -1,25 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, OntologyMetadata } from '@dasch-swiss/dsp-js';
-import {
-  AppConfigService,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
-import {
-  OntologyService,
-  ProjectService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  ListsSelectors,
-  OntologiesSelectors,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { AppConfigService, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ListsSelectors, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -60,9 +45,7 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
 
   @Select(UserSelectors.isLoggedIn) isLoggedIn$: Observable<boolean>;
   @Select(OntologiesSelectors.isLoading) isLoading$: Observable<boolean>;
-  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<
-    ListNodeInfo[]
-  >;
+  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
 
   constructor(
     protected _route: ActivatedRoute,
@@ -74,15 +57,7 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
     protected _cd: ChangeDetectorRef,
     protected _actions$: Actions
   ) {
-    super(
-      _store,
-      _route,
-      _projectService,
-      _titleService,
-      _router,
-      _cd,
-      _actions$
-    );
+    super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
   }
 
   ngOnInit(): void {
@@ -91,8 +66,7 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
 
   trackByFn = (index: number, item: ListNodeInfo) => `${index}-${item.id}`;
 
-  trackByOntologyMetaFn = (index: number, item: OntologyMetadata) =>
-    `${index}-${item.id}`;
+  trackByOntologyMetaFn = (index: number, item: OntologyMetadata) => `${index}-${item.id}`;
 
   /**
    * handles routing to the correct path
@@ -103,15 +77,9 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
     if (route === RouteConstants.ontology && id) {
       // get name of ontology
       const ontoName = OntologyService.getOntologyName(id);
-      this._router.navigate(
-        [
-          route,
-          encodeURIComponent(ontoName),
-          RouteConstants.editor,
-          RouteConstants.classes,
-        ],
-        { relativeTo: this._route.parent }
-      );
+      this._router.navigate([route, encodeURIComponent(ontoName), RouteConstants.editor, RouteConstants.classes], {
+        relativeTo: this._route.parent,
+      });
       return;
     }
     if (route === RouteConstants.list && id) {
@@ -122,10 +90,7 @@ export class DataModelsComponent extends ProjectBase implements OnInit {
       });
     } else if (route === 'docs') {
       // route to the external docs
-      window.open(
-        'https://docs.dasch.swiss/latest/DSP-APP/user-guide/project/#data-model',
-        '_blank'
-      );
+      window.open('https://docs.dasch.swiss/latest/DSP-APP/user-guide/project/#data-model', '_blank');
     } else {
       // default routing
       this._router.navigate([route], { relativeTo: this._route.parent });

@@ -1,18 +1,6 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import {
-  CreateColorValue,
-  ReadColorValue,
-  UpdateColorValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateColorValue, ReadColorValue, UpdateColorValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { CustomRegex } from '../custom-regex';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
@@ -23,10 +11,7 @@ import { ColorPickerComponent } from './color-picker/color-picker.component';
   templateUrl: './color-value.component.html',
   styleUrls: ['./color-value.component.scss'],
 })
-export class ColorValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class ColorValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @ViewChild('colorInput') colorPickerComponent: ColorPickerComponent;
 
   @Input() displayValue?: ReadColorValue;
@@ -95,10 +80,7 @@ export class ColorValueComponent
     updatedColorValue.color = this.valueFormControl.value;
 
     // add the submitted comment to updatedIntValue only if user has added a comment
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedColorValue.valueHasComment = this.commentFormControl.value;
     }
 

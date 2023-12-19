@@ -25,33 +25,24 @@
       <tr>
         <th class="first-col">Permissions</th>
         <th *ngFor="let dp of defaultPermissions">
-          <mat-icon [matTooltip]="dp.label" matTooltipPosition="above">
-            {{dp.icon}}
-          </mat-icon>
+          <mat-icon [matTooltip]="dp.label" matTooltipPosition="above"> {{dp.icon}} </mat-icon>
         </th>
       </tr>
       <ng-container *ngIf="hasPermissions && listOfPermissions.length">
-        <tr
-          *ngFor="let item of listOfPermissions"
-          [class]="item.group.split(':')[1]">
-          <td class="first-col">
-            {{item.group.split(':')[1] | titleFromCamelCase}}
-          </td>
+        <tr *ngFor="let item of listOfPermissions" [class]="item.group.split(':')[1]">
+          <td class="first-col">{{item.group.split(':')[1] | titleFromCamelCase}}</td>
           <td *ngFor="let dp of defaultPermissions" [class]="'perm-' + dp.name">
             <mat-icon
               class="status"
               [class.checked]="getStatus(dp.name, item.restriction)"
               [matTooltip]="dp.label"
               matTooltipPosition="above">
-              {{getStatus(dp.name, item.restriction) ? 'radio_button_checked' :
-              'radio_button_unchecked'}}
+              {{getStatus(dp.name, item.restriction) ? 'radio_button_checked' : 'radio_button_unchecked'}}
             </mat-icon>
           </td>
         </tr>
       </ng-container>
-      <tr
-        *ngIf="userHasPermission && userRestrictions"
-        class="border-top LoggedInUser">
+      <tr *ngIf="userHasPermission && userRestrictions" class="border-top LoggedInUser">
         <td class="first-col">Your permissions</td>
         <td *ngFor="let dp of defaultPermissions" [class]="'perm-' + dp.name">
           <mat-icon
@@ -59,8 +50,7 @@
             [class.checked]="getStatus(dp.name, userRestrictions)"
             [matTooltip]="dp.label"
             matTooltipPosition="above">
-            {{getStatus(dp.name, userRestrictions) ? 'radio_button_checked' :
-            'radio_button_unchecked'}}
+            {{getStatus(dp.name, userRestrictions) ? 'radio_button_checked' : 'radio_button_unchecked'}}
           </mat-icon>
         </td>
       </tr>

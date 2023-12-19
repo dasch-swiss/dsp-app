@@ -8,11 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthError, AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { UserStateModel } from '@dasch-swiss/vre/shared/app-state';
@@ -72,8 +68,7 @@ export class LoginFormComponent implements OnInit {
     forgotPassword: 'Forgot password?',
     error: {
       failed: 'Password or username is wrong',
-      server:
-        'An error has occurred when connecting to the server. Try again later or contact the DaSCH support.',
+      server: 'An error has occurred when connecting to the server. Try again later or contact the DaSCH support.',
     },
   };
   // error definitions for the following form fields
@@ -145,9 +140,7 @@ export class LoginFormComponent implements OnInit {
       .subscribe({
         next: loginResult => {
           if (loginResult) {
-            this._componentCommsService.emit(
-              new EmitEvent(Events.loginSuccess, true)
-            );
+            this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, true));
 
             return this._authService
               .loadUser(identifier)
@@ -164,9 +157,7 @@ export class LoginFormComponent implements OnInit {
         error: (error: AuthError) => {
           this.loginSuccess.emit(false);
 
-          this._componentCommsService.emit(
-            new EmitEvent(Events.loginSuccess, false)
-          );
+          this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, false));
 
           this.loading = false;
           this.isError = true;
@@ -181,23 +172,12 @@ export class LoginFormComponent implements OnInit {
   }
 
   private getReturnUrl(): string {
-    const returnUrl =
-      this.route.snapshot.queryParams[this.returnUrlParameterName];
-    this.location.go(
-      this.removeParameterFromUrl(
-        this.location.path(),
-        this.returnUrlParameterName,
-        returnUrl
-      )
-    );
+    const returnUrl = this.route.snapshot.queryParams[this.returnUrlParameterName];
+    this.location.go(this.removeParameterFromUrl(this.location.path(), this.returnUrlParameterName, returnUrl));
     return returnUrl;
   }
 
-  private removeParameterFromUrl(
-    path: string,
-    parameterName: string,
-    parameterValue: string
-  ): string {
+  private removeParameterFromUrl(path: string, parameterName: string, parameterValue: string): string {
     const urlSegments = path.split('?');
     const queryString = urlSegments.pop();
     if (!queryString) {
@@ -205,10 +185,7 @@ export class LoginFormComponent implements OnInit {
     }
     const params = queryString.split('&');
     const newQuerystring = params
-      .filter(
-        item =>
-          item !== `${parameterName}=${encodeURIComponent(parameterValue)}`
-      )
+      .filter(item => item !== `${parameterName}=${encodeURIComponent(parameterValue)}`)
       .join('&');
 
     if (newQuerystring) {

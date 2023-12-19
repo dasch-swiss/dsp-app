@@ -16,8 +16,7 @@ const videoFileValue: ReadMovingImageFileValue = {
   type: 'http://api.knora.org/ontology/knora-api/v2#MovingImageFileValue',
   id: 'http://rdfh.ch/1111/dyNT0dvbSgGrxVONpaH5FA/values/73Re06_TQDS4FM8SOyCHcQ',
   attachedToUser: 'http://rdfh.ch/users/root',
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/1111/dyNT0dvbSgGrxVONpaH5FAT/73Re06_TQDS4FM8SOyCHcQG',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/1111/dyNT0dvbSgGrxVONpaH5FAT/73Re06_TQDS4FM8SOyCHcQG',
   versionArkUrl:
     'http://0.0.0.0:3336/ark:/72163/1/1111/dyNT0dvbSgGrxVONpaH5FAT/73Re06_TQDS4FM8SOyCHcQG.20220329T112456951082Z',
   valueCreationDate: '2022-03-29T11:24:56.951082Z',
@@ -31,8 +30,7 @@ const videoFileValue: ReadMovingImageFileValue = {
   duration: 0,
   fps: 0,
   strval: 'http://0.0.0.0:1024/1111/5AiQkeJNbQn-ClrXWkJVFvB.mp4/file',
-  property:
-    'http://api.knora.org/ontology/knora-api/v2#hasMovingImageFileValue',
+  property: 'http://api.knora.org/ontology/knora-api/v2#hasMovingImageFileValue',
   propertyLabel: 'hat Filmdatei',
   propertyComment: 'Connects a Representation to a movie file',
 };
@@ -56,19 +54,8 @@ describe('VideoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        VideoComponent,
-        VideoPreviewComponent,
-        AvTimelineComponent,
-        TimePipe,
-      ],
-      imports: [
-        HttpClientTestingModule,
-        MatButtonModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatTooltipModule,
-      ],
+      declarations: [VideoComponent, VideoPreviewComponent, AvTimelineComponent, TimePipe],
+      imports: [HttpClientTestingModule, MatButtonModule, MatIconModule, MatToolbarModule, MatTooltipModule],
     }).compileComponents();
   });
 

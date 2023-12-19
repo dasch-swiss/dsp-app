@@ -21,8 +21,7 @@ export class InvalidControlScrollDirective {
    */
   private _scrollToFirstInvalidControl() {
     // target the first invalid form field
-    const firstInvalidControl: HTMLElement =
-      this._el.nativeElement.querySelector('form .ng-invalid');
+    const firstInvalidControl: HTMLElement = this._el.nativeElement.querySelector('form .ng-invalid');
 
     // scroll to the first invalid element in a smooth way
     firstInvalidControl.scrollIntoView({

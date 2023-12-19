@@ -22,8 +22,7 @@ const audioFileValue = {
   type: 'http://api.knora.org/ontology/knora-api/v2#AudioFileValue',
   id: 'http://rdfh.ch/1111/hgWTQVPRRTSI87PnlRmUxg/values/VKiMFffXQ9SzWeeCVrk8gw',
   attachedToUser: 'http://rdfh.ch/users/Iscj52QaSk-LNurRU6z3Hw',
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/1111/hgWTQVPRRTSI87PnlRmUxgI/RVy0rG=vTe=vU=QW6zDToAY',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/1111/hgWTQVPRRTSI87PnlRmUxgI/RVy0rG=vTe=vU=QW6zDToAY',
   versionArkUrl:
     'http://0.0.0.0:3336/ark:/72163/1/1111/hgWTQVPRRTSI87PnlRmUxgI/RVy0rG=vTe=vU=QW6zDToAY.20210719T074023813773Z',
   valueCreationDate: '2021-07-19T07:40:23.813773Z',
@@ -75,13 +74,7 @@ class MockStatusComponent {
 
   @Input() comment?: string;
   @Input() url?: string;
-  @Input() representation?:
-    | 'archive'
-    | 'audio'
-    | 'document'
-    | 'still-image'
-    | 'video'
-    | 'text';
+  @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
 
   constructor() {}
 }
@@ -91,27 +84,12 @@ describe('AudioComponent', () => {
   let testHostFixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async () => {
-    const representationServiceSpyObj = jasmine.createSpyObj(
-      'RepresentationService',
-      ['getFileInfo']
-    );
+    const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo']);
     // const sanitizerSpyObj = jasmine.createSpyObj('DomSanitizer', ['bypassSecurityTrustUrl']);
 
     await TestBed.configureTestingModule({
-      declarations: [
-        AudioComponent,
-        TestHostComponent,
-        MockStatusComponent,
-        CdkCopyToClipboard,
-      ],
-      imports: [
-        MatDialogModule,
-        MatSnackBarModule,
-        MatMenuModule,
-        MatSliderModule,
-        MatIconModule,
-        BrowserModule,
-      ],
+      declarations: [AudioComponent, TestHostComponent, MockStatusComponent, CdkCopyToClipboard],
+      imports: [MatDialogModule, MatSnackBarModule, MatMenuModule, MatSliderModule, MatIconModule, BrowserModule],
       providers: [
         AppConfigService,
         MockProvider(AppLoggingService),
@@ -136,9 +114,7 @@ describe('AudioComponent', () => {
 
   beforeEach(() => {
     const representationServiceSpy = TestBed.inject(RepresentationService);
-    (
-      representationServiceSpy as jasmine.SpyObj<RepresentationService>
-    ).getFileInfo.and.callFake(() =>
+    (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(() =>
       of(knoraJson).pipe(map((response: any) => response as object))
     );
 

@@ -23,9 +23,7 @@
         class="lang-button"
         *ngFor="let lang of languages; trackBy: trackByFn"
         (click)="setLanguage(lang)">
-        <span [class.existing-value]="getValueFromStringLiteral(lang)"
-          >{{ lang }}</span
-        >
+        <span [class.existing-value]="getValueFromStringLiteral(lang)">{{ lang }}</span>
       </button>
       <!-- TODO / QUESTION: should we support a show all button, to display values for all languages?
                 <mat-divider></mat-divider>
@@ -50,19 +48,13 @@
   <!-- if input element type is textarea -->
   <div *ngIf="textarea" class="string-literal long-text">
     <!-- button toggle group: buttons to select language -->
-    <mat-button-toggle-group
-      matPrefix
-      #group="matButtonToggleGroup"
-      vertical
-      class="string-literal-select-lang">
+    <mat-button-toggle-group matPrefix #group="matButtonToggleGroup" vertical class="string-literal-select-lang">
       <mat-button-toggle
         *ngFor="let lang of languages; trackBy: trackByFn"
         (click)="setLanguage(lang); switchFocus()"
         [checked]="lang === language"
         class="lang-toggle-button">
-        <span [class.existing-value]="getValueFromStringLiteral(lang)"
-          >{{ lang }}</span
-        >
+        <span [class.existing-value]="getValueFromStringLiteral(lang)">{{ lang }}</span>
       </mat-button-toggle>
     </mat-button-toggle-group>
     <mat-form-field class="string-literal-textarea">

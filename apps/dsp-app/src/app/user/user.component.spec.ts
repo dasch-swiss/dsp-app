@@ -16,10 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { TranslateModule } from '@ngx-translate/core';
@@ -117,15 +114,11 @@ describe('UserComponent', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): string => (store[key] = <any>value)
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): string => (store[key] = <any>value));
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -140,9 +133,7 @@ describe('UserComponent', () => {
   });
 
   it('should create', () => {
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
     expect(component).toBeTruthy();
   });
 });

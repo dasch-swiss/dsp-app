@@ -37,28 +37,19 @@ export class UserApiService extends BaseApi {
   }
 
   getGroupMembershipsForUser(iri: string) {
-    return this._http.get<GroupsResponse>(
-      `${this._userRoute(iri)}/group-memberships`
-    );
+    return this._http.get<GroupsResponse>(`${this._userRoute(iri)}/group-memberships`);
   }
 
   getProjectMembershipsForUser(iri: string) {
-    return this._http.get<ProjectsResponse>(
-      `${this._userRoute(iri)}/project-memberships`
-    );
+    return this._http.get<ProjectsResponse>(`${this._userRoute(iri)}/project-memberships`);
   }
 
   getProjectAdminMembershipsForUser(iri: string) {
-    return this._http.get<ProjectsResponse>(
-      `${this._userRoute(iri)}/project-admin-memberships`
-    );
+    return this._http.get<ProjectsResponse>(`${this._userRoute(iri)}/project-admin-memberships`);
   }
 
   updateBasicInformation(iri: string, updatedUser: UpdateUserRequest) {
-    return this._http.put<UserResponse>(
-      `${this._userRoute(iri)}/BasicUserInformation`,
-      updatedUser
-    );
+    return this._http.put<UserResponse>(`${this._userRoute(iri)}/BasicUserInformation`, updatedUser);
   }
 
   updateStatus(iri: string, status: boolean) {
@@ -76,44 +67,32 @@ export class UserApiService extends BaseApi {
 
   addToGroupMembership(userIri: string, groupIri: string) {
     return this._http.post<UserResponse>(
-      `${this._userRoute(userIri)}/group-memberships/${encodeURIComponent(
-        groupIri
-      )}`,
+      `${this._userRoute(userIri)}/group-memberships/${encodeURIComponent(groupIri)}`,
       {}
     );
   }
 
   removeFromGroupMembership(userIri: string, groupIri: string) {
     return this._http.post<UserResponse>(
-      `${this._userRoute(userIri)}/group-memberships/${encodeURIComponent(
-        groupIri
+      `${this._userRoute(userIri)}/group-memberships/${encodeURIComponent(groupIri)}`,
+      {}
+    );
+  }
+
+  addToProjectMembership(userIri: string, projectIri: string, adminProject = false) {
+    return this._http.post<UserResponse>(
+      `${this._userRoute(userIri)}/project-${adminProject ? 'admin-' : ''}memberships/${encodeURIComponent(
+        projectIri
       )}`,
       {}
     );
   }
 
-  addToProjectMembership(
-    userIri: string,
-    projectIri: string,
-    adminProject = false
-  ) {
+  removeFromProjectMembership(userIri: string, projectIri: string, adminProject = false) {
     return this._http.post<UserResponse>(
-      `${this._userRoute(userIri)}/project-${
-        adminProject ? 'admin-' : ''
-      }memberships/${encodeURIComponent(projectIri)}`,
-      {}
-    );
-  }
-
-  removeFromProjectMembership(
-    userIri: string,
-    projectIri: string,
-    adminProject = false
-  ) {
-    return this._http.post<UserResponse>(
-      `${this._userRoute(userIri)}/project-${
-        adminProject ? 'admin-' : ''
-      }memberships/${encodeURIComponent(projectIri)}`,
+      `${this._userRoute(userIri)}/project-${adminProject ? 'admin-' : ''}memberships/${encodeURIComponent(
+        projectIri
+      )}`,
       {}
     );
   }

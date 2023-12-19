@@ -91,9 +91,7 @@ describe('TextValueHtmlLinkDirective', () => {
     expect(directive.internalLinkClicked.emit).toHaveBeenCalled();
 
     // check the value; no need to test Angular EventEmitter
-    expect(directive.internalLinkClicked.emit).toHaveBeenCalledWith(
-      'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
-    );
+    expect(directive.internalLinkClicked.emit).toHaveBeenCalledWith('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw');
 
     // Check if the default action (i.e. window open of 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw') was prevented.
     // This must happen in case of an internal link.
@@ -126,9 +124,7 @@ describe('TextValueHtmlLinkDirective', () => {
     expect(directive.internalLinkClicked.emit).toHaveBeenCalled();
 
     // check the value; no need to test Angular EventEmitter
-    expect(directive.internalLinkClicked.emit).toHaveBeenCalledWith(
-      'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
-    );
+    expect(directive.internalLinkClicked.emit).toHaveBeenCalledWith('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw');
 
     // Check if the default action (i.e. window open of 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw') was prevented.
     // This must happen in case of an internal link.
@@ -140,22 +136,16 @@ describe('TextValueHtmlLinkDirective', () => {
     expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
 
     const hostCompDe = testHostFixture.debugElement;
-    const directiveDe = hostCompDe.query(
-      By.directive(TextValueHtmlLinkDirective)
-    );
+    const directiveDe = hostCompDe.query(By.directive(TextValueHtmlLinkDirective));
 
     const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
 
     // left mouse event
-    internalLinkDe.nativeElement.dispatchEvent(
-      new MouseEvent('mousedown', { bubbles: true, button: 1 })
-    );
+    internalLinkDe.nativeElement.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 1 }));
 
     testHostFixture.detectChanges();
 
-    expect(testHostComponent.internalLinkClickedIri).toEqual(
-      'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
-    );
+    expect(testHostComponent.internalLinkClickedIri).toEqual('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw');
   });
 
   it('should not emit on click on an external link', () => {
@@ -163,16 +153,12 @@ describe('TextValueHtmlLinkDirective', () => {
     expect(testHostComponent.internalLinkClickedIri).toBeUndefined();
 
     const hostCompDe = testHostFixture.debugElement;
-    const directiveDe = hostCompDe.query(
-      By.directive(TextValueHtmlLinkDirective)
-    );
+    const directiveDe = hostCompDe.query(By.directive(TextValueHtmlLinkDirective));
 
     const externalLinkDe = directiveDe.query(By.css('a:not(.salsah-link)'));
 
     // left mouse event
-    externalLinkDe.nativeElement.dispatchEvent(
-      new MouseEvent('click', { bubbles: true, button: 0 })
-    );
+    externalLinkDe.nativeElement.dispatchEvent(new MouseEvent('click', { bubbles: true, button: 0 }));
 
     testHostFixture.detectChanges();
 
@@ -184,9 +170,7 @@ describe('TextValueHtmlLinkDirective', () => {
     expect(testHostComponent).toBeTruthy();
 
     const hostCompDe = testHostFixture.debugElement;
-    const directiveDe = hostCompDe.query(
-      By.directive(TextValueHtmlLinkDirective)
-    );
+    const directiveDe = hostCompDe.query(By.directive(TextValueHtmlLinkDirective));
 
     const internalLinkDe = directiveDe.query(By.css('a.salsah-link'));
 
@@ -200,18 +184,14 @@ describe('TextValueHtmlLinkDirective', () => {
 
     testHostFixture.detectChanges();
 
-    expect(testHostComponent.internalLinkHoveredIri).toEqual(
-      'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
-    );
+    expect(testHostComponent.internalLinkHoveredIri).toEqual('http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw');
   });
 
   it('should not react to hovering over an external link', () => {
     expect(testHostComponent).toBeTruthy();
 
     const hostCompDe = testHostFixture.debugElement;
-    const directiveDe = hostCompDe.query(
-      By.directive(TextValueHtmlLinkDirective)
-    );
+    const directiveDe = hostCompDe.query(By.directive(TextValueHtmlLinkDirective));
 
     const externalLinkDe = directiveDe.query(By.css('a:not(.salsah-link)'));
 

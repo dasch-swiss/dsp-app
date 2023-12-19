@@ -13,10 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
@@ -136,29 +133,21 @@ describe('HeaderComponent', () => {
   });
 
   it('should display search panel', () => {
-    const searchPanel = testHostFixture.debugElement.query(
-      By.css('app-search-panel')
-    );
+    const searchPanel = testHostFixture.debugElement.query(By.css('app-search-panel'));
     expect(searchPanel).toBeTruthy();
   });
 
   it('should subscribe to component communication when the loginSuccess event is emitted', () => {
     componentCommsService.emit(new EmitEvent(Events.loginSuccess));
     testHostFixture.detectChanges();
-    expect(testHostComponent.headerComp.componentCommsSubscription.closed).toBe(
-      false
-    );
+    expect(testHostComponent.headerComp.componentCommsSubscription.closed).toBe(false);
   });
 
   it('should unsubscribe from changes on destruction', () => {
-    expect(testHostComponent.headerComp.componentCommsSubscription.closed).toBe(
-      false
-    );
+    expect(testHostComponent.headerComp.componentCommsSubscription.closed).toBe(false);
 
     testHostFixture.destroy();
 
-    expect(testHostComponent.headerComp.componentCommsSubscription.closed).toBe(
-      true
-    );
+    expect(testHostComponent.headerComp.componentCommsSubscription.closed).toBe(true);
   });
 });

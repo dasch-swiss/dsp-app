@@ -4,10 +4,7 @@ import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-literal';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  ProjectsSelectors,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { AppGlobal } from '@dsp-app/src/app/app-global';
 import { Select, Store } from '@ngxs/store';
 import { Observable, combineLatest, of } from 'rxjs';
@@ -35,35 +32,19 @@ export class DescriptionComponent {
   }
 
   get userHasPermission$(): Observable<boolean> {
-    return combineLatest([
-      this.user$,
-      this.readProject$,
-      this.store.select(UserSelectors.userProjectAdminGroups),
-    ]).pipe(
-      map(
-        ([user, readProject, userProjectGroups]: [
-          ReadUser,
-          ReadProject,
-          string[],
-        ]) => {
-          if (readProject == null) {
-            return false;
-          }
-
-          return ProjectService.IsProjectAdminOrSysAdmin(
-            user,
-            userProjectGroups,
-            readProject.id
-          );
+    return combineLatest([this.user$, this.readProject$, this.store.select(UserSelectors.userProjectAdminGroups)]).pipe(
+      map(([user, readProject, userProjectGroups]: [ReadUser, ReadProject, string[]]) => {
+        if (readProject == null) {
+          return false;
         }
-      )
+
+        return ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, readProject.id);
+      })
     );
   }
 
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<
-    ReadProject[]
-  >;
+  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
   @Select(ProjectsSelectors.isProjectsLoading)
   isProjectsLoading$: Observable<boolean>;
 
@@ -79,22 +60,15 @@ export class DescriptionComponent {
   }
 
   editProject() {
-    this._router.navigate([
-      RouteConstants.project,
-      this.projectUuid,
-      RouteConstants.edit,
-    ]);
+    this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.edit]);
   }
 
   trackByFn = (index: number, item: string) => `${index}-${item}`;
 
-  trackByStringLiteralFn = (index: number, item: StringLiteral) =>
-    `${index}-${item.value}`;
+  trackByStringLiteralFn = (index: number, item: StringLiteral) => `${index}-${item.value}`;
 
   // returns the descriptions sorted by language
-  private sortDescriptionsByLanguage(
-    descriptions: StringLiteral[]
-  ): StringLiteral[] {
+  private sortDescriptionsByLanguage(descriptions: StringLiteral[]): StringLiteral[] {
     const languageOrder = AppGlobal.languagesList.map(l => l.language);
 
     return descriptions.sort((a, b) => {
@@ -110,9 +84,7 @@ export class DescriptionComponent {
       return null;
     }
 
-    const project = projects.find(
-      x => x.id.split('/').pop() === this.projectUuid
-    );
+    const project = projects.find(x => x.id.split('/').pop() === this.projectUuid);
     return project ? this.projectWithSortedDescriptions(project) : null;
   }
 
@@ -120,9 +92,7 @@ export class DescriptionComponent {
   private projectWithSortedDescriptions(project: ReadProject): ReadProject {
     if (project.description && project.description.length > 1) {
       // sort the descriptions by language
-      project.description = this.sortDescriptionsByLanguage(
-        project.description
-      );
+      project.description = this.sortDescriptionsByLanguage(project.description);
     }
     return project;
   }

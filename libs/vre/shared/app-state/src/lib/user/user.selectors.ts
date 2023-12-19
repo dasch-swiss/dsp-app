@@ -29,10 +29,7 @@ export class UserSelectors {
   @Selector([UserState])
   static isLoggedIn(state: UserStateModel): boolean {
     return (
-      !state.isLoading &&
-      !!localStorage.getItem(Auth.AccessToken) &&
-      state.user !== null &&
-      state.user?.username !== ''
+      !state.isLoading && !!localStorage.getItem(Auth.AccessToken) && state.user !== null && state.user?.username !== ''
     );
   }
 
@@ -72,9 +69,7 @@ export class UserSelectors {
 
   @Selector([UserState])
   static displayName(state: UserStateModel): string | null {
-    return state.user?.familyName && state.user?.givenName
-      ? `${state.user.familyName} ${state.user.givenName}`
-      : null;
+    return state.user?.familyName && state.user?.givenName ? `${state.user.familyName} ${state.user.givenName}` : null;
   }
 
   @Selector([UserState])
@@ -85,19 +80,13 @@ export class UserSelectors {
   @Selector([UserState])
   static userActiveProjects(state: UserStateModel): StoredProject[] {
     return state.user
-      ? (state.user as ReadUser).projects.filter(
-          (project: StoredProject) => project.status === true
-        )
+      ? (state.user as ReadUser).projects.filter((project: StoredProject) => project.status === true)
       : [];
   }
 
   // list of archived (deleted) projects
   @Selector([UserState])
   static userInactiveProjects(state: UserStateModel): StoredProject[] {
-    return state.user
-      ? (state.user as ReadUser).projects.filter(
-          (project: StoredProject) => !project.status
-        )
-      : [];
+    return state.user ? (state.user as ReadUser).projects.filter((project: StoredProject) => !project.status) : [];
   }
 }

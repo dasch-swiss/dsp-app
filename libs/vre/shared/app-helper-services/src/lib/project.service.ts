@@ -39,58 +39,35 @@ export class ProjectService {
     return uuid;
   }
 
-  static IsInProjectGroup = (
-    userProjectGroups: string[],
-    projectIri: string
-  ): boolean => userProjectGroups.some(e => e === projectIri);
+  static IsInProjectGroup = (userProjectGroups: string[], projectIri: string): boolean =>
+    userProjectGroups.some(e => e === projectIri);
 
-  static IsMemberOfProjectAdminGroup = (
-    groupsPerProject: { [key: string]: string[] },
-    projectIri: string
-  ): boolean =>
+  static IsMemberOfProjectAdminGroup = (groupsPerProject: { [key: string]: string[] }, projectIri: string): boolean =>
     groupsPerProject &&
     groupsPerProject[projectIri] &&
     groupsPerProject[projectIri].indexOf(Constants.ProjectAdminGroupIRI) > -1;
 
-  static IsMemberOfSystemAdminGroup = (groupsPerProject: {
-    [key: string]: string[];
-  }): boolean =>
+  static IsMemberOfSystemAdminGroup = (groupsPerProject: { [key: string]: string[] }): boolean =>
     groupsPerProject &&
     groupsPerProject[Constants.SystemProjectIRI] &&
-    groupsPerProject[Constants.SystemProjectIRI].indexOf(
-      Constants.SystemAdminGroupIRI
-    ) > -1;
+    groupsPerProject[Constants.SystemProjectIRI].indexOf(Constants.SystemAdminGroupIRI) > -1;
 
   static IsProjectAdmin(
     groupsPerProject: { [key: string]: string[] },
     userProjectGroups: string[],
     projectIri: string
   ): boolean {
-    const isMemberOfProjectAdminGroup =
-      ProjectService.IsMemberOfProjectAdminGroup(groupsPerProject, projectIri);
-    return (
-      ProjectService.IsInProjectGroup(userProjectGroups, projectIri) ||
-      isMemberOfProjectAdminGroup
-    );
+    const isMemberOfProjectAdminGroup = ProjectService.IsMemberOfProjectAdminGroup(groupsPerProject, projectIri);
+    return ProjectService.IsInProjectGroup(userProjectGroups, projectIri) || isMemberOfProjectAdminGroup;
   }
 
-  static IsProjectAdminOrSysAdmin(
-    user: ReadUser,
-    userProjectGroups: string[],
-    projectIri: string
-  ): boolean {
+  static IsProjectAdminOrSysAdmin(user: ReadUser, userProjectGroups: string[], projectIri: string): boolean {
     if (!user || !projectIri) {
       return false;
     }
 
-    const groupsPerProject = user.permissions.groupsPerProject
-      ? user.permissions.groupsPerProject
-      : {};
-    return ProjectService.IsProjectOrSysAdmin(
-      groupsPerProject,
-      userProjectGroups,
-      projectIri
-    );
+    const groupsPerProject = user.permissions.groupsPerProject ? user.permissions.groupsPerProject : {};
+    return ProjectService.IsProjectOrSysAdmin(groupsPerProject, userProjectGroups, projectIri);
   }
 
   static IsProjectOrSysAdmin(
@@ -98,33 +75,17 @@ export class ProjectService {
     userProjectGroups: string[],
     projectIri: string
   ): boolean {
-    const isMemberOfSystemAdminGroup =
-      ProjectService.IsMemberOfSystemAdminGroup(groupsPerProject);
-    return (
-      ProjectService.IsProjectAdmin(
-        groupsPerProject,
-        userProjectGroups,
-        projectIri
-      ) || isMemberOfSystemAdminGroup
-    );
+    const isMemberOfSystemAdminGroup = ProjectService.IsMemberOfSystemAdminGroup(groupsPerProject);
+    return ProjectService.IsProjectAdmin(groupsPerProject, userProjectGroups, projectIri) || isMemberOfSystemAdminGroup;
   }
 
-  static IsProjectMember(
-    user: ReadUser,
-    userProjectGroups: string[],
-    projectUuid: string
-  ): boolean {
-    const isProjectAdmin = ProjectService.IsInProjectGroup(
-      userProjectGroups,
-      projectUuid
-    );
+  static IsProjectMember(user: ReadUser, userProjectGroups: string[], projectUuid: string): boolean {
+    const isProjectAdmin = ProjectService.IsInProjectGroup(userProjectGroups, projectUuid);
     return isProjectAdmin
       ? // check if the user is member of the current project(id contains the iri)
         true
       : user.projects.length === 0
         ? false
-        : user.projects.some(
-            p => ProjectService.IriToUuid(p.id) === projectUuid
-          );
+        : user.projects.some(p => ProjectService.IriToUuid(p.id) === projectUuid);
   }
 }

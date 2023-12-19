@@ -1,11 +1,6 @@
 <div *ngIf="(hasLoadingErrors$ | async) === false; else StatusMsg">
   <mat-sidenav-container class="project-view">
-    <mat-sidenav
-      #sidenav
-      mode="side"
-      [(opened)]="sideNavOpened"
-      [disableClose]="true"
-      class="project-nav">
+    <mat-sidenav #sidenav mode="side" [(opened)]="sideNavOpened" [disableClose]="true" class="project-nav">
       <div *ngIf="sideNavOpened" class="sidenav-collapse-btn">
         <button
           mat-icon-button
@@ -128,8 +123,7 @@
         </button>
       </div>
       <div class="main-content">
-        <dasch-swiss-app-progress-indicator
-          *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+        <dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
         <router-outlet></router-outlet>
       </div>
     </mat-sidenav-content>

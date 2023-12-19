@@ -1,11 +1,6 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
@@ -49,10 +44,7 @@ class TestHostValueComponent implements OnInit {
    * returns true if there is no property value or an invalid property value in the valueFormControl
    */
   hasError() {
-    return (
-      this.valueFormControl.hasError('pattern') ||
-      this.valueFormControl.hasError('required')
-    );
+    return this.valueFormControl.hasError('pattern') || this.valueFormControl.hasError('required');
   }
 }
 
@@ -60,12 +52,7 @@ describe('CommentFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CommentFormComponent, TestHostValueComponent],
-      imports: [
-        ReactiveFormsModule,
-        MatInputModule,
-        MatFormFieldModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [ReactiveFormsModule, MatInputModule, MatFormFieldModule, BrowserAnimationsModule],
     }).compileComponents();
   });
 
@@ -92,10 +79,7 @@ describe('CommentFormComponent', () => {
       expect(commentComponent.disallowed).toBeTruthy();
       testHostFixture.detectChanges();
       // testing if the lock icon is set correctly
-      const lockIcon =
-        testHostFixture.debugElement.nativeElement.querySelector(
-          '.comment-lock'
-        );
+      const lockIcon = testHostFixture.debugElement.nativeElement.querySelector('.comment-lock');
       expect(lockIcon).toBeTruthy();
     });
 
@@ -117,9 +101,7 @@ describe('CommentFormComponent', () => {
       testHostFixture.detectChanges();
       expect(component.commentFormControl.value).toBeTruthy(); // make sure there is a comment value
       expect(commentComponent.valueFormControlHasError); // testing hasError()
-      const warnText = testHostFixture.debugElement.nativeElement.querySelector(
-        '.custom-error-message'
-      );
+      const warnText = testHostFixture.debugElement.nativeElement.querySelector('.custom-error-message');
       // test if warn text is displayed
       expect(warnText.innerText).toEqual(
         "This comment won't be saved if there is an invalid or an empty property value above."
@@ -135,10 +117,7 @@ describe('CommentFormComponent', () => {
         component.commentFormControl.setValue('this is a comment');
         testHostFixture.detectChanges();
         expect(component.commentFormControl.value).toBeTruthy(); // make sure there is a comment value
-        const warnText =
-          testHostFixture.debugElement.nativeElement.querySelector(
-            '.custom-error-message'
-          );
+        const warnText = testHostFixture.debugElement.nativeElement.querySelector('.custom-error-message');
         // test if warn text is displayed
         expect(warnText.innerText).toEqual(
           "This comment won't be saved if there is an invalid or an empty property value above."
@@ -154,10 +133,7 @@ describe('CommentFormComponent', () => {
       expect(commentComponent.disallowed).toBeTruthy(); // testing if disallowed
       testHostFixture.detectChanges();
       // testing if the lock icon is set correctly
-      const lockIcon =
-        testHostFixture.debugElement.nativeElement.querySelector(
-          '.comment-lock'
-        );
+      const lockIcon = testHostFixture.debugElement.nativeElement.querySelector('.comment-lock');
       expect(lockIcon).toBeTruthy();
     });
   });

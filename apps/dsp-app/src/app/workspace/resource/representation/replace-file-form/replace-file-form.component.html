@@ -24,12 +24,7 @@
   </span>
   <span class="fill-remaining-space"></span>
   <span>
-    <button
-      mat-raised-button
-      type="submit"
-      [disabled]="!fileValue"
-      [color]="'primary'"
-      (click)="saveFile()">
+    <button mat-raised-button type="submit" [disabled]="!fileValue" [color]="'primary'" (click)="saveFile()">
       {{ 'appLabels.form.action.submit' | translate }}
     </button>
   </span>

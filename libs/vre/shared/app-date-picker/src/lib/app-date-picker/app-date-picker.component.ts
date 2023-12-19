@@ -38,10 +38,7 @@ import {
   _Constructor,
   MatOptionModule,
 } from '@angular/material/core';
-import {
-  MatFormFieldControl,
-  MatFormFieldModule,
-} from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
@@ -58,21 +55,13 @@ import { Subject } from 'rxjs';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class DatePickerErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
-    );
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
 
-type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> &
-  _AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 interface FormErrors {
   [key: string]: string;
@@ -93,8 +82,7 @@ class MatInputBase {
     public stateChanges: Subject<void>
   ) {}
 }
-const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
-  mixinErrorState(MatInputBase);
+const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
 @Component({
   standalone: true,
@@ -118,13 +106,7 @@ const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
 })
 export class AppDatePickerComponent
   extends _MatInputMixinBase
-  implements
-    ControlValueAccessor,
-    MatFormFieldControl<KnoraDate>,
-    OnChanges,
-    DoCheck,
-    CanUpdateErrorState,
-    OnDestroy
+  implements ControlValueAccessor, MatFormFieldControl<KnoraDate>, OnChanges, DoCheck, CanUpdateErrorState, OnDestroy
 {
   static nextId = 0;
 
@@ -252,19 +234,12 @@ export class AppDatePickerComponent
         knoraDate: dateValue,
       });
       this.calendar = dateValue.calendar;
-      this.era =
-        this.calendar === 'ISLAMIC'
-          ? 'noEra'
-          : dateValue.era === 'noEra'
-            ? 'CE'
-            : dateValue.era;
+      this.era = this.calendar === 'ISLAMIC' ? 'noEra' : dateValue.era === 'noEra' ? 'CE' : dateValue.era;
 
       this.day = dateValue.day;
       this.month = dateValue.month ? dateValue.month : 0;
       this.year = dateValue.year;
-      this.emitDateChanged.emit(
-        this.transform(dateValue, 'YYYY-MM-dd', 'gravsearch')
-      );
+      this.emitDateChanged.emit(this.transform(dateValue, 'YYYY-MM-dd', 'gravsearch'));
     } else {
       this.dateForm.setValue({ date: null, knoraDate: null });
     }
@@ -293,13 +268,7 @@ export class AppDatePickerComponent
     private _elRef: ElementRef<HTMLElement>,
     private _fm: FocusMonitor
   ) {
-    super(
-      _defaultErrorStateMatcher,
-      _parentForm,
-      _parentFormGroup,
-      ngControl,
-      _stateChanges
-    );
+    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
     this.dateForm = fb.group({
       date: [null, Validators.required],
@@ -379,9 +348,7 @@ export class AppDatePickerComponent
     switch (format) {
       case 'dd.MM.YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}.${this.leftPadding(
-            date.month
-          )}.${date.year}`;
+          return `${this.leftPadding(date.day)}.${this.leftPadding(date.month)}.${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}.${date.year}`;
         } else {
@@ -389,9 +356,7 @@ export class AppDatePickerComponent
         }
       case 'dd-MM-YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}-${this.leftPadding(
-            date.month
-          )}-${date.year}`;
+          return `${this.leftPadding(date.day)}-${this.leftPadding(date.month)}-${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}-${date.year}`;
         } else {
@@ -399,9 +364,7 @@ export class AppDatePickerComponent
         }
       case 'MM/dd/YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.month)}/${this.leftPadding(
-            date.day
-          )}/${date.year}`;
+          return `${this.leftPadding(date.month)}/${this.leftPadding(date.day)}/${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}/${date.year}`;
         } else {
@@ -409,9 +372,7 @@ export class AppDatePickerComponent
         }
       case 'YYYY-MM-dd':
         if (date.precision === 2) {
-          return `${date.year}-${this.leftPadding(
-            date.month
-          )}-${this.leftPadding(date.day)}`;
+          return `${date.year}-${this.leftPadding(date.month)}-${this.leftPadding(date.day)}`;
         } else if (date.precision === 1) {
           return `${date.year}-${this.leftPadding(date.month)}`;
         } else {
@@ -419,9 +380,7 @@ export class AppDatePickerComponent
         }
       default:
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}.${this.leftPadding(
-            date.month
-          )}.${date.year}`;
+          return `${this.leftPadding(date.day)}.${this.leftPadding(date.month)}.${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}.${date.year}`;
         } else {
@@ -444,14 +403,7 @@ export class AppDatePickerComponent
     switch (options) {
       case 'era':
         // displays date with era; era only in case of BCE
-        return (
-          value +
-          (date.era === 'noEra'
-            ? ''
-            : date.era === 'BCE' || date.era === 'AD'
-              ? ' ' + date.era
-              : '')
-        );
+        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ' ' + date.era : '');
       case 'calendar':
         // displays date without era but with calendar type
         return value + ' ' + this.titleCase(date.calendar);
@@ -467,11 +419,7 @@ export class AppDatePickerComponent
         // displays date with era (only as BCE) and selected calendar type
         return (
           value +
-          (date.era === 'noEra'
-            ? ''
-            : date.era === 'BCE'
-              ? ' ' + date.era
-              : '') +
+          (date.era === 'noEra' ? '' : date.era === 'BCE' ? ' ' + date.era : '') +
           ' ' +
           this.titleCase(date.calendar)
         );
@@ -514,10 +462,7 @@ export class AppDatePickerComponent
     this.form = new UntypedFormGroup({
       calendar: new UntypedFormControl(),
       era: new UntypedFormControl(''),
-      year: new UntypedFormControl('', [
-        Validators.required,
-        Validators.min(1),
-      ]),
+      year: new UntypedFormControl('', [Validators.required, Validators.min(1)]),
       month: new UntypedFormControl(''),
     });
 
@@ -545,11 +490,7 @@ export class AppDatePickerComponent
     this.calendar = this.form.controls['calendar'].value;
 
     this.era =
-      this.calendar === 'ISLAMIC'
-        ? 'noEra'
-        : this.form.controls['era'].value
-          ? this.form.controls['era'].value
-          : 'CE';
+      this.calendar === 'ISLAMIC' ? 'noEra' : this.form.controls['era'].value ? this.form.controls['era'].value : 'CE';
     // islamic calendar doesn't have a "before common era"
     // in case of switching calendar from islamic to gregorian or julian set default era value to CE
     if (this.calendar !== 'ISLAMIC' && this.era === 'noEra') {
@@ -578,12 +519,7 @@ export class AppDatePickerComponent
     Object.keys(this.formErrors).map((field: string) => {
       this.formErrors[field] = '';
       const control = form.get(field);
-      if (
-        control &&
-        control.dirty &&
-        !control.valid &&
-        control.errors !== null
-      ) {
+      if (control && control.dirty && !control.valid && control.errors !== null) {
         const messages = this.validationMessages[field];
         Object.keys(control.errors).map((key: string) => {
           this.formErrors[field] += messages[key] + ' ';
@@ -602,9 +538,7 @@ export class AppDatePickerComponent
         this.calendar.toUpperCase(),
         this.era,
         this.form.controls['year'].value,
-        this.form.controls['month'].value
-          ? this.form.controls['month'].value
-          : undefined,
+        this.form.controls['month'].value ? this.form.controls['month'].value : undefined,
         day ? day : undefined
       );
 
@@ -653,9 +587,7 @@ export class AppDatePickerComponent
         // found solution and formula here:
         // https://sciencing.com/convert-julian-date-calender-date-6017669.html
         julianDate = new Date();
-        difference =
-          parseInt((julianDate.getFullYear() + '').substring(0, 2), 10) * 0.75 -
-          1.25;
+        difference = parseInt((julianDate.getFullYear() + '').substring(0, 2), 10) * 0.75 - 1.25;
         julianDate.setDate(julianDate.getDate() - Math.floor(difference));
         day = julianDate.getDate();
         month = julianDate.getMonth() + 1;
@@ -746,11 +678,7 @@ export class AppDatePickerComponent
     const yearAstro = this.convertHistoricalYearToAstronomicalYear(year, era);
 
     // count the days of the month
-    let days = this.calculateDaysInMonth(
-      calendar.toUpperCase(),
-      yearAstro,
-      month
-    );
+    let days = this.calculateDaysInMonth(calendar.toUpperCase(), yearAstro, month);
 
     // calculate the week day and the position of the first day of the month
     // if date is before October 4th 1582, we should use the julian date converter for week day
@@ -762,15 +690,9 @@ export class AppDatePickerComponent
     // calculate weekday of the first the of the month;
     // found solution and formular here:
     // https://straub.as/java/basic/kalender.html
-    if (
-      year < 1582 ||
-      (year === 1582 && month <= 10) ||
-      calendar === 'JULIAN'
-    ) {
+    if (year < 1582 || (year === 1582 && month <= 10) || calendar === 'JULIAN') {
       // get the day of the week by using the julian date converter independet from selected calendar
-      firstDayOfMonth =
-        (1 + 2 * h + Math.floor((3 * h + 3) / 5) + k + Math.floor(k / 4) - 1) %
-        7;
+      firstDayOfMonth = (1 + 2 * h + Math.floor((3 * h + 3) / 5) + k + Math.floor(k / 4) - 1) % 7;
     } else {
       // firstDayOfMonth = new Date(year, month - 1, 1).getDay();
       firstDayOfMonth =
@@ -808,13 +730,7 @@ export class AppDatePickerComponent
     for (let i = 1; i <= days; i++) {
       // special case for October 1582, which had only 21 days instead of 31
       // because of the change from julian to gregorian calendar
-      if (
-        calendar === 'GREGORIAN' &&
-        year === 1582 &&
-        month === 10 &&
-        i === 5 &&
-        era === 'CE'
-      ) {
+      if (calendar === 'GREGORIAN' && year === 1582 && month === 10 && i === 5 && era === 'CE') {
         i = 15;
         days = 31;
       }

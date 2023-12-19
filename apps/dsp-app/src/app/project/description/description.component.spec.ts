@@ -25,10 +25,7 @@ import {
   StringLiteral,
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
@@ -78,22 +75,15 @@ describe('DescriptionComponent', () => {
   let rootLoader: HarnessLoader;
 
   beforeEach(waitForAsync(() => {
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-      'iriToUuid',
-    ]);
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid']);
 
     const dspConnSpy = {
       admin: {
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByShortcode',
-        ]),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByShortcode']),
       },
     };
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -163,15 +153,11 @@ describe('DescriptionComponent', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): string => (store[key] = <any>value)
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): string => (store[key] = <any>value));
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -183,31 +169,29 @@ describe('DescriptionComponent', () => {
     // mock application state service
     const cacheSpy = TestBed.inject(ApplicationStateService);
 
-    (cacheSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(
-      () => {
-        const response: ProjectResponse = new ProjectResponse();
-
-        const mockProjects = MockProjects.mockProjects();
-
-        response.project = mockProjects.body.projects[0];
-
-        return of(response.project as ReadProject);
-      }
-    );
-
-    const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByShortcode.and.callFake(() => {
-      const response = new ProjectResponse();
+    (cacheSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+      const response: ProjectResponse = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
 
       response.project = mockProjects.body.projects[0];
 
-      return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+      return of(response.project as ReadProject);
     });
+
+    const dspConnSpy = TestBed.inject(DspApiConnectionToken);
+
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+      () => {
+        const response = new ProjectResponse();
+
+        const mockProjects = MockProjects.mockProjects();
+
+        response.project = mockProjects.body.projects[0];
+
+        return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+      }
+    );
 
     testHostFixture = TestBed.createComponent(TestHostDescriptionComponent);
     testHostComponent = testHostFixture.componentInstance;
@@ -217,16 +201,12 @@ describe('DescriptionComponent', () => {
     expect(testHostComponent).toBeTruthy();
 
     const hostCompDe = testHostFixture.debugElement;
-    descriptionComponentDe = hostCompDe.query(
-      By.directive(DescriptionComponent)
-    );
+    descriptionComponentDe = hostCompDe.query(By.directive(DescriptionComponent));
     expect(descriptionComponentDe).toBeTruthy();
   });
 
   it('should get the session', () => {
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
   });
 
   it('should display the description in read mode', () => {
@@ -239,9 +219,7 @@ describe('DescriptionComponent', () => {
 
     testHostFixture.detectChanges();
 
-    const editBtn = await rootLoader.getAllHarnesses(
-      MatButtonHarness.with({ selector: '.app-toolbar-action button' })
-    );
+    const editBtn = await rootLoader.getAllHarnesses(MatButtonHarness.with({ selector: '.app-toolbar-action button' }));
 
     expect(editBtn.length).toEqual(0);
   });
@@ -251,9 +229,7 @@ describe('DescriptionComponent', () => {
 
     testHostFixture.detectChanges();
 
-    const editBtn = await rootLoader.getHarness(
-      MatButtonHarness.with({ selector: '.app-toolbar-action button' })
-    );
+    const editBtn = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.app-toolbar-action button' }));
 
     expect(editBtn).toBeTruthy();
   });

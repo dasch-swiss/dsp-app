@@ -1,9 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 //import { TestConfig } from '@dsp-app/src/test.config';
 import { OntologyService } from './ontology.service';
@@ -11,10 +8,7 @@ import { OntologyService } from './ontology.service';
 describe('OntologyService', () => {
   let service: OntologyService;
 
-  const applicationStateServiceSpy = jasmine.createSpyObj(
-    'ApplicationStateService',
-    ['get']
-  );
+  const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({

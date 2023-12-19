@@ -8,9 +8,7 @@ export class ResourceService {
   iriBase: string;
 
   constructor(private _acs: AppConfigService) {
-    this.iriBase = this._getIriBaseWithoutTrailingSlash(
-      this._acs.dspAppConfig.iriBase
-    );
+    this.iriBase = this._getIriBaseWithoutTrailingSlash(this._acs.dspAppConfig.iriBase);
   }
 
   /**

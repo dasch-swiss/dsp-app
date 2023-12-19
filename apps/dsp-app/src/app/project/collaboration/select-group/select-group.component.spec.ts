@@ -29,8 +29,7 @@ import { SelectGroupComponent } from './select-group.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template:
-    '<app-select-group #selectGroup projectCode="00FF" [projectid]="iri"></app-select-group>',
+  template: '<app-select-group #selectGroup projectCode="00FF" [projectid]="iri"></app-select-group>',
 })
 class TestHostHeaderComponent {
   @ViewChild('selectGroup') selectGroupComp: SelectGroupComponent;
@@ -55,12 +54,7 @@ describe('SelectGroupComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [
-        TestHostHeaderComponent,
-        SelectGroupComponent,
-        DialogComponent,
-        StatusComponent,
-      ],
+      declarations: [TestHostHeaderComponent, SelectGroupComponent, DialogComponent, StatusComponent],
       imports: [
         BrowserAnimationsModule,
         MatDialogModule,
@@ -88,9 +82,7 @@ describe('SelectGroupComponent', () => {
     // mock API
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.groupsEndpoint as jasmine.SpyObj<GroupsEndpointAdmin>
-    ).getGroups.and.callFake(() => {
+    (dspConnSpy.admin.groupsEndpoint as jasmine.SpyObj<GroupsEndpointAdmin>).getGroups.and.callFake(() => {
       const response = new GroupsResponse();
 
       const projectResponse = MockProjects.mockProject();

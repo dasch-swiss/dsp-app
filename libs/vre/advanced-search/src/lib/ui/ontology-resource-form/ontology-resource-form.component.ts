@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { ApiData } from '../../data-access/advanced-search-service/advanced-search.service';
@@ -34,9 +27,7 @@ export class OntologyResourceFormComponent {
     }
   }
 
-  @Input() set selectedResourceClass(
-    resourceClass: ApiData | null | undefined
-  ) {
+  @Input() set selectedResourceClass(resourceClass: ApiData | null | undefined) {
     if (!this.resourceClassesList) return;
     if (resourceClass) {
       this.resourceClassesList.value = resourceClass;

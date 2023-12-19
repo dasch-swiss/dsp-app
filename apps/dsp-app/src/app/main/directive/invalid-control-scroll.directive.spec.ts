@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormControl,
-  UntypedFormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InvalidControlScrollDirective } from './invalid-control-scroll.directive';
 
 @Component({

@@ -6,9 +6,7 @@
     <h3 class="mat-body subtitle">Increase your team</h3>
   </div>
   <div class="app-toolbar-row toolbar-form">
-    <h2 class="mat-headline-6">
-      {{ 'appLabels.form.user.title.add2project' | translate }}
-    </h2>
+    <h2 class="mat-headline-6">{{ 'appLabels.form.user.title.add2project' | translate }}</h2>
 
     <span class="fill-remaining-space"></span>
 
@@ -35,19 +33,13 @@
               <mat-icon>close</mat-icon>
             </button>
 
-            <mat-autocomplete
-              #user="matAutocomplete"
-              (optionSelected)="addUser($event.option.value)">
-              <mat-option
-                *ngFor="let user of filteredUsers | async"
-                [value]="user?.name">
+            <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
+              <mat-option *ngFor="let user of filteredUsers | async" [value]="user?.name">
                 {{ user?.label }}
               </mat-option>
             </mat-autocomplete>
 
-            <mat-hint *ngIf="selectUserErrors.username">
-              {{ selectUserErrors.username }}
-            </mat-hint>
+            <mat-hint *ngIf="selectUserErrors.username"> {{ selectUserErrors.username }} </mat-hint>
           </mat-form-field>
         </div>
       </form>
@@ -75,5 +67,4 @@
   </div>
 </div>
 
-<dasch-swiss-app-progress-indicator
-  *ngIf="loading"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>

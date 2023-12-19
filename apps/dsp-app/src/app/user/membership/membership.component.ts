@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { Constants, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
@@ -66,9 +58,7 @@ export class MembershipComponent implements OnDestroy {
     },
   };
 
-  @Select(ProjectsSelectors.allProjects) allProjects$: Observable<
-    StoredProject[]
-  >;
+  @Select(ProjectsSelectors.allProjects) allProjects$: Observable<StoredProject[]>;
   @Select(UserSelectors.allUsers) allUsers$: Observable<ReadUser[]>;
   @Select(ProjectsSelectors.isProjectsLoading)
   isProjectsLoading$: Observable<boolean>;
@@ -90,9 +80,7 @@ export class MembershipComponent implements OnDestroy {
   }
 
   addToProject(iri: string) {
-    this._store.dispatch(
-      new AddUserToProjectMembershipAction(this.user.id, iri)
-    );
+    this._store.dispatch(new AddUserToProjectMembershipAction(this.user.id, iri));
   }
 
   trackByFn = (index: number, item: StoredProject) => `${index}-${item?.id}`;
@@ -108,17 +96,10 @@ export class MembershipComponent implements OnDestroy {
    * @returns boolean
    */
   userIsProjectAdmin(permissions: PermissionsData, iri: string): boolean {
-    return (
-      permissions.groupsPerProject[iri].indexOf(
-        Constants.ProjectAdminGroupIRI
-      ) > -1
-    );
+    return permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1;
   }
 
-  private getProjects(
-    projects: StoredProject[],
-    user: ReadUser
-  ): AutocompleteItem[] {
+  private getProjects(projects: StoredProject[], user: ReadUser): AutocompleteItem[] {
     return projects
       .map(p => {
         if (

@@ -3,10 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {
-  FilteredResources,
-  SearchParams,
-} from './list-view/list-view.component';
+import { FilteredResources, SearchParams } from './list-view/list-view.component';
 
 export interface SplitSize {
   gutterNum: number;
@@ -65,9 +62,7 @@ export class ResultsComponent implements AfterViewChecked {
       this._handleParentParams(parentParams);
       this._handleSearchParams(params);
 
-      this._titleService.setTitle(
-        'Search results for ' + this.searchParams.mode + ' search'
-      );
+      this._titleService.setTitle('Search results for ' + this.searchParams.mode + ' search');
     });
   }
 
@@ -94,10 +89,7 @@ export class ResultsComponent implements AfterViewChecked {
 
   private _handleSearchParams(params: Params) {
     this.searchQuery = decodeURIComponent(params.get('q'));
-    this.searchMode =
-      decodeURIComponent(params.get('mode')) === 'fulltext'
-        ? 'fulltext'
-        : 'gravsearch';
+    this.searchMode = decodeURIComponent(params.get('mode')) === 'fulltext' ? 'fulltext' : 'gravsearch';
 
     this.searchParams = {
       query: this.searchQuery,

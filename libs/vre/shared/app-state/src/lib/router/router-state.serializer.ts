@@ -4,9 +4,7 @@ import { RouterStateModel } from './router-state.model';
 
 // The route state serializer will on route changes serialize
 // the activated route into an object which reflect our state model
-export class CustomRouterStateSerializer
-  implements RouterStateSerializer<RouterStateModel>
-{
+export class CustomRouterStateSerializer implements RouterStateSerializer<RouterStateModel> {
   serialize(routerState: RouterStateSnapshot): RouterStateModel {
     const {
       url,
@@ -22,9 +20,7 @@ export class CustomRouterStateSerializer
     const data = route.data;
 
     let params = route.params;
-    params = route.pathFromRoot
-      .filter(v => Object.keys(v.params).length)
-      .map(v => v.params)[0];
+    params = route.pathFromRoot.filter(v => Object.keys(v.params).length).map(v => v.params)[0];
     params = params ? params : route.params;
 
     return { url, params, queryParams, data };

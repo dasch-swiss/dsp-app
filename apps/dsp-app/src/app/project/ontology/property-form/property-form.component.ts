@@ -1,18 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
   ApiResponseError,
   CanDoResponse,
@@ -35,10 +22,7 @@ import {
   UpdateResourcePropertyGuiElement,
   UpdateResourcePropertyLabel,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  getAllEntityDefinitionsAsArray,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   OntologyService,
@@ -172,9 +156,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
   guiAttributes: string[] = [];
 
   // list of existing property names
-  existingNames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
 
   dspConstants = Constants;
 
@@ -192,9 +174,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
   currentOntology$: Observable<ReadOntology>;
   @Select(OntologiesSelectors.currentProjectOntologies)
   currentProjectOntologies$: Observable<ReadOntology[]>;
-  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<
-    ListNodeInfo[]
-  >;
+  @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -212,72 +192,55 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
     this.setEditMode();
 
     // set various lists to select from
-    this.currentOntology$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((response: ReadOntology) => {
-        this.ontology = response;
-        this.lastModificationDate = response.lastModificationDate;
+    this.currentOntology$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response: ReadOntology) => {
+      this.ontology = response;
+      this.lastModificationDate = response.lastModificationDate;
 
-        const resourceProperties = getAllEntityDefinitionsAsArray(
-          response.properties
-        );
+      const resourceProperties = getAllEntityDefinitionsAsArray(response.properties);
 
-        // set list of all existing resource property names to avoid same name twice
-        resourceProperties.forEach((resProp: PropertyDefinition) => {
-          const name = this._os.getNameFromIri(resProp.id);
-          this.existingNames.push(
-            new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-          );
-        });
-
-        // add all resource classes to the same list
-        getAllEntityDefinitionsAsArray(response.classes).forEach(
-          (resClass: ClassDefinition) => {
-            const name = this._os.getNameFromIri(resClass.id);
-            this.existingNames.push(
-              new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-            );
-          }
-        );
+      // set list of all existing resource property names to avoid same name twice
+      resourceProperties.forEach((resProp: PropertyDefinition) => {
+        const name = this._os.getNameFromIri(resProp.id);
+        this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
       });
+
+      // add all resource classes to the same list
+      getAllEntityDefinitionsAsArray(response.classes).forEach((resClass: ClassDefinition) => {
+        const name = this._os.getNameFromIri(resClass.id);
+        this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
+      });
+    });
 
     // a) in case of link value:
     // set list of resource classes from response; needed for linkValue
-    this.currentProjectOntologies$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((response: ReadOntology[]) => {
-        // reset list of ontology classes
-        this.ontologyClasses = [];
-        response.forEach(onto => {
-          const classDef = this._sortingService.keySortByAlphabetical(
-            getAllEntityDefinitionsAsArray(onto.classes),
-            'label'
-          );
-          if (classDef.length) {
-            const ontoClasses: ClassToSelect = {
-              ontologyId: onto.id,
-              ontologyLabel: onto.label,
-              classes: classDef,
-            };
-            this.ontologyClasses.push(ontoClasses);
-          }
-        });
+    this.currentProjectOntologies$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response: ReadOntology[]) => {
+      // reset list of ontology classes
+      this.ontologyClasses = [];
+      response.forEach(onto => {
+        const classDef = this._sortingService.keySortByAlphabetical(
+          getAllEntityDefinitionsAsArray(onto.classes),
+          'label'
+        );
+        if (classDef.length) {
+          const ontoClasses: ClassToSelect = {
+            ontologyId: onto.id,
+            ontologyLabel: onto.label,
+            classes: classDef,
+          };
+          this.ontologyClasses.push(ontoClasses);
+        }
       });
+    });
 
     // b) in case of list value:
     // set list of lists; needed for listValue
-    this.listsInProject$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((response: ListNodeInfo[]) => {
-        this.lists = response;
-      });
+    this.listsInProject$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response: ListNodeInfo[]) => {
+      this.lists = response;
+    });
 
     this.buildForm();
 
-    if (
-      this.editMode === 'assignExistingProperty' ||
-      this.editMode === 'assignNewProperty'
-    ) {
+    if (this.editMode === 'assignExistingProperty' || this.editMode === 'assignNewProperty') {
       // assigning a property to a class
       this.canEnableRequiredToggle();
     }
@@ -313,8 +276,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
       ];
 
       // filter property types by group
-      const restrictedElements: DefaultProperty[] =
-        this.filterPropertyTypesByGroup(this.propertyInfo.propType.group);
+      const restrictedElements: DefaultProperty[] = this.filterPropertyTypesByGroup(this.propertyInfo.propType.group);
 
       if (restrictedElements.length) {
         // slice array
@@ -324,16 +286,12 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
         const slice = 0;
 
         // there's only the object type "text", where we can change the gui element;
-        disablePropType =
-          this.propertyInfo.propType.objectType !== Constants.TextValue;
+        disablePropType = this.propertyInfo.propType.objectType !== Constants.TextValue;
 
-        this.restrictedPropertyTypes[0].elements =
-          restrictedElements.slice(slice);
+        this.restrictedPropertyTypes[0].elements = restrictedElements.slice(slice);
       } else {
         // case of unsupported property type
-        this.restrictedPropertyTypes[0].elements.push(
-          DefaultProperties.unsupported
-        );
+        this.restrictedPropertyTypes[0].elements.push(DefaultProperties.unsupported);
         this.unsupportedPropertyType = true;
       }
     } else {
@@ -343,16 +301,10 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
     this.propertyForm = this._fb.group({
       name: new UntypedFormControl(
         {
-          value: this.propertyInfo.propDef
-            ? this._os.getNameFromIri(this.propertyInfo.propDef.id)
-            : '',
+          value: this.propertyInfo.propDef ? this._os.getNameFromIri(this.propertyInfo.propDef.id) : '',
           disabled: this.propertyInfo.propDef,
         },
-        [
-          Validators.required,
-          existingNamesValidator(this.existingNames),
-          Validators.pattern(CustomRegex.ID_NAME_REGEX),
-        ]
+        [Validators.required, existingNamesValidator(this.existingNames), Validators.pattern(CustomRegex.ID_NAME_REGEX)]
       ),
       propType: new UntypedFormControl({
         value: this.propertyInfo.propType,
@@ -362,14 +314,11 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
         value: this.guiAttributes,
       }),
       multiple: new UntypedFormControl({
-        value: this._os.getCardinalityGuiValues(this.currentCardinality)
-          .multiple,
-        disabled:
-          this.propertyInfo.propType.objectType === Constants.BooleanValue,
+        value: this._os.getCardinalityGuiValues(this.currentCardinality).multiple,
+        disabled: this.propertyInfo.propType.objectType === Constants.BooleanValue,
       }),
       required: new UntypedFormControl({
-        value: this._os.getCardinalityGuiValues(this.currentCardinality)
-          .required,
+        value: this._os.getCardinalityGuiValues(this.currentCardinality).required,
         disabled: true, // default; will be reset if possible
       }),
     });
@@ -424,9 +373,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
    * @returns Filtered list of options
    */
   filter(list: AutocompleteItem[], label: string) {
-    return list.filter(
-      prop => prop.label?.toLowerCase().includes(label.toLowerCase())
-    );
+    return list.filter(prop => prop.label?.toLowerCase().includes(label.toLowerCase()));
   }
 
   /**
@@ -437,9 +384,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
    * @returns an array of elements
    */
   filterPropertyTypesByGroup(group: string): DefaultProperty[] {
-    const groups: PropertyCategory[] = this.defaultProperties.filter(
-      item => item.group === group
-    );
+    const groups: PropertyCategory[] = this.defaultProperties.filter(item => item.group === group);
 
     return groups.length ? groups[0].elements : [];
   }
@@ -461,9 +406,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
             this.showGuiAttr = true;
             // gui attribute value for lists looks as follows: hlist=<http://rdfh.ch/lists/00FF/73d0ec0302>
             // get index from guiAttr array where value starts with hlist=
-            const i = this.guiAttributes.findIndex(element =>
-              element.includes('hlist')
-            );
+            const i = this.guiAttributes.findIndex(element => element.includes('hlist'));
             // find content between pointy brackets to get list iri
             const re = /\<([^)]+)\>/;
             const listIri = this.guiAttributes[i].match(re)[1];
@@ -474,9 +417,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
           // prop type is resource pointer: link to or part of
           case Constants.LinkValue:
             this.showGuiAttr = true;
-            this.propertyForm.controls['guiAttr'].setValue(
-              this.propertyInfo.propDef.objectType
-            );
+            this.propertyForm.controls['guiAttr'].setValue(this.propertyInfo.propDef.objectType);
             break;
 
           default:
@@ -493,9 +434,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
         case Constants.ListValue:
         case Constants.LinkValue:
           this.showGuiAttr = true;
-          this.propertyForm.controls['guiAttr'].setValidators([
-            Validators.required,
-          ]);
+          this.propertyForm.controls['guiAttr'].setValidators([Validators.required]);
           // this.propertyForm.controls['guiAttr'].updateValueAndValidity();
           this.propertyForm.updateValueAndValidity();
           break;
@@ -512,19 +451,17 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
    * canEnableRequiredToggle: evaluate if the required toggle can be set for a newly assigned property of a class
    */
   canEnableRequiredToggle() {
-    this._dspApiConnection.v2.onto
-      .canReplaceCardinalityOfResourceClass(this.resClassIri)
-      .subscribe(
-        (response: CanDoResponse) => {
-          if (response.canDo) {
-            // enable the form
-            this.propertyForm.controls['required'].enable();
-          }
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+    this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resClassIri).subscribe(
+      (response: CanDoResponse) => {
+        if (response.canDo) {
+          // enable the form
+          this.propertyForm.controls['required'].enable();
         }
-      );
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
   /**
@@ -543,21 +480,15 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
       return;
     }
     // check if cardinality can be changed
-    const targetCardinality: Cardinality =
-      this.getTargetCardinality(targetGuiCardinality);
+    const targetCardinality: Cardinality = this.getTargetCardinality(targetGuiCardinality);
     this._dspApiConnection.v2.onto
-      .canReplaceCardinalityOfResourceClassWith(
-        this.resClassIri,
-        this.propertyInfo.propDef.id,
-        targetCardinality
-      )
+      .canReplaceCardinalityOfResourceClassWith(this.resClassIri, this.propertyInfo.propDef.id, targetCardinality)
       .subscribe(
         (response: CanDoResponse) => {
           this.canSetCardinality = response.canDo;
           if (!this.canSetCardinality) {
             this.canNotSetCardinalityReason = response.cannotDoReason;
-            this.canNotSetCardinalityUiReason =
-              this.getCanNotSetCardinalityUserReason();
+            this.canNotSetCardinalityUiReason = this.getCanNotSetCardinalityUserReason();
           }
           this.canChangeCardinalityChecked = true;
         },
@@ -573,16 +504,11 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
    * @return the equivalent cardinality enum
    */
   getTargetCardinality(targetValue: GuiCardinality): Cardinality {
-    const currentCardinality = this._os.getCardinalityGuiValues(
-      this.currentCardinality
-    );
+    const currentCardinality = this._os.getCardinalityGuiValues(this.currentCardinality);
     const updatedCardinality = Object.assign(currentCardinality, {
       [targetValue.key]: targetValue.value,
     });
-    return this._os.translateCardinality(
-      updatedCardinality.multiple,
-      updatedCardinality.required
-    );
+    return this._os.translateCardinality(updatedCardinality.multiple, updatedCardinality.required);
   }
 
   /**
@@ -624,70 +550,54 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
 
         if (onto4Comment.entity.comments.length) {
           // if the comments array is not empty, send a request to update the comments
-          this._dspApiConnection.v2.onto
-            .updateResourceProperty(onto4Comment)
-            .subscribe(
-              (
-                propertyCommentResponse: ResourcePropertyDefinitionWithAllLanguages
-              ) => {
-                this.lastModificationDate =
-                  propertyCommentResponse.lastModificationDate;
+          this._dspApiConnection.v2.onto.updateResourceProperty(onto4Comment).subscribe(
+            (propertyCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+              this.lastModificationDate = propertyCommentResponse.lastModificationDate;
 
-                // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
-                // this only works for the TextValue object type currently
-                // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
-                if (
-                  !this.unsupportedPropertyType &&
-                  this.propertyInfo.propDef.objectType ===
-                    Constants.TextValue &&
-                  this.propertyInfo.propDef.guiElement !==
-                    this.propertyForm.controls['propType'].value.guiEle
-                ) {
-                  this.replaceGuiElement();
-                } else {
-                  this.onSuccess();
-                }
-              },
-              (error: ApiResponseError) => {
-                this.onError(error);
+              // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
+              // this only works for the TextValue object type currently
+              // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
+              if (
+                !this.unsupportedPropertyType &&
+                this.propertyInfo.propDef.objectType === Constants.TextValue &&
+                this.propertyInfo.propDef.guiElement !== this.propertyForm.controls['propType'].value.guiEle
+              ) {
+                this.replaceGuiElement();
+              } else {
+                this.onSuccess();
               }
-            );
+            },
+            (error: ApiResponseError) => {
+              this.onError(error);
+            }
+          );
         } else {
           // if the comments array is empty, send a request to remove the comments
-          const deleteResourcePropertyComment =
-            new DeleteResourcePropertyComment();
+          const deleteResourcePropertyComment = new DeleteResourcePropertyComment();
           deleteResourcePropertyComment.id = this.propertyInfo.propDef.id;
-          deleteResourcePropertyComment.lastModificationDate =
-            this.lastModificationDate;
+          deleteResourcePropertyComment.lastModificationDate = this.lastModificationDate;
 
-          this._dspApiConnection.v2.onto
-            .deleteResourcePropertyComment(deleteResourcePropertyComment)
-            .subscribe(
-              (
-                deleteCommentResponse: ResourcePropertyDefinitionWithAllLanguages
-              ) => {
-                this.lastModificationDate =
-                  deleteCommentResponse.lastModificationDate;
+          this._dspApiConnection.v2.onto.deleteResourcePropertyComment(deleteResourcePropertyComment).subscribe(
+            (deleteCommentResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+              this.lastModificationDate = deleteCommentResponse.lastModificationDate;
 
-                // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
-                // this only works for the TextValue object type currently
-                // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
-                if (
-                  !this.unsupportedPropertyType &&
-                  this.propertyInfo.propDef.objectType ===
-                    Constants.TextValue &&
-                  this.propertyInfo.propDef.guiElement !==
-                    this.propertyForm.controls['propType'].value.guiEle
-                ) {
-                  this.replaceGuiElement();
-                } else {
-                  this.onSuccess();
-                }
-              },
-              (error: ApiResponseError) => {
-                this.onError(error);
+              // if property type is supported and is of type TextValue and the guiElement is different from its initial value, call replaceGuiElement() to update the guiElement
+              // this only works for the TextValue object type currently
+              // https://docs.dasch.swiss/latest/DSP-API/03-apis/api-v2/ontology-information/#changing-the-gui-element-and-gui-attributes-of-a-property
+              if (
+                !this.unsupportedPropertyType &&
+                this.propertyInfo.propDef.objectType === Constants.TextValue &&
+                this.propertyInfo.propDef.guiElement !== this.propertyForm.controls['propType'].value.guiEle
+              ) {
+                this.replaceGuiElement();
+              } else {
+                this.onSuccess();
               }
-            );
+            },
+            (error: ApiResponseError) => {
+              this.onError(error);
+            }
+          );
         }
 
         this.ontology.lastModificationDate = this.lastModificationDate;
@@ -806,31 +716,25 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
     changedClass.cardinalities = this.classProperties;
 
     // get the property for replacing the cardinality
-    const idx = changedClass.cardinalities.findIndex(
-      c => c.propertyIndex === this.propertyInfo.propDef.id
-    );
+    const idx = changedClass.cardinalities.findIndex(c => c.propertyIndex === this.propertyInfo.propDef.id);
     if (idx === -1) {
       return;
     }
     // set the new cardinality
-    changedClass.cardinalities[idx].cardinality = this.getTargetCardinality(
-      this.targetGuiCardinality
-    );
+    changedClass.cardinalities[idx].cardinality = this.getTargetCardinality(this.targetGuiCardinality);
 
     classUpdate.entity = changedClass;
-    this._dspApiConnection.v2.onto
-      .replaceCardinalityOfResourceClass(classUpdate)
-      .subscribe(
-        (res: ResourceClassDefinitionWithAllLanguages) => {
-          this.lastModificationDate = res.lastModificationDate;
-          this.submittingChange = false;
-          this.onSuccess();
-        },
-        (error: ApiResponseError) => {
-          this.onError(error);
-          this.closeDialog.emit();
-        }
-      );
+    this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(classUpdate).subscribe(
+      (res: ResourceClassDefinitionWithAllLanguages) => {
+        this.lastModificationDate = res.lastModificationDate;
+        this.submittingChange = false;
+        this.onSuccess();
+      },
+      (error: ApiResponseError) => {
+        this.onError(error);
+        this.closeDialog.emit();
+      }
+    );
   }
 
   replaceGuiElement() {
@@ -840,8 +744,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
 
     const updateGuiEle = new UpdateResourcePropertyGuiElement();
     updateGuiEle.id = this.propertyInfo.propDef.id;
-    updateGuiEle.guiElement =
-      this.propertyForm.controls['propType'].value.guiEle;
+    updateGuiEle.guiElement = this.propertyForm.controls['propType'].value.guiEle;
 
     const guiAttr = this.propertyForm.controls['guiAttr'].value;
     if (guiAttr) {
@@ -850,17 +753,15 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
 
     onto4guiEle.entity = updateGuiEle;
 
-    this._dspApiConnection.v2.onto
-      .replaceGuiElementOfProperty(onto4guiEle)
-      .subscribe(
-        (guiEleResponse: ResourcePropertyDefinitionWithAllLanguages) => {
-          this.lastModificationDate = guiEleResponse.lastModificationDate;
-          this.onSuccess();
-        },
-        (error: ApiResponseError) => {
-          this.onError(error);
-        }
-      );
+    this._dspApiConnection.v2.onto.replaceGuiElementOfProperty(onto4guiEle).subscribe(
+      (guiEleResponse: ResourcePropertyDefinitionWithAllLanguages) => {
+        this.lastModificationDate = guiEleResponse.lastModificationDate;
+        this.onSuccess();
+      },
+      (error: ApiResponseError) => {
+        this.onError(error);
+      }
+    );
   }
 
   /**
@@ -881,10 +782,7 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
 
     const propCard: IHasProperty = {
       propertyIndex: prop.id,
-      cardinality: this._os.translateCardinality(
-        this.propertyForm.value.multiple,
-        this.propertyForm.value.required
-      ),
+      cardinality: this._os.translateCardinality(this.propertyForm.value.multiple, this.propertyForm.value.required),
       guiOrder: this.guiOrder, // add new property to the end of current list of properties
     };
 
@@ -892,17 +790,15 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
 
     onto.entity = addCard;
 
-    this._dspApiConnection.v2.onto
-      .addCardinalityToResourceClass(onto)
-      .subscribe(
-        (res: ResourceClassDefinitionWithAllLanguages) => {
-          this.lastModificationDate = res.lastModificationDate;
-          this.onSuccess();
-        },
-        (error: ApiResponseError) => {
-          this.onError(error);
-        }
-      );
+    this._dspApiConnection.v2.onto.addCardinalityToResourceClass(onto).subscribe(
+      (res: ResourceClassDefinitionWithAllLanguages) => {
+        this.lastModificationDate = res.lastModificationDate;
+        this.onSuccess();
+      },
+      (error: ApiResponseError) => {
+        this.onError(error);
+      }
+    );
   }
 
   setGuiAttribute(guiAttr: string): string[] {
@@ -944,26 +840,16 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
     const classLabel = this.resClassIri.split('#')[1];
     const pLabel = this.propertyInfo.propDef.label;
 
-    if (
-      this.canNotSetCardinalityReason.includes(
-        'is not included in the new cardinality'
-      )
-    ) {
+    if (this.canNotSetCardinalityReason.includes('is not included in the new cardinality')) {
       // data contradicting the change
-      if (
-        this.targetGuiCardinality.key === 'multiple' &&
-        this.targetGuiCardinality.value === false
-      ) {
+      if (this.targetGuiCardinality.key === 'multiple' && this.targetGuiCardinality.value === false) {
         // there are instances which have that property multiple times and do not allow to set multiple to false
         reason.detail = `At least one ${classLabel} has multiple ${pLabel} properties in your data.`;
         reason.hint =
           `In order to change the data model and set the property ${pLabel} from multiple to ` +
           `single, every ${classLabel} must have only one ${pLabel} in the data.`;
       }
-      if (
-        this.targetGuiCardinality.key === 'required' &&
-        this.targetGuiCardinality.value === true
-      ) {
+      if (this.targetGuiCardinality.key === 'required' && this.targetGuiCardinality.value === true) {
         // setting from multiple to single is not possible because there are instances which have that property
         // multiple times and do not allow to set multiple to false
         reason.detail = `At least one ${classLabel} does not have a ${pLabel} property in your data.`;

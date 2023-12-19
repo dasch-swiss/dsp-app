@@ -1,13 +1,4 @@
-import {
-  Component,
-  DebugElement,
-  Inject,
-  Input,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
+import { Component, DebugElement, Inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
   UntypedFormBuilder,
@@ -75,10 +66,8 @@ class TestHostComponent implements OnInit {
   ngOnInit() {
     MockResource.getTestThing().subscribe(res => {
       this.parentResource = res;
-      this.propDef =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue';
-      this.resourceClassDef =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+      this.propDef = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue';
+      this.resourceClassDef = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
     });
   }
 }
@@ -228,16 +217,11 @@ describe('CreateLinkResourceComponent', () => {
   beforeEach(waitForAsync(() => {
     const dspConnSpy = {
       v2: {
-        ontologyCache: jasmine.createSpyObj('ontologyCache', [
-          'getOntology',
-          'getResourceClassDefinition',
-        ]),
+        ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition']),
         res: jasmine.createSpyObj('res', ['createResource']),
       },
       admin: {
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByShortcode',
-        ]),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByShortcode']),
       },
     };
 
@@ -273,14 +257,8 @@ describe('CreateLinkResourceComponent', () => {
   beforeEach(() => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-    ).getResourceClassDefinition.and.callFake(() =>
-      of(
-        MockOntology.mockIResourceClassAndPropertyDefinitions(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-        )
-      )
+    (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(() =>
+      of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
     );
 
     testHostFixture = TestBed.createComponent(TestHostComponent);
@@ -290,36 +268,30 @@ describe('CreateLinkResourceComponent', () => {
 
     const hostCompDe = testHostFixture.debugElement;
 
-    createLinkResourceComponentDe = hostCompDe.query(
-      By.directive(CreateLinkResourceComponent)
-    );
+    createLinkResourceComponentDe = hostCompDe.query(By.directive(CreateLinkResourceComponent));
   });
 
   it('should initialize the properties array', async () => {
-    expect(
-      testHostComponent.createLinkResourceComponent.properties.length
-    ).toEqual(18);
+    expect(testHostComponent.createLinkResourceComponent.properties.length).toEqual(18);
   });
 
   it('should submit the form', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
     // mock projects endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByShortcode.and.callFake(() => {
-      const response = new ProjectResponse();
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByShortcode.and.callFake(
+      () => {
+        const response = new ProjectResponse();
 
-      const mockProjects = MockProjects.mockProjects();
+        const mockProjects = MockProjects.mockProjects();
 
-      response.project = mockProjects.body.projects[0];
+        response.project = mockProjects.body.projects[0];
 
-      return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-    });
+        return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+      }
+    );
 
-    (
-      dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>
-    ).createResource.and.callFake(() => {
+    (dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>).createResource.and.callFake(() => {
       let resource = new ReadResource();
 
       MockResource.getTestThing().subscribe(res => {
@@ -329,23 +301,16 @@ describe('CreateLinkResourceComponent', () => {
       return of(resource);
     });
 
-    testHostComponent.createLinkResourceComponent.properties =
-      new Array<ResourcePropertyDefinition>();
+    testHostComponent.createLinkResourceComponent.properties = new Array<ResourcePropertyDefinition>();
 
     MockResource.getTestThing().subscribe(res => {
-      const resourcePropDef = (
-        res.entityInfo as ResourceClassAndPropertyDefinitions
-      ).getAllPropertyDefinitions()[9];
-      testHostComponent.createLinkResourceComponent.properties.push(
-        resourcePropDef as ResourcePropertyDefinition
-      );
+      const resourcePropDef = (res.entityInfo as ResourceClassAndPropertyDefinitions).getAllPropertyDefinitions()[9];
+      testHostComponent.createLinkResourceComponent.properties.push(resourcePropDef as ResourcePropertyDefinition);
     });
 
     testHostFixture.detectChanges();
 
-    const selectPropertiesComp = createLinkResourceComponentDe.query(
-      By.directive(MockSelectPropertiesComponent)
-    );
+    const selectPropertiesComp = createLinkResourceComponentDe.query(By.directive(MockSelectPropertiesComponent));
 
     expect(selectPropertiesComp).toBeTruthy();
 
@@ -355,14 +320,11 @@ describe('CreateLinkResourceComponent', () => {
     const props = {};
     const createVal = new CreateIntValue();
     createVal.int = 123;
-    props['http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'] = [
-      createVal,
-    ];
+    props['http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'] = [createVal];
 
     const expectedCreateResource = new CreateResource();
     expectedCreateResource.label = 'My Label';
-    expectedCreateResource.type =
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+    expectedCreateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
     expectedCreateResource.properties = props;
 
     testHostComponent.createLinkResourceComponent.onSubmit();

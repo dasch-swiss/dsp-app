@@ -7,12 +7,7 @@
     <mat-form-field class="full-width login-field">
       <mat-icon *ngIf="icons" matPrefix>person</mat-icon>
 
-      <input
-        #username
-        [placeholder]="formLabel.name"
-        autocomplete="username"
-        formControlName="username"
-        matInput />
+      <input #username [placeholder]="formLabel.name" autocomplete="username" formControlName="username" matInput />
     </mat-form-field>
 
     <!-- Password -->
@@ -39,11 +34,7 @@
       mat-raised-button
       type="submit">
       <div class="progress-button-content">
-        <dasch-swiss-app-progress-indicator
-          *ngIf="loading"
-          [color]="'white'"
-          [status]="0"
-          class="login-progress" />
+        <dasch-swiss-app-progress-indicator *ngIf="loading" [color]="'white'" [status]="0" class="login-progress" />
         <mat-icon *ngIf="isError && !loading">close</mat-icon>
         <span>{{ isError ? formLabel.retry : formLabel.submit }}</span>
       </div>

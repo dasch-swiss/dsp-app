@@ -6,59 +6,35 @@
       [title]="'appLabels.form.user.title.profile' | translate"
       [subtitle]="'appLabels.form.user.title.new' | translate">
     </app-dialog-header>
-    <app-user-form
-      [name]="data.name"
-      [projectUuid]="data.project"
-      (closeDialog)="dialogRef.close()">
-    </app-user-form>
+    <app-user-form [name]="data.name" [projectUuid]="data.project" (closeDialog)="dialogRef.close()"> </app-user-form>
   </div>
 
   <!-- Modify user data -->
   <div *ngSwitchCase="'editUser'">
-    <app-dialog-header
-      [title]="data.user.username"
-      [subtitle]="'appLabels.form.user.title.edit' | translate">
+    <app-dialog-header [title]="data.user.username" [subtitle]="'appLabels.form.user.title.edit' | translate">
     </app-dialog-header>
-    <app-user-form
-      [user]="data.user"
-      (closeDialog)="dialogRef.close()"></app-user-form>
+    <app-user-form [user]="data.user" (closeDialog)="dialogRef.close()"></app-user-form>
   </div>
 
   <!-- Update password -->
   <div *ngSwitchCase="'editPassword'">
-    <app-dialog-header
-      [title]="data.user.username"
-      [subtitle]="'appLabels.form.user.title.password' | translate">
+    <app-dialog-header [title]="data.user.username" [subtitle]="'appLabels.form.user.title.password' | translate">
     </app-dialog-header>
-    <app-password-form
-      [user]="data.user"
-      (closeDialog)="dialogRef.close()"></app-password-form>
+    <app-password-form [user]="data.user" (closeDialog)="dialogRef.close()"></app-password-form>
   </div>
 
   <!-- Delete user -->
   <div *ngSwitchCase="'deleteUser'">
-    <app-dialog-header
-      [title]="data.name"
-      [subtitle]="'Suspend user'"></app-dialog-header>
+    <app-dialog-header [title]="data.name" [subtitle]="'Suspend user'"></app-dialog-header>
     Do you want to suspend this user?
 
     <!-- TODO: create a mat dialog actions component with the following buttons: Cancel to reset and OK to confirm action -->
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         No, keep it
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Yes, suspend
       </button>
     </mat-dialog-actions>
@@ -66,26 +42,14 @@
 
   <!-- Reactivate user -->
   <div *ngSwitchCase="'activateUser'">
-    <app-dialog-header
-      [title]="data.name"
-      [subtitle]="'Activate user'"></app-dialog-header>
+    <app-dialog-header [title]="data.name" [subtitle]="'Activate user'"></app-dialog-header>
     Do you want to reactivate this user?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         Cancel
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'primary'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'primary'" class="confirm-button center" [mat-dialog-close]="true">
         Reactivate
       </button>
     </mat-dialog-actions>
@@ -93,26 +57,14 @@
 
   <!-- Remove user from project -->
   <div *ngSwitchCase="'removeFromProject'">
-    <app-dialog-header
-      [title]="data.name"
-      [subtitle]="'Remove user from Project'"></app-dialog-header>
+    <app-dialog-header [title]="data.name" [subtitle]="'Remove user from Project'"></app-dialog-header>
     Do you want to remove this user from the project?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         Cancel
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'primary'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'primary'" class="confirm-button center" [mat-dialog-close]="true">
         Remove
       </button>
     </mat-dialog-actions>
@@ -120,22 +72,11 @@
 
   <!-- Manage user project membership -->
   <div *ngSwitchCase="'manageProjectMembership'">
-    <app-dialog-header
-      [title]="data.user.username"
-      [subtitle]="'Manage project membership'">
-    </app-dialog-header>
-    <app-membership
-      [user]="data.user"
-      (closeDialog)="dialogRef.close()"></app-membership>
+    <app-dialog-header [title]="data.user.username" [subtitle]="'Manage project membership'"> </app-dialog-header>
+    <app-membership [user]="data.user" (closeDialog)="dialogRef.close()"></app-membership>
     <mat-dialog-actions>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        color="primary"
-        class="cancel-button center"
-        [mat-dialog-close]="false">
-        Close
-      </button>
+      <button mat-button color="primary" class="cancel-button center" [mat-dialog-close]="false">Close</button>
     </mat-dialog-actions>
   </div>
 
@@ -143,27 +84,15 @@
 
   <!-- Deactivate project -->
   <div *ngSwitchCase="'deactivateProject'">
-    <app-dialog-header
-      [title]="data.name"
-      [subtitle]="'appLabels.form.project.title.deactivate' | translate">
+    <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.deactivate' | translate">
     </app-dialog-header>
     Do you want to deactivate this project?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         Cancel
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Deactivate
       </button>
     </mat-dialog-actions>
@@ -171,27 +100,15 @@
 
   <!-- Reactivate project -->
   <div *ngSwitchCase="'activateProject'">
-    <app-dialog-header
-      [title]="data.name"
-      [subtitle]="'appLabels.form.project.title.activate' | translate">
+    <app-dialog-header [title]="data.name" [subtitle]="'appLabels.form.project.title.activate' | translate">
     </app-dialog-header>
     Do you want to reactivate this project?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         Cancel
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'primary'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'primary'" class="confirm-button center" [mat-dialog-close]="true">
         Reactivate
       </button>
     </mat-dialog-actions>
@@ -201,9 +118,7 @@
 
   <!-- Create new list -->
   <div *ngSwitchCase="'createList'">
-    <app-dialog-header
-      [title]="'Create new list'"
-      [subtitle]=""></app-dialog-header>
+    <app-dialog-header [title]="'Create new list'" [subtitle]=""></app-dialog-header>
     <app-list-info-form
       [projectUuid]="data.project"
       [mode]="'create'"
@@ -214,8 +129,7 @@
 
   <!-- Insert list child node -->
   <div *ngSwitchCase="'insertListNode'">
-    <app-dialog-header [title]="'Insert new child node'" [subtitle]="">
-    </app-dialog-header>
+    <app-dialog-header [title]="'Insert new child node'" [subtitle]=""> </app-dialog-header>
     <app-edit-list-item
       [iri]="data.id"
       [projectIri]="data.project"
@@ -228,22 +142,14 @@
 
   <!-- Update list info -->
   <div *ngSwitchCase="'editListInfo'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Edit controlled vocabulary info'">
-    </app-dialog-header>
-    <app-list-info-form
-      [iri]="data.id"
-      [mode]="'update'"
-      [projectIri]="data.project"
-      (closeDialog)="dialogRef.close()">
+    <app-dialog-header [title]="data.title" [subtitle]="'Edit controlled vocabulary info'"> </app-dialog-header>
+    <app-list-info-form [iri]="data.id" [mode]="'update'" [projectIri]="data.project" (closeDialog)="dialogRef.close()">
     </app-list-info-form>
   </div>
 
   <!-- Update list child node -->
   <div *ngSwitchCase="'editListNode'">
-    <app-dialog-header [title]="data.title" [subtitle]="'Edit child node'">
-    </app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Edit child node'"> </app-dialog-header>
     <app-edit-list-item
       [iri]="data.id"
       [projectIri]="data.project"
@@ -253,27 +159,15 @@
 
   <!-- Delete list node-->
   <div *ngSwitchCase="'deleteListNode'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'appLabels.form.lists.title.deleteListNode' | translate">
+    <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.deleteListNode' | translate">
     </app-dialog-header>
     Do you want to delete this node?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         No, keep it
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Yes, delete
       </button>
     </mat-dialog-actions>
@@ -284,12 +178,7 @@
     Unable to delete this controlled vocabulary node as it is in use.
     <mat-dialog-actions>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Okay
       </button>
     </mat-dialog-actions>
@@ -297,27 +186,15 @@
 
   <!-- Delete list -->
   <div *ngSwitchCase="'deleteList'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'appLabels.form.lists.title.deleteList' | translate">
+    <app-dialog-header [title]="data.title" [subtitle]="'appLabels.form.lists.title.deleteList' | translate">
     </app-dialog-header>
     Do you want to delete this controlled vocabulary?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         No, keep it
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Yes, delete
       </button>
     </mat-dialog-actions>
@@ -325,19 +202,12 @@
 
   <!-- Ontology editor: create new ontology -->
   <div *ngSwitchCase="'createOntology'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Create new'"></app-dialog-header>
-    <app-ontology-form
-      [projectUuid]="data.project"
-      (closeDialog)="dialogRef.close($event)"></app-ontology-form>
+    <app-dialog-header [title]="data.title" [subtitle]="'Create new'"></app-dialog-header>
+    <app-ontology-form [projectUuid]="data.project" (closeDialog)="dialogRef.close($event)"></app-ontology-form>
   </div>
 
   <div *ngSwitchCase="'editOntology'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Customize data model'"
-      (closed)="dialogRef.close()">
+    <app-dialog-header [title]="data.title" [subtitle]="'Customize data model'" (closed)="dialogRef.close()">
     </app-dialog-header>
     <app-ontology-form
       [iri]="data.id"
@@ -346,26 +216,14 @@
   </div>
 
   <div *ngSwitchCase="'deleteOntology'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Delete data model'"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Delete data model'"></app-dialog-header>
     Do you want to delete this data model?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         No, keep it
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Yes, delete
       </button>
     </mat-dialog-actions>
@@ -373,9 +231,7 @@
 
   <!-- Ontology editor: customize and add resource class -->
   <div *ngSwitchCase="'createResourceClass'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="data.subtitle"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
     <app-resource-class-form
       [iri]="data.id"
       [name]="data.title"
@@ -386,8 +242,7 @@
   </div>
 
   <div *ngSwitchCase="'editResourceClass'">
-    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
-    </app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"> </app-dialog-header>
     <app-resource-class-form
       [iri]="data.id"
       [name]="data.title"
@@ -398,26 +253,14 @@
   </div>
 
   <div *ngSwitchCase="'deleteResourceClass'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Delete resource class'"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Delete resource class'"></app-dialog-header>
     Do you want to delete this resource class?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         No, keep it
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Yes, delete
       </button>
     </mat-dialog-actions>
@@ -437,8 +280,7 @@
   </div>
 
   <div *ngSwitchCase="'createProperty'">
-    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
-    </app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"> </app-dialog-header>
     <app-property-form
       [propertyInfo]="data.propInfo"
       [resClassIri]="data.parentIri"
@@ -448,8 +290,7 @@
   </div>
 
   <div *ngSwitchCase="'editProperty'">
-    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle">
-    </app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"> </app-dialog-header>
     <app-property-form
       [propertyInfo]="data.propInfo"
       [resClassIri]="data.parentIri"
@@ -458,26 +299,14 @@
     </app-property-form>
   </div>
   <div *ngSwitchCase="'deleteProperty'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Delete property'"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Delete property'"></app-dialog-header>
     Do you want to delete this property?
     <mat-dialog-actions>
-      <button
-        mat-button
-        color="primary"
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
+      <button mat-button color="primary" mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">
         No, keep it
       </button>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-raised-button
-        [color]="'warn'"
-        class="confirm-button center"
-        [mat-dialog-close]="true">
+      <button mat-button mat-raised-button [color]="'warn'" class="confirm-button center" [mat-dialog-close]="true">
         Yes, delete
       </button>
     </mat-dialog-actions>
@@ -485,17 +314,10 @@
 
   <!-- all about RESOURCE -->
   <div *ngSwitchCase="'editResource'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Edit resource\'s label'">
-    </app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Edit resource\'s label'"> </app-dialog-header>
     <mat-dialog-content class="form-content">
       <mat-form-field class="large-field">
-        <input
-          matInput
-          placeholder="Label"
-          [value]="data.title"
-          (keyup)="onKey($event)" />
+        <input matInput placeholder="Label" [value]="data.title" (keyup)="onKey($event)" />
       </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions>
@@ -521,9 +343,7 @@
   </div>
 
   <div *ngSwitchCase="'deleteResource'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Delete resource instance'"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Delete resource instance'"></app-dialog-header>
     <mat-dialog-content class="form-content">
       <mat-form-field class="large-field">
         <mat-label>Comment why resource is being deleted</mat-label>
@@ -558,11 +378,8 @@
   </div>
 
   <div *ngSwitchCase="'eraseResource'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Delete resource'"></app-dialog-header>
-    Do you want to erase this resource forever?<br /><br />WARNING: This action
-    cannot be undone, so use it with care.
+    <app-dialog-header [title]="data.title" [subtitle]="'Delete resource'"></app-dialog-header>
+    Do you want to erase this resource forever?<br /><br />WARNING: This action cannot be undone, so use it with care.
     <mat-dialog-actions>
       <button
         mat-button
@@ -585,16 +402,12 @@
   </div>
 
   <div *ngSwitchCase="'addRegion'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="data.subtitle"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
     <app-add-region-form [resourceIri]="data.id"></app-add-region-form>
   </div>
 
   <div *ngSwitchCase="'replaceFile'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="data.subtitle"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="data.subtitle"></app-dialog-header>
     <mat-dialog-content class="form-content">
       <app-replace-file-form
         [representation]="data.representation"
@@ -603,9 +416,7 @@
     </mat-dialog-content>
   </div>
   <div *ngSwitchCase="'linkResources'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Link resources'"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Link resources'"></app-dialog-header>
     <mat-dialog-content>
       <app-resource-link-form
         [resources]="data.selectedResources"
@@ -614,9 +425,7 @@
   </div>
 
   <div *ngSwitchCase="'createLinkResource'">
-    <app-dialog-header
-      [title]="data.title"
-      [subtitle]="'Create a new linked resource'"></app-dialog-header>
+    <app-dialog-header [title]="data.title" [subtitle]="'Create a new linked resource'"></app-dialog-header>
     <mat-dialog-content>
       <app-create-link-resource
         [parentResource]="data.parentResource"
@@ -635,21 +444,12 @@
   <!-- Unknown method (or not yet defined) -->
   <!-- Default dialog content component -->
   <div *ngSwitchDefault>
-    <app-dialog-header
-      [title]="'Not yet implemented'"
-      [subtitle]="'ERROR 400'"
-      (closed)="dialogRef.close()">
+    <app-dialog-header [title]="'Not yet implemented'" [subtitle]="'ERROR 400'" (closed)="dialogRef.close()">
     </app-dialog-header>
     <p class="todo" [innerHtml]="notYetImplemented"></p>
     <mat-dialog-actions>
       <span class="fill-remaining-space"></span>
-      <button
-        mat-button
-        mat-dialog-close
-        class="cancel-button center"
-        [mat-dialog-close]="false">
-        OK
-      </button>
+      <button mat-button mat-dialog-close class="cancel-button center" [mat-dialog-close]="false">OK</button>
       <span class="fill-remaining-space"></span>
     </mat-dialog-actions>
   </div>

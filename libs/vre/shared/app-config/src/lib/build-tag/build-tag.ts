@@ -18,7 +18,5 @@ export type BuildTag = z.infer<typeof BuildTagSchema>;
 export function buildTagFactory(): Observable<BuildTag> {
   const httpClient = inject(HttpClient);
 
-  return httpClient
-    .get('/config/build.json')
-    .pipe(map(buildTagValue => BuildTagSchema.parse(buildTagValue)));
+  return httpClient.get('/config/build.json').pipe(map(buildTagValue => BuildTagSchema.parse(buildTagValue)));
 }

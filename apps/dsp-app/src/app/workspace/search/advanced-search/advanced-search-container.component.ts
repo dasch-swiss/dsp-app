@@ -1,10 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  QueryObject,
-  PropertyFormItem,
-} from '@dasch-swiss/vre/advanced-search';
+import { QueryObject, PropertyFormItem } from '@dasch-swiss/vre/advanced-search';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
@@ -30,9 +27,9 @@ export class AdvancedSearchContainerComponent implements OnInit {
   onSearch(queryObject: QueryObject): void {
     this.logProperties(queryObject.properties);
 
-    const route = `./${RouteConstants.advancedSearch}/${
-      RouteConstants.gravSearch
-    }/${encodeURIComponent(queryObject.query)}`;
+    const route = `./${RouteConstants.advancedSearch}/${RouteConstants.gravSearch}/${encodeURIComponent(
+      queryObject.query
+    )}`;
 
     this._router.navigate([route], { relativeTo: this._route.parent });
   }

@@ -1,12 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import {
-  ApiResponseData,
-  ApiResponseError,
-  Constants,
-  CredentialsResponse,
-  UserResponse,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, Constants, CredentialsResponse, UserResponse } from '@dasch-swiss/dsp-js';
 
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
@@ -47,16 +41,11 @@ export class SessionService {
        * set the application state for current/logged-in user
        */
       const session = this.session() as Session;
-      this._userApiService
-        .get(session.user.name as string, 'username')
-        .subscribe(response => {
-          if (response instanceof ApiResponseData) {
-            this._applicationStateService.set(
-              session.user.name,
-              response.body.user
-            );
-          }
-        });
+      this._userApiService.get(session.user.name as string, 'username').subscribe(response => {
+        if (response instanceof ApiResponseData) {
+          this._applicationStateService.set(session.user.name, response.body.user);
+        }
+      });
     }
   }
 
@@ -76,11 +65,7 @@ export class SessionService {
    * @param identifier  email address or username
    * @param type 'email' or 'username'
    */
-  setSession(
-    jwt: string,
-    identifier: string,
-    type: 'email' | 'username'
-  ): Observable<boolean> {
+  setSession(jwt: string, identifier: string, type: 'email' | 'username'): Observable<boolean> {
     this._dspApiConnection.v2.jsonWebToken = jwt ? jwt : '';
 
     // get user information
@@ -113,15 +98,9 @@ export class SessionService {
         // check if the api credentials are still valid
 
         return this._dspApiConnection.v2.auth.checkCredentials().pipe(
-          map(
-            (
-              credentials:
-                | ApiResponseData<CredentialsResponse>
-                | ApiResponseError
-            ) => {
-              return this._updateSessionId(credentials, session, tsNow);
-            }
-          ),
+          map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) => {
+            return this._updateSessionId(credentials, session, tsNow);
+          }),
           catchError(() => {
             // if there is any error checking the credentials (mostly a 401 for after
             // switching the server where this session/the credentials are unknown), we destroy the session
@@ -176,13 +155,10 @@ export class SessionService {
 
       for (const key of groupsPerProjectKeys) {
         if (key === Constants.SystemProjectIRI) {
-          sysAdmin =
-            groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
+          sysAdmin = groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
         }
 
-        if (
-          groupsPerProject[key].indexOf(Constants.ProjectAdminGroupIRI) > -1
-        ) {
+        if (groupsPerProject[key].indexOf(Constants.ProjectAdminGroupIRI) > -1) {
           projectAdmin.push(key);
         }
       }

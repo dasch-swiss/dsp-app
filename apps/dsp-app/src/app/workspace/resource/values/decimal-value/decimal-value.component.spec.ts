@@ -4,12 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  ReadDecimalValue,
-  MockResource,
-  UpdateDecimalValue,
-  CreateDecimalValue,
-} from '@dasch-swiss/dsp-js';
+import { ReadDecimalValue, MockResource, UpdateDecimalValue, CreateDecimalValue } from '@dasch-swiss/dsp-js';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { DecimalValueComponent } from './decimal-value.component';
 
@@ -17,10 +12,7 @@ import { DecimalValueComponent } from './decimal-value.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-decimal-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"></app-decimal-value>`,
+  template: ` <app-decimal-value #inputVal [displayValue]="displayInputVal" [mode]="mode"></app-decimal-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: DecimalValueComponent;
@@ -97,9 +89,7 @@ describe('DecimalValueComponent', () => {
     });
 
     it('should display an existing value', () => {
-      expect(
-        testHostComponent.inputValueComponent.displayValue.decimal
-      ).toEqual(1.5);
+      expect(testHostComponent.inputValueComponent.displayValue.decimal).toEqual(1.5);
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -130,8 +120,7 @@ describe('DecimalValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateDecimalValue).toBeTruthy();
 
@@ -153,22 +142,17 @@ describe('DecimalValueComponent', () => {
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
       // set a comment value
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'this is a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateDecimalValue).toBeTruthy();
 
-      expect((updatedValue as UpdateDecimalValue).valueHasComment).toEqual(
-        'this is a comment'
-      );
+      expect((updatedValue as UpdateDecimalValue).valueHasComment).toEqual('this is a comment');
     });
 
     it('should not return an invalid update value', () => {
@@ -193,8 +177,7 @@ describe('DecimalValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -263,9 +246,7 @@ describe('DecimalValueComponent', () => {
       valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
       valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-      expect(testHostComponent.inputValueComponent.displayValue).toEqual(
-        undefined
-      );
+      expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
       expect(valueInputNativeElement.value).toEqual('');
     });

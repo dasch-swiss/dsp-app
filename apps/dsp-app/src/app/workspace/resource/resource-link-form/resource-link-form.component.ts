@@ -8,12 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   ApiResponseError,
@@ -27,10 +22,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-  ProjectsSelectors,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -68,11 +60,7 @@ export class ResourceLinkFormComponent implements OnInit, OnDestroy {
   selectedProject: string;
 
   get usersProjects$(): Observable<StoredProject[]> {
-    return combineLatest([
-      this.currentUserProjects$,
-      this.isSysAdmin$,
-      this.allNotSystemProjects$,
-    ]).pipe(
+    return combineLatest([this.currentUserProjects$, this.isSysAdmin$, this.allNotSystemProjects$]).pipe(
       takeUntil(this.ngUnsubscribe),
       map(([currentUserProjects, isSysAdmin, allNotSystemProjects]) =>
         isSysAdmin ? currentUserProjects : allNotSystemProjects
@@ -82,9 +70,7 @@ export class ResourceLinkFormComponent implements OnInit, OnDestroy {
 
   @Select(ProjectsSelectors.allNotSystemProjects)
   allNotSystemProjects$: Observable<StoredProject[]>;
-  @Select(UserSelectors.userProjects) currentUserProjects$: Observable<
-    StoredProject[]
-  >;
+  @Select(UserSelectors.userProjects) currentUserProjects$: Observable<StoredProject[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean[]>;
   @Select(ProjectsSelectors.isProjectsLoading) isLoading$: Observable<boolean>;
   @Select(ProjectsSelectors.hasLoadingErrors)

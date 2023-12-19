@@ -13,30 +13,15 @@ import {
   UpdateOntology,
   UpdateResourceClassCardinality,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  getAllEntityDefinitionsAsArray,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-  ProjectService,
-  SortingService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import {
-  Action,
-  Actions,
-  ofActionSuccessful,
-  State,
-  StateContext,
-} from '@ngxs/store';
+import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
-import {
-  IProjectOntologiesKeyValuePairs,
-  OntologyProperties,
-} from '../model-interfaces';
+import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
 import {
   ClearCurrentOntologyAction,
   ClearOntologiesAction,
@@ -82,18 +67,12 @@ export class OntologiesState {
 
   // TODO Remove this action when all actions containing this usage is implemented
   @Action(SetOntologiesLoadingAction)
-  setOntologiesLoadingAction(
-    ctx: StateContext<OntologiesStateModel>,
-    { isLoading }: SetOntologiesLoadingAction
-  ) {
+  setOntologiesLoadingAction(ctx: StateContext<OntologiesStateModel>, { isLoading }: SetOntologiesLoadingAction) {
     ctx.patchState({ isLoading });
   }
 
   @Action(SetCurrentOntologyAction)
-  setCurrentOntologyAction(
-    ctx: StateContext<OntologiesStateModel>,
-    { readOntology }: SetCurrentOntologyAction
-  ) {
+  setCurrentOntologyAction(ctx: StateContext<OntologiesStateModel>, { readOntology }: SetCurrentOntologyAction) {
     ctx.patchState({ currentOntology: readOntology });
   }
 
@@ -104,9 +83,7 @@ export class OntologiesState {
   ) {
     const state = ctx.getState();
     const readOntologies = state.projectOntologies[projectUuid].readOntologies;
-    readOntologies[
-      readOntologies.findIndex(onto => onto.id === readOntology.id)
-    ] = readOntology;
+    readOntologies[readOntologies.findIndex(onto => onto.id === readOntology.id)] = readOntology;
     ctx.patchState(state);
   }
 
@@ -125,84 +102,69 @@ export class OntologiesState {
   }
 
   @Action(LoadProjectOntologiesAction)
-  loadProjectOntologiesAction(
-    ctx: StateContext<OntologiesStateModel>,
-    { projectIri }: LoadProjectOntologiesAction
-  ) {
+  loadProjectOntologiesAction(ctx: StateContext<OntologiesStateModel>, { projectIri }: LoadProjectOntologiesAction) {
     ctx.patchState({ isLoading: true });
     projectIri = this._projectService.uuidToIri(projectIri);
 
     // get all project ontologies
-    return this._dspApiConnection.v2.onto
-      .getOntologiesByProjectIri(projectIri)
-      .pipe(
-        take(1),
-        map((response: OntologiesMetadata | ApiResponseError) => {
-          return response as OntologiesMetadata;
-        }),
-        tap({
-          next: (ontoMeta: OntologiesMetadata) => {
-            if (!ontoMeta.ontologies.length) {
-              ctx.dispatch(new LoadListsInProjectAction(projectIri));
-              ctx.patchState({ isLoading: false });
-              return;
-            }
+    return this._dspApiConnection.v2.onto.getOntologiesByProjectIri(projectIri).pipe(
+      take(1),
+      map((response: OntologiesMetadata | ApiResponseError) => {
+        return response as OntologiesMetadata;
+      }),
+      tap({
+        next: (ontoMeta: OntologiesMetadata) => {
+          if (!ontoMeta.ontologies.length) {
+            ctx.dispatch(new LoadListsInProjectAction(projectIri));
+            ctx.patchState({ isLoading: false });
+            return;
+          }
 
-            const projectOntologies: IProjectOntologiesKeyValuePairs = {
-              [projectIri]: {
-                ontologiesMetadata: ontoMeta.ontologies,
-                readOntologies: [],
-              },
-            };
-            ctx.setState({ ...ctx.getState(), projectOntologies });
-            // TODO should load ontologies as a batch with dedicated endpoint, not one by one
-            ctx
-              .dispatch(
-                // dispatch all actions except the last one to keep the loading state
-                ontoMeta.ontologies
-                  .slice(0, ontoMeta.ontologies.length - 1)
-                  .map(
-                    onto => new LoadOntologyAction(onto.id, projectIri, false)
-                  )
-              )
-              .pipe(
-                take(1),
-                tap(() =>
-                  ctx.dispatch(
-                    new LoadOntologyAction(
-                      ontoMeta.ontologies[ontoMeta.ontologies.length - 1].id,
-                      projectIri,
-                      true
-                    )
-                  )
+          const projectOntologies: IProjectOntologiesKeyValuePairs = {
+            [projectIri]: {
+              ontologiesMetadata: ontoMeta.ontologies,
+              readOntologies: [],
+            },
+          };
+          ctx.setState({ ...ctx.getState(), projectOntologies });
+          // TODO should load ontologies as a batch with dedicated endpoint, not one by one
+          ctx
+            .dispatch(
+              // dispatch all actions except the last one to keep the loading state
+              ontoMeta.ontologies
+                .slice(0, ontoMeta.ontologies.length - 1)
+                .map(onto => new LoadOntologyAction(onto.id, projectIri, false))
+            )
+            .pipe(
+              take(1),
+              tap(() =>
+                ctx.dispatch(
+                  new LoadOntologyAction(ontoMeta.ontologies[ontoMeta.ontologies.length - 1].id, projectIri, true)
                 )
               )
-              .subscribe(() =>
-                this._actions$
-                  .pipe(ofActionSuccessful(LoadOntologyAction))
-                  .pipe(take(1))
-                  .subscribe(() =>
-                    // last action dispatched
-                    ctx.dispatch(new LoadListsInProjectAction(projectIri))
-                  )
-              );
-          },
-          error: (error: ApiResponseError) => {
-            ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-            this._errorHandler.showMessage(error);
-          },
-        })
-      );
+            )
+            .subscribe(() =>
+              this._actions$
+                .pipe(ofActionSuccessful(LoadOntologyAction))
+                .pipe(take(1))
+                .subscribe(() =>
+                  // last action dispatched
+                  ctx.dispatch(new LoadListsInProjectAction(projectIri))
+                )
+            );
+        },
+        error: (error: ApiResponseError) => {
+          ctx.patchState({ hasLoadingErrors: true, isLoading: false });
+          this._errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(LoadOntologyAction)
   loadOntologyAction(
     ctx: StateContext<OntologiesStateModel>,
-    {
-      ontologyIri: ontologyIri,
-      projectUuid,
-      stopLoadingWhenCompleted,
-    }: LoadOntologyAction
+    { ontologyIri: ontologyIri, projectUuid, stopLoadingWhenCompleted }: LoadOntologyAction
   ) {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.v2.onto.getOntology(ontologyIri, true).pipe(
@@ -220,15 +182,11 @@ export class OntologiesState {
             };
           }
 
-          let projectReadOntologies =
-            projectOntologiesState[projectIri].readOntologies;
+          let projectReadOntologies = projectOntologiesState[projectIri].readOntologies;
           projectReadOntologies.push(ontology);
-          projectReadOntologies = projectReadOntologies.sort((o1, o2) =>
-            this._compareOntologies(o1, o2)
-          );
+          projectReadOntologies = projectReadOntologies.sort((o1, o2) => this._compareOntologies(o1, o2));
           // this._sortingService.keySortByAlphabetical(projectReadOntologies, 'label');
-          projectOntologiesState[projectIri].readOntologies =
-            projectReadOntologies;
+          projectOntologiesState[projectIri].readOntologies = projectReadOntologies;
 
           ctx.setState({
             ...ctx.getState(),
@@ -269,10 +227,7 @@ export class OntologiesState {
   }
 
   @Action(ClearProjectOntologiesAction)
-  clearProjectOntologies(
-    ctx: StateContext<OntologiesStateModel>,
-    { projectUuid }: ClearProjectOntologiesAction
-  ) {
+  clearProjectOntologies(ctx: StateContext<OntologiesStateModel>, { projectUuid }: ClearProjectOntologiesAction) {
     const projectIri = this._projectService.uuidToIri(projectUuid);
     return of(ctx.getState()).pipe(
       map(currentState => {
@@ -301,8 +256,7 @@ export class OntologiesState {
   clearCurrentOntology(ctx: StateContext<OntologiesStateModel>) {
     const state = ctx.getState();
     state.currentOntology = defaults.currentOntology;
-    state.currentProjectOntologyProperties =
-      defaults.currentProjectOntologyProperties;
+    state.currentProjectOntologyProperties = defaults.currentProjectOntologyProperties;
     ctx.patchState(state);
   }
 
@@ -317,15 +271,12 @@ export class OntologiesState {
       return;
     }
     // get all project ontologies
-    const projectOntologies =
-      state.projectOntologies[projectUuid].readOntologies;
+    const projectOntologies = state.projectOntologies[projectUuid].readOntologies;
     const ontoProperties = <OntologyProperties[]>projectOntologies.map(
       onto =>
         <OntologyProperties>{
           ontology: onto.id,
-          properties: this.initOntoProperties(
-            getAllEntityDefinitionsAsArray(onto.properties)
-          ),
+          properties: this.initOntoProperties(getAllEntityDefinitionsAsArray(onto.properties)),
         }
     );
 
@@ -342,51 +293,40 @@ export class OntologiesState {
   @Action(RemovePropertyAction)
   removePropertyAction(
     ctx: StateContext<OntologiesStateModel>,
-    {
-      property,
-      resourceClass,
-      currentOntologyPropertiesToDisplay,
-    }: RemovePropertyAction
+    { property, resourceClass, currentOntologyPropertiesToDisplay }: RemovePropertyAction
   ) {
     ctx.patchState({ isLoading: true });
     const state = ctx.getState();
 
     const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-    onto.lastModificationDate = <string>(
-      state.currentOntology?.lastModificationDate
-    );
+    onto.lastModificationDate = <string>state.currentOntology?.lastModificationDate;
     onto.id = <string>state.currentOntology?.id;
     const delCard = new UpdateResourceClassCardinality();
     delCard.id = resourceClass.id;
     delCard.cardinalities = [];
-    delCard.cardinalities = currentOntologyPropertiesToDisplay.filter(
-      prop => prop.propertyIndex === property.iri
-    );
+    delCard.cardinalities = currentOntologyPropertiesToDisplay.filter(prop => prop.propertyIndex === property.iri);
     onto.entity = delCard;
 
-    return this._dspApiConnection.v2.onto
-      .deleteCardinalityFromResourceClass(onto)
-      .pipe(
-        take(1),
-        map(
-          (
-            response: ResourceClassDefinitionWithAllLanguages | ApiResponseError
-          ) => response as ResourceClassDefinitionWithAllLanguages
-        ),
-        tap({
-          next: () => {
-            // ctx.dispatch(new SetCurrentOntologyPropertiesToDisplayAction(currentOntologyPropertiesToDisplay));
-            ctx.setState({ ...state, isLoading: false });
-            this._notification.openSnackBar(
-              `You have successfully removed "${property.label}" from "${resourceClass.label}".`
-            );
-          },
-          error: (error: ApiResponseError) => {
-            ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-            this._errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.v2.onto.deleteCardinalityFromResourceClass(onto).pipe(
+      take(1),
+      map(
+        (response: ResourceClassDefinitionWithAllLanguages | ApiResponseError) =>
+          response as ResourceClassDefinitionWithAllLanguages
+      ),
+      tap({
+        next: () => {
+          // ctx.dispatch(new SetCurrentOntologyPropertiesToDisplayAction(currentOntologyPropertiesToDisplay));
+          ctx.setState({ ...state, isLoading: false });
+          this._notification.openSnackBar(
+            `You have successfully removed "${property.label}" from "${resourceClass.label}".`
+          );
+        },
+        error: (error: ApiResponseError) => {
+          ctx.patchState({ hasLoadingErrors: true, isLoading: false });
+          this._errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(ReplacePropertyAction)
@@ -398,9 +338,7 @@ export class OntologiesState {
     const state = ctx.getState();
 
     const onto = new UpdateOntology<UpdateResourceClassCardinality>();
-    onto.lastModificationDate = <string>(
-      state.currentOntology?.lastModificationDate
-    );
+    onto.lastModificationDate = <string>state.currentOntology?.lastModificationDate;
     onto.id = <string>state.currentOntology?.id;
     const addCard = new UpdateResourceClassCardinality();
     addCard.id = resourceClass.id;
@@ -417,24 +355,21 @@ export class OntologiesState {
 
     onto.entity = addCard;
 
-    return this._dspApiConnection.v2.onto
-      .replaceGuiOrderOfCardinalities(onto)
-      .pipe(
-        take(1),
-        map(
-          (
-            response: ResourceClassDefinitionWithAllLanguages | ApiResponseError
-          ) => response as ResourceClassDefinitionWithAllLanguages
-        ),
-        tap({
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          next: () => {},
-          error: (error: ApiResponseError) => {
-            ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-            this._errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.v2.onto.replaceGuiOrderOfCardinalities(onto).pipe(
+      take(1),
+      map(
+        (response: ResourceClassDefinitionWithAllLanguages | ApiResponseError) =>
+          response as ResourceClassDefinitionWithAllLanguages
+      ),
+      tap({
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        next: () => {},
+        error: (error: ApiResponseError) => {
+          ctx.patchState({ hasLoadingErrors: true, isLoading: false });
+          this._errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(CurrentOntologyCanBeDeletedAction)
@@ -445,27 +380,25 @@ export class OntologiesState {
       return;
     }
 
-    return this._dspApiConnection.v2.onto
-      .canDeleteOntology(state.currentOntology.id)
-      .pipe(
-        take(1),
-        map((response: CanDoResponse | ApiResponseError) => {
-          return response as CanDoResponse;
-        }),
-        tap({
-          next: (response: CanDoResponse) => {
-            ctx.setState({
-              ...ctx.getState(),
-              isLoading: false,
-              currentOntologyCanBeDeleted: response.canDo,
-            });
-          },
-          error: (error: ApiResponseError) => {
-            ctx.patchState({ hasLoadingErrors: true });
-            this._errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.v2.onto.canDeleteOntology(state.currentOntology.id).pipe(
+      take(1),
+      map((response: CanDoResponse | ApiResponseError) => {
+        return response as CanDoResponse;
+      }),
+      tap({
+        next: (response: CanDoResponse) => {
+          ctx.setState({
+            ...ctx.getState(),
+            isLoading: false,
+            currentOntologyCanBeDeleted: response.canDo,
+          });
+        },
+        error: (error: ApiResponseError) => {
+          ctx.patchState({ hasLoadingErrors: true });
+          this._errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   /**
@@ -487,17 +420,13 @@ export class OntologiesState {
     return 0;
   }
 
-  private initOntoProperties(
-    allOntoProperties: PropertyDefinition[]
-  ): PropertyDefinition[] {
+  private initOntoProperties(allOntoProperties: PropertyDefinition[]): PropertyDefinition[] {
     // reset the ontology properties
     const listOfProperties: PropertyDefinition[] = [];
 
     // display only the properties which are not a subjectType of Standoff
     allOntoProperties.forEach(resProp => {
-      const standoff = resProp.subjectType
-        ? resProp.subjectType.includes('Standoff')
-        : false;
+      const standoff = resProp.subjectType ? resProp.subjectType.includes('Standoff') : false;
       if (resProp.objectType !== Constants.LinkValue && !standoff) {
         listOfProperties.push(resProp);
       }
@@ -505,9 +434,6 @@ export class OntologiesState {
 
     // sort properties by label
     // --> TODO: add sort functionallity to the gui
-    return this._sortingService.keySortByAlphabetical(
-      listOfProperties,
-      'label'
-    );
+    return this._sortingService.keySortByAlphabetical(listOfProperties, 'label');
   }
 }

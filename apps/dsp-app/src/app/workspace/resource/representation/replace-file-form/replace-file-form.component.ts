@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UpdateFileValue } from '@dasch-swiss/dsp-js';
 import { UploadComponent } from '../upload/upload.component';
 
@@ -15,17 +8,10 @@ import { UploadComponent } from '../upload/upload.component';
   styleUrls: ['./replace-file-form.component.scss'],
 })
 export class ReplaceFileFormComponent implements OnInit {
-  @Input() representation:
-    | 'stillImage'
-    | 'movingImage'
-    | 'audio'
-    | 'document'
-    | 'text'
-    | 'archive';
+  @Input() representation: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
   @Input() propId: string;
 
-  @Output() closeDialog: EventEmitter<UpdateFileValue> =
-    new EventEmitter<UpdateFileValue>();
+  @Output() closeDialog: EventEmitter<UpdateFileValue> = new EventEmitter<UpdateFileValue>();
 
   @ViewChild('upload') uploadComponent: UploadComponent;
 
@@ -58,17 +44,12 @@ export class ReplaceFileFormComponent implements OnInit {
 
     if (representationType === undefined) {
       this.warningMessages.push('File will be replaced.');
-      this.warningMessages.push(
-        'Please note that you are about to replace the file'
-      );
+      this.warningMessages.push('Please note that you are about to replace the file');
     }
 
     let repType = representationType;
 
-    if (
-      representationType === 'stillImage' ||
-      representationType === 'movingImage'
-    ) {
+    if (representationType === 'stillImage' || representationType === 'movingImage') {
       switch (representationType) {
         case 'stillImage':
           repType = 'image';
@@ -80,12 +61,9 @@ export class ReplaceFileFormComponent implements OnInit {
       }
     }
 
-    const capitalized =
-      repType[0].toUpperCase() + repType.substring(1).toLowerCase();
+    const capitalized = repType[0].toUpperCase() + repType.substring(1).toLowerCase();
 
     this.warningMessages.push(capitalized + ' will be replaced.');
-    this.warningMessages.push(
-      'Please note that you are about to replace the ' + repType + '.'
-    );
+    this.warningMessages.push('Please note that you are about to replace the ' + repType + '.');
   }
 }

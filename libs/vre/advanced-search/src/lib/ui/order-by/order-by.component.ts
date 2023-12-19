@@ -1,27 +1,10 @@
-import {
-  CdkDragDrop,
-  CdkDrag,
-  CdkDragHandle,
-  CdkDropList,
-  moveItemInArray,
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDrag, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import {
-  MatListModule,
-  MatSelectionList,
-  MatSelectionListChange,
-} from '@angular/material/list';
+import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OrderByItem } from '../../data-access/advanced-search-store/advanced-search-store.service';
 
@@ -53,8 +36,7 @@ export class OrderByComponent {
   sortOrderSelectionList!: MatSelectionList;
 
   isOpen = false;
-  tooltipText =
-    'Search cannot be ordered by a URI property or a property that links to a resource.';
+  tooltipText = 'Search cannot be ordered by a URI property or a property that links to a resource.';
 
   drop(event: CdkDragDrop<string[]>) {
     if (!this.orderByList) return;
@@ -68,9 +50,7 @@ export class OrderByComponent {
     if (!this.orderByList) return;
 
     event.options.forEach(option => {
-      const selectedItem = this.orderByList?.find(
-        item => item.id === option.value
-      );
+      const selectedItem = this.orderByList?.find(item => item.id === option.value);
       if (selectedItem) {
         selectedItem.orderBy = option.selected;
       }

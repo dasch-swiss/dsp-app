@@ -1,28 +1,14 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  DebugElement,
-  Input,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, DebugElement, Input } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatOptionModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import {
-  MatSlideToggleChange,
-  MatSlideToggleModule,
-} from '@angular/material/slide-toggle';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  ReadBooleanValue,
-  MockResource,
-  UpdateBooleanValue,
-  CreateBooleanValue,
-} from '@dasch-swiss/dsp-js';
+import { ReadBooleanValue, MockResource, UpdateBooleanValue, CreateBooleanValue } from '@dasch-swiss/dsp-js';
 import { FormattedBooleanPipe } from '@dsp-app/src/app/main/pipes/formatting/formatted-boolean.pipe';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { BooleanValueComponent } from './boolean-value.component';
@@ -31,10 +17,7 @@ import { BooleanValueComponent } from './boolean-value.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-boolean-value
-    #booleanVal
-    [displayValue]="displayBooleanVal"
-    [mode]="mode"></app-boolean-value>`,
+  template: ` <app-boolean-value #booleanVal [displayValue]="displayBooleanVal" [mode]="mode"></app-boolean-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('booleanVal') booleanValueComponent: BooleanValueComponent;
@@ -128,9 +111,7 @@ describe('BooleanValueComponent', () => {
     });
 
     it('should display an existing value', () => {
-      expect(testHostComponent.booleanValueComponent.displayValue.bool).toEqual(
-        true
-      );
+      expect(testHostComponent.booleanValueComponent.displayValue.bool).toEqual(true);
 
       expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
 
@@ -144,9 +125,7 @@ describe('BooleanValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
 
       const slideToggleElement = valueBooleanDebugElement.componentInstance;
 
@@ -164,8 +143,7 @@ describe('BooleanValueComponent', () => {
 
       expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.booleanValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.booleanValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateBooleanValue).toBeTruthy();
 
@@ -181,9 +159,7 @@ describe('BooleanValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
 
       const slideToggleElement = valueBooleanDebugElement.componentInstance;
 
@@ -196,16 +172,13 @@ describe('BooleanValueComponent', () => {
       expect(slideToggleElement.checked).toBe(true);
 
       // Set a comment value
-      testHostComponent.booleanValueComponent.commentFormControl.setValue(
-        'a comment'
-      );
+      testHostComponent.booleanValueComponent.commentFormControl.setValue('a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.booleanValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.booleanValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateBooleanValue).toBeTruthy();
     });
@@ -215,9 +188,7 @@ describe('BooleanValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
 
       const slideToggleElement = valueBooleanDebugElement.componentInstance;
 
@@ -276,16 +247,12 @@ describe('BooleanValueComponent', () => {
       expect(testHostComponent).toBeTruthy();
       expect(testHostComponent.booleanValueComponent).toBeTruthy();
       // check if it is really required (valueRequiredValidator defaults to true)
-      expect(
-        testHostComponent.booleanValueComponent.valueRequiredValidator
-      ).toBeTruthy();
+      expect(testHostComponent.booleanValueComponent.valueRequiredValidator).toBeTruthy();
 
       const hostCompDe = testHostFixture.debugElement;
 
       valueComponentDe = hostCompDe.query(By.directive(BooleanValueComponent));
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
 
       slideToggleElement = valueBooleanDebugElement.componentInstance;
 
@@ -342,9 +309,7 @@ describe('BooleanValueComponent', () => {
       expect(testHostComponent).toBeTruthy();
       expect(testHostComponent.booleanValueComponent).toBeTruthy();
       // it is not required
-      expect(
-        testHostComponent.booleanValueComponent.valueRequiredValidator
-      ).toEqual(false);
+      expect(testHostComponent.booleanValueComponent.valueRequiredValidator).toEqual(false);
 
       const hostCompDe = testHostFixture.debugElement;
 
@@ -352,9 +317,7 @@ describe('BooleanValueComponent', () => {
       // the component is rendered
       expect(valueComponentDe).toBeTruthy();
       // but there is no toggle at all
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
       expect(valueBooleanDebugElement).toBeFalsy();
 
       expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
@@ -363,13 +326,9 @@ describe('BooleanValueComponent', () => {
     it('should add/set remove/unset boolean value properties', () => {
       // There is no boolean value
       expect(testHostComponent.booleanValueComponent.boolValIsUnset).toBe(true);
-      expect(testHostComponent.booleanValueComponent.displayValue).toEqual(
-        undefined
-      );
+      expect(testHostComponent.booleanValueComponent.displayValue).toEqual(undefined);
       // the add button should be there by default
-      const setValueButton = valueComponentDe.query(
-        By.css('button.value-action.create')
-      );
+      const setValueButton = valueComponentDe.query(By.css('button.value-action.create'));
       expect(setValueButton).toBeTruthy();
       const setValueButtonNativeElement = setValueButton.nativeElement;
 
@@ -378,9 +337,7 @@ describe('BooleanValueComponent', () => {
       testHostFixture.detectChanges();
 
       // is there a toggle
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
       slideToggleElement = valueBooleanDebugElement.componentInstance;
       expect(slideToggleElement).toBeTruthy();
 
@@ -393,15 +350,11 @@ describe('BooleanValueComponent', () => {
       expect(testHostComponent.booleanValueComponent.form.valid).toBeTruthy();
 
       // the add button should disappear
-      const setValueButtonNow = valueComponentDe.query(
-        By.css('button.value-action.create')
-      );
+      const setValueButtonNow = valueComponentDe.query(By.css('button.value-action.create'));
       expect(setValueButtonNow).toBeNull();
 
       // the remove button should appear
-      const cancelButtonDebugElement = valueComponentDe.query(
-        By.css('button.value-action.cancel')
-      );
+      const cancelButtonDebugElement = valueComponentDe.query(By.css('button.value-action.cancel'));
       const cancelButtonNativeElement = cancelButtonDebugElement.nativeElement;
       expect(cancelButtonNativeElement).toBeTruthy();
 
@@ -410,16 +363,12 @@ describe('BooleanValueComponent', () => {
       testHostFixture.detectChanges();
 
       // there no toggle anymore
-      valueBooleanDebugElement = valueComponentDe.query(
-        By.css('mat-slide-toggle')
-      );
+      valueBooleanDebugElement = valueComponentDe.query(By.css('mat-slide-toggle'));
       expect(valueBooleanDebugElement).toBeNull();
 
       // there is no cancel button anymore
       // the remove button should appear
-      const cancelButtonDebugElementNow = valueComponentDe.query(
-        By.css('button.value-action.cancel')
-      );
+      const cancelButtonDebugElementNow = valueComponentDe.query(By.css('button.value-action.cancel'));
       expect(cancelButtonDebugElementNow).toBeNull();
     });
   });

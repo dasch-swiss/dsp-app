@@ -8,16 +8,10 @@
         (selectedResources)="onSelectionChange($event)">
       </app-list-view>
     </as-split-area>
-    <as-split-area
-      [size]="60"
-      *ngIf="selectedResources?.count > 0"
-      cdkScrollable>
+    <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
       <div [ngSwitch]="viewMode">
         <!-- single resource view -->
-        <app-resource
-          *ngSwitchCase="'single'"
-          [resourceIri]="resourceIri"
-          [splitSizeChanged]="splitSize">
+        <app-resource *ngSwitchCase="'single'" [resourceIri]="resourceIri" [splitSizeChanged]="splitSize">
         </app-resource>
 
         <!-- intermediate view -->

@@ -61,13 +61,9 @@ export class ProjectsState {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.admin.projectsEndpoint.getProjects().pipe(
       take(1),
-      map(
-        (
-          projectsResponse: ApiResponseData<ProjectsResponse> | ApiResponseError
-        ) => {
-          return projectsResponse as ApiResponseData<ProjectsResponse>;
-        }
-      ),
+      map((projectsResponse: ApiResponseData<ProjectsResponse> | ApiResponseError) => {
+        return projectsResponse as ApiResponseData<ProjectsResponse>;
+      }),
       tap({
         next: (projectsResponse: ApiResponseData<ProjectsResponse>) => {
           ctx.setState({
@@ -88,65 +84,47 @@ export class ProjectsState {
   }
 
   @Action(LoadProjectAction, { cancelUncompleted: true })
-  loadProjectAction(
-    ctx: StateContext<ProjectsStateModel>,
-    { projectUuid, isCurrentProject }: LoadProjectAction
-  ) {
+  loadProjectAction(ctx: StateContext<ProjectsStateModel>, { projectUuid, isCurrentProject }: LoadProjectAction) {
     ctx.patchState({ isLoading: true });
 
     const projectIri = this.projectService.uuidToIri(projectUuid);
     // get current project data, project members and project groups
     // and set the project state here
-    return this._dspApiConnection.admin.projectsEndpoint
-      .getProjectByIri(projectIri)
-      .pipe(
-        take(1),
-        map(
-          (
-            projectsResponse:
-              | ApiResponseData<ProjectResponse>
-              | ApiResponseError
-          ) => {
-            return projectsResponse as ApiResponseData<ProjectResponse>;
+    return this._dspApiConnection.admin.projectsEndpoint.getProjectByIri(projectIri).pipe(
+      take(1),
+      map((projectsResponse: ApiResponseData<ProjectResponse> | ApiResponseError) => {
+        return projectsResponse as ApiResponseData<ProjectResponse>;
+      }),
+      tap({
+        next: (response: ApiResponseData<ProjectResponse>) => {
+          const project = response.body.project;
+
+          let state = ctx.getState();
+          if (!state.readProjects) {
+            state.readProjects = [];
           }
-        ),
-        tap({
-          next: (response: ApiResponseData<ProjectResponse>) => {
-            const project = response.body.project;
 
-            let state = ctx.getState();
-            if (!state.readProjects) {
-              state.readProjects = [];
-            }
+          state = produce(state, draft => {
+            const index = draft.readProjects.findIndex(p => p.id === project.id);
+            index > -1 ? (draft.readProjects[index] = project) : draft.readProjects.push(project);
+            draft.isLoading = false;
+          });
 
-            state = produce(state, draft => {
-              const index = draft.readProjects.findIndex(
-                p => p.id === project.id
-              );
-              index > -1
-                ? (draft.readProjects[index] = project)
-                : draft.readProjects.push(project);
-              draft.isLoading = false;
-            });
-
-            ctx.patchState(state);
-            return project;
-          },
-          error: (error: ApiResponseError) => {
-            ctx.patchState({ hasLoadingErrors: true });
-            this.errorHandler.showMessage(error);
-          },
-        }),
-        concatMap(() =>
-          ctx.dispatch([
-            new LoadProjectMembersAction(projectUuid),
-            new LoadProjectGroupsAction(projectUuid),
-          ])
-        ),
-        finalize(() => {
-          ctx.patchState({ isLoading: false });
-        })
-      );
+          ctx.patchState(state);
+          return project;
+        },
+        error: (error: ApiResponseError) => {
+          ctx.patchState({ hasLoadingErrors: true });
+          this.errorHandler.showMessage(error);
+        },
+      }),
+      concatMap(() =>
+        ctx.dispatch([new LoadProjectMembersAction(projectUuid), new LoadProjectGroupsAction(projectUuid)])
+      ),
+      finalize(() => {
+        ctx.patchState({ isLoading: false });
+      })
+    );
   }
 
   @Action(ClearProjectsAction)
@@ -161,31 +139,23 @@ export class ProjectsState {
   }
 
   @Action(RemoveUserFromProjectAction)
-  removeUserFromProject(
-    ctx: StateContext<ProjectsStateModel>,
-    { userId, projectIri }: RemoveUserFromProjectAction
-  ) {
+  removeUserFromProject(ctx: StateContext<ProjectsStateModel>, { userId, projectIri }: RemoveUserFromProjectAction) {
     ctx.patchState({ isLoading: true });
-    return this._dspApiConnection.admin.usersEndpoint
-      .removeUserFromProjectMembership(userId, projectIri)
-      .pipe(
-        take(1),
-        map((response: ApiResponseData<UserResponse> | ApiResponseError) => {
-          return response as ApiResponseData<UserResponse>;
-        }),
-        tap({
-          next: (response: ApiResponseData<UserResponse>) => {
-            ctx.dispatch([
-              new SetUserAction(response.body.user),
-              new LoadProjectMembersAction(projectIri),
-            ]);
-            ctx.patchState({ isLoading: false });
-          },
-          error: error => {
-            this.errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(userId, projectIri).pipe(
+      take(1),
+      map((response: ApiResponseData<UserResponse> | ApiResponseError) => {
+        return response as ApiResponseData<UserResponse>;
+      }),
+      tap({
+        next: (response: ApiResponseData<UserResponse>) => {
+          ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
+          ctx.patchState({ isLoading: false });
+        },
+        error: error => {
+          this.errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(AddUserToProjectMembershipAction)
@@ -194,67 +164,53 @@ export class ProjectsState {
     { userId, projectIri }: AddUserToProjectMembershipAction
   ) {
     ctx.patchState({ isLoading: true, hasLoadingErrors: false });
-    return this._dspApiConnection.admin.usersEndpoint
-      .addUserToProjectMembership(userId, projectIri)
-      .pipe(
-        take(1),
-        map((response: ApiResponseData<UserResponse> | ApiResponseError) => {
-          return response as ApiResponseData<UserResponse>;
-        }),
-        tap({
-          next: (response: ApiResponseData<UserResponse>) => {
-            ctx.dispatch([
-              new SetUserAction(response.body.user),
-              new LoadProjectMembersAction(projectIri),
-            ]);
-            ctx.patchState({ isLoading: false });
-          },
-          error: error => {
-            ctx.patchState({ hasLoadingErrors: true });
-            this.errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userId, projectIri).pipe(
+      take(1),
+      map((response: ApiResponseData<UserResponse> | ApiResponseError) => {
+        return response as ApiResponseData<UserResponse>;
+      }),
+      tap({
+        next: (response: ApiResponseData<UserResponse>) => {
+          ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
+          ctx.patchState({ isLoading: false });
+        },
+        error: error => {
+          ctx.patchState({ hasLoadingErrors: true });
+          this.errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(LoadProjectMembersAction)
-  loadProjectMembersAction(
-    ctx: StateContext<ProjectsStateModel>,
-    { projectUuid }: LoadProjectMembersAction
-  ) {
+  loadProjectMembersAction(ctx: StateContext<ProjectsStateModel>, { projectUuid }: LoadProjectMembersAction) {
     if (!this.store.selectSnapshot(UserSelectors.isLoggedIn)) {
       return;
     }
 
     ctx.patchState({ isLoading: true });
     const projectIri = this.projectService.uuidToIri(projectUuid);
-    return this._dspApiConnection.admin.projectsEndpoint
-      .getProjectMembersByIri(projectIri)
-      .pipe(
-        take(1),
-        map(
-          (
-            membersResponse: ApiResponseData<MembersResponse> | ApiResponseError
-          ) => {
-            return membersResponse as ApiResponseData<MembersResponse>;
-          }
-        ),
-        tap({
-          next: (response: ApiResponseData<MembersResponse>) => {
-            ctx.setState({
-              ...ctx.getState(),
-              isLoading: false,
-              projectMembers: {
-                [projectIri]: { value: response.body.members },
-              },
-            });
-          },
-          error: error => {
-            ctx.patchState({ hasLoadingErrors: true });
-            this.errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri).pipe(
+      take(1),
+      map((membersResponse: ApiResponseData<MembersResponse> | ApiResponseError) => {
+        return membersResponse as ApiResponseData<MembersResponse>;
+      }),
+      tap({
+        next: (response: ApiResponseData<MembersResponse>) => {
+          ctx.setState({
+            ...ctx.getState(),
+            isLoading: false,
+            projectMembers: {
+              [projectIri]: { value: response.body.members },
+            },
+          });
+        },
+        error: error => {
+          ctx.patchState({ hasLoadingErrors: true });
+          this.errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(LoadProjectGroupsAction)
@@ -262,13 +218,9 @@ export class ProjectsState {
     ctx.patchState({ isLoading: true });
     return this._dspApiConnection.admin.groupsEndpoint.getGroups().pipe(
       take(1),
-      map(
-        (
-          groupsResponse: ApiResponseData<GroupsResponse> | ApiResponseError
-        ) => {
-          return groupsResponse as ApiResponseData<GroupsResponse>;
-        }
-      ),
+      map((groupsResponse: ApiResponseData<GroupsResponse> | ApiResponseError) => {
+        return groupsResponse as ApiResponseData<GroupsResponse>;
+      }),
       tap({
         next: (response: ApiResponseData<GroupsResponse>) => {
           const groups: IKeyValuePairs<ReadGroup> = {};
@@ -295,40 +247,30 @@ export class ProjectsState {
   }
 
   @Action(UpdateProjectAction)
-  updateProjectAction(
-    ctx: StateContext<ProjectsStateModel>,
-    { projectUuid, projectData }: UpdateProjectAction
-  ) {
+  updateProjectAction(ctx: StateContext<ProjectsStateModel>, { projectUuid, projectData }: UpdateProjectAction) {
     ctx.patchState({ isLoading: true });
-    return this._dspApiConnection.admin.projectsEndpoint
-      .updateProject(projectUuid, projectData)
-      .pipe(
-        take(1),
-        map((response: ApiResponseData<ProjectResponse> | ApiResponseError) => {
-          return response as ApiResponseData<ProjectResponse>;
-        }),
-        tap({
-          next: (response: ApiResponseData<ProjectResponse>) => {
-            ctx.dispatch(new LoadProjectsAction());
-            return response.body.project;
-          },
-          error: error => {
-            this.errorHandler.showMessage(error);
-          },
-        })
-      );
+    return this._dspApiConnection.admin.projectsEndpoint.updateProject(projectUuid, projectData).pipe(
+      take(1),
+      map((response: ApiResponseData<ProjectResponse> | ApiResponseError) => {
+        return response as ApiResponseData<ProjectResponse>;
+      }),
+      tap({
+        next: (response: ApiResponseData<ProjectResponse>) => {
+          ctx.dispatch(new LoadProjectsAction());
+          return response.body.project;
+        },
+        error: error => {
+          this.errorHandler.showMessage(error);
+        },
+      })
+    );
   }
 
   @Action(SetProjectMemberAction)
-  setProjectMember(
-    ctx: StateContext<ProjectsStateModel>,
-    { member }: SetProjectMemberAction
-  ) {
+  setProjectMember(ctx: StateContext<ProjectsStateModel>, { member }: SetProjectMemberAction) {
     const state = ctx.getState();
     Object.keys(state.projectMembers).forEach(projectId => {
-      const index = state.projectMembers[projectId].value.findIndex(
-        u => u.id === member.id
-      );
+      const index = state.projectMembers[projectId].value.findIndex(u => u.id === member.id);
       if (index > -1) {
         state.projectMembers[projectId].value[index] = member;
       }

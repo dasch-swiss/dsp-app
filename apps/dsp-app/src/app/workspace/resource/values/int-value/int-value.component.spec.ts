@@ -7,12 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatLegacyInputHarness as MatInputHarness } from '@angular/material/legacy-input/testing';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  ReadIntValue,
-  MockResource,
-  UpdateIntValue,
-  CreateIntValue,
-} from '@dasch-swiss/dsp-js';
+import { ReadIntValue, MockResource, UpdateIntValue, CreateIntValue } from '@dasch-swiss/dsp-js';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { IntValueComponent } from './int-value.component';
 
@@ -20,10 +15,7 @@ import { IntValueComponent } from './int-value.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-int-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"></app-int-value>`,
+  template: ` <app-int-value #inputVal [displayValue]="displayInputVal" [mode]="mode"></app-int-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: IntValueComponent;
@@ -66,10 +58,7 @@ class TestHostCreateValueComponent implements OnInit {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-int-value
-    #inputVal
-    [mode]="mode"
-    [valueRequiredValidator]="false"></app-int-value>`,
+  template: ` <app-int-value #inputVal [mode]="mode" [valueRequiredValidator]="false"></app-int-value>`,
 })
 class TestHostCreateValueNoValueRequiredComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: IntValueComponent;
@@ -139,9 +128,7 @@ describe('IntValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const inputElement = await loader.getHarness(
-        MatInputHarness.with({ selector: '.value' })
-      );
+      const inputElement = await loader.getHarness(MatInputHarness.with({ selector: '.value' }));
 
       expect(await inputElement.getValue()).toEqual('1');
 
@@ -149,8 +136,7 @@ describe('IntValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateIntValue).toBeTruthy();
 
@@ -162,9 +148,7 @@ describe('IntValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const inputElement = await loader.getHarness(
-        MatInputHarness.with({ selector: '.value' })
-      );
+      const inputElement = await loader.getHarness(MatInputHarness.with({ selector: '.value' }));
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
@@ -174,16 +158,13 @@ describe('IntValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'this is a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateIntValue).toBeTruthy();
     });
@@ -197,9 +178,7 @@ describe('IntValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const valueInputDebugElement = valueComponentDe.query(
-        By.css('input.value')
-      );
+      const valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
       const valueInputNativeElement = valueInputDebugElement.nativeElement;
 
       expect(valueInputNativeElement.value).toEqual('1');
@@ -212,8 +191,7 @@ describe('IntValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -223,9 +201,7 @@ describe('IntValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const inputElement = await loader.getHarness(
-        MatInputHarness.with({ selector: '.value' })
-      );
+      const inputElement = await loader.getHarness(MatInputHarness.with({ selector: '.value' }));
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
 
@@ -274,13 +250,9 @@ describe('IntValueComponent', () => {
       expect(testHostComponent).toBeTruthy();
       expect(testHostComponent.inputValueComponent).toBeTruthy();
 
-      inputElement = await loader.getHarness(
-        MatInputHarness.with({ selector: '.value' })
-      );
+      inputElement = await loader.getHarness(MatInputHarness.with({ selector: '.value' }));
 
-      expect(testHostComponent.inputValueComponent.displayValue).toEqual(
-        undefined
-      );
+      expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
       expect(await inputElement.getValue()).toEqual('');
     });
@@ -319,9 +291,7 @@ describe('IntValueComponent', () => {
     let testHostFixture: ComponentFixture<TestHostCreateValueNoValueRequiredComponent>;
 
     beforeEach(() => {
-      testHostFixture = TestBed.createComponent(
-        TestHostCreateValueNoValueRequiredComponent
-      );
+      testHostFixture = TestBed.createComponent(TestHostCreateValueNoValueRequiredComponent);
       testHostComponent = testHostFixture.componentInstance;
       testHostFixture.detectChanges();
 
@@ -329,9 +299,7 @@ describe('IntValueComponent', () => {
     });
 
     it('should not create an empty value', () => {
-      expect(testHostComponent.inputValueComponent.getNewValue()).toEqual(
-        false
-      );
+      expect(testHostComponent.inputValueComponent.getNewValue()).toEqual(false);
     });
   });
 });

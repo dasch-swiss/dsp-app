@@ -1,34 +1,16 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-  CreateIntervalValue,
-  ReadIntervalValue,
-  UpdateIntervalValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateIntervalValue, ReadIntervalValue, UpdateIntervalValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
-import {
-  Interval,
-  IntervalInputComponent,
-} from './interval-input/interval-input.component';
+import { Interval, IntervalInputComponent } from './interval-input/interval-input.component';
 
 @Component({
   selector: 'app-interval-value',
   templateUrl: './interval-value.component.html',
   styleUrls: ['./interval-value.component.scss'],
 })
-export class IntervalValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class IntervalValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @ViewChild('intervalInput') intervalInputComponent: IntervalInputComponent;
 
   @Input() displayValue?: ReadIntervalValue;
@@ -41,15 +23,8 @@ export class IntervalValueComponent
     super();
   }
 
-  standardValueComparisonFunc(
-    initValue: Interval,
-    curValue: Interval | null
-  ): boolean {
-    return (
-      curValue instanceof Interval &&
-      initValue.start === curValue.start &&
-      initValue.end === curValue.end
-    );
+  standardValueComparisonFunc(initValue: Interval, curValue: Interval | null): boolean {
+    return curValue instanceof Interval && initValue.start === curValue.start && initValue.end === curValue.end;
   }
 
   getInitValue(): Interval | null {
@@ -103,10 +78,7 @@ export class IntervalValueComponent
     updatedIntervalValue.end = this.valueFormControl.value.end;
 
     // add the submitted comment to updatedIntervalValue only if user has added a comment
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedIntervalValue.valueHasComment = this.commentFormControl.value;
     }
 

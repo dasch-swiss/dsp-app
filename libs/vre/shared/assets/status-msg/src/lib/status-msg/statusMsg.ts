@@ -16,23 +16,19 @@ export class HttpStatusMsg {
     },
     103: {
       message: 'Checkpoint',
-      description:
-        'Used in the resumable requests proposal to resume aborted PUT or POST requests',
+      description: 'Used in the resumable requests proposal to resume aborted PUT or POST requests',
     },
     200: {
       message: 'OK',
-      description:
-        'The request is OK (this is the standard response for successful HTTP requests)',
+      description: 'The request is OK (this is the standard response for successful HTTP requests)',
     },
     201: {
       message: 'Created',
-      description:
-        'The request has been fulfilled, and a new resource is created',
+      description: 'The request has been fulfilled, and a new resource is created',
     },
     202: {
       message: 'Accepted',
-      description:
-        'The request has been accepted for processing, but the processing has not been completed',
+      description: 'The request has been accepted for processing, but the processing has not been completed',
     },
     203: {
       message: 'Non-Authoritative Information',
@@ -41,8 +37,7 @@ export class HttpStatusMsg {
     },
     204: {
       message: 'No Content',
-      description:
-        'The request has been successfully processed, but is not returning any content',
+      description: 'The request has been successfully processed, but is not returning any content',
     },
     205: {
       message: 'Reset Content',
@@ -51,13 +46,11 @@ export class HttpStatusMsg {
     },
     206: {
       message: 'Partial Content',
-      description:
-        'The server is delivering only part of the resource due to a range header sent by the client',
+      description: 'The server is delivering only part of the resource due to a range header sent by the client',
     },
     300: {
       message: 'Multiple Choices',
-      description:
-        'A link list. The user can select a link and go to that location. Maximum five addresses',
+      description: 'A link list. The user can select a link and go to that location. Maximum five addresses',
     },
     301: {
       message: 'Moved Permanently',
@@ -73,8 +66,7 @@ export class HttpStatusMsg {
     },
     304: {
       message: 'Not Modified',
-      description:
-        'Indicates the requested page has not been modified since last requested',
+      description: 'Indicates the requested page has not been modified since last requested',
     },
     306: {
       message: 'Switch Proxy',
@@ -86,8 +78,7 @@ export class HttpStatusMsg {
     },
     308: {
       message: 'Resume Incomplete',
-      description:
-        'Used in the resumable requests proposal to resume aborted PUT or POST requests',
+      description: 'Used in the resumable requests proposal to resume aborted PUT or POST requests',
     },
     400: {
       message: 'Bad Request',
@@ -104,8 +95,7 @@ export class HttpStatusMsg {
     },
     403: {
       message: 'Forbidden',
-      description:
-        'The request was a legal request, but the server is refusing to respond to it',
+      description: 'The request was a legal request, but the server is refusing to respond to it',
     },
     404: {
       message: 'Not Found',
@@ -113,13 +103,11 @@ export class HttpStatusMsg {
     },
     405: {
       message: 'Method Not Allowed',
-      description:
-        'A request was made of a page using a request method not supported by that page',
+      description: 'A request was made of a page using a request method not supported by that page',
     },
     406: {
       message: 'Not Acceptable',
-      description:
-        'The server can only generate a response that is not accepted by the client',
+      description: 'The server can only generate a response that is not accepted by the client',
     },
     407: {
       message: 'Proxy Authentication Required',
@@ -131,8 +119,7 @@ export class HttpStatusMsg {
     },
     409: {
       message: 'Conflict',
-      description:
-        'The request could not be completed because of a conflict in the request',
+      description: 'The request could not be completed because of a conflict in the request',
     },
     410: {
       message: 'Gone',
@@ -140,18 +127,15 @@ export class HttpStatusMsg {
     },
     411: {
       message: 'Length Required',
-      description:
-        'The "Content-Length" is not defined. The server will not accept the request without it',
+      description: 'The "Content-Length" is not defined. The server will not accept the request without it',
     },
     412: {
       message: 'Precondition Failed',
-      description:
-        'The precondition given in the request evaluated to false by the server',
+      description: 'The precondition given in the request evaluated to false by the server',
     },
     413: {
       message: 'Request Entity Too Large',
-      description:
-        'The server will not accept the request, because the request entity is too large',
+      description: 'The server will not accept the request, because the request entity is too large',
     },
     414: {
       message: 'Request-URI Too Long',
@@ -160,18 +144,15 @@ export class HttpStatusMsg {
     },
     415: {
       message: 'Unsupported Media Type',
-      description:
-        'The server will not accept the request, because the media type is not supported',
+      description: 'The server will not accept the request, because the media type is not supported',
     },
     416: {
       message: 'Requested Range Not Satisfiable',
-      description:
-        'The client has asked for a portion of the file, but the server cannot supply that portion',
+      description: 'The client has asked for a portion of the file, but the server cannot supply that portion',
     },
     417: {
       message: 'Expectation Failed',
-      description:
-        'The server cannot meet the requirements of the Expect request-header field',
+      description: 'The server cannot meet the requirements of the Expect request-header field',
     },
     418: {
       message: "I'm a teapot",
@@ -185,8 +166,7 @@ export class HttpStatusMsg {
     },
     422: {
       message: 'Unprocessable Entity',
-      description:
-        'The request was well-formed but was unable to be followed due to semantic errors',
+      description: 'The request was well-formed but was unable to be followed due to semantic errors',
     },
     423: {
       message: 'Locked',
@@ -194,8 +174,7 @@ export class HttpStatusMsg {
     },
     424: {
       message: 'Failed Dependency',
-      description:
-        'The request failed due to failure of a previous request (e.g., a PROPPATCH)',
+      description: 'The request failed due to failure of a previous request (e.g., a PROPPATCH)',
     },
     426: {
       message: 'Upgrade Required',
@@ -223,8 +202,7 @@ export class HttpStatusMsg {
     },
     500: {
       message: 'Internal Server Error',
-      description:
-        'An error has occured in a server side script, a no more specific message is suitable',
+      description: 'An error has occured in a server side script, a no more specific message is suitable',
     },
     501: {
       message: 'Not Implemented',
@@ -247,8 +225,7 @@ export class HttpStatusMsg {
     },
     505: {
       message: 'HTTP Version Not Supported',
-      description:
-        'The server does not support the HTTP protocol version used in the request',
+      description: 'The server does not support the HTTP protocol version used in the request',
     },
     511: {
       message: 'Network Authentication Required',
@@ -271,10 +248,8 @@ export class HttpStatusMsg {
         info: "Add the 'html' variable to your code lookup to get the error displayed in a nice html template",
         demoURL: '/statusMsg/?code=404&html',
       },
-      invalidCode:
-        'If an invalid code is given, the site will just show the json list of all codes',
-      credits:
-        'This site was crafted by Unreal Designs and is powered by UDCDN',
+      invalidCode: 'If an invalid code is given, the site will just show the json list of all codes',
+      credits: 'This site was crafted by Unreal Designs and is powered by UDCDN',
     },
     '1xx': {
       message: 'Information',

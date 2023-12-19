@@ -54,9 +54,7 @@ describe('RepresentationService', () => {
 
   it('should return the file info', () => {
     const httpClientSpy = TestBed.inject(HttpClient);
-    (httpClientSpy as jasmine.SpyObj<HttpClient>).get.and.returnValue(
-      of(knoraJson)
-    );
+    (httpClientSpy as jasmine.SpyObj<HttpClient>).get.and.returnValue(of(knoraJson));
 
     service
       .getFileInfo('http://0.0.0.0:1024/1111/7vpVORXYoFV-FkzJ5Fg4bkU.mp3/file')

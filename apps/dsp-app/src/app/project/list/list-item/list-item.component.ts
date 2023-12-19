@@ -7,11 +7,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  ListNode,
-  ListResponse,
-  RepositionChildNodeRequest,
-} from '@dasch-swiss/dsp-js';
+import { ListNode, ListResponse, RepositionChildNodeRequest } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { take } from 'rxjs/operators';
 import { ListNodeOperation } from '../list-item-form/list-item-form.component';
@@ -37,9 +33,7 @@ export class ListItemComponent implements OnInit {
 
   @Input() language?: string;
 
-  @Output() refreshChildren: EventEmitter<ListNode[]> = new EventEmitter<
-    ListNode[]
-  >();
+  @Output() refreshChildren: EventEmitter<ListNode[]> = new EventEmitter<ListNode[]>();
 
   // permissions of logged-in user
   @Input() isAdmin = false;
@@ -101,9 +95,7 @@ export class ListItemComponent implements OnInit {
         case 'create': {
           if (firstNode) {
             // in case of new child node, we have to use the children from list
-            const index: number = this.list.findIndex(
-              item => item.id === this.expandedNode
-            );
+            const index: number = this.list.findIndex(item => item.id === this.expandedNode);
             this.list[index].children.push(data.listNode);
           } else {
             this.list.push(data.listNode);
@@ -141,20 +133,17 @@ export class ListItemComponent implements OnInit {
           break;
         }
         case 'reposition': {
-          const repositionRequest: RepositionChildNodeRequest =
-            new RepositionChildNodeRequest();
+          const repositionRequest: RepositionChildNodeRequest = new RepositionChildNodeRequest();
           repositionRequest.parentNodeIri = this.parentIri;
           repositionRequest.position = data.listNode.position;
 
           // since we don't have any way to know the parent IRI from the ListItemForm component, we need to do the API call here
           // --> TODO now we have the parent IRI within the ListItemForm component so we can move this logic there
-          this._listApiService
-            .repositionChildNode(data.listNode.id, repositionRequest)
-            .subscribe(response => {
-              this.list = response.node.children;
-              this.refreshChildren.emit(this.list);
-              this._cd.markForCheck();
-            });
+          this._listApiService.repositionChildNode(data.listNode.id, repositionRequest).subscribe(response => {
+            this.list = response.node.children;
+            this.refreshChildren.emit(this.list);
+            this._cd.markForCheck();
+          });
           break;
         }
         default: {

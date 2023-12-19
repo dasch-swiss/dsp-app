@@ -5,11 +5,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -85,29 +81,16 @@ describe('ListComponent', () => {
   beforeEach(waitForAsync(() => {
     const dspConnSpyObj = {
       admin: {
-        listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-          'getListsInProject',
-          'deleteListNode',
-        ]),
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByIri',
-        ]),
+        listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListsInProject', 'deleteListNode']),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri']),
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
-    const routerSpy = jasmine.createSpyObj('Router', [
-      'navigate',
-      'navigateByUrl',
-    ]);
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -201,31 +184,25 @@ describe('ListComponent', () => {
       // mock session service
       const sessionSpy = TestBed.inject(SessionService);
 
-      (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-        () => {
-          const session: Session = {
-            id: 12345,
-            user: {
-              name: 'username',
-              jwt: 'myToken',
-              lang: 'en',
-              sysAdmin: true,
-              projectAdmin: [],
-            },
-          };
+      (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+        const session: Session = {
+          id: 12345,
+          user: {
+            name: 'username',
+            jwt: 'myToken',
+            lang: 'en',
+            sysAdmin: true,
+            projectAdmin: [],
+          },
+        };
 
-          return session;
-        }
-      );
+        return session;
+      });
 
       // mock application state service
-      const applicationStateServiceSpy = TestBed.inject(
-        ApplicationStateService
-      );
+      const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-      (
-        applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-      ).get.and.callFake(() => {
+      (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
         const response: ProjectResponse = new ProjectResponse();
 
         const mockProjects = MockProjects.mockProjects();
@@ -244,9 +221,7 @@ describe('ListComponent', () => {
       // mock lists endpoint
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-      ).getListsInProject.and.callFake(() => {
+      (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListsInProject.and.callFake(() => {
         const response = new ListsResponse();
 
         response.lists = new Array<ListNodeInfo>();
@@ -275,10 +250,7 @@ describe('ListComponent', () => {
       });
 
       // mock projects endpoint
-      (
-        dspConnSpy.admin
-          .projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-      ).getProjectByIri.and.callFake(() => {
+      (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(() => {
         const response = new ProjectResponse();
 
         const mockProjects = MockProjects.mockProjects();
@@ -297,8 +269,7 @@ describe('ListComponent', () => {
       testHostFixture.detectChanges();
 
       overlayContainer = TestBed.inject(OverlayContainer);
-      rootLoader =
-        TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
+      rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
 
       expect(testHostComponent.listComponent.session).toBeTruthy();
       expect(testHostComponent).toBeTruthy();

@@ -1,21 +1,12 @@
 import { Component, OnInit, ViewChild, DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormGroup,
-  UntypedFormBuilder,
-  ReactiveFormsModule,
-  UntypedFormControl,
-} from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  GregorianCalendarDate,
-  CalendarPeriod,
-  CalendarDate,
-} from '@dasch-swiss/jdnconvertiblecalendar';
+import { GregorianCalendarDate, CalendarPeriod, CalendarDate } from '@dasch-swiss/jdnconvertiblecalendar';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { JDNDatepickerDirective } from '../../jdn-datepicker-directive/jdndatepicker.directive';
 import { TimeInputComponent, DateTime } from './time-input.component';
@@ -50,10 +41,7 @@ class TestHostComponent implements OnInit {
 @Component({
   template: ` <div [formGroup]="form">
     <mat-form-field>
-      <app-time-input
-        #timeInput
-        [formControlName]="'time'"
-        [valueRequiredValidator]="false"></app-time-input>
+      <app-time-input #timeInput [formControlName]="'time'" [valueRequiredValidator]="false"></app-time-input>
     </mat-form-field>
   </div>`,
 })
@@ -91,11 +79,7 @@ describe('TimeInputComponent', () => {
         MatJDNConvertibleCalendarDateAdapterModule,
         BrowserAnimationsModule,
       ],
-      declarations: [
-        TimeInputComponent,
-        TestHostComponent,
-        JDNDatepickerDirective,
-      ],
+      declarations: [TimeInputComponent, TestHostComponent, JDNDatepickerDirective],
     }).compileComponents();
   }));
 
@@ -108,18 +92,12 @@ describe('TimeInputComponent', () => {
     expect(testHostComponent.timeInputComponent).toBeTruthy();
 
     const hostCompDe = testHostFixture.debugElement;
-    datetimeInputComponentDe = hostCompDe.query(
-      By.directive(TimeInputComponent)
-    );
+    datetimeInputComponentDe = hostCompDe.query(By.directive(TimeInputComponent));
 
-    dateInputDebugElement = datetimeInputComponentDe.query(
-      By.css('input.date')
-    );
+    dateInputDebugElement = datetimeInputComponentDe.query(By.css('input.date'));
     dateInputNativeElement = dateInputDebugElement.nativeElement;
 
-    timeInputDebugElement = datetimeInputComponentDe.query(
-      By.css('input.time')
-    );
+    timeInputDebugElement = datetimeInputComponentDe.query(By.css('input.time'));
     timeInputNativeElement = timeInputDebugElement.nativeElement;
   });
 
@@ -137,9 +115,7 @@ describe('TimeInputComponent', () => {
     testHostFixture.detectChanges();
 
     expect(testHostComponent.form.controls.time).toBeTruthy();
-    expect(testHostComponent.form.controls.time.value).toEqual(
-      '1993-10-10T11:00:00Z'
-    );
+    expect(testHostComponent.form.controls.time.value).toEqual('1993-10-10T11:00:00Z');
 
     timeInputNativeElement.value = '17:00';
 
@@ -148,20 +124,15 @@ describe('TimeInputComponent', () => {
     testHostFixture.detectChanges();
 
     expect(testHostComponent.form.controls.time).toBeTruthy();
-    expect(testHostComponent.form.controls.time.value).toEqual(
-      '1993-10-10T16:00:00Z'
-    );
+    expect(testHostComponent.form.controls.time.value).toEqual('1993-10-10T16:00:00Z');
   });
 
   it('should return a timestamp from userInputToTimestamp()', () => {
     const calendarDate = new CalendarDate(1993, 10, 10);
-    const gcd = new GregorianCalendarDate(
-      new CalendarPeriod(calendarDate, calendarDate)
-    );
+    const gcd = new GregorianCalendarDate(new CalendarPeriod(calendarDate, calendarDate));
     const userInput = new DateTime(gcd, '12:00');
 
-    const timestamp =
-      testHostComponent.timeInputComponent.userInputToTimestamp(userInput);
+    const timestamp = testHostComponent.timeInputComponent.userInputToTimestamp(userInput);
 
     expect(timestamp).toEqual('1993-10-10T11:00:00Z');
   });
@@ -169,10 +140,7 @@ describe('TimeInputComponent', () => {
   it('should return a DateTime from convertTimestampToDateTime()', () => {
     const timestamp = '1993-10-10T11:00:00Z';
 
-    const dateTime =
-      testHostComponent.timeInputComponent.convertTimestampToDateTime(
-        timestamp
-      );
+    const dateTime = testHostComponent.timeInputComponent.convertTimestampToDateTime(timestamp);
 
     expect(dateTime.date.toCalendarPeriod().periodStart.year).toEqual(1993);
     expect(dateTime.date.toCalendarPeriod().periodStart.month).toEqual(10);
@@ -182,9 +150,7 @@ describe('TimeInputComponent', () => {
   });
 
   it("should mark the form's validity correctly", () => {
-    expect(testHostComponent.timeInputComponent.valueRequiredValidator).toBe(
-      true
-    );
+    expect(testHostComponent.timeInputComponent.valueRequiredValidator).toBe(true);
     expect(testHostComponent.timeInputComponent.form.valid).toBe(true);
 
     testHostComponent.timeInputComponent.timeFormControl.setValue(null);
@@ -215,11 +181,7 @@ describe('TimeInputComponent no value required', () => {
         MatJDNConvertibleCalendarDateAdapterModule,
         BrowserAnimationsModule,
       ],
-      declarations: [
-        TimeInputComponent,
-        NoValueRequiredTestHostComponent,
-        JDNDatepickerDirective,
-      ],
+      declarations: [TimeInputComponent, NoValueRequiredTestHostComponent, JDNDatepickerDirective],
     }).compileComponents();
   }));
 
@@ -232,17 +194,13 @@ describe('TimeInputComponent no value required', () => {
   });
 
   it('should receive the propagated valueRequiredValidator from the parent component', () => {
-    expect(testHostComponent.timeInputComponent.valueRequiredValidator).toBe(
-      false
-    );
+    expect(testHostComponent.timeInputComponent.valueRequiredValidator).toBe(false);
   });
 
   it("should mark the form's validity correctly", () => {
     expect(testHostComponent.timeInputComponent.form.valid).toBe(true);
 
-    testHostComponent.timeInputComponent.timeFormControl.setValue(
-      '2019-08-06T12:00:00Z'
-    );
+    testHostComponent.timeInputComponent.timeFormControl.setValue('2019-08-06T12:00:00Z');
 
     testHostComponent.timeInputComponent._handleInput();
 

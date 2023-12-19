@@ -11,8 +11,7 @@ export class CustomRegex {
 
   public static readonly COLOR_REGEX = /^#(?:[0-9a-fA-F]{6})$/;
 
-  public static readonly TIME_REGEX =
-    /^([0-1]{1}[0-9]{1}|[2]{1}[0-4]{1}):{1}[0-5]{1}[0-9]{1}$/;
+  public static readonly TIME_REGEX = /^([0-1]{1}[0-9]{1}|[2]{1}[0-4]{1}):{1}[0-5]{1}[0-9]{1}$/;
 
   public static readonly GEONAME_REGEX = /^[0-9]{7}$/;
 
@@ -25,10 +24,8 @@ export class CustomRegex {
 
   public static readonly SHORTNAME_REGEX = /^[a-zA-Z]+\S*$/;
 
-  public static readonly ONTOLOGYNAME_REGEX =
-    /^(?![vV][0-9]|[0-9]|[\u00C0-\u017F]).[a-zA-Z0-9]+\S*$/;
+  public static readonly ONTOLOGYNAME_REGEX = /^(?![vV][0-9]|[0-9]|[\u00C0-\u017F]).[a-zA-Z0-9]+\S*$/;
 
   // regex to check ontology name: shouldn't start with a number or with 'v' followed by a number, spaces or special characters are not allowed
-  public static readonly ID_NAME_REGEX =
-    /^(?![vV]+[0-9])+^([a-zA-Z])[a-zA-Z0-9_.-]*$/;
+  public static readonly ID_NAME_REGEX = /^(?![vV]+[0-9])+^([a-zA-Z])[a-zA-Z0-9_.-]*$/;
 }

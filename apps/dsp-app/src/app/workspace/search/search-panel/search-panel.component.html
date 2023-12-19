@@ -6,25 +6,15 @@
   </app-fulltext-search>
 
   <!-- Do not display advanced and expert search on mobile devices smaller than tablet -->
-  <div
-    class="advanced-expert-buttons"
-    [class.with-project-filter]="projectfilter">
-    <button
-      mat-flat-button
-      class="hint"
-      [class.active]="showHint"
-      (click)="openPanelWithBackdrop('hint')">
+  <div class="advanced-expert-buttons" [class.with-project-filter]="projectfilter">
+    <button mat-flat-button class="hint" [class.active]="showHint" (click)="openPanelWithBackdrop('hint')">
       <mat-icon matPrefix>lightbulb</mat-icon>
       <span class="desktop-only">How to search</span>
     </button>
     <span class="fill-remaining-space"></span>
 
     <!-- expert search button: if expert === true -->
-    <button
-      mat-flat-button
-      *ngIf="expert"
-      [class.active]="showExpert"
-      (click)="openPanelWithBackdrop('expert')">
+    <button mat-flat-button *ngIf="expert" [class.active]="showExpert" (click)="openPanelWithBackdrop('expert')">
       <mat-icon matPrefix>school</mat-icon>
       <span class="desktop-only">expert</span>
     </button>
@@ -33,9 +23,7 @@
 
 <!-- full-text search menu -->
 <ng-template #searchMenu>
-  <div
-    class="app-search-menu with-advanced-search"
-    [class.with-project-filter]="projectfilter">
+  <div class="app-search-menu with-advanced-search" [class.with-project-filter]="projectfilter">
     <div class="app-menu-header">
       <span class="app-menu-title">
         <h4 [ngSwitch]="true">
@@ -52,9 +40,7 @@
       </span>
     </div>
     <div class="app-menu-content" [ngSwitch]="true">
-      <app-expert-search
-        *ngSwitchCase="showExpert"
-        (search)="emitSearch($event)"></app-expert-search>
+      <app-expert-search *ngSwitchCase="showExpert" (search)="emitSearch($event)"></app-expert-search>
       <app-hint *ngSwitchCase="showHint" [topic]="'search'"></app-hint>
     </div>
   </div>

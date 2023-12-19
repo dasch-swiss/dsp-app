@@ -1,9 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  DspInstrumentationConfig,
-  DspInstrumentationToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspInstrumentationConfig, DspInstrumentationToken } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 
 @Injectable({
@@ -15,15 +12,13 @@ export class PendoAnalyticsService {
   private environment: string = this.config.environment;
 
   constructor() {
-    this.authService.isLoggedIn$
-      .pipe(takeUntilDestroyed())
-      .subscribe((isLoggedIn: boolean) => {
-        if (isLoggedIn) {
-          this.setActiveUser(this.authService.tokenUser);
-        } else {
-          this.removeActiveUser();
-        }
-      });
+    this.authService.isLoggedIn$.pipe(takeUntilDestroyed()).subscribe((isLoggedIn: boolean) => {
+      if (isLoggedIn) {
+        this.setActiveUser(this.authService.tokenUser);
+      } else {
+        this.removeActiveUser();
+      }
+    });
   }
 
   /**

@@ -13,9 +13,7 @@ export class GravsearchSearchParams {
    * as a parameter and returns a Gravsearch query string.
    * Returns false if not set correctly (init state).
    */
-  constructor(
-    public generateGravsearch: (offset: number) => string | boolean
-  ) {}
+  constructor(public generateGravsearch: (offset: number) => string | boolean) {}
 }
 
 @Injectable({
@@ -27,9 +25,7 @@ export class SearchParamsService {
   constructor() {
     // init with a dummy function that returns false
     // if the application is reloaded, this will be returned
-    this._currentSearchParams = new BehaviorSubject<GravsearchSearchParams>(
-      new GravsearchSearchParams(() => false)
-    );
+    this._currentSearchParams = new BehaviorSubject<GravsearchSearchParams>(new GravsearchSearchParams(() => false));
   }
 
   /**

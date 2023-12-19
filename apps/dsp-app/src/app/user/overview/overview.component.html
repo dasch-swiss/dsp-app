@@ -1,32 +1,21 @@
 <div class="content extra-large middle">
-  <dasch-swiss-app-progress-indicator
-    *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+  <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
   <div class="overview">
     <!-- user is a system admin -->
-    <div
-      *ngIf="(isSysAdmin$ | async) && (isProjectsLoading$ | async) === false">
+    <div *ngIf="(isSysAdmin$ | async) && (isProjectsLoading$ | async) === false">
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
           <p>Browse Research Projects</p>
         </div>
         <div class="create-project-button">
-          <button
-            mat-flat-button
-            [color]="'primary'"
-            (click)="createNewProject()">
-            Create New Project
-          </button>
+          <button mat-flat-button [color]="'primary'" (click)="createNewProject()">Create New Project</button>
         </div>
       </div>
       <div class="project-tiles">
-        <div
-          *ngFor="let proj of allProjects$ | async; trackBy: trackByFn"
-          class="project-tile-container">
-          <app-project-tile
-            [project]="proj"
-            [sysAdmin]="true"></app-project-tile>
+        <div *ngFor="let proj of allProjects$ | async; trackBy: trackByFn" class="project-tile-container">
+          <app-project-tile [project]="proj" [sysAdmin]="true"></app-project-tile>
         </div>
       </div>
     </div>
@@ -38,12 +27,8 @@
         </div>
       </div>
       <div class="project-tiles">
-        <div
-          *ngFor="let userProj of userActiveProjects$ | async; trackBy: trackByFn"
-          class="project-tile-container">
-          <app-project-tile
-            [project]="userProj"
-            [sysAdmin]="false"></app-project-tile>
+        <div *ngFor="let userProj of userActiveProjects$ | async; trackBy: trackByFn" class="project-tile-container">
+          <app-project-tile [project]="userProj" [sysAdmin]="false"></app-project-tile>
         </div>
       </div>
       <div class="title-bar other-projects">
@@ -55,16 +40,13 @@
         <div
           *ngFor="let otherProj of userOtherActiveProjects$ | async; trackBy: trackByFn"
           class="project-tile-container">
-          <app-project-tile
-            [project]="otherProj"
-            [sysAdmin]="false"></app-project-tile>
+          <app-project-tile [project]="otherProj" [sysAdmin]="false"></app-project-tile>
         </div>
       </div>
     </div>
 
     <!-- user is not logged in -->
-    <div
-      *ngIf="((isProjectsLoading$ | async) === false) && user$ | async | isFalsy">
+    <div *ngIf="((isProjectsLoading$ | async) === false) && user$ | async | isFalsy">
       <!-- list all projects -->
       <div class="title-bar admin">
         <div class="title">
@@ -72,12 +54,8 @@
         </div>
       </div>
       <div class="project-tiles">
-        <div
-          *ngFor="let proj of allActiveProjects$ | async; trackBy: trackByFn"
-          class="project-tile-container">
-          <app-project-tile
-            [project]="proj"
-            [sysAdmin]="false"></app-project-tile>
+        <div *ngFor="let proj of allActiveProjects$ | async; trackBy: trackByFn" class="project-tile-container">
+          <app-project-tile [project]="proj" [sysAdmin]="false"></app-project-tile>
         </div>
       </div>
     </div>

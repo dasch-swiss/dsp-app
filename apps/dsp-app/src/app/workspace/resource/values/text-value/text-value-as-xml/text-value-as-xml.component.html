@@ -9,17 +9,12 @@
   <ng-template #sourceMode>
     <span class="rm-value">{{ displayValue?.xml }}</span>
   </ng-template>
-  <span class="rm-comment" *ngIf="shouldShowComment"
-    >{{ commentFormControl.value }}</span
-  >
+  <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
 </span>
 <ng-template #showForm>
   <div *ngIf="editor; else noConfig" [formGroup]="form">
     <span [formGroup]="form">
-      <ckeditor
-        [formControlName]="'value'"
-        [config]="editorConfig"
-        [editor]="editor"></ckeditor>
+      <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor"></ckeditor>
       <app-comment-form
         *ngIf="
                     !commentDisabled && valueFormControl && commentFormControl

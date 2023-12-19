@@ -1,11 +1,5 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
-import {
-  waitForAsync,
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -101,8 +95,7 @@ class TestHostCreateValueComponent implements OnInit {
 
   ngOnInit() {
     MockResource.getTestThing().subscribe(res => {
-      this.propIri =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue';
+      this.propIri = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue';
       this.currentOntoIri = 'http://0.0.0.0:3333/ontology/0001/anything/v2';
       this.parentResource = res;
       this.mode = 'create';
@@ -131,8 +124,7 @@ class TestHostCreateValueNoValueRequiredComponent implements OnInit {
 
   ngOnInit() {
     MockResource.getTestThing().subscribe(res => {
-      this.propIri =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue';
+      this.propIri = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasOtherThingValue';
       this.currentOntoIri = 'http://0.0.0.0:3333/ontology/0001/anything/v2';
       this.parentResource = res;
       this.mode = 'create';
@@ -144,10 +136,7 @@ describe('LinkValueComponent', () => {
   beforeEach(waitForAsync(() => {
     const valuesSpyObj = {
       v2: {
-        ontologyCache: jasmine.createSpyObj('ontologyCache', [
-          'getOntology',
-          'getResourceClassDefinition',
-        ]),
+        ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition']),
         search: jasmine.createSpyObj('search', ['doSearchByLabel']),
       },
     };
@@ -188,35 +177,20 @@ describe('LinkValueComponent', () => {
     beforeEach(() => {
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-      ).getOntology.and.callFake(() => {
-        const anythingOnto = MockOntology.mockReadOntology(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-        const knoraApiOnto = MockOntology.mockReadOntology(
-          'http://api.knora.org/ontology/knora-api/v2'
-        );
+      (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getOntology.and.callFake(() => {
+        const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+        const knoraApiOnto = MockOntology.mockReadOntology('http://api.knora.org/ontology/knora-api/v2');
 
         const ontoMap: Map<string, ReadOntology> = new Map();
 
         ontoMap.set('http://api.knora.org/ontology/knora-api/v2', knoraApiOnto);
-        ontoMap.set(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2',
-          anythingOnto
-        );
+        ontoMap.set('http://0.0.0.0:3333/ontology/0001/anything/v2', anythingOnto);
 
         return of(ontoMap);
       });
 
-      (
-        dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-      ).getResourceClassDefinition.and.callFake(() =>
-        of(
-          MockOntology.mockIResourceClassAndPropertyDefinitions(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-          )
-        )
+      (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(() =>
+        of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
       );
 
       testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
@@ -234,24 +208,17 @@ describe('LinkValueComponent', () => {
     });
 
     it('should display an existing value', fakeAsync(() => {
-      expect(
-        testHostComponent.inputValueComponent.displayValue.linkedResourceIri
-      ).toEqual('http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ');
-      expect(
-        testHostComponent.inputValueComponent.displayValue.linkedResource.label
-      ).toEqual('Sierra');
+      expect(testHostComponent.inputValueComponent.displayValue.linkedResourceIri).toEqual(
+        'http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ'
+      );
+      expect(testHostComponent.inputValueComponent.displayValue.linkedResource.label).toEqual('Sierra');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('read');
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value instanceof
-          ReadResource
-      ).toBe(true);
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value.label
-      ).toEqual('Sierra');
+      expect(testHostComponent.inputValueComponent.valueFormControl.value instanceof ReadResource).toBe(true);
+      expect(testHostComponent.inputValueComponent.valueFormControl.value.label).toEqual('Sierra');
 
       // setValue has to be called, otherwise the native input field does not get the label via the displayWith function
       const res = testHostComponent.inputValueComponent.valueFormControl.value;
@@ -291,63 +258,37 @@ describe('LinkValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateLinkValue).toBeTruthy();
 
-      expect((updatedValue as UpdateLinkValue).linkedResourceIri).toEqual(
-        'newId'
-      );
+      expect((updatedValue as UpdateLinkValue).linkedResourceIri).toEqual('newId');
     }));
 
     it('should compare the existing version of a link to the user input', () => {
       // sierra, http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ
-      const initValue: ReadResource =
-        testHostComponent.inputValueComponent.getInitValue();
+      const initValue: ReadResource = testHostComponent.inputValueComponent.getInitValue();
 
       const readRes1 = new ReadResource();
       readRes1.id = 'http://rdfh.ch/0001/0C-0L1kORryKzJAJxxRyRQ';
       readRes1.label = 'Sierra';
 
-      expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          readRes1
-        )
-      ).toBeTruthy();
+      expect(testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, readRes1)).toBeTruthy();
 
       const readRes2 = new ReadResource();
       readRes2.id = 'newId';
       readRes2.label = 'new target';
 
-      expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          readRes2
-        )
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, readRes2)).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          null
-        )
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, null)).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.standardValueComparisonFunc(
-          initValue,
-          'searchlabel'
-        )
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.standardValueComparisonFunc(initValue, 'searchlabel')).toBeFalsy();
     });
 
     it('should search for resources by their label', fakeAsync(() => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
-      (
-        valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-      ).doSearchByLabel.and.callFake(() => {
+      (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(() => {
         const res = new ReadResource();
         res.id = 'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ';
         res.label = 'hidden thing';
@@ -361,14 +302,9 @@ describe('LinkValueComponent', () => {
       tick(DEBOUNCING_VALUE);
       testHostFixture.detectChanges();
 
-      expect(valuesSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith(
-        'thing',
-        0,
-        {
-          limitToResourceClass:
-            'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing',
-        }
-      );
+      expect(valuesSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith('thing', 0, {
+        limitToResourceClass: 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing',
+      });
       expect(testHostComponent.inputValueComponent.resources.length).toEqual(1);
       expect(testHostComponent.inputValueComponent.resources[0].id).toEqual(
         'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ'
@@ -378,9 +314,7 @@ describe('LinkValueComponent', () => {
     it('should not return an invalid update value (string)', () => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-      ).doSearchByLabel.and.callFake(() => {
+      (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(() => {
         const res = new ReadResource();
         res.id = 'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ';
         res.label = 'hidden thing';
@@ -395,14 +329,11 @@ describe('LinkValueComponent', () => {
       expect(testHostComponent.inputValueComponent.mode).toEqual('update');
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      testHostComponent.inputValueComponent.valueFormControl.setValue(
-        'my string'
-      );
+      testHostComponent.inputValueComponent.valueFormControl.setValue('my string');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -410,9 +341,7 @@ describe('LinkValueComponent', () => {
     it('should not return an invalid update value (no value)', () => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-      ).doSearchByLabel.and.callFake(() => {
+      (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(() => {
         const res = new ReadResource();
         res.id = 'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ';
         res.label = 'hidden thing';
@@ -431,8 +360,7 @@ describe('LinkValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -447,15 +375,12 @@ describe('LinkValueComponent', () => {
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy(); // because no value nor the comment changed
 
       // set a comment value
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy(); // now the form must be valid, hence the comment changed
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
       expect(updatedValue instanceof UpdateLinkValue).toBeTruthy();
     });
 
@@ -505,9 +430,7 @@ describe('LinkValueComponent', () => {
       tick(DEBOUNCING_VALUE);
       testHostFixture.detectChanges();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value.label
-      ).toEqual('Sierra');
+      expect(testHostComponent.inputValueComponent.valueFormControl.value.label).toEqual('Sierra');
 
       const linkedRes = new ReadResource();
       linkedRes.id = 'newId';
@@ -532,9 +455,7 @@ describe('LinkValueComponent', () => {
 
       valueReadModeNativeElement.click();
 
-      expect(testHostComponent.linkValueClicked).toEqual(
-        testHostComponent.displayInputVal
-      );
+      expect(testHostComponent.linkValueClicked).toEqual(testHostComponent.displayInputVal);
     });
 
     it('should emit the displayValue when the value is hovered', () => {
@@ -548,9 +469,7 @@ describe('LinkValueComponent', () => {
         })
       );
 
-      expect(testHostComponent.linkValueHovered).toEqual(
-        testHostComponent.displayInputVal
-      );
+      expect(testHostComponent.linkValueHovered).toEqual(testHostComponent.displayInputVal);
     });
   });
 
@@ -566,35 +485,20 @@ describe('LinkValueComponent', () => {
     beforeEach(() => {
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-      ).getOntology.and.callFake(() => {
-        const anythingOnto = MockOntology.mockReadOntology(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-        const knoraApiOnto = MockOntology.mockReadOntology(
-          'http://api.knora.org/ontology/knora-api/v2'
-        );
+      (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getOntology.and.callFake(() => {
+        const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+        const knoraApiOnto = MockOntology.mockReadOntology('http://api.knora.org/ontology/knora-api/v2');
 
         const ontoMap: Map<string, ReadOntology> = new Map();
 
         ontoMap.set('http://api.knora.org/ontology/knora-api/v2', knoraApiOnto);
-        ontoMap.set(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2',
-          anythingOnto
-        );
+        ontoMap.set('http://0.0.0.0:3333/ontology/0001/anything/v2', anythingOnto);
 
         return of(ontoMap);
       });
 
-      (
-        dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-      ).getResourceClassDefinition.and.callFake(() =>
-        of(
-          MockOntology.mockIResourceClassAndPropertyDefinitions(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-          )
-        )
+      (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(() =>
+        of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
       );
 
       testHostFixture = TestBed.createComponent(TestHostCreateValueComponent);
@@ -615,9 +519,7 @@ describe('LinkValueComponent', () => {
     it('should search a new value', fakeAsync(() => {
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-      ).doSearchByLabel.and.callFake(() => {
+      (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(() => {
         const res = new ReadResource();
         res.id = 'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ';
         res.label = 'hidden thing';
@@ -630,14 +532,9 @@ describe('LinkValueComponent', () => {
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('create');
-      expect(valuesSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith(
-        'thing',
-        0,
-        {
-          limitToResourceClass:
-            'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing',
-        }
-      );
+      expect(valuesSpy.v2.search.doSearchByLabel).toHaveBeenCalledWith('thing', 0, {
+        limitToResourceClass: 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing',
+      });
       expect(testHostComponent.inputValueComponent.resources.length).toEqual(1);
     }));
 
@@ -653,25 +550,18 @@ describe('LinkValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value instanceof
-          ReadResource
-      ).toBeTruthy();
+      expect(testHostComponent.inputValueComponent.valueFormControl.value instanceof ReadResource).toBeTruthy();
 
       const newValue = testHostComponent.inputValueComponent.getNewValue();
       expect(newValue instanceof CreateLinkValue).toBeTruthy();
-      expect((newValue as CreateLinkValue).linkedResourceIri).toEqual(
-        'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ'
-      );
+      expect((newValue as CreateLinkValue).linkedResourceIri).toEqual('http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ');
     });
 
     it('should only create a new value if input is a resource', () => {
       // simulate user input
       const valuesSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-      ).doSearchByLabel.and.callFake(() => {
+      (valuesSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doSearchByLabel.and.callFake(() => {
         const res = new ReadResource();
         res.id = 'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ';
         res.label = 'hidden thing';
@@ -682,10 +572,7 @@ describe('LinkValueComponent', () => {
       const label = 'thing';
       testHostComponent.inputValueComponent.valueFormControl.setValue(label);
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value instanceof
-          ReadResource
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.valueFormControl.value instanceof ReadResource).toBeFalsy();
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
       const newValue = testHostComponent.inputValueComponent.getNewValue();
@@ -719,9 +606,7 @@ describe('LinkValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.valueFormControl.value).toEqual(null);
 
       expect(valueInputNativeElement.value).toEqual('');
     }));
@@ -734,40 +619,23 @@ describe('LinkValueComponent', () => {
     beforeEach(() => {
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-      ).getOntology.and.callFake(() => {
-        const anythingOnto = MockOntology.mockReadOntology(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-        const knoraApiOnto = MockOntology.mockReadOntology(
-          'http://api.knora.org/ontology/knora-api/v2'
-        );
+      (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getOntology.and.callFake(() => {
+        const anythingOnto = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+        const knoraApiOnto = MockOntology.mockReadOntology('http://api.knora.org/ontology/knora-api/v2');
 
         const ontoMap: Map<string, ReadOntology> = new Map();
 
         ontoMap.set('http://api.knora.org/ontology/knora-api/v2', knoraApiOnto);
-        ontoMap.set(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2',
-          anythingOnto
-        );
+        ontoMap.set('http://0.0.0.0:3333/ontology/0001/anything/v2', anythingOnto);
 
         return of(ontoMap);
       });
 
-      (
-        dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>
-      ).getResourceClassDefinition.and.callFake(() =>
-        of(
-          MockOntology.mockIResourceClassAndPropertyDefinitions(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-          )
-        )
+      (dspConnSpy.v2.ontologyCache as jasmine.SpyObj<OntologyCache>).getResourceClassDefinition.and.callFake(() =>
+        of(MockOntology.mockIResourceClassAndPropertyDefinitions('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'))
       );
 
-      testHostFixture = TestBed.createComponent(
-        TestHostCreateValueNoValueRequiredComponent
-      );
+      testHostFixture = TestBed.createComponent(TestHostCreateValueNoValueRequiredComponent);
       testHostComponent = testHostFixture.componentInstance;
       testHostFixture.detectChanges();
 
@@ -786,16 +654,11 @@ describe('LinkValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value instanceof
-          ReadResource
-      ).toBeTruthy();
+      expect(testHostComponent.inputValueComponent.valueFormControl.value instanceof ReadResource).toBeTruthy();
 
       const newValue = testHostComponent.inputValueComponent.getNewValue();
       expect(newValue instanceof CreateLinkValue).toBeTruthy();
-      expect((newValue as CreateLinkValue).linkedResourceIri).toEqual(
-        'http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ'
-      );
+      expect((newValue as CreateLinkValue).linkedResourceIri).toEqual('http://rdfh.ch/0001/IwMDbs0KQsaxSRUTl2cAIQ');
     });
   });
 });

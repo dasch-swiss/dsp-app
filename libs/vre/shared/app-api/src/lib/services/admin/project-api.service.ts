@@ -33,10 +33,7 @@ export class ProjectApiService extends BaseApi {
   }
 
   update(iri: string, updatedProject: UpdateProjectRequest) {
-    return this._http.put<ProjectResponse>(
-      this._projectRoute(iri),
-      updatedProject
-    );
+    return this._http.put<ProjectResponse>(this._projectRoute(iri), updatedProject);
   }
 
   delete(iri: string) {
@@ -44,27 +41,18 @@ export class ProjectApiService extends BaseApi {
   }
 
   getKeywordsForProject(iri: string) {
-    return this._http.get<KeywordsResponse>(
-      `${this._projectRoute(iri)}/Keywords`
-    );
+    return this._http.get<KeywordsResponse>(`${this._projectRoute(iri)}/Keywords`);
   }
 
   getMembersForProject(id: string, idType: ProjectIdentifier = 'iri') {
-    return this._http.get<MembersResponse>(
-      `${this._projectRoute(id, idType)}/members`
-    );
+    return this._http.get<MembersResponse>(`${this._projectRoute(id, idType)}/members`);
   }
 
   getAdminMembersForProject(id: string, idType: ProjectIdentifier = 'iri') {
-    return this._http.get<MembersResponse>(
-      `${this._projectRoute(id, idType)}/admin-members`
-    );
+    return this._http.get<MembersResponse>(`${this._projectRoute(id, idType)}/admin-members`);
   }
 
-  getRestrictedViewSettingsForProject(
-    id: string,
-    idType: ProjectIdentifier = 'iri'
-  ) {
+  getRestrictedViewSettingsForProject(id: string, idType: ProjectIdentifier = 'iri') {
     return this._http.get<ProjectRestrictedViewSettingsResponse>(
       `${this._projectRoute(id, idType)}/RestrictedViewSettings`
     );

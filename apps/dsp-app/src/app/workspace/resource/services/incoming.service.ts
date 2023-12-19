@@ -1,10 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  ApiResponseError,
-  CountQueryResponse,
-  KnoraApiConnection,
-  ReadResourceSequence,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseError, CountQueryResponse, KnoraApiConnection, ReadResourceSequence } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { Observable } from 'rxjs';
 
@@ -29,10 +24,7 @@ export class IncomingService {
    * @param {number} offset the offset to be used for paging. 0 is the default and is used to get the first page of results.
    * @returns {Observable<any>}
    */
-  getIncomingRegions(
-    resourceIRI: string,
-    offset: number
-  ): Observable<ReadResourceSequence | ApiResponseError> {
+  getIncomingRegions(resourceIRI: string, offset: number): Observable<ReadResourceSequence | ApiResponseError> {
     const sparqlQueryStr = `
 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/simple/v2#>
 
@@ -127,9 +119,7 @@ OFFSET ${offset}
 `;
 
     return countQuery
-      ? this._dspApiConnection.v2.search.doExtendedSearchCountQuery(
-          sparqlQueryStr
-        )
+      ? this._dspApiConnection.v2.search.doExtendedSearchCountQuery(sparqlQueryStr)
       : this._dspApiConnection.v2.search.doExtendedSearch(sparqlQueryStr);
   }
 
@@ -233,9 +223,7 @@ FILTER NOT EXISTS {
 } OFFSET ${offset}
 `;
     return countQuery
-      ? this._dspApiConnection.v2.search.doExtendedSearchCountQuery(
-          sparqlQueryStr
-        )
+      ? this._dspApiConnection.v2.search.doExtendedSearchCountQuery(sparqlQueryStr)
       : this._dspApiConnection.v2.search.doExtendedSearch(sparqlQueryStr);
   }
 }

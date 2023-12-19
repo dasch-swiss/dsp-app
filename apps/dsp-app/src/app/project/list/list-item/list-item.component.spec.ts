@@ -1,9 +1,4 @@
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,10 +15,7 @@ import {
   ReadProject,
   RepositionChildNodeResponse,
 } from '@dasch-swiss/dsp-js';
-import {
-  AppConfigService,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
@@ -85,34 +77,17 @@ describe('ListItemComponent', () => {
   beforeEach(waitForAsync(() => {
     const listsEndpointSpyObj = {
       admin: {
-        listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-          'getList',
-          'repositionChildNode',
-        ]),
+        listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getList', 'repositionChildNode']),
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     TestBed.configureTestingModule({
-      declarations: [
-        ListItemComponent,
-        MockListItemFormComponent,
-        TestHostComponent,
-      ],
-      imports: [
-        BrowserAnimationsModule,
-        MatDialogModule,
-        MatIconModule,
-        MatSnackBarModule,
-      ],
+      declarations: [ListItemComponent, MockListItemFormComponent, TestHostComponent],
+      imports: [BrowserAnimationsModule, MatDialogModule, MatIconModule, MatSnackBarModule],
       providers: [
         MockProvider(AppLoggingService),
         {
@@ -136,29 +111,25 @@ describe('ListItemComponent', () => {
     // mock session service
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: true,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: true,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     // mock application state service
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: ProjectResponse = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -170,15 +141,11 @@ describe('ListItemComponent', () => {
 
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-    ).getList.and.callFake(() => {
+    (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getList.and.callFake(() => {
       const response = new ListResponse();
       response.list.listinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList';
       response.list.listinfo.isRootNode = true;
-      response.list.listinfo.labels = [
-        { value: 'Tree List Node Root', language: 'en' },
-      ];
+      response.list.listinfo.labels = [{ value: 'Tree List Node Root', language: 'en' }];
       response.list.children = [
         {
           comments: [],
@@ -243,23 +210,17 @@ describe('ListItemComponent', () => {
 
     expect(testHostComponent.listItem.list.length).toEqual(2);
 
-    expect(testHostComponent.listItem.list[0].labels).toEqual([
-      { value: 'Tree List Node 0123', language: 'en' },
-    ]);
+    expect(testHostComponent.listItem.list[0].labels).toEqual([{ value: 'Tree List Node 0123', language: 'en' }]);
   });
 
   it('should update the view to show an inserted node', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-    ).getList.and.callFake(() => {
+    (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getList.and.callFake(() => {
       const response = new ListResponse();
       response.list.listinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList';
       response.list.listinfo.isRootNode = true;
-      response.list.listinfo.labels = [
-        { value: 'Tree List Node Root', language: 'en' },
-      ];
+      response.list.listinfo.labels = [{ value: 'Tree List Node Root', language: 'en' }];
       response.list.children = [
         {
           comments: [],
@@ -323,9 +284,7 @@ describe('ListItemComponent', () => {
       },
     ]);
 
-    expect(dspConnSpy.admin.listsEndpoint.getList).toHaveBeenCalledWith(
-      testHostComponent.parentIri
-    );
+    expect(dspConnSpy.admin.listsEndpoint.getList).toHaveBeenCalledWith(testHostComponent.parentIri);
 
     // getList is called twice because it is also called in ngOnInit
     expect(dspConnSpy.admin.listsEndpoint.getList).toHaveBeenCalledTimes(2);
@@ -354,17 +313,13 @@ describe('ListItemComponent', () => {
 
     expect(testHostComponent.listItem.list.length).toEqual(1);
 
-    expect(testHostComponent.listItem.list[0].labels).toEqual([
-      { value: 'Tree List Node 02', language: 'en' },
-    ]);
+    expect(testHostComponent.listItem.list[0].labels).toEqual([{ value: 'Tree List Node 02', language: 'en' }]);
   });
 
   it('should reposition the node in position 1 to position 0', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-    ).repositionChildNode.and.callFake(() => {
+    (dspConnSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).repositionChildNode.and.callFake(() => {
       const response = new RepositionChildNodeResponse();
       response.node.id = 'http://rdfh.ch/lists/0001/otherTreeList';
       response.node.isRootNode = true;
@@ -395,9 +350,7 @@ describe('ListItemComponent', () => {
       return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
     });
 
-    expect(testHostComponent.listItem.list[1].id).toEqual(
-      'http://rdfh.ch/lists/0001/otherTreeList02'
-    );
+    expect(testHostComponent.listItem.list[1].id).toEqual('http://rdfh.ch/lists/0001/otherTreeList02');
 
     const listNodeOperation: ListNodeOperation = new ListNodeOperation();
     listNodeOperation.listNode = new ListNode();
@@ -408,8 +361,6 @@ describe('ListItemComponent', () => {
 
     expect(testHostComponent.listItem.list.length).toEqual(2);
 
-    expect(testHostComponent.listItem.list[0].id).toEqual(
-      'http://rdfh.ch/lists/0001/otherTreeList02'
-    );
+    expect(testHostComponent.listItem.list[0].id).toEqual('http://rdfh.ch/lists/0001/otherTreeList02');
   });
 });

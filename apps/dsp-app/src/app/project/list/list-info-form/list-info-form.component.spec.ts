@@ -5,11 +5,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -103,14 +99,8 @@ describe('ListInfoFormComponent', () => {
 
   const listsEndpointSpyObj = {
     admin: {
-      listsEndpoint: jasmine.createSpyObj('listsEndpoint', [
-        'getListInfo',
-        'updateListInfo',
-        'createList',
-      ]),
-      projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-        'getProjectByIri',
-      ]),
+      listsEndpoint: jasmine.createSpyObj('listsEndpoint', ['getListInfo', 'updateListInfo', 'createList']),
+      projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri']),
     },
   };
 
@@ -120,9 +110,7 @@ describe('ListInfoFormComponent', () => {
     },
   };
 
-  const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-    'uuidToIri',
-  ]);
+  const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['uuidToIri']);
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -194,9 +182,7 @@ describe('ListInfoFormComponent', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
     // mock projects endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByIri.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(() => {
       const response = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -211,18 +197,11 @@ describe('ListInfoFormComponent', () => {
     beforeEach(() => {
       const listsEndpointSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        listsEndpointSpy.admin
-          .listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-      ).getListInfo.and.callFake(() => {
+      (listsEndpointSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).getListInfo.and.callFake(() => {
         const response = new ListInfoResponse();
         response.listinfo.id = 'http://rdfh.ch/lists/0001/otherTreeList';
-        response.listinfo.labels = [
-          { value: 'Other Tree List', language: 'en' },
-        ];
-        response.listinfo.comments = [
-          { value: 'Other Tree List comment', language: 'en' },
-        ];
+        response.listinfo.labels = [{ value: 'Other Tree List', language: 'en' }];
+        response.listinfo.comments = [{ value: 'Other Tree List comment', language: 'en' }];
         return of(
           ApiResponseData.fromAjaxResponse({
             response,
@@ -230,31 +209,23 @@ describe('ListInfoFormComponent', () => {
         );
       });
 
-      testHostUpdateListFixture = TestBed.createComponent(
-        TestHostUpdateListComponent
-      );
+      testHostUpdateListFixture = TestBed.createComponent(TestHostUpdateListComponent);
       testHostUpdateListComponent = testHostUpdateListFixture.componentInstance;
       testHostUpdateListFixture.detectChanges();
       expect(testHostUpdateListComponent).toBeTruthy();
 
-      rootLoader = TestbedHarnessEnvironment.documentRootLoader(
-        testHostUpdateListFixture
-      );
+      rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostUpdateListFixture);
     });
 
     it('should instantiate arrays for labels and comments', () => {
-      expect(testHostUpdateListComponent.listInfoForm.labels).toEqual([
-        { value: 'Other Tree List', language: 'en' },
-      ]);
+      expect(testHostUpdateListComponent.listInfoForm.labels).toEqual([{ value: 'Other Tree List', language: 'en' }]);
       expect(testHostUpdateListComponent.listInfoForm.comments).toEqual([
         { value: 'Other Tree List comment', language: 'en' },
       ]);
     });
 
     it('should display "Update" as the submit button text and be disabled as long as no labels and comments are provided', async () => {
-      const submitButton = await rootLoader.getHarness(
-        MatButtonHarness.with({ selector: '.list-submit' })
-      );
+      const submitButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.list-submit' }));
 
       expect(await submitButton.getText()).toEqual('Update');
       expect(await submitButton.isDisabled()).toBeTruthy(); // because comment is missing in the test data
@@ -308,33 +279,19 @@ describe('ListInfoFormComponent', () => {
         'comments'
       );
 
-      const updateListInfoRequest: UpdateListInfoRequest =
-        new UpdateListInfoRequest();
-      updateListInfoRequest.listIri =
-        testHostUpdateListComponent.listInfoForm.iri;
-      updateListInfoRequest.projectIri =
-        testHostUpdateListComponent.listInfoForm.projectIri;
-      updateListInfoRequest.labels =
-        testHostUpdateListComponent.listInfoForm.labels;
-      updateListInfoRequest.comments =
-        testHostUpdateListComponent.listInfoForm.comments;
+      const updateListInfoRequest: UpdateListInfoRequest = new UpdateListInfoRequest();
+      updateListInfoRequest.listIri = testHostUpdateListComponent.listInfoForm.iri;
+      updateListInfoRequest.projectIri = testHostUpdateListComponent.listInfoForm.projectIri;
+      updateListInfoRequest.labels = testHostUpdateListComponent.listInfoForm.labels;
+      updateListInfoRequest.comments = testHostUpdateListComponent.listInfoForm.comments;
 
-      (
-        listsEndpointSpy.admin
-          .listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-      ).updateListInfo.and.callFake(() => {
+      (listsEndpointSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).updateListInfo.and.callFake(() => {
         const response = new ListInfoResponse();
-        response.listinfo.labels = [
-          { value: 'My edited list label', language: 'en' },
-        ];
-        response.listinfo.comments = [
-          { value: 'My edited list comment', language: 'en' },
-        ];
+        response.listinfo.labels = [{ value: 'My edited list label', language: 'en' }];
+        response.listinfo.comments = [{ value: 'My edited list comment', language: 'en' }];
 
         expect(updateListInfoRequest.labels).toEqual(response.listinfo.labels);
-        expect(updateListInfoRequest.comments).toEqual(
-          response.listinfo.comments
-        );
+        expect(updateListInfoRequest.comments).toEqual(response.listinfo.comments);
 
         return of(
           ApiResponseData.fromAjaxResponse({
@@ -344,27 +301,19 @@ describe('ListInfoFormComponent', () => {
       });
 
       testHostUpdateListComponent.listInfoForm.submitData();
-      expect(
-        listsEndpointSpy.admin.listsEndpoint.updateListInfo
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        listsEndpointSpy.admin.listsEndpoint.updateListInfo
-      ).toHaveBeenCalledWith(updateListInfoRequest);
+      expect(listsEndpointSpy.admin.listsEndpoint.updateListInfo).toHaveBeenCalledTimes(1);
+      expect(listsEndpointSpy.admin.listsEndpoint.updateListInfo).toHaveBeenCalledWith(updateListInfoRequest);
     });
   });
 
   describe('create new list', () => {
     beforeEach(() => {
-      testHostCreateListFixture = TestBed.createComponent(
-        TestHostCreateListComponent
-      );
+      testHostCreateListFixture = TestBed.createComponent(TestHostCreateListComponent);
       testHostCreateListComponent = testHostCreateListFixture.componentInstance;
       testHostCreateListFixture.detectChanges();
       expect(testHostCreateListComponent).toBeTruthy();
 
-      rootLoader = TestbedHarnessEnvironment.documentRootLoader(
-        testHostCreateListFixture
-      );
+      rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostCreateListFixture);
     });
 
     it('should instantiate empty arrays for labels and comments', () => {
@@ -373,17 +322,12 @@ describe('ListInfoFormComponent', () => {
     });
 
     it('should display "Create" as the submit button text and be disabled as long as no labels are provided', async () => {
-      const submitButton = await rootLoader.getHarness(
-        MatButtonHarness.with({ selector: '.list-submit' })
-      );
+      const submitButton = await rootLoader.getHarness(MatButtonHarness.with({ selector: '.list-submit' }));
 
       expect(await submitButton.getText()).toEqual('Create');
       expect(await submitButton.isDisabled()).toBeTruthy();
 
-      testHostCreateListComponent.listInfoForm.handleData(
-        [{ value: 'My new list', language: 'en' }],
-        'labels'
-      );
+      testHostCreateListComponent.listInfoForm.handleData([{ value: 'My new list', language: 'en' }], 'labels');
       testHostCreateListComponent.listInfoForm.handleData(
         [{ value: 'My new list description', language: 'en' }],
         'comments'
@@ -397,40 +341,25 @@ describe('ListInfoFormComponent', () => {
     it('should create a new list', () => {
       const listsEndpointSpy = TestBed.inject(DspApiConnectionToken);
 
-      testHostCreateListComponent.listInfoForm.handleData(
-        [{ value: 'My new list', language: 'en' }],
-        'labels'
-      );
+      testHostCreateListComponent.listInfoForm.handleData([{ value: 'My new list', language: 'en' }], 'labels');
       testHostCreateListComponent.listInfoForm.handleData(
         [{ value: 'My new list comment', language: 'en' }],
         'comments'
       );
 
       const createListRequest: CreateListRequest = new CreateListRequest();
-      createListRequest.projectIri =
-        testHostCreateListComponent.listInfoForm.projectIri;
-      createListRequest.labels =
-        testHostCreateListComponent.listInfoForm.labels;
-      createListRequest.comments =
-        testHostCreateListComponent.listInfoForm.comments;
+      createListRequest.projectIri = testHostCreateListComponent.listInfoForm.projectIri;
+      createListRequest.labels = testHostCreateListComponent.listInfoForm.labels;
+      createListRequest.comments = testHostCreateListComponent.listInfoForm.comments;
 
-      (
-        listsEndpointSpy.admin
-          .listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>
-      ).createList.and.callFake(() => {
+      (listsEndpointSpy.admin.listsEndpoint as jasmine.SpyObj<ListsEndpointAdmin>).createList.and.callFake(() => {
         const response = new ListResponse();
         response.list.children = [];
-        response.list.listinfo.labels = [
-          { value: 'My new list', language: 'en' },
-        ];
-        response.list.listinfo.comments = [
-          { value: 'My new list comment', language: 'en' },
-        ];
+        response.list.listinfo.labels = [{ value: 'My new list', language: 'en' }];
+        response.list.listinfo.comments = [{ value: 'My new list comment', language: 'en' }];
 
         expect(createListRequest.labels).toEqual(response.list.listinfo.labels);
-        expect(createListRequest.comments).toEqual(
-          response.list.listinfo.comments
-        );
+        expect(createListRequest.comments).toEqual(response.list.listinfo.comments);
 
         return of(
           ApiResponseData.fromAjaxResponse({
@@ -440,12 +369,8 @@ describe('ListInfoFormComponent', () => {
       });
 
       testHostCreateListComponent.listInfoForm.submitData();
-      expect(
-        listsEndpointSpy.admin.listsEndpoint.createList
-      ).toHaveBeenCalledTimes(1);
-      expect(
-        listsEndpointSpy.admin.listsEndpoint.createList
-      ).toHaveBeenCalledWith(createListRequest);
+      expect(listsEndpointSpy.admin.listsEndpoint.createList).toHaveBeenCalledTimes(1);
+      expect(listsEndpointSpy.admin.listsEndpoint.createList).toHaveBeenCalledWith(createListRequest);
     });
   });
 });

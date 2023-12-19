@@ -12,11 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import {
-  MatSelect,
-  MatSelectChange,
-  MatSelectModule,
-} from '@angular/material/select';
+import { MatSelect, MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Constants } from '@dasch-swiss/dsp-js';
 import {
   PropertyData,
@@ -82,18 +78,14 @@ export class PropertyFormComponent implements AfterViewInit {
   @Output() emitRemovePropertyForm = new EventEmitter<PropertyFormItem>();
   @Output() emitSelectedPropertyChanged = new EventEmitter<PropertyFormItem>();
   @Output() emitSelectedOperatorChanged = new EventEmitter<PropertyFormItem>();
-  @Output() emitSelectedMatchPropertyResourceClassChanged =
-    new EventEmitter<PropertyFormItem>();
+  @Output() emitSelectedMatchPropertyResourceClassChanged = new EventEmitter<PropertyFormItem>();
   @Output() emitSearchValueChanged = new EventEmitter<PropertyFormItem>();
   @Output() emitResourceSearchValueChanged = new EventEmitter<SearchItem>();
   @Output() emitLoadMoreSearchResults = new EventEmitter<SearchItem>();
   @Output() emitAddChildPropertyForm = new EventEmitter<PropertyFormItem>();
-  @Output() emitRemoveChildPropertyForm =
-    new EventEmitter<ParentChildPropertyPair>();
-  @Output() emitChildSelectedPropertyChanged =
-    new EventEmitter<ParentChildPropertyPair>();
-  @Output() emitChildSelectedOperatorChanged =
-    new EventEmitter<ParentChildPropertyPair>();
+  @Output() emitRemoveChildPropertyForm = new EventEmitter<ParentChildPropertyPair>();
+  @Output() emitChildSelectedPropertyChanged = new EventEmitter<ParentChildPropertyPair>();
+  @Output() emitChildSelectedOperatorChanged = new EventEmitter<ParentChildPropertyPair>();
   @Output() emitChildValueChanged = new EventEmitter<ParentChildPropertyPair>();
 
   @ViewChild('propertiesList') propertiesList!: MatSelect;
@@ -117,12 +109,8 @@ export class PropertyFormComponent implements AfterViewInit {
       this.operatorsList.value = this.propertyFormItem.selectedOperator;
     }
 
-    if (
-      this.resourceClassList &&
-      this.propertyFormItem.selectedMatchPropertyResourceClass
-    ) {
-      this.resourceClassList.value =
-        this.propertyFormItem.selectedMatchPropertyResourceClass;
+    if (this.resourceClassList && this.propertyFormItem.selectedMatchPropertyResourceClass) {
+      this.resourceClassList.value = this.propertyFormItem.selectedMatchPropertyResourceClass;
     }
   }
 
@@ -248,9 +236,7 @@ export class PropertyFormComponent implements AfterViewInit {
   }
 
   // get the list of child properties of a linked resource
-  getLinkMatchPropertyFormItems(
-    value: string | PropertyFormItem[] | undefined
-  ): PropertyFormItem[] | undefined {
+  getLinkMatchPropertyFormItems(value: string | PropertyFormItem[] | undefined): PropertyFormItem[] | undefined {
     if (Array.isArray(value)) {
       return value;
     } else {
@@ -258,17 +244,12 @@ export class PropertyFormComponent implements AfterViewInit {
     }
   }
 
-  compareObjects(
-    object1: PropertyData | ApiData,
-    object2: PropertyData | ApiData
-  ) {
+  compareObjects(object1: PropertyData | ApiData, object2: PropertyData | ApiData) {
     return object1 && object2 && object1.iri == object2.iri;
   }
 
   // Type guard function to check if the value adheres to ApiData interface
   _isApiData(value: any): value is ApiData {
-    return (
-      value && typeof value === 'object' && 'iri' in value && 'label' in value
-    );
+    return value && typeof value === 'object' && 'iri' in value && 'label' in value;
   }
 }

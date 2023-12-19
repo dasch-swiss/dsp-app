@@ -1,24 +1,14 @@
 <!-- if user is looged-in: display user's avatar and user menu -->
 <ng-container *ngIf="isLoggedIn$ | async; else loginFormTemplate">
-  <button
-    mat-button
-    [matMenuTriggerFor]="userMenu"
-    class="main-toolbar-button user-menu">
-    <img
-      appAdminImage
-      [image]="(user$ | async)?.email"
-      [type]="'user'"
-      class="avatar"
-      alt="avatar" />
+  <button mat-button [matMenuTriggerFor]="userMenu" class="main-toolbar-button user-menu">
+    <img appAdminImage [image]="(user$ | async)?.email" [type]="'user'" class="avatar" alt="avatar" />
   </button>
 
   <mat-menu #userMenu="matMenu" xPosition="before" class="user-menu">
     <!-- first line: user name and close button -->
     <div class="menu-header">
       <div class="menu-title">Signed in as</div>
-      <div class="menu-title">
-        {{(user$ | async)?.givenName}} {{(user$ | async)?.familyName}}
-      </div>
+      <div class="menu-title">{{(user$ | async)?.givenName}} {{(user$ | async)?.familyName}}</div>
     </div>
     <!-- menu items -->
     <div class="menu-content">
@@ -37,11 +27,7 @@
         <!-- system for system admin only -->
 
         <mat-list-item *ngIf="isSysAdmin$ | async" class="nav-item">
-          <button
-            mat-button
-            [routerLink]="systemLink"
-            routerLinkActive="active-link"
-            class="nav-item button">
+          <button mat-button [routerLink]="systemLink" routerLinkActive="active-link" class="nav-item button">
             <span class="label">System Administration</span>
           </button>
         </mat-list-item>
@@ -57,13 +43,7 @@
 </ng-container>
 
 <ng-template #loginFormTemplate>
-  <button
-    mat-raised-button
-    color="primary"
-    [matMenuTriggerFor]="loginForm"
-    class="login-button">
-    LOGIN
-  </button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" class="login-button">LOGIN</button>
   <mat-menu #loginForm xPosition="before" class="form-menu">
     <app-login-form
       (click)="$event.stopPropagation()"

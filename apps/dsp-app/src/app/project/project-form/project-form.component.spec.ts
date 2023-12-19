@@ -57,27 +57,16 @@ describe('ProjectFormComponent', () => {
   };
 
   beforeEach(waitForAsync(() => {
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-      'iriToUuid',
-      'uuidToIri',
-    ]);
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['iriToUuid', 'uuidToIri']);
 
     const dspConnSpyObj = {
       admin: {
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByIri',
-          'getProjects',
-        ]),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri', 'getProjects']),
       },
     };
 
     TestBed.configureTestingModule({
-      declarations: [
-        ProjectFormComponent,
-        DialogComponent,
-        StatusComponent,
-        MockStringLiteralInputComponent,
-      ],
+      declarations: [ProjectFormComponent, DialogComponent, StatusComponent, MockStringLiteralInputComponent],
       imports: [
         BrowserAnimationsModule,
         MatChipsModule,
@@ -117,9 +106,7 @@ describe('ProjectFormComponent', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
     // mock projects endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByIri.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(() => {
       const response = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -129,9 +116,7 @@ describe('ProjectFormComponent', () => {
       return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
     });
 
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjects.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjects.and.callFake(() => {
       const projects = MockProjects.mockProjects();
       return of(projects);
     });

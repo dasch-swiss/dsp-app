@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
   ApiResponseError,
@@ -73,8 +65,7 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
   }
 
   openReplaceFileDialog() {
-    const propId =
-      this.parentResource.properties[Constants.HasArchiveFileValue][0].id;
+    const propId = this.parentResource.properties[Constants.HasArchiveFileValue][0].id;
 
     const dialogConfig: MatDialogConfig = {
       width: '800px',
@@ -111,28 +102,19 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
       .updateValue(updateRes as UpdateResource<UpdateValue>)
       .pipe(
         mergeMap((res: WriteValueResponse) =>
-          this._dspApiConnection.v2.values.getValue(
-            this.parentResource.id,
-            res.uuid
-          )
+          this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
       .subscribe(
         (res2: ReadResource) => {
           this.src.fileValue.fileUrl = (
-            res2.properties[
-              Constants.HasArchiveFileValue
-            ][0] as ReadArchiveFileValue
+            res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue
           ).fileUrl;
           this.src.fileValue.filename = (
-            res2.properties[
-              Constants.HasArchiveFileValue
-            ][0] as ReadArchiveFileValue
+            res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue
           ).filename;
           this.src.fileValue.strval = (
-            res2.properties[
-              Constants.HasArchiveFileValue
-            ][0] as ReadArchiveFileValue
+            res2.properties[Constants.HasArchiveFileValue][0] as ReadArchiveFileValue
           ).strval;
 
           this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
@@ -141,9 +123,7 @@ export class ArchiveComponent implements OnInit, AfterViewInit {
             this._valueOperationEventService.emit(
               new EmitEvent(
                 Events.FileValueUpdated,
-                new UpdatedFileEventValue(
-                  res2.properties[Constants.HasArchiveFileValue][0]
-                )
+                new UpdatedFileEventValue(res2.properties[Constants.HasArchiveFileValue][0])
               )
             );
           });

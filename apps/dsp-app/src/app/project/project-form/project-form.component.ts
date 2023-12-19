@@ -1,19 +1,7 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Location } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  Inject,
-  Input,
-  OnInit,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
@@ -25,14 +13,8 @@ import {
   StringLiteral,
   UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
-import {
-  ProjectApiService,
-  UserApiService,
-} from '@dasch-swiss/vre/shared/app-api';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { ProjectApiService, UserApiService } from '@dasch-swiss/vre/shared/app-api';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -68,14 +50,10 @@ export class ProjectFormComponent implements OnInit {
   /**
    * shortcode and shortname must be unique
    */
-  existingShortNames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingShortNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
   shortnameRegex = /^[a-zA-Z]+\S*$/;
 
-  existingShortcodes: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingShortcodes: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
   shortcodeRegex = /^[0-9A-Fa-f]+$/;
 
   /**
@@ -128,16 +106,9 @@ export class ProjectFormComponent implements OnInit {
   validationMessages = {
     shortname: {
       required: 'Short name is required.',
-      minlength:
-        'Short name must be at least ' +
-        this.shortnameMinLength +
-        ' characters long.',
-      maxlength:
-        'Short name cannot be more than ' +
-        this.shortnameMaxLength +
-        ' characters long.',
-      pattern:
-        "Short name shouldn't start with a number; Spaces are not allowed.",
+      minlength: 'Short name must be at least ' + this.shortnameMinLength + ' characters long.',
+      maxlength: 'Short name cannot be more than ' + this.shortnameMaxLength + ' characters long.',
+      pattern: "Short name shouldn't start with a number; Spaces are not allowed.",
       existingName: 'This short name is already taken.',
     },
     longname: {
@@ -145,23 +116,14 @@ export class ProjectFormComponent implements OnInit {
     },
     shortcode: {
       required: 'Shortcode is required',
-      maxlength:
-        'Shortcode cannot be more than ' +
-        this.shortcodeMaxLength +
-        ' characters long.',
-      minlength:
-        'Shortcode cannot be less than ' +
-        this.shortcodeMinLength +
-        ' characters long.',
+      maxlength: 'Shortcode cannot be more than ' + this.shortcodeMaxLength + ' characters long.',
+      minlength: 'Shortcode cannot be less than ' + this.shortcodeMinLength + ' characters long.',
       pattern: 'This is not a hexadecimal value!',
       existingName: 'This shortcode is already taken.',
     },
     description: {
       required: 'A description is required.',
-      maxlength:
-        'Description cannot be more than ' +
-        this.descriptionMaxLength +
-        ' characters long.',
+      maxlength: 'Description cannot be more than ' + this.descriptionMaxLength + ' characters long.',
     },
     keywords: {
       required: 'At least one keyword is required.',
@@ -220,18 +182,10 @@ export class ProjectFormComponent implements OnInit {
       this._projectApiService.list().subscribe(
         response => {
           for (const project of response.projects) {
-            this.existingShortNames.push(
-              new RegExp(
-                '(?:^|W)' + project.shortname.toLowerCase() + '(?:$|W)'
-              )
-            );
+            this.existingShortNames.push(new RegExp('(?:^|W)' + project.shortname.toLowerCase() + '(?:$|W)'));
 
             if (project.shortcode !== null) {
-              this.existingShortcodes.push(
-                new RegExp(
-                  '(?:^|W)' + project.shortcode.toLowerCase() + '(?:$|W)'
-                )
-              );
+              this.existingShortcodes.push(new RegExp('(?:^|W)' + project.shortcode.toLowerCase() + '(?:$|W)'));
             }
           }
         },
@@ -360,8 +314,7 @@ export class ProjectFormComponent implements OnInit {
   getStringLiteral(data: StringLiteral[]) {
     this.description = data;
     if (!this.description.length) {
-      this.formErrors['description'] =
-        this.validationMessages['description'].required;
+      this.formErrors['description'] = this.validationMessages['description'].required;
     } else {
       this.formErrors['description'] = '';
     }
@@ -419,24 +372,14 @@ export class ProjectFormComponent implements OnInit {
       }
 
       // edit / update project data
-      this._store.dispatch(
-        new UpdateProjectAction(this.project.id, projectData)
-      );
-      this._actions$
-        .pipe(ofActionSuccessful(LoadProjectsAction))
-        .subscribe(() => {
-          this.success = true;
-          this.project = this._store.selectSnapshot(
-            ProjectsSelectors.currentProject
-          );
-          this._notification.openSnackBar(
-            'You have successfully updated the project information.'
-          );
-          this._router.navigate([
-            `${RouteConstants.projectRelative}/${this.projectUuid}`,
-          ]);
-          this.loading = false;
-        });
+      this._store.dispatch(new UpdateProjectAction(this.project.id, projectData));
+      this._actions$.pipe(ofActionSuccessful(LoadProjectsAction)).subscribe(() => {
+        this.success = true;
+        this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
+        this._notification.openSnackBar('You have successfully updated the project information.');
+        this._router.navigate([`${RouteConstants.projectRelative}/${this.projectUuid}`]);
+        this.loading = false;
+      });
     } else {
       // create new project
       const projectData: Project = new Project();
@@ -464,27 +407,17 @@ export class ProjectFormComponent implements OnInit {
 
           // add logged-in user to the project
           // who am I?
-          const user = this._store.selectSnapshot(
-            UserSelectors.user
-          ) as ReadUser;
-          this._userApiService
-            .addToProjectMembership(user.id, projectResponse.project.id)
-            .subscribe(() => {
-              const uuid = this._projectService.iriToUuid(
-                projectResponse.project.id
-              );
-              this.loading = false;
-              // redirect to project page
-              this._router
-                .navigateByUrl(`${RouteConstants.projectRelative}`, {
-                  skipLocationChange: true,
-                })
-                .then(() =>
-                  this._router.navigate([
-                    `${RouteConstants.projectRelative}/${uuid}`,
-                  ])
-                );
-            });
+          const user = this._store.selectSnapshot(UserSelectors.user) as ReadUser;
+          this._userApiService.addToProjectMembership(user.id, projectResponse.project.id).subscribe(() => {
+            const uuid = this._projectService.iriToUuid(projectResponse.project.id);
+            this.loading = false;
+            // redirect to project page
+            this._router
+              .navigateByUrl(`${RouteConstants.projectRelative}`, {
+                skipLocationChange: true,
+              })
+              .then(() => this._router.navigate([`${RouteConstants.projectRelative}/${uuid}`]));
+          });
         },
         (error: ApiResponseError) => {
           this._errorHandler.showMessage(error);

@@ -32,9 +32,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     JDNConvertibleCalendarDateAdapter.MM_YYYY,
   ];
 
-  private static readonly parsableDateFormats = [
-    JDNConvertibleCalendarDateAdapter.DD_MM_YYYY,
-  ];
+  private static readonly parsableDateFormats = [JDNConvertibleCalendarDateAdapter.DD_MM_YYYY];
 
   private static readonly dateFormatRegexes = {
     'DD-MM-YYYY': new RegExp('^(\\d?\\d)-(\\d?\\d)-(\\d{4})'),
@@ -59,22 +57,16 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
   ) {
     super();
 
-    this.setLocale(
-      dateLocale || JDNConvertibleCalendarDateAdapter.defaultLocale
-    );
+    this.setLocale(dateLocale || JDNConvertibleCalendarDateAdapter.defaultLocale);
 
     // get active calendar from token
-    this.activeCalendarToken.subscribe(
-      (activeCal: 'Gregorian' | 'Julian' | 'Islamic') => {
-        if (
-          JDNConvertibleCalendar.supportedCalendars.indexOf(activeCal) === -1
-        ) {
-          throw Error('Invalid value for token ACTIVE_CALENDAR: ' + activeCal);
-        }
-
-        this.activeCalendar = activeCal;
+    this.activeCalendarToken.subscribe((activeCal: 'Gregorian' | 'Julian' | 'Islamic') => {
+      if (JDNConvertibleCalendar.supportedCalendars.indexOf(activeCal) === -1) {
+        throw Error('Invalid value for token ACTIVE_CALENDAR: ' + activeCal);
       }
-    );
+
+      this.activeCalendar = activeCal;
+    });
   }
 
   /**
@@ -119,10 +111,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
    * @param calendar the calendar format to convert to.
    * @returns converted date.
    */
-  convertCalendar(
-    date: JDNConvertibleCalendar,
-    calendar: string
-  ): JDNConvertibleCalendar {
+  convertCalendar(date: JDNConvertibleCalendar, calendar: string): JDNConvertibleCalendar {
     // another instance has to be returned, otherwise "activeDate" set method is not triggered for MatYearView
 
     const dateMod: JDNConvertibleCalendar = this.clone(date);
@@ -161,8 +150,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
 
   getDayOfWeek(date: JDNConvertibleCalendar): number {
     // dayOfWeek is an optional class member, but always set when returned by this method
-    const dayOfWeek: number | undefined =
-      date.toCalendarPeriod().periodStart.dayOfWeek;
+    const dayOfWeek: number | undefined = date.toCalendarPeriod().periodStart.dayOfWeek;
 
     if (dayOfWeek !== undefined) {
       return dayOfWeek;
@@ -172,21 +160,10 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
   }
 
   getMonthNames(style: 'long' | 'short' | 'narrow'): string[] {
-    if (
-      this.activeCalendar === 'Julian' ||
-      this.activeCalendar === 'Gregorian'
-    ) {
-      return JDNConvertibleCalendarNames.getMonthNames(
-        'Gregorian',
-        this.locale,
-        style
-      );
+    if (this.activeCalendar === 'Julian' || this.activeCalendar === 'Gregorian') {
+      return JDNConvertibleCalendarNames.getMonthNames('Gregorian', this.locale, style);
     } else if (this.activeCalendar === 'Islamic') {
-      return JDNConvertibleCalendarNames.getMonthNames(
-        'Islamic',
-        this.locale,
-        style
-      );
+      return JDNConvertibleCalendarNames.getMonthNames('Islamic', this.locale, style);
     }
   }
 
@@ -201,21 +178,10 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
   }
 
   getDayOfWeekNames(style: 'long' | 'short' | 'narrow') {
-    if (
-      this.activeCalendar === 'Julian' ||
-      this.activeCalendar === 'Gregorian'
-    ) {
-      return JDNConvertibleCalendarNames.getWeekdayNames(
-        'Gregorian',
-        this.locale,
-        style
-      );
+    if (this.activeCalendar === 'Julian' || this.activeCalendar === 'Gregorian') {
+      return JDNConvertibleCalendarNames.getWeekdayNames('Gregorian', this.locale, style);
     } else if (this.activeCalendar === 'Islamic') {
-      return JDNConvertibleCalendarNames.getWeekdayNames(
-        'Islamic',
-        this.locale,
-        style
-      );
+      return JDNConvertibleCalendarNames.getWeekdayNames('Islamic', this.locale, style);
     }
   }
 
@@ -258,16 +224,9 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
    * @param calendar the calendar to be used.
    * @returns a date in the specified calendar.
    */
-  private createCalendarDate(
-    year: number,
-    month: number,
-    date: number,
-    calendar: string
-  ): JDNConvertibleCalendar {
+  private createCalendarDate(year: number, month: number, date: number, calendar: string): JDNConvertibleCalendar {
     if (month < 0 || month > 11) {
-      throw Error(
-        `Invalid month index "${month}". Month index has to be between 0 and 11.`
-      );
+      throw Error(`Invalid month index "${month}". Month index has to be between 0 and 11.`);
     }
 
     if (date < 1) {
@@ -289,11 +248,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     }
   }
 
-  createDate(
-    year: number,
-    month: number,
-    date: number
-  ): JDNConvertibleCalendar {
+  createDate(year: number, month: number, date: number): JDNConvertibleCalendar {
     // create a date in the active calendar
     return this.createCalendarDate(year, month, date, this.activeCalendar);
   }
@@ -314,15 +269,10 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     // month used a 1 based index
     const calDate = new CalendarDate(year, month + 1, day);
 
-    const dateGregorian = new GregorianCalendarDate(
-      new CalendarPeriod(calDate, calDate)
-    );
+    const dateGregorian = new GregorianCalendarDate(new CalendarPeriod(calDate, calDate));
 
     // convert the date to the active calendar
-    const date: JDNConvertibleCalendar = this.convertCalendar(
-      dateGregorian,
-      this.activeCalendar
-    );
+    const date: JDNConvertibleCalendar = this.convertCalendar(dateGregorian, this.activeCalendar);
 
     return date;
   }
@@ -332,14 +282,11 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     if (
       parseFormat !== undefined &&
       typeof parseFormat === 'string' &&
-      JDNConvertibleCalendarDateAdapter.parsableDateFormats.indexOf(
-        parseFormat
-      ) !== -1
+      JDNConvertibleCalendarDateAdapter.parsableDateFormats.indexOf(parseFormat) !== -1
     ) {
       switch (parseFormat) {
         case JDNConvertibleCalendarDateAdapter.DD_MM_YYYY: {
-          const dateStringRegex =
-            JDNConvertibleCalendarDateAdapter.dateFormatRegexes[parseFormat];
+          const dateStringRegex = JDNConvertibleCalendarDateAdapter.dateFormatRegexes[parseFormat];
 
           const parsed: Array<any> | null = dateStringRegex.exec(value);
 
@@ -347,11 +294,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
             // index 0 is the whole match
 
             // month index must be 0 based
-            date = this.createDate(
-              parseInt(parsed[3]),
-              parseInt(parsed[2]) - 1,
-              parseInt(parsed[1])
-            );
+            date = this.createDate(parseInt(parsed[3]), parseInt(parsed[2]) - 1, parseInt(parsed[1]));
             break;
           } else {
             console.log(`Error: parsing of date string failed: ${value}`);
@@ -359,9 +302,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
           }
         }
         default: {
-          console.log(
-            `Error: supported parsable format was not handled correctly: ${parseFormat}`
-          );
+          console.log(`Error: supported parsable format was not handled correctly: ${parseFormat}`);
           return null;
         }
       }
@@ -378,9 +319,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     if (
       displayFormat !== undefined &&
       typeof displayFormat === 'string' &&
-      JDNConvertibleCalendarDateAdapter.displayDateFormats.lastIndexOf(
-        displayFormat
-      ) !== -1
+      JDNConvertibleCalendarDateAdapter.displayDateFormats.lastIndexOf(displayFormat) !== -1
     ) {
       const calendarPeriod = date.toCalendarPeriod();
 
@@ -392,10 +331,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
           )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(
             calendarPeriod.periodStart.month,
             2
-          )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(
-            calendarPeriod.periodStart.year,
-            4
-          )}`;
+          )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(calendarPeriod.periodStart.year, 4)}`;
           break;
         }
 
@@ -403,17 +339,12 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
           dateString = `${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(
             calendarPeriod.periodStart.month,
             2
-          )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(
-            calendarPeriod.periodStart.year,
-            4
-          )}`;
+          )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(calendarPeriod.periodStart.year, 4)}`;
           break;
         }
 
         default: {
-          console.log(
-            `Error: supported display format was not handled correctly: ${displayFormat}`
-          );
+          console.log(`Error: supported display format was not handled correctly: ${displayFormat}`);
         }
       }
     } else {
@@ -423,10 +354,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     return dateString;
   }
 
-  addCalendarYears(
-    date: JDNConvertibleCalendar,
-    years: number
-  ): JDNConvertibleCalendar {
+  addCalendarYears(date: JDNConvertibleCalendar, years: number): JDNConvertibleCalendar {
     // another instance has to be returned, otherwise "activeDate" set method is not triggered for MatYearView
 
     const dateMod = this.clone(date);
@@ -436,10 +364,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     return dateMod;
   }
 
-  addCalendarMonths(
-    date: JDNConvertibleCalendar,
-    months: number
-  ): JDNConvertibleCalendar {
+  addCalendarMonths(date: JDNConvertibleCalendar, months: number): JDNConvertibleCalendar {
     // another instance has to be returned, otherwise "activeDate" set method is not triggered for MatMonthView
 
     const dateMod = this.clone(date);
@@ -449,10 +374,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     return dateMod;
   }
 
-  addCalendarDays(
-    date: JDNConvertibleCalendar,
-    days: number
-  ): JDNConvertibleCalendar {
+  addCalendarDays(date: JDNConvertibleCalendar, days: number): JDNConvertibleCalendar {
     // another instance has to be returned, otherwise events do not work correctly
 
     const dateMod = this.clone(date);
@@ -474,10 +396,7 @@ export class JDNConvertibleCalendarDateAdapter extends DateAdapter<JDNConvertibl
     )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(
       gregorianCalPeriod.periodStart.month,
       2
-    )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(
-      gregorianCalPeriod.periodStart.day,
-      2
-    )}`;
+    )}-${JDNConvertibleCalendarDateAdapter.addLeadingZeroToNumber(gregorianCalPeriod.periodStart.day, 2)}`;
   }
 
   isDateInstance(obj: any): boolean {

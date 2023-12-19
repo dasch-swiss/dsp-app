@@ -4,12 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  ApiResponseData,
-  MockProjects,
-  ProjectResponse,
-  ProjectsEndpointAdmin,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseData, MockProjects, ProjectResponse, ProjectsEndpointAdmin } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
@@ -43,24 +38,15 @@ describe('OntologyClassInstanceComponent', () => {
 
   const dspConnSpyObj = {
     admin: {
-      projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-        'getProjectByIri',
-      ]),
+      projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri']),
     },
   };
 
-  const ontologyServiceSpyObj = jasmine.createSpyObj('OntologyService', [
-    'getIriBaseUrl',
-  ]);
+  const ontologyServiceSpyObj = jasmine.createSpyObj('OntologyService', ['getIriBaseUrl']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        OntologyClassInstanceComponent,
-        SplitComponent,
-        SplitAreaDirective,
-        MockListViewComponent,
-      ],
+      declarations: [OntologyClassInstanceComponent, SplitComponent, SplitAreaDirective, MockListViewComponent],
       imports: [MatSnackBarModule, MatDialogModule, RouterTestingModule],
       providers: [
         {
@@ -97,17 +83,13 @@ describe('OntologyClassInstanceComponent', () => {
   beforeEach(() => {
     const ontoServiceSpy = TestBed.inject(OntologyService);
 
-    (
-      ontoServiceSpy as jasmine.SpyObj<OntologyService>
-    ).getIriBaseUrl.and.callFake(() => '0.0.0.0:3333');
+    (ontoServiceSpy as jasmine.SpyObj<OntologyService>).getIriBaseUrl.and.callFake(() => '0.0.0.0:3333');
 
     // mock API
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
     // mock projects endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByIri.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(() => {
       const response = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();

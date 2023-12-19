@@ -7,12 +7,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import {
-  CountQueryResponse,
-  MockResource,
-  ReadResourceSequence,
-  SearchEndpointV2,
-} from '@dasch-swiss/dsp-js';
+import { CountQueryResponse, MockResource, ReadResourceSequence, SearchEndpointV2 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { MockProvider } from 'ng-mocks';
@@ -102,12 +97,7 @@ describe('ListViewComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [
-        ListViewComponent,
-        TestParentComponent,
-        TestProgressIndicatorComponent,
-        TestResourceListComponent,
-      ],
+      declarations: [ListViewComponent, TestParentComponent, TestProgressIndicatorComponent, TestResourceListComponent],
       imports: [
         BrowserAnimationsModule,
         MatButtonModule,
@@ -139,17 +129,13 @@ describe('ListViewComponent', () => {
   beforeEach(() => {
     const searchSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-    ).doFulltextSearchCountQuery.and.callFake(() => {
+    (searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doFulltextSearchCountQuery.and.callFake(() => {
       const num = new CountQueryResponse();
       num.numberOfResults = 5;
       return of(num);
     });
 
-    (
-      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-    ).doFulltextSearch.and.callFake(() => {
+    (searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doFulltextSearch.and.callFake(() => {
       let resources: ReadResourceSequence;
       // mock list of resourcses to simulate full-text search response
       MockResource.getTestThings(5).subscribe(res => {
@@ -160,17 +146,13 @@ describe('ListViewComponent', () => {
       }
     });
 
-    (
-      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-    ).doExtendedSearchCountQuery.and.callFake(() => {
+    (searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doExtendedSearchCountQuery.and.callFake(() => {
       const num = new CountQueryResponse();
       num.numberOfResults = 5;
       return of(num);
     });
 
-    (
-      searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>
-    ).doExtendedSearch.and.callFake(() => {
+    (searchSpy.v2.search as jasmine.SpyObj<SearchEndpointV2>).doExtendedSearch.and.callFake(() => {
       let resources: ReadResourceSequence;
       // mock list of resourcses to simulate full-text search response
       MockResource.getTestThings(5).subscribe(res => {
@@ -192,39 +174,25 @@ describe('ListViewComponent', () => {
     const searchSpy = TestBed.inject(DspApiConnectionToken);
 
     // do fulltext search count query
-    expect(searchSpy.v2.search.doFulltextSearchCountQuery).toHaveBeenCalledWith(
-      'fake query',
-      0,
-      {
-        limitToProject: 'http://rdfh.ch/projects/0803',
-      }
-    );
+    expect(searchSpy.v2.search.doFulltextSearchCountQuery).toHaveBeenCalledWith('fake query', 0, {
+      limitToProject: 'http://rdfh.ch/projects/0803',
+    });
 
     // do fulltext search
-    expect(searchSpy.v2.search.doFulltextSearch).toHaveBeenCalledWith(
-      'fake query',
-      0,
-      { limitToProject: 'http://rdfh.ch/projects/0803' }
-    );
-    expect(testHostComponent.listViewFulltext.resources.resources.length).toBe(
-      5
-    );
+    expect(searchSpy.v2.search.doFulltextSearch).toHaveBeenCalledWith('fake query', 0, {
+      limitToProject: 'http://rdfh.ch/projects/0803',
+    });
+    expect(testHostComponent.listViewFulltext.resources.resources.length).toBe(5);
   });
 
   it('should do advanced search', () => {
     const searchSpy = TestBed.inject(DspApiConnectionToken);
 
     // do advanced search count query
-    expect(searchSpy.v2.search.doExtendedSearchCountQuery).toHaveBeenCalledWith(
-      'fake query OFFSET 0'
-    );
+    expect(searchSpy.v2.search.doExtendedSearchCountQuery).toHaveBeenCalledWith('fake query OFFSET 0');
 
     // do advanced search
-    expect(searchSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith(
-      'fake query OFFSET 0'
-    );
-    expect(
-      testHostComponent.listViewGravsearch.resources.resources.length
-    ).toBe(5);
+    expect(searchSpy.v2.search.doExtendedSearch).toHaveBeenCalledWith('fake query OFFSET 0');
+    expect(testHostComponent.listViewGravsearch.resources.resources.length).toBe(5);
   });
 });

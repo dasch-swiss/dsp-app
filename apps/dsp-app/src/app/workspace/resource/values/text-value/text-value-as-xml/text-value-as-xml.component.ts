@@ -1,21 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-  Constants,
-  CreateTextValueAsXml,
-  ReadTextValueAsXml,
-  UpdateTextValueAsXml,
-} from '@dasch-swiss/dsp-js';
+import { Constants, CreateTextValueAsXml, ReadTextValueAsXml, UpdateTextValueAsXml } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import * as Editor from 'ckeditor5-custom-build';
 import { ValueErrorStateMatcher } from '../../value-error-state-matcher';
@@ -26,17 +12,12 @@ import { ckEditor } from '../ck-editor';
   templateUrl: './text-value-as-xml.component.html',
   styleUrls: ['./text-value-as-xml.component.scss'],
 })
-export class TextValueAsXMLComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class TextValueAsXMLComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadTextValueAsXml;
 
-  @Output() internalLinkClicked: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() internalLinkClicked: EventEmitter<string> = new EventEmitter<string>();
 
-  @Output() internalLinkHovered: EventEmitter<string> =
-    new EventEmitter<string>();
+  @Output() internalLinkHovered: EventEmitter<string> = new EventEmitter<string>();
 
   readonly standardMapping = Constants.StandardMapping; // todo: define this somewhere else
 
@@ -64,20 +45,15 @@ export class TextValueAsXMLComponent
   }
 
   standardValueComparisonFunc(initValue: any, curValue: any): boolean {
-    const initValueTrimmed =
-      typeof initValue === 'string' ? initValue.trim() : initValue;
-    const curValueTrimmed =
-      typeof curValue === 'string' ? curValue.trim() : curValue;
+    const initValueTrimmed = typeof initValue === 'string' ? initValue.trim() : initValue;
+    const curValueTrimmed = typeof curValue === 'string' ? curValue.trim() : curValue;
 
     return initValueTrimmed === this._handleXML(curValueTrimmed, false, false);
   }
 
   getInitValue(): string | null {
     // check for standard mapping
-    if (
-      this.displayValue !== undefined &&
-      this.displayValue.mapping === this.standardMapping
-    ) {
+    if (this.displayValue !== undefined && this.displayValue.mapping === this.standardMapping) {
       return this._handleXML(this.displayValue.xml, true);
     } else {
       return null;
@@ -111,10 +87,7 @@ export class TextValueAsXMLComponent
     newTextValue.xml = this._handleXML(this.valueFormControl.value, false);
     newTextValue.mapping = this.standardMapping;
 
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       newTextValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -133,10 +106,7 @@ export class TextValueAsXMLComponent
     updatedTextValue.xml = this._handleXML(this.valueFormControl.value, false);
     updatedTextValue.mapping = this.standardMapping;
 
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedTextValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -164,10 +134,7 @@ export class TextValueAsXMLComponent
     if (fromKnora) {
       // cKEditor accepts tags from version 4
       // see 4 to 5 migration, see https://ckeditor.com/docs/ckeditor5/latest/builds/guides/migrate.html
-      return xml
-        .replace(doctype, '')
-        .replace(openingTextTag, '')
-        .replace(closingTextTag, '');
+      return xml.replace(doctype, '').replace(openingTextTag, '').replace(closingTextTag, '');
     } else {
       // replace &nbsp; entity
       xml = xml.replace(/&nbsp;/g, String.fromCharCode(160));

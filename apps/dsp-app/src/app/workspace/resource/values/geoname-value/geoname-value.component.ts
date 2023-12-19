@@ -1,24 +1,9 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
-import {
-  CreateGeonameValue,
-  ReadGeonameValue,
-  UpdateGeonameValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateGeonameValue, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { Observable, Subscription } from 'rxjs';
-import {
-  DisplayPlace,
-  GeonameService,
-  SearchPlace,
-} from '../../services/geoname.service';
+import { DisplayPlace, GeonameService, SearchPlace } from '../../services/geoname.service';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 
 // https://stackoverflow.com/questions/45661010/dynamic-nested-reactive-form-expressionchangedafterithasbeencheckederror
@@ -40,10 +25,7 @@ export function geonameIdValidator(control: AbstractControl) {
   templateUrl: './geoname-value.component.html',
   styleUrls: ['./geoname-value.component.scss'],
 })
-export class GeonameValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class GeonameValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadGeonameValue;
 
   valueChangesSubscription: Subscription;
@@ -62,16 +44,8 @@ export class GeonameValueComponent
     super();
   }
 
-  standardValueComparisonFunc(
-    initValue: { id: string },
-    curValue: { id: string } | null
-  ): boolean {
-    return (
-      curValue !== null &&
-      typeof curValue === 'object' &&
-      'id' in curValue &&
-      initValue.id === curValue.id
-    );
+  standardValueComparisonFunc(initValue: { id: string }, curValue: { id: string } | null): boolean {
+    return curValue !== null && typeof curValue === 'object' && 'id' in curValue && initValue.id === curValue.id;
   }
 
   getInitValue(): { id: string } | null {
@@ -107,37 +81,30 @@ export class GeonameValueComponent
     });
 
     // react to user typing places
-    this.valueChangesSubscription =
-      this.valueFormControl.valueChanges.subscribe((searchTerm: string) => {
-        // console.log(searchTerm);
-        // tODO: move this to a method
-        if (
-          (this.mode === 'create' || this.mode === 'update') &&
-          searchTerm !== null
-        ) {
-          if (typeof searchTerm === 'string' && searchTerm.length >= 3) {
-            // console.log('searching for ' + searchTerm);
-            this._geonameService.searchPlace(searchTerm).subscribe(
-              places => (this.places = places),
-              () => (this.places = [])
-            );
-          } else {
-            this.places = [];
-          }
+    this.valueChangesSubscription = this.valueFormControl.valueChanges.subscribe((searchTerm: string) => {
+      // console.log(searchTerm);
+      // tODO: move this to a method
+      if ((this.mode === 'create' || this.mode === 'update') && searchTerm !== null) {
+        if (typeof searchTerm === 'string' && searchTerm.length >= 3) {
+          // console.log('searching for ' + searchTerm);
+          this._geonameService.searchPlace(searchTerm).subscribe(
+            places => (this.places = places),
+            () => (this.places = [])
+          );
+        } else {
+          this.places = [];
         }
-      });
+      }
+    });
 
-    this.commentChangesSubscription =
-      this.commentFormControl.valueChanges.subscribe(() => {
-        this.valueFormControl.updateValueAndValidity();
-      });
+    this.commentChangesSubscription = this.commentFormControl.valueChanges.subscribe(() => {
+      this.valueFormControl.updateValueAndValidity();
+    });
 
     this.resetFormControl();
 
     if (this.mode === 'read') {
-      this.$geonameLabel = this._geonameService.resolveGeonameID(
-        this.valueFormControl.value.id
-      );
+      this.$geonameLabel = this._geonameService.resolveGeonameID(this.valueFormControl.value.id);
     }
 
     resolvedPromise.then(() => {
@@ -152,9 +119,7 @@ export class GeonameValueComponent
     this.resetFormControl();
 
     if (this.mode === 'read' && this.valueFormControl !== undefined) {
-      this.$geonameLabel = this._geonameService.resolveGeonameID(
-        this.valueFormControl.value.id
-      );
+      this.$geonameLabel = this._geonameService.resolveGeonameID(this.valueFormControl.value.id);
     }
   }
 

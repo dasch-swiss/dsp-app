@@ -1,26 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
 import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/ClassAndPropertyDefinitions';
-import {
-  MaterialColor,
-  RouteConstants,
-  getAllEntityDefinitionsAsArray,
-} from '@dasch-swiss/vre/shared/app-config';
+import { MaterialColor, RouteConstants, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  OntologiesSelectors,
-  ProjectsSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import {
   ComponentCommunicationEventService,
   Events,
@@ -63,9 +49,7 @@ export class ProjectComponent extends ProjectBase implements OnInit {
 
   get color$(): Observable<string> {
     return this.readProject$.pipe(
-      map(readProject =>
-        !readProject.status ? MaterialColor.Warn : MaterialColor.Primary
-      )
+      map(readProject => (!readProject.status ? MaterialColor.Warn : MaterialColor.Primary))
     );
   }
 
@@ -98,19 +82,14 @@ export class ProjectComponent extends ProjectBase implements OnInit {
   }
 
   get isLoading$(): Observable<boolean> {
-    return combineLatest([
-      this.isOntologiesLoading$,
-      this.isProjectsLoading$,
-    ]).pipe(
+    return combineLatest([this.isOntologiesLoading$, this.isProjectsLoading$]).pipe(
       map(([isOntologiesLoading, isProjectsLoading]) => {
         return isOntologiesLoading === true || isProjectsLoading === true;
       })
     );
   }
 
-  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<
-    ReadProject[]
-  >;
+  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
   @Select(ProjectsSelectors.isProjectsLoading)
   isProjectsLoading$: Observable<boolean>;
   @Select(OntologiesSelectors.isLoading)
@@ -128,15 +107,7 @@ export class ProjectComponent extends ProjectBase implements OnInit {
     _titleService: Title,
     _projectService: ProjectService
   ) {
-    super(
-      _store,
-      _route,
-      _projectService,
-      _titleService,
-      _router,
-      _cd,
-      _actions$
-    );
+    super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
   }
 
   /**
@@ -189,8 +160,7 @@ export class ProjectComponent extends ProjectBase implements OnInit {
 
   open(route: AvailableRoute, id = '') {
     const routeCommands = id ? [route, id] : [route];
-    const extras =
-      route === RouteConstants.project ? {} : { relativeTo: this._route };
+    const extras = route === RouteConstants.project ? {} : { relativeTo: this._route };
     this.listItemSelected = `/${route}/${id}`;
     this._router.navigate(routeCommands, extras);
   }

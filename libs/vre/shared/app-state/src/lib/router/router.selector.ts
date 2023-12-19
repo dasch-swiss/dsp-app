@@ -1,7 +1,4 @@
-import {
-  RouterState,
-  RouterStateModel as RouterStateOuterModel,
-} from '@ngxs/router-plugin';
+import { RouterState, RouterStateModel as RouterStateOuterModel } from '@ngxs/router-plugin';
 import { Selector } from '@ngxs/store';
 import { RouterStateModel } from './router-state.model';
 

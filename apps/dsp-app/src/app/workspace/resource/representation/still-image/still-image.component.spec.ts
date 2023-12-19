@@ -2,23 +2,13 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  MatDialogModule,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  Constants,
-  MockResource,
-  ReadGeomValue,
-  ReadResource,
-  ReadValue,
-} from '@dasch-swiss/dsp-js';
+import { Constants, MockResource, ReadGeomValue, ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
@@ -35,23 +25,19 @@ const stillImageFileValue = {
   type: 'http://api.knora.org/ontology/knora-api/v2#StillImageFileValue',
   id: 'http://rdfh.ch/0803/00014b43f902/values/18dc0912cd05',
   attachedToUser: 'http://rdfh.ch/users/91e19f1e01',
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/0803/00014b43f902l/000000000018dc0912cd0wl',
-  versionArkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/0803/00014b43f902l/000000000018dc0912cd0wl.20121121T165038Z',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/0803/00014b43f902l/000000000018dc0912cd0wl',
+  versionArkUrl: 'http://0.0.0.0:3336/ark:/72163/1/0803/00014b43f902l/000000000018dc0912cd0wl.20121121T165038Z',
   valueCreationDate: '2012-11-21T16:50:38Z',
   hasPermissions:
     'CR knora-admin:Creator|M knora-admin:ProjectMember|V knora-admin:KnownUser|RV knora-admin:UnknownUser',
   userHasPermission: 'RV',
   uuid: '000000000018dc0912cd0w',
   filename: 'incunabula_0000003328.jp2',
-  fileUrl:
-    'http://0.0.0.0:1024/0803/incunabula_0000003328.jp2/full/1312,1815/0/default.jpg',
+  fileUrl: 'http://0.0.0.0:1024/0803/incunabula_0000003328.jp2/full/1312,1815/0/default.jpg',
   dimX: 1312,
   dimY: 1815,
   iiifBaseUrl: 'http://0.0.0.0:1024/0803',
-  strval:
-    'http://0.0.0.0:1024/0803/incunabula_0000003328.jp2/full/1312,1815/0/default.jpg',
+  strval: 'http://0.0.0.0:1024/0803/incunabula_0000003328.jp2/full/1312,1815/0/default.jpg',
   property: 'http://api.knora.org/ontology/knora-api/v2#hasStillImageFileValue',
   propertyLabel: 'has image file',
   propertyComment: 'Connects a Representation to an image file',
@@ -129,9 +115,7 @@ class TestHostComponent implements OnInit {
     });
 
     this.stillImageFileRepresentations = [
-      new FileRepresentation(stillImageFileValue, [
-        new Region(makeRegion([rectangleGeom], 'first')),
-      ]),
+      new FileRepresentation(stillImageFileValue, [new Region(makeRegion([rectangleGeom], 'first'))]),
     ];
   }
 
@@ -151,17 +135,10 @@ describe('StillImageComponent', () => {
       },
     };
 
-    const representationServiceSpyObj = jasmine.createSpyObj(
-      'RepresentationService',
-      ['getFileInfo']
-    );
+    const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo']);
 
     TestBed.configureTestingModule({
-      declarations: [
-        StillImageComponent,
-        TestHostComponent,
-        CdkCopyToClipboard,
-      ],
+      declarations: [StillImageComponent, TestHostComponent, CdkCopyToClipboard],
       imports: [
         BrowserAnimationsModule,
         HttpClientTestingModule,
@@ -196,9 +173,7 @@ describe('StillImageComponent', () => {
 
   beforeEach(() => {
     const representationServiceSpy = TestBed.inject(RepresentationService);
-    (
-      representationServiceSpy as jasmine.SpyObj<RepresentationService>
-    ).getFileInfo.and.callFake(() =>
+    (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(() =>
       of(knoraJson).pipe(map((response: any) => response as object))
     );
 
@@ -225,9 +200,7 @@ describe('StillImageComponent', () => {
 
   it('should have 1 image loaded after resources change with 1 full size image', done => {
     testHostComponent.osdViewerComp['_viewer'].addHandler('open', () => {
-      expect(
-        testHostComponent.osdViewerComp['_viewer'].world.getItemCount()
-      ).toEqual(1);
+      expect(testHostComponent.osdViewerComp['_viewer'].world.getItemCount()).toEqual(1);
       done();
     });
   });

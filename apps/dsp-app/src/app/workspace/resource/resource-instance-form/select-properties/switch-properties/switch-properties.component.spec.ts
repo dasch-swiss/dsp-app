@@ -1,12 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
   CreateIntValue,
@@ -43,9 +38,7 @@ class TestSwitchPropertiesParentComponent implements OnInit {
   formName: string;
 
   ngOnInit() {
-    this.property = MockOntology.mockReadOntology(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2'
-    ).properties[
+    this.property = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2').properties[
       'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
     ] as ResourcePropertyDefinition;
   }
@@ -101,20 +94,14 @@ describe('SwitchPropertiesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        SwitchPropertiesComponent,
-        MockCreateIntValueComponent,
-        TestSwitchPropertiesParentComponent,
-      ],
+      declarations: [SwitchPropertiesComponent, MockCreateIntValueComponent, TestSwitchPropertiesParentComponent],
       imports: [RouterTestingModule],
       providers: [CommonModule, UntypedFormBuilder],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    testHostFixture = TestBed.createComponent(
-      TestSwitchPropertiesParentComponent
-    );
+    testHostFixture = TestBed.createComponent(TestSwitchPropertiesParentComponent);
     testHostComponent = testHostFixture.componentInstance;
     testHostFixture.detectChanges();
     expect(testHostComponent).toBeTruthy();
@@ -122,11 +109,8 @@ describe('SwitchPropertiesComponent', () => {
 
   it('should create an IntValue component', () => {
     expect(
-      testHostComponent.switchPropertiesComponent
-        .createValueComponent instanceof MockCreateIntValueComponent
+      testHostComponent.switchPropertiesComponent.createValueComponent instanceof MockCreateIntValueComponent
     ).toBe(true);
-    expect(
-      testHostComponent.switchPropertiesComponent.createValueComponent.mode
-    ).toEqual('create');
+    expect(testHostComponent.switchPropertiesComponent.createValueComponent.mode).toEqual('create');
   });
 });

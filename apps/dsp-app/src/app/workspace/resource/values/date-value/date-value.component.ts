@@ -1,19 +1,6 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-  CreateDateValue,
-  KnoraDate,
-  KnoraPeriod,
-  ReadDateValue,
-  UpdateDateValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateDateValue, KnoraDate, KnoraPeriod, ReadDateValue, UpdateDateValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 
@@ -22,10 +9,7 @@ import { ValueErrorStateMatcher } from '../value-error-state-matcher';
   templateUrl: './date-value.component.html',
   styleUrls: ['./date-value.component.scss'],
 })
-export class DateValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class DateValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadDateValue;
 
   // @Input() displayOptions?: 'era' | 'calendar' | 'all';
@@ -57,20 +41,12 @@ export class DateValueComponent
     );
   }
 
-  standardValueComparisonFunc(
-    initValue: KnoraDate | KnoraPeriod,
-    curValue: KnoraDate | KnoraPeriod | null
-  ): boolean {
+  standardValueComparisonFunc(initValue: KnoraDate | KnoraPeriod, curValue: KnoraDate | KnoraPeriod | null): boolean {
     let sameValue: boolean;
     if (initValue instanceof KnoraDate && curValue instanceof KnoraDate) {
       sameValue = this.sameDate(initValue, curValue);
-    } else if (
-      initValue instanceof KnoraPeriod &&
-      curValue instanceof KnoraPeriod
-    ) {
-      sameValue =
-        this.sameDate(initValue.start, curValue.start) &&
-        this.sameDate(initValue.end, curValue.end);
+    } else if (initValue instanceof KnoraPeriod && curValue instanceof KnoraPeriod) {
+      sameValue = this.sameDate(initValue.start, curValue.start) && this.sameDate(initValue.end, curValue.end);
     } else {
       // init value and current value have different types
       sameValue = false;
@@ -104,14 +80,10 @@ export class DateValueComponent
    * @param value the value to be populated.
    * @param dateOrPeriod the date or period to read from.
    */
-  populateValue(
-    value: UpdateDateValue | CreateDateValue,
-    dateOrPeriod: KnoraDate | KnoraPeriod
-  ) {
+  populateValue(value: UpdateDateValue | CreateDateValue, dateOrPeriod: KnoraDate | KnoraPeriod) {
     if (dateOrPeriod instanceof KnoraDate) {
       value.calendar = dateOrPeriod.calendar;
-      value.startEra =
-        dateOrPeriod.era !== 'noEra' ? dateOrPeriod.era : undefined;
+      value.startEra = dateOrPeriod.era !== 'noEra' ? dateOrPeriod.era : undefined;
       value.startDay = dateOrPeriod.day;
       value.startMonth = dateOrPeriod.month;
       value.startYear = dateOrPeriod.year;
@@ -123,14 +95,12 @@ export class DateValueComponent
     } else if (dateOrPeriod instanceof KnoraPeriod) {
       value.calendar = dateOrPeriod.start.calendar;
 
-      value.startEra =
-        dateOrPeriod.start.era !== 'noEra' ? dateOrPeriod.start.era : undefined;
+      value.startEra = dateOrPeriod.start.era !== 'noEra' ? dateOrPeriod.start.era : undefined;
       value.startDay = dateOrPeriod.start.day;
       value.startMonth = dateOrPeriod.start.month;
       value.startYear = dateOrPeriod.start.year;
 
-      value.endEra =
-        dateOrPeriod.end.era !== 'noEra' ? dateOrPeriod.end.era : undefined;
+      value.endEra = dateOrPeriod.end.era !== 'noEra' ? dateOrPeriod.end.era : undefined;
       value.endDay = dateOrPeriod.end.day;
       value.endMonth = dateOrPeriod.end.month;
       value.endYear = dateOrPeriod.end.year;

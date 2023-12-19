@@ -23,19 +23,14 @@ export class CurrentPageState {
   constructor(private store: Store) {}
 
   @Action(SetCurrentPageAction)
-  setCurrentPage(
-    ctx: StateContext<CurrentPageStateModel>,
-    { page }: SetCurrentPageAction
-  ) {
+  setCurrentPage(ctx: StateContext<CurrentPageStateModel>, { page }: SetCurrentPageAction) {
     ctx.setState({ ...ctx.getState(), page });
     ctx.patchState({ page });
   }
 
   @Action(ReloadCurrentPageAction)
   reloadCurrentPage(ctx: StateContext<CurrentPageStateModel>) {
-    ctx.dispatch(
-      new SetCurrentPageAction(this.store.snapshot().currentPage.page)
-    );
+    ctx.dispatch(new SetCurrentPageAction(this.store.snapshot().currentPage.page));
   }
 
   @Action(AppInitAction)
@@ -44,15 +39,9 @@ export class CurrentPageState {
   }
 
   @Action(SetLoginReturnLinkAction)
-  setReturnLink(
-    ctx: StateContext<CurrentPageStateModel>,
-    { loginReturnLink }: SetLoginReturnLinkAction
-  ) {
+  setReturnLink(ctx: StateContext<CurrentPageStateModel>, { loginReturnLink }: SetLoginReturnLinkAction) {
     ctx.patchState({
-      loginReturnLink: loginReturnLink.replace(
-        new RegExp('^/[a-z]{2}-[A-Z]{2}'),
-        ''
-      ),
+      loginReturnLink: loginReturnLink.replace(new RegExp('^/[a-z]{2}-[A-Z]{2}'), ''),
     });
   }
 }

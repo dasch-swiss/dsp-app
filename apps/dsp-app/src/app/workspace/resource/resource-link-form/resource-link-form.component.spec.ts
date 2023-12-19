@@ -1,20 +1,6 @@
-import {
-  Component,
-  DebugElement,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, DebugElement, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -58,9 +44,7 @@ const resolvedPromise = Promise.resolve(null);
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-resource-link-form
-    #resourceLinkFormComp
-    [resources]="resources"></app-resource-link-form>`,
+  template: ` <app-resource-link-form #resourceLinkFormComp [resources]="resources"></app-resource-link-form>`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild('resourceLinkFormComp')
@@ -126,28 +110,18 @@ describe('ResourceLinkFormComponent', () => {
   beforeEach(waitForAsync(() => {
     const dspConnSpy = {
       admin: {
-        usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
-          'getUserByUsername',
-        ]),
+        usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUserByUsername']),
       },
       v2: {
         onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri']),
-        ontologyCache: jasmine.createSpyObj('ontologyCache', [
-          'getOntology',
-          'getResourceClassDefinition',
-        ]),
+        ontologyCache: jasmine.createSpyObj('ontologyCache', ['getOntology', 'getResourceClassDefinition']),
         res: jasmine.createSpyObj('res', ['createResource']),
       },
     };
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession']);
 
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     const appInitSpy = {
       dspAppConfig: {
@@ -156,11 +130,7 @@ describe('ResourceLinkFormComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [
-        ResourceLinkFormComponent,
-        TestHostComponent,
-        MockSelectProjectComponent,
-      ],
+      declarations: [ResourceLinkFormComponent, TestHostComponent, MockSelectProjectComponent],
       imports: [
         BrowserAnimationsModule,
         MatButtonModule,
@@ -201,28 +171,24 @@ describe('ResourceLinkFormComponent', () => {
   beforeEach(() => {
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: false,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: false,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: UserResponse = new UserResponse();
 
       const project = MockProjects.mockProject();
@@ -240,43 +206,30 @@ describe('ResourceLinkFormComponent', () => {
 
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUserByUsername.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUserByUsername.and.callFake(() => {
       const loggedInUser = MockUsers.mockUser();
       return of(loggedInUser);
     });
 
     const hostCompDe = testHostFixture.debugElement;
 
-    resourceLinkFormComponentDe = hostCompDe.query(
-      By.directive(ResourceLinkFormComponent)
-    );
+    resourceLinkFormComponentDe = hostCompDe.query(By.directive(ResourceLinkFormComponent));
   });
 
   it('should initialize the usersProjects array', () => {
-    expect(
-      testHostComponent.resourceLinkFormComponent.usersProjects.length
-    ).toEqual(1);
+    expect(testHostComponent.resourceLinkFormComponent.usersProjects.length).toEqual(1);
   });
 
   it('should show the select project component', () => {
-    const comp = resourceLinkFormComponentDe.query(
-      By.directive(MockSelectProjectComponent)
-    );
+    const comp = resourceLinkFormComponentDe.query(By.directive(MockSelectProjectComponent));
 
-    expect(
-      (comp.componentInstance as MockSelectProjectComponent).usersProjects
-        .length
-    ).toEqual(1);
+    expect((comp.componentInstance as MockSelectProjectComponent).usersProjects.length).toEqual(1);
   });
 
   it('should submit the form', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-    (
-      dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>
-    ).createResource.and.callFake(() => {
+    (dspConnSpy.v2.res as jasmine.SpyObj<ResourcesEndpointV2>).createResource.and.callFake(() => {
       let resource = new ReadResource();
 
       MockResource.getTestThing().subscribe(res => {
@@ -286,9 +239,7 @@ describe('ResourceLinkFormComponent', () => {
       return of(resource);
     });
 
-    testHostComponent.resourceLinkFormComponent.form.controls['label'].setValue(
-      'My Label'
-    );
+    testHostComponent.resourceLinkFormComponent.form.controls['label'].setValue('My Label');
 
     testHostFixture.detectChanges();
 

@@ -30,9 +30,7 @@ describe('ResourceService with iriBase = http://rdfh.ch', () => {
   });
 
   it("should return the app's resource path from project iri", () => {
-    const path = service.getResourcePath(
-      'http://rdfh.ch/082B/SQkTPdHdTzq_gqbwj6QR-A'
-    );
+    const path = service.getResourcePath('http://rdfh.ch/082B/SQkTPdHdTzq_gqbwj6QR-A');
     expect(path).toEqual('/082B/SQkTPdHdTzq_gqbwj6QR-A');
   });
 });
@@ -66,9 +64,7 @@ describe('ResourceService with iriBase = http://rdfh.ch/', () => {
   });
 
   it("should return the app's resource path from project iri", () => {
-    const path = service.getResourcePath(
-      'http://rdfh.ch/082B/SQkTPdHdTzq_gqbwj6QR-A'
-    );
+    const path = service.getResourcePath('http://rdfh.ch/082B/SQkTPdHdTzq_gqbwj6QR-A');
     expect(path).toEqual('/082B/SQkTPdHdTzq_gqbwj6QR-A');
   });
 });

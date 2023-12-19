@@ -1,19 +1,12 @@
-<dasch-swiss-app-progress-indicator
-  *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
-<div
-  *ngIf="(isProjectsLoading$ | async) === false && (readProject$ | async)"
-  class="content large middle">
+<dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+<div *ngIf="(isProjectsLoading$ | async) === false && (readProject$ | async)" class="content large middle">
   <div>
     <p>Project Description</p>
   </div>
   <!--  mobile version: status and edit icon displayed before the title -->
   <div class="app-toolbar-mobile">
     <span class="app-toolbar-action-edit" *ngIf="userHasPermission$ | async">
-      <button
-        mat-icon-button
-        *ngIf="(readProject$ | async)?.status"
-        class="right"
-        color="primary">
+      <button mat-icon-button *ngIf="(readProject$ | async)?.status" class="right" color="primary">
         <mat-icon>edit_square</mat-icon>
         Edit project description
       </button>
@@ -24,8 +17,7 @@
   <div class="app-toolbar transparent more-space-bottom">
     <div class="app-toolbar-row">
       <h3 class="mat-body subtitle">
-        Project {{ (readProject$ | async)?.shortcode }} | {{ (readProject$ |
-        async)?.shortname | uppercase }}
+        Project {{ (readProject$ | async)?.shortcode }} | {{ (readProject$ | async)?.shortname | uppercase }}
       </h3>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action">
@@ -52,16 +44,12 @@
       <div [innerHtml]="desc.value"></div>
     </section>
 
-    <mat-divider
-      *ngIf="(readProject$ | async)?.keywords.length > 0"></mat-divider>
+    <mat-divider *ngIf="(readProject$ | async)?.keywords.length > 0"></mat-divider>
 
     <!-- keywords -->
     <section class="project keywords">
       <mat-chip-listbox>
-        <mat-chip
-          *ngFor="let k of (readProject$ | async)?.keywords; trackBy: trackByFn"
-          >{{k}}</mat-chip
-        >
+        <mat-chip *ngFor="let k of (readProject$ | async)?.keywords; trackBy: trackByFn">{{k}}</mat-chip>
       </mat-chip-listbox>
     </section>
   </div>

@@ -8,24 +8,13 @@
     <p class="action center" *ngIf="item.url">
       <span [ngSwitch]="item.url.substring(0, 4)">
         <!-- in case of http (external address) -->
-        <a
-          mat-button
-          *ngSwitchCase="'http'"
-          [href]="item.url"
-          target="_blank"
-          color="primary"
-          class="external-url">
+        <a mat-button *ngSwitchCase="'http'" [href]="item.url" target="_blank" color="primary" class="external-url">
           {{ item.urlText ? item.urlText : 'Read more'}}
           <mat-icon iconPositionEnd class="suffix">launch</mat-icon>
         </a>
 
         <!-- in case of mailto -->
-        <a
-          mat-button
-          *ngSwitchCase="'mail'"
-          [href]="item.url"
-          color="primary"
-          class="mailto">
+        <a mat-button *ngSwitchCase="'mail'" [href]="item.url" color="primary" class="mailto">
           {{ item.urlText ? item.urlText : 'Read more'}}
           <mat-icon iconPositionEnd class="suffix">mail</mat-icon>
         </a>

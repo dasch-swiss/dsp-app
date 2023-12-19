@@ -20,10 +20,7 @@ export class AppLoggingService {
 
   constructor() {
     this.buildTag$.pipe(first()).subscribe(tag => {
-      if (
-        this.config.dataDog.enabled &&
-        typeof this.config.dataDog.clientToken == 'string'
-      ) {
+      if (this.config.dataDog.enabled && typeof this.config.dataDog.clientToken == 'string') {
         datadogLogs.init({
           clientToken: this.config.dataDog.clientToken,
           site: this.config.dataDog.site,

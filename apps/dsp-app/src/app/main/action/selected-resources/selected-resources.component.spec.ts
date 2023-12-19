@@ -23,10 +23,7 @@ class TestHostSelectedResourcesComponent {
   selectedResources: SelectedResourcesComponent;
 
   selectedResCount = 2;
-  selectedRes = [
-    'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw',
-    'http://rdfh.ch/0010/H6gBWUuJSuuO-CilddsgfdQw',
-  ];
+  selectedRes = ['http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw', 'http://rdfh.ch/0010/H6gBWUuJSuuO-CilddsgfdQw'];
 
   getActionType(action: string) {
     console.log(action);
@@ -39,18 +36,13 @@ describe('SelectedResourcesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        SelectedResourcesComponent,
-        TestHostSelectedResourcesComponent,
-      ],
+      declarations: [SelectedResourcesComponent, TestHostSelectedResourcesComponent],
       imports: [MatListModule, MatButtonModule, MatIconModule],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    testHostFixture = TestBed.createComponent(
-      TestHostSelectedResourcesComponent
-    );
+    testHostFixture = TestBed.createComponent(TestHostSelectedResourcesComponent);
     testHostComponent = testHostFixture.componentInstance;
     testHostFixture.detectChanges();
   });

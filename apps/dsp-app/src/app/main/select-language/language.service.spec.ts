@@ -9,10 +9,7 @@ describe('LanguageService', () => {
     });
   });
 
-  it('should be created', inject(
-    [LanguageService],
-    (service: LanguageService) => {
-      expect(service).toBeTruthy();
-    }
-  ));
+  it('should be created', inject([LanguageService], (service: LanguageService) => {
+    expect(service).toBeTruthy();
+  }));
 });

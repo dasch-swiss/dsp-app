@@ -1,10 +1,4 @@
-import {
-  ClassDefinition,
-  IHasProperty,
-  OntologyMetadata,
-  ReadOntology,
-  PropertyDefinition,
-} from '@dasch-swiss/dsp-js';
+import { ClassDefinition, IHasProperty, OntologyMetadata, ReadOntology, PropertyDefinition } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 
 export interface IKeyValuePairs<T> {

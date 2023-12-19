@@ -26,13 +26,11 @@ describe('UserService', () => {
   });
 
   it('should get a user', done => {
-    const userCacheSpy = spyOn(service['_userCache'], 'getUser').and.callFake(
-      () => {
-        const user = MockUsers.mockUser();
+    const userCacheSpy = spyOn(service['_userCache'], 'getUser').and.callFake(() => {
+      const user = MockUsers.mockUser();
 
-        return of(user.body);
-      }
-    );
+      return of(user.body);
+    });
 
     service.getUser('http://rdfh.ch/users/root').subscribe(user => {
       expect(user.user.id).toEqual('http://rdfh.ch/users/root');

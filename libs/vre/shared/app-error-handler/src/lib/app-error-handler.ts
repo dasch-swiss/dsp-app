@@ -5,11 +5,7 @@
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, inject, Injectable } from '@angular/core';
-import {
-  ApiResponseData,
-  ApiResponseError,
-  HealthResponse,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseData, ApiResponseError, HealthResponse } from '@dasch-swiss/dsp-js';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
@@ -49,51 +45,33 @@ export class AppErrorHandler implements ErrorHandler {
 
   showMessage(error: ApiResponseError) {
     // in case of (internal) server error
-    const apiServerError =
-      error.error &&
-      !(error.error instanceof AjaxError && error.error['response']);
+    const apiServerError = error.error && !(error.error instanceof AjaxError && error.error['response']);
 
-    if (
-      ((error.status > 499 && error.status < 600) || apiServerError) &&
-      error.status !== 504
-    ) {
+    if (((error.status > 499 && error.status < 600) || apiServerError) && error.status !== 504) {
       let status = apiServerError ? 503 : error.status;
 
       // check if the api is healthy:
-      (
-        this.dataAccessService.getHealthStatus() as Observable<
-          ApiResponseData<HealthResponse>
-        >
-      )
-        .pipe(take(1))
-        .subscribe(
-          (response: ApiResponseData<HealthResponse>) => {
-            if (!response.body.status) {
-              const healthError: ApiResponseError = {
-                error: response.body.message,
-                method: response.method,
-                status: 500,
-                url: error.url,
-              };
-              status = 500;
-              error = healthError;
-              this.appLoggingService.error(
-                `ERROR ${status}: Server side error — dsp-api is not healthy`
-              );
-            } else {
-              this.appLoggingService.error(
-                `ERROR ${status}: Server side error — dsp-api not responding`
-              );
-            }
-          },
-          (healthError: ApiResponseError) => {
-            this.appLoggingService.error(
-              `ERROR ${status}: Server side error — dsp-api not responding`,
-              healthError
-            );
+      (this.dataAccessService.getHealthStatus() as Observable<ApiResponseData<HealthResponse>>).pipe(take(1)).subscribe(
+        (response: ApiResponseData<HealthResponse>) => {
+          if (!response.body.status) {
+            const healthError: ApiResponseError = {
+              error: response.body.message,
+              method: response.method,
+              status: 500,
+              url: error.url,
+            };
+            status = 500;
             error = healthError;
+            this.appLoggingService.error(`ERROR ${status}: Server side error — dsp-api is not healthy`);
+          } else {
+            this.appLoggingService.error(`ERROR ${status}: Server side error — dsp-api not responding`);
           }
-        );
+        },
+        (healthError: ApiResponseError) => {
+          this.appLoggingService.error(`ERROR ${status}: Server side error — dsp-api not responding`, healthError);
+          error = healthError;
+        }
+      );
 
       error.status = status;
       this.notificationService.openSnackBar(error);
@@ -107,17 +85,9 @@ export class AppErrorHandler implements ErrorHandler {
         (logoutError: ApiResponseError) => {
           this.notificationService.openSnackBar(logoutError);
           if (logoutError.error instanceof AjaxError) {
-            this.appLoggingService.error(
-              `Logout ajax error`,
-              {},
-              new Error(logoutError.error['message'])
-            );
+            this.appLoggingService.error(`Logout ajax error`, {}, new Error(logoutError.error['message']));
           } else {
-            this.appLoggingService.error(
-              `Logout other error`,
-              {},
-              new Error(logoutError.error)
-            );
+            this.appLoggingService.error(`Logout other error`, {}, new Error(logoutError.error));
           }
         }
       );
@@ -126,22 +96,14 @@ export class AppErrorHandler implements ErrorHandler {
       this.notificationService.openSnackBar(error);
       // log error to Rollbar (done automatically by simply throwing a new Error)
       if (error instanceof ApiResponseError) {
-        if (
-          error.error &&
-          error.error instanceof AjaxError &&
-          !error.error['message'].startsWith('ajax error')
-        ) {
+        if (error.error && error.error instanceof AjaxError && !error.error['message'].startsWith('ajax error')) {
           // the Api response error contains a complex error message from dsp-js-lib
-          this.appLoggingService.error(
-            `Api response error`,
-            {},
-            new Error(error.error['message'])
-          );
+          this.appLoggingService.error(`Api response error`, {}, new Error(error.error['message']));
         } else {
           const defaultStatusMsg = this.httpStatusMsg.default;
-          const message = `${defaultStatusMsg[error.status].message} (${
-            error.status
-          }): ${defaultStatusMsg[error.status].description}`;
+          const message = `${defaultStatusMsg[error.status].message} (${error.status}): ${
+            defaultStatusMsg[error.status].description
+          }`;
           this.appLoggingService.error(`Error`, {}, new Error(message));
         }
       } else {

@@ -1,30 +1,15 @@
 <span *ngIf="resourceClassDefinitions?.length > 0" [formGroup]="form">
-  <mat-form-field
-    *ngIf="resourceClassDefinitions.length === 1"
-    class="large-field selected-res-class">
+  <mat-form-field *ngIf="resourceClassDefinitions.length === 1" class="large-field selected-res-class">
     <mat-label>Select a resource class *</mat-label>
-    <input
-      matInput
-      disabled
-      value="{{ resourceClassDefinitions[0].label }}"
-      class="res-label" />
+    <input matInput disabled value="{{ resourceClassDefinitions[0].label }}" class="res-label" />
   </mat-form-field>
-  <mat-form-field
-    *ngIf="resourceClassDefinitions.length > 1"
-    class="large-field">
+  <mat-form-field *ngIf="resourceClassDefinitions.length > 1" class="large-field">
     <mat-label>Select a resource class</mat-label>
-    <mat-select
-      placeholder="Select a resource class"
-      formControlName="resources"
-      class="select-resource">
-      <mat-option *ngFor="let res of resourceClassDefinitions" [value]="res.id"
-        >{{ res.label }}</mat-option
-      >
+    <mat-select placeholder="Select a resource class" formControlName="resources" class="select-resource">
+      <mat-option *ngFor="let res of resourceClassDefinitions" [value]="res.id">{{ res.label }}</mat-option>
     </mat-select>
     <mat-error *ngIf="form.controls.resources.hasError('required')">
-      <span class="custom-error-message"
-        >A resource class must be selected.</span
-      >
+      <span class="custom-error-message">A resource class must be selected.</span>
     </mat-error>
   </mat-form-field>
 </span>

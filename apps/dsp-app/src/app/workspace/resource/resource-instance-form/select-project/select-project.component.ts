@@ -1,18 +1,5 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { StoredProject } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -23,9 +10,7 @@ const resolvedPromise = Promise.resolve(null);
   templateUrl: './select-project.component.html',
   styleUrls: ['./select-project.component.scss'],
 })
-export class SelectProjectComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class SelectProjectComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() formGroup: UntypedFormGroup;
 
   @Input() usersProjects: StoredProject[];
@@ -67,9 +52,7 @@ export class SelectProjectComponent
     // if there is only one project to choose from, select it automatically
     // more info: https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error
     if (this.usersProjects.length === 1) {
-      Promise.resolve(null).then(() =>
-        this.form.controls.projects.setValue(this.usersProjects[0].id)
-      );
+      Promise.resolve(null).then(() => this.form.controls.projects.setValue(this.usersProjects[0].id));
     }
   }
 

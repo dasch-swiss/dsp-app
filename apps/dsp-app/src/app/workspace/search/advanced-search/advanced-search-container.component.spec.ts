@@ -22,8 +22,7 @@ class MockAdvancedSearchComponent {
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-advanced-search-container
-    #advSearch></app-advanced-search-container>`,
+  template: ` <app-advanced-search-container #advSearch></app-advanced-search-container>`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild('advSearch') advancedSearch: AdvancedSearchContainerComponent;
@@ -43,11 +42,7 @@ describe('AdvancedSearchContainerComponent', () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [
-        AdvancedSearchContainerComponent,
-        TestHostComponent,
-        MockAdvancedSearchComponent,
-      ],
+      declarations: [AdvancedSearchContainerComponent, TestHostComponent, MockAdvancedSearchComponent],
       imports: [BrowserAnimationsModule],
       providers: [
         MockProvider(AppLoggingService),

@@ -39,9 +39,7 @@ export const Rollbar = z.discriminatedUnion('enabled', [
 export type Rollbar = z.infer<typeof Rollbar>;
 
 export const Instrumentation = z.object({
-  environment: z
-    .string()
-    .nonempty("required 'environment' value missing in config"),
+  environment: z.string().nonempty("required 'environment' value missing in config"),
   dataDog: Datadog,
   rollbar: Rollbar,
 });
@@ -89,9 +87,7 @@ export const AppConfig = z.object({
   iiifHost: z.string().nonempty("required 'iiifHost' value missing in config"),
   iiifPort: IiifPort,
   iiifPath: z.string(),
-  geonameToken: z
-    .string()
-    .nonempty("required 'geonameToken' value missing in config"),
+  geonameToken: z.string().nonempty("required 'geonameToken' value missing in config"),
   jsonWebToken: z.string(),
   iriBase: z.literal('http://rdfh.ch'),
   logErrors: z.boolean(),

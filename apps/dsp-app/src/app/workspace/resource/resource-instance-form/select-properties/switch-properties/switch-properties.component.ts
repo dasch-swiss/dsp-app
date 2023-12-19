@@ -1,10 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import {
-  Constants,
-  ReadResource,
-  ResourcePropertyDefinition,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 @Component({
   selector: 'app-switch-properties',
@@ -37,10 +33,7 @@ export class SwitchPropertiesComponent implements OnInit {
     // a conversion from a number to a boolean is required by the input valueRequiredValidator
     this.isRequiredProp = !!+this.isRequiredProp;
 
-    if (
-      this.property.guiElement ===
-      Constants.SalsahGui + Constants.HashDelimiter + 'Textarea'
-    ) {
+    if (this.property.guiElement === Constants.SalsahGui + Constants.HashDelimiter + 'Textarea') {
       this.textArea = true;
     }
   }

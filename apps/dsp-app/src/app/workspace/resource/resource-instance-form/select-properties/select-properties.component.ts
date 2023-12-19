@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
+import { Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import {
   Cardinality,
@@ -57,10 +50,7 @@ export class SelectPropertiesComponent implements OnInit {
     if (this.properties) {
       for (const prop of this.properties) {
         if (prop) {
-          if (
-            prop.objectType ===
-            'http://api.knora.org/ontology/knora-api/v2#TextValue'
-          ) {
+          if (prop.objectType === 'http://api.knora.org/ontology/knora-api/v2#TextValue') {
             prop.objectType = this._valueService.getTextValueClass(prop);
           }
 
@@ -74,9 +64,7 @@ export class SelectPropertiesComponent implements OnInit {
           // each property will also have a cardinality array to be used when marking a field as required
           // see the isPropRequired method below for more info
           this.isPropRequired(prop.id);
-          this.propertyValuesKeyValuePair[prop.id + '-cardinality'] = [
-            this.isRequiredProp ? 1 : 0,
-          ];
+          this.propertyValuesKeyValuePair[prop.id + '-cardinality'] = [this.isRequiredProp ? 1 : 0];
         }
       }
     }
@@ -109,10 +97,7 @@ export class SelectPropertiesComponent implements OnInit {
       this.selectedResourceClass.propertiesList.filter((card: IHasProperty) => {
         if (card.propertyIndex === propId) {
           // cardinality 1 or 1-N
-          if (
-            card.cardinality === Cardinality._1 ||
-            card.cardinality === Cardinality._1_n
-          ) {
+          if (card.cardinality === Cardinality._1 || card.cardinality === Cardinality._1_n) {
             this.isRequiredProp = true;
           } else {
             // cardinality 0-1 or 0-N
@@ -152,8 +137,9 @@ export class SelectPropertiesComponent implements OnInit {
     // update the filtered version of the corresponding property values array.
     // used in the template to calculate if the delete button should be shown.
     // i.e. don't show the delete button if there is only one value
-    this.propertyValuesKeyValuePair[prop.id + '-filtered'] =
-      this._filterValueArray(this.propertyValuesKeyValuePair[prop.id]);
+    this.propertyValuesKeyValuePair[prop.id + '-filtered'] = this._filterValueArray(
+      this.propertyValuesKeyValuePair[prop.id]
+    );
   }
 
   /**

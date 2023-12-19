@@ -1,19 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ReadUser } from '@dasch-swiss/dsp-js';
-import {
-  LoadUserAction,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -45,11 +34,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(user =>
-        this._titleService.setTitle(
-          `${user.username} (${user.givenName} ${user.familyName})`
-        )
-      );
+      .subscribe(user => this._titleService.setTitle(`${user.username} (${user.givenName} ${user.familyName})`));
   }
 
   ngOnDestroy() {

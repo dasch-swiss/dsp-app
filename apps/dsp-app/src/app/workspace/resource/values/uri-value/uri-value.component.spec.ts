@@ -4,12 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  ReadUriValue,
-  MockResource,
-  UpdateUriValue,
-  CreateUriValue,
-} from '@dasch-swiss/dsp-js';
+import { ReadUriValue, MockResource, UpdateUriValue, CreateUriValue } from '@dasch-swiss/dsp-js';
 import { CommentFormComponent } from '../comment-form/comment-form.component';
 import { UriValueComponent } from './uri-value.component';
 
@@ -17,11 +12,7 @@ import { UriValueComponent } from './uri-value.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-uri-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"
-    [label]="label"></app-uri-value>`,
+  template: ` <app-uri-value #inputVal [displayValue]="displayInputVal" [mode]="mode" [label]="label"></app-uri-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: UriValueComponent;
@@ -100,24 +91,18 @@ describe('UriValueComponent', () => {
     });
 
     it('should display an existing value', () => {
-      expect(testHostComponent.inputValueComponent.displayValue.uri).toEqual(
-        'http://www.google.ch'
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.uri).toEqual('http://www.google.ch');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('read');
 
-      expect(valueReadModeNativeElement.innerText).toEqual(
-        'http://www.google.ch'
-      );
+      expect(valueReadModeNativeElement.innerText).toEqual('http://www.google.ch');
 
       const anchorDebugElement = valueReadModeDebugElement.query(By.css('a'));
       expect(anchorDebugElement.nativeElement).toBeDefined();
 
-      expect(anchorDebugElement.attributes['href']).toEqual(
-        'http://www.google.ch'
-      );
+      expect(anchorDebugElement.attributes['href']).toEqual('http://www.google.ch');
       expect(anchorDebugElement.attributes['target']).toEqual('_blank');
     });
 
@@ -126,9 +111,7 @@ describe('UriValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(testHostComponent.inputValueComponent.displayValue.uri).toEqual(
-        'http://www.google.ch'
-      );
+      expect(testHostComponent.inputValueComponent.displayValue.uri).toEqual('http://www.google.ch');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -139,9 +122,7 @@ describe('UriValueComponent', () => {
       const anchorDebugElement = valueReadModeDebugElement.query(By.css('a'));
       expect(anchorDebugElement.nativeElement).toBeDefined();
 
-      expect(anchorDebugElement.attributes['href']).toEqual(
-        'http://www.google.ch'
-      );
+      expect(anchorDebugElement.attributes['href']).toEqual('http://www.google.ch');
       expect(anchorDebugElement.attributes['target']).toEqual('_blank');
     });
 
@@ -167,14 +148,11 @@ describe('UriValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateUriValue).toBeTruthy();
 
-      expect((updatedValue as UpdateUriValue).uri).toEqual(
-        'http://www.reddit.com'
-      );
+      expect((updatedValue as UpdateUriValue).uri).toEqual('http://www.reddit.com');
     });
 
     it('should validate an existing value with an added comment', () => {
@@ -191,22 +169,17 @@ describe('UriValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy(); // because no value nor the comment changed
 
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'this is a comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('this is a comment');
 
       testHostFixture.detectChanges();
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateUriValue).toBeTruthy();
 
-      expect((updatedValue as UpdateUriValue).valueHasComment).toEqual(
-        'this is a comment'
-      );
+      expect((updatedValue as UpdateUriValue).valueHasComment).toEqual('this is a comment');
     });
 
     it('should not return an invalid update value', () => {
@@ -231,8 +204,7 @@ describe('UriValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
@@ -274,9 +246,7 @@ describe('UriValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(valueReadModeNativeElement.innerText).toEqual(
-        'http://www.reddit.com'
-      );
+      expect(valueReadModeNativeElement.innerText).toEqual('http://www.reddit.com');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
     });
@@ -303,14 +273,10 @@ describe('UriValueComponent', () => {
       valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
       valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-      expect(testHostComponent.inputValueComponent.displayValue).toEqual(
-        undefined
-      );
+      expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
       expect(valueInputNativeElement.value).toEqual('');
-      expect(
-        testHostComponent.inputValueComponent.commentFormControl.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual(null);
     });
 
     it('should create a value', () => {
@@ -336,9 +302,7 @@ describe('UriValueComponent', () => {
 
       valueInputNativeElement.dispatchEvent(new Event('input'));
 
-      testHostComponent.inputValueComponent.commentFormControl.setValue(
-        'created comment'
-      );
+      testHostComponent.inputValueComponent.commentFormControl.setValue('created comment');
 
       testHostFixture.detectChanges();
 
@@ -352,9 +316,7 @@ describe('UriValueComponent', () => {
 
       expect(valueInputNativeElement.value).toEqual('');
 
-      expect(
-        testHostComponent.inputValueComponent.commentFormControl.value
-      ).toEqual(null);
+      expect(testHostComponent.inputValueComponent.commentFormControl.value).toEqual(null);
     });
   });
 });

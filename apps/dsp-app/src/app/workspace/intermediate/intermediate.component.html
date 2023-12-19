@@ -4,10 +4,7 @@
     <div class="mock title"></div>
     <div class="mock content">
       <p class="count">{{ resources.count }}</p>
-      <p class="text">
-        {{ resources.count | i18nPlural : itemPluralMapping['resource'] }}
-        Selected
-      </p>
+      <p class="text">{{ resources.count | i18nPlural : itemPluralMapping['resource'] }} Selected</p>
     </div>
     <div class="action">
       <span class="fill-remaining-space"></span>

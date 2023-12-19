@@ -27,9 +27,7 @@ export class JDNPeriod {
   ) {
     // check that periodStart equals or is before periodEnd
     if (periodStart > periodEnd)
-      throw new JDNConvertibleCalendarError(
-        `start of a JDNPeriod must not be greater than its end`
-      );
+      throw new JDNConvertibleCalendarError(`start of a JDNPeriod must not be greater than its end`);
 
     // check that given arguments are integers (JDNs have no fractions)
     if (!(Utils.isInteger(periodStart) && Utils.isInteger(periodEnd))) {

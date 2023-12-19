@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import {
   ApiResponseError,
   Constants,
@@ -84,16 +75,13 @@ export class AddValueComponent implements OnInit, AfterViewInit {
       this.resourcePropertyDefinition.objectType === Constants.TextValue ||
       this.resourcePropertyDefinition.objectType === 'ReadTextValueAsString'
     ) {
-      this.resourcePropertyDefinition.objectType =
-        this._valueService.getTextValueClass(this.resourcePropertyDefinition);
+      this.resourcePropertyDefinition.objectType = this._valueService.getTextValueClass(
+        this.resourcePropertyDefinition
+      );
 
-      if (
-        this.resourcePropertyDefinition.objectType === 'ReadTextValueAsString'
-      ) {
+      if (this.resourcePropertyDefinition.objectType === 'ReadTextValueAsString') {
         // handle the correct gui element depending on guiEle property
-        this.textValueGuiEle = this._valueService.getTextValueGuiEle(
-          this.resourcePropertyDefinition.guiElement
-        );
+        this.textValueGuiEle = this._valueService.getTextValueGuiEle(this.resourcePropertyDefinition.guiElement);
 
         if (this.textValueGuiEle === 'textArea') {
           this.textArea = true;
@@ -138,10 +126,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
           .pipe(
             mergeMap((res: WriteValueResponse) =>
               // if successful, get the newly created value
-              this._dspApiConnection.v2.values.getValue(
-                this.parentResource.id,
-                res.uuid
-              )
+              this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
             )
           )
           .subscribe(
@@ -150,10 +135,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
               // property-view component to hide the add value form
               // resource-view component to trigger a refresh of the resource
               this._valueOperationEventService.emit(
-                new EmitEvent(
-                  Events.ValueAdded,
-                  new AddedEventValue(res2.getValues(updateRes.property)[0])
-                )
+                new EmitEvent(Events.ValueAdded, new AddedEventValue(res2.getValues(updateRes.property)[0]))
               );
 
               // hide the progress indicator
@@ -173,10 +155,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
                   });
                   break;
                 default:
-                  console.error(
-                    'There was an error processing your request. Details: ',
-                    error
-                  );
+                  console.error('There was an error processing your request. Details: ', error);
                   break;
               }
             }

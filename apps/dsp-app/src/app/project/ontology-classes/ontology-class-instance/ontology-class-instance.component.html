@@ -9,10 +9,7 @@
         (selectedResources)="openSelectedResources($event)">
       </app-list-view>
     </as-split-area>
-    <as-split-area
-      [size]="60"
-      *ngIf="selectedResources?.count > 0"
-      cdkScrollable>
+    <as-split-area [size]="60" *ngIf="selectedResources?.count > 0" cdkScrollable>
       <div [ngSwitch]="viewMode">
         <!-- single resource view -->
         <app-resource
@@ -43,15 +40,11 @@
   class="single-instance-form"
   *ngIf="(instanceId$ | async) && (instanceId$ | async) === routeConstants.addClassInstance">
   <h3>Create new resource of type: {{(resClass$ | async)?.label}}</h3>
-  <app-resource-instance-form
-    [resourceClassIri]="classId$ | async"
-    [projectIri]="projectIri">
+  <app-resource-instance-form [resourceClassIri]="classId$ | async" [projectIri]="projectIri">
   </app-resource-instance-form>
 </div>
 
 <!-- display single resource instance if instance id exists and is not called "add" -->
-<div
-  class="single-instance"
-  *ngIf="(instanceId$ | async) && (instanceId$ | async) !== routeConstants.addClassInstance">
+<div class="single-instance" *ngIf="(instanceId$ | async) && (instanceId$ | async) !== routeConstants.addClassInstance">
   <app-resource [resourceIri]="resourceIri$ | async"></app-resource>
 </div>

@@ -21,12 +21,7 @@ describe('GravsearchService', () => {
         [
           {
             id: 'd708083b-d670-46d8-a4ea-5c106ffa49b4',
-            operators: [
-              Operators.Equals,
-              Operators.NotEquals,
-              Operators.IsLike,
-              Operators.Matches,
-            ],
+            operators: [Operators.Equals, Operators.NotEquals, Operators.IsLike, Operators.Matches],
             selectedOperator: 'equals',
             selectedProperty: {
               iri: 'resourceLabel',
@@ -174,8 +169,7 @@ OFFSET 0`
             selectedProperty: {
               iri: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#linkToTest',
               label: 'Link to Test',
-              objectType:
-                'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
+              objectType: 'http://api.test.dasch.swiss/ontology/0420/eric-onto/v2#test',
               isLinkedResourceProperty: true,
             },
           },
@@ -212,12 +206,7 @@ OFFSET 0`
         [
           {
             id: '83fa06a4-a7bf-4e23-bcda-30c70777d761',
-            operators: [
-              Operators.Equals,
-              Operators.NotEquals,
-              Operators.IsLike,
-              Operators.Matches,
-            ],
+            operators: [Operators.Equals, Operators.NotEquals, Operators.IsLike, Operators.Matches],
             selectedOperator: 'equals',
             selectedProperty: {
               iri: 'resourceLabel',

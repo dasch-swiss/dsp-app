@@ -1,18 +1,5 @@
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { OntologiesMetadata } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 
@@ -23,9 +10,7 @@ const resolvedPromise = Promise.resolve(null);
   templateUrl: './select-ontology.component.html',
   styleUrls: ['./select-ontology.component.scss'],
 })
-export class SelectOntologyComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class SelectOntologyComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() formGroup: UntypedFormGroup;
 
   @Input() ontologiesMetadata: OntologiesMetadata;
@@ -48,11 +33,9 @@ export class SelectOntologyComponent
     });
 
     // emit Iri of the project when selected
-    this.ontologyChangesSubscription = this.form.valueChanges.subscribe(
-      data => {
-        this.ontologySelected.emit(data.ontologies);
-      }
-    );
+    this.ontologyChangesSubscription = this.form.valueChanges.subscribe(data => {
+      this.ontologySelected.emit(data.ontologies);
+    });
 
     // check if there is a pre-selected ontology, if so, set the value of the form control to this value
     if (this.selectedOntology) {
@@ -70,9 +53,7 @@ export class SelectOntologyComponent
     // more info: https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error
     if (this.ontologiesMetadata.ontologies.length === 1) {
       Promise.resolve(null).then(() =>
-        this.form.controls.ontologies.setValue(
-          this.ontologiesMetadata.ontologies[0].id
-        )
+        this.form.controls.ontologies.setValue(this.ontologiesMetadata.ontologies[0].id)
       );
     }
   }

@@ -12,9 +12,7 @@
     [displayWith]="displayResource"
     (optionsScroll)="onScroll()"
     (optionSelected)="onResourceSelected($event)">
-    <mat-option
-      *ngIf="resourcesSearchNoResults && !resourcesSearchResultsLoading"
-      [disabled]="true">
+    <mat-option *ngIf="resourcesSearchNoResults && !resourcesSearchResultsLoading" [disabled]="true">
       No results found
     </mat-option>
     <mat-option
@@ -23,11 +21,7 @@
       {{resourcesSearchResultsCount}} results found
     </mat-option>
 
-    <mat-option *ngFor="let res of resourcesSearchResults" [value]="res">
-      {{ res?.label }}
-    </mat-option>
-    <mat-option *ngIf="resourcesSearchResultsLoading" [disabled]="true">
-      Loading...
-    </mat-option>
+    <mat-option *ngFor="let res of resourcesSearchResults" [value]="res"> {{ res?.label }} </mat-option>
+    <mat-option *ngIf="resourcesSearchResultsLoading" [disabled]="true"> Loading... </mat-option>
   </mat-autocomplete>
 </mat-form-field>

@@ -42,18 +42,8 @@ describe('PermissionInfoComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        MatButtonModule,
-        MatIconModule,
-        MatTooltipModule,
-        OverlayModule,
-        RouterTestingModule,
-      ],
-      declarations: [
-        TestHostComponent,
-        PermissionInfoComponent,
-        TitleFromCamelCasePipe,
-      ],
+      imports: [MatButtonModule, MatIconModule, MatTooltipModule, OverlayModule, RouterTestingModule],
+      declarations: [TestHostComponent, PermissionInfoComponent, TitleFromCamelCasePipe],
       providers: [],
     }).compileComponents();
   }));
@@ -71,197 +61,100 @@ describe('PermissionInfoComponent', () => {
   });
 
   it('should have permission values and an icon button', () => {
-    expect(
-      testHostFixture.nativeElement.querySelector('button.permissions')
-        .innerText
-    ).toEqual('lock');
+    expect(testHostFixture.nativeElement.querySelector('button.permissions').innerText).toEqual('lock');
     expect(testHostComponent.permissionInfoComponent.hasPermissions).toEqual(
       'CR knora-admin:Creator|M knora-admin:ProjectMember|V knora-admin:KnownUser|RV knora-admin:UnknownUser'
     );
-    expect(testHostComponent.permissionInfoComponent.userHasPermission).toEqual(
-      'RV'
-    );
+    expect(testHostComponent.permissionInfoComponent.userHasPermission).toEqual('RV');
   });
 
   it('should display all permissions as enabled in the first line (Creator has CR)', () => {
     const hostCompDe = testHostFixture.debugElement;
-    const permissionInfoEl = hostCompDe.query(
-      By.directive(PermissionInfoComponent)
-    );
-    const permissionBtnEl = permissionInfoEl.query(
-      By.css('button.permissions')
-    );
+    const permissionInfoEl = hostCompDe.query(By.directive(PermissionInfoComponent));
+    const permissionBtnEl = permissionInfoEl.query(By.css('button.permissions'));
     permissionBtnEl.triggerEventHandler('click', null);
     testHostFixture.detectChanges();
 
-    const permissionInfoBox = permissionInfoEl.query(
-      By.css('div.overlay-info-box')
-    );
+    const permissionInfoBox = permissionInfoEl.query(By.css('div.overlay-info-box'));
     const rowEle = permissionInfoBox.nativeElement.querySelector('tr.Creator');
 
     expect(rowEle.querySelector('td.first-col').innerText).toEqual('Creator');
-    expect(
-      rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
   });
 
   it('should display three permissions as enabled in the second line (Project Member has M)', () => {
     const hostCompDe = testHostFixture.debugElement;
-    const permissionInfoEl = hostCompDe.query(
-      By.directive(PermissionInfoComponent)
-    );
-    const permissionBtnEl = permissionInfoEl.query(
-      By.css('button.permissions')
-    );
+    const permissionInfoEl = hostCompDe.query(By.directive(PermissionInfoComponent));
+    const permissionBtnEl = permissionInfoEl.query(By.css('button.permissions'));
     permissionBtnEl.triggerEventHandler('click', null);
     testHostFixture.detectChanges();
 
-    const permissionInfoBox = permissionInfoEl.query(
-      By.css('div.overlay-info-box')
-    );
-    const rowEle =
-      permissionInfoBox.nativeElement.querySelector('tr.ProjectMember');
+    const permissionInfoBox = permissionInfoEl.query(By.css('div.overlay-info-box'));
+    const rowEle = permissionInfoBox.nativeElement.querySelector('tr.ProjectMember');
 
-    expect(rowEle.querySelector('td.first-col').innerText).toEqual(
-      'Project Member'
-    );
-    expect(
-      rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.first-col').innerText).toEqual('Project Member');
+    expect(rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
   });
 
   it('should display two permissions as enabled in the third line (Known User has V)', () => {
     const hostCompDe = testHostFixture.debugElement;
-    const permissionInfoEl = hostCompDe.query(
-      By.directive(PermissionInfoComponent)
-    );
-    const permissionBtnEl = permissionInfoEl.query(
-      By.css('button.permissions')
-    );
+    const permissionInfoEl = hostCompDe.query(By.directive(PermissionInfoComponent));
+    const permissionBtnEl = permissionInfoEl.query(By.css('button.permissions'));
     permissionBtnEl.triggerEventHandler('click', null);
     testHostFixture.detectChanges();
 
-    const permissionInfoBox = permissionInfoEl.query(
-      By.css('div.overlay-info-box')
-    );
-    const rowEle =
-      permissionInfoBox.nativeElement.querySelector('tr.KnownUser');
+    const permissionInfoBox = permissionInfoEl.query(By.css('div.overlay-info-box'));
+    const rowEle = permissionInfoBox.nativeElement.querySelector('tr.KnownUser');
 
-    expect(rowEle.querySelector('td.first-col').innerText).toEqual(
-      'Known User'
-    );
-    expect(
-      rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.first-col').innerText).toEqual('Known User');
+    expect(rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
   });
 
   it('should display only one permissions as enabled in the fourth line (Unknown User has RV)', () => {
     const hostCompDe = testHostFixture.debugElement;
-    const permissionInfoEl = hostCompDe.query(
-      By.directive(PermissionInfoComponent)
-    );
-    const permissionBtnEl = permissionInfoEl.query(
-      By.css('button.permissions')
-    );
+    const permissionInfoEl = hostCompDe.query(By.directive(PermissionInfoComponent));
+    const permissionBtnEl = permissionInfoEl.query(By.css('button.permissions'));
     permissionBtnEl.triggerEventHandler('click', null);
     testHostFixture.detectChanges();
 
-    const permissionInfoBox = permissionInfoEl.query(
-      By.css('div.overlay-info-box')
-    );
-    const rowEle =
-      permissionInfoBox.nativeElement.querySelector('tr.UnknownUser');
+    const permissionInfoBox = permissionInfoEl.query(By.css('div.overlay-info-box'));
+    const rowEle = permissionInfoBox.nativeElement.querySelector('tr.UnknownUser');
 
-    expect(rowEle.querySelector('td.first-col').innerText).toEqual(
-      'Unknown User'
-    );
-    expect(
-      rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.first-col').innerText).toEqual('Unknown User');
+    expect(rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
   });
 
   it('should display only one permissions as enabled in the logged-in-user line (Logged-in User has RV)', () => {
     const hostCompDe = testHostFixture.debugElement;
-    const permissionInfoEl = hostCompDe.query(
-      By.directive(PermissionInfoComponent)
-    );
-    const permissionBtnEl = permissionInfoEl.query(
-      By.css('button.permissions')
-    );
+    const permissionInfoEl = hostCompDe.query(By.directive(PermissionInfoComponent));
+    const permissionBtnEl = permissionInfoEl.query(By.css('button.permissions'));
     permissionBtnEl.triggerEventHandler('click', null);
     testHostFixture.detectChanges();
 
-    const permissionInfoBox = permissionInfoEl.query(
-      By.css('div.overlay-info-box')
-    );
-    const rowEle =
-      permissionInfoBox.nativeElement.querySelector('tr.LoggedInUser');
+    const permissionInfoBox = permissionInfoEl.query(By.css('div.overlay-info-box'));
+    const rowEle = permissionInfoBox.nativeElement.querySelector('tr.LoggedInUser');
 
-    expect(rowEle.querySelector('td.first-col').innerText).toEqual(
-      'Your permissions'
-    );
-    expect(
-      rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_checked');
-    expect(
-      rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
-    expect(
-      rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText
-    ).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.first-col').innerText).toEqual('Your permissions');
+    expect(rowEle.querySelector('td.perm-RV').querySelector('.mat-icon').innerText).toEqual('radio_button_checked');
+    expect(rowEle.querySelector('td.perm-V').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-M').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-D').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
+    expect(rowEle.querySelector('td.perm-CR').querySelector('.mat-icon').innerText).toEqual('radio_button_unchecked');
   });
 });

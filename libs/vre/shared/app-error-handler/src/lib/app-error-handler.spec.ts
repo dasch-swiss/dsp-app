@@ -1,18 +1,8 @@
-import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import {
-  BrowserAnimationsModule,
-  NoopAnimationsModule,
-} from '@angular/platform-browser/animations';
-import {
-  ApiResponseData,
-  ApiResponseError,
-  HealthResponse,
-} from '@dasch-swiss/dsp-js';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ApiResponseData, ApiResponseError, HealthResponse } from '@dasch-swiss/dsp-js';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
@@ -30,12 +20,7 @@ describe('AppErrorHandler', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        BrowserAnimationsModule,
-        HttpClientTestingModule,
-        MatSnackBarModule,
-        NoopAnimationsModule,
-      ],
+      imports: [BrowserAnimationsModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
       providers: [
         MockProvider(AppLoggingService),
         MockProvider(NotificationService, notificationMock),

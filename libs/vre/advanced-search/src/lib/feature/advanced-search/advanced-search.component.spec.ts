@@ -4,10 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import {
-  ApiData,
-  PropertyData,
-} from '../../data-access/advanced-search-service/advanced-search.service';
+import { ApiData, PropertyData } from '../../data-access/advanced-search-service/advanced-search.service';
 import {
   AdvancedSearchStoreService,
   PropertyFormItem,
@@ -46,9 +43,7 @@ export class MockAdvancedSearchStoreService {
     // Mocked implementation
   }
 
-  filteredPropertiesList(
-    selectedResourceClass: string | Observable<string>
-  ): void {
+  filteredPropertiesList(selectedResourceClass: string | Observable<string>): void {
     // Mocked implementation
   }
 }
@@ -65,11 +60,7 @@ describe('AdvancedSearchComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        AdvancedSearchComponent,
-        BrowserAnimationsModule,
-        MatDialogModule,
-      ],
+      imports: [AdvancedSearchComponent, BrowserAnimationsModule, MatDialogModule],
       providers: [
         {
           provide: ActivatedRoute,
@@ -101,26 +92,12 @@ describe('AdvancedSearchComponent', () => {
 
     fixture = TestBed.createComponent(AdvancedSearchComponent);
     component = fixture.componentInstance;
-    mockAdvancedSearchStoreService = fixture.debugElement.injector.get(
-      AdvancedSearchStoreService
-    );
+    mockAdvancedSearchStoreService = fixture.debugElement.injector.get(AdvancedSearchStoreService);
     setStateSpy = jest.spyOn(mockAdvancedSearchStoreService, 'setState');
-    ontologiesListSpy = jest.spyOn(
-      mockAdvancedSearchStoreService,
-      'ontologiesList'
-    );
-    resourceClassesListSpy = jest.spyOn(
-      mockAdvancedSearchStoreService,
-      'resourceClassesList'
-    );
-    propertiesListSpy = jest.spyOn(
-      mockAdvancedSearchStoreService,
-      'propertiesList'
-    );
-    filteredPropertiesListSpy = jest.spyOn(
-      mockAdvancedSearchStoreService,
-      'filteredPropertiesList'
-    );
+    ontologiesListSpy = jest.spyOn(mockAdvancedSearchStoreService, 'ontologiesList');
+    resourceClassesListSpy = jest.spyOn(mockAdvancedSearchStoreService, 'resourceClassesList');
+    propertiesListSpy = jest.spyOn(mockAdvancedSearchStoreService, 'propertiesList');
+    filteredPropertiesListSpy = jest.spyOn(mockAdvancedSearchStoreService, 'filteredPropertiesList');
     fixture.detectChanges();
   });
 

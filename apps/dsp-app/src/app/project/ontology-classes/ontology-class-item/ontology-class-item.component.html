@@ -1,8 +1,5 @@
 <div class="class-item-container">
-  <div
-    class="content"
-    [routerLinkActive]="['is-active']"
-    (click)="selectItem()">
+  <div class="content" [routerLinkActive]="['is-active']" (click)="selectItem()">
     <div class="box link" [routerLink]="classLink">
       <div
         #resClassLabel
@@ -24,15 +21,10 @@
                         'vertical-align': 'middle'
                     }">
         </ngx-skeleton-loader>
-        <div *ngIf="results !== undefined" class="entry">
-          {{results | i18nPlural: itemPluralMapping['entry']}}
-        </div>
+        <div *ngIf="results !== undefined" class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
       </div>
     </div>
-    <div
-      class="icon link"
-      *ngIf="projectMember"
-      [routerLink]="getAddClassInstanceLink()">
+    <div class="icon link" *ngIf="projectMember" [routerLink]="getAddClassInstanceLink()">
       <mat-icon>add_circle_outline</mat-icon>
     </div>
   </div>

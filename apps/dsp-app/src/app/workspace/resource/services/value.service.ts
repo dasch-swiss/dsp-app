@@ -93,17 +93,11 @@ export class ValueService {
    * @param objectType PropertyDefinition ObjectType
    * @param valueType Value type (ReadValue, DeleteValue, BaseValue, etc.)
    */
-  compareObjectTypeWithValueType(
-    objectType: string,
-    valueType: string
-  ): boolean {
+  compareObjectTypeWithValueType(objectType: string, valueType: string): boolean {
     return (
-      (objectType === this._readTextValueAsString &&
-        valueType === this.constants.TextValue) ||
-      (objectType === this._readTextValueAsHtml &&
-        valueType === this.constants.TextValue) ||
-      (objectType === this._readTextValueAsXml &&
-        valueType === this.constants.TextValue) ||
+      (objectType === this._readTextValueAsString && valueType === this.constants.TextValue) ||
+      (objectType === this._readTextValueAsHtml && valueType === this.constants.TextValue) ||
+      (objectType === this._readTextValueAsXml && valueType === this.constants.TextValue) ||
       objectType === valueType
     );
   }
@@ -124,11 +118,7 @@ export class ValueService {
    * @param value the given value.
    * @param propertyDef the given values property definition.
    */
-  isReadOnly(
-    valueTypeOrClass: string,
-    value: ReadValue,
-    propertyDef: ResourcePropertyDefinition
-  ): boolean {
+  isReadOnly(valueTypeOrClass: string, value: ReadValue, propertyDef: ResourcePropertyDefinition): boolean {
     // if value is not editable in general from the ontology,
     // flag it as read-only
     if (!propertyDef.isEditable) {
@@ -195,10 +185,7 @@ export class ValueService {
   createJDNCalendarDateFromKnoraDate(date: KnoraDate): JDNConvertibleCalendar {
     let calPeriod: CalendarPeriod;
 
-    const yearAstro = this.convertHistoricalYearToAstronomicalYear(
-      date.year,
-      date.era
-    );
+    const yearAstro = this.convertHistoricalYearToAstronomicalYear(date.year, date.era);
 
     if (date.precision === Precision.dayPrecision) {
       calPeriod = new CalendarPeriod(
@@ -208,20 +195,12 @@ export class ValueService {
     } else if (date.precision === Precision.monthPrecision) {
       calPeriod = new CalendarPeriod(
         new CalendarDate(yearAstro, date.month, 1),
-        new CalendarDate(
-          yearAstro,
-          date.month,
-          this.calculateDaysInMonth(date.calendar, date.year, date.month)
-        )
+        new CalendarDate(yearAstro, date.month, this.calculateDaysInMonth(date.calendar, date.year, date.month))
       );
     } else if (date.precision === Precision.yearPrecision) {
       calPeriod = new CalendarPeriod(
         new CalendarDate(yearAstro, 1, 1),
-        new CalendarDate(
-          yearAstro,
-          12,
-          this.calculateDaysInMonth(date.calendar, date.year, 12)
-        )
+        new CalendarDate(yearAstro, 12, this.calculateDaysInMonth(date.calendar, date.year, 12))
       );
     } else {
       throw Error('Invalid precision');

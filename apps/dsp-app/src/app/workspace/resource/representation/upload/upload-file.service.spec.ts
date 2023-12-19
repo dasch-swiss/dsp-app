@@ -1,7 +1,4 @@
-import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
@@ -35,9 +32,7 @@ describe('UploadFileService', () => {
     service = TestBed.inject(UploadFileService);
     httpTestingController = TestBed.inject(HttpTestingController);
 
-    const sessionServiceSpy = TestBed.inject(
-      SessionService
-    ) as jasmine.SpyObj<SessionService>;
+    const sessionServiceSpy = TestBed.inject(SessionService) as jasmine.SpyObj<SessionService>;
 
     sessionServiceSpy.getSession.and.callFake(() => {
       const session: Session = {
@@ -78,15 +73,11 @@ describe('UploadFileService', () => {
 
     service.upload(mockUploadData).subscribe(res => {
       expect(res.uploadedFiles.length).toEqual(1);
-      expect(res.uploadedFiles[0].internalFilename).toEqual(
-        '8R0cJE3TSgB-BssuQyeW1rE.jp2'
-      );
+      expect(res.uploadedFiles[0].internalFilename).toEqual('8R0cJE3TSgB-BssuQyeW1rE.jp2');
       done();
     });
 
-    const httpRequest = httpTestingController.expectOne(
-      'https://iiif.dasch.swiss/upload?token=myToken'
-    );
+    const httpRequest = httpTestingController.expectOne('https://iiif.dasch.swiss/upload?token=myToken');
 
     expect(httpRequest.request.method).toEqual('POST');
 

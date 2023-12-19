@@ -1,11 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {
-  Component,
-  DebugElement,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, DebugElement, Input, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -28,8 +22,7 @@ const documentPdfFileValue = {
   type: 'http://api.knora.org/ontology/knora-api/v2#DocumentFileValue',
   id: 'http://rdfh.ch/1111/ay_F18DrTHeJ4zKuTt8Qzw/values/uY_qTEqVSBOW3c2vyeGXQg',
   attachedToUser: 'http://rdfh.ch/users/Iscj52QaSk-LNurRU6z3Hw',
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/1111/ay_F18DrTHeJ4zKuTt8Qzws/lRExhaYnQZuWVspAnbrjAQO',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/1111/ay_F18DrTHeJ4zKuTt8Qzws/lRExhaYnQZuWVspAnbrjAQO',
   versionArkUrl:
     'http://0.0.0.0:3336/ark:/72163/1/1111/ay_F18DrTHeJ4zKuTt8Qzws/lRExhaYnQZuWVspAnbrjAQO.20210716T062258456728Z',
   valueCreationDate: '2021-07-16T06:22:58.456728Z',
@@ -52,8 +45,7 @@ const documentPptFileValue = {
   type: 'http://api.knora.org/ontology/knora-api/v2#DocumentFileValue',
   id: 'http://rdfh.ch/1111/ay_F18DrTHeJ4zKuTt8Qzw/values/uY_qTEqVSBOW3c2vyeGXQg',
   attachedToUser: 'http://rdfh.ch/users/Iscj52QaSk-LNurRU6z3Hw',
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/1111/ay_F18DrTHeJ4zKuTt8Qzws/lRExhaYnQZuWVspAnbrjAQO',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/1111/ay_F18DrTHeJ4zKuTt8Qzws/lRExhaYnQZuWVspAnbrjAQO',
   versionArkUrl:
     'http://0.0.0.0:3336/ark:/72163/1/1111/ay_F18DrTHeJ4zKuTt8Qzws/lRExhaYnQZuWVspAnbrjAQO.20210716T062258456728Z',
   valueCreationDate: '2021-07-16T06:22:58.456728Z',
@@ -102,8 +94,7 @@ const appInitSpy = {
  * test host component with a pdf document
  */
 @Component({
-  template: ` <app-document [src]="documentFileRepresentation">
-  </app-document>`,
+  template: ` <app-document [src]="documentFileRepresentation"> </app-document>`,
 })
 class TestPdfDocumentHostComponent implements OnInit {
   @ViewChild(DocumentComponent) documentComp: DocumentComponent;
@@ -111,9 +102,7 @@ class TestPdfDocumentHostComponent implements OnInit {
   documentFileRepresentation: FileRepresentation;
 
   ngOnInit() {
-    this.documentFileRepresentation = new FileRepresentation(
-      documentPdfFileValue
-    );
+    this.documentFileRepresentation = new FileRepresentation(documentPdfFileValue);
   }
 }
 
@@ -121,8 +110,7 @@ class TestPdfDocumentHostComponent implements OnInit {
  * test host component with a ppt document
  */
 @Component({
-  template: ` <app-document [src]="documentFileRepresentation">
-  </app-document>`,
+  template: ` <app-document [src]="documentFileRepresentation"> </app-document>`,
 })
 class TestPptDocumentHostComponent implements OnInit {
   @ViewChild(DocumentComponent) documentComp: DocumentComponent;
@@ -130,9 +118,7 @@ class TestPptDocumentHostComponent implements OnInit {
   documentFileRepresentation: FileRepresentation;
 
   ngOnInit() {
-    this.documentFileRepresentation = new FileRepresentation(
-      documentPptFileValue
-    );
+    this.documentFileRepresentation = new FileRepresentation(documentPptFileValue);
   }
 }
 
@@ -142,23 +128,14 @@ class MockStatusComponent {
 
   @Input() comment?: string;
   @Input() url?: string;
-  @Input() representation?:
-    | 'archive'
-    | 'audio'
-    | 'document'
-    | 'still-image'
-    | 'video'
-    | 'text';
+  @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
 
   constructor() {}
 }
 
 describe('DocumentComponent', () => {
   beforeEach(async () => {
-    const representationServiceSpyObj = jasmine.createSpyObj(
-      'RepresentationService',
-      ['getFileInfo']
-    );
+    const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo']);
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -198,9 +175,7 @@ describe('DocumentComponent', () => {
 
     beforeEach(() => {
       const representationServiceSpy = TestBed.inject(RepresentationService);
-      (
-        representationServiceSpy as jasmine.SpyObj<RepresentationService>
-      ).getFileInfo.and.callFake(() =>
+      (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(() =>
         of(knoraJsonPdf).pipe(map((response: any) => response as object))
       );
 
@@ -219,9 +194,7 @@ describe('DocumentComponent', () => {
       expect(pdfDebugElement).toBeTruthy();
 
       // should not show the default document viewer if the pdf viewer is shown
-      const fileRepresentationDebugElement = documentComponentDe.query(
-        By.css('.file-representation')
-      );
+      const fileRepresentationDebugElement = documentComponentDe.query(By.css('.file-representation'));
       expect(fileRepresentationDebugElement).toBeFalsy();
     });
   });
@@ -233,9 +206,7 @@ describe('DocumentComponent', () => {
 
     beforeEach(() => {
       const representationServiceSpy = TestBed.inject(RepresentationService);
-      (
-        representationServiceSpy as jasmine.SpyObj<RepresentationService>
-      ).getFileInfo.and.callFake(() =>
+      (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(() =>
         of(knoraJsonPpt).pipe(map((response: any) => response as object))
       );
 
@@ -250,9 +221,7 @@ describe('DocumentComponent', () => {
     });
 
     it('should show the default document viewer if the document is not a pdf', () => {
-      const fileRepresentationDebugElement = documentComponentDe.query(
-        By.css('.file-representation')
-      );
+      const fileRepresentationDebugElement = documentComponentDe.query(By.css('.file-representation'));
       expect(fileRepresentationDebugElement).toBeTruthy();
 
       // should not show the pdf viewer if the default document viewer is shown

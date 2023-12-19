@@ -1,9 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  EmitEvent,
-  Events,
-  ValueOperationEventService,
-} from './value-operation-event.service';
+import { EmitEvent, Events, ValueOperationEventService } from './value-operation-event.service';
 
 describe('ValueOperationEventService', () => {
   let service: ValueOperationEventService;
@@ -43,10 +39,7 @@ describe('ValueOperationEventService', () => {
     let valuesCount = 2;
 
     // listen for ValueAdded event
-    const valueOperationEventSubscription = service.on(
-      Events.ValueAdded,
-      () => (valuesCount += 1)
-    );
+    const valueOperationEventSubscription = service.on(Events.ValueAdded, () => (valuesCount += 1));
 
     // emit ValueAdded event
     service.emit(new EmitEvent(Events.ValueAdded));

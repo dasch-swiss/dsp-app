@@ -22,10 +22,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     if (localStorage.getItem('cookieBanner') === null) {
-      localStorage.setItem(
-        'cookieBanner',
-        JSON.stringify(this.showCookieBanner)
-      );
+      localStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
     } else {
       this.showCookieBanner = JSON.parse(localStorage.getItem('cookieBanner'));
     }

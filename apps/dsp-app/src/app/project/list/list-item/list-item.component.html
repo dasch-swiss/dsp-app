@@ -1,7 +1,5 @@
 <div class="list" *ngIf="list && list.length > 0">
-  <div
-    class="list-node"
-    *ngFor="let node of list; let first = first; let last = last;">
+  <div class="list-node" *ngFor="let node of list; let first = first; let last = last;">
     <!-- button to expand / close node -->
     <div class="expand-close-container">
       <button
@@ -10,9 +8,7 @@
         color="primary"
         mat-icon-button
         (click)="toggleChildren(node.id)">
-        <mat-icon class="mat-icon-rtl-mirror">
-          {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}}
-        </mat-icon>
+        <mat-icon class="mat-icon-rtl-mirror"> {{showChildren(node.id) ? 'expand_more' : 'chevron_right'}} </mat-icon>
       </button>
     </div>
     <!-- existing node: show label in form; value is e.g. {{node.labels[0].value}} -->
@@ -46,9 +42,7 @@
     </app-list-item>
 
     <!-- in the case of no children: show form to append new item -->
-    <div
-      class="child-node"
-      *ngIf="node.id === expandedNode && node.children.length === 0 && projectStatus && isAdmin">
+    <div class="child-node" *ngIf="node.id === expandedNode && node.children.length === 0 && projectStatus && isAdmin">
       <!-- first child should have an empty list? yes -->
       <app-list-item-form
         class="append-child-node"

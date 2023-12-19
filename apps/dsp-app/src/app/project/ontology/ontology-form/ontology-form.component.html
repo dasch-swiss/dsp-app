@@ -16,22 +16,13 @@
         matTooltipClass="multi-line-tooltip"
         >help</mat-icon
       >
-      <mat-hint *ngIf="formErrors.name" class="medium-field">
-        {{ formErrors.name }}
-      </mat-hint>
-      <mat-hint align="end"
-        >{{ ontologyForm.controls['name'].value.length }} / {{ nameMaxLength
-        }}</mat-hint
-      >
+      <mat-hint *ngIf="formErrors.name" class="medium-field"> {{ formErrors.name }} </mat-hint>
+      <mat-hint align="end">{{ ontologyForm.controls['name'].value.length }} / {{ nameMaxLength }}</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="large-field ontology-label">
       <span *ngIf="!iri" matPrefix>{{ project.shortname }}:&nbsp;</span>
-      <input
-        matInput
-        placeholder="Label"
-        [formControl]="ontologyForm.controls['label']"
-        [value]="ontologyLabel" />
+      <input matInput placeholder="Label" [formControl]="ontologyForm.controls['label']" [value]="ontologyLabel" />
       <mat-hint *ngIf="formErrors.label"> {{ formErrors.label }} </mat-hint>
     </mat-form-field>
 
@@ -50,11 +41,7 @@
     <div class="form-panel form-action">
       <span class="fill-remaining-space"></span>
       <span>
-        <button
-          mat-raised-button
-          type="submit"
-          [color]="error ? 'warn' : 'primary'"
-          [disabled]="!ontologyForm.valid">
+        <button mat-raised-button type="submit" [color]="error ? 'warn' : 'primary'" [disabled]="!ontologyForm.valid">
           <div class="progress-button-content">
             <dasch-swiss-app-progress-indicator
               *ngIf="loading"

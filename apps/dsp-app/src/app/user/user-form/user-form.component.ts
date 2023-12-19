@@ -9,20 +9,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
-import {
-  ApiResponseError,
-  Constants,
-  ReadUser,
-  StringLiteral,
-  UpdateUserRequest,
-  User,
-} from '@dasch-swiss/dsp-js';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ApiResponseError, Constants, ReadUser, StringLiteral, UpdateUserRequest, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
@@ -88,17 +76,13 @@ export class UserFormComponent implements OnInit, OnChanges {
   /**
    * username should be unique
    */
-  existingUsernames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingUsernames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
   usernameMinLength = 4;
 
   /**
    * email should be unique
    */
-  existingEmails: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingEmails: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
 
   /**
    * form group for the form controller
@@ -128,19 +112,14 @@ export class UserFormComponent implements OnInit, OnChanges {
     email: {
       required: 'Email address is required.',
       pattern: "This doesn't appear to be a valid email address.",
-      existingName:
-        'This user exists already. If you want to edit it, ask a system administrator.',
+      existingName: 'This user exists already. If you want to edit it, ask a system administrator.',
       member: 'This user is already a member of the project.',
     },
     username: {
       required: 'Username is required.',
       pattern: 'Spaces and special characters are not allowed in username',
-      minlength:
-        'Username must be at least ' +
-        this.usernameMinLength +
-        ' characters long.',
-      existingName:
-        'This user exists already. If you want to edit it, ask a system administrator.',
+      minlength: 'Username must be at least ' + this.usernameMinLength + ' characters long.',
+      existingName: 'This user exists already. If you want to edit it, ask a system administrator.',
       member: 'This user is already a member of the project.',
     },
   };
@@ -196,14 +175,10 @@ export class UserFormComponent implements OnInit, OnChanges {
         for (const user of allUsers) {
           // email address of the user should be unique.
           // therefore we create a list of existing email addresses to avoid multiple use of user names
-          this.existingEmails.push(
-            new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)')
-          );
+          this.existingEmails.push(new RegExp('(?:^|W)' + user.email.toLowerCase() + '(?:$|W)'));
           // username should also be unique.
           // therefore we create a list of existingUsernames to avoid multiple use of user names
-          this.existingUsernames.push(
-            new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)')
-          );
+          this.existingUsernames.push(new RegExp('(?:^|W)' + user.username.toLowerCase() + '(?:$|W)'));
         }
 
         const newUser: ReadUser = new ReadUser();
@@ -232,14 +207,11 @@ export class UserFormComponent implements OnInit, OnChanges {
    */
   buildForm(user: ReadUser): boolean {
     // get info about system admin permission
-    if (
-      user.id &&
-      user.permissions.groupsPerProject[Constants.SystemProjectIRI]
-    ) {
+    if (user.id && user.permissions.groupsPerProject[Constants.SystemProjectIRI]) {
       // this user is member of the system project. does he has admin rights?
-      this.sysAdminPermission = user.permissions.groupsPerProject[
-        Constants.SystemProjectIRI
-      ].includes(Constants.SystemAdminGroupIRI);
+      this.sysAdminPermission = user.permissions.groupsPerProject[Constants.SystemProjectIRI].includes(
+        Constants.SystemAdminGroupIRI
+      );
     }
 
     // if user is defined, we're in the edit mode
@@ -266,11 +238,7 @@ export class UserFormComponent implements OnInit, OnChanges {
           value: user.email,
           disabled: editMode,
         },
-        [
-          Validators.required,
-          Validators.pattern(CustomRegex.EMAIL_REGEX),
-          existingNamesValidator(this.existingEmails),
-        ]
+        [Validators.required, Validators.pattern(CustomRegex.EMAIL_REGEX), existingNamesValidator(this.existingEmails)]
       ),
       username: new UntypedFormControl(
         {
@@ -347,33 +315,27 @@ export class UserFormComponent implements OnInit, OnChanges {
       // userData.email = this.userForm.value.email;
       userData.lang = this.userForm.value.lang;
 
-      this._userApiService
-        .updateBasicInformation(this.user.id, userData)
-        .subscribe(
-          response => {
-            this.user = response.user;
-            this.buildForm(this.user);
-            const user = this._store.selectSnapshot(
-              UserSelectors.user
-            ) as ReadUser;
-            // update application state
-            if (user.username === this.user.username) {
-              // update logged in user session
-              this.user.lang = this.userForm.controls['lang'].value;
-            }
-
-            this._store.dispatch(new SetUserAction(this.user));
-            this._notification.openSnackBar(
-              "You have successfully updated the user's profile data."
-            );
-            this.closeDialog.emit();
-            this.loading = false;
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
-            this.loading = false;
+      this._userApiService.updateBasicInformation(this.user.id, userData).subscribe(
+        response => {
+          this.user = response.user;
+          this.buildForm(this.user);
+          const user = this._store.selectSnapshot(UserSelectors.user) as ReadUser;
+          // update application state
+          if (user.username === this.user.username) {
+            // update logged in user session
+            this.user.lang = this.userForm.controls['lang'].value;
           }
-        );
+
+          this._store.dispatch(new SetUserAction(this.user));
+          this._notification.openSnackBar("You have successfully updated the user's profile data.");
+          this.closeDialog.emit();
+          this.loading = false;
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+          this.loading = false;
+        }
+      );
     } else {
       this.createNewUser(this.userForm.value);
     }
@@ -391,22 +353,15 @@ export class UserFormComponent implements OnInit, OnChanges {
     userData.lang = userForm.lang;
 
     this._store.dispatch(new CreateUserAction(userData));
-    combineLatest([
-      this._actions$.pipe(ofActionSuccessful(CreateUserAction)),
-      this.allUsers$,
-    ])
+    combineLatest([this._actions$.pipe(ofActionSuccessful(CreateUserAction)), this.allUsers$])
       .pipe(take(1))
       .subscribe(([loadUsersAction, allUsers]) => {
-        this.user = allUsers.find(
-          user => user.username === loadUsersAction.userData.username
-        );
+        this.user = allUsers.find(user => user.username === loadUsersAction.userData.username);
         this.buildForm(this.user);
         if (this.projectUuid) {
           // if a projectUuid exists, add the user to the project
           const projectIri = this._projectService.uuidToIri(this.projectUuid);
-          this._store.dispatch(
-            new AddUserToProjectMembershipAction(this.user.id, projectIri)
-          );
+          this._store.dispatch(new AddUserToProjectMembershipAction(this.user.id, projectIri));
         }
 
         this.closeDialog.emit(this.user);

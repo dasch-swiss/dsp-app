@@ -9,12 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  CreateGeonameValue,
-  MockResource,
-  ReadGeonameValue,
-  UpdateGeonameValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateGeonameValue, MockResource, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { of } from 'rxjs';
 import { DisplayPlace, GeonameService } from '../../services/geoname.service';
@@ -25,10 +20,7 @@ import { GeonameValueComponent } from './geoname-value.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-geoname-value
-    #inputVal
-    [displayValue]="displayInputVal"
-    [mode]="mode"></app-geoname-value>`,
+  template: ` <app-geoname-value #inputVal [displayValue]="displayInputVal" [mode]="mode"></app-geoname-value>`,
 })
 class TestHostDisplayValueComponent implements OnInit {
   @ViewChild('inputVal') inputValueComponent: GeonameValueComponent;
@@ -69,10 +61,7 @@ class TestHostCreateValueComponent implements OnInit {
 
 describe('GeonameValueComponent', () => {
   beforeEach(waitForAsync(() => {
-    const mockGeonameService = jasmine.createSpyObj('GeonameService', [
-      'resolveGeonameID',
-      'searchPlace',
-    ]);
+    const mockGeonameService = jasmine.createSpyObj('GeonameService', ['resolveGeonameID', 'searchPlace']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -81,13 +70,7 @@ describe('GeonameValueComponent', () => {
         TestHostDisplayValueComponent,
         TestHostCreateValueComponent,
       ],
-      imports: [
-        ReactiveFormsModule,
-        MatInputModule,
-        BrowserAnimationsModule,
-        MatIconModule,
-        MatAutocompleteModule,
-      ],
+      imports: [ReactiveFormsModule, MatInputModule, BrowserAnimationsModule, MatIconModule, MatAutocompleteModule],
       providers: [
         AppConfigService,
         {
@@ -108,13 +91,9 @@ describe('GeonameValueComponent', () => {
     let loader: HarnessLoader;
 
     beforeEach(() => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
-      geonameServiceMock.resolveGeonameID.and.returnValue(
-        of({ displayName: 'Basel' } as DisplayPlace)
-      );
+      geonameServiceMock.resolveGeonameID.and.returnValue(of({ displayName: 'Basel' } as DisplayPlace));
 
       testHostFixture = TestBed.createComponent(TestHostDisplayValueComponent);
       testHostComponent = testHostFixture.componentInstance;
@@ -131,13 +110,9 @@ describe('GeonameValueComponent', () => {
     });
 
     it('should display an existing value', () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
-      expect(
-        testHostComponent.inputValueComponent.displayValue.geoname
-      ).toEqual('2661604');
+      expect(testHostComponent.inputValueComponent.displayValue.geoname).toEqual('2661604');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
@@ -148,20 +123,14 @@ describe('GeonameValueComponent', () => {
       const anchorDebugElement = valueReadModeDebugElement.query(By.css('a'));
       expect(anchorDebugElement.nativeElement).toBeDefined();
 
-      expect(anchorDebugElement.attributes.href).toEqual(
-        'https://www.geonames.org/2661604'
-      );
+      expect(anchorDebugElement.attributes.href).toEqual('https://www.geonames.org/2661604');
       expect(anchorDebugElement.attributes.target).toEqual('_blank');
 
-      expect(geonameServiceMock.resolveGeonameID).toHaveBeenCalledOnceWith(
-        '2661604'
-      );
+      expect(geonameServiceMock.resolveGeonameID).toHaveBeenCalledOnceWith('2661604');
     });
 
     it('should make an existing value editable', async () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
       geonameServiceMock.searchPlace.and.returnValue(
         of([
@@ -197,20 +166,15 @@ describe('GeonameValueComponent', () => {
 
       expect(options.length).toEqual(1);
 
-      expect(await options[0].getText()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await options[0].getText()).toEqual('Terra Linda High School, California, United States');
 
       await options[0].click();
 
-      expect(await autocomplete.getValue()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await autocomplete.getValue()).toEqual('Terra Linda High School, California, United States');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue instanceof UpdateGeonameValue).toBeTruthy();
 
@@ -218,9 +182,7 @@ describe('GeonameValueComponent', () => {
     });
 
     it('should not return an invalid update value', async () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
       geonameServiceMock.searchPlace.and.returnValue(of([]));
 
@@ -241,16 +203,13 @@ describe('GeonameValueComponent', () => {
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
 
-      const updatedValue =
-        testHostComponent.inputValueComponent.getUpdatedValue();
+      const updatedValue = testHostComponent.inputValueComponent.getUpdatedValue();
 
       expect(updatedValue).toBeFalsy();
     });
 
     it('should restore the initially displayed value', async () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
       geonameServiceMock.searchPlace.and.returnValue(
         of([
@@ -284,33 +243,23 @@ describe('GeonameValueComponent', () => {
 
       expect(options.length).toEqual(1);
 
-      expect(await options[0].getText()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await options[0].getText()).toEqual('Terra Linda High School, California, United States');
 
       await options[0].click();
 
-      expect(await autocomplete.getValue()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await autocomplete.getValue()).toEqual('Terra Linda High School, California, United States');
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value.id
-      ).toEqual('5401678');
+      expect(testHostComponent.inputValueComponent.valueFormControl.value.id).toEqual('5401678');
 
       testHostComponent.inputValueComponent.resetFormControl();
 
-      expect(
-        testHostComponent.inputValueComponent.valueFormControl.value.id
-      ).toEqual('2661604');
+      expect(testHostComponent.inputValueComponent.valueFormControl.value.id).toEqual('2661604');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
     });
 
     it('should set a new display value', () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
       geonameServiceMock.resolveGeonameID.and.returnValue(
         of({ displayName: 'Terra Linda High School' } as DisplayPlace)
@@ -325,27 +274,19 @@ describe('GeonameValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      expect(valueReadModeNativeElement.innerText).toEqual(
-        'Terra Linda High School'
-      );
+      expect(valueReadModeNativeElement.innerText).toEqual('Terra Linda High School');
 
       expect(testHostComponent.inputValueComponent.form.valid).toBeTruthy();
 
-      expect(geonameServiceMock.resolveGeonameID).toHaveBeenCalledWith(
-        '5401678'
-      );
+      expect(geonameServiceMock.resolveGeonameID).toHaveBeenCalledWith('5401678');
     });
 
     it('should unsubscribe when destroyed', () => {
-      expect(
-        testHostComponent.inputValueComponent.valueChangesSubscription.closed
-      ).toBeFalsy();
+      expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeFalsy();
 
       testHostComponent.inputValueComponent.ngOnDestroy();
 
-      expect(
-        testHostComponent.inputValueComponent.valueChangesSubscription.closed
-      ).toBeTruthy();
+      expect(testHostComponent.inputValueComponent.valueChangesSubscription.closed).toBeTruthy();
     });
   });
 
@@ -373,17 +314,13 @@ describe('GeonameValueComponent', () => {
       valueInputDebugElement = valueComponentDe.query(By.css('input.value'));
       valueInputNativeElement = valueInputDebugElement.nativeElement;
 
-      expect(testHostComponent.inputValueComponent.displayValue).toEqual(
-        undefined
-      );
+      expect(testHostComponent.inputValueComponent.displayValue).toEqual(undefined);
       expect(testHostComponent.inputValueComponent.form.valid).toBeFalsy();
       expect(valueInputNativeElement.value).toEqual('');
     });
 
     it('should create a value', async () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
       geonameServiceMock.searchPlace.and.returnValue(
         of([
@@ -409,15 +346,11 @@ describe('GeonameValueComponent', () => {
 
       expect(options.length).toEqual(1);
 
-      expect(await options[0].getText()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await options[0].getText()).toEqual('Terra Linda High School, California, United States');
 
       await options[0].click();
 
-      expect(await autocomplete.getValue()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await autocomplete.getValue()).toEqual('Terra Linda High School, California, United States');
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('create');
 
@@ -431,9 +364,7 @@ describe('GeonameValueComponent', () => {
     });
 
     it('should reset form after cancellation', async () => {
-      const geonameServiceMock = TestBed.inject(
-        GeonameService
-      ) as jasmine.SpyObj<GeonameService>;
+      const geonameServiceMock = TestBed.inject(GeonameService) as jasmine.SpyObj<GeonameService>;
 
       geonameServiceMock.searchPlace.and.returnValue(
         of([
@@ -459,15 +390,11 @@ describe('GeonameValueComponent', () => {
 
       expect(options.length).toEqual(1);
 
-      expect(await options[0].getText()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await options[0].getText()).toEqual('Terra Linda High School, California, United States');
 
       await options[0].click();
 
-      expect(await autocomplete.getValue()).toEqual(
-        'Terra Linda High School, California, United States'
-      );
+      expect(await autocomplete.getValue()).toEqual('Terra Linda High School, California, United States');
 
       expect(testHostComponent.inputValueComponent.mode).toEqual('create');
 

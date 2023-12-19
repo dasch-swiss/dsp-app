@@ -1,5 +1,4 @@
-<dasch-swiss-app-progress-indicator
-  *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
 <div *ngIf="(isProjectsLoading$ | async) === false">
   <div *ngIf="isProjectAdmin$ | async" class="content large middle">

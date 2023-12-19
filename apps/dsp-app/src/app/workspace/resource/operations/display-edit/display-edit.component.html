@@ -114,10 +114,7 @@
                 "></app-list-value>
       <span *ngSwitchDefault>{{ displayValue.strval }}</span>
     </span>
-    <div
-      class="action-bubble"
-      *ngIf="showActionBubble && !editModeActive"
-      [@simpleFadeAnimation]="'in'">
+    <div class="action-bubble" *ngIf="showActionBubble && !editModeActive" [@simpleFadeAnimation]="'in'">
       <div class="button-container">
         <button
           mat-button
@@ -132,11 +129,7 @@
           (click)="activateEditMode()">
           <mat-icon>edit</mat-icon>
         </button>
-        <button
-          mat-button
-          class="info"
-          matTooltip="{{ getTooltipText() }}"
-          matTooltipClass="info-tooltip">
+        <button mat-button class="info" matTooltip="{{ getTooltipText() }}" matTooltipClass="info-tooltip">
           <mat-icon>info</mat-icon>
         </button>
         <button
@@ -190,8 +183,6 @@
       (click)="cancelEditValue()">
       <mat-icon>undo</mat-icon>
     </button>
-    <dasch-swiss-app-progress-indicator
-      *ngIf="submittingValue"
-      [status]="0"></dasch-swiss-app-progress-indicator>
+    <dasch-swiss-app-progress-indicator *ngIf="submittingValue" [status]="0"></dasch-swiss-app-progress-indicator>
   </div>
 </div>

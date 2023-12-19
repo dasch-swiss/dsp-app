@@ -17,8 +17,7 @@ import { RepresentationService } from '../representation.service';
 import { TextComponent } from './text.component';
 
 const textFileValue = {
-  arkUrl:
-    'http://0.0.0.0:3336/ark:/72163/1/9876/=wcU1HzYTEKbJCYPybyKmAs/Kp81r_BPTHKa4oSd5iIxXgd',
+  arkUrl: 'http://0.0.0.0:3336/ark:/72163/1/9876/=wcU1HzYTEKbJCYPybyKmAs/Kp81r_BPTHKa4oSd5iIxXgd',
   attachedToUser: 'http://rdfh.ch/users/root',
   fileUrl: 'http://0.0.0.0:1024/9876/Jjic1ixccX7-BUHCAFNlEts.txt/file',
   filename: 'Jjic1ixccX7-BUHCAFNlEts.txt',
@@ -72,13 +71,7 @@ class MockStatusComponent {
 
   @Input() comment?: string;
   @Input() url?: string;
-  @Input() representation?:
-    | 'archive'
-    | 'audio'
-    | 'document'
-    | 'still-image'
-    | 'video'
-    | 'text';
+  @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
 
   constructor() {}
 }
@@ -88,20 +81,11 @@ describe('TextComponent', () => {
   let testHostFixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async () => {
-    const representationServiceSpyObj = jasmine.createSpyObj(
-      'RepresentationService',
-      ['getFileInfo']
-    );
+    const representationServiceSpyObj = jasmine.createSpyObj('RepresentationService', ['getFileInfo']);
 
     TestBed.configureTestingModule({
       declarations: [TextComponent, TestHostComponent, MockStatusComponent],
-      imports: [
-        HttpClientTestingModule,
-        MatDialogModule,
-        MatSnackBarModule,
-        MatMenuModule,
-        MatIconModule,
-      ],
+      imports: [HttpClientTestingModule, MatDialogModule, MatSnackBarModule, MatMenuModule, MatIconModule],
       providers: [
         AppConfigService,
         MockProvider(AppLoggingService),
@@ -119,9 +103,7 @@ describe('TextComponent', () => {
 
   beforeEach(() => {
     const representationServiceSpy = TestBed.inject(RepresentationService);
-    (
-      representationServiceSpy as jasmine.SpyObj<RepresentationService>
-    ).getFileInfo.and.callFake(() =>
+    (representationServiceSpy as jasmine.SpyObj<RepresentationService>).getFileInfo.and.callFake(() =>
       of(knoraJson).pipe(map((response: any) => response as object))
     );
 

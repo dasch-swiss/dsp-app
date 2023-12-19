@@ -1,15 +1,8 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import {
-  ApiResponseData,
-  HealthResponse,
-  KnoraApiConnection,
-} from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { ApiResponseData, HealthResponse, KnoraApiConnection } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { HttpStatusMsg } from '@dasch-swiss/vre/shared/assets/status-msg';
 
 export interface StatusMsg {
@@ -31,13 +24,7 @@ export class StatusComponent implements OnInit {
 
   @Input() comment?: string;
   @Input() url?: string;
-  @Input() representation?:
-    | 'archive'
-    | 'audio'
-    | 'document'
-    | 'still-image'
-    | 'video'
-    | 'text';
+  @Input() representation?: 'archive' | 'audio' | 'document' | 'still-image' | 'video' | 'text';
 
   refresh = false;
 
@@ -125,11 +112,7 @@ export class StatusComponent implements OnInit {
       this.message.action = 'goto';
     } else {
       // set the page title only in case of main error
-      this._titleService.setTitle(
-        `DSP | ${this.getTypeByStatus(this.status).toUpperCase()} ${
-          this.status
-        }`
-      );
+      this._titleService.setTitle(`DSP | ${this.getTypeByStatus(this.status).toUpperCase()} ${this.status}`);
     }
   }
 

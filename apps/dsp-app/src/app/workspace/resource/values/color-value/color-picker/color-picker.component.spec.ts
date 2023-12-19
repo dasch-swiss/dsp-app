@@ -1,10 +1,6 @@
 import { Component, OnInit, ViewChild, DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
@@ -18,9 +14,7 @@ import { ColorPickerComponent } from './color-picker.component';
 @Component({
   template: ` <div [formGroup]="form">
     <mat-form-field>
-      <app-color-picker
-        #colorInput
-        [formControlName]="'colorValue'"></app-color-picker>
+      <app-color-picker #colorInput [formControlName]="'colorValue'"></app-color-picker>
     </mat-form-field>
   </div>`,
 })
@@ -48,13 +42,7 @@ describe('ColorPickerComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        ColorPickerModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [ColorPickerModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
       declarations: [ColorPickerComponent, TestHostComponent],
     }).compileComponents();
   }));
@@ -68,17 +56,11 @@ describe('ColorPickerComponent', () => {
     expect(testHostComponent.colorPickerComponent).toBeTruthy();
 
     const hostCompDe = testHostFixture.debugElement;
-    colorPickerComponentDe = hostCompDe.query(
-      By.directive(ColorPickerComponent)
-    );
-    colorInputDebugElement = colorPickerComponentDe.query(
-      By.css('input.color')
-    );
+    colorPickerComponentDe = hostCompDe.query(By.directive(ColorPickerComponent));
+    colorInputDebugElement = colorPickerComponentDe.query(By.css('input.color'));
     colorInputNativeElement = colorInputDebugElement.nativeElement;
 
-    expect(
-      colorInputNativeElement.getAttribute('ng-reflect-cp-disabled')
-    ).toEqual('false');
+    expect(colorInputNativeElement.getAttribute('ng-reflect-cp-disabled')).toEqual('false');
   });
 
   it('should initialize the color correctly', () => {

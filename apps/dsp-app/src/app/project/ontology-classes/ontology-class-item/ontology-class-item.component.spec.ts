@@ -5,10 +5,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ClassDefinition, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { TestConfig } from '@dsp-app/src/test.config';
 import { OntologyClassItemComponent } from './ontology-class-item.component';
 
@@ -16,10 +13,7 @@ import { OntologyClassItemComponent } from './ontology-class-item.component';
  * test host component to simulate parent component.
  */
 @Component({
-  template: `
-    <app-ontology-class-item #ontoClassItem [resClass]="resClass">
-    </app-ontology-class-item>
-  `,
+  template: ` <app-ontology-class-item #ontoClassItem [resClass]="resClass"> </app-ontology-class-item> `,
 })
 class TestHostComponent {
   @ViewChild('ontoClassItem') ontoClassItem: OntologyClassItemComponent;
@@ -36,8 +30,7 @@ class TestHostComponent {
         isInherited: true,
       },
       {
-        propertyIndex:
-          'http://api.knora.org/ontology/knora-api/v2#attachedToProject',
+        propertyIndex: 'http://api.knora.org/ontology/knora-api/v2#attachedToProject',
         cardinality: 0,
         isInherited: true,
       },

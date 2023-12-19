@@ -1,11 +1,6 @@
 import { Component, DebugElement, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { By } from '@angular/platform-browser';
@@ -18,9 +13,7 @@ import { Interval, IntervalInputComponent } from './interval-input.component';
 @Component({
   template: ` <div [formGroup]="form">
     <mat-form-field>
-      <app-interval-input
-        #intervalInput
-        [formControlName]="'interval'"></app-interval-input>
+      <app-interval-input #intervalInput [formControlName]="'interval'"></app-interval-input>
     </mat-form-field>
   </div>`,
 })
@@ -77,12 +70,7 @@ describe('IntervalInputComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
       declarations: [IntervalInputComponent, TestHostComponent],
     }).compileComponents();
   }));
@@ -96,12 +84,8 @@ describe('IntervalInputComponent', () => {
     expect(testHostComponent.intervalInputComponent).toBeTruthy();
 
     const hostCompDe = testHostFixture.debugElement;
-    intervalInputComponentDe = hostCompDe.query(
-      By.directive(IntervalInputComponent)
-    );
-    startInputDebugElement = intervalInputComponentDe.query(
-      By.css('input.start')
-    );
+    intervalInputComponentDe = hostCompDe.query(By.directive(IntervalInputComponent));
+    startInputDebugElement = intervalInputComponentDe.query(By.css('input.start'));
     startInputNativeElement = startInputDebugElement.nativeElement;
     endInputDebugElement = intervalInputComponentDe.query(By.css('input.end'));
     endInputNativeElement = endInputDebugElement.nativeElement;
@@ -151,14 +135,10 @@ describe('IntervalInputComponent', () => {
   });
 
   it("should mark the form's validity correctly", () => {
-    expect(
-      testHostComponent.intervalInputComponent.valueRequiredValidator
-    ).toBe(true);
+    expect(testHostComponent.intervalInputComponent.valueRequiredValidator).toBe(true);
     expect(testHostComponent.intervalInputComponent.form.valid).toBe(true);
 
-    testHostComponent.intervalInputComponent.startIntervalControl.setValue(
-      null
-    );
+    testHostComponent.intervalInputComponent.startIntervalControl.setValue(null);
 
     testHostComponent.intervalInputComponent._handleInput();
 
@@ -172,12 +152,7 @@ describe('InvertalInputComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
       declarations: [IntervalInputComponent, NoValueRequiredTestHostComponent],
     }).compileComponents();
   }));
@@ -191,9 +166,7 @@ describe('InvertalInputComponent', () => {
   });
 
   it('should receive the propagated valueRequiredValidator from the parent component', () => {
-    expect(
-      testHostComponent.intervalInputComponent.valueRequiredValidator
-    ).toBe(false);
+    expect(testHostComponent.intervalInputComponent.valueRequiredValidator).toBe(false);
   });
 
   it("should mark the form's validity correctly", () => {

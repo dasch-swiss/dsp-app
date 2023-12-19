@@ -73,37 +73,23 @@ describe('ProjectComponent', () => {
   };
 
   beforeEach(waitForAsync(() => {
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get', 'set', 'has']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get', 'set', 'has']);
 
     // getProjectMembersByIri and getGroups currently have no mock implementation because
     // their results are stored in the application state but never actually used in the component
     // so they're irrevelant for this unit test but need to be defined at least
     const dspConnSpyObj = {
       admin: {
-        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', [
-          'getProjectByIri',
-          'getProjectMembersByIri',
-        ]),
+        projectsEndpoint: jasmine.createSpyObj('projectsEndpoint', ['getProjectByIri', 'getProjectMembersByIri']),
         groupsEndpoint: jasmine.createSpyObj('groupsEndpoint', ['getGroups']),
       },
       v2: {
-        onto: jasmine.createSpyObj('onto', [
-          'getOntologiesByProjectIri',
-          'getOntology',
-        ]),
+        onto: jasmine.createSpyObj('onto', ['getOntologiesByProjectIri', 'getOntology']),
       },
     };
-    const ontoServiceSpy = jasmine.createSpyObj('OntologyService', [
-      'getOntologyName',
-    ]);
+    const ontoServiceSpy = jasmine.createSpyObj('OntologyService', ['getOntologyName']);
 
-    const sessionServiceSpy = jasmine.createSpyObj('SessionService', [
-      'getSession',
-      'setSession',
-    ]);
+    const sessionServiceSpy = jasmine.createSpyObj('SessionService', ['getSession', 'setSession']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -166,9 +152,7 @@ describe('ProjectComponent', () => {
     // mock application state service
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response: ProjectResponse = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -182,9 +166,7 @@ describe('ProjectComponent', () => {
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
     // mock projects endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectByIri.and.callFake(() => {
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectByIri.and.callFake(() => {
       const response = new ProjectResponse();
 
       const mockProjects = MockProjects.mockProjects();
@@ -195,22 +177,20 @@ describe('ProjectComponent', () => {
     });
 
     // mock project members endpoint
-    (
-      dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>
-    ).getProjectMembersByIri.and.callFake(() => {
-      const response = new MembersResponse();
+    (dspConnSpy.admin.projectsEndpoint as jasmine.SpyObj<ProjectsEndpointAdmin>).getProjectMembersByIri.and.callFake(
+      () => {
+        const response = new MembersResponse();
 
-      const mockUsers = MockUsers.mockUsers();
+        const mockUsers = MockUsers.mockUsers();
 
-      response.members = mockUsers.body.users;
+        response.members = mockUsers.body.users;
 
-      return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
-    });
+        return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
+      }
+    );
 
     // mock groups endpoint
-    (
-      dspConnSpy.admin.groupsEndpoint as jasmine.SpyObj<GroupsEndpointAdmin>
-    ).getGroups.and.callFake(() => {
+    (dspConnSpy.admin.groupsEndpoint as jasmine.SpyObj<GroupsEndpointAdmin>).getGroups.and.callFake(() => {
       const response = new GroupsResponse();
 
       const groups = [new ReadGroup()];
@@ -220,41 +200,33 @@ describe('ProjectComponent', () => {
       return of(ApiResponseData.fromAjaxResponse({ response } as AjaxResponse));
     });
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).getOntologiesByProjectIri.and.callFake(() => {
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntologiesByProjectIri.and.callFake(() => {
       const anythingOnto = MockOntology.mockOntologiesMetadata();
       return of(anythingOnto);
     });
 
-    (
-      dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>
-    ).getOntology.and.callFake(() => {
-      const response: ReadOntology = MockOntology.mockReadOntology(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2'
-      );
+    (dspConnSpy.v2.onto as jasmine.SpyObj<OntologiesEndpointV2>).getOntology.and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
       return of(response);
     });
 
     // mock session service
     const sessionSpy = TestBed.inject(SessionService);
 
-    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(
-      () => {
-        const session: Session = {
-          id: 12345,
-          user: {
-            name: 'username',
-            jwt: 'myToken',
-            lang: 'en',
-            sysAdmin: true,
-            projectAdmin: [],
-          },
-        };
+    (sessionSpy as jasmine.SpyObj<SessionService>).getSession.and.callFake(() => {
+      const session: Session = {
+        id: 12345,
+        user: {
+          name: 'username',
+          jwt: 'myToken',
+          lang: 'en',
+          sysAdmin: true,
+          projectAdmin: [],
+        },
+      };
 
-        return session;
-      }
-    );
+      return session;
+    });
 
     fixture = TestBed.createComponent(TestHostProjectComponent);
     component = fixture.componentInstance;

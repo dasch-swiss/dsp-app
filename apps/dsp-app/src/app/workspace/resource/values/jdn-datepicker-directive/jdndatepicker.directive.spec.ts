@@ -9,9 +9,7 @@ import { JDNDatepickerDirective } from './jdndatepicker.directive';
  * test host component to simulate parent component.
  */
 @Component({
-  template: ` <app-jdn-datepicker
-    #activeCalDir
-    [activeCalendar]="activeCalendar"></app-jdn-datepicker>`,
+  template: ` <app-jdn-datepicker #activeCalDir [activeCalendar]="activeCalendar"></app-jdn-datepicker>`,
 })
 class TestHostComponent implements OnInit {
   @ViewChild(JDNDatepickerDirective) jdnDir;
@@ -33,10 +31,7 @@ describe('JDNDatepickerDirective', () => {
   let testBehaviourSubjSpy;
 
   beforeEach(waitForAsync(() => {
-    testBehaviourSubject = jasmine.createSpyObj('ACTIVE_CALENDAR', [
-      'next',
-      'complete',
-    ]);
+    testBehaviourSubject = jasmine.createSpyObj('ACTIVE_CALENDAR', ['next', 'complete']);
 
     setCompleteSpy = testBehaviourSubject.complete.and.stub();
 
@@ -84,9 +79,7 @@ describe('JDNDatepickerDirective', () => {
 
     expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(2);
 
-    expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual([
-      'Gregorian',
-    ]);
+    expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual(['Gregorian']);
     expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual(['Julian']);
   });
 
@@ -96,12 +89,8 @@ describe('JDNDatepickerDirective', () => {
 
     expect(testBehaviourSubjSpy.next).toHaveBeenCalledTimes(2);
 
-    expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual([
-      'Gregorian',
-    ]);
-    expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual([
-      'Gregorian',
-    ]);
+    expect(testBehaviourSubjSpy.next.calls.all()[0].args).toEqual(['Gregorian']);
+    expect(testBehaviourSubjSpy.next.calls.all()[1].args).toEqual(['Gregorian']);
   });
 
   it('should complete the BehaviourSubject when destroyed', () => {

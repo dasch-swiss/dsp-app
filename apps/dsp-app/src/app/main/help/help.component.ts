@@ -6,11 +6,7 @@ import {
   KnoraApiConnection,
   VersionResponse,
 } from '@dasch-swiss/dsp-js';
-import {
-  AppConfigService,
-  DspApiConnectionToken,
-  DspConfig,
-} from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { environment } from '@dsp-app/src/environments/environment';
 import { GridItem } from '../grid/grid.component';
@@ -108,8 +104,7 @@ export class HelpComponent implements OnInit {
 
     this.support[0].url += this.dsp.environment + ': ' + this.dsp.release;
 
-    this.releaseNotesUrl =
-      'https://github.com/dasch-swiss/dsp-das/releases/tag/v' + this.appVersion;
+    this.releaseNotesUrl = 'https://github.com/dasch-swiss/dsp-das/releases/tag/v' + this.appVersion;
 
     this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(
       (response: ApiResponseData<VersionResponse>) => {

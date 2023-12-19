@@ -82,6 +82,7 @@
         "key-spacing": "off",
         "linebreak-style": "off",
         "max-classes-per-file": "off",
+        "max-len": "off",
         "new-parens": "off",
         "no-confusing-arrow": "off",
         "no-case-declarations": "warn",

@@ -6,10 +6,7 @@ import {
   DspInstrumentationToken,
 } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
-import {
-  datadogRum,
-  RumFetchResourceEventDomainContext,
-} from '@datadog/browser-rum';
+import { datadogRum, RumFetchResourceEventDomainContext } from '@datadog/browser-rum';
 import { Observable } from 'rxjs';
 import { v5 as uuidv5 } from 'uuid';
 
@@ -23,11 +20,7 @@ export class DatadogRumService {
 
   constructor() {
     this.buildTag$.subscribe(tag => {
-      if (
-        this.config.dataDog.enabled &&
-        this.config.dataDog.applicationId &&
-        this.config.dataDog.clientToken
-      ) {
+      if (this.config.dataDog.enabled && this.config.dataDog.applicationId && this.config.dataDog.clientToken) {
         datadogRum.init({
           applicationId: this.config.dataDog.applicationId,
           clientToken: this.config.dataDog.clientToken,
@@ -47,8 +40,7 @@ export class DatadogRumService {
             if (event.type === 'resource' && event.resource.type === 'xhr') {
               event.context = {
                 ...event.context,
-                responseHeaders: (context as RumFetchResourceEventDomainContext)
-                  .response?.body,
+                responseHeaders: (context as RumFetchResourceEventDomainContext).response?.body,
               };
             }
           },

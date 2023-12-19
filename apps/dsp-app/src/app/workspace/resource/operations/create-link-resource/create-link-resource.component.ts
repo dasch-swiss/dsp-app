@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import {
   ApiResponseError,
@@ -38,8 +30,7 @@ export class CreateLinkResourceComponent implements OnInit {
   @Input() resourceClassDef: string;
   @Input() currentOntoIri: string;
 
-  @Output() closeDialog: EventEmitter<ReadResource | DialogEvent> =
-    new EventEmitter<ReadResource | DialogEvent>();
+  @Output() closeDialog: EventEmitter<ReadResource | DialogEvent> = new EventEmitter<ReadResource | DialogEvent>();
 
   @ViewChild('selectProps')
   selectPropertiesComponent: SelectPropertiesComponent;
@@ -50,13 +41,7 @@ export class CreateLinkResourceComponent implements OnInit {
   ontologyInfo: ResourceClassAndPropertyDefinitions;
   fileValue: CreateFileValue;
 
-  hasFileValue:
-    | 'stillImage'
-    | 'movingImage'
-    | 'audio'
-    | 'document'
-    | 'text'
-    | 'archive';
+  hasFileValue: 'stillImage' | 'movingImage' | 'audio' | 'document' | 'text' | 'archive';
 
   propertiesObj = {};
 
@@ -110,84 +95,64 @@ export class CreateLinkResourceComponent implements OnInit {
 
   onSubmit() {
     if (this.propertiesForm.valid) {
-      this._projectApiService
-        .get(this.resourceClassDef.split('/')[4], 'shortcode')
-        .subscribe(response => {
-          const createResource = new CreateResource();
+      this._projectApiService.get(this.resourceClassDef.split('/')[4], 'shortcode').subscribe(response => {
+        const createResource = new CreateResource();
 
-          const resLabelVal = <CreateTextValueAsString>(
-            this.selectPropertiesComponent.createValueComponent.getNewValue()
-          );
+        const resLabelVal = <CreateTextValueAsString>this.selectPropertiesComponent.createValueComponent.getNewValue();
 
-          createResource.label = resLabelVal.text;
+        createResource.label = resLabelVal.text;
 
-          createResource.type = this.resourceClassDef;
+        createResource.type = this.resourceClassDef;
 
-          createResource.attachedToProject = response.project.id;
+        createResource.attachedToProject = response.project.id;
 
-          this.selectPropertiesComponent.switchPropertiesComponent.forEach(
-            child => {
-              const createVal = child.createValueComponent.getNewValue();
-              const iri = child.property.id;
-              if (createVal instanceof CreateValue) {
-                if (this.propertiesObj[iri]) {
-                  // if a key already exists, add the createVal to the array
-                  this.propertiesObj[iri].push(createVal);
-                } else {
-                  // if no key exists, add one and add the createVal as the first value of the array
-                  this.propertiesObj[iri] = [createVal];
-                }
-              }
-            }
-          );
-
-          if (this.fileValue) {
-            switch (this.hasFileValue) {
-              case 'stillImage':
-                this.propertiesObj[Constants.HasStillImageFileValue] = [
-                  this.fileValue,
-                ];
-                break;
-              case 'document':
-                this.propertiesObj[Constants.HasDocumentFileValue] = [
-                  this.fileValue,
-                ];
-                break;
-              case 'audio':
-                this.propertiesObj[Constants.HasAudioFileValue] = [
-                  this.fileValue,
-                ];
-                break;
-              case 'movingImage':
-                this.propertiesObj[Constants.HasMovingImageFileValue] = [
-                  this.fileValue,
-                ];
-                break;
-              case 'archive':
-                this.propertiesObj[Constants.HasArchiveFileValue] = [
-                  this.fileValue,
-                ];
-                break;
-              case 'text':
-                this.propertiesObj[Constants.HasTextFileValue] = [
-                  this.fileValue,
-                ];
+        this.selectPropertiesComponent.switchPropertiesComponent.forEach(child => {
+          const createVal = child.createValueComponent.getNewValue();
+          const iri = child.property.id;
+          if (createVal instanceof CreateValue) {
+            if (this.propertiesObj[iri]) {
+              // if a key already exists, add the createVal to the array
+              this.propertiesObj[iri].push(createVal);
+            } else {
+              // if no key exists, add one and add the createVal as the first value of the array
+              this.propertiesObj[iri] = [createVal];
             }
           }
-
-          createResource.properties = this.propertiesObj;
-
-          this._dspApiConnection.v2.res
-            .createResource(createResource)
-            .subscribe(
-              (res: ReadResource) => {
-                this.closeDialog.emit(res);
-              },
-              (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-              }
-            );
         });
+
+        if (this.fileValue) {
+          switch (this.hasFileValue) {
+            case 'stillImage':
+              this.propertiesObj[Constants.HasStillImageFileValue] = [this.fileValue];
+              break;
+            case 'document':
+              this.propertiesObj[Constants.HasDocumentFileValue] = [this.fileValue];
+              break;
+            case 'audio':
+              this.propertiesObj[Constants.HasAudioFileValue] = [this.fileValue];
+              break;
+            case 'movingImage':
+              this.propertiesObj[Constants.HasMovingImageFileValue] = [this.fileValue];
+              break;
+            case 'archive':
+              this.propertiesObj[Constants.HasArchiveFileValue] = [this.fileValue];
+              break;
+            case 'text':
+              this.propertiesObj[Constants.HasTextFileValue] = [this.fileValue];
+          }
+        }
+
+        createResource.properties = this.propertiesObj;
+
+        this._dspApiConnection.v2.res.createResource(createResource).subscribe(
+          (res: ReadResource) => {
+            this.closeDialog.emit(res);
+          },
+          (error: ApiResponseError) => {
+            this._errorHandler.showMessage(error);
+          }
+        );
+      });
     } else {
       this.propertiesForm.markAllAsTouched();
     }

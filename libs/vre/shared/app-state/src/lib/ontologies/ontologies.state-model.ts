@@ -1,8 +1,5 @@
 import { ReadOntology } from '@dasch-swiss/dsp-js';
-import {
-  IProjectOntologiesKeyValuePairs,
-  OntologyProperties,
-} from '../model-interfaces';
+import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
 
 export class OntologiesStateModel {
   isLoading: boolean | undefined;

@@ -1,17 +1,6 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import {
-  CreateBooleanValue,
-  ReadBooleanValue,
-  UpdateBooleanValue,
-} from '@dasch-swiss/dsp-js';
+import { CreateBooleanValue, ReadBooleanValue, UpdateBooleanValue } from '@dasch-swiss/dsp-js';
 import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 
 @Component({
@@ -19,10 +8,7 @@ import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.d
   templateUrl: './boolean-value.component.html',
   styleUrls: ['./boolean-value.component.scss'],
 })
-export class BooleanValueComponent
-  extends BaseValueDirective
-  implements OnInit, OnChanges, OnDestroy
-{
+export class BooleanValueComponent extends BaseValueDirective implements OnInit, OnChanges, OnDestroy {
   @Input() displayValue?: ReadBooleanValue;
 
   @Input() moreSpace?: boolean;
@@ -45,8 +31,7 @@ export class BooleanValueComponent
 
   ngOnInit() {
     // set the boolean value to unset if the new property is not required
-    this.boolValIsUnset =
-      this.mode === 'create' && !this.valueRequiredValidator;
+    this.boolValIsUnset = this.mode === 'create' && !this.valueRequiredValidator;
     super.ngOnInit();
   }
 
@@ -70,10 +55,7 @@ export class BooleanValueComponent
     newBooleanValue.bool = this.valueFormControl.value;
 
     // add the submitted new comment to newBooleanValue only if the user has added a comment
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       newBooleanValue.valueHasComment = this.commentFormControl.value;
     }
 
@@ -92,10 +74,7 @@ export class BooleanValueComponent
     updatedBooleanValue.bool = this.valueFormControl.value;
 
     // add the submitted comment to updatedBooleanValue only if user has added a comment
-    if (
-      this.commentFormControl.value !== null &&
-      this.commentFormControl.value !== ''
-    ) {
+    if (this.commentFormControl.value !== null && this.commentFormControl.value !== '') {
       updatedBooleanValue.valueHasComment = this.commentFormControl.value;
     }
 

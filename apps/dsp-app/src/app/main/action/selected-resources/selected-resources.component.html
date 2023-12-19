@@ -13,44 +13,12 @@
   </mat-list>
 
   <div class="action-buttons">
-    <button
-      id="compare"
-      mat-raised-button
-      color="primary"
-      class="res-action"
-      (click)="compareResources()">
+    <button id="compare" mat-raised-button color="primary" class="res-action" (click)="compareResources()">
       Compare
     </button>
-    <button
-      id="edit"
-      mat-raised-button
-      color="primary"
-      class="res-action"
-      disabled>
-      Edit
-    </button>
-    <button
-      id="delete"
-      mat-raised-button
-      color="primary"
-      class="res-action"
-      disabled>
-      Delete
-    </button>
-    <button
-      id="star"
-      mat-raised-button
-      color="primary"
-      class="res-action"
-      disabled>
-      Starred
-    </button>
-    <button
-      id="cancel"
-      mat-raised-button
-      class="res-action"
-      (click)="cancelSelection()">
-      Cancel
-    </button>
+    <button id="edit" mat-raised-button color="primary" class="res-action" disabled>Edit</button>
+    <button id="delete" mat-raised-button color="primary" class="res-action" disabled>Delete</button>
+    <button id="star" mat-raised-button color="primary" class="res-action" disabled>Starred</button>
+    <button id="cancel" mat-raised-button class="res-action" (click)="cancelSelection()">Cancel</button>
   </div>
 </div>

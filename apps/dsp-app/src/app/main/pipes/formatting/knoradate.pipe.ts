@@ -5,11 +5,7 @@ import { KnoraDate } from '@dasch-swiss/dsp-js';
   name: 'knoraDate',
 })
 export class KnoraDatePipe implements PipeTransform {
-  transform(
-    date: KnoraDate,
-    format?: string,
-    displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'
-  ): string {
+  transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
     if (!(date instanceof KnoraDate)) {
       // console.error('Non-KnoraDate provided. Expected a valid KnoraDate');
       return '';
@@ -38,14 +34,7 @@ export class KnoraDatePipe implements PipeTransform {
     switch (options) {
       case 'era':
         // displays date with era; era only in case of BCE
-        return (
-          value +
-          (date.era === 'noEra'
-            ? ''
-            : date.era === 'BCE' || date.era === 'AD'
-              ? ' ' + date.era
-              : '')
-        );
+        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ' ' + date.era : '');
       case 'calendar':
         // displays date without era but with calendar type
         return value + ' ' + this._titleCase(date.calendar);
@@ -56,11 +45,7 @@ export class KnoraDatePipe implements PipeTransform {
         // displays date with era (only as BCE) and selected calendar type
         return (
           value +
-          (date.era === 'noEra'
-            ? ''
-            : date.era === 'BCE'
-              ? ' ' + date.era
-              : '') +
+          (date.era === 'noEra' ? '' : date.era === 'BCE' ? ' ' + date.era : '') +
           ' ' +
           this._titleCase(date.calendar)
         );
@@ -71,9 +56,7 @@ export class KnoraDatePipe implements PipeTransform {
     switch (format) {
       case 'dd.MM.YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}.${this.leftPadding(
-            date.month
-          )}.${date.year}`;
+          return `${this.leftPadding(date.day)}.${this.leftPadding(date.month)}.${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}.${date.year}`;
         } else {
@@ -81,9 +64,7 @@ export class KnoraDatePipe implements PipeTransform {
         }
       case 'dd-MM-YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}-${this.leftPadding(
-            date.month
-          )}-${date.year}`;
+          return `${this.leftPadding(date.day)}-${this.leftPadding(date.month)}-${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}-${date.year}`;
         } else {
@@ -91,9 +72,7 @@ export class KnoraDatePipe implements PipeTransform {
         }
       case 'MM/dd/YYYY':
         if (date.precision === 2) {
-          return `${this.leftPadding(date.month)}/${this.leftPadding(
-            date.day
-          )}/${date.year}`;
+          return `${this.leftPadding(date.month)}/${this.leftPadding(date.day)}/${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}/${date.year}`;
         } else {
@@ -101,9 +80,7 @@ export class KnoraDatePipe implements PipeTransform {
         }
       default:
         if (date.precision === 2) {
-          return `${this.leftPadding(date.day)}.${this.leftPadding(
-            date.month
-          )}.${date.year}`;
+          return `${this.leftPadding(date.day)}.${this.leftPadding(date.month)}.${date.year}`;
         } else if (date.precision === 1) {
           return `${this.leftPadding(date.month)}.${date.year}`;
         } else {

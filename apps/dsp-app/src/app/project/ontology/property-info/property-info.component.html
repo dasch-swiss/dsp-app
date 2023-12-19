@@ -1,8 +1,4 @@
-<div
-  class="property-info"
-  [class.standalone]="true"
-  (mouseenter)="mouseEnter()"
-  (mouseleave)="mouseLeave()">
+<div class="property-info" [class.standalone]="true" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
   <div class="upper-prop-container">
     <div mat-line class="title" [class.with-line-break]="true">
       <span
@@ -17,8 +13,7 @@
         [matTooltip]="propDef.comment"
         matTooltipPosition="above"
         matTooltipClass="multi-line-tooltip">
-        {{!propDef.labels.length ? propDef?.label : propDef.labels |
-        appStringifyStringLiteral:'all'}}
+        {{!propDef.labels.length ? propDef?.label : propDef.labels | appStringifyStringLiteral:'all'}}
       </span>
       <!-- property is linked to a class or to a list: display connected class or list -->
       <span
@@ -45,11 +40,7 @@
       <span *ngIf="resClasses.length; else notUsed">
         <span class="mat-caption">&gt; Property is used in:</span>
         <span *ngFor="let c of resClasses; trackBy: trackByFn; let last = last">
-          <span
-            [matTooltip]="c.comment"
-            matTooltipPosition="above"
-            (click)="clickedOnClass.emit(c)"
-            >{{c.label}}</span
+          <span [matTooltip]="c.comment" matTooltipPosition="above" (click)="clickedOnClass.emit(c)">{{c.label}}</span
           ><span *ngIf="!last">&nbsp;&middot;</span>
         </span>
       </span>

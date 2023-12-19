@@ -1,9 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,12 +8,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  ApiResponseData,
-  MockUsers,
-  UsersEndpointAdmin,
-  UsersResponse,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseData, MockUsers, UsersEndpointAdmin, UsersResponse } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
@@ -43,32 +34,19 @@ describe('UserFormComponent', () => {
     },
   };
 
-  const applicationStateServiceSpyAllUsers = jasmine.createSpyObj(
-    'ApplicationStateServiceAllUsers',
-    ['get', 'set']
-  );
+  const applicationStateServiceSpyAllUsers = jasmine.createSpyObj('ApplicationStateServiceAllUsers', ['get', 'set']);
 
   const apiSpyObj = {
     admin: {
-      usersEndpoint: jasmine.createSpyObj('usersEndpoint', [
-        'getUser',
-        'getUsers',
-      ]),
+      usersEndpoint: jasmine.createSpyObj('usersEndpoint', ['getUser', 'getUsers']),
     },
   };
 
-  const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-    'uuidToIri',
-  ]);
+  const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['uuidToIri']);
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        UserFormComponent,
-        PasswordFormComponent,
-        DialogComponent,
-        StatusComponent,
-      ],
+      declarations: [UserFormComponent, PasswordFormComponent, DialogComponent, StatusComponent],
       imports: [
         BrowserAnimationsModule,
         MatDialogModule,
@@ -111,17 +89,13 @@ describe('UserFormComponent', () => {
     localStorage.setItem('session', JSON.stringify(TestConfig.CurrentSession));
 
     const dspConnSpy = TestBed.inject(DspApiConnectionToken);
-    (
-      dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-    ).getUsers.and.callFake(() => {
+    (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUsers.and.callFake(() => {
       const allUsers: ApiResponseData<UsersResponse> = MockUsers.mockUsers();
       return of(allUsers);
     });
 
     const cacheSpyAllUsers = TestBed.inject(ApplicationStateService);
-    (
-      cacheSpyAllUsers as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (cacheSpyAllUsers as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const allUsers: ApiResponseData<UsersResponse> = MockUsers.mockUsers();
       return of(allUsers.body.users);
     });
@@ -142,9 +116,7 @@ describe('UserFormComponent', () => {
   });
 
   it('should create', () => {
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
     expect(component).toBeTruthy();
   });
 

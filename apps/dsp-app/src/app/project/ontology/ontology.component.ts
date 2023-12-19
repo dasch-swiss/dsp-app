@@ -9,11 +9,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -60,10 +56,7 @@ import {
   SetCurrentProjectOntologyPropertiesAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import {
-  DialogComponent,
-  DialogEvent,
-} from '@dsp-app/src/app/main/dialog/dialog.component';
+import { DialogComponent, DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, combineLatest, forkJoin } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
@@ -75,10 +68,7 @@ import { ProjectBase } from '../project-base';
   templateUrl: './ontology.component.html',
   styleUrls: ['./ontology.component.scss'],
 })
-export class OntologyComponent
-  extends ProjectBase
-  implements OnInit, OnDestroy
-{
+export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   // all resource classes in the current ontology
@@ -126,17 +116,13 @@ export class OntologyComponent
   // id of current ontology
   get ontologyIri(): string {
     const iriBase = this._ontologyService.getIriBaseUrl();
-    const ontologyName = this._route.snapshot.paramMap.get(
-      RouteConstants.ontoParameter
-    );
+    const ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
     return `${iriBase}/${RouteConstants.ontology}/${this.project?.shortcode}/${ontologyName}/v2`;
   }
 
   getOntologyIri(projectShortcode: string): string {
     const iriBase = this._ontologyService.getIriBaseUrl();
-    const ontologyName = this._route.snapshot.paramMap.get(
-      RouteConstants.ontoParameter
-    );
+    const ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
     return `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2`;
   }
 
@@ -150,10 +136,7 @@ export class OntologyComponent
   }
 
   get isLoading$(): Observable<boolean> {
-    return combineLatest([
-      this.isOntologiesLoading$,
-      this.isProjectsLoading$,
-    ]).pipe(
+    return combineLatest([this.isOntologiesLoading$, this.isProjectsLoading$]).pipe(
       takeUntil(this.ngUnsubscribe),
       map(([isOntologiesLoading, isProjectsLoading]) => {
         return isOntologiesLoading === true || isProjectsLoading === true;
@@ -192,15 +175,7 @@ export class OntologyComponent
     protected _projectService: ProjectService,
     protected _cd: ChangeDetectorRef
   ) {
-    super(
-      _store,
-      _route,
-      _projectService,
-      _titleService,
-      _router,
-      _cd,
-      _actions$
-    );
+    super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
   }
 
   @HostListener('window:resize', ['$event']) onWindowResize() {
@@ -220,9 +195,7 @@ export class OntologyComponent
 
     if (this._route.snapshot) {
       // get the selected view from route: display classes or properties view
-      this.view = this._route.snapshot.params.view
-        ? this._route.snapshot.params.view
-        : RouteConstants.classes;
+      this.view = this._route.snapshot.params.view ? this._route.snapshot.params.view : RouteConstants.classes;
     }
 
     this._store
@@ -234,38 +207,27 @@ export class OntologyComponent
 
     // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after child component
     // subscription responsible for emitting event is triggered
-    this.updatePropertyAssignment$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => {
-        this.onUpdatePropertyAssignment();
-      });
+    this.updatePropertyAssignment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      this.onUpdatePropertyAssignment();
+    });
 
     this._cd.markForCheck();
   }
 
   private initProjectOntologies(currentProject: ReadProject) {
-    if (
-      !currentProject ||
-      !this.projectUuid ||
-      currentProject.id !== this.projectIri
-    ) {
+    if (!currentProject || !this.projectUuid || currentProject.id !== this.projectIri) {
       return;
     }
 
-    const projectOntologies = this._store.selectSnapshot(
-      OntologiesSelectors.projectOntologies
-    );
+    const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
     if (
       currentProject.ontologies.length > 0 &&
-      (!projectOntologies[this.projectIri] ||
-        projectOntologies[this.projectIri].readOntologies.length === 0)
+      (!projectOntologies[this.projectIri] || projectOntologies[this.projectIri].readOntologies.length === 0)
     ) {
       this._store.dispatch(new LoadProjectOntologiesAction(currentProject.id));
-      this._actions$
-        .pipe(ofActionSuccessful(LoadListsInProjectAction))
-        .subscribe(() => {
-          this.initOntology();
-        });
+      this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction)).subscribe(() => {
+        this.initOntology();
+      });
     } else {
       this.initOntology();
     }
@@ -291,9 +253,7 @@ export class OntologyComponent
       }),
     });
 
-    this.ontologyForm.valueChanges.subscribe(val =>
-      this.onValueChanged(val.ontology)
-    );
+    this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
   }
 
   /**
@@ -302,10 +262,7 @@ export class OntologyComponent
    */
   initOntologiesList(): void {
     this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
-    combineLatest([
-      this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction)),
-      this.currentProjectOntologies$,
-    ])
+    combineLatest([this._actions$.pipe(ofActionSuccessful(LoadListsInProjectAction)), this.currentProjectOntologies$])
       .pipe(
         take(1),
         map(([loadListsInProjectAction, currentProjectOntologies]) =>
@@ -323,31 +280,19 @@ export class OntologyComponent
   }
 
   initOntology() {
-    let currentOntology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
+    let currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     if (!currentOntology) {
-      const projectOntologies = this._store.selectSnapshot(
-        OntologiesSelectors.projectOntologies
-      );
+      const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
       const projectIri = this._projectService.uuidToIri(this.projectUuid);
-      const currentProject = this._store.selectSnapshot(
-        ProjectsSelectors.currentProject
-      );
+      const currentProject = this._store.selectSnapshot(ProjectsSelectors.currentProject);
       const ontologyIri = this.getOntologyIri(currentProject.shortcode);
-      currentOntology = projectOntologies[projectIri]?.readOntologies.find(
-        o => o.id === ontologyIri
-      );
+      currentOntology = projectOntologies[projectIri]?.readOntologies.find(o => o.id === ontologyIri);
       if (currentOntology) {
         this.resetOntologyView(currentOntology);
       } else {
-        const isLoading = this._store.selectSnapshot(
-          OntologiesSelectors.isLoading
-        );
+        const isLoading = this._store.selectSnapshot(OntologiesSelectors.isLoading);
         if (isLoading === false) {
-          this._store.dispatch(
-            new LoadOntologyAction(ontologyIri, this.projectUuid, true)
-          );
+          this._store.dispatch(new LoadOntologyAction(ontologyIri, this.projectUuid, true));
           this._actions$
             .pipe(ofActionSuccessful(LoadOntologyAction))
             .pipe(take(1))
@@ -370,34 +315,23 @@ export class OntologyComponent
     allOntoClasses.forEach(resClass => {
       if (resClass.subClassOf.length) {
         const splittedSubClass = resClass.subClassOf[0].split('#');
-        if (
-          !splittedSubClass[0].includes(Constants.StandoffOntology) &&
-          !splittedSubClass[1].includes('Standoff')
-        ) {
+        if (!splittedSubClass[0].includes(Constants.StandoffOntology) && !splittedSubClass[1].includes('Standoff')) {
           this.ontoClasses.push(resClass);
         }
       }
     });
     // sort classes by label
     // --> TODO: add sort functionallity to the gui
-    this.ontoClasses = this._sortingService.keySortByAlphabetical(
-      this.ontoClasses,
-      'label'
-    );
+    this.ontoClasses = this._sortingService.keySortByAlphabetical(this.ontoClasses, 'label');
   }
 
-  initOntoProperties(
-    ontology: ReadOntology,
-    allOntoProperties: PropertyDefinition[]
-  ) {
+  initOntoProperties(ontology: ReadOntology, allOntoProperties: PropertyDefinition[]) {
     // reset the ontology properties
     const listOfProperties = [];
 
     // display only the properties which are not a subjectType of Standoff
     allOntoProperties.forEach(resProp => {
-      const standoff = resProp.subjectType
-        ? resProp.subjectType.includes('Standoff')
-        : false;
+      const standoff = resProp.subjectType ? resProp.subjectType.includes('Standoff') : false;
       if (resProp.objectType !== Constants.LinkValue && !standoff) {
         listOfProperties.push(resProp);
       }
@@ -406,24 +340,17 @@ export class OntologyComponent
     // sort properties by label
     this.ontoProperties = {
       ontology: ontology.id,
-      properties: this._sortingService.keySortByAlphabetical(
-        listOfProperties,
-        'label'
-      ),
+      properties: this._sortingService.keySortByAlphabetical(listOfProperties, 'label'),
     };
   }
 
-  trackByPropertyCategoryFn = (index: number, item: PropertyCategory) =>
-    `${index}-${item.group}`;
+  trackByPropertyCategoryFn = (index: number, item: PropertyCategory) => `${index}-${item.group}`;
 
-  trackByClassDefinitionFn = (index: number, item: ClassDefinition) =>
-    `${index}-${item.id}`;
+  trackByClassDefinitionFn = (index: number, item: ClassDefinition) => `${index}-${item.id}`;
 
-  trackByPropertyDefinitionFn = (index: number, item: PropertyDefinition) =>
-    `${index}-${item.id}`;
+  trackByPropertyDefinitionFn = (index: number, item: PropertyDefinition) => `${index}-${item.id}`;
 
-  trackByDefaultClassFn = (index: number, item: DefaultClass) =>
-    `${index}-${item.iri}`;
+  trackByDefaultClassFn = (index: number, item: DefaultClass) => `${index}-${item.iri}`;
 
   trackByElementFn = (index: number) => `${index}`;
 
@@ -440,13 +367,9 @@ export class OntologyComponent
   }
 
   onLastModificationDateChange(lastModificationDate): void {
-    const ontology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     // TODO reload or just update lastModificationDate in the state?
-    this._store.dispatch(
-      new LoadOntologyAction(ontology.id, this.projectUuid, true)
-    );
+    this._store.dispatch(new LoadOntologyAction(ontology.id, this.projectUuid, true));
   }
 
   /**
@@ -454,20 +377,11 @@ export class OntologyComponent
    * @param id ontology id/iri
    * @param view 'classes' | 'properties' | ' graph'
    */
-  openOntologyRoute(
-    id: string,
-    view: 'classes' | 'properties' | 'graph' = 'classes'
-  ) {
+  openOntologyRoute(id: string, view: 'classes' | 'properties' | 'graph' = 'classes') {
     this.view = view;
 
     this._router.navigate(
-      [
-        RouteConstants.project,
-        this.projectUuid,
-        RouteConstants.ontologies,
-        encodeURIComponent(id),
-        view,
-      ],
+      [RouteConstants.project, this.projectUuid, RouteConstants.ontologies, encodeURIComponent(id), view],
       { skipLocationChange: false }
     );
   }
@@ -477,10 +391,7 @@ export class OntologyComponent
    * @param id
    */
   resetOntology(id: string) {
-    this._store.dispatch([
-      new SetCurrentOntologyAction(null),
-      new CurrentOntologyCanBeDeletedAction(),
-    ]);
+    this._store.dispatch([new SetCurrentOntologyAction(null), new CurrentOntologyCanBeDeletedAction()]);
     this.ontoClasses = [];
     this.openOntologyRoute(id, this.view);
     this.initOntologiesList();
@@ -492,10 +403,7 @@ export class OntologyComponent
     // grab the onto class information to display
     this.initOntoClasses(getAllEntityDefinitionsAsArray(ontology.classes));
     // grab the onto properties information to display
-    this.initOntoProperties(
-      ontology,
-      getAllEntityDefinitionsAsArray(ontology.properties)
-    );
+    this.initOntoProperties(ontology, getAllEntityDefinitionsAsArray(ontology.properties));
 
     this._store.dispatch([
       new SetCurrentOntologyAction(ontology),
@@ -517,19 +425,12 @@ export class OntologyComponent
    * @param mode
    * @param [iri] only in edit mode
    */
-  openOntologyForm(
-    mode: 'createOntology' | 'editOntology',
-    iri?: string
-  ): void {
-    const ontology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
+  openOntologyForm(mode: 'createOntology' | 'editOntology', iri?: string): void {
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     const title = iri ? ontology.label : 'Data model';
 
     const uuid = this._projectService.iriToUuid(this.projectUuid);
-    const existingOntologyNames = this._store.selectSnapshot(
-      OntologiesSelectors.currentProjectExistingOntologyNames
-    );
+    const existingOntologyNames = this._store.selectSnapshot(OntologiesSelectors.currentProjectExistingOntologyNames);
 
     const dialogConfig: MatDialogConfig = {
       width: '640px',
@@ -558,10 +459,7 @@ export class OntologyComponent
    * @param mode
    * @param resClassInfo (could be subClassOf (create mode) or resource class itself (edit mode))
    */
-  openResourceClassForm(
-    mode: 'createResourceClass' | 'editResourceClass',
-    resClassInfo: DefaultClass
-  ): void {
+  openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', resClassInfo: DefaultClass): void {
     const dialogConfig: MatDialogConfig = {
       width: '640px',
       maxHeight: '80vh',
@@ -590,10 +488,7 @@ export class OntologyComponent
    * @param mode whether an existing property is assigned or a new one is created
    * @param propertyInfo the property to assign and edit
    */
-  openPropertyForm(
-    mode: 'createProperty' | 'editProperty',
-    propertyInfo: PropertyInfoObject
-  ): void {
+  openPropertyForm(mode: 'createProperty' | 'editProperty', propertyInfo: PropertyInfoObject): void {
     const title = propertyInfo.propDef
       ? propertyInfo.propDef.label
       : propertyInfo.propType.group + ': ' + propertyInfo.propType.label;
@@ -646,9 +541,7 @@ export class OntologyComponent
 
     dialogRef.afterClosed().subscribe(answer => {
       if (answer === true) {
-        const ontology = this._store.selectSnapshot(
-          OntologiesSelectors.currentOntology
-        );
+        const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
         // delete and refresh the view
         switch (mode) {
           case 'Ontology':
@@ -660,9 +553,7 @@ export class OntologyComponent
               .pipe(take(1))
               .subscribe(
                 () => {
-                  this._store.dispatch(
-                    new ClearProjectOntologiesAction(this.projectUuid)
-                  );
+                  this._store.dispatch(new ClearProjectOntologiesAction(this.projectUuid));
                   // reset current ontology
                   // this._store.dispatch([
                   //     new SetCurrentOntologyAction(null),
@@ -702,8 +593,7 @@ export class OntologyComponent
             break;
           case 'Property':
             // delete resource property and refresh the view
-            const resProp: DeleteResourceProperty =
-              new DeleteResourceProperty();
+            const resProp: DeleteResourceProperty = new DeleteResourceProperty();
             resProp.id = info.iri;
             resProp.lastModificationDate = ontology.lastModificationDate;
             this._dspApiConnection.v2.onto
@@ -728,18 +618,10 @@ export class OntologyComponent
   }
 
   private setTitle() {
-    combineLatest([
-      ProjectBase.navigationEndFilter(this._router.events),
-      this.project$,
-      this.currentOntology$,
-    ])
+    combineLatest([ProjectBase.navigationEndFilter(this._router.events), this.project$, this.currentOntology$])
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(([event, project, currentOntology]) => {
-        this._titleService.setTitle(
-          `Project ${project?.shortname} | Data model ${
-            currentOntology.id ? '' : 's'
-          }`
-        );
+        this._titleService.setTitle(`Project ${project?.shortname} | Data model ${currentOntology.id ? '' : 's'}`);
       });
   }
 }

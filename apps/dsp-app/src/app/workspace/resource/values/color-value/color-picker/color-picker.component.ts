@@ -1,15 +1,6 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import {
-  Component,
-  DoCheck,
-  ElementRef,
-  HostBinding,
-  Input,
-  OnDestroy,
-  Optional,
-  Self,
-} from '@angular/core';
+import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, Optional, Self } from '@angular/core';
 import {
   ControlValueAccessor,
   UntypedFormBuilder,
@@ -32,20 +23,12 @@ import { Subject } from 'rxjs';
 
 /** error when invalid control is dirty, touched, or submitted. */
 export class ColorPickerErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
-    );
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
 }
-type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> &
-  _AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
   constructor(
@@ -56,26 +39,17 @@ class MatInputBase {
     public stateChanges: Subject<void>
   ) {}
 }
-const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
-  mixinErrorState(MatInputBase);
+const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
 @Component({
   selector: 'app-color-picker',
   templateUrl: './color-picker.component.html',
   styleUrls: ['./color-picker.component.scss'],
-  providers: [
-    { provide: MatFormFieldControl, useExisting: ColorPickerComponent },
-    { provide: Subject },
-  ],
+  providers: [{ provide: MatFormFieldControl, useExisting: ColorPickerComponent }, { provide: Subject }],
 })
 export class ColorPickerComponent
   extends _MatInputMixinBase
-  implements
-    ControlValueAccessor,
-    MatFormFieldControl<string>,
-    DoCheck,
-    CanUpdateErrorState,
-    OnDestroy
+  implements ControlValueAccessor, MatFormFieldControl<string>, DoCheck, CanUpdateErrorState, OnDestroy
 {
   static nextId = 0;
 
@@ -169,13 +143,7 @@ export class ColorPickerComponent
     @Optional() _parentFormGroup: FormGroupDirective,
     _defaultErrorStateMatcher: ErrorStateMatcher
   ) {
-    super(
-      _defaultErrorStateMatcher,
-      _parentForm,
-      _parentFormGroup,
-      ngControl,
-      _stateChanges
-    );
+    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
     this.colorForm = fb.group({
       color: [null, Validators.required],

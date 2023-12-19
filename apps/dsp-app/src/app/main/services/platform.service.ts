@@ -22,9 +22,7 @@ export class PlatformService {
       return false;
     }
 
-    this._isMobile = this.checkMobileOrTablet(
-      navigator.userAgent || navigator.vendor || (window as any).opera
-    );
+    this._isMobile = this.checkMobileOrTablet(navigator.userAgent || navigator.vendor || (window as any).opera);
 
     return this._isMobile;
   }

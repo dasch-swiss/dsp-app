@@ -3,17 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import {
-  Component,
-  DoCheck,
-  ElementRef,
-  HostBinding,
-  Input,
-  OnDestroy,
-  OnInit,
-  Optional,
-  Self,
-} from '@angular/core';
+import { Component, DoCheck, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -48,16 +38,10 @@ export function periodStartEndValidator(
   return (control: AbstractControl): { [key: string]: any } | null => {
     if (isPeriod.value && control.value !== null && endDate.value !== null) {
       // period: check if start is before end
-      const jdnStartDate = valueService.createJDNCalendarDateFromKnoraDate(
-        control.value
-      );
-      const jdnEndDate = valueService.createJDNCalendarDateFromKnoraDate(
-        endDate.value
-      );
+      const jdnStartDate = valueService.createJDNCalendarDateFromKnoraDate(control.value);
+      const jdnEndDate = valueService.createJDNCalendarDateFromKnoraDate(endDate.value);
 
-      const invalid =
-        jdnStartDate.toJDNPeriod().periodEnd >=
-        jdnEndDate.toJDNPeriod().periodStart;
+      const invalid = jdnStartDate.toJDNPeriod().periodEnd >= jdnEndDate.toJDNPeriod().periodStart;
 
       return invalid ? { periodStartEnd: { value: control.value } } : null;
     }
@@ -66,8 +50,7 @@ export function periodStartEndValidator(
   };
 }
 
-type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> &
-  _AbstractConstructor<CanUpdateErrorState>;
+type CanUpdateErrorStateCtor = _Constructor<CanUpdateErrorState> & _AbstractConstructor<CanUpdateErrorState>;
 
 class MatInputBase {
   constructor(
@@ -79,8 +62,7 @@ class MatInputBase {
   ) {}
 }
 
-const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase =
-  mixinErrorState(MatInputBase);
+const _MatInputMixinBase: CanUpdateErrorStateCtor & typeof MatInputBase = mixinErrorState(MatInputBase);
 
 @Component({
   selector: 'app-date-value-handler',
@@ -120,9 +102,7 @@ export class DateValueHandlerComponent
 
   readonly controlType = 'app-date-value-handler';
 
-  calendars = JDNConvertibleCalendar.supportedCalendars.map(cal =>
-    cal.toUpperCase()
-  );
+  calendars = JDNConvertibleCalendar.supportedCalendars.map(cal => cal.toUpperCase());
 
   private _subscriptions: Subscription[] = [];
 
@@ -135,10 +115,7 @@ export class DateValueHandlerComponent
     if (!this.isPeriodControl.value) {
       return this.startDate.value;
     } else {
-      if (
-        this.endDate.value &&
-        this.startDate.value.calendar !== this.endDate.value.calendar
-      ) {
+      if (this.endDate.value && this.startDate.value.calendar !== this.endDate.value.calendar) {
         this.endDate.value.calendar = this.startDate.value.calendar;
       }
 
@@ -225,13 +202,7 @@ export class DateValueHandlerComponent
     _defaultErrorStateMatcher: ErrorStateMatcher,
     private _valueService: ValueService
   ) {
-    super(
-      _defaultErrorStateMatcher,
-      _parentForm,
-      _parentFormGroup,
-      ngControl,
-      _stateChanges
-    );
+    super(_defaultErrorStateMatcher, _parentForm, _parentFormGroup, ngControl, _stateChanges);
 
     if (this.ngControl != null) {
       // setting the value accessor directly (instead of using
@@ -245,18 +216,16 @@ export class DateValueHandlerComponent
     this.endDate = new UntypedFormControl(null);
     this.startDate = new UntypedFormControl(null);
 
-    const eraChangesSubscription = this.isPeriodControl.valueChanges.subscribe(
-      isPeriod => {
-        this.endDate.clearValidators();
+    const eraChangesSubscription = this.isPeriodControl.valueChanges.subscribe(isPeriod => {
+      this.endDate.clearValidators();
 
-        if (isPeriod && this.valueRequiredValidator) {
-          // end date is required in case of a period
-          this.endDate.setValidators([Validators.required]);
-        }
-
-        this.endDate.updateValueAndValidity();
+      if (isPeriod && this.valueRequiredValidator) {
+        // end date is required in case of a period
+        this.endDate.setValidators([Validators.required]);
       }
-    );
+
+      this.endDate.updateValueAndValidity();
+    });
 
     this._subscriptions.push(eraChangesSubscription);
 
@@ -305,20 +274,10 @@ export class DateValueHandlerComponent
     if (this.valueRequiredValidator) {
       this.startDate.setValidators([
         Validators.required,
-        periodStartEndValidator(
-          this.isPeriodControl,
-          this.endDate,
-          this._valueService
-        ),
+        periodStartEndValidator(this.isPeriodControl, this.endDate, this._valueService),
       ]);
     } else {
-      this.startDate.setValidators([
-        periodStartEndValidator(
-          this.isPeriodControl,
-          this.endDate,
-          this._valueService
-        ),
-      ]);
+      this.startDate.setValidators([periodStartEndValidator(this.isPeriodControl, this.endDate, this._valueService)]);
     }
     this.startDate.updateValueAndValidity();
   }

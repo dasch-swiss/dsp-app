@@ -18,10 +18,7 @@ import {
   KnoraApiConnection,
   ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
@@ -100,8 +97,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   /**
    * emits the selected resources 1-n
    */
-  @Output() selectedResources: EventEmitter<FilteredResources> =
-    new EventEmitter<FilteredResources>();
+  @Output() selectedResources: EventEmitter<FilteredResources> = new EventEmitter<FilteredResources>();
 
   resources: ReadResourceSequence;
 
@@ -159,8 +155,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   isCurrentSearch = (): boolean =>
-    this.search.query !== this.currentSearch?.query ||
-    this.currentSearch.query === undefined;
+    this.search.query !== this.currentSearch?.query || this.currentSearch.query === undefined;
 
   initSearch(): void {
     // reset
@@ -221,11 +216,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
   handleBackButtonClicked() {
     const projectUuid = this._route.parent.snapshot.paramMap.get('uuid');
     if (projectUuid) {
-      this._router.navigate([
-        RouteConstants.project,
-        projectUuid,
-        RouteConstants.advancedSearch,
-      ]);
+      this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.advancedSearch]);
     }
   }
 
@@ -258,17 +249,12 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
       if (index === 0) {
         // perform count query
         this._dspApiConnection.v2.search
-          .doFulltextSearchCountQuery(
-            this.search.query,
-            index,
-            this.search.filter
-          )
+          .doFulltextSearchCountQuery(this.search.query, index, this.search.filter)
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
             (count: CountQueryResponse) => {
               this.numberOfAllResults = count.numberOfResults;
-              this.currentRangeEnd =
-                this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
+              this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
 
               if (this.numberOfAllResults === 0) {
                 this.emitSelectedResources();
@@ -311,9 +297,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
         );
     } else if (this.search.mode === 'gravsearch') {
       // emit 'gravSearchExecuted' event to the fulltext-search component in order to clear the input field
-      this._componentCommsService.emit(
-        new EmitEvent(Events.gravSearchExecuted, true)
-      );
+      this._componentCommsService.emit(new EmitEvent(Events.gravSearchExecuted, true));
 
       // request the count query if the page index is zero otherwise it is already stored in the numberOfAllResults
       const numberOfAllResults$ =
@@ -325,8 +309,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
               .pipe(
                 map((count: CountQueryResponse) => {
                   this.numberOfAllResults = count.numberOfResults;
-                  this.currentRangeEnd =
-                    this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
+                  this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
                   if (this.numberOfAllResults === 0) {
                     this._notification.openSnackBar('No resources to display.');
                     this.emitSelectedResources();
@@ -354,21 +337,13 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
                 (response: ReadResourceSequence) => {
                   // if the response does not contain any resources even the search count is greater than 0,
                   // it means that the user does not have the permissions to see anything: emit an empty result
-                  if (
-                    response.resources.length === 0 &&
-                    this.numberOfAllResults > 0
-                  ) {
-                    this._notification.openSnackBar(
-                      'No permission to display the resources.'
-                    );
+                  if (response.resources.length === 0 && this.numberOfAllResults > 0) {
+                    this._notification.openSnackBar('No permission to display the resources.');
                     this.emitSelectedResources();
                   }
 
                   this.resources = response;
-                  this.hasPermission = !(
-                    numberOfAllResults > 0 &&
-                    this.resources.resources.length === 0
-                  );
+                  this.hasPermission = !(numberOfAllResults > 0 && this.resources.resources.length === 0);
                   this.loading = false;
                   this._cd.markForCheck();
                 },
@@ -379,9 +354,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
                 }
               );
           } else {
-            this._notification.openSnackBar(
-              'The gravsearch query is not set correctly'
-            );
+            this._notification.openSnackBar('The gravsearch query is not set correctly');
             this.resources = undefined;
             this.loading = false;
             this._cd.markForCheck();

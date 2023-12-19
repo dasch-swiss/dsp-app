@@ -21,15 +21,10 @@ export class PermissionApiService extends BaseApi {
   }
 
   getProjectPermissions(projectIri: string) {
-    return this._http.get<ProjectPermissionsResponse>(
-      `${this.baseUri}/${encodeURIComponent(projectIri)}`
-    );
+    return this._http.get<ProjectPermissionsResponse>(`${this.baseUri}/${encodeURIComponent(projectIri)}`);
   }
 
-  updateAdministrativePermission(
-    permissionIri: string,
-    permisssion: UpdateAdministrativePermission
-  ) {
+  updateAdministrativePermission(permissionIri: string, permisssion: UpdateAdministrativePermission) {
     // TODO from name, it should be in admin-permission-api.service.ts, but from route it is in the right place.
     return this._http.put<AdministrativePermissionResponse>(
       `${this.baseUri}/${encodeURIComponent(permissionIri)}/hasPermissions`,
@@ -37,10 +32,7 @@ export class PermissionApiService extends BaseApi {
     );
   }
 
-  updateAdministrativePermissionGroup(
-    permissionIri: string,
-    updatedGroup: UpdateAdministrativePermissionGroup
-  ) {
+  updateAdministrativePermissionGroup(permissionIri: string, updatedGroup: UpdateAdministrativePermissionGroup) {
     // TODO from name, it should be in admin-permission-api.service.ts, but from route it is in the right place.
     return this._http.put<AdministrativePermissionResponse>(
       `${this.baseUri}/${encodeURIComponent(permissionIri)}/group`,
@@ -54,15 +46,11 @@ export class PermissionApiService extends BaseApi {
     );
   }
 
-  createDefaultObjectAccessPermission(
-    defaultObject: CreateDefaultObjectAccessPermission
-  ) {
+  createDefaultObjectAccessPermission(defaultObject: CreateDefaultObjectAccessPermission) {
     // A default object access permission must
     // always reference a project
     if (!defaultObject.forProject) {
-      throw new Error(
-        'Project is required when creating a new default object access permission.'
-      );
+      throw new Error('Project is required when creating a new default object access permission.');
     }
 
     if (defaultObject.hasPermissions.length === 0) {
@@ -85,21 +73,13 @@ export class PermissionApiService extends BaseApi {
       defaultObject.forResourceClass &&
       defaultObject.forProperty
     ) {
-      return this._http.post<DefaultObjectAccessPermissionResponse>(
-        `${this.baseUri}/doap`,
-        defaultObject
-      );
+      return this._http.post<DefaultObjectAccessPermissionResponse>(`${this.baseUri}/doap`, defaultObject);
     } else {
-      throw new Error(
-        'Invalid combination of properties for creation of new default object access permission.'
-      );
+      throw new Error('Invalid combination of properties for creation of new default object access permission.');
     }
   }
 
-  updateDefaultObjectAccessPermission(
-    permissionIri: string,
-    permission: UpdateDefaultObjectAccessPermission
-  ) {
+  updateDefaultObjectAccessPermission(permissionIri: string, permission: UpdateDefaultObjectAccessPermission) {
     // TODO route should be replaced by /doap
     return this._http.put<DefaultObjectAccessPermissionResponse>(
       `${this.baseUri}/${encodeURIComponent(permissionIri)}/hasPermissions`,
@@ -107,10 +87,7 @@ export class PermissionApiService extends BaseApi {
     );
   }
 
-  updateDefaultObjectAccessPermissionGroup(
-    permissionIri: string,
-    permission: UpdateDefaultObjectAccessPermission
-  ) {
+  updateDefaultObjectAccessPermissionGroup(permissionIri: string, permission: UpdateDefaultObjectAccessPermission) {
     // TODO route should be replaced by /doap
     return this._http.put<DefaultObjectAccessPermissionResponse>(
       `${this.baseUri}/${encodeURIComponent(permissionIri)}/group`,

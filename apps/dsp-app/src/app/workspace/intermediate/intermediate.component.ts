@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';

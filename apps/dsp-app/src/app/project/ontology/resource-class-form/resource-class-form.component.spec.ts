@@ -16,17 +16,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  KnoraApiConnection,
-  MockOntology,
-  ReadOntology,
-  StringLiteral,
-} from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, MockOntology, ReadOntology, StringLiteral } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
@@ -59,10 +51,7 @@ describe('ResourceClassFormComponent', () => {
   let component: TestHostResourceClassFormComponent;
   let fixture: ComponentFixture<TestHostResourceClassFormComponent>;
 
-  const applicationStateServiceSpy = jasmine.createSpyObj(
-    'ApplicationStateService',
-    ['get']
-  );
+  const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -116,12 +105,8 @@ describe('ResourceClassFormComponent', () => {
     // mock application state service for currentOntology
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
-      const response: ReadOntology = MockOntology.mockReadOntology(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2'
-      );
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
       return of(response);
     });
 

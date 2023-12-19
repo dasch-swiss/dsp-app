@@ -6,10 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection, MockProjects } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { MaterialModule } from '@dsp-app/src/app/material-module';
@@ -25,10 +22,7 @@ describe('OntologyFormComponent', () => {
 
   const formBuilder: UntypedFormBuilder = new UntypedFormBuilder();
 
-  const applicationStateServiceSpy = jasmine.createSpyObj(
-    'ApplicationStateService',
-    ['get']
-  );
+  const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -66,9 +60,7 @@ describe('OntologyFormComponent', () => {
     // mock application state service for currentOntology
     const applicationStateServiceSpy = TestBed.inject(ApplicationStateService);
 
-    (
-      applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>
-    ).get.and.callFake(() => {
+    (applicationStateServiceSpy as jasmine.SpyObj<ApplicationStateService>).get.and.callFake(() => {
       const response = MockProjects.mockProject();
       return of(response.body.project);
     });
@@ -170,15 +162,11 @@ describe('OntologyFormComponent', () => {
 
     nameInput.setValue('biblio');
 
-    expect(ontologyFormComponent.ontologyForm.controls.label.value).toEqual(
-      'Biblio'
-    );
+    expect(ontologyFormComponent.ontologyForm.controls.label.value).toEqual('Biblio');
     expect(form.valid).toBeTruthy();
 
     labelInput.setValue('Biblio Ontology');
-    expect(ontologyFormComponent.ontologyForm.controls.label.value).toEqual(
-      'Biblio Ontology'
-    );
+    expect(ontologyFormComponent.ontologyForm.controls.label.value).toEqual('Biblio Ontology');
     expect(form.valid).toBeTruthy();
   });
 });

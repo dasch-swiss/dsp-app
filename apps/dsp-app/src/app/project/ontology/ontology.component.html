@@ -1,11 +1,8 @@
 <div *ngIf="!disableContent">
-  <dasch-swiss-app-progress-indicator
-    *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
+  <dasch-swiss-app-progress-indicator *ngIf="isLoading$ | async"></dasch-swiss-app-progress-indicator>
 
   <!-- main content: overview shows resource classes of ontology -->
-  <div
-    *ngIf="(isLoading$ | async) === false && currentOntology$ | async"
-    class="ontology-editor">
+  <div *ngIf="(isLoading$ | async) === false && currentOntology$ | async" class="ontology-editor">
     <mat-toolbar class="ontology-editor-header">
       <mat-toolbar-row>
         <span class="ontology-info">
@@ -19,14 +16,12 @@
             class="mat-caption"
             [matTooltip]="'Last modification date: ' + (lastModificationDate$ | async)"
             matTooltipPosition="above">
-            <span
-              *ngIf="(lastModificationDate$ | async); else noModificationDate">
+            <span *ngIf="(lastModificationDate$ | async); else noModificationDate">
               Updated on: {{(lastModificationDate$ | async) | date:'medium'}}
             </span>
             <ng-template #noModificationDate>
               <span class="note warning">
-                This data model can't be edited because of missing
-                "lastModificationDate"!
+                This data model can't be edited because of missing "lastModificationDate"!
               </span>
             </ng-template>
           </p>
@@ -35,9 +30,7 @@
         <span class="fill-remaining-space"></span>
 
         <!-- edit options -->
-        <span
-          class="ontology-actions project-actions"
-          *ngIf="(project$ | async)?.status">
+        <span class="ontology-actions project-actions" *ngIf="(project$ | async)?.status">
           <p class="mat-caption space-reducer">Data model configuration</p>
           <span
             [matTooltip]="((isAdmin$ | async) ? ((lastModificationDate$ | async) ? 'Edit data model info' : 'This data model can\'t be edited because of missing lastModificationDate!') : null)">
@@ -71,19 +64,9 @@
       #ontologyEditor
       *ngIf="(isLoading$ | async) === false && (view === 'classes' || view === 'properties')"
       class="ontology-editor-container">
-      <mat-sidenav
-        class="ontology-editor-sidenav"
-        mode="side"
-        position="end"
-        opened>
+      <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
         <mat-list>
-          <a
-            mat-list-item
-            routerLinkActive="active"
-            [routerLink]="classesLink"
-            (click)="view = 'classes'"
-            >Classes</a
-          >
+          <a mat-list-item routerLinkActive="active" [routerLink]="classesLink" (click)="view = 'classes'">Classes</a>
           <span *ngIf="view === 'classes'">
             <button
               mat-button
@@ -115,11 +98,7 @@
             </span>
           </span>
           <mat-divider></mat-divider>
-          <a
-            mat-list-item
-            routerLinkActive="active"
-            [routerLink]="propertiesLink"
-            (click)="view = 'properties'"
+          <a mat-list-item routerLinkActive="active" [routerLink]="propertiesLink" (click)="view = 'properties'"
             >Properties</a
           >
           <span
@@ -135,15 +114,9 @@
               <mat-icon>add</mat-icon>
               Create new property
             </button>
-            <mat-menu
-              #addPropertyMenu="matMenu"
-              xPosition="before"
-              class="switch-nested-menu">
-              <ng-container
-                *ngFor="let type of defaultProperties; trackBy: trackByPropertyCategoryFn">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu">
-                  {{type.group}}
-                </button>
+            <mat-menu #addPropertyMenu="matMenu" xPosition="before" class="switch-nested-menu">
+              <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropertyCategoryFn">
+                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
                 <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
                   <button
                     mat-menu-item
@@ -177,9 +150,7 @@
             [updatePropertyAssignment$]="updatePropertyAssignment$">
           </app-resource-class-info>
         </div>
-        <div
-          class="ontology-editor-list properties"
-          *ngIf="view === 'properties'">
+        <div class="ontology-editor-list properties" *ngIf="view === 'properties'">
           <!-- list of properties of current ontology -->
           <mat-list class="without-padding">
             <mat-list-item

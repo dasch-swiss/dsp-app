@@ -18,10 +18,7 @@ import {
 } from '@angular/forms';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { SearchParams } from '../../results/list-view/list-view.component';
-import {
-  GravsearchSearchParams,
-  SearchParamsService,
-} from '../services/search-params.service';
+import { GravsearchSearchParams, SearchParamsService } from '../services/search-params.service';
 
 /**
  * validator checking that the query does not contain a certain term, here OFFSET
@@ -80,10 +77,7 @@ CONSTRUCT {
     this.queryFormControl = new UntypedFormControl('');
 
     this.expertSearchForm = this._fb.group({
-      gravsearchquery: [
-        '',
-        [Validators.required, forbiddenTermValidator(/OFFSET/i)],
-      ],
+      gravsearchquery: ['', [Validators.required, forbiddenTermValidator(/OFFSET/i)]],
     });
   }
 
@@ -130,9 +124,7 @@ CONSTRUCT {
          `;
 
     // function that generates the same Gravsearch query with the given offset
-    const generateGravsearchWithCustomOffset = (
-      localOffset: number
-    ): string => {
+    const generateGravsearchWithCustomOffset = (localOffset: number): string => {
       const offsetCustomTemplate = `
              OFFSET ${localOffset}
              `;
@@ -142,9 +134,7 @@ CONSTRUCT {
 
     if (offset === 0) {
       // store the function so another Gravsearch query can be created with an increased offset
-      this._searchParamsService.changeSearchParamsMsg(
-        new GravsearchSearchParams(generateGravsearchWithCustomOffset)
-      );
+      this._searchParamsService.changeSearchParamsMsg(new GravsearchSearchParams(generateGravsearchWithCustomOffset));
     }
     return query + offsetTemplate;
   }

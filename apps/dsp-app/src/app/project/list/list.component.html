@@ -1,6 +1,5 @@
 <div *ngIf="!disableContent">
-  <dasch-swiss-app-progress-indicator
-    *ngIf="isListsLoading$ | async"></dasch-swiss-app-progress-indicator>
+  <dasch-swiss-app-progress-indicator *ngIf="isListsLoading$ | async"></dasch-swiss-app-progress-indicator>
 
   <!-- display only when loading is finished and project member has value -->
   <div *ngIf="(isListsLoading$ | async) === false">
@@ -17,20 +16,13 @@
                 {{list.labels | appStringifyStringLiteral}}
               </h3>
               <span class="fill-remaining-space"></span>
-              <p
-                class="mat-body"
-                [matTooltip]="list.comments | appStringifyStringLiteral"
-                matTooltipPosition="above">
+              <p class="mat-body" [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="above">
                 {{list.comments | appStringifyStringLiteral | appTruncate:64}}
               </p>
               <span class="fill-remaining-space"></span>
 
-              <span
-                class="project-actions"
-                *ngIf="(project$ | async)?.status && (isAdmin$ | async)">
-                <p class="mat-caption space-reducer">
-                  Controlled vocabulary configuration
-                </p>
+              <span class="project-actions" *ngIf="(project$ | async)?.status && (isAdmin$ | async)">
+                <p class="mat-caption space-reducer">Controlled vocabulary configuration</p>
                 <button
                   color="primary"
                   mat-button

@@ -8,12 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
   ApiResponseError,
   ClassDefinition,
@@ -29,10 +24,7 @@ import {
   UpdateResourceClassLabel,
 } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/dsp-js/src/models/v2/string-literal-v2';
-import {
-  DspApiConnectionToken,
-  getAllEntityDefinitionsAsArray,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
@@ -82,8 +74,10 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
   /**
    * update title and subtitle in dialog header (by switching from step 1 (resource class) to step 2 (properties))
    */
-  @Output() updateParent: EventEmitter<{ title: string; subtitle: string }> =
-    new EventEmitter<{ title: string; subtitle: string }>();
+  @Output() updateParent: EventEmitter<{ title: string; subtitle: string }> = new EventEmitter<{
+    title: string;
+    subtitle: string;
+  }>();
 
   // store name as resourceClassTitle on init; in this case it can't be overwritten in the next / prev navigation
   resourceClassTitle: string;
@@ -97,8 +91,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
   // message after successful post
   successMessage: any = {
     status: 200,
-    statusText:
-      'You have successfully updated the resource class and all properties',
+    statusText: 'You have successfully updated the resource class and all properties',
   };
 
   // progress
@@ -117,9 +110,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
   resourceClassCommentsTouched: boolean;
 
   // list of existing class names
-  existingNames: [RegExp] = [
-    new RegExp('anEmptyRegularExpressionWasntPossible'),
-  ];
+  existingNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
 
   // form errors on the following fields:
   formErrors = {
@@ -160,32 +151,22 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     // set file representation or default resource class as title
     this.resourceClassTitle = this.name;
 
-    this.ontology = this._store.selectSnapshot(
-      OntologiesSelectors.currentOntology
-    );
+    this.ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     this.lastModificationDate = this.ontology.lastModificationDate;
 
-    const resourceClasses = getAllEntityDefinitionsAsArray(
-      this.ontology.classes
-    );
-    const resourceProperties = getAllEntityDefinitionsAsArray(
-      this.ontology.properties
-    );
+    const resourceClasses = getAllEntityDefinitionsAsArray(this.ontology.classes);
+    const resourceProperties = getAllEntityDefinitionsAsArray(this.ontology.properties);
 
     // set list of all existing resource class names to avoid same name twice
     resourceClasses.forEach((resClass: ClassDefinition) => {
       const name = this._os.getNameFromIri(resClass.id);
-      this.existingNames.push(
-        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-      );
+      this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
     });
 
     // add all resource properties to the same list
     resourceProperties.forEach((resProp: PropertyDefinition) => {
       const name = this._os.getNameFromIri(resProp.id);
-      this.existingNames.push(
-        new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)')
-      );
+      this.existingNames.push(new RegExp('(?:^|W)' + name.toLowerCase() + '(?:$|W)'));
     });
 
     this.buildForm();
@@ -209,9 +190,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
     if (this.edit) {
       // getClassDefinitionsByType is not accessible therefore following line was replaced from this:
       // const resourceClasses: ResourceClassDefinitionWithAllLanguages[] = this.ontology.getClassDefinitionsByType(ResourceClassDefinitionWithAllLanguages);
-      const classDefinitions = getAllEntityDefinitionsAsArray(
-        this.ontology.classes
-      );
+      const classDefinitions = getAllEntityDefinitionsAsArray(this.ontology.classes);
       // edit mode: res class info (label and comment)
       // get resource class info
       Object.keys(classDefinitions).forEach(key => {
@@ -228,11 +207,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
           value: this.edit ? this._os.getNameFromIri(this.iri) : '',
           disabled: this.edit,
         },
-        [
-          Validators.required,
-          existingNamesValidator(this.existingNames),
-          Validators.pattern(CustomRegex.ID_NAME_REGEX),
-        ]
+        [Validators.required, existingNamesValidator(this.existingNames), Validators.pattern(CustomRegex.ID_NAME_REGEX)]
       ),
       label: new UntypedFormControl(
         {
@@ -293,8 +268,7 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
    * @param type
    */
   handleError(touched: boolean, type: 'label' | 'comment') {
-    const checkValue =
-      type === 'label' ? this.resourceClassLabels : this.resourceClassComments;
+    const checkValue = type === 'label' ? this.resourceClassLabels : this.resourceClassComments;
     const messages = this.validationMessages[type];
 
     this.formErrors[type] = '';
@@ -339,47 +313,36 @@ export class ResourceClassFormComponent implements OnInit, AfterViewChecked {
 
           if (updateComment.comments.length) {
             // if the comments array is not empty, send a request to update the comments
-            this._dspApiConnection.v2.onto
-              .updateResourceClass(onto4Comment)
-              .subscribe(
-                (
-                  classCommentResponse: ResourceClassDefinitionWithAllLanguages
-                ) => {
-                  this.lastModificationDate =
-                    classCommentResponse.lastModificationDate;
+            this._dspApiConnection.v2.onto.updateResourceClass(onto4Comment).subscribe(
+              (classCommentResponse: ResourceClassDefinitionWithAllLanguages) => {
+                this.lastModificationDate = classCommentResponse.lastModificationDate;
 
-                  // close the dialog box
-                  this.loading = false;
-                  this.closeDialog.emit();
-                },
-                (error: ApiResponseError) => {
-                  this._errorHandler.showMessage(error);
-                }
-              );
+                // close the dialog box
+                this.loading = false;
+                this.closeDialog.emit();
+              },
+              (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+              }
+            );
           } else {
             // if the comments array is empty, send a request to remove the comments
             const deleteResourceClassComment = new DeleteResourceClassComment();
             deleteResourceClassComment.id = this.iri;
-            deleteResourceClassComment.lastModificationDate =
-              this.lastModificationDate;
+            deleteResourceClassComment.lastModificationDate = this.lastModificationDate;
 
-            this._dspApiConnection.v2.onto
-              .deleteResourceClassComment(deleteResourceClassComment)
-              .subscribe(
-                (
-                  deleteCommentResponse: ResourceClassDefinitionWithAllLanguages
-                ) => {
-                  this.lastModificationDate =
-                    deleteCommentResponse.lastModificationDate;
+            this._dspApiConnection.v2.onto.deleteResourceClassComment(deleteResourceClassComment).subscribe(
+              (deleteCommentResponse: ResourceClassDefinitionWithAllLanguages) => {
+                this.lastModificationDate = deleteCommentResponse.lastModificationDate;
 
-                  // close the dialog box
-                  this.loading = false;
-                  this.closeDialog.emit();
-                },
-                (error: ApiResponseError) => {
-                  this._errorHandler.showMessage(error);
-                }
-              );
+                // close the dialog box
+                this.loading = false;
+                this.closeDialog.emit();
+              },
+              (error: ApiResponseError) => {
+                this._errorHandler.showMessage(error);
+              }
+            );
           }
         },
         (error: ApiResponseError) => {

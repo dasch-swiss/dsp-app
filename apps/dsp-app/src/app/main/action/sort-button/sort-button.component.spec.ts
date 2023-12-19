@@ -13,11 +13,7 @@ import { SortButtonComponent } from './sort-button.component';
  */
 @Component({
   template: `
-    <app-sort-button
-      #sortButton
-      [sortProps]="sortProps"
-      [position]="position"
-      (sortKeyChange)="sortList($event)">
+    <app-sort-button #sortButton [sortProps]="sortProps" [position]="position" (sortKeyChange)="sortList($event)">
     </app-sort-button>
     <ul class="list">
       <li *ngFor="let item of list" class="item">
@@ -125,9 +121,7 @@ describe('SortButtonComponent', () => {
 
     const sortSelectionBtnEl: DebugElement = spanEl.query(By.css('button'));
 
-    const matIconEl: DebugElement = sortSelectionBtnEl.query(
-      By.css('mat-icon')
-    );
+    const matIconEl: DebugElement = sortSelectionBtnEl.query(By.css('mat-icon'));
 
     // expect that the button label is 'sort'
     expect(matIconEl.nativeElement.innerText).toEqual('sort');
@@ -140,15 +134,9 @@ describe('SortButtonComponent', () => {
     const sortSelectionEl = matMenuEl.references.sortSelection;
 
     // expect that items's names of the sort list are 'Firstname', 'Last name' and 'Creator'
-    expect(
-      sortSelectionEl.items._results[0]._elementRef.nativeElement.innerText
-    ).toEqual('First name');
-    expect(
-      sortSelectionEl.items._results[1]._elementRef.nativeElement.innerText
-    ).toEqual('Last name');
-    expect(
-      sortSelectionEl.items._results[2]._elementRef.nativeElement.innerText
-    ).toEqual('Creator');
+    expect(sortSelectionEl.items._results[0]._elementRef.nativeElement.innerText).toEqual('First name');
+    expect(sortSelectionEl.items._results[1]._elementRef.nativeElement.innerText).toEqual('Last name');
+    expect(sortSelectionEl.items._results[2]._elementRef.nativeElement.innerText).toEqual('Creator');
 
     // sort by 'lastname' through a click event
     const item2 = sortSelectionEl.items._results[1]._elementRef.nativeElement;

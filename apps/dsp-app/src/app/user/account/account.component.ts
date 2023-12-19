@@ -4,10 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
-import {
-  LoadUserAction,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';

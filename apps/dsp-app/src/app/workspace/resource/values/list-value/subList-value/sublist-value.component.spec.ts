@@ -30,37 +30,23 @@ export class ListNodeV2 {
  */
 @Component({
   selector: 'app-host-component',
-  template: ` <button
-      mat-stroked-button
-      [matMenuTriggerFor]="mainMenu"
-      type="button">
+  template: ` <button mat-stroked-button [matMenuTriggerFor]="mainMenu" type="button">
       <span *ngIf="!selectedNode">Select list value</span>
       <span *ngIf="selectedNode">{{ selectedNode.label }}</span>
     </button>
 
     <mat-menu #mainMenu="matMenu" [overlapTrigger]="false">
-      <button
-        mat-menu-item
-        [matMenuTriggerFor]="childMenu"
-        (click)="getSelectedNode(testList)"
-        type="button">
+      <button mat-menu-item [matMenuTriggerFor]="childMenu" (click)="getSelectedNode(testList)" type="button">
         {{ testList.label }}
       </button>
 
       <mat-menu #childMenu="matMenu" [overlapTrigger]="false">
         <span *ngFor="let child of children">
           <span *ngIf="child.children && child.children.length > 0">
-            <button
-              mat-menu-item
-              [matMenuTriggerFor]="menu.childMenu"
-              (click)="setValue(child)"
-              type="button">
+            <button mat-menu-item [matMenuTriggerFor]="menu.childMenu" (click)="setValue(child)" type="button">
               {{ child.label }}
             </button>
-            <app-sublist-value
-              #menu
-              [children]="child.children"
-              (selectedNode)="setValue($event)"></app-sublist-value>
+            <app-sublist-value #menu [children]="child.children" (selectedNode)="setValue($event)"></app-sublist-value>
           </span>
 
           <span *ngIf="!child.children || child.children.length === 0">
@@ -91,10 +77,7 @@ class TestHostComponent implements OnInit {
   }
 
   ngOnInit() {
-    const testList = new ListNodeV2(
-      'http://rdfh.ch/lists/0001/treeList',
-      'tree list'
-    );
+    const testList = new ListNodeV2('http://rdfh.ch/lists/0001/treeList', 'tree list');
 
     const testListChild1 = new ListNodeV2(
       'http://rdfh.ch/lists/0001/treeList/01',
@@ -164,8 +147,6 @@ describe('SublistValueComponent', () => {
 
     testHostFixture.detectChanges();
 
-    expect(testHostComponent.selectedNode.id).toEqual(
-      'http://rdfh.ch/lists/0001/treeList'
-    );
+    expect(testHostComponent.selectedNode.id).toEqual('http://rdfh.ch/lists/0001/treeList');
   });
 });

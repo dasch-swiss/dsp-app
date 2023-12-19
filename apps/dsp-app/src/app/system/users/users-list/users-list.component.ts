@@ -19,15 +19,9 @@ import {
   ReadUser,
 } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import {
-  DspApiConnectionToken,
-  RouteConstants,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import {
-  ProjectService,
-  SortingService,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   LoadProjectAction,
   LoadProjectMembersAction,
@@ -165,10 +159,7 @@ export class UsersListComponent implements OnInit {
       return false;
     }
 
-    return ProjectService.IsMemberOfProjectAdminGroup(
-      permissions.groupsPerProject,
-      this.project.id
-    );
+    return ProjectService.IsMemberOfProjectAdminGroup(permissions.groupsPerProject, this.project.id);
   }
 
   /**
@@ -178,16 +169,11 @@ export class UsersListComponent implements OnInit {
    */
   userIsSystemAdmin(permissions: Permissions): boolean {
     let admin = false;
-    const groupsPerProjectKeys: string[] = Object.keys(
-      permissions.groupsPerProject
-    );
+    const groupsPerProjectKeys: string[] = Object.keys(permissions.groupsPerProject);
 
     for (const key of groupsPerProjectKeys) {
       if (key === Constants.SystemProjectIRI) {
-        admin =
-          permissions.groupsPerProject[key].indexOf(
-            Constants.SystemAdminGroupIRI
-          ) > -1;
+        admin = permissions.groupsPerProject[key].indexOf(Constants.SystemAdminGroupIRI) > -1;
       }
     }
 
@@ -224,9 +210,7 @@ export class UsersListComponent implements OnInit {
                 .subscribe(
                   () => {
                     if (this.projectUuid) {
-                      this._store.dispatch(
-                        new LoadProjectAction(this.projectUuid)
-                      );
+                      this._store.dispatch(new LoadProjectAction(this.projectUuid));
                     }
                   },
                   (ngError: ApiResponseError) => {
@@ -256,75 +240,67 @@ export class UsersListComponent implements OnInit {
     if (this.userIsProjectAdmin(permissions)) {
       // true = user is already project admin --> remove from admin rights
 
-      this._userApiService
-        .removeFromProjectMembership(id, this.project.id, true)
-        .subscribe(
-          response => {
-            // if this user is not the logged-in user
-            if (currentUser.username !== response.user.username) {
-              this._store.dispatch(new SetUserAction(response.user));
-              this.refreshParent.emit();
-            } else {
-              // the logged-in user removed himself as project admin
-              // the list is not available anymore;
-              // open dialog to confirm and
-              // redirect to project page
-              // update the application state of logged-in user and the session
-              this._store.dispatch(new LoadUserAction(currentUser.username));
-              this._actions$
-                .pipe(ofActionSuccessful(LoadUserAction))
-                .pipe(take(1))
-                .subscribe(() => {
-                  const isSysAdmin = ProjectService.IsMemberOfSystemAdminGroup(
-                    (currentUser as ReadUser).permissions.groupsPerProject
-                  );
-                  if (isSysAdmin) {
-                    this.refreshParent.emit();
-                  } else {
-                    // logged-in user is NOT system admin:
-                    // go to project page and reload project admin interface
-                    this._router
-                      .navigateByUrl(RouteConstants.refreshRelative, {
-                        skipLocationChange: true,
-                      })
-                      .then(() =>
-                        this._router.navigate([
-                          `${RouteConstants.projectRelative}/${this.projectUuid}`,
-                        ])
-                      );
-                  }
-                });
-            }
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
+      this._userApiService.removeFromProjectMembership(id, this.project.id, true).subscribe(
+        response => {
+          // if this user is not the logged-in user
+          if (currentUser.username !== response.user.username) {
+            this._store.dispatch(new SetUserAction(response.user));
+            this.refreshParent.emit();
+          } else {
+            // the logged-in user removed himself as project admin
+            // the list is not available anymore;
+            // open dialog to confirm and
+            // redirect to project page
+            // update the application state of logged-in user and the session
+            this._store.dispatch(new LoadUserAction(currentUser.username));
+            this._actions$
+              .pipe(ofActionSuccessful(LoadUserAction))
+              .pipe(take(1))
+              .subscribe(() => {
+                const isSysAdmin = ProjectService.IsMemberOfSystemAdminGroup(
+                  (currentUser as ReadUser).permissions.groupsPerProject
+                );
+                if (isSysAdmin) {
+                  this.refreshParent.emit();
+                } else {
+                  // logged-in user is NOT system admin:
+                  // go to project page and reload project admin interface
+                  this._router
+                    .navigateByUrl(RouteConstants.refreshRelative, {
+                      skipLocationChange: true,
+                    })
+                    .then(() => this._router.navigate([`${RouteConstants.projectRelative}/${this.projectUuid}`]));
+                }
+              });
           }
-        );
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+        }
+      );
     } else {
       // false: user isn't project admin yet --> add admin rights
-      this._userApiService
-        .addToProjectMembership(id, this.project.id)
-        .subscribe(
-          response => {
-            if (currentUser.username !== response.user.username) {
-              this._store.dispatch(new SetUserAction(response.user));
-              this.refreshParent.emit();
-            } else {
-              // the logged-in user (system admin) added himself as project admin
-              // update the application state of logged-in user and the session
-              this._store.dispatch(new LoadUserAction(currentUser.username));
-              this._actions$
-                .pipe(ofActionSuccessful(LoadUserAction))
-                .pipe(take(1))
-                .subscribe(() => {
-                  this.refreshParent.emit();
-                });
-            }
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
+      this._userApiService.addToProjectMembership(id, this.project.id).subscribe(
+        response => {
+          if (currentUser.username !== response.user.username) {
+            this._store.dispatch(new SetUserAction(response.user));
+            this.refreshParent.emit();
+          } else {
+            // the logged-in user (system admin) added himself as project admin
+            // update the application state of logged-in user and the session
+            this._store.dispatch(new LoadUserAction(currentUser.username));
+            this._actions$
+              .pipe(ofActionSuccessful(LoadUserAction))
+              .pipe(take(1))
+              .subscribe(() => {
+                this.refreshParent.emit();
+              });
           }
-        );
+        },
+        (error: ApiResponseError) => {
+          this._errorHandler.showMessage(error);
+        }
+      );
     }
   }
 
@@ -335,9 +311,7 @@ export class UsersListComponent implements OnInit {
       .subscribe(
         response => {
           this._store.dispatch(new SetUserAction(response.user));
-          if (
-            this._store.selectSnapshot(UserSelectors.username) !== user.username
-          ) {
+          if (this._store.selectSnapshot(UserSelectors.username) !== user.username) {
             this.refreshParent.emit();
           }
         },
@@ -370,9 +344,7 @@ export class UsersListComponent implements OnInit {
       if (response === true) {
         switch (mode) {
           case 'removeFromProject':
-            this._store.dispatch(
-              new RemoveUserFromProjectAction(user.id, this.project.id)
-            );
+            this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
             this._actions$
               .pipe(ofActionSuccessful(LoadProjectMembersAction))
               .pipe(take(1))
@@ -447,10 +419,7 @@ export class UsersListComponent implements OnInit {
 
   sortList(key: any) {
     this.sortBy = key;
-    this.list = this._sortingService.keySortByAlphabetical(
-      this.list,
-      this.sortBy as any
-    );
+    this.list = this._sortingService.keySortByAlphabetical(this.list, this.sortBy as any);
     localStorage.setItem('sortUsersBy', key);
   }
 

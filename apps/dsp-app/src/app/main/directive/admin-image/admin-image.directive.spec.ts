@@ -36,9 +36,7 @@ describe('Directive: AdminImageDirective', () => {
   });
 
   it('should display the project logo of the DaSCH', () => {
-    expect(imageEl.nativeElement.src).toBe(
-      'http://dasch.swiss/content/images/2017/11/DaSCH_Logo_RGB.png'
-    );
+    expect(imageEl.nativeElement.src).toBe('http://dasch.swiss/content/images/2017/11/DaSCH_Logo_RGB.png');
   });
 
   it('should display the default project logo if the image is null or undefined', () => {

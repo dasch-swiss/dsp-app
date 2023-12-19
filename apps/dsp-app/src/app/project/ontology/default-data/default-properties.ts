@@ -1,7 +1,4 @@
-import {
-  Constants,
-  ResourcePropertyDefinitionWithAllLanguages,
-} from '@dasch-swiss/dsp-js';
+import { Constants, ResourcePropertyDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 
 /**
  * property object with all information to create or edit a property
@@ -163,8 +160,7 @@ export class DefaultProperties {
         {
           icon: 'filter_3',
           label: 'Page number',
-          description:
-            'The page number is needed for page classes in case of part of properties',
+          description: 'The page number is needed for page classes in case of part of properties',
           subPropOf: Constants.SeqNum,
           objectType: Constants.IntValue,
           guiEle: Constants.GuiSpinbox, // 'Number',

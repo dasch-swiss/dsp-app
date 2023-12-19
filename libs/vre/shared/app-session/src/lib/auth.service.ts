@@ -1,16 +1,7 @@
 import { EventEmitter, Injectable, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  ApiResponseData,
-  ApiResponseError,
-  CredentialsResponse,
-  LoginResponse,
-  User,
-} from '@dasch-swiss/dsp-js';
-import {
-  Auth,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { ApiResponseData, ApiResponseError, CredentialsResponse, LoginResponse, User } from '@dasch-swiss/dsp-js';
+import { Auth, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   LoadUserAction,
@@ -23,14 +14,7 @@ import {
 import { Store } from '@ngxs/store';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import {
-  catchError,
-  tap,
-  switchMap,
-  map,
-  takeLast,
-  take,
-} from 'rxjs/operators';
+import { catchError, tap, switchMap, map, takeLast, take } from 'rxjs/operators';
 import { LoginError, ServerError } from './error';
 
 @Injectable({ providedIn: 'root' })
@@ -81,15 +65,9 @@ export class AuthService {
         // the internal session has expired
         // check if the api credentials are still valid
         return this._dspApiConnection.v2.auth.checkCredentials().pipe(
-          map(
-            (
-              credentials:
-                | ApiResponseData<CredentialsResponse>
-                | ApiResponseError
-            ) => {
-              return this._updateSessionId(credentials);
-            }
-          ),
+          map((credentials: ApiResponseData<CredentialsResponse> | ApiResponseError) => {
+            return this._updateSessionId(credentials);
+          }),
           catchError(() => {
             // if there is any error checking the credentials (mostly a 401 for after
             // switching the server where this session/the credentials are unknown), we destroy the session
@@ -116,9 +94,7 @@ export class AuthService {
    * @param session the current session
    * @param timestamp timestamp in form of a number
    */
-  private _updateSessionId(
-    credentials: ApiResponseData<CredentialsResponse> | ApiResponseError
-  ): boolean {
+  private _updateSessionId(credentials: ApiResponseData<CredentialsResponse> | ApiResponseError): boolean {
     if (credentials instanceof ApiResponseData) {
       // the dsp api credentials are still valid
       this.storeToken(credentials.body.message);
@@ -145,42 +121,37 @@ export class AuthService {
    * @returns an Either with the session or an error message
    */
   apiLogin$(identifier: string, password: string): Observable<boolean> {
-    const identifierType: 'iri' | 'email' | 'username' =
-      identifier.indexOf('@') > -1 ? 'email' : 'username';
-    return this._dspApiConnection.v2.auth
-      .login(identifierType, identifier, password)
-      .pipe(
-        takeLast(1),
-        tap((response: ApiResponseData<LoginResponse> | ApiResponseError) => {
-          if (response instanceof ApiResponseData) {
-            this.storeToken(response.body.token);
+    const identifierType: 'iri' | 'email' | 'username' = identifier.indexOf('@') > -1 ? 'email' : 'username';
+    return this._dspApiConnection.v2.auth.login(identifierType, identifier, password).pipe(
+      takeLast(1),
+      tap((response: ApiResponseData<LoginResponse> | ApiResponseError) => {
+        if (response instanceof ApiResponseData) {
+          this.storeToken(response.body.token);
+        }
+      }),
+      switchMap((response: ApiResponseData<LoginResponse> | ApiResponseError) => {
+        if (response instanceof ApiResponseData) {
+          return of(true);
+        } else {
+          // error handling
+          if (response.status === 401 || response.status === 403) {
+            // wrong credentials
+            return throwError(<LoginError>{
+              type: 'login',
+              status: response.status,
+              msg: 'Wrong credentials',
+            });
+          } else {
+            // server error
+            return throwError(<ServerError>{
+              type: 'server',
+              status: response.status,
+              msg: 'Server error',
+            });
           }
-        }),
-        switchMap(
-          (response: ApiResponseData<LoginResponse> | ApiResponseError) => {
-            if (response instanceof ApiResponseData) {
-              return of(true);
-            } else {
-              // error handling
-              if (response.status === 401 || response.status === 403) {
-                // wrong credentials
-                return throwError(<LoginError>{
-                  type: 'login',
-                  status: response.status,
-                  msg: 'Wrong credentials',
-                });
-              } else {
-                // server error
-                return throwError(<ServerError>{
-                  type: 'server',
-                  status: response.status,
-                  msg: 'Server error',
-                });
-              }
-            }
-          }
-        )
-      );
+        }
+      })
+    );
   }
 
   // TODO refresh access token using API
@@ -273,9 +244,7 @@ export class AuthService {
       return false;
     }
 
-    return (
-      date.setSeconds(date.getSeconds() - 30).valueOf() <= new Date().valueOf()
-    );
+    return date.setSeconds(date.getSeconds() - 30).valueOf() <= new Date().valueOf();
   }
 
   getTokenExpirationDate(token: string): Date | null {

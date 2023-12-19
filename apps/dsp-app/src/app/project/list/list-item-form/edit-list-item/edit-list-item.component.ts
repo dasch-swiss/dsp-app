@@ -39,8 +39,7 @@ export class EditListItemComponent implements OnInit {
 
   @Input() projectIri: string;
 
-  @Output() closeDialog: EventEmitter<List | ListNodeInfo> =
-    new EventEmitter<List>();
+  @Output() closeDialog: EventEmitter<List | ListNodeInfo> = new EventEmitter<List>();
 
   loading: boolean;
 
@@ -151,35 +150,26 @@ export class EditListItemComponent implements OnInit {
    * sends a request to DSP-API to update the list child node with the data inside the two local arrays.
    */
   updateChildNode() {
-    const childNodeUpdateData: UpdateChildNodeRequest =
-      new UpdateChildNodeRequest();
+    const childNodeUpdateData: UpdateChildNodeRequest = new UpdateChildNodeRequest();
     childNodeUpdateData.projectIri = this.projectIri;
     childNodeUpdateData.listIri = this.iri;
     childNodeUpdateData.labels = this.labels;
-    childNodeUpdateData.comments =
-      this.comments.length > 0 ? this.comments : undefined;
+    childNodeUpdateData.comments = this.comments.length > 0 ? this.comments : undefined;
 
-    this._listApiService
-      .updateChildNode(childNodeUpdateData.listIri, childNodeUpdateData)
-      .subscribe(
-        response => {
-          // if initialCommentsLength is not equal to 0 and the comment is now empty, send request to delete comment
-          if (
-            this.initialCommentsLength !== 0 &&
-            !childNodeUpdateData.comments
-          ) {
-            this._listApiService
-              .deleteChildComments(childNodeUpdateData.listIri)
-              .subscribe();
-          }
-          this.loading = false;
-          this.closeDialog.emit(response.nodeinfo);
-        },
-        (error: ApiResponseError) => {
-          this.errorMessage = error;
-          this.loading = false;
+    this._listApiService.updateChildNode(childNodeUpdateData.listIri, childNodeUpdateData).subscribe(
+      response => {
+        // if initialCommentsLength is not equal to 0 and the comment is now empty, send request to delete comment
+        if (this.initialCommentsLength !== 0 && !childNodeUpdateData.comments) {
+          this._listApiService.deleteChildComments(childNodeUpdateData.listIri).subscribe();
         }
-      );
+        this.loading = false;
+        this.closeDialog.emit(response.nodeinfo);
+      },
+      (error: ApiResponseError) => {
+        this.errorMessage = error;
+        this.loading = false;
+      }
+    );
   }
 
   /**
@@ -187,8 +177,7 @@ export class EditListItemComponent implements OnInit {
    * Sends a request to DSP-API to insert a new list child node in the provided position.
    */
   insertChildNode() {
-    const createChildNodeRequest: CreateChildNodeRequest =
-      new CreateChildNodeRequest();
+    const createChildNodeRequest: CreateChildNodeRequest = new CreateChildNodeRequest();
     createChildNodeRequest.name =
       this._projectService.iriToUuid(this.projectIri) +
       '-' +
@@ -196,25 +185,19 @@ export class EditListItemComponent implements OnInit {
       Math.random().toString(36).substring(2);
     createChildNodeRequest.parentNodeIri = this.parentIri;
     createChildNodeRequest.labels = this.labels;
-    createChildNodeRequest.comments =
-      this.comments.length > 0 ? this.comments : undefined;
+    createChildNodeRequest.comments = this.comments.length > 0 ? this.comments : undefined;
     createChildNodeRequest.projectIri = this.projectIri;
     createChildNodeRequest.position = this.position;
 
-    this._listApiService
-      .createChildNode(
-        createChildNodeRequest.parentNodeIri,
-        createChildNodeRequest
-      )
-      .subscribe(
-        response => {
-          this.loading = false;
-          this.closeDialog.emit(response.nodeinfo);
-        },
-        (error: ApiResponseError) => {
-          this.errorMessage = error;
-          this.loading = false;
-        }
-      );
+    this._listApiService.createChildNode(createChildNodeRequest.parentNodeIri, createChildNodeRequest).subscribe(
+      response => {
+        this.loading = false;
+        this.closeDialog.emit(response.nodeinfo);
+      },
+      (error: ApiResponseError) => {
+        this.errorMessage = error;
+        this.loading = false;
+      }
+    );
   }
 }

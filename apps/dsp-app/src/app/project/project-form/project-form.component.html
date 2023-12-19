@@ -1,9 +1,5 @@
 <div class="project-form-container">
-  <form
-    *ngIf="!loading && project.status"
-    [formGroup]="form"
-    class="project-form"
-    (ngSubmit)="submitData()">
+  <form *ngIf="!loading && project.status" [formGroup]="form" class="project-form" (ngSubmit)="submitData()">
     <div class="project-form-short">
       <!-- short and long name -->
       <mat-form-field class="shortcode">
@@ -14,9 +10,7 @@
                     }}"
           [maxlength]="shortcodeMaxLength"
           [formControl]="form.controls['shortcode']" />
-        <mat-hint *ngIf="formErrors.shortcode">
-          {{ formErrors.shortcode }}
-        </mat-hint>
+        <mat-hint *ngIf="formErrors.shortcode"> {{ formErrors.shortcode }} </mat-hint>
       </mat-form-field>
 
       <!-- short name -->
@@ -28,9 +22,7 @@
                         'appLabels.form.project.general.shortname' | translate
                     }}"
           [formControl]="form.controls['shortname']" />
-        <mat-hint *ngIf="formErrors.shortname">
-          {{ formErrors.shortname }}
-        </mat-hint>
+        <mat-hint *ngIf="formErrors.shortname"> {{ formErrors.shortname }} </mat-hint>
       </mat-form-field>
     </div>
     <!-- long name -->
@@ -41,9 +33,7 @@
                     'appLabels.form.project.general.longname' | translate
                 }}"
         [formControl]="form.controls['longname']" />
-      <mat-hint *ngIf="formErrors.longname">
-        {{ formErrors.longname }}
-      </mat-hint>
+      <mat-hint *ngIf="formErrors.longname"> {{ formErrors.longname }} </mat-hint>
     </mat-form-field>
 
     <!-- description -->
@@ -56,9 +46,7 @@
       [value]="project.description"
       (dataChanged)="getStringLiteral($event)">
     </dasch-swiss-app-string-literal>
-    <mat-hint class="string-literal-error" *ngIf="formErrors.description">
-      {{ formErrors.description }}
-    </mat-hint>
+    <mat-hint class="string-literal-error" *ngIf="formErrors.description"> {{ formErrors.description }} </mat-hint>
 
     <!-- institution -->
     <!--
@@ -91,9 +79,7 @@
           [matChipInputAddOnBlur]="addOnBlur"
           (matChipInputTokenEnd)="addKeyword($event)" />
       </mat-chip-grid>
-      <mat-hint *ngIf="formErrors.keywords">
-        {{ formErrors.keywords }}
-      </mat-hint>
+      <mat-hint *ngIf="formErrors.keywords"> {{ formErrors.keywords }} </mat-hint>
     </mat-form-field>
 
     <!-- upload logo -->
@@ -110,12 +96,7 @@
 
     <div class="form-panel form-action">
       <span>
-        <button
-          class="cancel-button"
-          color="primary"
-          mat-button
-          type="reset"
-          (click)="goBack()">
+        <button class="cancel-button" color="primary" mat-button type="reset" (click)="goBack()">
           {{ 'appLabels.form.action.cancel' | translate }}
         </button>
       </span>
@@ -129,18 +110,10 @@
                         !this.description.length ||
                         (projectIri && !project.status)
                     ">
-          <dasch-swiss-app-progress-indicator
-            [color]="'white'"
-            [status]="0"
-            *ngIf="loading"
-            class="submit-progress">
+          <dasch-swiss-app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
           </dasch-swiss-app-progress-indicator>
-          <span *ngIf="projectIri"
-            >{{ 'appLabels.form.action.update' | translate }}</span
-          >
-          <span *ngIf="!projectIri"
-            >{{ 'appLabels.form.action.submit' | translate }}</span
-          >
+          <span *ngIf="projectIri">{{ 'appLabels.form.action.update' | translate }}</span>
+          <span *ngIf="!projectIri">{{ 'appLabels.form.action.submit' | translate }}</span>
         </button>
       </span>
     </div>

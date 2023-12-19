@@ -15,10 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { StatusComponent } from '@dsp-app/src/app/main/status/status.component';
@@ -52,9 +49,7 @@ describe('CollaborationComponent', () => {
   };
 
   beforeEach(waitForAsync(() => {
-    const projectServiceSpy = jasmine.createSpyObj('ProjectService', [
-      'uuidToIri',
-    ]);
+    const projectServiceSpy = jasmine.createSpyObj('ProjectService', ['uuidToIri']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -135,9 +130,7 @@ describe('CollaborationComponent', () => {
   });
 
   it('should create', () => {
-    expect<any>(localStorage.getItem('session')).toBe(
-      JSON.stringify(TestConfig.CurrentSession)
-    );
+    expect<any>(localStorage.getItem('session')).toBe(JSON.stringify(TestConfig.CurrentSession));
     expect(component).toBeTruthy();
   });
 

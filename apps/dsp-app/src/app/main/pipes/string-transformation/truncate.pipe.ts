@@ -32,15 +32,11 @@ export class TruncatePipe implements PipeTransform {
     }
 
     // if a custom limit was provided, use that. Otherwise, use the default limit of 20 characters
-    const limitSetting: number =
-      limit !== undefined ? limit : this.defaultLimit;
+    const limitSetting: number = limit !== undefined ? limit : this.defaultLimit;
 
     // if a custom trail was provided, use that. Otherwise, use the default trail of '...'
-    const trailSetting: string =
-      trail !== undefined ? trail : this.defaultTrail;
+    const trailSetting: string = trail !== undefined ? trail : this.defaultTrail;
 
-    return value.length > limitSetting
-      ? value.substring(0, limitSetting) + trailSetting
-      : value;
+    return value.length > limitSetting ? value.substring(0, limitSetting) + trailSetting : value;
   }
 }

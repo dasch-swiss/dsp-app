@@ -18,18 +18,11 @@
   </app-select-properties>
   <div class="form-panel form-action">
     <span>
-      <button mat-button type="button" (click)="onCancel()">
-        {{ 'appLabels.form.action.cancel' | translate }}
-      </button>
+      <button mat-button type="button" (click)="onCancel()">{{ 'appLabels.form.action.cancel' | translate }}</button>
     </span>
     <span class="fill-remaining-space"></span>
     <span>
-      <button
-        mat-raised-button
-        type="submit"
-        color="primary"
-        class="form-submit"
-        [disabled]="!propertiesForm.valid">
+      <button mat-raised-button type="submit" color="primary" class="form-submit" [disabled]="!propertiesForm.valid">
         {{ 'appLabels.form.action.submit' | translate }}
       </button>
     </span>

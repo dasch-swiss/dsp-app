@@ -17,10 +17,7 @@ export class NotificationService {
   // todo: maybe we can add more parameters like:
   // action: string = 'x', duration: number = 4200
   // and / or type: 'note' | 'warning' | 'error' | 'success'; which can be used for the panelClass
-  openSnackBar(
-    notification: string | HttpErrorResponse | ApiResponseError,
-    type?: 'success' | 'error'
-  ): void {
+  openSnackBar(notification: string | HttpErrorResponse | ApiResponseError, type?: 'success' | 'error'): void {
     let message: string;
 
     const conf: MatSnackBarConfig = {
@@ -42,9 +39,7 @@ export class NotificationService {
         message = notification.error['message'];
       } else {
         const defaultStatusMsg = this._statusMsg.default;
-        message = `${defaultStatusMsg[notification.status].message} (${
-          notification.status
-        }): `;
+        message = `${defaultStatusMsg[notification.status].message} (${notification.status}): `;
 
         if (notification.status === 504) {
           message += `There was a timeout issue with one or several requests.
@@ -61,8 +56,7 @@ export class NotificationService {
         message = notification.message;
         // sipi error
         if (message.includes('knora.json: 0 Unknown Error')) {
-          message =
-            'IIIF server error: The image could not be loaded. Please try again later.';
+          message = 'IIIF server error: The image could not be loaded. Please try again later.';
         }
       } else {
         message = notification;

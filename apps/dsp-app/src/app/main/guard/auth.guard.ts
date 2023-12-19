@@ -3,11 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
-import {
-  CurrentPageSelectors,
-  SetUserAction,
-  UserSelectors,
-} from '@dasch-swiss/vre/shared/app-state';
+import { CurrentPageSelectors, SetUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionCompleted, Select, Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -51,8 +47,6 @@ export class AuthGuard implements CanActivate {
   private _goToHomePage() {
     this.document.defaultView.location.href =
       `${this.document.defaultView.location.href}?` +
-      `returnLink=${this.store.selectSnapshot(
-        CurrentPageSelectors.loginReturnLink
-      )}`;
+      `returnLink=${this.store.selectSnapshot(CurrentPageSelectors.loginReturnLink)}`;
   }
 }

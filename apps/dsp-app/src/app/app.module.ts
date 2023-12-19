@@ -1,11 +1,7 @@
 /* eslint-disable max-len */
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import {
-  HTTP_INTERCEPTORS,
-  HttpClient,
-  HttpClientModule,
-} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -13,10 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
-import {
-  DatadogRumService,
-  PendoAnalyticsService,
-} from '@dasch-swiss/vre/shared/app-analytics';
+import { DatadogRumService, PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
 import {
   AppConfigService,
   buildTagFactory,
@@ -338,21 +331,18 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     PendoAnalyticsService,
     {
       provide: DspApiConfigToken,
-      useFactory: (appConfigService: AppConfigService) =>
-        appConfigService.dspApiConfig,
+      useFactory: (appConfigService: AppConfigService) => appConfigService.dspApiConfig,
       deps: [AppConfigService],
     },
     apiConnectionTokenProvider,
     {
       provide: DspAppConfigToken,
-      useFactory: (appConfigService: AppConfigService) =>
-        appConfigService.dspAppConfig,
+      useFactory: (appConfigService: AppConfigService) => appConfigService.dspAppConfig,
       deps: [AppConfigService],
     },
     {
       provide: DspInstrumentationToken,
-      useFactory: (appConfigService: AppConfigService) =>
-        appConfigService.dspInstrumentationConfig,
+      useFactory: (appConfigService: AppConfigService) => appConfigService.dspInstrumentationConfig,
       deps: [AppConfigService],
     },
     {

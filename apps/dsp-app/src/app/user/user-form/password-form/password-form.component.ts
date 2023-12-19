@@ -1,23 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
-import {
-  ApiResponseError,
-  KnoraApiConnection,
-  ReadUser,
-  User,
-} from '@dasch-swiss/dsp-js';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { ApiResponseError, KnoraApiConnection, ReadUser, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
@@ -74,8 +57,7 @@ export class PasswordFormComponent implements OnInit {
     password: {
       required: 'Password is required.',
       minlength: 'Use at least 8 characters.',
-      pattern:
-        'The password should have at least one uppercase letter and one number.',
+      pattern: 'The password should have at least one uppercase letter and one number.',
     },
     confirmPassword: {
       required: 'You have to confirm your password.',
@@ -144,9 +126,7 @@ export class PasswordFormComponent implements OnInit {
 
   buildForm() {
     const requesterPassword =
-      this.updateOwn || !this.confirmForm
-        ? ''
-        : this.confirmForm.controls.requesterPassword.value;
+      this.updateOwn || !this.confirmForm ? '' : this.confirmForm.controls.requesterPassword.value;
 
     const name = this.user?.username ? this.user.username : '';
 
@@ -167,11 +147,7 @@ export class PasswordFormComponent implements OnInit {
           value: '',
           disabled: false,
         },
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(CustomRegex.PASSWORD_REGEX),
-        ]
+        [Validators.required, Validators.minLength(8), Validators.pattern(CustomRegex.PASSWORD_REGEX)]
       ),
       confirmPassword: new UntypedFormControl(
         {
@@ -186,24 +162,15 @@ export class PasswordFormComponent implements OnInit {
       this.onValueChanged(this.form);
 
       // compare passwords here
-      if (
-        this.form.controls.password.dirty &&
-        this.form.controls.confirmPassword.dirty
-      ) {
-        this.matchingPasswords =
-          this.form.controls.password.value ===
-          this.form.controls.confirmPassword.value;
+      if (this.form.controls.password.dirty && this.form.controls.confirmPassword.dirty) {
+        this.matchingPasswords = this.form.controls.password.value === this.form.controls.confirmPassword.value;
 
         this.formErrors['confirmPassword'] += this.matchingPasswords
           ? ''
           : this.validationMessages['confirmPassword'].match;
       }
 
-      if (
-        this.matchingPasswords &&
-        !this.formErrors['password'] &&
-        !this.formErrors['confirmPassword']
-      ) {
+      if (this.matchingPasswords && !this.formErrors['password'] && !this.formErrors['confirmPassword']) {
         this.sendToParent.emit(this.form.controls.password.value);
       } else {
         this.sendToParent.emit('');
@@ -266,35 +233,26 @@ export class PasswordFormComponent implements OnInit {
       ? this.form.controls.requesterPassword.value
       : this.confirmForm.controls.requesterPassword.value;
 
-    this._userApiService
-      .updatePassword(
-        this.user.id,
-        requesterPassword,
-        this.form.controls.password.value
-      )
-      .subscribe(
-        () => {
-          const successResponse =
-            'You have successfully updated ' +
-            (this.updateOwn ? 'your' : "user's") +
-            ' password.';
-          this._notification.openSnackBar(successResponse);
-          this.closeDialog.emit();
-          this.form.reset();
-          this.loading = false;
-        },
-        (error: ApiResponseError) => {
-          if (error.status === 403) {
-            // incorrect old password
-            this.form.controls.requesterPassword.setErrors({
-              incorrectPassword: true,
-            });
-          } else {
-            this._errorHandler.showMessage(error);
-          }
-          this.loading = false;
-          this.error = true;
+    this._userApiService.updatePassword(this.user.id, requesterPassword, this.form.controls.password.value).subscribe(
+      () => {
+        const successResponse = 'You have successfully updated ' + (this.updateOwn ? 'your' : "user's") + ' password.';
+        this._notification.openSnackBar(successResponse);
+        this.closeDialog.emit();
+        this.form.reset();
+        this.loading = false;
+      },
+      (error: ApiResponseError) => {
+        if (error.status === 403) {
+          // incorrect old password
+          this.form.controls.requesterPassword.setErrors({
+            incorrectPassword: true,
+          });
+        } else {
+          this._errorHandler.showMessage(error);
         }
-      );
+        this.loading = false;
+        this.error = true;
+      }
+    );
   }
 }

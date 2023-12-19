@@ -3,18 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, Input, OnInit } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MockResource, ReadIntValue, ReadValue } from '@dasch-swiss/dsp-js';
-import {
-  ConfirmationDialogComponent,
-  ConfirmationDialogValueDeletionPayload,
-} from './confirmation-dialog.component';
+import { ConfirmationDialogComponent, ConfirmationDialogValueDeletionPayload } from './confirmation-dialog.component';
 
 /**
  * test host component to simulate parent component with a confirmation dialog.
@@ -31,10 +23,7 @@ class ConfirmationDialogTestHostComponent implements OnInit {
 
   ngOnInit() {
     MockResource.getTestThing().subscribe(res => {
-      this.testValue = res.getValuesAs(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger',
-        ReadIntValue
-      )[0];
+      this.testValue = res.getValuesAs('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger', ReadIntValue)[0];
     });
   }
 
@@ -95,9 +84,7 @@ describe('ConfirmationDialogComponent', () => {
   }));
 
   beforeEach(() => {
-    testHostFixture = TestBed.createComponent(
-      ConfirmationDialogTestHostComponent
-    );
+    testHostFixture = TestBed.createComponent(ConfirmationDialogTestHostComponent);
     testHostComponent = testHostFixture.componentInstance;
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(testHostFixture);
     testHostFixture.detectChanges();
@@ -118,8 +105,6 @@ describe('ConfirmationDialogComponent', () => {
     expect(dspConfirmMsg).toBeTruthy();
 
     const dialogTitle = dialogDiv.querySelector('.title');
-    expect(dialogTitle.innerHTML.trim()).toEqual(
-      'Are you sure you want to delete this value from Integer?'
-    );
+    expect(dialogTitle.innerHTML.trim()).toEqual('Are you sure you want to delete this value from Integer?');
   });
 });

@@ -1,11 +1,6 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -103,8 +98,7 @@ class DspAddValueTestComponent implements OnInit {
     const definitionForProp = this.readResource.entityInfo
       .getAllPropertyDefinitions()
       .filter(
-        (resourcePropDef: ResourcePropertyDefinition) =>
-          resourcePropDef.id === propIri
+        (resourcePropDef: ResourcePropertyDefinition) => resourcePropDef.id === propIri
       ) as ResourcePropertyDefinition[];
 
     if (definitionForProp.length !== 1) {
@@ -126,18 +120,11 @@ describe('AddValueComponent', () => {
       },
     };
 
-    const eventSpy = jasmine.createSpyObj('ValueOperationEventService', [
-      'emit',
-    ]);
+    const eventSpy = jasmine.createSpyObj('ValueOperationEventService', ['emit']);
 
     TestBed.configureTestingModule({
       imports: [BrowserAnimationsModule, MatIconModule],
-      declarations: [
-        AddValueComponent,
-        DspAddValueTestComponent,
-        TestIntValueComponent,
-        TestTimeValueComponent,
-      ],
+      declarations: [AddValueComponent, DspAddValueTestComponent, TestIntValueComponent, TestTimeValueComponent],
       providers: [
         {
           provide: DspApiConnectionToken,
@@ -155,9 +142,7 @@ describe('AddValueComponent', () => {
   beforeEach(() => {
     const valueEventSpy = TestBed.inject(ValueOperationEventService);
 
-    (
-      valueEventSpy as jasmine.SpyObj<ValueOperationEventService>
-    ).emit.and.stub();
+    (valueEventSpy as jasmine.SpyObj<ValueOperationEventService>).emit.and.stub();
 
     testHostFixture = TestBed.createComponent(DspAddValueTestComponent);
     testHostComponent = testHostFixture.componentInstance;
@@ -167,9 +152,7 @@ describe('AddValueComponent', () => {
   });
 
   it('should choose the apt component for an integer value', () => {
-    testHostComponent.assignResourcePropDef(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
-    );
+    testHostComponent.assignResourcePropDef('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger');
 
     testHostFixture.detectChanges();
 
@@ -179,16 +162,11 @@ describe('AddValueComponent', () => {
       'http://api.knora.org/ontology/knora-api/v2#IntValue'
     );
 
-    expect(
-      testHostComponent.testAddValueComponent.createValueComponent instanceof
-        TestIntValueComponent
-    ).toBeTruthy();
+    expect(testHostComponent.testAddValueComponent.createValueComponent instanceof TestIntValueComponent).toBeTruthy();
   });
 
   it('should choose the apt component for a time value', () => {
-    testHostComponent.assignResourcePropDef(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#hasTimeStamp'
-    );
+    testHostComponent.assignResourcePropDef('http://0.0.0.0:3333/ontology/0001/anything/v2#hasTimeStamp');
 
     testHostFixture.detectChanges();
 
@@ -198,10 +176,7 @@ describe('AddValueComponent', () => {
       'http://api.knora.org/ontology/knora-api/v2#TimeValue'
     );
 
-    expect(
-      testHostComponent.testAddValueComponent.createValueComponent instanceof
-        TestTimeValueComponent
-    ).toBeTruthy();
+    expect(testHostComponent.testAddValueComponent.createValueComponent instanceof TestTimeValueComponent).toBeTruthy();
   });
 
   describe('add new value', () => {
@@ -209,9 +184,7 @@ describe('AddValueComponent', () => {
     let addValueComponentDe;
 
     beforeEach(() => {
-      testHostComponent.assignResourcePropDef(
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger'
-      );
+      testHostComponent.assignResourcePropDef('http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger');
 
       testHostFixture.detectChanges();
 
@@ -233,9 +206,7 @@ describe('AddValueComponent', () => {
 
       const valueEventSpy = TestBed.inject(ValueOperationEventService);
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).createValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).createValue.and.callFake(() => {
         const response = new WriteValueResponse();
 
         response.id = 'newID';
@@ -245,9 +216,7 @@ describe('AddValueComponent', () => {
         return of(response);
       });
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).getValue.and.callFake(() => {
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).getValue.and.callFake(() => {
         const createdVal = new ReadIntValue();
 
         createdVal.id = 'newID';
@@ -257,27 +226,19 @@ describe('AddValueComponent', () => {
 
         resource.properties = {
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [
-            createdVal,
-          ],
+          'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger': [createdVal],
         };
 
         return of(resource);
       });
 
-      expect(
-        testHostComponent.testAddValueComponent.createModeActive
-      ).toBeTruthy();
+      expect(testHostComponent.testAddValueComponent.createModeActive).toBeTruthy();
 
-      testHostComponent.testAddValueComponent.createValueComponent.form.setValue(
-        { test: 123 }
-      );
+      testHostComponent.testAddValueComponent.createValueComponent.form.setValue({ test: 123 });
 
       testHostFixture.detectChanges();
 
-      const saveButtonDebugElement = addValueComponentDe.query(
-        By.css('button.save')
-      );
+      const saveButtonDebugElement = addValueComponentDe.query(By.css('button.save'));
       const saveButtonNativeElement = saveButtonDebugElement.nativeElement;
 
       expect(saveButtonNativeElement).toBeDefined();
@@ -289,14 +250,11 @@ describe('AddValueComponent', () => {
       const expectedUpdateResource = new UpdateResource();
 
       expectedUpdateResource.id = 'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw';
-      expectedUpdateResource.type =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
-      expectedUpdateResource.property =
-        'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
+      expectedUpdateResource.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+      expectedUpdateResource.property = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasInteger';
 
       const expectedCreateVal = new CreateIntValue();
-      expectedCreateVal.int =
-        testHostComponent.testAddValueComponent.createValueComponent.form.value.test;
+      expectedCreateVal.int = testHostComponent.testAddValueComponent.createValueComponent.form.value.test;
 
       expectedUpdateResource.value = expectedCreateVal;
 
@@ -304,16 +262,11 @@ describe('AddValueComponent', () => {
       newReadValue.id = 'newID';
       newReadValue.int = 1;
 
-      expect(valuesSpy.v2.values.createValue).toHaveBeenCalledWith(
-        expectedUpdateResource
-      );
+      expect(valuesSpy.v2.values.createValue).toHaveBeenCalledWith(expectedUpdateResource);
       expect(valuesSpy.v2.values.createValue).toHaveBeenCalledTimes(1);
 
       expect(valuesSpy.v2.values.getValue).toHaveBeenCalledTimes(1);
-      expect(valuesSpy.v2.values.getValue).toHaveBeenCalledWith(
-        testHostComponent.readResource.id,
-        'uuid'
-      );
+      expect(valuesSpy.v2.values.getValue).toHaveBeenCalledWith(testHostComponent.readResource.id, 'uuid');
 
       expect(valueEventSpy.emit).toHaveBeenCalledTimes(1);
       expect(valueEventSpy.emit).toHaveBeenCalledWith(
@@ -328,21 +281,15 @@ describe('AddValueComponent', () => {
 
       error.status = 400;
 
-      (
-        valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>
-      ).createValue.and.returnValue(throwError(error));
+      (valuesSpy.v2.values as jasmine.SpyObj<ValuesEndpointV2>).createValue.and.returnValue(throwError(error));
 
-      expect(
-        testHostComponent.testAddValueComponent.createModeActive
-      ).toBeTruthy();
+      expect(testHostComponent.testAddValueComponent.createModeActive).toBeTruthy();
 
       testHostComponent.testAddValueComponent.createValueComponent.form.controls.test.clearValidators();
       testHostComponent.testAddValueComponent.createValueComponent.form.controls.test.updateValueAndValidity();
       testHostFixture.detectChanges();
 
-      const saveButtonDebugElement = addValueComponentDe.query(
-        By.css('button.save')
-      );
+      const saveButtonDebugElement = addValueComponentDe.query(By.css('button.save'));
       const saveButtonNativeElement = saveButtonDebugElement.nativeElement;
 
       expect(saveButtonNativeElement).toBeDefined();
@@ -351,9 +298,7 @@ describe('AddValueComponent', () => {
 
       testHostFixture.detectChanges();
 
-      const formErrors =
-        testHostComponent.testAddValueComponent.createValueComponent
-          .valueFormControl.errors;
+      const formErrors = testHostComponent.testAddValueComponent.createValueComponent.valueFormControl.errors;
 
       const expectedErrors = {
         duplicateValue: true,

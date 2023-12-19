@@ -41,21 +41,11 @@ import { map, takeUntil } from 'rxjs/operators';
 import { SplitSize } from '../results/results.component';
 import { DspCompoundPosition, DspResource } from './dsp-resource';
 import { PropertyInfoValues } from './properties/properties.component';
-import {
-  FileRepresentation,
-  RepresentationConstants,
-} from './representation/file-representation';
-import {
-  Region,
-  StillImageComponent,
-} from './representation/still-image/still-image.component';
+import { FileRepresentation, RepresentationConstants } from './representation/file-representation';
+import { Region, StillImageComponent } from './representation/still-image/still-image.component';
 import { IncomingService } from './services/incoming.service';
 import { ResourceService } from './services/resource.service';
-import {
-  Events,
-  UpdatedFileEventValue,
-  ValueOperationEventService,
-} from './services/value-operation-event.service';
+import { Events, UpdatedFileEventValue, ValueOperationEventService } from './services/value-operation-event.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -133,11 +123,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
       takeUntil(this.ngUnsubscribe),
       map(([user, userProjectGroups]) => {
         return this.attachedToProjectResource
-          ? ProjectService.IsProjectAdminOrSysAdmin(
-              user,
-              userProjectGroups,
-              this.attachedToProjectResource
-            )
+          ? ProjectService.IsProjectAdminOrSysAdmin(user, userProjectGroups, this.attachedToProjectResource)
           : false;
       })
     );
@@ -165,10 +151,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
       this.resourceUuid = params.resource;
       this.valueUuid = params.value;
       if (this.projectCode && this.resourceUuid) {
-        this.resourceIri = this._resourceService.getResourceIri(
-          this.projectCode,
-          this.resourceUuid
-        );
+        this.resourceIri = this._resourceService.getResourceIri(this.projectCode, this.resourceUuid);
         this.oldResourceIri = this.resourceIri;
         this.initResource(this.resourceIri);
       }
@@ -184,16 +167,13 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     });
 
     this.valueOperationEventSubscriptions.push(
-      this._valueOperationEventService.on(
-        Events.FileValueUpdated,
-        (newFileValue: UpdatedFileEventValue) => {
-          if (newFileValue) {
-            if (this.resourceIri) {
-              this.initResource(this.resourceIri);
-            }
+      this._valueOperationEventService.on(Events.FileValueUpdated, (newFileValue: UpdatedFileEventValue) => {
+        if (newFileValue) {
+          if (this.resourceIri) {
+            this.initResource(this.resourceIri);
           }
         }
-      )
+      })
     );
   }
 
@@ -263,15 +243,11 @@ export class ResourceComponent implements OnChanges, OnDestroy {
       this.getIncomingStillImageRepresentations(offset);
     } else {
       // get incoming resource, if the offset is the same but page changed
-      this.getIncomingResource(
-        this.resource.incomingRepresentations[position].id
-      );
+      this.getIncomingResource(this.resource.incomingRepresentations[position].id);
     }
     this.compoundPosition.position = position;
     this.compoundPosition.page = page;
-    this.representationsToDisplay = this.collectRepresentationsAndAnnotations(
-      this.incomingResource
-    );
+    this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
   }
 
   // ------------------------------------------------------------------------
@@ -314,39 +290,31 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     this.resource = resource;
     this.oldResourceIri = this.resourceIri;
 
-    this.representationsToDisplay =
-      this.collectRepresentationsAndAnnotations(resource);
+    this.representationsToDisplay = this.collectRepresentationsAndAnnotations(resource);
     if (!this.representationsToDisplay.length && !this.compoundPosition) {
       // the resource could be a compound object
       if (this.stillImageRepresentationsForCompoundResourceSub) {
         this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
       }
-      this.stillImageRepresentationsForCompoundResourceSub =
-        this._incomingService
-          .getStillImageRepresentationsForCompoundResource(
-            resource.res.id,
-            0,
-            true
-          )
-          .subscribe(
-            (countQuery: CountQueryResponse) => {
-              if (countQuery.numberOfResults > 0) {
-                // this is a compound object
-                this.compoundPosition = new DspCompoundPosition(
-                  countQuery.numberOfResults
-                );
-                this.compoundNavigation(1);
-              }
-
-              this.loading = false;
-              this._cdr.markForCheck();
-            },
-            (error: ApiResponseError) => {
-              this.loading = false;
-              this._errorHandler.showMessage(error);
-              this._cdr.markForCheck();
+      this.stillImageRepresentationsForCompoundResourceSub = this._incomingService
+        .getStillImageRepresentationsForCompoundResource(resource.res.id, 0, true)
+        .subscribe(
+          (countQuery: CountQueryResponse) => {
+            if (countQuery.numberOfResults > 0) {
+              // this is a compound object
+              this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
+              this.compoundNavigation(1);
             }
-          );
+
+            this.loading = false;
+            this._cdr.markForCheck();
+          },
+          (error: ApiResponseError) => {
+            this.loading = false;
+            this._errorHandler.showMessage(error);
+            this._cdr.markForCheck();
+          }
+        );
     } else {
       this.requestIncomingResources(resource);
     }
@@ -355,18 +323,14 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     this.resource.resProps = this.initProps(this.resource.res);
 
     // gather system property information
-    this.resource.systemProps =
-      this.resource.res.entityInfo.getPropertyDefinitionsByType(
-        SystemPropertyDefinition
-      );
+    this.resource.systemProps = this.resource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
   }
 
   renderAsRegion(region: DspResource) {
     // display the corresponding still-image resource instance
     // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
-    const annotatedRepresentationIri = (
-      region.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[]
-    )[0].linkedResourceIri;
+    const annotatedRepresentationIri = (region.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[])[0]
+      .linkedResourceIri;
     // get the annotated main resource
     this.getResource(annotatedRepresentationIri).subscribe(dspResource => {
       this.resource = dspResource;
@@ -378,11 +342,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
       this.selectedRegion = region.res.id;
       // define resource as annotation of type region
-      this.resourceIsAnnotation = this.resource.res.entityInfo.classes[
-        Constants.Region
-      ]
-        ? 'region'
-        : 'sequence';
+      this.resourceIsAnnotation = this.resource.res.entityInfo.classes[Constants.Region] ? 'region' : 'sequence';
     });
   }
 
@@ -394,9 +354,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
   renderRegion(iri) {
     // display the corresponding still-image resource instance
     // find the iri of the parent resource; still-image in case of region, moving-image or audio in case of sequence
-    const annotationOfIri = (
-      this.resource.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[]
-    )[0].linkedResourceIri;
+    const annotationOfIri = (this.resource.res.properties[Constants.IsRegionOfValue] as ReadLinkValue[])[0]
+      .linkedResourceIri;
 
     // get the parent resource to display
     this.getResource(annotationOfIri);
@@ -407,44 +366,35 @@ export class ResourceComponent implements OnChanges, OnDestroy {
 
     this.selectedRegion = iri;
     // define resource as annotation of type region
-    this.resourceIsAnnotation = this.resource.res.entityInfo.classes[
-      Constants.Region
-    ]
-      ? 'region'
-      : 'sequence';
+    this.resourceIsAnnotation = this.resource.res.entityInfo.classes[Constants.Region] ? 'region' : 'sequence';
   }
 
   getIncomingResource(iri: string) {
     if (this.incomingResourceSub) {
       this.incomingResourceSub.unsubscribe();
     }
-    this.incomingResourceSub = this._dspApiConnection.v2.res
-      .getResource(iri)
-      .subscribe(
-        (response: ReadResource) => {
-          const res = new DspResource(response);
+    this.incomingResourceSub = this._dspApiConnection.v2.res.getResource(iri).subscribe(
+      (response: ReadResource) => {
+        const res = new DspResource(response);
 
-          this.incomingResource = res;
-          this.incomingResource.resProps = this.initProps(response);
-          this.incomingResource.systemProps =
-            this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(
-              SystemPropertyDefinition
-            );
+        this.incomingResource = res;
+        this.incomingResource.resProps = this.initProps(response);
+        this.incomingResource.systemProps =
+          this.incomingResource.res.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
-          this.representationsToDisplay =
-            this.collectRepresentationsAndAnnotations(this.incomingResource);
-          if (
-            this.representationsToDisplay.length &&
-            this.representationsToDisplay[0].fileValue &&
-            this.compoundPosition
-          ) {
-            this.getIncomingRegions(this.incomingResource, 0);
-          }
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+        this.representationsToDisplay = this.collectRepresentationsAndAnnotations(this.incomingResource);
+        if (
+          this.representationsToDisplay.length &&
+          this.representationsToDisplay[0].fileValue &&
+          this.compoundPosition
+        ) {
+          this.getIncomingRegions(this.incomingResource, 0);
         }
-      );
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
   tabChanged(e: MatTabChangeEvent) {
@@ -475,18 +425,12 @@ export class ResourceComponent implements OnChanges, OnDestroy {
             propInfoAndValues = {
               propDef: prop.propertyDefinition,
               guiDef: prop,
-              values: resource.getValuesAs(
-                prop.propertyIndex,
-                ReadStillImageFileValue
-              ),
+              values: resource.getValuesAs(prop.propertyIndex, ReadStillImageFileValue),
             };
 
             const stillImageRepresentations = [
               new FileRepresentation(
-                resource.getValuesAs(
-                  Constants.HasStillImageFileValue,
-                  ReadStillImageFileValue
-                )[0],
+                resource.getValuesAs(Constants.HasStillImageFileValue, ReadStillImageFileValue)[0],
                 []
               ),
             ];
@@ -529,9 +473,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
    * @param resource The resource to get the images for.
    * @returns A collection of images for the given resource.
    */
-  protected collectRepresentationsAndAnnotations(
-    resource: DspResource
-  ): FileRepresentation[] {
+  protected collectRepresentationsAndAnnotations(resource: DspResource): FileRepresentation[] {
     if (!resource) {
       return;
     }
@@ -562,10 +504,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
           annotation.resProps = this.initProps(incomingRegion);
 
           // gather system property information
-          annotation.systemProps =
-            incomingRegion.entityInfo.getPropertyDefinitionsByType(
-              SystemPropertyDefinition
-            );
+          annotation.systemProps = incomingRegion.entityInfo.getPropertyDefinitionsByType(SystemPropertyDefinition);
 
           annotations.push(annotation);
         }
@@ -603,9 +542,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
       const archive = new FileRepresentation(fileValue);
       representations.push(archive);
     } else if (resource.res.properties[Constants.HasTextFileValue]) {
-      const fileValue: ReadTextFileValue = resource.res.properties[
-        Constants.HasTextFileValue
-      ][0] as ReadTextFileValue;
+      const fileValue: ReadTextFileValue = resource.res.properties[Constants.HasTextFileValue][0] as ReadTextFileValue;
       const text = new FileRepresentation(fileValue);
       representations.push(text);
     }
@@ -635,10 +572,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
       this.stillImageRepresentationsForCompoundResourceSub.unsubscribe();
     }
     this.stillImageRepresentationsForCompoundResourceSub = this._incomingService
-      .getStillImageRepresentationsForCompoundResource(
-        this.resource.res.id,
-        offset
-      )
+      .getStillImageRepresentationsForCompoundResource(this.resource.res.id, offset)
       .subscribe(
         (incomingImageRepresentations: ReadResourceSequence) => {
           if (!this.resource) {
@@ -646,13 +580,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
           }
           if (incomingImageRepresentations.resources.length > 0) {
             // set the incoming representations for the current offset only
-            this.resource.incomingRepresentations =
-              incomingImageRepresentations.resources;
-            this.getIncomingResource(
-              this.resource.incomingRepresentations[
-                this.compoundPosition.position
-              ].id
-            );
+            this.resource.incomingRepresentations = incomingImageRepresentations.resources;
+            this.getIncomingResource(this.resource.incomingRepresentations[this.compoundPosition.position].id);
           } else {
             this.loading = false;
             this.representationsToDisplay = [];
@@ -703,27 +632,21 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     if (this.incomingRegionsSub) {
       this.incomingRegionsSub.unsubscribe();
     }
-    this.incomingRegionsSub = this._incomingService
-      .getIncomingRegions(resource.res.id, offset)
-      .subscribe(
-        (regions: ReadResourceSequence) => {
-          // append elements of regions.resources to resource.incoming
-          Array.prototype.push.apply(
-            resource.incomingAnnotations,
-            regions.resources
-          );
+    this.incomingRegionsSub = this._incomingService.getIncomingRegions(resource.res.id, offset).subscribe(
+      (regions: ReadResourceSequence) => {
+        // append elements of regions.resources to resource.incoming
+        Array.prototype.push.apply(resource.incomingAnnotations, regions.resources);
 
-          // this.annotationResources.push(regions.resources)
+        // this.annotationResources.push(regions.resources)
 
-          // prepare regions to be displayed
-          // triggers ngOnChanges of StillImageComponent
-          this.representationsToDisplay =
-            this.collectRepresentationsAndAnnotations(resource);
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+        // prepare regions to be displayed
+        // triggers ngOnChanges of StillImageComponent
+        this.representationsToDisplay = this.collectRepresentationsAndAnnotations(resource);
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
   /**
@@ -733,24 +656,19 @@ export class ResourceComponent implements OnChanges, OnDestroy {
    * It takes the number of images returned as an argument.
    */
   protected getIncomingLinks(offset: number): void {
-    this._incomingService
-      .getIncomingLinksForResource(this.resource?.res.id, offset)
-      .subscribe(
-        (incomingResources: ReadResourceSequence) => {
-          // Check if incomingReferences is initialized, if not, initialize it as an empty array
-          if (!this.resource?.res.incomingReferences) {
-            this.resource.res.incomingReferences = [];
-          }
-          // append elements incomingResources to this.resource.incomingLinks
-          Array.prototype.push.apply(
-            this.resource?.res.incomingReferences,
-            incomingResources.resources
-          );
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+    this._incomingService.getIncomingLinksForResource(this.resource?.res.id, offset).subscribe(
+      (incomingResources: ReadResourceSequence) => {
+        // Check if incomingReferences is initialized, if not, initialize it as an empty array
+        if (!this.resource?.res.incomingReferences) {
+          this.resource.res.incomingReferences = [];
         }
-      );
+        // append elements incomingResources to this.resource.incomingLinks
+        Array.prototype.push.apply(this.resource?.res.incomingReferences, incomingResources.resources);
+      },
+      (error: ApiResponseError) => {
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 
   openRegion(iri: string) {
@@ -776,10 +694,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
     } else {
       this.resource.incomingAnnotations = [];
     }
-    this.getIncomingRegions(
-      this.incomingResource ? this.incomingResource : this.resource,
-      0
-    );
+    this.getIncomingRegions(this.incomingResource ? this.incomingResource : this.resource, 0);
     this.openRegion(iri);
   }
 

@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Pipe,
-  PipeTransform,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatLineModule } from '@angular/material/core';

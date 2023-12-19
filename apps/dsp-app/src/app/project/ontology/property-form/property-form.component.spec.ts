@@ -14,17 +14,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import {
-  ListNodeInfo,
-  MockOntology,
-  ReadOntology,
-  StringLiteral,
-} from '@dasch-swiss/dsp-js';
+import { ListNodeInfo, MockOntology, ReadOntology, StringLiteral } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import {
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { ApplicationStateService } from '@dasch-swiss/vre/shared/app-state-service';
 import { TestConfig } from '@dsp-app/src/test.config';
@@ -306,10 +298,7 @@ describe('PropertyFormComponent', () => {
   let listHostFixture: ComponentFixture<ListHostComponent>;
 
   beforeEach(waitForAsync(() => {
-    const applicationStateServiceSpy = jasmine.createSpyObj(
-      'ApplicationStateService',
-      ['get']
-    );
+    const applicationStateServiceSpy = jasmine.createSpyObj('ApplicationStateService', ['get']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -357,14 +346,10 @@ describe('PropertyFormComponent', () => {
   beforeEach(() => {
     // mock application state service for currentOntology
     const cacheSpyOnto = TestBed.inject(ApplicationStateService);
-    (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get
-      .withArgs('currentOntology')
-      .and.callFake(() => {
-        const response: ReadOntology = MockOntology.mockReadOntology(
-          'http://0.0.0.0:3333/ontology/0001/anything/v2'
-        );
-        return of(response);
-      });
+    (cacheSpyOnto as jasmine.SpyObj<ApplicationStateService>).get.withArgs('currentOntology').and.callFake(() => {
+      const response: ReadOntology = MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2');
+      return of(response);
+    });
 
     // mock application state service for currentProjectOntologies
     const cacheSpyProjOnto = TestBed.inject(ApplicationStateService);
@@ -372,28 +357,18 @@ describe('PropertyFormComponent', () => {
       .withArgs('currentProjectOntologies')
       .and.callFake(() => {
         const ontologies: ReadOntology[] = [];
-        ontologies.push(
-          MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/anything/v2'
-          )
-        );
-        ontologies.push(
-          MockOntology.mockReadOntology(
-            'http://0.0.0.0:3333/ontology/0001/minimal/v2'
-          )
-        );
+        ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/anything/v2'));
+        ontologies.push(MockOntology.mockReadOntology('http://0.0.0.0:3333/ontology/0001/minimal/v2'));
         const response: ReadOntology[] = ontologies;
         return of(response);
       });
 
     // mock application state service for currentOntologyLists
     const cacheSpyLists = TestBed.inject(ApplicationStateService);
-    (cacheSpyLists as jasmine.SpyObj<ApplicationStateService>).get
-      .withArgs('currentOntologyLists')
-      .and.callFake(() => {
-        const response: ListNodeInfo[] = listNodeInfo;
-        return of(response);
-      });
+    (cacheSpyLists as jasmine.SpyObj<ApplicationStateService>).get.withArgs('currentOntologyLists').and.callFake(() => {
+      const response: ListNodeInfo[] = listNodeInfo;
+      return of(response);
+    });
 
     // simple text
     simpleTextHostFixture = TestBed.createComponent(SimpleTextHostComponent);
@@ -423,12 +398,8 @@ describe('PropertyFormComponent', () => {
 
   it('expect property type "text" has four labels but no comment"', () => {
     expect(simpleTextHostComponent.propertyFormComponent).toBeTruthy();
-    expect(
-      simpleTextHostComponent.propertyFormComponent.propertyInfo.propDef
-    ).toBeDefined();
-    expect(
-      simpleTextHostComponent.propertyFormComponent.propertyInfo.propType
-    ).toBeDefined();
+    expect(simpleTextHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
+    expect(simpleTextHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
 
     expect(simpleTextHostComponent.propertyFormComponent.labels).toEqual([
       {
@@ -451,57 +422,36 @@ describe('PropertyFormComponent', () => {
 
     expect(simpleTextHostComponent.propertyFormComponent.comments).toEqual([]);
 
-    expect(
-      simpleTextHostComponent.propertyFormComponent.showGuiAttr
-    ).toBeFalsy();
+    expect(simpleTextHostComponent.propertyFormComponent.showGuiAttr).toBeFalsy();
   });
 
   it('should update labels when the value changes; error message should disapear', () => {
     const hostCompDe = simpleTextHostFixture.debugElement;
-    const submitButton: DebugElement = hostCompDe.query(
-      By.css('button.submit')
-    );
+    const submitButton: DebugElement = hostCompDe.query(By.css('button.submit'));
     expect(submitButton.nativeElement.innerText).toContain('Update');
 
-    simpleTextHostComponent.propertyFormComponent.handleData(
-      [{ language: 'de', value: 'New Label' }],
-      'label'
-    );
+    simpleTextHostComponent.propertyFormComponent.handleData([{ language: 'de', value: 'New Label' }], 'label');
     simpleTextHostFixture.detectChanges();
 
-    const formInvalidMessageDe: DebugElement = hostCompDe.query(
-      By.css('string-literal-error')
-    );
+    const formInvalidMessageDe: DebugElement = hostCompDe.query(By.css('string-literal-error'));
     expect(formInvalidMessageDe).toBeFalsy();
   });
 
   it('expect link to other resource called "Thing" ( = guiAttribute)', () => {
     expect(linkHostComponent.propertyFormComponent).toBeTruthy();
-    expect(
-      linkHostComponent.propertyFormComponent.propertyInfo.propDef
-    ).toBeDefined();
-    expect(
-      linkHostComponent.propertyFormComponent.propertyInfo.propType
-    ).toBeDefined();
+    expect(linkHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
+    expect(linkHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
 
     const form = linkHostComponent.propertyFormComponent.propertyForm;
-    expect(form.controls['guiAttr'].value).toEqual(
-      'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing'
-    );
+    expect(form.controls['guiAttr'].value).toEqual('http://0.0.0.0:3333/ontology/0001/anything/v2#Thing');
   });
 
   it('expect link to List called "Tree list root" ( = guiAttribute)', () => {
     expect(listHostComponent.propertyFormComponent).toBeTruthy();
-    expect(
-      listHostComponent.propertyFormComponent.propertyInfo.propDef
-    ).toBeDefined();
-    expect(
-      listHostComponent.propertyFormComponent.propertyInfo.propType
-    ).toBeDefined();
+    expect(listHostComponent.propertyFormComponent.propertyInfo.propDef).toBeDefined();
+    expect(listHostComponent.propertyFormComponent.propertyInfo.propType).toBeDefined();
 
     const form = listHostComponent.propertyFormComponent.propertyForm;
-    expect(form.controls['guiAttr'].value).toEqual(
-      'http://rdfh.ch/lists/0001/otherTreeList'
-    );
+    expect(form.controls['guiAttr'].value).toEqual('http://rdfh.ch/lists/0001/otherTreeList');
   });
 });

@@ -1,10 +1,6 @@
 <div [formGroup]="dateForm" class="date-picker-container">
   <mat-form-field class="hidden">
-    <input
-      matInput
-      [formControlName]="'knoraDate'"
-      [errorStateMatcher]="matcher"
-      readonly />
+    <input matInput [formControlName]="'knoraDate'" [errorStateMatcher]="matcher" readonly />
   </mat-form-field>
   <mat-form-field
     [floatLabel]="'always'"
@@ -31,25 +27,14 @@
     <mat-icon matSuffix class="link">event</mat-icon>
 </mat-form-field> -->
 <!-- <button mat-button [matMenuTriggerFor]="menu">Menu</button> -->
-<mat-menu
-  #datePicker="matMenu"
-  [formGroup]="form"
-  class="date-picker"
-  (closed)="closed.emit()">
-  <div
-    class="date-picker-content"
-    (click)="$event.stopPropagation()"
-    (keydown)="$event.stopPropagation()">
+<mat-menu #datePicker="matMenu" [formGroup]="form" class="date-picker" (closed)="closed.emit()">
+  <div class="date-picker-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
     <!-- select calendar and button to close date picker -->
     <div class="calendar-selector panel">
       <mat-form-field class="calendar">
         <mat-label>Calendar</mat-label>
         <mat-select formControlName="calendar" class="center">
-          <mat-option
-            *ngFor="let cal of calendars; let i = index"
-            [value]="cal">
-            {{ titleCase(cal) }}
-          </mat-option>
+          <mat-option *ngFor="let cal of calendars; let i = index" [value]="cal"> {{ titleCase(cal) }} </mat-option>
         </mat-select>
       </mat-form-field>
       <span class="fill-remaining-space"></span>
@@ -57,11 +42,7 @@
         <!-- go to the current date -->
         <button mat-button (click)="setToday()">Today</button>
         <!-- submit button (which is needed if date doesn't have precision on an exact day) -->
-        <button
-          mat-icon-button
-          color="primary"
-          [disabled]="!form.valid"
-          (click)="setDate(day); closeDatePicker()">
+        <button mat-icon-button color="primary" [disabled]="!form.valid" (click)="setDate(day); closeDatePicker()">
           <mat-icon>done</mat-icon>
         </button>
       </div>
@@ -74,25 +55,16 @@
         <mat-label>Month</mat-label>
         <mat-select formControlName="month" class="center">
           <mat-option>None</mat-option>
-          <mat-option
-            *ngFor="let month of months; let i = index"
-            [value]="i + 1">
+          <mat-option *ngFor="let month of months; let i = index" [value]="i + 1">
             <span *ngIf="calendar !== 'ISLAMIC'">{{ month[0] }}</span>
             <span *ngIf="calendar === 'ISLAMIC'">{{ month[1] }}</span>
           </mat-option>
         </mat-select>
       </mat-form-field>
       <!-- set year incl. era -->
-      <mat-form-field
-        class="year"
-        [class.withButtonToggle]="calendar !== 'ISLAMIC'">
+      <mat-form-field class="year" [class.withButtonToggle]="calendar !== 'ISLAMIC'">
         <mat-label>Year</mat-label>
-        <input
-          matInput
-          type="number"
-          formControlName="year"
-          min="1"
-          class="center" />
+        <input matInput type="number" formControlName="year" min="1" class="center" />
         <mat-error *ngIf="formErrors.year"> {{ formErrors.year }} </mat-error>
         <!-- <button mat-flat-button matSuffix (click)="switchEra()" [attr.aria-label]="'Switch era'"
                 [attr.aria-pressed]="ce">

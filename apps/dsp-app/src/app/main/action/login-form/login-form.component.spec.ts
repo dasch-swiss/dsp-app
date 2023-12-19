@@ -15,11 +15,7 @@ import {
   UsersEndpointAdmin,
 } from '@dasch-swiss/dsp-js';
 import { DatadogRumService } from '@dasch-swiss/vre/shared/app-analytics';
-import {
-  AppConfigService,
-  DspApiConfigToken,
-  DspApiConnectionToken,
-} from '@dasch-swiss/vre/shared/app-config';
+import { AppConfigService, DspApiConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { Session, SessionService } from '@dasch-swiss/vre/shared/app-session';
 import { TestConfig } from '@dsp-app/src/test.config';
@@ -71,9 +67,7 @@ xdescribe('LoginFormComponent', () => {
       },
     };
 
-    const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', [
-      'setActiveUser',
-    ]);
+    const datadogRumServiceSpy = jasmine.createSpyObj('datadogRumService', ['setActiveUser']);
 
     TestBed.configureTestingModule({
       declarations: [LoginFormComponent, TestHostComponent],
@@ -110,30 +104,22 @@ xdescribe('LoginFormComponent', () => {
   beforeEach(() => {
     let store = {};
 
-    spyOn(sessionStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(sessionStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(sessionStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(sessionStorage, 'setItem').and.callFake(
-      (key: string, value: string): string => (store[key] = <any>value)
-    );
+    spyOn(sessionStorage, 'setItem').and.callFake((key: string, value: string): string => (store[key] = <any>value));
     spyOn(sessionStorage, 'clear').and.callFake(() => {
       store = {};
     });
 
-    spyOn(localStorage, 'getItem').and.callFake(
-      (key: string): string => store[key] || null
-    );
+    spyOn(localStorage, 'getItem').and.callFake((key: string): string => store[key] || null);
     spyOn(localStorage, 'removeItem').and.callFake((key: string): void => {
       delete store[key];
     });
-    spyOn(localStorage, 'setItem').and.callFake(
-      (key: string, value: string): void => {
-        store[key] = value;
-      }
-    );
+    spyOn(localStorage, 'setItem').and.callFake((key: string, value: string): void => {
+      store[key] = value;
+    });
     spyOn(localStorage, 'clear').and.callFake(() => {
       store = {};
     });
@@ -155,9 +141,7 @@ xdescribe('LoginFormComponent', () => {
     beforeEach(() => {
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        dspConnSpy.v2.auth as jasmine.SpyObj<AuthenticationEndpointV2>
-      ).login.and.callFake(() => {
+      (dspConnSpy.v2.auth as jasmine.SpyObj<AuthenticationEndpointV2>).login.and.callFake(() => {
         const response: LoginResponse = new LoginResponse();
 
         response.token = 'myToken';
@@ -169,9 +153,7 @@ xdescribe('LoginFormComponent', () => {
         );
       });
 
-      (
-        dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>
-      ).getUser.and.callFake(() => {
+      (dspConnSpy.admin.usersEndpoint as jasmine.SpyObj<UsersEndpointAdmin>).getUser.and.callFake(() => {
         const loggedInUser = MockUsers.mockUser();
         return of(loggedInUser);
       });
@@ -180,13 +162,9 @@ xdescribe('LoginFormComponent', () => {
     it('should log the user in if the credentials are correct', () => {
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      testHostComponent.loginFormComponent.form
-        .get('username')
-        .setValue('root');
+      testHostComponent.loginFormComponent.form.get('username').setValue('root');
 
-      testHostComponent.loginFormComponent.form
-        .get('password')
-        .setValue('test');
+      testHostComponent.loginFormComponent.form.get('password').setValue('test');
 
       testHostFixture.detectChanges();
 
@@ -194,18 +172,11 @@ xdescribe('LoginFormComponent', () => {
 
       expect(dspConnSpy.v2.auth.login).toHaveBeenCalledTimes(1);
 
-      expect(dspConnSpy.v2.auth.login).toHaveBeenCalledWith(
-        'username',
-        'root',
-        'test'
-      );
+      expect(dspConnSpy.v2.auth.login).toHaveBeenCalledWith('username', 'root', 'test');
 
       expect(dspConnSpy.admin.usersEndpoint.getUser).toHaveBeenCalledTimes(1);
 
-      expect(dspConnSpy.admin.usersEndpoint.getUser).toHaveBeenCalledWith(
-        'username',
-        'root'
-      );
+      expect(dspConnSpy.admin.usersEndpoint.getUser).toHaveBeenCalledWith('username', 'root');
 
       const session = JSON.parse(localStorage.getItem('session'));
 
@@ -221,9 +192,7 @@ xdescribe('LoginFormComponent', () => {
     beforeEach(() => {
       const dspConnSpy = TestBed.inject(DspApiConnectionToken);
 
-      (
-        dspConnSpy.v2.auth as jasmine.SpyObj<AuthenticationEndpointV2>
-      ).logout.and.callFake(() => {
+      (dspConnSpy.v2.auth as jasmine.SpyObj<AuthenticationEndpointV2>).logout.and.callFake(() => {
         const response: LogoutResponse = new LogoutResponse();
 
         response.status = 0;
@@ -254,9 +223,7 @@ xdescribe('LoginFormComponent', () => {
       // store session in localStorage
       localStorage.setItem('session', JSON.stringify(session));
 
-      expect(JSON.parse(localStorage.getItem('session')).user.name).toEqual(
-        'username'
-      );
+      expect(JSON.parse(localStorage.getItem('session')).user.name).toEqual('username');
 
       testHostComponent.loginFormComponent.logout();
 

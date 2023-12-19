@@ -1,20 +1,6 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -70,9 +56,7 @@ export class PropertyFormValueComponent implements OnInit, AfterViewInit {
     if (this.objectType !== Constants.DateValue) {
       this.inputControl.setValue(this.value);
     } else {
-      const knoraDate = this._transformDateStringToKnoraDateObject(
-        this.value as string
-      );
+      const knoraDate = this._transformDateStringToKnoraDateObject(this.value as string);
       this.dateControl.setValue(knoraDate);
     }
   }
