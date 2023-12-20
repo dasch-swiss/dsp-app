@@ -302,9 +302,9 @@ export class ResourceComponent implements OnChanges, OnDestroy {
               // this is a compound object
               this.compoundPosition = new DspCompoundPosition(countQuery.numberOfResults);
               this.compoundNavigation(1);
+            } else {
+              this.loading = false;
             }
-
-            this.loading = false;
             this._cdr.markForCheck();
           },
           (error: ApiResponseError) => {
@@ -388,6 +388,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         ) {
           this.getIncomingRegions(this.incomingResource, 0);
         }
+
+        this._cdr.markForCheck();
       },
       (error: ApiResponseError) => {
         this._errorHandler.showMessage(error);
@@ -585,8 +587,8 @@ export class ResourceComponent implements OnChanges, OnDestroy {
           } else {
             this.loading = false;
             this.representationsToDisplay = [];
-            this._cdr.markForCheck();
           }
+          this._cdr.markForCheck();
         },
         (error: ApiResponseError) => {
           this._errorHandler.showMessage(error);
@@ -642,6 +644,7 @@ export class ResourceComponent implements OnChanges, OnDestroy {
         // prepare regions to be displayed
         // triggers ngOnChanges of StillImageComponent
         this.representationsToDisplay = this.collectRepresentationsAndAnnotations(resource);
+        this._cdr.markForCheck();
       },
       (error: ApiResponseError) => {
         this._errorHandler.showMessage(error);
