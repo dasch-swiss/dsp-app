@@ -14,9 +14,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
+import { DialogComponent } from '../../../../main/dialog/dialog.component';
 import {
   EmitEvent,
   Events,

@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateBooleanValue, ReadBooleanValue, UpdateBooleanValue } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 
 @Component({
   selector: 'app-boolean-value',

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { Constants, ReadResource, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import { BaseValueDirective } from '../../../../../main/directive/base-value.directive';
 
 @Component({
   selector: 'app-switch-properties',

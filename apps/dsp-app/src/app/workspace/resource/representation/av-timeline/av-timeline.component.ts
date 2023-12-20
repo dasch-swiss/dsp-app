@@ -10,7 +10,7 @@ import {
   SimpleChange,
   ViewChild,
 } from '@angular/core';
-import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component';
+import { SplitSize } from '../../../results/results.component';
 
 export interface PointerValue {
   position: number;

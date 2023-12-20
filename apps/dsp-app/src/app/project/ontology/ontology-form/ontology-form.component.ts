@@ -23,11 +23,11 @@ import {
   SetCurrentOntologyAction,
   SetCurrentProjectOntologyPropertiesAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
+import { existingNamesValidator } from '../../../main/directive/existing-name/existing-name.directive';
+import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 
 export interface NewOntology {
   projectIri: string;

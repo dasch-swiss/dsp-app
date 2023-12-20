@@ -5,11 +5,11 @@ import { ResourceClassDefinition, StoredProject } from '@dasch-swiss/dsp-js';
 import { AppConfigService, RouteConstants, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { IProjectOntologiesKeyValuePairs, OntologiesSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { FilteredResources, SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
-import { SplitSize } from '@dsp-app/src/app/workspace/results/results.component';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil, takeWhile } from 'rxjs/operators';
+import { FilteredResources, SearchParams } from '../../../workspace/results/list-view/list-view.component';
+import { SplitSize } from '../../../workspace/results/results.component';
 import { ProjectBase } from '../../project-base';
 
 @Component({

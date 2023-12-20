@@ -42,11 +42,11 @@ import {
   RemovePropertyAction,
   ReplacePropertyAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { DialogComponent, DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
+import { DialogComponent, DialogEvent } from '../../../main/dialog/dialog.component';
+import { GuiCardinality } from './resource-class-property-info/resource-class-property-info.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

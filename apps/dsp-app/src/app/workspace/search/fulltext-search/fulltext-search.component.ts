@@ -21,11 +21,11 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { Subscription } from 'rxjs';
 import {
   ComponentCommunicationEventService,
   Events,
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { Subscription } from 'rxjs';
+} from '../../../main/services/component-communication-event.service';
 import { SearchParams } from '../../results/list-view/list-view.component';
 
 export interface PrevSearchItem {

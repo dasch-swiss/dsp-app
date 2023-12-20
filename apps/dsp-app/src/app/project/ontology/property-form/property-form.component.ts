@@ -39,14 +39,14 @@ import {
   PropToDisplay,
   SetCurrentOntologyAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
-import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
-import { AutocompleteItem } from '@dsp-app/src/app/workspace/search/operator';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DialogEvent } from '../../../main/dialog/dialog.component';
+import { existingNamesValidator } from '../../../main/directive/existing-name/existing-name.directive';
+import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
+import { AutocompleteItem } from '../../../workspace/search/operator';
+import { GuiCardinality } from '../resource-class-info/resource-class-property-info/resource-class-property-info.component';
 
 export type EditMode =
   | 'createProperty'

@@ -24,8 +24,6 @@ import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/shared/app-progress-indicator';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
 import { AppStringLiteralComponent } from '@dasch-swiss/vre/shared/app-string-literal';
-import { AuthGuardComponent } from '@dsp-app/src/app/main/guard/auth-guard.component';
-import { ResourceClassPropertyInfoComponent } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
@@ -52,6 +50,7 @@ import { InvalidControlScrollDirective } from './main/directive/invalid-control-
 
 import { FooterComponent } from './main/footer/footer.component';
 import { GridComponent } from './main/grid/grid.component';
+import { AuthGuardComponent } from './main/guard/auth-guard.component';
 import { HeaderComponent } from './main/header/header.component';
 import { HelpComponent } from './main/help/help.component';
 import { AuthInterceptor } from './main/http-interceptors/auth-interceptor';
@@ -83,6 +82,7 @@ import { PropertyFormComponent } from './project/ontology/property-form/property
 import { PropertyInfoComponent } from './project/ontology/property-info/property-info.component';
 import { ResourceClassFormComponent } from './project/ontology/resource-class-form/resource-class-form.component';
 import { ResourceClassInfoComponent } from './project/ontology/resource-class-info/resource-class-info.component';
+import { ResourceClassPropertyInfoComponent } from './project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
 import { OntologyClassInstanceComponent } from './project/ontology-classes/ontology-class-instance/ontology-class-instance.component';
 import { OntologyClassItemComponent } from './project/ontology-classes/ontology-class-item/ontology-class-item.component';
 import { OntologyClassesComponent } from './project/ontology-classes/ontology-classes.component';

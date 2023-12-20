@@ -9,7 +9,7 @@ import {
   ResourceClassDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { ValueService } from '../../services/value.service';
 import { SwitchPropertiesComponent } from './switch-properties/switch-properties.component';
 

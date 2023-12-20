@@ -21,12 +21,12 @@ import {
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { Subscription } from 'rxjs';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
   Events,
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { Subscription } from 'rxjs';
+} from '../../../main/services/component-communication-event.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

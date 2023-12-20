@@ -10,8 +10,8 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { mergeMap } from 'rxjs/operators';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import {
   AddedEventValue,
   EmitEvent,

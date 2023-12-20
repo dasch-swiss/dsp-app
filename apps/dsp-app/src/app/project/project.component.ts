@@ -7,13 +7,10 @@ import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/o
 import { MaterialColor, RouteConstants, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
-import {
-  ComponentCommunicationEventService,
-  Events,
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, Subscription, of, combineLatest } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { ComponentCommunicationEventService, Events } from '../main/services/component-communication-event.service';
 import { ProjectBase } from './project-base';
 
 type AvailableRoute =

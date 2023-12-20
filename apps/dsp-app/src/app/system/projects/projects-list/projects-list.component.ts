@@ -15,11 +15,11 @@ import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { SortingService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { SortProp } from '@dsp-app/src/app/main/action/sort-button/sort-button.component';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
 import { Select } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, take, takeUntil, tap } from 'rxjs/operators';
+import { SortProp } from '../../../main/action/sort-button/sort-button.component';
+import { DialogComponent } from '../../../main/dialog/dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

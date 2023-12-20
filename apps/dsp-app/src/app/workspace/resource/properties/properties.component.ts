@@ -41,13 +41,13 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { ConfirmationWithComment, DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
+import { forkJoin, Observable, Subscription } from 'rxjs';
+import { ConfirmationWithComment, DialogComponent } from '../../../main/dialog/dialog.component';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
   Events as CommsEvents,
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+} from '../../../main/services/component-communication-event.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 import { IncomingService } from '../services/incoming.service';

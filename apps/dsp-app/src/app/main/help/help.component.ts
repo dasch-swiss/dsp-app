@@ -8,7 +8,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { environment } from '@dsp-app/src/environments/environment';
+import { environment } from '../../../environments/environment';
 import { GridItem } from '../grid/grid.component';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { ReadTextValueAsHtml } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import { BaseValueDirective } from '../../../../../main/directive/base-value.directive';
 
 @Component({
   selector: 'app-text-value-as-html',

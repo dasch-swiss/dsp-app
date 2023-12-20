@@ -4,9 +4,9 @@ import { User } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { MenuItem } from '@dsp-app/src/app/main/declarations/menu-item';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
+import { MenuItem } from '../../main/declarations/menu-item';
 
 @Component({
   selector: 'app-user-menu',

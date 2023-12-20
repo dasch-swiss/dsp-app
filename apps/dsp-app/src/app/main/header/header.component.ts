@@ -5,13 +5,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AppConfigService, RouteConstants, DspConfig } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { DialogComponent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import {
-  ComponentCommunicationEventService,
-  Events,
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
-import { SearchParams } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
 import { Subscription } from 'rxjs';
+import { SearchParams } from '../../workspace/results/list-view/list-view.component';
+import { DialogComponent } from '../dialog/dialog.component';
+import { ComponentCommunicationEventService, Events } from '../services/component-communication-event.service';
 
 @Component({
   selector: 'app-header',

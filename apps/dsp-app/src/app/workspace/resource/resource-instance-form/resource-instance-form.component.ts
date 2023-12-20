@@ -31,7 +31,7 @@ import {
   ComponentCommunicationEventService,
   EmitEvent,
   Events as CommsEvents,
-} from '@dsp-app/src/app/main/services/component-communication-event.service';
+} from '../../../main/services/component-communication-event.service';
 import { ResourceService } from '../services/resource.service';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
 

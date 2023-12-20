@@ -5,10 +5,10 @@ import { StringLiteral } from '@dasch-swiss/dsp-js/src/models/admin/string-liter
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { AppGlobal } from '@dsp-app/src/app/app-global';
 import { Select, Store } from '@ngxs/store';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { AppGlobal } from '../../app-global';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

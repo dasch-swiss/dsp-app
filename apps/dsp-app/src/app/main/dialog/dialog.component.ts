@@ -3,8 +3,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Cardinality, ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 import { PropToDisplay } from '@dasch-swiss/vre/shared/app-state';
-import { GuiCardinality } from '@dsp-app/src/app/project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
-import { FilteredResources } from '@dsp-app/src/app/workspace/results/list-view/list-view.component';
+import { GuiCardinality } from '../../project/ontology/resource-class-info/resource-class-property-info/resource-class-property-info.component';
+import { FilteredResources } from '../../workspace/results/list-view/list-view.component';
 
 export interface DialogData {
   mode: string; // switch mode

@@ -1,8 +1,8 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { CreateGeonameValue, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { Observable, Subscription } from 'rxjs';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { DisplayPlace, GeonameService, SearchPlace } from '../../services/geoname.service';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 

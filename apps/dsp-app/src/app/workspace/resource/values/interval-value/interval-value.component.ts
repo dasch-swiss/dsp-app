@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateIntervalValue, ReadIntervalValue, UpdateIntervalValue } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { Interval, IntervalInputComponent } from './interval-input/interval-input.component';
 

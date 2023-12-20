@@ -24,8 +24,8 @@ import {
   UpdateProjectAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
 import { Actions, ofActionSuccessful, Store } from '@ngxs/store';
+import { existingNamesValidator } from '../../main/directive/existing-name/existing-name.directive';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

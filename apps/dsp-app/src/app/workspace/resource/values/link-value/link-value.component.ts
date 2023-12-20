@@ -16,10 +16,10 @@ import {
   UpdateLinkValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { DialogComponent, DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DialogComponent, DialogEvent } from '../../../../main/dialog/dialog.component';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 
 export function resourceValidator(control: AbstractControl) {
   const invalid = !(control.value === null || control.value === '' || control.value instanceof ReadResource);

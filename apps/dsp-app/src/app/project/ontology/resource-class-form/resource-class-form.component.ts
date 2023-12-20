@@ -28,11 +28,11 @@ import { DspApiConnectionToken, getAllEntityDefinitionsAsArray } from '@dasch-sw
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { AppGlobal } from '@dsp-app/src/app/app-global';
-import { DialogEvent } from '@dsp-app/src/app/main/dialog/dialog.component';
-import { existingNamesValidator } from '@dsp-app/src/app/main/directive/existing-name/existing-name.directive';
-import { CustomRegex } from '@dsp-app/src/app/workspace/resource/values/custom-regex';
 import { Store } from '@ngxs/store';
+import { AppGlobal } from '../../../app-global';
+import { DialogEvent } from '../../../main/dialog/dialog.component';
+import { existingNamesValidator } from '../../../main/directive/existing-name/existing-name.directive';
+import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 
 // nested form components; solution from:
 // https://medium.com/@joshblf/dynamic-nested-reactive-forms-in-angular-654c1d4a769a

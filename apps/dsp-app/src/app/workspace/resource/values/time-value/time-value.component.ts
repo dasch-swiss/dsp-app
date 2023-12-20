@@ -1,7 +1,7 @@
 import { Component, OnInit, OnChanges, OnDestroy, ViewChild, Input, Inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ReadTimeValue, CreateTimeValue, UpdateTimeValue } from '@dasch-swiss/dsp-js';
-import { BaseValueDirective } from '@dsp-app/src/app/main/directive/base-value.directive';
+import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { ValueErrorStateMatcher } from '../value-error-state-matcher';
 import { TimeInputComponent } from './time-input/time-input.component';
 
