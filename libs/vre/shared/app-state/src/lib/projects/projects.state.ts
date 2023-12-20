@@ -8,6 +8,7 @@ import {
   ProjectResponse,
   ProjectsResponse,
   ReadGroup,
+  ReadUser,
   UserResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
@@ -21,15 +22,15 @@ import { IKeyValuePairs } from '../model-interfaces';
 import { SetUserAction } from '../user/user.actions';
 import { UserSelectors } from '../user/user.selectors';
 import {
-  LoadProjectsAction,
-  LoadProjectAction,
-  ClearProjectsAction,
-  RemoveUserFromProjectAction,
   AddUserToProjectMembershipAction,
-  LoadProjectMembersAction,
+  ClearProjectsAction,
+  LoadProjectAction,
   LoadProjectGroupsAction,
-  UpdateProjectAction,
+  LoadProjectMembersAction,
+  LoadProjectsAction,
+  RemoveUserFromProjectAction,
   SetProjectMemberAction,
+  UpdateProjectAction,
 } from './projects.actions';
 import { ProjectsStateModel } from './projects.state-model';
 
@@ -124,9 +125,14 @@ export class ProjectsState {
           this.errorHandler.showMessage(error);
         },
       }),
-      concatMap(() =>
-        ctx.dispatch([new LoadProjectMembersAction(projectUuid), new LoadProjectGroupsAction(projectUuid)])
-      ),
+      concatMap(() => {
+        const user = this.store.selectSnapshot(UserSelectors.user) as ReadUser;
+        const userProjectAdminGroups = this.store.selectSnapshot(UserSelectors.userProjectAdminGroups);
+        const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectAdminGroups, projectIri);
+        return isProjectAdmin
+          ? ctx.dispatch([new LoadProjectMembersAction(projectUuid), new LoadProjectGroupsAction(projectUuid)])
+          : EMPTY;
+      }),
       finalize(() => {
         ctx.patchState({ isLoading: false });
       })

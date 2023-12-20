@@ -89,7 +89,7 @@
               <!-- list of ontology classes -->
               <app-ontology-classes
                 [resClasses]="getAllEntityDefinitionsAsArray(onto.classes)"
-                [projectMember]="isAdmin$ | async">
+                [projectMember]="(isAdmin$ | async) || (isMember$ | async)">
               </app-ontology-classes>
             </mat-expansion-panel>
             <mat-divider></mat-divider>

@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, On
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
+import { ReadOntology, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/ClassAndPropertyDefinitions';
 import { MaterialColor, RouteConstants, getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { OntologiesSelectors, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
-import { Observable, Subscription, of, combineLatest } from 'rxjs';
+import { Observable, Subscription, combineLatest, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { ComponentCommunicationEventService, Events } from '../main/services/component-communication-event.service';
 import { ProjectBase } from './project-base';
@@ -43,6 +43,14 @@ export class ProjectComponent extends ProjectBase implements OnInit {
   settingsRoute: AvailableRoute = RouteConstants.settings;
   dataModelsRoute: AvailableRoute = RouteConstants.dataModels;
   advancedSearchRoute: AvailableRoute = RouteConstants.advancedSearch;
+
+  get isMember$(): Observable<boolean> {
+    return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
+      map(([user, userProjectAdminGroups]) =>
+        ProjectService.IsProjectMember(user, userProjectAdminGroups, this.projectUuid)
+      )
+    );
+  }
 
   get color$(): Observable<string> {
     return this.readProject$.pipe(
@@ -84,13 +92,12 @@ export class ProjectComponent extends ProjectBase implements OnInit {
     );
   }
 
+  @Select(UserSelectors.user) user$: Observable<ReadUser>;
+  @Select(UserSelectors.userProjects) userProjects$: Observable<ReadUser>;
   @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
-  @Select(ProjectsSelectors.isProjectsLoading)
-  isProjectsLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.isLoading)
-  isOntologiesLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.hasLoadingErrors)
-  hasLoadingErrors$: Observable<boolean>;
+  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+  @Select(OntologiesSelectors.isLoading) isOntologiesLoading$: Observable<boolean>;
+  @Select(OntologiesSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;
 
   constructor(
     private _componentCommsService: ComponentCommunicationEventService,

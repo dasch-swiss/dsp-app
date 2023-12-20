@@ -43,13 +43,11 @@ export class ProjectService {
     userProjectGroups.some(e => e === projectIri);
 
   static IsMemberOfProjectAdminGroup = (groupsPerProject: { [key: string]: string[] }, projectIri: string): boolean =>
-    groupsPerProject &&
-    groupsPerProject[projectIri] &&
+    (groupsPerProject && groupsPerProject[projectIri]) !== undefined &&
     groupsPerProject[projectIri].indexOf(Constants.ProjectAdminGroupIRI) > -1;
 
   static IsMemberOfSystemAdminGroup = (groupsPerProject: { [key: string]: string[] }): boolean =>
-    groupsPerProject &&
-    groupsPerProject[Constants.SystemProjectIRI] &&
+    (groupsPerProject && groupsPerProject[Constants.SystemProjectIRI]) !== undefined &&
     groupsPerProject[Constants.SystemProjectIRI].indexOf(Constants.SystemAdminGroupIRI) > -1;
 
   static IsProjectAdmin(
