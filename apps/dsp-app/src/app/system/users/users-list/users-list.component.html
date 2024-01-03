@@ -128,7 +128,7 @@
             mat-menu-item
             *ngIf="projectUuid"
             (click)="
-                            openDialog('removeFromProject', user)
+                            askToRemoveFromProject(user)
                         ">
             Remove member from project
           </button>
@@ -145,17 +145,13 @@
           <button
             mat-menu-item
             *ngIf="user.status && (isSysAdmin$ | async) && !projectUuid"
-            (click)="
-                            openDialog('deleteUser', user)
-                        ">
+            (click)="askToDeleteUser(user.username, user.id)">
             Suspend user
           </button>
           <button
             mat-menu-item
             *ngIf="!user.status && (isSysAdmin$ | async) && !projectUuid"
-            (click)="
-                            openDialog('activateUser', user)
-                        ">
+            (click)="askToActivateUser(user.username, user.id)">
             Reactivate user
           </button>
         </mat-menu>

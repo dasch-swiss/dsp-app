@@ -70,7 +70,7 @@
         mat-button
         class="delete"
         title="delete"
-        (click)="$event.stopPropagation(); openDialog('deleteListNode', labels[0].value, iri)">
+        (click)="$event.stopPropagation(); askToDeleteListNode(labels[0].value, iri)">
         <mat-icon>delete</mat-icon>
       </button>
     </div>

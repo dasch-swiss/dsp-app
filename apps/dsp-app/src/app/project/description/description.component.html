@@ -1,12 +1,12 @@
-<dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
-<div *ngIf="(isProjectsLoading$ | async) === false && (readProject$ | async)" class="content large middle">
+<dasch-swiss-app-progress-indicator *ngIf="loading"></dasch-swiss-app-progress-indicator>
+<div *ngIf="(readProject$ | async) as project" class="content large middle">
   <div>
     <p>Project Description</p>
   </div>
   <!--  mobile version: status and edit icon displayed before the title -->
   <div class="app-toolbar-mobile">
     <span class="app-toolbar-action-edit" *ngIf="userHasPermission$ | async">
-      <button mat-icon-button *ngIf="(readProject$ | async)?.status" class="right" color="primary">
+      <button mat-icon-button *ngIf="project.status" class="right" color="primary">
         <mat-icon>edit_square</mat-icon>
         Edit project description
       </button>
@@ -16,16 +16,14 @@
   <!-- desktop and tablet version -->
   <div class="app-toolbar transparent more-space-bottom">
     <div class="app-toolbar-row">
-      <h3 class="mat-body subtitle">
-        Project {{ (readProject$ | async)?.shortcode }} | {{ (readProject$ | async)?.shortname | uppercase }}
-      </h3>
+      <h3 class="mat-body subtitle">Project {{ project.shortcode }} | {{ project.shortname | uppercase }}</h3>
       <span class="fill-remaining-space"></span>
       <span class="app-toolbar-action">
         <button
           mat-button
-          *ngIf="(userHasPermission$ | async) && (readProject$ | async)?.status"
+          *ngIf="(userHasPermission$ | async) && project.status"
           class="right"
-          (click)="editProject()"
+          [routerLink]="RouteConstants.edit"
           color="primary">
           <mat-icon>edit_square</mat-icon>
           Edit project description
@@ -36,20 +34,18 @@
   <!-- description -->
   <div class="description-rm">
     <div>
-      <p class="project-longname">{{(readProject$ | async)?.longname}}</p>
+      <p class="project-longname">{{project.longname}}</p>
     </div>
-    <section
-      class="project description"
-      *ngFor="let desc of (readProject$ | async)?.description; trackBy: trackByStringLiteralFn">
+    <section class="project description" *ngFor="let desc of sortedDescriptions$ | async">
       <div [innerHtml]="desc.value"></div>
     </section>
 
-    <mat-divider *ngIf="(readProject$ | async)?.keywords.length > 0"></mat-divider>
+    <mat-divider *ngIf="project.keywords.length > 0"></mat-divider>
 
     <!-- keywords -->
     <section class="project keywords">
       <mat-chip-listbox>
-        <mat-chip *ngFor="let k of (readProject$ | async)?.keywords; trackBy: trackByFn">{{k}}</mat-chip>
+        <mat-chip *ngFor="let k of project.keywords">{{k}}</mat-chip>
       </mat-chip-listbox>
     </section>
   </div>

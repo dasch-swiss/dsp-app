@@ -33,7 +33,8 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
+import { ConfirmDialogComponent } from '../../../main/action/confirm-dialog/confirm-dialog.component';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 
 @Component({
@@ -319,6 +320,39 @@ export class UsersListComponent implements OnInit {
           this._errorHandler.showMessage(error);
         }
       );
+  }
+
+  askToActivateUser(username: string, id: string) {
+    this._dialog
+      .open(ConfirmDialogComponent, { data: { message: `Do you want to reactivate user ${username}?` } })
+      .afterClosed()
+      .subscribe(response => {
+        if (response === true) this.activateUser(id);
+      });
+  }
+
+  askToDeleteUser(username: string, id: string) {
+    this._dialog
+      .open(ConfirmDialogComponent, { data: { message: `Do you want to suspend user ${username}?` } })
+      .afterClosed()
+      .subscribe(response => {
+        if (response === true) this.deleteUser(id);
+      });
+  }
+
+  askToRemoveFromProject(user: ReadUser) {
+    this._dialog
+      .open(ConfirmDialogComponent, { data: { message: 'Do you want to remove this user from the project?' } })
+      .afterClosed()
+      .pipe(
+        switchMap(response => {
+          if (!response) return;
+
+          this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
+          return this._actions$.pipe(ofActionSuccessful(LoadProjectMembersAction));
+        })
+      )
+      .subscribe();
   }
 
   /**

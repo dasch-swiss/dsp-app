@@ -36,11 +36,7 @@
     </div>
     <!-- delete account: button -->
     <div class="center more-space-top more-space-bottom">
-      <button
-        *ngIf="(user$ | async)?.status"
-        mat-button
-        [color]="'warn'"
-        (click)="openDialog('deleteUser', username, userId)">
+      <button *ngIf="(user$ | async)?.status" mat-button [color]="'warn'" (click)="askToDeleteUser(username, userId)">
         {{ 'appLabels.form.user.title.deleteButton' | translate | uppercase }}
       </button>
 
@@ -48,7 +44,7 @@
         *ngIf="!((user$ | async)?.status)"
         mat-button
         [color]="'primary'"
-        (click)="openDialog('activateUser', username, userId)">
+        (click)="askToActivateUser(username, userId)">
         ACTIVATE ACCOUNT
       </button>
     </div>

@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
@@ -21,9 +20,18 @@ import {
 import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
-import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/shared/app-progress-indicator';
+import {
+  AppProgressIndicatorComponent,
+  CenteredLayoutComponent,
+  LoadingButtonDirective,
+} from '@dasch-swiss/vre/shared/app-progress-indicator';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
-import { AppStringLiteralComponent } from '@dasch-swiss/vre/shared/app-string-literal';
+import {
+  AppStringLiteralComponent,
+  MultiLanguageTextareaComponent,
+  MutiLanguageInputComponent,
+  HumanReadableErrorPipe,
+} from '@dasch-swiss/vre/shared/app-string-literal';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
@@ -33,6 +41,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ConfirmDialogComponent } from './main/action/confirm-dialog/confirm-dialog.component';
 import { ConfirmationDialogComponent } from './main/action/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationMessageComponent } from './main/action/confirmation-dialog/confirmation-message/confirmation-message.component';
 import { HintComponent } from './main/action/hint/hint.component';
@@ -47,7 +56,6 @@ import { DisableContextMenuDirective } from './main/directive/disable-context-me
 import { ExistingNameDirective } from './main/directive/existing-name/existing-name.directive';
 import { ExternalLinksDirective } from './main/directive/external-links.directive';
 import { InvalidControlScrollDirective } from './main/directive/invalid-control-scroll.directive';
-
 import { FooterComponent } from './main/footer/footer.component';
 import { GridComponent } from './main/grid/grid.component';
 import { AuthGuardComponent } from './main/guard/auth-guard.component';
@@ -66,16 +74,24 @@ import { TimePipe } from './main/pipes/time.pipe';
 import { SelectLanguageComponent } from './main/select-language/select-language.component';
 import { StatusComponent } from './main/status/status.component';
 import { MaterialModule } from './material-module';
+import { ChipListInputComponent } from './project/chip-list-input/chip-list-input.component';
 import { AddUserComponent } from './project/collaboration/add-user/add-user.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
 import { SelectGroupComponent } from './project/collaboration/select-group/select-group.component';
+import { CommonInputComponent } from './project/common-input/common-input.component';
+import { CreateProjectFormPageComponent } from './project/create-project-form-page/create-project-form-page.component';
 import { DataModelsComponent } from './project/data-models/data-models.component';
 import { DescriptionComponent } from './project/description/description.component';
-import { ListInfoFormComponent } from './project/list/list-info-form/list-info-form.component';
+import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
 import { ListItemComponent } from './project/list/list-item/list-item.component';
 import { EditListItemComponent } from './project/list/list-item-form/edit-list-item/edit-list-item.component';
 import { ListItemFormComponent } from './project/list/list-item-form/list-item-form.component';
 import { ListComponent } from './project/list/list.component';
+import { CreateListInfoPageComponent } from './project/list/reusable-list-info-form/create-list-info-page.component';
+import { EditListInfoDialogComponent } from './project/list/reusable-list-info-form/edit-list-info-dialog.component';
+import { ReusableListInfoFormComponent } from './project/list/reusable-list-info-form/reusable-list-info-form.component';
+import { CreateResourceClassDialogComponent } from './project/ontology/create-resource-class-dialog/create-resource-class-dialog.component';
+import { EditResourceClassDialogComponent } from './project/ontology/edit-resource-class-dialog/edit-resource-class-dialog.component';
 import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { PropertyFormComponent } from './project/ontology/property-form/property-form.component';
@@ -86,8 +102,8 @@ import { ResourceClassPropertyInfoComponent } from './project/ontology/resource-
 import { OntologyClassInstanceComponent } from './project/ontology-classes/ontology-class-instance/ontology-class-instance.component';
 import { OntologyClassItemComponent } from './project/ontology-classes/ontology-class-item/ontology-class-item.component';
 import { OntologyClassesComponent } from './project/ontology-classes/ontology-classes.component';
-import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
+import { ReusableProjectFormComponent } from './project/reusable-project-form/reusable-project-form.component';
 import { SettingsComponent } from './project/settings/settings.component';
 import { apiConnectionTokenProvider } from './providers/api-connection-token.provider';
 import { ProjectTileComponent } from './system/project-tile/project-tile.component';
@@ -181,15 +197,20 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     AvTimelineComponent,
     DescriptionComponent,
     BooleanValueComponent,
+    CenteredLayoutComponent,
+    ChipListInputComponent,
     CollaborationComponent,
     ColorPickerComponent,
     ColorValueComponent,
     CommentFormComponent,
+    CommonInputComponent,
     ComparisonComponent,
     ConfirmationDialogComponent,
+    ConfirmDialogComponent,
     ConfirmationMessageComponent,
     CookiePolicyComponent,
     CreateLinkResourceComponent,
+    CreateResourceClassDialogComponent,
     DateValueComponent,
     DateValueHandlerComponent,
     DecimalValueComponent,
@@ -200,6 +221,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     DocumentComponent,
     DragDropDirective,
     EditListItemComponent,
+    EditResourceClassDialogComponent,
     ExistingNameDirective,
     ExpertSearchComponent,
     ExternalLinksDirective,
@@ -217,10 +239,13 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     InvalidControlScrollDirective,
     JDNDatepickerDirective,
     KnoraDatePipe,
+    LoadingButtonDirective,
     LinkifyPipe,
     LinkValueComponent,
     ListComponent,
-    ListInfoFormComponent,
+    EditListInfoDialogComponent,
+    CreateListInfoPageComponent,
+    ReusableListInfoFormComponent,
     ListItemComponent,
     ListItemFormComponent,
     ListValueComponent,
@@ -233,7 +258,9 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     PermissionInfoComponent,
     ProfileComponent,
     ProjectComponent,
-    ProjectFormComponent,
+    CreateProjectFormPageComponent,
+    ReusableProjectFormComponent,
+    EditProjectFormPageComponent,
     ProjectsComponent,
     ProjectsListComponent,
     PropertiesComponent,
@@ -298,6 +325,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     AngularSplitModule,
     AppDatePickerComponent,
     AppProgressIndicatorComponent,
+    HumanReadableErrorPipe,
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
@@ -321,6 +349,8 @@ export function httpLoaderFactory(httpClient: HttpClient) {
       },
     }),
     AppStringLiteralComponent,
+    MultiLanguageTextareaComponent,
+    MutiLanguageInputComponent,
     NgxsStoreModule,
     NgxsStoragePluginModule.forRoot(),
   ],

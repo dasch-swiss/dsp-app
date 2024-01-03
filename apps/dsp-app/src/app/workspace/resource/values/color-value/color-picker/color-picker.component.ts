@@ -102,11 +102,13 @@ export class ColorPickerComponent
     return !colorInput.color;
   }
 
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   set required(req) {
     this._required = coerceBooleanProperty(req);
     this.stateChanges.next();
   }
 
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   set disabled(value: boolean) {
     this._disabled = coerceBooleanProperty(value);
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -114,11 +116,13 @@ export class ColorPickerComponent
     this.stateChanges.next();
   }
 
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   set placeholder(plh) {
     this._placeholder = plh;
     this.stateChanges.next();
   }
 
+  // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
   set value(colorValue: string | null) {
     if (colorValue !== null) {
       this.colorForm.setValue({ color: colorValue });

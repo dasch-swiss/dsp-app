@@ -6,11 +6,11 @@ import {
   KnoraApiConnection,
   MembersResponse,
   ProjectResponse,
-  ProjectsResponse,
   ReadGroup,
   ReadUser,
   UserResponse,
 } from '@dasch-swiss/dsp-js';
+import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -54,24 +54,20 @@ export class ProjectsState {
     private _dspApiConnection: KnoraApiConnection,
     private store: Store,
     private errorHandler: AppErrorHandler,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private projectApiService: ProjectApiService
   ) {}
 
   @Action(LoadProjectsAction, { cancelUncompleted: true })
   loadProjects(ctx: StateContext<ProjectsStateModel>) {
     ctx.patchState({ isLoading: true });
-    return this._dspApiConnection.admin.projectsEndpoint.getProjects().pipe(
-      take(1),
-      map(
-        (projectsResponse: ApiResponseData<ProjectsResponse> | ApiResponseError) =>
-          projectsResponse as ApiResponseData<ProjectsResponse>
-      ),
+    return this.projectApiService.list().pipe(
       tap({
-        next: (projectsResponse: ApiResponseData<ProjectsResponse>) => {
+        next: response => {
           ctx.setState({
             ...ctx.getState(),
             isLoading: false,
-            allProjects: projectsResponse.body.projects,
+            allProjects: response.projects,
           });
         },
         error: (error: ApiResponseError) => {
@@ -259,18 +255,10 @@ export class ProjectsState {
   @Action(UpdateProjectAction)
   updateProjectAction(ctx: StateContext<ProjectsStateModel>, { projectUuid, projectData }: UpdateProjectAction) {
     ctx.patchState({ isLoading: true });
-    return this._dspApiConnection.admin.projectsEndpoint.updateProject(projectUuid, projectData).pipe(
-      take(1),
-      map(
-        (response: ApiResponseData<ProjectResponse> | ApiResponseError) => response as ApiResponseData<ProjectResponse>
-      ),
+    return this.projectApiService.update(this.projectService.uuidToIri(projectUuid), projectData).pipe(
       tap({
-        next: (response: ApiResponseData<ProjectResponse>) => {
+        next: response => {
           ctx.dispatch(new LoadProjectsAction());
-          return response.body.project;
-        },
-        error: error => {
-          this.errorHandler.showMessage(error);
         },
       })
     );

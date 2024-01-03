@@ -22,6 +22,8 @@ import {
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { filter, switchMap } from 'rxjs/operators';
+import { ConfirmDialogComponent } from '../../../main/action/confirm-dialog/confirm-dialog.component';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 
 export class ListNodeOperation {
@@ -109,8 +111,6 @@ export class ListItemFormComponent implements OnInit {
   showActionBubble = false;
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _listApiService: ListApiService,
     private _errorHandler: AppErrorHandler,
     private _dialog: MatDialog,
@@ -222,6 +222,30 @@ export class ListItemFormComponent implements OnInit {
     this.showActionBubble = false;
   }
 
+  askToDeleteListNode(name: string, iri: string) {
+    this._dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: name,
+          message: 'Do you want to delete this node?',
+        },
+      })
+      .afterClosed()
+      .pipe(
+        filter(response => typeof response === 'boolean' && response === true),
+        switchMap(() => this._listApiService.deleteListNode(iri))
+      )
+      .subscribe(response => {
+        const listNodeOperation = new ListNodeOperation();
+
+        listNodeOperation.listNode = response.node;
+        listNodeOperation.operation = 'delete';
+
+        // emit data to parent to update the view
+        this.refreshParent.emit(listNodeOperation);
+      });
+  }
+
   /**
    * called when the 'edit' or 'delete' button is clicked.
    *
@@ -268,36 +292,6 @@ export class ListItemFormComponent implements OnInit {
         // emit data to parent to update the view
         this.refreshParent.emit(listNodeOperation);
         this.labels = (data as ChildNodeInfo).labels;
-      } else if (mode === 'deleteListNode' && typeof data === 'boolean' && data === true) {
-        // delete
-        // delete the node
-        this._listApiService.deleteListNode(iri).subscribe(
-          response => {
-            listNodeOperation.listNode = response.node;
-            listNodeOperation.operation = 'delete';
-
-            // emit data to parent to update the view
-            this.refreshParent.emit(listNodeOperation);
-          },
-          (error: ApiResponseError) => {
-            // if DSP-API returns a 400, it is likely that the list node is in use so we inform the user of this
-            if (error.status === 400) {
-              const errorDialogConfig: MatDialogConfig = {
-                width: '640px',
-                position: {
-                  top: '112px',
-                },
-                data: { mode: 'deleteListNodeError' },
-              };
-
-              // open the dialog box
-              this._dialog.open(DialogComponent, errorDialogConfig);
-            } else {
-              // use default error behavior
-              this._errorHandler.showMessage(error);
-            }
-          }
-        );
       }
     });
   }

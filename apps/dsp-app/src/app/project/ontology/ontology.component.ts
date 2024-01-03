@@ -61,6 +61,8 @@ import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { DialogComponent, DialogEvent } from '../../main/dialog/dialog.component';
 import { ProjectBase } from '../project-base';
+import { CreateResourceClassDialogComponent } from './create-resource-class-dialog/create-resource-class-dialog.component';
+import { EditResourceClassDialogComponent } from './edit-resource-class-dialog/edit-resource-class-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -452,33 +454,44 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     });
   }
 
-  /**
-   * opens resource class form to create or edit resource class info
-   * @param mode
-   * @param resClassInfo (could be subClassOf (create mode) or resource class itself (edit mode))
-   */
-  openResourceClassForm(mode: 'createResourceClass' | 'editResourceClass', resClassInfo: DefaultClass): void {
-    const dialogConfig: MatDialogConfig = {
-      width: '640px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: {
-        id: resClassInfo.iri,
-        title: resClassInfo.label,
-        subtitle: 'Customize resource class',
-        mode,
-      },
-    };
+  createResourceClass(resClassInfo: DefaultClass): void {
+    const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
 
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+    this._dialog
+      .open(CreateResourceClassDialogComponent, {
+        data: {
+          id: resClassInfo.iri,
+          title: resClassInfo.label,
+          ontologyId: currentOntology.id,
+          lastModificationDate: currentOntology.lastModificationDate,
+        },
+      })
+      .afterClosed()
+      .subscribe(event => {
+        if (event !== DialogEvent.DialogCanceled) {
+          this.initOntologiesList();
+        }
+      });
+  }
 
-    dialogRef.afterClosed().subscribe(event => {
-      if (event !== DialogEvent.DialogCanceled) {
-        this.initOntologiesList();
-      }
-    });
+  updateResourceClass(resClassInfo: DefaultClass): void {
+    const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+
+    this._dialog
+      .open(EditResourceClassDialogComponent, {
+        data: {
+          id: resClassInfo.iri,
+          title: resClassInfo.label,
+          ontologyId: currentOntology.id,
+          lastModificationDate: currentOntology.lastModificationDate,
+        },
+      })
+      .afterClosed()
+      .subscribe(event => {
+        if (event !== DialogEvent.DialogCanceled) {
+          this.initOntologiesList();
+        }
+      });
   }
 
   /**

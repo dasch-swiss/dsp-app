@@ -51,8 +51,8 @@ export class ListItemComponent implements OnInit {
       this._listApiService
         .get(this.parentIri)
         .pipe(take(1))
-        .subscribe(result => {
-          if (!(result instanceof ListResponse)) return;
+        .subscribe((result: ListResponse) => {
+          console.log(result);
 
           this.list = result.list.children;
           this.language = result.list.listinfo.labels[0].language;

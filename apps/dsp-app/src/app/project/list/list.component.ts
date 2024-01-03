@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, StringLiteral } from '@dasch-swiss/dsp-js';
@@ -13,10 +13,11 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
-import { DialogComponent } from '../../main/dialog/dialog.component';
+import { ConfirmDialogComponent } from '../../main/action/confirm-dialog/confirm-dialog.component';
 import { ProjectBase } from '../project-base';
+import { EditListInfoDialogComponent } from './reusable-list-info-form/edit-list-info-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,45 +104,37 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
    * edit list data, remove list from project etc.
    *
    */
-  openDialog(mode: string, name: string, iri?: string): void {
-    const dialogConfig: MatDialogConfig = {
-      width: '640px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
+  editList(list: ListNodeInfo) {
+    this._dialog.open(EditListInfoDialogComponent, {
+      width: '100%',
+      minWidth: 500,
       data: {
-        mode,
-        title: name,
-        id: iri,
-        project: this.projectUuid,
+        projectIri: this._projectService.uuidToIri(this.projectUuid),
+        list,
       },
-    };
-
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(data => {
-      switch (mode) {
-        case 'editListInfo': {
-          window.location.reload();
-          break;
-        }
-        case 'deleteList': {
-          if (typeof data === 'boolean' && data === true) {
-            this._store.dispatch(new DeleteListNodeAction(this.listIri));
-            this.listIri = undefined;
-            this._actions$
-              .pipe(ofActionSuccessful(DeleteListNodeAction))
-              .pipe(take(1))
-              .subscribe(() => {
-                this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
-                this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
-              });
-          }
-          break;
-        }
-      }
     });
+  }
+
+  openDialog(list: ListNodeInfo): void {
+    this._dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          message: 'Do you want to delete this controlled vocabulary?',
+        },
+      })
+      .afterClosed()
+      .subscribe(response => {
+        if (!response) return;
+        this._store.dispatch(new DeleteListNodeAction(this.listIri));
+        this.listIri = undefined;
+        this._actions$
+          .pipe(ofActionSuccessful(DeleteListNodeAction))
+          .pipe(take(1))
+          .subscribe(() => {
+            this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
+            this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
+          });
+      });
   }
 
   private _setPageTitle() {

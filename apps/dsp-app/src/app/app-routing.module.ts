@@ -7,25 +7,23 @@ import { OntologyClassInstanceGuard } from './main/guard/ontology-class-instance
 import { HelpComponent } from './main/help/help.component';
 import { StatusComponent } from './main/status/status.component';
 import { CollaborationComponent } from './project/collaboration/collaboration.component';
+import { CreateProjectFormPageComponent } from './project/create-project-form-page/create-project-form-page.component';
 import { DataModelsComponent } from './project/data-models/data-models.component';
 import { DescriptionComponent } from './project/description/description.component';
-import { ListInfoFormComponent } from './project/list/list-info-form/list-info-form.component';
+import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
 import { ListComponent } from './project/list/list.component';
+import { CreateListInfoPageComponent } from './project/list/reusable-list-info-form/create-list-info-page.component';
+import { CreateResourceClassDialogComponent } from './project/ontology/create-resource-class-dialog/create-resource-class-dialog.component';
 import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { OntologyClassInstanceComponent } from './project/ontology-classes/ontology-class-instance/ontology-class-instance.component';
-import { ProjectFormComponent } from './project/project-form/project-form.component';
 import { ProjectComponent } from './project/project.component';
 import { SettingsComponent } from './project/settings/settings.component';
-// project
 import { ProjectsComponent } from './system/projects/projects.component';
-// system
 import { SystemComponent } from './system/system.component';
 import { UsersComponent } from './system/users/users.component';
-// user
 import { OverviewComponent } from './user/overview/overview.component';
 import { UserComponent } from './user/user.component';
-// search results and resource viewer
 import { ResourceComponent } from './workspace/resource/resource.component';
 import { ResultsComponent } from './workspace/results/results.component';
 import { AdvancedSearchContainerComponent } from './workspace/search/advanced-search/advanced-search-container.component';
@@ -42,7 +40,7 @@ const routes: Routes = [
   {
     path: RouteConstants.createNewProjectRelative,
     canActivate: [AuthGuard],
-    component: ProjectFormComponent,
+    component: CreateProjectFormPageComponent,
   },
   {
     path: RouteConstants.projectUuidRelative,
@@ -51,7 +49,7 @@ const routes: Routes = [
       {
         path: RouteConstants.edit,
         canActivate: [AuthGuard],
-        component: ProjectFormComponent,
+        component: EditProjectFormPageComponent,
       },
       {
         path: RouteConstants.home,
@@ -88,7 +86,7 @@ const routes: Routes = [
       },
       {
         path: RouteConstants.addList,
-        component: ListInfoFormComponent,
+        component: CreateListInfoPageComponent,
         canActivate: [AuthGuard],
       },
       {

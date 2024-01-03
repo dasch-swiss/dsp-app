@@ -26,7 +26,7 @@
                 <button
                   color="primary"
                   mat-button
-                  (click)="$event.stopPropagation(); openDialog('editListInfo', list.labels[0].value, list.id)"
+                  (click)="$event.stopPropagation(); editList( list)"
                   matTooltip="Edit controlled vocabulary info">
                   <mat-icon>edit</mat-icon>
                   Edit
@@ -35,7 +35,7 @@
                   color="warn"
                   mat-button
                   class="delete"
-                  (click)="$event.stopPropagation(); openDialog('deleteList', list.labels[0].value, list.id)"
+                  (click)="$event.stopPropagation(); openDialog(list)"
                   matTooltip="Delete controlled vocabulary">
                   <mat-icon>delete</mat-icon>
                   Delete
@@ -45,7 +45,7 @@
           </mat-toolbar>
 
           <app-list-item
-            [list]="list"
+            [list]="[list]"
             [parentIri]="list.id"
             [projectIri]="(project$ | async)?.id"
             [projectUuid]="projectUuid"

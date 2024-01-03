@@ -60,28 +60,10 @@
         </button>
         <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
           <button mat-menu-item *ngIf="status" (click)="editProject(project.id)">Edit project information</button>
-          <button
-            mat-menu-item
-            *ngIf="status"
-            (click)="
-                            openDialog(
-                                'deactivateProject',
-                                project.shortname,
-                                project.id
-                            )
-                        ">
+          <button mat-menu-item *ngIf="status" (click)="askToDeactivateProject(project.shortname,project.id)">
             Deactivate project
           </button>
-          <button
-            mat-menu-item
-            *ngIf="!status"
-            (click)="
-                            openDialog(
-                                'activateProject',
-                                project.shortname,
-                                project.id
-                            )
-                        ">
+          <button mat-menu-item *ngIf="!status" (click)="askToActivateProject(project.shortname,project.id)">
             Reactivate project
           </button>
         </mat-menu>

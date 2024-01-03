@@ -39,6 +39,8 @@
         "arrow-parens": "off",
         "implicit-arrow-linebreak": "off",
         "operator-linebreak": "off",
+        "object-curly-newline": "off",
+        "function-paren-newline": "off",
         "max-len": "off",
         "@typescript-eslint/comma-dangle": "off",
         "@typescript-eslint/indent": "off",

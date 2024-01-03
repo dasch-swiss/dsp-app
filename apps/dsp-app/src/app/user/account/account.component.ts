@@ -8,7 +8,7 @@ import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { DialogComponent } from '../../main/dialog/dialog.component';
+import { ConfirmDialogComponent } from '../../main/action/confirm-dialog/confirm-dialog.component';
 import { apiConnectionTokenProvider } from '../../providers/api-connection-token.provider';
 
 @Component({
@@ -46,33 +46,21 @@ export class AccountComponent implements OnInit {
     );
   }
 
-  openDialog(mode: string, name: string, id?: string): void {
+  askToActivateUser(username: string, id: string) {
     this._dialog
-      .open(DialogComponent, {
-        width: '560px',
-        maxHeight: '80vh',
-        position: {
-          top: '112px',
-        },
-        data: { name, mode },
-      })
+      .open(ConfirmDialogComponent, { data: { message: `Do you want to reactivate user ${username}?` } })
       .afterClosed()
       .subscribe(response => {
-        if (response === true) {
-          // get the mode
-          switch (mode) {
-            case 'deleteUser':
-              this.deleteUser(id);
-              break;
+        if (response === true) this.activateUser(id);
+      });
+  }
 
-            case 'activateUser':
-              this.activateUser(id);
-              break;
-          }
-        } else {
-          // update the view
-          this.refreshParent.emit();
-        }
+  askToDeleteUser(username: string, id: string) {
+    this._dialog
+      .open(ConfirmDialogComponent, { data: { message: `Do you want to suspend user ${username}?` } })
+      .afterClosed()
+      .subscribe(response => {
+        if (response === true) this.deleteUser(id);
       });
   }
 
