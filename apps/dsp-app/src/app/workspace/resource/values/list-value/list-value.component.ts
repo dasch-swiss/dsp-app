@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
@@ -36,7 +36,8 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     @Inject(FormBuilder) protected _fb: FormBuilder,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler
+    private _errorHandler: AppErrorHandler,
+    private _cd: ChangeDetectorRef
   ) {
     super();
   }
@@ -145,6 +146,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
           } else {
             this.selectedNodeHierarchy = this._getHierarchy(nodeIri, response.children);
           }
+          this._cd.markForCheck();
         },
         (error: ApiResponseError) => {
           this._errorHandler.showMessage(error);
