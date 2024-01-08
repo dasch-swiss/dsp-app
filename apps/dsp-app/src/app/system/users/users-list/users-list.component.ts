@@ -3,23 +3,15 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Inject,
   Input,
   OnInit,
   Output,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import {
-  ApiResponseError,
-  Constants,
-  KnoraApiConnection,
-  Permissions,
-  ReadProject,
-  ReadUser,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseError, Constants, Permissions, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
@@ -31,9 +23,9 @@ import {
   SetUserAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, combineLatest } from 'rxjs';
+import { map, switchMap, take } from 'rxjs/operators';
 import { ConfirmDialogComponent } from '../../../main/action/confirm-dialog/confirm-dialog.component';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 
@@ -105,19 +97,30 @@ export class UsersListComponent implements OnInit {
   // ... and sort by 'username'
   sortBy = 'username';
 
+  disableMenu$: Observable<boolean> = combineLatest([
+    this._store.select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin),
+    this._store.select(UserSelectors.isSysAdmin),
+  ]).pipe(
+    map(([isCurrentProjectAdminOrSysAdmin, isSysAdmin]) => {
+      if (this.project && this.project.status === false) {
+        return true;
+      } else {
+        const isProjectAdmin = this.projectUuid ? isCurrentProjectAdminOrSysAdmin : false;
+        return !isProjectAdmin && !isSysAdmin;
+      }
+    })
+  );
+
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
   @Select(UserSelectors.username) username$: Observable<string>;
-  @Select(ProjectsSelectors.isCurrentProjectAdmin)
-  isProjectAdmin$: Observable<boolean>;
+  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
+  @Select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin) isCurrentProjectAdminOrSysAdmin$: Observable<boolean>;
   @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;
-  @Select(ProjectsSelectors.isProjectsLoading)
-  isProjectsLoading$: Observable<boolean>;
+  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
   @Select(UserSelectors.isLoading) isUsersLoading$: Observable<boolean>;
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _userApiService: UserApiService,
     private _dialog: MatDialog,
     private _errorHandler: AppErrorHandler,
@@ -125,7 +128,6 @@ export class UsersListComponent implements OnInit {
     private _router: Router,
     private _sortingService: SortingService,
     private _store: Store,
-    private _projectService: ProjectService,
     private _actions$: Actions,
     private _cd: ChangeDetectorRef
   ) {
@@ -238,9 +240,9 @@ export class UsersListComponent implements OnInit {
    */
   updateProjectAdminMembership(id: string, permissions: Permissions): void {
     const currentUser = this._store.selectSnapshot(UserSelectors.user);
-    if (this.userIsProjectAdmin(permissions)) {
+    const userIsProjectAdmin = this.userIsProjectAdmin(permissions);
+    if (userIsProjectAdmin) {
       // true = user is already project admin --> remove from admin rights
-
       this._userApiService.removeFromProjectMembership(id, this.project.id, true).subscribe(
         response => {
           // if this user is not the logged-in user
@@ -281,7 +283,7 @@ export class UsersListComponent implements OnInit {
       );
     } else {
       // false: user isn't project admin yet --> add admin rights
-      this._userApiService.addToProjectMembership(id, this.project.id).subscribe(
+      this._userApiService.addToProjectMembership(id, this.project.id, true).subscribe(
         response => {
           if (currentUser.username !== response.user.username) {
             this._store.dispatch(new SetUserAction(response.user));
@@ -436,19 +438,6 @@ export class UsersListComponent implements OnInit {
           this._errorHandler.showMessage(error);
         }
       );
-  }
-
-  disableMenu(): boolean {
-    // disable menu in case of:
-    // project.status = false
-    if (this.project && this.project.status === false) {
-      return true;
-    } else {
-      return (
-        !this._store.selectSnapshot(UserSelectors.isSysAdmin) &&
-        !this._store.selectSnapshot(ProjectsSelectors.isCurrentProjectAdmin)
-      );
-    }
   }
 
   sortList(key: any) {

@@ -93,7 +93,7 @@ export class UserApiService extends BaseApi {
   }
 
   removeFromProjectMembership(userIri: string, projectIri: string, adminProject = false) {
-    return this._http.post<UserResponse>(
+    return this._http.delete<UserResponse>(
       `${this._userRoute(userIri)}/project-${adminProject ? 'admin-' : ''}memberships/${encodeURIComponent(
         projectIri
       )}`,

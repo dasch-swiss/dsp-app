@@ -5,7 +5,7 @@ import { ReadUser } from '@dasch-swiss/dsp-js';
 import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, takeWhile } from 'rxjs/operators';
 import { DialogComponent } from '../../main/dialog/dialog.component';
 
 @Component({
@@ -33,7 +33,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user$
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .pipe(
+        takeUntil(this.ngUnsubscribe),
+        takeWhile(user => user !== null)
+      )
       .subscribe(user => this._titleService.setTitle(`${user.username} (${user.givenName} ${user.familyName})`));
   }
 

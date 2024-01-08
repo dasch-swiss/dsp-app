@@ -41,12 +41,12 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, forkJoin } from 'rxjs';
 import { ConfirmationWithComment, DialogComponent } from '../../../main/dialog/dialog.component';
 import {
+  Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
-  Events as CommsEvents,
 } from '../../../main/services/component-communication-event.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
@@ -172,7 +172,6 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     private _valueOperationEventService: ValueOperationEventService,
     private _valueService: ValueService,
     private _componentCommsService: ComponentCommunicationEventService,
-    private _projectService: ProjectService,
     private _sortingService: SortingService,
     private _cd: ChangeDetectorRef
   ) {}
@@ -265,7 +264,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
    * @param project
    */
   openProject(project: ReadProject) {
-    const uuid = this._projectService.iriToUuid(project.id);
+    const uuid = ProjectService.IriToUuid(project.id);
     window.open(`/project/${uuid}`, '_blank');
   }
 

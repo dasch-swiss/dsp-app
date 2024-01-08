@@ -13,15 +13,6 @@ import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 export class ProjectService {
   constructor(private _acs: AppConfigService) {}
 
-  iriToUuid(iri: string): string {
-    if (iri) {
-      const array = iri.split('/');
-      return array[array.length - 1];
-    }
-
-    return '';
-  }
-
   static IriToUuid(iri: string): string {
     if (iri) {
       const array = iri.split('/');
@@ -40,11 +31,21 @@ export class ProjectService {
   }
 
   static IsInProjectGroup = (userProjectGroups: string[], projectIri: string): boolean =>
-    userProjectGroups.some(e => e === projectIri);
+    userProjectGroups.some(e => ProjectService.IriToUuid(e) === ProjectService.IriToUuid(projectIri));
 
-  static IsMemberOfProjectAdminGroup = (groupsPerProject: { [key: string]: string[] }, projectIri: string): boolean =>
-    (groupsPerProject && groupsPerProject[projectIri]) !== undefined &&
-    groupsPerProject[projectIri].indexOf(Constants.ProjectAdminGroupIRI) > -1;
+  static IsMemberOfProjectAdminGroup(groupsPerProject: { [key: string]: string[] }, projectIri: string): boolean {
+    if (!groupsPerProject || Object.keys(groupsPerProject).length === 0) {
+      return false;
+    }
+
+    const groups: { [key: string]: string[] } = {};
+    Object.keys(groupsPerProject).forEach(group => {
+      groups[ProjectService.IriToUuid(group)] = groupsPerProject[group];
+    });
+
+    const groupValue = groups[ProjectService.IriToUuid(projectIri)];
+    return groupValue !== undefined && groupValue.indexOf(Constants.ProjectAdminGroupIRI) > -1;
+  }
 
   static IsMemberOfSystemAdminGroup = (groupsPerProject: { [key: string]: string[] }): boolean =>
     (groupsPerProject && groupsPerProject[Constants.SystemProjectIRI]) !== undefined &&
@@ -82,7 +83,7 @@ export class ProjectService {
     return isProjectAdmin
       ? // check if the user is member of the current project(id contains the iri)
         true
-      : user.projects.length === 0
+      : !user || user.projects.length === 0
         ? false
         : user.projects.some(p => ProjectService.IriToUuid(p.id) === projectUuid);
   }

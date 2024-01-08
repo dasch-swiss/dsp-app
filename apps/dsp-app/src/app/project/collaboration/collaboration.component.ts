@@ -3,7 +3,12 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { LoadProjectMembersAction, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import {
+  IKeyValuePairs,
+  LoadProjectMembersAction,
+  ProjectsSelectors,
+  UserSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -47,9 +52,9 @@ export class CollaborationComponent extends ProjectBase implements OnInit, OnDes
     );
   }
 
-  @Select(ProjectsSelectors.projectMembers) projectMembers$: Observable<ReadUser[]>;
-  @Select(ProjectsSelectors.isProjectsLoading)
-  isProjectsLoading$: Observable<boolean>;
+  @Select(ProjectsSelectors.projectMembers) projectMembers$: Observable<IKeyValuePairs<ReadUser>>;
+  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+  @Select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin) isCurrentProjectAdminOrSysAdmin$: Observable<boolean>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
   @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;

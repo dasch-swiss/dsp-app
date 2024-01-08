@@ -13,18 +13,15 @@ export class ProjectTileComponent {
   @Input() project: StoredProject;
   @Input() sysAdmin: boolean; // used to show settings button
 
-  constructor(
-    private _router: Router,
-    private _projectService: ProjectService
-  ) {}
+  constructor(private _router: Router) {}
 
   navigateToProject(id: string) {
-    const uuid = this._projectService.iriToUuid(id);
+    const uuid = ProjectService.IriToUuid(id);
     this._router.navigate([RouteConstants.project, uuid]);
   }
 
   navigateToSettings(id: string) {
-    const uuid = this._projectService.iriToUuid(id);
+    const uuid = ProjectService.IriToUuid(id);
     this._router.navigate([RouteConstants.project, uuid, RouteConstants.settings, RouteConstants.collaboration]);
   }
 }

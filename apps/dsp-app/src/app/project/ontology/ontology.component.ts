@@ -34,13 +34,13 @@ import {
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   DefaultClass,
-  DefaultResourceClasses,
-  SortingService,
-  ProjectService,
   DefaultProperties,
+  DefaultResourceClasses,
+  OntologyService,
+  ProjectService,
   PropertyCategory,
   PropertyInfoObject,
-  OntologyService,
+  SortingService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   ClearCurrentOntologyAction,
@@ -429,7 +429,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     const title = iri ? ontology.label : 'Data model';
 
-    const uuid = this._projectService.iriToUuid(this.projectUuid);
+    const uuid = ProjectService.IriToUuid(this.projectUuid);
     const existingOntologyNames = this._store.selectSnapshot(OntologiesSelectors.currentProjectExistingOntologyNames);
 
     const dialogConfig: MatDialogConfig = {

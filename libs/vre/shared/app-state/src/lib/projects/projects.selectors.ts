@@ -74,7 +74,7 @@ export class ProjectsSelectors {
   }
 
   @Selector([ProjectsState, UserSelectors.user, UserSelectors.userProjectAdminGroups, RouterSelectors.params])
-  static isCurrentProjectAdmin(
+  static isCurrentProjectAdminOrSysAdmin(
     state: ProjectsStateModel,
     user: ReadUser,
     userProjectGroups: string[],
