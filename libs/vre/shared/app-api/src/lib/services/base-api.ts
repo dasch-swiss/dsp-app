@@ -1,7 +1,9 @@
+import { KnoraApiConfig } from '@dasch-swiss/dsp-js/src/knora-api-config';
+
 export abstract class BaseApi {
   protected baseUri: string;
-  constructor(endpoint: string) {
-    const host = 'http://0.0.0.0:3333';
+  constructor(endpoint: string, apiConfig: KnoraApiConfig) {
+    const host = apiConfig.apiUrl;
     this.baseUri = `${host}/${endpoint}`;
   }
 }

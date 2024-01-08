@@ -12,12 +12,16 @@ import {
   UpdateDefaultObjectAccessPermissionProperty,
   UpdateDefaultObjectAccessPermissionResourceClass,
 } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 @Injectable({ providedIn: 'root' })
 export class PermissionApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('admin/permissions');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('admin/permissions', _appConfig.dspApiConfig);
   }
 
   getProjectPermissions(projectIri: string) {

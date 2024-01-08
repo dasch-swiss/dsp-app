@@ -9,6 +9,7 @@ import {
   ProjectsResponse,
   UpdateProjectRequest,
 } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 export type ProjectIdentifier = 'iri' | 'shortname' | 'shortcode';
@@ -16,8 +17,11 @@ export type ProjectIdentifier = 'iri' | 'shortname' | 'shortcode';
   providedIn: 'root',
 })
 export class ProjectApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('admin/projects');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('admin/projects', _appConfig.dspApiConfig);
   }
 
   list() {

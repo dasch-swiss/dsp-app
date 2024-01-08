@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { Graph } from '../../../interfaces/graph.interface';
 import { BaseApi } from '../../base-api';
 import { CanDoResponse } from './can-do-response.interface';
@@ -20,8 +21,11 @@ import { UpdateResourceProperty } from './update-resource-property.interface';
   providedIn: 'root',
 })
 export class OntologyV2ApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('v2/ontologies');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('v2/ontologies', _appConfig.dspApiConfig);
   }
 
   getMetadata() {

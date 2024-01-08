@@ -8,6 +8,7 @@ import {
   UserResponse,
   UsersResponse,
 } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 export type UserIdentifier = 'iri' | 'email' | 'username';
@@ -16,8 +17,11 @@ export type UserIdentifier = 'iri' | 'email' | 'username';
   providedIn: 'root',
 })
 export class UserApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('admin/users');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('admin/users', _appConfig.dspApiConfig);
   }
 
   list() {

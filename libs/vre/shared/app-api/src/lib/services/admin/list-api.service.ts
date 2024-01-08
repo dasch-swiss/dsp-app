@@ -21,14 +21,18 @@ import {
   UpdateGroupRequest,
   UpdateListInfoRequest,
 } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ListApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('admin/lists');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('admin/lists', _appConfig.dspApiConfig);
   }
 
   list() {

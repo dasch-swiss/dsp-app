@@ -1,12 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AdministrativePermissionsResponse, CreateAdministrativePermission } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 @Injectable({ providedIn: 'root' })
 export class AdministrativePermissionApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('admin/permissions/ap');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('admin/permissions/ap', _appConfig.dspApiConfig);
   }
 
   list(projectIri: string) {

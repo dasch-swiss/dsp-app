@@ -1,14 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CreateGroupRequest, GroupsResponse, UpdateGroupRequest } from '@dasch-swiss/dsp-js';
+import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { BaseApi } from '../base-api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GroupApiService extends BaseApi {
-  constructor(private _http: HttpClient) {
-    super('admin/groups');
+  constructor(
+    private _http: HttpClient,
+    private _appConfig: AppConfigService
+  ) {
+    super('admin/groups', _appConfig.dspApiConfig);
   }
 
   list() {
