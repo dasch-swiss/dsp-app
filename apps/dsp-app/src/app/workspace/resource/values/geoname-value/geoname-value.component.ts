@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { CreateGeonameValue, ReadGeonameValue, UpdateGeonameValue } from '@dasch-swiss/dsp-js';
 import { Observable, Subscription } from 'rxjs';
@@ -39,7 +39,8 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
 
   constructor(
     @Inject(FormBuilder) protected _fb: FormBuilder,
-    private _geonameService: GeonameService
+    private _geonameService: GeonameService,
+    private _cd: ChangeDetectorRef
   ) {
     super();
   }
@@ -93,6 +94,9 @@ export class GeonameValueComponent extends BaseValueDirective implements OnInit,
             },
             () => {
               this.places = [];
+            },
+            () => {
+              this._cd.markForCheck();
             }
           );
         } else {
