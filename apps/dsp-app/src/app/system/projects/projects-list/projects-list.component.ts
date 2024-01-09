@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Constants, ReadProject, ReadUser, StoredProject, UpdateProjectRequest } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
@@ -9,8 +8,8 @@ import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-st
 import { Select } from '@ngxs/store';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
-import { ConfirmDialogComponent } from '../../../main/action/confirm-dialog/confirm-dialog.component';
 import { SortProp } from '../../../main/action/sort-button/sort-button.component';
+import { DialogService } from '../../../main/services/dialog.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,7 +75,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   constructor(
     private _projectApiService: ProjectApiService,
-    private _dialog: MatDialog,
+    private _dialog: DialogService,
     private _router: Router,
     private _sortingService: SortingService
   ) {}
@@ -141,21 +140,15 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   askToDeactivateProject(name: string, id: string) {
-    this._dialog
-      .open(ConfirmDialogComponent, { data: { message: `Do you want to deactivate project ${name}?` } })
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) this.deactivateProject(id);
-      });
+    this._dialog.afterConfirmation(`Do you want to deactivate project ${name}?`).subscribe(() => {
+      this.deactivateProject(id);
+    });
   }
 
   askToActivateProject(name: string, id: string) {
-    this._dialog
-      .open(ConfirmDialogComponent, { data: { message: `Do you want to reactivate project ${name}?` } })
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) this.activateProject(id);
-      });
+    this._dialog.afterConfirmation(`Do you want to reactivate project ${name}?`).subscribe(() => {
+      this.activateProject(id);
+    });
   }
 
   sortList(key: any) {

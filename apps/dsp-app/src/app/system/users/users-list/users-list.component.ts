@@ -28,6 +28,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { ConfirmDialogComponent } from '../../../main/action/confirm-dialog/confirm-dialog.component';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
+import { DialogService } from '../../../main/services/dialog.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -122,7 +123,8 @@ export class UsersListComponent implements OnInit {
 
   constructor(
     private _userApiService: UserApiService,
-    private _dialog: MatDialog,
+    private _matDialog: MatDialog,
+    private _dialog: DialogService,
     private _errorHandler: AppErrorHandler,
     private _route: ActivatedRoute,
     private _router: Router,
@@ -325,31 +327,22 @@ export class UsersListComponent implements OnInit {
   }
 
   askToActivateUser(username: string, id: string) {
-    this._dialog
-      .open(ConfirmDialogComponent, { data: { message: `Do you want to reactivate user ${username}?` } })
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) this.activateUser(id);
-      });
+    this._dialog.afterConfirmation(`Do you want to reactivate user ${username}?`).subscribe(() => {
+      this.activateUser(id);
+    });
   }
 
   askToDeleteUser(username: string, id: string) {
-    this._dialog
-      .open(ConfirmDialogComponent, { data: { message: `Do you want to suspend user ${username}?` } })
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) this.deleteUser(id);
-      });
+    this._dialog.afterConfirmation(`Do you want to suspend user ${username}?`).subscribe(() => {
+      this.deleteUser(id);
+    });
   }
 
   askToRemoveFromProject(user: ReadUser) {
     this._dialog
-      .open(ConfirmDialogComponent, { data: { message: 'Do you want to remove this user from the project?' } })
-      .afterClosed()
+      .afterConfirmation('Do you want to remove this user from the project?')
       .pipe(
-        switchMap(response => {
-          if (!response) return;
-
+        switchMap(() => {
           this._store.dispatch(new RemoveUserFromProjectAction(user.id, this.project.id));
           return this._actions$.pipe(ofActionSuccessful(LoadProjectMembersAction));
         })
@@ -374,7 +367,7 @@ export class UsersListComponent implements OnInit {
       data: { user, mode },
     };
 
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+    const dialogRef = this._matDialog.open(DialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(response => {
       if (response === true) {

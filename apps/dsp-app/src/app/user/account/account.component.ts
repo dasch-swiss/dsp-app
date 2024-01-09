@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
@@ -8,7 +7,7 @@ import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ConfirmDialogComponent } from '../../main/action/confirm-dialog/confirm-dialog.component';
+import { DialogService } from '../../main/services/dialog.service';
 import { apiConnectionTokenProvider } from '../../providers/api-connection-token.provider';
 
 @Component({
@@ -30,7 +29,7 @@ export class AccountComponent implements OnInit {
 
   constructor(
     private _userApiService: UserApiService,
-    private _dialog: MatDialog,
+    private _dialog: DialogService,
     private _titleService: Title,
     private _store: Store,
     private _authService: AuthService
@@ -47,21 +46,15 @@ export class AccountComponent implements OnInit {
   }
 
   askToActivateUser(username: string, id: string) {
-    this._dialog
-      .open(ConfirmDialogComponent, { data: { message: `Do you want to reactivate user ${username}?` } })
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) this.activateUser(id);
-      });
+    this._dialog.afterConfirmation(`Do you want to reactivate user ${username}?`).subscribe(() => {
+      this.activateUser(id);
+    });
   }
 
   askToDeleteUser(username: string, id: string) {
-    this._dialog
-      .open(ConfirmDialogComponent, { data: { message: `Do you want to suspend user ${username}?` } })
-      .afterClosed()
-      .subscribe(response => {
-        if (response === true) this.deleteUser(id);
-      });
+    this._dialog.afterConfirmation(`Do you want to suspend user ${username}?`).subscribe(() => {
+      this.deleteUser(id);
+    });
   }
 
   deleteUser(id: string) {

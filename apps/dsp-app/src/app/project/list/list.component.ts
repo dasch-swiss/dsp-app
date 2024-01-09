@@ -13,9 +13,9 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
-import { ConfirmDialogComponent } from '../../main/action/confirm-dialog/confirm-dialog.component';
+import { DialogService } from '../../main/services/dialog.service';
 import { ProjectBase } from '../project-base';
 import { EditListInfoDialogComponent } from './reusable-list-info-form/edit-list-info-dialog.component';
 
@@ -59,7 +59,8 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
 
   constructor(
     private _acs: AppConfigService,
-    private _dialog: MatDialog,
+    private _dialog: DialogService,
+    private _matDialog: MatDialog,
     protected _route: ActivatedRoute,
     protected _router: Router,
     protected _titleService: Title,
@@ -105,7 +106,7 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
    *
    */
   editList(list: ListNodeInfo) {
-    this._dialog.open(EditListInfoDialogComponent, {
+    this._matDialog.open(EditListInfoDialogComponent, {
       width: '100%',
       minWidth: 500,
       data: {
@@ -116,25 +117,17 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
   }
 
   openDialog(list: ListNodeInfo): void {
-    this._dialog
-      .open(ConfirmDialogComponent, {
-        data: {
-          message: 'Do you want to delete this controlled vocabulary?',
-        },
-      })
-      .afterClosed()
-      .subscribe(response => {
-        if (!response) return;
-        this._store.dispatch(new DeleteListNodeAction(this.listIri));
-        this.listIri = undefined;
-        this._actions$
-          .pipe(ofActionSuccessful(DeleteListNodeAction))
-          .pipe(take(1))
-          .subscribe(() => {
-            this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
-            this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
-          });
-      });
+    this._dialog.afterConfirmation('Do you want to delete this controlled vocabulary?').subscribe(() => {
+      this._store.dispatch(new DeleteListNodeAction(this.listIri));
+      this.listIri = undefined;
+      this._actions$
+        .pipe(ofActionSuccessful(DeleteListNodeAction))
+        .pipe(take(1))
+        .subscribe(() => {
+          this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
+          this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
+        });
+    });
   }
 
   private _setPageTitle() {

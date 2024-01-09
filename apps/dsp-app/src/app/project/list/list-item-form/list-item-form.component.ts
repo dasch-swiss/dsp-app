@@ -4,7 +4,6 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Inject,
   Input,
   OnInit,
   Output,
@@ -14,17 +13,15 @@ import {
   ApiResponseError,
   ChildNodeInfo,
   CreateChildNodeRequest,
-  KnoraApiConnection,
   ListInfoResponse,
   ListNode,
   StringLiteral,
 } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { filter, switchMap } from 'rxjs/operators';
-import { ConfirmDialogComponent } from '../../../main/action/confirm-dialog/confirm-dialog.component';
+import { switchMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
+import { DialogService } from '../../../main/services/dialog.service';
 
 export class ListNodeOperation {
   operation: 'create' | 'insert' | 'update' | 'delete' | 'reposition';
@@ -113,7 +110,8 @@ export class ListItemFormComponent implements OnInit {
   constructor(
     private _listApiService: ListApiService,
     private _errorHandler: AppErrorHandler,
-    private _dialog: MatDialog,
+    private _dialog: DialogService,
+    private _matDialog: MatDialog,
     private _cd: ChangeDetectorRef
   ) {}
 
@@ -224,17 +222,8 @@ export class ListItemFormComponent implements OnInit {
 
   askToDeleteListNode(name: string, iri: string) {
     this._dialog
-      .open(ConfirmDialogComponent, {
-        data: {
-          title: name,
-          message: 'Do you want to delete this node?',
-        },
-      })
-      .afterClosed()
-      .pipe(
-        filter(response => typeof response === 'boolean' && response === true),
-        switchMap(() => this._listApiService.deleteListNode(iri))
-      )
+      .afterConfirmation('Do you want to delete this node?', name)
+      .pipe(switchMap(() => this._listApiService.deleteListNode(iri)))
       .subscribe(response => {
         const listNodeOperation = new ListNodeOperation();
 
@@ -271,7 +260,7 @@ export class ListItemFormComponent implements OnInit {
     };
 
     // open the dialog box
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
+    const dialogRef = this._matDialog.open(DialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe((data: ChildNodeInfo | boolean) => {
       // init data to emit to parent
