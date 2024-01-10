@@ -1,6 +1,5 @@
 import { InjectionToken } from '@angular/core';
 import { KnoraApiConfig, KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { EntityDefinition } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/EntityDefinition';
 import { DspAppConfig } from './dsp-app-config';
 import { DspInstrumentationConfig } from './dsp-instrumentation-config';
 
@@ -24,10 +23,3 @@ export const DspAppConfigToken = new InjectionToken<DspAppConfig>('DSP app speci
 export const DspInstrumentationToken = new InjectionToken<DspInstrumentationConfig>(
   'DSP instrumentation configuration'
 );
-
-// TODO make this method accessible from api. All object methods is lost when it is stored to the state
-export const getAllEntityDefinitionsAsArray = <T extends EntityDefinition>(entityDefs: { [index: string]: T }): T[] => {
-  const entityIndexes = Object.keys(entityDefs);
-
-  return entityIndexes.map((entityIndex: string) => entityDefs[entityIndex]);
-};
