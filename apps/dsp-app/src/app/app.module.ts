@@ -81,9 +81,13 @@ import { CreateProjectFormPageComponent } from './project/create-project-form-pa
 import { DataModelsComponent } from './project/data-models/data-models.component';
 import { DescriptionComponent } from './project/description/description.component';
 import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
+import { ActionBubbleComponent } from './project/list/action-bubble/action-bubble.component';
 import { ListItemComponent } from './project/list/list-item/list-item.component';
-import { EditListItemComponent } from './project/list/list-item-form/edit-list-item/edit-list-item.component';
+import { ListItemElementComponent } from './project/list/list-item-element/list-item-element.component';
+import { CreateListItemDialogComponent } from './project/list/list-item-form/edit-list-item/create-list-item-dialog.component';
+import { EditListItemDialogComponent } from './project/list/list-item-form/edit-list-item/edit-list-item-dialog.component';
 import { ListItemFormComponent } from './project/list/list-item-form/list-item-form.component';
+import { ReusableListItemFormComponent } from './project/list/list-item-form/reusable-list-item-form.component';
 import { ListComponent } from './project/list/list.component';
 import { CreateListInfoPageComponent } from './project/list/reusable-list-info-form/create-list-info-page.component';
 import { EditListInfoDialogComponent } from './project/list/reusable-list-info-form/edit-list-info-dialog.component';
@@ -183,6 +187,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
 @NgModule({
   declarations: [
     AccountComponent,
+    ActionBubbleComponent,
     AddRegionFormComponent,
     AddUserComponent,
     AddValueComponent,
@@ -218,7 +223,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     DisplayEditComponent,
     DocumentComponent,
     DragDropDirective,
-    EditListItemComponent,
     EditResourceClassDialogComponent,
     ExpertSearchComponent,
     FooterComponent,
@@ -240,9 +244,12 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     LinkValueComponent,
     ListComponent,
     EditListInfoDialogComponent,
+    EditListItemDialogComponent,
     CreateListInfoPageComponent,
     ReusableListInfoFormComponent,
+    ReusableListItemFormComponent,
     ListItemComponent,
+    ListItemElementComponent,
     ListItemFormComponent,
     ListValueComponent,
     ListViewComponent,
@@ -316,6 +323,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     CommentFormComponent,
     DataModelsComponent,
     IsFalsyPipe,
+    CreateListItemDialogComponent,
   ],
   imports: [
     AngularSplitModule,

@@ -8,7 +8,7 @@ import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 
 @Component({
-  selector: 'app-create-info-form-page',
+  selector: 'app-create-list-info-page',
   template: `
     <dasch-swiss-centered-layout>
       <app-reusable-list-info-form
@@ -18,10 +18,7 @@ import { Store } from '@ngxs/store';
         }"
         (formValueChange)="form = $event"></app-reusable-list-info-form>
 
-      <div style="display: flex; justify-content: space-between">
-        <button color="primary" mat-button type="reset" [routerLink]="['..']">
-          {{ 'appLabels.form.action.cancel' | translate }}
-        </button>
+      <div style="display: flex; justify-content: flex-end">
         <button
           mat-raised-button
           type="submit"

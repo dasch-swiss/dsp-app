@@ -64,7 +64,7 @@ export class ListApiService extends BaseApi {
   }
 
   getNodeInfo(iri: string) {
-    return this._http.get<ListNodeInfoResponse>(`${this._listRoute(iri)}/info`);
+    return this._http.get<ListInfoResponse | ListNodeInfoResponse>(`${this._listRoute(iri)}/info`);
   }
 
   updateInfo(iri: string, updatedList: UpdateListInfoRequest) {

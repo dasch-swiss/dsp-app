@@ -15,9 +15,13 @@ import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
+import { DIALOG_LARGE } from '../../main/services/dialog-sizes.constant';
 import { DialogService } from '../../main/services/dialog.service';
 import { ProjectBase } from '../project-base';
-import { EditListInfoDialogComponent } from './reusable-list-info-form/edit-list-info-dialog.component';
+import {
+  EditListInfoDialogComponent,
+  EditListInfoDialogProps,
+} from './reusable-list-info-form/edit-list-info-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -105,10 +109,9 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
    * edit list data, remove list from project etc.
    *
    */
-  editList(list: ListNodeInfo) {
-    this._matDialog.open(EditListInfoDialogComponent, {
-      width: '100%',
-      minWidth: 500,
+  askToEditList(list: ListNodeInfo) {
+    this._matDialog.open<EditListInfoDialogComponent, EditListInfoDialogProps, boolean>(EditListInfoDialogComponent, {
+      ...DIALOG_LARGE,
       data: {
         projectIri: this._projectService.uuidToIri(this.projectUuid),
         list,
@@ -116,18 +119,20 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
     });
   }
 
-  openDialog(list: ListNodeInfo): void {
-    this._dialog.afterConfirmation('Do you want to delete this controlled vocabulary?').subscribe(() => {
-      this._store.dispatch(new DeleteListNodeAction(this.listIri));
-      this.listIri = undefined;
-      this._actions$
-        .pipe(ofActionSuccessful(DeleteListNodeAction))
-        .pipe(take(1))
-        .subscribe(() => {
-          this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
-          this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
-        });
-    });
+  askToDeleteList(list: ListNodeInfo): void {
+    this._dialog
+      .afterConfirmation('Do you want to delete this controlled vocabulary?', list.labels[0].value)
+      .subscribe(() => {
+        this._store.dispatch(new DeleteListNodeAction(this.listIri));
+        this.listIri = undefined;
+        this._actions$
+          .pipe(ofActionSuccessful(DeleteListNodeAction))
+          .pipe(take(1))
+          .subscribe(() => {
+            this._store.dispatch(new LoadListsInProjectAction(this.projectIri));
+            this._router.navigate([RouteConstants.project, this.projectUuid, RouteConstants.dataModels]);
+          });
+      });
   }
 
   private _setPageTitle() {

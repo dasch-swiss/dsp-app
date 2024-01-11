@@ -3,6 +3,10 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 
+/** Component Provider used in combination with
+ * MultiLanguageInputComponent and MultiLanguageTextareaComponent.
+ * Those two components have the same business logic (here), but differ in their html.
+ */
 @Injectable()
 export class MultiLanguageFormService {
   selectedLanguageIndex: number;
@@ -67,22 +71,30 @@ export class MultiLanguageFormService {
   }
 
   private _setupLanguageIndex(): number {
-    const commonEntries = (this.formArray.value as { language: string }[])
+    const responseLanguages = (this.formArray.value as { language: string }[])
       .map(v => v.language)
-      .filter((itemA: string) => this.availableLanguages.includes(itemA));
+      .filter((language: string) => this.availableLanguages.includes(language));
 
-    if (commonEntries.length === 0) {
-      this.formArray.push(this._fb.group({ language: this.availableLanguages[0], value: '' }));
+    const userFavoriteLanguage =
+      (this._store.selectSnapshot(UserSelectors.language) as string) || navigator.language.substring(0, 2);
+
+    if (responseLanguages.length === 0) {
+      // form is empty, push a new value
+      this.formArray.push(
+        this._fb.group({
+          language: this.availableLanguages.includes(userFavoriteLanguage)
+            ? userFavoriteLanguage
+            : this.availableLanguages[0],
+          value: '',
+        })
+      );
       return 0;
     }
 
-    const userLanguage =
-      (this._store.selectSnapshot(UserSelectors.language) as string) || navigator.language.substring(0, 2);
-
-    if (commonEntries.includes(userLanguage)) {
-      return this.availableLanguages.indexOf(userLanguage);
-    } else {
-      return this.availableLanguages.indexOf(commonEntries[0]);
+    if (this.availableLanguages.includes(userFavoriteLanguage)) {
+      return this.availableLanguages.indexOf(userFavoriteLanguage);
     }
+
+    return this.availableLanguages.indexOf(responseLanguages[0]);
   }
 }

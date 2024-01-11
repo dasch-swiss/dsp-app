@@ -7,22 +7,16 @@ import { startWith } from 'rxjs/operators';
 import { atLeastOneStringRequired } from '../../reusable-project-form/at-least-one-string-required.validator';
 
 @Component({
-  selector: 'app-reusable-list-info-form',
+  selector: 'app-reusable-list-item-form',
   template: `
-    <dasch-swiss-multi-language-input
-      placeholder="Controlled vocabulary label *"
-      [formGroup]="form"
-      controlName="labels">
+    <dasch-swiss-multi-language-input placeholder="Child node label *" [formGroup]="form" controlName="labels">
     </dasch-swiss-multi-language-input>
 
-    <dasch-swiss-multi-language-textarea
-      placeholder="Controlled vocabulary description *"
-      [formGroup]="form"
-      controlName="comments">
+    <dasch-swiss-multi-language-textarea placeholder="Child node description" [formGroup]="form" controlName="comments">
     </dasch-swiss-multi-language-textarea>
   `,
 })
-export class ReusableListInfoFormComponent implements OnInit, OnDestroy {
+export class ReusableListItemFormComponent implements OnInit, OnDestroy {
   @Input() formData: {
     labels: MultiLanguages;
     comments: MultiLanguages;
@@ -64,8 +58,7 @@ export class ReusableListInfoFormComponent implements OnInit, OnDestroy {
             language,
             value: [value, [Validators.maxLength(2000)]],
           })
-        ),
-        atLeastOneStringRequired('value')
+        )
       ),
     });
   }
