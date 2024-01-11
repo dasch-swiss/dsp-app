@@ -72,7 +72,7 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
       return of({} as ReadProject);
     }
 
-    return this.readProjects$.pipe(
+    return this.allProjects$.pipe(
       take(1),
       map(projects => this.getCurrentProject(projects))
     );
@@ -103,7 +103,7 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
 
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
   @Select(UserSelectors.userProjects) userProjects$: Observable<ReadUser>;
-  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
+  @Select(ProjectsSelectors.allProjects) allProjects$: Observable<ReadProject[]>;
   @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
   @Select(OntologiesSelectors.isLoading) isOntologiesLoading$: Observable<boolean>;
   @Select(OntologiesSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;

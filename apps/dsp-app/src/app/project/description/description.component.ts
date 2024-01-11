@@ -22,7 +22,7 @@ export class DescriptionComponent {
     switchMap(params => {
       this.loading = true;
       return this._store
-        .select(ProjectsSelectors.readProjects)
+        .select(ProjectsSelectors.allProjects)
         .pipe(map(projects => projects.find(x => x.id.split('/').pop() === params.get(RouteConstants.uuidParameter))));
     }),
     tap(() => {

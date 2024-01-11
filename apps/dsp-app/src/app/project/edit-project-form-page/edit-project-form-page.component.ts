@@ -6,9 +6,9 @@ import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { UpdateProjectAction } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
-import { map, switchMap } from 'rxjs/operators';
+import { LoadProjectsAction, UpdateProjectAction } from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
+import { map, switchMap, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-project-form-page',
@@ -58,7 +58,8 @@ export class EditProjectFormPageComponent {
     private route: ActivatedRoute,
     private _store: Store,
     private _router: Router,
-    private _notification: NotificationService
+    private _notification: NotificationService,
+    private _actions: Actions
   ) {}
 
   onSubmit() {
@@ -70,7 +71,8 @@ export class EditProjectFormPageComponent {
       keywords: this.form.value.keywords,
     };
 
-    this._store.dispatch(new UpdateProjectAction(projectUuid, projectData)).subscribe(() => {
+    this._store.dispatch(new UpdateProjectAction(projectUuid, projectData));
+    this._actions.pipe(ofActionSuccessful(LoadProjectsAction), take(1)).subscribe(() => {
       this._notification.openSnackBar('You have successfully updated the project information.');
       this._router.navigate([`${RouteConstants.projectRelative}/${projectUuid}`]);
     });

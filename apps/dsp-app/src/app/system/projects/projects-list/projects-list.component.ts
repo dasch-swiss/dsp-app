@@ -6,7 +6,7 @@ import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { SortProp } from '../../../main/action/sort-button/sort-button.component';
 import { DialogService } from '../../../main/services/dialog.service';
@@ -69,7 +69,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   @Select(UserSelectors.userProjectAdminGroups)
   userProjectAdminGroups$: Observable<string[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(ProjectsSelectors.readProjects) readProjects$: Observable<ReadProject[]>;
+  @Select(ProjectsSelectors.allProjects) allProjects: Observable<ReadProject[]>;
   @Select(ProjectsSelectors.isProjectsLoading)
   isProjectsLoading$: Observable<boolean>;
 

@@ -34,11 +34,6 @@ export class ProjectsSelectors {
   }
 
   @Selector([ProjectsState])
-  static readProjects(state: ProjectsStateModel): ReadProject[] {
-    return state.readProjects;
-  }
-
-  @Selector([ProjectsState])
   static projectMembers(state: ProjectsStateModel): IKeyValuePairs<ReadUser> {
     return state.projectMembers;
   }
@@ -69,7 +64,7 @@ export class ProjectsSelectors {
   @Selector([ProjectsState, RouterSelectors.params])
   static currentProject(state: ProjectsStateModel, params: Params): ReadProject | undefined {
     const uuid = params[`${RouteConstants.uuidParameter}`];
-    const project = state.readProjects.find(p => ProjectService.IriToUuid(p.id) === uuid);
+    const project = state.allProjects.find(p => ProjectService.IriToUuid(p.id) === uuid);
     return project;
   }
 

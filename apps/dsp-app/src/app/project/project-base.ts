@@ -5,8 +5,9 @@ import { ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   IKeyValuePairs,
-  LoadProjectAction,
+  LoadProjectMembershipAction,
   LoadProjectOntologiesAction,
+  LoadProjectsAction,
   OntologiesSelectors,
   ProjectsSelectors,
   UserSelectors,
@@ -83,10 +84,8 @@ export class ProjectBase implements OnInit, OnDestroy {
 
   private loadProject(): void {
     this.isProjectsLoading$
-      .pipe(
-        takeWhile(isLoading => isLoading === false && this.projectUuid !== undefined),
-        take(1)
-      )
+      .pipe(takeWhile(isLoading => isLoading === false && this.projectUuid !== undefined))
+      .pipe(take(1))
       .subscribe({
         next: () => {
           const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers)[this.projectIri];
@@ -94,14 +93,14 @@ export class ProjectBase implements OnInit, OnDestroy {
           if (!this.project || this.project.id !== this.projectIri || !projectMembers) {
             // get current project data, project members and project groups
             // and set the project state here
-            this._store.dispatch(new LoadProjectAction(this.projectUuid, true));
+            this._store.dispatch([new LoadProjectsAction(), new LoadProjectMembershipAction(this.projectUuid)]);
           } else if (!this.isOntologiesAvailable()) {
             this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
           }
         },
         complete: () => {
           this._actions$
-            .pipe(ofActionSuccessful(LoadProjectAction))
+            .pipe(ofActionSuccessful(LoadProjectsAction))
             .pipe(take(1))
             .subscribe(() => this.setProjectData());
         },

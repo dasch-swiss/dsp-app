@@ -14,7 +14,7 @@ import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Action, State, StateContext, Store } from '@ngxs/store';
+import { Action, Actions, State, StateContext, Store, ofActionSuccessful } from '@ngxs/store';
 import { produce } from 'immer';
 import { EMPTY, of } from 'rxjs';
 import { concatMap, finalize, map, take, tap } from 'rxjs/operators';
@@ -24,9 +24,11 @@ import { UserSelectors } from '../user/user.selectors';
 import {
   AddUserToProjectMembershipAction,
   ClearProjectsAction,
+  ClearProjectsMembershipAction,
   LoadProjectAction,
   LoadProjectGroupsAction,
   LoadProjectMembersAction,
+  LoadProjectMembershipAction,
   LoadProjectsAction,
   RemoveUserFromProjectAction,
   SetProjectMemberAction,
@@ -38,7 +40,6 @@ const defaults: ProjectsStateModel = {
   isLoading: false,
   hasLoadingErrors: false,
   allProjects: [],
-  readProjects: [],
   projectMembers: {},
   projectGroups: {},
 };
@@ -55,7 +56,8 @@ export class ProjectsState {
     private store: Store,
     private errorHandler: AppErrorHandler,
     private projectService: ProjectService,
-    private projectApiService: ProjectApiService
+    private projectApiService: ProjectApiService,
+    private actions: Actions
   ) {}
 
   @Action(LoadProjectsAction, { cancelUncompleted: true })
@@ -82,7 +84,7 @@ export class ProjectsState {
   }
 
   @Action(LoadProjectAction, { cancelUncompleted: true })
-  loadProjectAction(ctx: StateContext<ProjectsStateModel>, { projectUuid }: LoadProjectAction) {
+  loadProjectAction(ctx: StateContext<ProjectsStateModel>, { projectUuid, loadMembership }: LoadProjectAction) {
     ctx.patchState({ isLoading: true });
 
     const projectIri = this.projectService.uuidToIri(projectUuid);
@@ -99,16 +101,16 @@ export class ProjectsState {
           const project = response.body.project;
 
           let state = ctx.getState();
-          if (!state.readProjects) {
-            state.readProjects = [];
+          if (!state.allProjects) {
+            state.allProjects = [];
           }
 
           state = produce(state, draft => {
-            const index = draft.readProjects.findIndex(p => p.id === project.id);
+            const index = draft.allProjects.findIndex(p => p.id === project.id);
             if (index > -1) {
-              draft.readProjects[index] = project;
+              draft.allProjects[index] = project;
             } else {
-              draft.readProjects.push(project);
+              draft.allProjects.push(project);
             }
             draft.isLoading = false;
           });
@@ -122,12 +124,7 @@ export class ProjectsState {
         },
       }),
       concatMap(() => {
-        const user = this.store.selectSnapshot(UserSelectors.user) as ReadUser;
-        const userProjectAdminGroups = this.store.selectSnapshot(UserSelectors.userProjectAdminGroups);
-        const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectAdminGroups, projectIri);
-        return isProjectAdmin
-          ? ctx.dispatch([new LoadProjectMembersAction(projectUuid), new LoadProjectGroupsAction(projectUuid)])
-          : EMPTY;
+        return loadMembership ? ctx.dispatch(new LoadProjectMembershipAction(projectUuid)) : EMPTY;
       }),
       finalize(() => {
         ctx.patchState({ isLoading: false });
@@ -135,12 +132,33 @@ export class ProjectsState {
     );
   }
 
+  @Action(LoadProjectMembershipAction, { cancelUncompleted: true })
+  loadProjectMembershipAction(ctx: StateContext<ProjectsStateModel>, { projectUuid }: LoadProjectAction) {
+    const projectIri = this.projectService.uuidToIri(projectUuid);
+    const user = this.store.selectSnapshot(UserSelectors.user) as ReadUser;
+    const userProjectAdminGroups = this.store.selectSnapshot(UserSelectors.userProjectAdminGroups);
+    const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectAdminGroups, projectIri);
+    if (isProjectAdmin) {
+      ctx.patchState({ isLoading: true });
+      ctx.dispatch([new LoadProjectMembersAction(projectUuid), new LoadProjectGroupsAction(projectUuid)]);
+      this.actions.pipe(take(1), ofActionSuccessful(LoadProjectGroupsAction)).subscribe(() => {
+        ctx.patchState({ isLoading: false });
+      });
+    }
+  }
+
   @Action(ClearProjectsAction)
   clearProjects(ctx: StateContext<ProjectsStateModel>) {
+    ctx.patchState(defaults);
+  }
+
+  @Action(ClearProjectsMembershipAction)
+  clearProjectsMembership(ctx: StateContext<ProjectsStateModel>) {
     return of(ctx.getState()).pipe(
       map(currentState => {
-        defaults.allProjects = currentState.allProjects as any;
-        ctx.patchState(defaults);
+        currentState.projectMembers = defaults.projectMembers;
+        currentState.projectGroups = defaults.projectGroups;
+        ctx.patchState(currentState);
         return currentState;
       })
     );

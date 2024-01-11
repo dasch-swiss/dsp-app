@@ -8,12 +8,20 @@ export class LoadProjectAction {
   static readonly type = '[Projects] Load Project';
   constructor(
     public projectUuid: string,
-    public isCurrentProject = false
+    public loadMembership = true
   ) {}
+}
+
+export class LoadProjectMembershipAction {
+  static readonly type = '[Projects] Load Project Membership';
+  constructor(public projectUuid: string) {}
 }
 
 export class ClearProjectsAction {
   static readonly type = '[Projects] Clear projects';
+}
+export class ClearProjectsMembershipAction {
+  static readonly type = '[Projects] Clear projects membership';
 }
 
 export class RemoveUserFromProjectAction {
