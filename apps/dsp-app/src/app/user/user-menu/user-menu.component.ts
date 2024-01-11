@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { Router } from '@angular/router';
 import { User } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
@@ -22,13 +23,19 @@ export class UserMenuComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  isLoggedIn$: Observable<boolean> = this._authService.isLoggedIn$;
+  get isLoggedIn$(): Observable<boolean> {
+    return this._authService.isSessionValid$();
+  }
+
   @Select(UserSelectors.user) user$: Observable<User>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<User>;
 
   systemLink = RouteConstants.system;
 
-  constructor(private _authService: AuthService) {}
+  constructor(
+    private _authService: AuthService,
+    private _router: Router
+  ) {}
 
   ngOnInit() {
     this.navigation = [

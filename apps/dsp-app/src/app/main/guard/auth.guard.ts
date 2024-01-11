@@ -2,9 +2,10 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 import { ReadUser } from '@dasch-swiss/dsp-js';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
-import { CurrentPageSelectors, SetUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionCompleted, Select, Store } from '@ngxs/store';
+import { SetUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Select, Store, ofActionCompleted } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -32,7 +33,7 @@ export class AuthGuard implements CanActivate {
           return this.store.dispatch(new SetUserAction(user));
         }
       }),
-      switchMap(() => this._authService.isLoggedIn$),
+      switchMap(() => this._authService.isSessionValid$(true)),
       map(isLoggedIn => {
         if (isLoggedIn) {
           return true;
@@ -45,8 +46,6 @@ export class AuthGuard implements CanActivate {
   }
 
   private _goToHomePage() {
-    this.document.defaultView.location.href =
-      `${this.document.defaultView.location.href}?` +
-      `returnLink=${this.store.selectSnapshot(CurrentPageSelectors.loginReturnLink)}`;
+    this.document.defaultView.location.href = `${RouteConstants.home}?returnLink=${this.document.defaultView.location.href}`;
   }
 }

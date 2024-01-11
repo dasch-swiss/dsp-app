@@ -13,8 +13,6 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class OntologyClassInstanceGuard implements CanActivate {
-  isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
-
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
   @Select(UserSelectors.userProjects) userProjects$: Observable<StoredProject[]>;
 
@@ -26,12 +24,12 @@ export class OntologyClassInstanceGuard implements CanActivate {
 
   canActivate(activatedRoute: ActivatedRouteSnapshot): Observable<boolean> {
     const instanceId = activatedRoute.params[RouteConstants.instanceParameter];
-    return combineLatest([this.isLoggedIn$, this.isSysAdmin$, this.userProjects$]).pipe(
-      map(([isLoggedIn, isSysAdmin, userProjects]) => {
+    return combineLatest([this.authService.isSessionValid$(), this.isSysAdmin$, this.userProjects$]).pipe(
+      map(([isSessionValid, isSysAdmin, userProjects]) => {
         const projectUuid = activatedRoute.parent.params[RouteConstants.uuidParameter];
         const isAddInstance = instanceId === RouteConstants.addClassInstance;
 
-        if (!isLoggedIn && isAddInstance) {
+        if (!isSessionValid && isAddInstance) {
           this.router.navigateByUrl(`/${RouteConstants.project}/${projectUuid}`);
           return false;
         }

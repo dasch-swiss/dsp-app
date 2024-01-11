@@ -12,13 +12,16 @@ export class PendoAnalyticsService {
   private environment: string = this.config.environment;
 
   constructor() {
-    this.authService.isLoggedIn$.pipe(takeUntilDestroyed()).subscribe((isLoggedIn: boolean) => {
-      if (isLoggedIn) {
-        this.setActiveUser(this.authService.tokenUser);
-      } else {
-        this.removeActiveUser();
-      }
-    });
+    this.authService
+      .isSessionValid$()
+      .pipe(takeUntilDestroyed())
+      .subscribe((isSessionValid: boolean) => {
+        if (isSessionValid) {
+          this.setActiveUser(this.authService.tokenUser);
+        } else {
+          this.removeActiveUser();
+        }
+      });
   }
 
   /**

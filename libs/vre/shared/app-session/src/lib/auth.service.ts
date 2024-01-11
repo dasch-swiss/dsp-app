@@ -1,29 +1,23 @@
 import { EventEmitter, Injectable, Output, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiResponseData, ApiResponseError, CredentialsResponse, LoginResponse, User } from '@dasch-swiss/dsp-js';
-import { Auth, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { Auth, DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import {
-  LoadUserAction,
-  ClearProjectsAction,
-  LogUserOutAction,
-  UserStateModel,
   ClearListsAction,
   ClearOntologiesAction,
+  ClearProjectsAction,
+  LogUserOutAction,
 } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, tap, switchMap, map, takeLast, take } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, take, takeLast, tap } from 'rxjs/operators';
 import { LoginError, ServerError } from './error';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenRefreshIntervalId: any;
-  private _isLoggedIn$ = new BehaviorSubject<boolean>(this.isLoggedIn());
   private _dspApiConnection = inject(DspApiConnectionToken);
-
-  isLoggedIn$ = this._isLoggedIn$.asObservable();
 
   get tokenUser() {
     return this.getTokenUser();
@@ -36,7 +30,7 @@ export class AuthService {
     private router: Router // private intervalWrapper: IntervalWrapperService
   ) {
     // check if the (possibly) existing session is still valid and if not, destroy it
-    this.isSessionValid()
+    this.isSessionValid$()
       .pipe(takeLast(1))
       .subscribe(valid => {
         if (!valid) {
@@ -54,7 +48,7 @@ export class AuthService {
    * If a json web token exists, it doesn't mean that the knora api credentials are still valid.
    *
    */
-  isSessionValid(): Observable<boolean> {
+  isSessionValid$(forceLogout: boolean = false): Observable<boolean> {
     // mix of checks with session.validation and this.authenticate
     const accessToken = this.getAccessToken();
     if (accessToken) {
@@ -83,7 +77,10 @@ export class AuthService {
     } else {
       // no session found; update knora api connection with empty jwt
       this._dspApiConnection.v2.jsonWebToken = '';
-      this.doLogoutUser();
+      if (forceLogout) {
+        this.doLogoutUser();
+      }
+
       return of(false);
     }
   }
@@ -104,14 +101,6 @@ export class AuthService {
       this.doLogoutUser();
       return false;
     }
-  }
-
-  loadUser(username: string): Observable<UserStateModel> {
-    return this.store.dispatch(new LoadUserAction(username)).pipe(
-      tap(() => {
-        this._isLoggedIn$.next(true);
-      })
-    );
   }
 
   /**
@@ -186,7 +175,6 @@ export class AuthService {
   }
 
   doLogoutUser() {
-    this._isLoggedIn$.next(false);
     this.removeTokens();
     this.store.dispatch([
       new LogUserOutAction(),
@@ -195,6 +183,7 @@ export class AuthService {
       new ClearOntologiesAction(),
     ]);
     clearTimeout(this.tokenRefreshIntervalId);
+    this.router.navigate([RouteConstants.home], { replaceUrl: true });
   }
 
   isLoggedIn() {

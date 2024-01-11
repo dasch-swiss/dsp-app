@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   BuildTag,
   BuildTagToken,
@@ -47,16 +48,19 @@ export class DatadogRumService {
         });
 
         // depending on the session state, activate or deactivate the user
-        this.authService.isLoggedIn$.subscribe((isLoggedIn: boolean) => {
-          if (isLoggedIn) {
-            if (this.authService.tokenUser) {
-              const id: string = uuidv5(this.authService.tokenUser, uuidv5.URL);
-              this.setActiveUser(id);
-            } else {
-              this.removeActiveUser();
+        this.authService
+          .isSessionValid$()
+          .pipe(takeUntilDestroyed())
+          .subscribe((isSessionValid: boolean) => {
+            if (isSessionValid) {
+              if (this.authService.tokenUser) {
+                const id: string = uuidv5(this.authService.tokenUser, uuidv5.URL);
+                this.setActiveUser(id);
+              } else {
+                this.removeActiveUser();
+              }
             }
-          }
-        });
+          });
       }
     });
   }

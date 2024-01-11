@@ -1,7 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ApiResponseError, Constants, ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { Action, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
@@ -83,6 +82,8 @@ export class UserState {
 
   @Action(SetUserAction)
   setUser(ctx: StateContext<UserStateModel>, { user }: SetUserAction) {
+    if (!user) return;
+
     const state = ctx.getState();
     const userIndex = state.allUsers.findIndex(u => u.id === user.id);
     if (userIndex > -1) {
