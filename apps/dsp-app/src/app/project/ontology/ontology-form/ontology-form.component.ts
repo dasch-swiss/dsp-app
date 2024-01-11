@@ -26,7 +26,7 @@ import {
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { existingNamesValidator } from '../../../main/directive/existing-name/existing-name.directive';
+import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 
 export interface NewOntology {

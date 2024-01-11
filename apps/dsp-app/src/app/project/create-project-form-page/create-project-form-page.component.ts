@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
-import { finalize, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-project-form-page',
@@ -21,6 +20,7 @@ import { finalize, tap } from 'rxjs/operators';
         <button color="primary" mat-button type="reset" [routerLink]="['..']">
           {{ 'appLabels.form.action.cancel' | translate }}
         </button>
+
         <button
           mat-raised-button
           type="submit"
@@ -54,11 +54,8 @@ export class CreateProjectFormPageComponent {
         selfjoin: true,
         status: true,
       })
-      .pipe(
-        tap(() => {
-          this.loading = false;
-        })
-      )
-      .subscribe();
+      .subscribe(() => {
+        this.loading = false;
+      });
   }
 }

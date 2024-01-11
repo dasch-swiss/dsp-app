@@ -3,10 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
-import { existingNamesValidator } from '../../main/directive/existing-name/existing-name.directive';
 import { arrayLengthGreaterThanZeroValidator } from './array-length-greater-than-zero-validator';
 import { atLeastOneStringRequired } from './at-least-one-string-required.validator';
-import PROJECT_FORM_CONSTANTS from './reusable-project-form.constants';
 
 @Component({
   selector: 'app-reusable-project-form',
@@ -55,6 +53,7 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
     keywords: string[];
   };
   @Output() formValueChange = new EventEmitter<FormGroup>();
+
   form: FormGroup;
   shortcodePatternError = { errorKey: 'pattern', message: 'This field must contains letters from A to F and 0 to 9' };
   subscription: Subscription;
@@ -64,7 +63,7 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._buildForm();
 
-    this.subscription = this.form.valueChanges.pipe(startWith(null)).subscribe(z => {
+    this.subscription = this.form.valueChanges.pipe(startWith(<FormGroup>null)).subscribe(() => {
       this.formValueChange.emit(this.form);
     });
   }
@@ -73,23 +72,11 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
     this.form = this._fb.group({
       shortcode: [
         { value: this.formData.shortcode, disabled: this.formData.shortcode !== '' },
-        [
-          Validators.required,
-          Validators.minLength(PROJECT_FORM_CONSTANTS.shortcodeMinLength),
-          Validators.maxLength(PROJECT_FORM_CONSTANTS.shortcodeMaxLength),
-          existingNamesValidator(PROJECT_FORM_CONSTANTS.existingShortcodes),
-          Validators.pattern(PROJECT_FORM_CONSTANTS.shortcodeRegex),
-        ],
+        [Validators.required, Validators.minLength(4), Validators.maxLength(4), Validators.pattern(/^[0-9A-Fa-f]+$/)],
       ],
       shortname: [
         { value: this.formData.shortname, disabled: this.formData.shortname !== '' },
-        [
-          Validators.required,
-          Validators.minLength(PROJECT_FORM_CONSTANTS.shortnameMinLength),
-          Validators.maxLength(PROJECT_FORM_CONSTANTS.shortnameMaxLength),
-          existingNamesValidator(PROJECT_FORM_CONSTANTS.existingShortNames),
-          Validators.pattern(PROJECT_FORM_CONSTANTS.shortnameRegex),
-        ],
+        [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+\S*$/)],
       ],
       longname: [this.formData.longname, [Validators.required]],
       description: this._fb.array(

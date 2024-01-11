@@ -26,7 +26,7 @@ import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
-import { existingNamesValidator } from '../../../main/directive/existing-name/existing-name.directive';
+import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { AutocompleteItem } from '../../../workspace/search/operator';
 
 @Component({

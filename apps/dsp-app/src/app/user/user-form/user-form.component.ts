@@ -27,7 +27,7 @@ import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
-import { existingNamesValidator } from '../../main/directive/existing-name/existing-name.directive';
+import { existingNamesValidator } from '../../main/directive/existing-name/existing-names.validator';
 import { CustomRegex } from '../../workspace/resource/values/custom-regex';
 
 @Component({

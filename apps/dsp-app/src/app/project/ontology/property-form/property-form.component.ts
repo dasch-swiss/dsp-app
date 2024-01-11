@@ -44,7 +44,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogEvent } from '../../../main/dialog/dialog.component';
-import { existingNamesValidator } from '../../../main/directive/existing-name/existing-name.directive';
+import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 import { AutocompleteItem } from '../../../workspace/search/operator';
 import { GuiCardinality } from '../resource-class-info/resource-class-property-info/resource-class-property-info.component';
