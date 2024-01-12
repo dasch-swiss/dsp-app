@@ -21,7 +21,7 @@ import {
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { of, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, of } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
@@ -141,9 +141,8 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.componentCommsSubscriptions.push(
-      this._componentCommsService.on(Events.resourceDeleted, () => {
-        this._doSearch();
-      })
+      this._componentCommsService.on(Events.resourceChanged, () => this._doSearch()),
+      this._componentCommsService.on(Events.resourceDeleted, () => this._doSearch())
     );
   }
 

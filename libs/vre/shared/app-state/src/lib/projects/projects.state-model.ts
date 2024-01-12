@@ -3,6 +3,7 @@ import { IKeyValuePairs } from '../model-interfaces';
 
 export class ProjectsStateModel {
   isLoading = false;
+  isMembershipLoading = false;
   hasLoadingErrors = false;
   allProjects: ReadProject[] = [];
   projectMembers: IKeyValuePairs<ReadUser> = {};

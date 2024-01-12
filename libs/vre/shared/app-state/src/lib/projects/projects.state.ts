@@ -38,6 +38,7 @@ import { ProjectsStateModel } from './projects.state-model';
 
 const defaults: ProjectsStateModel = {
   isLoading: false,
+  isMembershipLoading: false,
   hasLoadingErrors: false,
   allProjects: [],
   projectMembers: {},
@@ -139,10 +140,10 @@ export class ProjectsState {
     const userProjectAdminGroups = this.store.selectSnapshot(UserSelectors.userProjectAdminGroups);
     const isProjectAdmin = ProjectService.IsProjectAdminOrSysAdmin(user, userProjectAdminGroups, projectIri);
     if (isProjectAdmin) {
-      ctx.patchState({ isLoading: true });
+      ctx.patchState({ isMembershipLoading: true });
       ctx.dispatch([new LoadProjectMembersAction(projectUuid), new LoadProjectGroupsAction(projectUuid)]);
       this.actions.pipe(take(1), ofActionSuccessful(LoadProjectGroupsAction)).subscribe(() => {
-        ctx.patchState({ isLoading: false });
+        ctx.patchState({ isMembershipLoading: false });
       });
     }
   }
@@ -166,14 +167,14 @@ export class ProjectsState {
 
   @Action(RemoveUserFromProjectAction)
   removeUserFromProject(ctx: StateContext<ProjectsStateModel>, { userId, projectIri }: RemoveUserFromProjectAction) {
-    ctx.patchState({ isLoading: true });
+    ctx.patchState({ isMembershipLoading: true });
     return this._dspApiConnection.admin.usersEndpoint.removeUserFromProjectMembership(userId, projectIri).pipe(
       take(1),
       map((response: ApiResponseData<UserResponse> | ApiResponseError) => response as ApiResponseData<UserResponse>),
       tap({
         next: (response: ApiResponseData<UserResponse>) => {
           ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
-          ctx.patchState({ isLoading: false });
+          ctx.patchState({ isMembershipLoading: false });
         },
         error: error => {
           this.errorHandler.showMessage(error);
@@ -187,14 +188,14 @@ export class ProjectsState {
     ctx: StateContext<ProjectsStateModel>,
     { userId, projectIri }: AddUserToProjectMembershipAction
   ) {
-    ctx.patchState({ isLoading: true, hasLoadingErrors: false });
+    ctx.patchState({ isMembershipLoading: true, hasLoadingErrors: false });
     return this._dspApiConnection.admin.usersEndpoint.addUserToProjectMembership(userId, projectIri).pipe(
       take(1),
       map((response: ApiResponseData<UserResponse> | ApiResponseError) => response as ApiResponseData<UserResponse>),
       tap({
         next: (response: ApiResponseData<UserResponse>) => {
           ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
-          ctx.patchState({ isLoading: false });
+          ctx.patchState({ isMembershipLoading: false });
         },
         error: error => {
           ctx.patchState({ hasLoadingErrors: true });
@@ -210,7 +211,7 @@ export class ProjectsState {
       return;
     }
 
-    ctx.patchState({ isLoading: true });
+    ctx.patchState({ isMembershipLoading: true });
     const projectIri = this.projectService.uuidToIri(projectUuid);
     return this._dspApiConnection.admin.projectsEndpoint.getProjectMembersByIri(projectIri).pipe(
       take(1),
@@ -222,7 +223,7 @@ export class ProjectsState {
         next: (response: ApiResponseData<MembersResponse>) => {
           ctx.setState({
             ...ctx.getState(),
-            isLoading: false,
+            isMembershipLoading: false,
             projectMembers: {
               [projectIri]: { value: response.body.members },
             },
@@ -238,7 +239,7 @@ export class ProjectsState {
 
   @Action(LoadProjectGroupsAction)
   loadProjectGroupsAction(ctx: StateContext<ProjectsStateModel>) {
-    ctx.patchState({ isLoading: true });
+    ctx.patchState({ isMembershipLoading: true });
     return this._dspApiConnection.admin.groupsEndpoint.getGroups().pipe(
       take(1),
       map(
@@ -259,7 +260,7 @@ export class ProjectsState {
 
           ctx.setState({
             ...ctx.getState(),
-            isLoading: false,
+            isMembershipLoading: false,
             projectGroups: groups,
           });
         },

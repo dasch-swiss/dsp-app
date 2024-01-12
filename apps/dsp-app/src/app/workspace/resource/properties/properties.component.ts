@@ -391,6 +391,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
                 this.resource.res.label = payload.label;
                 this.lastModificationDate = response.lastModificationDate;
                 // if annotations tab is active; a label of a region has been changed --> update regions
+                this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceChanged));
                 if (this.isAnnotation) {
                   this.regionChanged.emit();
                 }
