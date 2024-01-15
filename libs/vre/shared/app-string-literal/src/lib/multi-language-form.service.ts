@@ -9,8 +9,8 @@ import { Store } from '@ngxs/store';
  */
 @Injectable()
 export class MultiLanguageFormService {
+  readonly availableLanguages: string[] = ['de', 'fr', 'it', 'en', 'rm'];
   selectedLanguageIndex: number;
-  availableLanguages: string[] = ['de', 'fr', 'it', 'en', 'rm'];
   formGroup: FormGroup;
   controlName: string;
 
@@ -73,7 +73,7 @@ export class MultiLanguageFormService {
   private _setupLanguageIndex(): number {
     const responseLanguages = (this.formArray.value as { language: string }[])
       .map(v => v.language)
-      .filter((language: string) => this.availableLanguages.includes(language));
+      .filter(language => this.availableLanguages.includes(language));
 
     const userFavoriteLanguage =
       (this._store.selectSnapshot(UserSelectors.language) as string) || navigator.language.substring(0, 2);
@@ -91,7 +91,7 @@ export class MultiLanguageFormService {
       return 0;
     }
 
-    if (this.availableLanguages.includes(userFavoriteLanguage)) {
+    if (responseLanguages.includes(userFavoriteLanguage) && this.availableLanguages.includes(userFavoriteLanguage)) {
       return this.availableLanguages.indexOf(userFavoriteLanguage);
     }
 
