@@ -6,6 +6,7 @@ export class RouteConstants {
   static readonly settings = 'settings';
   static readonly refresh = 'refresh';
   static readonly users = 'users';
+  static readonly logout = 'logout';
 
   static readonly projects = 'projects';
   static readonly project = 'project';

@@ -93,16 +93,14 @@ export class ProjectBase implements OnInit, OnDestroy {
           if (!this.project || this.project.id !== this.projectIri || !projectMembers) {
             // get current project data, project members and project groups
             // and set the project state here
+            this._actions$
+              .pipe(ofActionSuccessful(LoadProjectsAction))
+              .pipe(take(1))
+              .subscribe(() => this.setProjectData());
             this._store.dispatch([new LoadProjectsAction(), new LoadProjectMembershipAction(this.projectUuid)]);
           } else if (!this.isOntologiesAvailable()) {
             this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
           }
-        },
-        complete: () => {
-          this._actions$
-            .pipe(ofActionSuccessful(LoadProjectsAction))
-            .pipe(take(1))
-            .subscribe(() => this.setProjectData());
         },
       });
   }
@@ -126,18 +124,12 @@ export class ProjectBase implements OnInit, OnDestroy {
 
   private isOntologiesAvailable(): boolean {
     const currentProjectOntologies = this._store.selectSnapshot(OntologiesSelectors.currentProjectOntologies);
-    let result = true;
-
-    this.project.ontologies.forEach(ontoIri => {
-      if (
-        !currentProjectOntologies ||
-        currentProjectOntologies.length === 0 ||
-        !currentProjectOntologies.find(o => o.id === ontoIri)
-      ) {
-        result = false;
-      }
-    });
-
-    return result;
+    return (
+      currentProjectOntologies &&
+      currentProjectOntologies.length > 0 &&
+      currentProjectOntologies.some(o =>
+        this.project.ontologies.some(ontoName => o.id.split('/').find(x => x === ontoName.split('/').pop()))
+      )
+    );
   }
 }

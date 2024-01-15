@@ -8,7 +8,7 @@ import {
   ClearProjectsAction,
   LogUserOutAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Store } from '@ngxs/store';
+import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, take, takeLast, tap } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class AuthService {
 
   constructor(
     private store: Store,
+    private _actions: Actions,
     private router: Router // private intervalWrapper: IntervalWrapperService
   ) {
     // check if the (possibly) existing session is still valid and if not, destroy it
@@ -176,6 +177,14 @@ export class AuthService {
 
   doLogoutUser() {
     this.removeTokens();
+    this._actions
+      .pipe(ofActionSuccessful(ClearProjectsAction))
+      .pipe(take(1))
+      .subscribe(() =>
+        this.router
+          .navigate([RouteConstants.logout], { skipLocationChange: true })
+          .then(() => this.router.navigate([RouteConstants.home]))
+      );
     this.store.dispatch([
       new LogUserOutAction(),
       new ClearProjectsAction(),
@@ -183,7 +192,6 @@ export class AuthService {
       new ClearOntologiesAction(),
     ]);
     clearTimeout(this.tokenRefreshIntervalId);
-    this.router.navigate([RouteConstants.home], { replaceUrl: true });
   }
 
   isLoggedIn() {
