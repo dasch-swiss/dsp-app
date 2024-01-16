@@ -58,8 +58,14 @@ import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { DialogComponent, DialogEvent } from '../../main/dialog/dialog.component';
 import { ProjectBase } from '../project-base';
-import { CreateResourceClassDialogComponent } from './create-resource-class-dialog/create-resource-class-dialog.component';
-import { EditResourceClassDialogComponent } from './edit-resource-class-dialog/edit-resource-class-dialog.component';
+import {
+  CreateResourceClassDialogComponent,
+  CreateResourceClassDialogProps,
+} from './create-resource-class-dialog/create-resource-class-dialog.component';
+import {
+  EditResourceClassDialogComponent,
+  EditResourceClassDialogProps,
+} from './edit-resource-class-dialog/edit-resource-class-dialog.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -455,14 +461,17 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
 
     this._dialog
-      .open(CreateResourceClassDialogComponent, {
-        data: {
-          id: resClassInfo.iri,
-          title: resClassInfo.label,
-          ontologyId: currentOntology.id,
-          lastModificationDate: currentOntology.lastModificationDate,
-        },
-      })
+      .open<CreateResourceClassDialogComponent, CreateResourceClassDialogProps, null>(
+        CreateResourceClassDialogComponent,
+        {
+          data: {
+            id: resClassInfo.iri,
+            title: resClassInfo.label,
+            ontologyId: currentOntology.id,
+            lastModificationDate: currentOntology.lastModificationDate,
+          },
+        }
+      )
       .afterClosed()
       .subscribe(event => {
         if (event !== DialogEvent.DialogCanceled) {
@@ -475,7 +484,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
 
     this._dialog
-      .open(EditResourceClassDialogComponent, {
+      .open<EditResourceClassDialogComponent, EditResourceClassDialogProps, boolean>(EditResourceClassDialogComponent, {
         data: {
           id: resClassInfo.iri,
           title: resClassInfo.label,
@@ -485,7 +494,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       })
       .afterClosed()
       .subscribe(event => {
-        if (event !== DialogEvent.DialogCanceled) {
+        if (event === true) {
           this.initOntologiesList();
         }
       });

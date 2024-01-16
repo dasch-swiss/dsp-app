@@ -10,7 +10,14 @@ import {
   UpdateResourceClassLabel,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { finalize, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
+
+export interface EditResourceClassDialogProps {
+  id: string;
+  title: string;
+  ontologyId: string;
+  lastModificationDate: string;
+}
 
 @Component({
   selector: 'app-edit-resource-class-dialog',
@@ -44,8 +51,8 @@ export class EditResourceClassDialogComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA)
-    public data: { id: string; title: string; ontologyId: string; lastModificationDate: string },
-    public dialogRef: MatDialogRef<EditResourceClassDialogComponent>
+    public data: EditResourceClassDialogProps,
+    public dialogRef: MatDialogRef<EditResourceClassDialogComponent, boolean>
   ) {}
 
   ngOnInit() {
@@ -92,7 +99,9 @@ export class EditResourceClassDialogComponent implements OnInit {
           this.loading = false;
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.dialogRef.close(true);
+      });
   }
 
   private _deleteResourceComment$() {

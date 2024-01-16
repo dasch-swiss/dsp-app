@@ -1,10 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ApiResponseError, CreateResourceClass, KnoraApiConnection, UpdateOntology } from '@dasch-swiss/dsp-js';
+import { CreateResourceClass, KnoraApiConnection, UpdateOntology } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { tap } from 'rxjs/operators';
+
+export interface CreateResourceClassDialogProps {
+  id: string;
+  title: string;
+  ontologyId: string;
+  lastModificationDate: string;
+}
 
 @Component({
   selector: 'app-create-resource-class-dialog',
@@ -37,8 +43,8 @@ export class CreateResourceClassDialogComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     @Inject(MAT_DIALOG_DATA)
-    public data: { id: string; title: string; ontologyId: string; lastModificationDate: string },
-    public dialogRef: MatDialogRef<CreateResourceClassDialogComponent>
+    public data: CreateResourceClassDialogProps,
+    public dialogRef: MatDialogRef<CreateResourceClassDialogComponent, boolean>
   ) {}
 
   ngOnInit() {
