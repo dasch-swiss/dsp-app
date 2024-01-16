@@ -80,15 +80,17 @@ export class MultiLanguageFormService {
 
     if (responseLanguages.length === 0) {
       // form is empty, push a new value
-      this.formArray.push(
-        this._fb.group({
-          language: this.availableLanguages.includes(userFavoriteLanguage)
-            ? userFavoriteLanguage
-            : this.availableLanguages[0],
-          value: '',
-        })
-      );
-      return 0;
+      const indexFavoriteLanguage = this.availableLanguages.indexOf(userFavoriteLanguage);
+
+      // with user favorite language
+      if (indexFavoriteLanguage !== -1) {
+        this._addEmptyFormControl(userFavoriteLanguage);
+        return indexFavoriteLanguage;
+        // with default language
+      } else {
+        this._addEmptyFormControl(this.availableLanguages[0]);
+        return 0;
+      }
     }
 
     if (responseLanguages.includes(userFavoriteLanguage) && this.availableLanguages.includes(userFavoriteLanguage)) {
@@ -96,5 +98,14 @@ export class MultiLanguageFormService {
     }
 
     return this.availableLanguages.indexOf(responseLanguages[0]);
+  }
+
+  private _addEmptyFormControl(language: string) {
+    this.formArray.push(
+      this._fb.group({
+        language,
+        value: '',
+      })
+    );
   }
 }
