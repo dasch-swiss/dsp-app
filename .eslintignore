@@ -9,3 +9,4 @@ tmp/
 
 # Ignore certain project files
 docs/assets/js/
+apps/dsp-app/cypress/

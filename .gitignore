@@ -59,4 +59,4 @@ Thumbs.db
 
 #E2E
 /.nx
-apps/dsp-app-e2e/cypress/screenshots
+apps/dsp-app/cypress/screenshots

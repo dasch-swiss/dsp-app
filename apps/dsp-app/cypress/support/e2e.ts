@@ -9,14 +9,14 @@ beforeEach(() => {
     // read JSON data file
     users = json;
 
-    if (Cypress.spec.relative.startsWith('cypress/e2e/System_Admin')) {
+    if (Cypress.spec.relative.startsWith('cypress/e2e/system-admin')) {
       cy.login({
         username: users.systemAdmin_username_root,
         password: users.systemAdmin_password_root,
       });
     }
 
-    if (Cypress.spec.relative.startsWith('cypress/e2e/Project_Member')) {
+    if (Cypress.spec.relative.startsWith('cypress/e2e/project-member')) {
       cy.login({
         username: users.projectMember_username,
         password: users.projectMember_password,

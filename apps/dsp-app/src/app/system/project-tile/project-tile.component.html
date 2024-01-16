@@ -1,4 +1,4 @@
-<div class="project-tile">
+<div class="project-tile" data-cy="tile">
   <div class="project-tile-content">
     <div class="top-bar">
       <div class="status">
@@ -25,7 +25,12 @@
     </div>
 
     <div class="workspace-button-container">
-      <button class="workspace-button" mat-flat-button [color]="'primary'" (click)="navigateToProject(project.id)">
+      <button
+        class="workspace-button"
+        mat-flat-button
+        [color]="'primary'"
+        (click)="navigateToProject(project.id)"
+        data-cy="navigate-to-project-button">
         Browse Data
       </button>
     </div>
