@@ -1,4 +1,15 @@
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   ApiResponseError,
   Constants,
@@ -21,6 +32,7 @@ import {
 import { ValueService } from '../../services/value.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-add-value',
   templateUrl: './add-value.component.html',
   styleUrls: ['./add-value.component.scss'],
@@ -62,7 +74,8 @@ export class AddValueComponent implements OnInit, AfterViewInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _valueOperationEventService: ValueOperationEventService,
-    private _valueService: ValueService
+    private _valueService: ValueService,
+    private _cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -140,6 +153,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
 
               // hide the progress indicator
               this.submittingValue = false;
+              this._cd.markForCheck();
             },
             (error: ApiResponseError) => {
               // hide the progress indicator
