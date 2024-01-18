@@ -40,7 +40,7 @@ export class UserSelectors {
 
   @Selector([UserState])
   static username(state: UserStateModel): string | null | undefined {
-    return state.user?.username;
+    return state?.user?.username;
   }
 
   @Selector([UserState])
