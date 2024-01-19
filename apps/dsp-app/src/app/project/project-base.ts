@@ -75,7 +75,7 @@ export class ProjectBase implements OnInit, OnDestroy {
   }
 
   protected getCurrentProject(projects: ReadProject[]): ReadProject {
-    if (!projects) {
+    if (!this.projectUuid || !projects) {
       return null;
     }
 

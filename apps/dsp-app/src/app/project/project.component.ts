@@ -10,14 +10,14 @@ import {
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReadOntology, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
 import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/ClassAndPropertyDefinitions';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
-import { MaterialColor, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { OntologiesSelectors, ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
-import { Observable, Subscription, combineLatest, of } from 'rxjs';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { ComponentCommunicationEventService, Events } from '../main/services/component-communication-event.service';
 import { ProjectBase } from './project-base';
@@ -53,59 +53,34 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
   dataModelsRoute: AvailableRoute = RouteConstants.dataModels;
   advancedSearchRoute: AvailableRoute = RouteConstants.advancedSearch;
 
-  get isMember$(): Observable<boolean> {
-    return combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
-      map(([user, userProjectAdminGroups]) =>
-        ProjectService.IsProjectMember(user, userProjectAdminGroups, this.projectUuid)
-      )
-    );
-  }
+  isMember$: Observable<boolean> = combineLatest([this.user$, this.userProjectAdminGroups$]).pipe(
+    map(([user, userProjectAdminGroups]) =>
+      ProjectService.IsProjectMember(user, userProjectAdminGroups, this.projectUuid)
+    )
+  );
 
-  get color$(): Observable<string> {
-    return this.readProject$.pipe(
-      map(readProject => (!readProject.status ? MaterialColor.Warn : MaterialColor.Primary))
-    );
-  }
+  readProject$: Observable<ReadProject> = (
+    this._store.select(ProjectsSelectors.allProjects) as Observable<ReadProject[]>
+  ).pipe(
+    take(1),
+    map(projects => this.getCurrentProject(projects))
+  );
 
-  get readProject$(): Observable<ReadProject> {
-    if (!this.projectUuid) {
-      return of({} as ReadProject);
-    }
+  projectOntologies$: Observable<ReadOntology[]> = combineLatest([
+    this.isProjectsLoading$,
+    this._store.select(OntologiesSelectors.isLoading),
+    this._store.select(OntologiesSelectors.projectOntologies),
+  ]).pipe(
+    map(([isProjectsLoading, isOntologiesLoading, ontologies]) => {
+      const projectIri = this._projectService.uuidToIri(this.projectUuid);
+      if (!ontologies || !ontologies[projectIri]) {
+        return [];
+      }
 
-    return this.allProjects$.pipe(
-      take(1),
-      map(projects => this.getCurrentProject(projects))
-    );
-  }
+      return ontologies[projectIri].readOntologies;
+    })
+  );
 
-  get projectOntologies$(): Observable<ReadOntology[]> {
-    if (!this.projectUuid) {
-      return of({} as ReadOntology[]);
-    }
-
-    return this._store.select(OntologiesSelectors.projectOntologies).pipe(
-      map(ontologies => {
-        const projectIri = this._projectService.uuidToIri(this.projectUuid);
-        if (!ontologies || !ontologies[projectIri]) {
-          return [];
-        }
-
-        return ontologies[projectIri].readOntologies;
-      })
-    );
-  }
-
-  get isLoading$(): Observable<boolean> {
-    return combineLatest([this.isOntologiesLoading$, this.isProjectsLoading$]).pipe(
-      map(([isOntologiesLoading, isProjectsLoading]) => isOntologiesLoading === true || isProjectsLoading === true)
-    );
-  }
-
-  @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjects) userProjects$: Observable<ReadUser>;
-  @Select(ProjectsSelectors.allProjects) allProjects$: Observable<ReadProject[]>;
-  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.isLoading) isOntologiesLoading$: Observable<boolean>;
   @Select(OntologiesSelectors.hasLoadingErrors) hasLoadingErrors$: Observable<boolean>;
 
   constructor(

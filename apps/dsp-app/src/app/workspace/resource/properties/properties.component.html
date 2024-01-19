@@ -137,7 +137,7 @@
 </div>
 
 <!-- list of properties -->
-<div class="properties-container" *ngIf="!loading">
+<div class="properties-container">
   <div class="properties" *ngIf="resource.resProps.length > 0; else noProperties">
     <!-- list of properties -->
     <div *ngFor="let prop of resource.resProps; let last = last">
