@@ -6,6 +6,10 @@
 
 This monorepo host different applications and libraries of the DaSCH Service Platform.
 
+## @dasch-swiss librairies
+Please go to the following readme:
+- [@dasch-swiss/jdnconvertiblecalendar](./libs/jdnconvertiblecalendar/README.md)
+- [@dasch-swiss/jdnconvertiblecalendardateadapter](./libs/jdnconvertiblecalendardateadapter/README.md)
 ## DSP-APP &mdash; Generic user interface of DaSCH Service Platform
 
 This app is a simple user interface for the research data repository of the

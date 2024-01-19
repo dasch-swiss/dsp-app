@@ -1,6 +1,6 @@
 {
   "name": "@dasch-swiss/jdnconvertiblecalendardateadapter",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "description": "Implementation of Angular Material DateAdapter for JDNConvertibleCalendar",
   "keywords": [
     "Angular Material Datepicker",
@@ -10,12 +10,19 @@
   ],
   "author": "Swiss National Data and Service Center for the Humanities and/or DaSCH Service Platform contributors. Email to support@dasch.swiss.",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/dasch-swiss/dsp-app#readme",
+  "homepage": "https://github.com/dasch-swiss/dsp-das#readme",
+  "bugs": {
+    "url": "https://github.com/dasch-swiss/dsp-das/issues"
+  },
   "peerDependencies": {
-    "@angular/common": "^15.2.2",
-    "@angular/core": "^15.2.2",
-    "@angular/animations": "^15.2.2",
-    "@angular/cdk": "^15.2.3",
-    "@angular/material": "^15.2.3"
+    "@angular/common": ">=15.2.2",
+    "@angular/core": ">=15.2.2",
+    "@angular/animations": ">=15.2.2",
+    "@angular/cdk": ">=15.2.3",
+    "@angular/material": ">=15.2.3",
+    "@angular/platform-browser-dynamic": ">=15.2.3",
+    "@dasch-swiss/jdnconvertiblecalendar": ">=0.0.1",
+    "rxjs": ">=6.6.7",
+    "zone.js": ">=0.13.3"
   }
 }

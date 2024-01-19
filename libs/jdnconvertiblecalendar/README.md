@@ -53,12 +53,6 @@ She reviewed the calendar conversion algorithms in `JDNConvertibleConversionModu
 
 See <https://dhlab-basel.github.io/JDNConvertibleCalendar/docs/index.html>.
 
-The HTML-documentation can also be built locally running `npm run builddocs` in the project root.
-
-## Examples
-
-For working examples, please see the tests in the test directory. Run the test with `npm test` from the project root.
-
 ## Known Problems
 
 - The static configuration of how many months a year has per calendar may not be good enough for other calendars than Gregorian and Julian (lunar calendars).
@@ -66,16 +60,20 @@ For working examples, please see the tests in the test directory. Run the test w
 
 ## NPM Package
 
-This project is available as an npm module: <https://www.npmjs.com/package/jdnconvertiblecalendar>.
+This project is available as an npm module: <https://www.npmjs.com/package/@dasch-swiss/jdnconvertiblecalendar>.
 
 ## Integration in Angular Material
 
-`JDNConvertibleCalendar` can used with Angular Material (<https://material.angular.io>). Please see <https://github.com/dhlab-basel/JDNConvertibleCalendarDateAdapter> for more details.
+`JDNConvertibleCalendar` can used with Angular Material (<https://material.angular.io>). Please see <https://www.npmjs.com/package/@dasch-swiss/jdnconvertiblecalendardateadapter> for more details.
 
 ## Building
 
-Run `nx build jdnconvertiblecalendar` to build the library.
+Run `nx run jdnconvertiblecalendar:build` to build the library.
 
 ## Running unit tests
 
-Run `nx test jdnconvertiblecalendar` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx run jdnconvertiblecalendar:test` to execute the unit tests via [Jest](https://jestjs.io).
+
+## Run a demo
+
+Please see the README.md in this repository at `/apps/dateAdapter/README.md`

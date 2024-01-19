@@ -9,8 +9,6 @@ export function makeCalendarToken() {
 }
 
 @Directive({
-  // TODO this directive is used as a component. Disable this line in the
-  //  near future.
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'app-jdn-datepicker',
   providers: [
