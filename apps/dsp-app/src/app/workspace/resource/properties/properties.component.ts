@@ -39,8 +39,10 @@ import {
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 import { Observable, Subscription, forkJoin } from 'rxjs';
 import { ConfirmationWithComment, DialogComponent } from '../../../main/dialog/dialog.component';
 import {
@@ -173,7 +175,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     private _valueService: ValueService,
     private _componentCommsService: ComponentCommunicationEventService,
     private _sortingService: SortingService,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _store: Store,
+    private _ontologyService: OntologyService
   ) {}
 
   ngOnInit(): void {
@@ -340,14 +344,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
               // delete the resource and refresh the view
               this._dspApiConnection.v2.res.deleteResource(payload).subscribe(
                 (response: DeleteResourceResponse) => {
-                  // display notification and mark resource as 'deleted'
-                  this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
-                  this.deletedResource = true;
-                  this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
-                  if (this.isAnnotation) {
-                    this.regionDeleted.emit();
-                  }
-                  this._cd.markForCheck();
+                  this._onResourceDeleted(response);
                 },
                 (error: ApiResponseError) => {
                   this._errorHandler.showMessage(error);
@@ -359,16 +356,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
               // erase the resource and refresh the view
               this._dspApiConnection.v2.res.eraseResource(payload).subscribe(
                 (response: DeleteResourceResponse) => {
-                  // display notification and mark resource as 'erased'
-                  this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
-                  this.deletedResource = true;
-                  this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
-                  // if it is an Annotation/Region which has been erases, we emit the
-                  // regionChanged event, in order to refresh the page
-                  if (this.isAnnotation) {
-                    this.regionDeleted.emit();
-                  }
-                  this._cd.markForCheck();
+                  this._onResourceDeleted(response);
                 },
                 (error: ApiResponseError) => {
                   this._errorHandler.showMessage(error);
@@ -566,6 +554,23 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   toggleAllProps(status: boolean) {
     this.showAllProps = !status;
     localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
+  }
+
+  private _onResourceDeleted(response: DeleteResourceResponse) {
+    // display notification and mark resource as 'erased'
+    this._notification.openSnackBar(`${response.result}: ${this.resource.res.label}`);
+    this.deletedResource = true;
+    const ontologyIri = this._ontologyService.getOntologyIriFromRoute(this.project?.shortcode);
+    const classId = this.resource.res.entityInfo.classes[this.resource.res.type]?.id;
+    this._store.dispatch(new LoadClassItemsCountAction(ontologyIri, classId));
+    this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceDeleted));
+    // if it is an Annotation/Region which has been erases, we emit the
+    // regionChanged event, in order to refresh the page
+    if (this.isAnnotation) {
+      this.regionDeleted.emit();
+    }
+
+    this._cd.markForCheck();
   }
 
   /**

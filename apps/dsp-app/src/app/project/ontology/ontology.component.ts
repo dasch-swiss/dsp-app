@@ -118,19 +118,6 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
 
   updatePropertyAssignment$: Subject<any> = new Subject();
 
-  // id of current ontology
-  get ontologyIri(): string {
-    const iriBase = this._ontologyService.getIriBaseUrl();
-    const ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
-    return `${iriBase}/${RouteConstants.ontology}/${this.project?.shortcode}/${ontologyName}/v2`;
-  }
-
-  getOntologyIri(projectShortcode: string): string {
-    const iriBase = this._ontologyService.getIriBaseUrl();
-    const ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
-    return `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2`;
-  }
-
   // the lastModificationDate is the most important key
   // when updating something inside the ontology
   get lastModificationDate$(): Observable<string> {
@@ -148,19 +135,13 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
   }
 
   @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjectAdminGroups)
-  userProjectAdminGroups$: Observable<string[]>;
+  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(ProjectsSelectors.isProjectsLoading)
-  isProjectsLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.isLoading)
-  isOntologiesLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.currentProjectOntologies)
-  currentProjectOntologies$: Observable<ReadOntology[]>;
-  @Select(OntologiesSelectors.currentOntology)
-  currentOntology$: Observable<ReadOntology>;
-  @Select(OntologiesSelectors.currentOntologyCanBeDeleted)
-  currentOntologyCanBeDeleted$: Observable<boolean>;
+  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+  @Select(OntologiesSelectors.isLoading) isOntologiesLoading$: Observable<boolean>;
+  @Select(OntologiesSelectors.currentProjectOntologies) currentProjectOntologies$: Observable<ReadOntology[]>;
+  @Select(OntologiesSelectors.currentOntology) currentOntology$: Observable<ReadOntology>;
+  @Select(OntologiesSelectors.currentOntologyCanBeDeleted) currentOntologyCanBeDeleted$: Observable<boolean>;
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -269,7 +250,9 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       .pipe(
         take(1),
         map(([loadListsInProjectAction, currentProjectOntologies]) =>
-          currentProjectOntologies.find(x => x.id === this.ontologyIri)
+          currentProjectOntologies.find(
+            x => x.id === this._ontologyService.getOntologyIriFromRoute(this.project?.shortcode)
+          )
         )
       )
       .subscribe(readOnto => {
@@ -288,7 +271,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       const projectOntologies = this._store.selectSnapshot(OntologiesSelectors.projectOntologies);
       const projectIri = this._projectService.uuidToIri(this.projectUuid);
       const currentProject = this._store.selectSnapshot(ProjectsSelectors.currentProject);
-      const ontologyIri = this.getOntologyIri(currentProject.shortcode);
+      const ontologyIri = this._ontologyService.getOntologyIriFromRoute(currentProject.shortcode);
       currentOntology = projectOntologies[projectIri]?.readOntologies.find(o => o.id === ontologyIri);
       if (currentOntology) {
         this.resetOntologyView(currentOntology);

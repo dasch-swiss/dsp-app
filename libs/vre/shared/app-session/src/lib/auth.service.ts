@@ -5,6 +5,7 @@ import { Auth, DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/sh
 import {
   ClearListsAction,
   ClearOntologiesAction,
+  ClearOntologyClassAction,
   ClearProjectsAction,
   LogUserOutAction,
   UserSelectors,
@@ -196,6 +197,7 @@ export class AuthService {
       new ClearProjectsAction(),
       new ClearListsAction(),
       new ClearOntologiesAction(),
+      new ClearOntologyClassAction(),
     ]);
   }
 

@@ -13,7 +13,7 @@
       <div class="entry-container">
         <mat-icon>{{icon}}</mat-icon>
         <ngx-skeleton-loader
-          *ngIf="results === undefined"
+          *ngIf="(results$ | async) === undefined"
           count="1"
           appearance="line"
           [theme]="{
@@ -21,7 +21,9 @@
                         'vertical-align': 'middle'
                     }">
         </ngx-skeleton-loader>
-        <div *ngIf="results !== undefined" class="entry">{{results | i18nPlural: itemPluralMapping['entry']}}</div>
+        <div *ngIf="(results$ | async) !== undefined" class="entry">
+          {{results$ | async | i18nPlural: itemPluralMapping['entry']}}
+        </div>
       </div>
     </div>
     <div class="icon link" *ngIf="projectMember" [routerLink]="getAddClassInstanceLink()">

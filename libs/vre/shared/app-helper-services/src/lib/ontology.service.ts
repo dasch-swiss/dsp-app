@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   Cardinality,
   Constants,
@@ -6,7 +7,7 @@ import {
   ReadOntology,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConfigToken } from '@dasch-swiss/vre/shared/app-config';
+import { DspApiConfigToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { Observable, of } from 'rxjs';
 import { DefaultProperties, DefaultProperty, PropertyCategory } from './default-data/default-properties';
 
@@ -20,7 +21,10 @@ export class OntologyService {
   // list of default property types
   defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
-  constructor(@Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig) {}
+  constructor(
+    @Inject(DspApiConfigToken) private _dspApiConfig: KnoraApiConfig,
+    private _route: ActivatedRoute
+  ) {}
 
   /**
    * create a unique name (id) for resource classes or properties;
@@ -207,5 +211,15 @@ export class OntologyService {
     return `http://${this._dspApiConfig.apiHost}${
       this._dspApiConfig.apiPort !== null ? `:${this._dspApiConfig.apiPort}` : ''
     }${this._dspApiConfig.apiPath}`;
+  }
+
+  getOntologyIriFromRoute(projectShortcode: string): string {
+    const iriBase = this.getIriBaseUrl();
+    let ontologyName = this._route.snapshot.paramMap.get(RouteConstants.ontoParameter);
+    if (!ontologyName) {
+      ontologyName = this._route.snapshot.root.children[0].children[0].paramMap.get(RouteConstants.ontoParameter);
+    }
+
+    return `${iriBase}/${RouteConstants.ontology}/${projectShortcode}/${ontologyName}/v2`;
   }
 }

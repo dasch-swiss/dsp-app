@@ -4,24 +4,23 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  ClassDefinition,
-  KnoraApiConnection,
-  CountQueryResponse,
-  ApiResponseError,
-  Constants,
-} from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
+import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { Subscription } from 'rxjs';
+import {
+  IClassItemsKeyValuePairs,
+  LoadClassItemsCountAction,
+  OntologyClassSelectors,
+} from '@dasch-swiss/vre/shared/app-state';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
@@ -35,15 +34,20 @@ import {
   styleUrls: ['./ontology-class-item.component.scss'],
 })
 export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDestroy {
+  destroyed: Subject<void> = new Subject<void>();
+
   @Input() resClass: ClassDefinition;
 
   @Input() projectMember: boolean;
 
   @ViewChild('resClassLabel') resClassLabel: ElementRef;
 
-  gravsearch: string;
-
-  results: number;
+  get results$(): Observable<number> {
+    return combineLatest([
+      this._store.select(OntologyClassSelectors.classItems),
+      this._store.select(OntologyClassSelectors.isLoading),
+    ]).pipe(map(([classItems]) => classItems[this.resClass.id]?.classItemsCount));
+  }
 
   classLink: string;
 
@@ -62,39 +66,27 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     },
   };
 
+  @Select(OntologyClassSelectors.classItems) classItems$: Observable<IClassItemsKeyValuePairs>;
+
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _route: ActivatedRoute,
     private _componentCommsService: ComponentCommunicationEventService,
-    private _cdr: ChangeDetectorRef
-  ) {}
+    private _cdr: ChangeDetectorRef,
+    private _store: Store,
+    private _actions$: Actions,
+    private _cd: ChangeDetectorRef
+  ) {
+    this._actions$.pipe(takeUntil(this.destroyed), ofActionSuccessful(LoadClassItemsCountAction)).subscribe(() => {
+      this._cd.markForCheck();
+    });
+  }
 
   ngOnInit(): void {
     const uuid = this._route.snapshot.params.uuid;
     const splitIri = this.resClass.id.split('#');
     const ontologyName = OntologyService.getOntologyName(splitIri[0]);
     this.classLink = `${RouteConstants.projectRelative}/${uuid}/${RouteConstants.ontology}/${ontologyName}/${splitIri[1]}`;
-
-    this.gravsearch = this._setGravsearch(this.resClass.id);
-
-    // get number of resource instances
-    this._getSearchCount();
-
     this.icon = this._getIcon();
-
-    this.componentCommsSubscriptions.push(
-      this._componentCommsService.on(Events.resourceDeleted, () => {
-        this._getSearchCount();
-      })
-    );
-
-    this.componentCommsSubscriptions.push(
-      this._componentCommsService.on(Events.resourceCreated, () => {
-        this._getSearchCount();
-      })
-    );
   }
 
   ngAfterViewInit(): void {
@@ -104,6 +96,8 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
 
   ngOnDestroy(): void {
     this.componentCommsSubscriptions.forEach(sub => sub.unsubscribe());
+    this.destroyed.next();
+    this.destroyed.complete();
   }
 
   selectItem() {
@@ -114,24 +108,6 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
     if (element) {
       return element.scrollHeight > element.clientHeight;
     }
-  }
-
-  private _setGravsearch(iri: string): string {
-    return `
-        PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
-        CONSTRUCT {
-
-        ?mainRes knora-api:isMainResource true .
-
-        } WHERE {
-
-        ?mainRes a knora-api:Resource .
-
-        ?mainRes a <${iri}> .
-
-        }
-
-        OFFSET 0`;
   }
 
   /**
@@ -156,18 +132,6 @@ export class OntologyClassItemComponent implements OnInit, AfterViewInit, OnDest
       default: // resource does not have a file representation
         return 'insert_drive_file';
     }
-  }
-
-  private _getSearchCount() {
-    this._dspApiConnection.v2.search.doExtendedSearchCountQuery(this.gravsearch).subscribe(
-      (res: CountQueryResponse) => {
-        this.results = res.numberOfResults;
-        this._cdr.markForCheck();
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
-      }
-    );
   }
 
   getAddClassInstanceLink(): string {

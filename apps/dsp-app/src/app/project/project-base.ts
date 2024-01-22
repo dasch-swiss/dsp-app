@@ -47,6 +47,7 @@ export class ProjectBase implements OnInit, OnDestroy {
   @Select(ProjectsSelectors.isCurrentProjectMember) isProjectMember$: Observable<boolean>;
   @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;
   @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+  @Select(ProjectsSelectors.isMembershipLoading) isMembershipLoading$: Observable<boolean>;
   @Select(ProjectsSelectors.projectMembers) projectMembers$: Observable<IKeyValuePairs<ReadUser>>;
 
   constructor(
@@ -65,7 +66,8 @@ export class ProjectBase implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadProject();
+    this._loadMembership();
+    this._loadProject();
   }
 
   ngOnDestroy(): void {
@@ -82,24 +84,37 @@ export class ProjectBase implements OnInit, OnDestroy {
     return projects.find(x => x.id.split('/').pop() === this.projectUuid);
   }
 
-  private loadProject(): void {
+  private _loadProject(): void {
     this.isProjectsLoading$
       .pipe(takeWhile(isLoading => isLoading === false && this.projectUuid !== undefined))
       .pipe(take(1))
       .subscribe({
         next: () => {
-          const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers)[this.projectIri];
           this.project = this._store.selectSnapshot(ProjectsSelectors.currentProject);
-          if (!this.project || this.project.id !== this.projectIri || !projectMembers) {
+          if (!this.project || this.project.id !== this.projectIri) {
             // get current project data, project members and project groups
             // and set the project state here
             this._actions$
               .pipe(ofActionSuccessful(LoadProjectsAction))
               .pipe(take(1))
               .subscribe(() => this.setProjectData());
-            this._store.dispatch([new LoadProjectsAction(), new LoadProjectMembershipAction(this.projectUuid)]);
+            this._store.dispatch([new LoadProjectsAction()]);
           } else if (!this.isOntologiesAvailable()) {
             this._store.dispatch(new LoadProjectOntologiesAction(this.projectUuid));
+          }
+        },
+      });
+  }
+
+  private _loadMembership(): void {
+    this.isMembershipLoading$
+      .pipe(takeWhile(isMembershipLoading => isMembershipLoading === false && this.projectUuid !== undefined))
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers)[this.projectIri];
+          if (!projectMembers) {
+            this._store.dispatch(new LoadProjectMembershipAction(this.projectUuid));
           }
         },
       });

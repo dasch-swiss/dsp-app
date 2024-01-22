@@ -16,13 +16,14 @@ import {
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyClassService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { Action, Actions, State, StateContext, ofActionSuccessful } from '@ngxs/store';
 import { of } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
 import { IProjectOntologiesKeyValuePairs, OntologyProperties } from '../model-interfaces';
+import { LoadClassItemsCountAction } from '../ontology-class/ontology-class.actions';
 import {
   ClearCurrentOntologyAction,
   ClearOntologiesAction,
@@ -142,15 +143,22 @@ export class OntologiesState {
                 )
               )
             )
-            .subscribe(() =>
-              this._actions$
-                .pipe(ofActionSuccessful(LoadOntologyAction))
-                .pipe(take(1))
-                .subscribe(() =>
-                  // last action dispatched
-                  ctx.dispatch(new LoadListsInProjectAction(projectIri))
-                )
-            );
+            .pipe(switchMap(() => this._actions$.pipe(ofActionSuccessful(LoadOntologyAction), take(1)))) // last action dispatched
+            .subscribe(() => {
+              ctx.dispatch(new LoadListsInProjectAction(projectIri));
+              ontoMeta.ontologies.forEach(onto => {
+                const readOntology = ctx
+                  .getState()
+                  .projectOntologies[projectIri].readOntologies.find(o => o.id === onto.id);
+                if (readOntology) {
+                  ctx.dispatch(
+                    OntologyClassService.GetReadOntologyClassesToDisplay(readOntology.classes).map(
+                      resClass => new LoadClassItemsCountAction(onto.id, resClass.id)
+                    )
+                  );
+                }
+              });
+            });
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true, isLoading: false });
@@ -180,7 +188,13 @@ export class OntologiesState {
           }
 
           let projectReadOntologies = projectOntologiesState[projectIri].readOntologies;
-          projectReadOntologies.push(ontology);
+          const projectReadOntologiesIndex = projectReadOntologies.findIndex(o => o.id === ontology.id);
+          if (projectReadOntologiesIndex > 0) {
+            projectReadOntologies[projectReadOntologiesIndex] = ontology;
+          } else {
+            projectReadOntologies.push(ontology);
+          }
+
           projectReadOntologies = projectReadOntologies.sort((o1, o2) => this._compareOntologies(o1, o2));
           // this._sortingService.keySortByAlphabetical(projectReadOntologies, 'label');
           projectOntologiesState[projectIri].readOntologies = projectReadOntologies;

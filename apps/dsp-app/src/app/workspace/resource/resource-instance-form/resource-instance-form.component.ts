@@ -27,10 +27,12 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { DefaultClass, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
 import {
+  Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
-  Events as CommsEvents,
 } from '../../../main/services/component-communication-event.service';
 import { ResourceService } from '../services/resource.service';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
@@ -92,7 +94,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
     private _router: Router,
     private _componentCommsService: ComponentCommunicationEventService,
     private _notification: NotificationService,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _store: Store
   ) {}
 
   ngOnInit(): void {
@@ -250,6 +253,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
               relativeTo: this._route.parent,
             })
             .then(() => {
+              this._store.dispatch(new LoadClassItemsCountAction(this.ontologyIri, this.resourceClass.id));
               this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceCreated));
               this._cd.markForCheck();
             });
