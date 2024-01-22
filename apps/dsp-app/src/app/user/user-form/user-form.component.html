@@ -84,8 +84,7 @@
           <dasch-swiss-app-progress-indicator [color]="'white'" [status]="0" *ngIf="loading" class="submit-progress">
           </dasch-swiss-app-progress-indicator>
           <mat-icon *ngIf="(hasLoadingErrors$ | async) === true && !loading">close</mat-icon>
-          {{ !loading && (hasLoadingErrors$ | async) === true ? ('appLabels.form.action.retry' | translate) :
-          ('appLabels.form.action.submit' | translate) }}
+          {{ ('appLabels.form.action.submit' | translate) }}
         </button>
       </span>
     </div>
