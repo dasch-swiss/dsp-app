@@ -24,7 +24,7 @@ import {
       <button
         mat-button
         *ngIf="position > 0"
-        title="move up"
+        matTooltip="move up"
         (click)="$event.stopPropagation(); repositionNode('up')"
         class="reposition up">
         <mat-icon>arrow_upward</mat-icon>
@@ -32,22 +32,22 @@ import {
       <button
         mat-button
         *ngIf="position < length - 1"
-        title="move down"
+        matTooltip="move down"
         (click)="$event.stopPropagation(); repositionNode('down')"
         class="reposition down">
         <mat-icon>arrow_downward</mat-icon>
       </button>
       <button
         mat-button
-        title="insert new child node above"
+        matTooltip="insert new child above"
         (click)="$event.stopPropagation(); askToInsertNode()"
         class="insert">
         <mat-icon>vertical_align_top</mat-icon>
       </button>
-      <button mat-button class="edit" title="edit" (click)="$event.stopPropagation(); askToEditNode()">
+      <button mat-button class="edit" matTooltip="edit" (click)="$event.stopPropagation(); askToEditNode()">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-button class="delete" title="delete" (click)="$event.stopPropagation(); askToDeleteListNode()">
+      <button mat-button class="delete" matTooltip="delete" (click)="$event.stopPropagation(); askToDeleteListNode()">
         <mat-icon>delete</mat-icon>
       </button>
     </div>
