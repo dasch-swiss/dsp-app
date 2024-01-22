@@ -147,7 +147,6 @@ export class UserFormComponent implements OnInit, OnChanges {
   hasLoadingErrors$: Observable<boolean>;
 
   constructor(
-    @Inject(DspApiConnectionToken)
     private _userApiService: UserApiService,
     private _errorHandler: AppErrorHandler,
     private _formBuilder: UntypedFormBuilder,
