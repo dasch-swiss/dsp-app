@@ -7,15 +7,15 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
  * @param {RegExp} valArrayRegexp List of regular expression values
  * @returns ValidatorFn
  */
-export function existingNamesValidator(valArrayRegexp: [RegExp]): ValidatorFn {
+export function existingNamesValidator(valArrayRegexp: [RegExp], isCaseSensitive = false): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } => {
-    let name;
+    let name: string;
 
     if (control.value) {
-      name = control.value.toLowerCase();
+      name = isCaseSensitive ? control.value : control.value.toLowerCase();
     }
 
-    let no;
+    let no: boolean;
     for (const existing of valArrayRegexp) {
       no = existing.test(name);
       if (no) {

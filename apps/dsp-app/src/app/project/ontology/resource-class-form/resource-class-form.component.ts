@@ -67,7 +67,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
     // add all resource properties to the same list
     resourceProperties.forEach((resProp: PropertyDefinition) => {
       const name = this._os.getNameFromIri(resProp.id);
-      this.existingNames.push(new RegExp(`(?:^|W)${name.toLowerCase()}(?:$|W)`));
+      this.existingNames.push(new RegExp(`(?:^|W)${name}(?:$|W)`));
     });
 
     this.buildForm();
@@ -84,7 +84,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
         this.formData.name,
         [
           Validators.required,
-          existingNamesValidator(this.existingNames),
+          existingNamesValidator(this.existingNames, true),
           Validators.pattern(CustomRegex.ID_NAME_REGEX),
         ],
       ],
