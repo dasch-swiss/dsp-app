@@ -1,6 +1,6 @@
-<dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
+<dasch-swiss-app-progress-indicator *ngIf="isMembershipLoading$ | async"></dasch-swiss-app-progress-indicator>
 
-<div class="content" *ngIf="(isProjectsLoading$ | async) === false">
+<div class="content" *ngIf="(isMembershipLoading$ | async) === false">
   <h4 class="mat-subtitle-2">
     This user is member of {{ (user$ | async)?.projects.length | i18nPlural : itemPluralMapping['project'] }}
   </h4>
@@ -34,8 +34,8 @@
     <!-- select another project to add user -->
     <mat-list-item class="add-to-project">
       <mat-form-field class="select-project">
-        <mat-select placeholder="Add user to project" [formControl]="newProject">
-          <mat-option>Select Project to add user</mat-option>
+        <mat-select placeholder="Add user to project" [formControl]="newProject" [(ngModel)]="selectedValue">
+          <mat-option value="">Select Project to add user</mat-option>
           <mat-divider></mat-divider>
           <mat-option *ngFor="let project of projects$ | async; trackBy: trackByFn;" [value]="project?.iri">
             {{ project?.name }}
