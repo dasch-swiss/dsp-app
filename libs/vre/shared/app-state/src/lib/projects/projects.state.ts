@@ -279,6 +279,13 @@ export class ProjectsState {
         next: response => {
           ctx.dispatch(new LoadProjectsAction());
         },
+        error: (error: ApiResponseError) => {
+          ctx.patchState({ hasLoadingErrors: true });
+          this.errorHandler.showMessage(error);
+        },
+      }),
+      finalize(() => {
+        ctx.patchState({ isLoading: false });
       })
     );
   }
