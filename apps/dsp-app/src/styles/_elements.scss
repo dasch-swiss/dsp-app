@@ -683,7 +683,7 @@ $gc-small: $form-width - $gc-large - 4;
   top: 3px;
   border: 1px solid #e4e4e4;
   border-radius: 14px;
-  padding: 0;
+  padding: 4px;
   background-color: #e4e4e4;
   z-index: 2;
   @include box-shadow();
@@ -692,7 +692,7 @@ $gc-small: $form-width - $gc-large - 4;
     button {
       // cursor: pointer;
       border: none;
-      padding: 2px;
+      padding: 4px;
       outline: none;
       background-color: transparent;
       color: $primary;
@@ -730,7 +730,7 @@ $gc-small: $form-width - $gc-large - 4;
     }
 
     button.info {
-      cursor: help;
+      cursor: inherit;
     }
 
     button:hover {
