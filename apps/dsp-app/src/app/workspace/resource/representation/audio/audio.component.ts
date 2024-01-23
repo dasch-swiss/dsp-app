@@ -66,12 +66,10 @@ export class AudioComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.loaded.emit(true);
-    const player = document.getElementById('audio') as HTMLAudioElement;
-    if (player) {
-      player.addEventListener('timeupdate', () => {
-        this.currentTime = player.currentTime;
-      });
-    }
+  }
+
+  onTimeUpdate(event: { target: HTMLAudioElement }) {
+    this.currentTime = event.target.currentTime;
   }
 
   togglePlay() {
