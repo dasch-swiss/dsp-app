@@ -5,7 +5,7 @@ import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadProjectsAction } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -48,8 +48,7 @@ export class CreateProjectFormPageComponent {
   constructor(
     private _projectApiService: ProjectApiService,
     private _store: Store,
-    private _router: Router,
-    private _actions: Actions
+    private _router: Router
   ) {}
 
   submitForm() {
