@@ -2,7 +2,7 @@
   [formGroup]="form"
   (ngSubmit)="submitData()"
   class="form"
-  *ngIf="(usersProjects$ | async)?.length; else notProjectMember">
+  *ngIf="(usersProjects$ | async)?.length && (isCurrentProjectAdminOrSysAdmin$ | async) === true; else notProjectMember">
   <!-- auto complete list to select resource classes -->
   <div class="form-content">
     <app-select-project
@@ -32,7 +32,7 @@
     <div class="resource-container">
       <p>The following resources will be connected:</p>
       <ul>
-        <li *ngFor="let res of resources.resInfo">{{ res.label }}</li>
+        <li *ngFor="let res of resources.resInfo; trackBy: trackByFn">{{ res.label }}</li>
       </ul>
     </div>
 
