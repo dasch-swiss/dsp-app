@@ -123,6 +123,7 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
   @Input() compoundNavigation?: DspCompoundPosition;
   @Input() currentTab: string;
   @Input() parentResource: ReadResource;
+  @Input() adminPermissions: boolean;
 
   @Output() goToPage = new EventEmitter<number>();
 

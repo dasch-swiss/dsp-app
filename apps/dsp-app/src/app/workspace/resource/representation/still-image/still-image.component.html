@@ -76,7 +76,9 @@
         Copy IIIF URL to clipboard
       </button>
       <button class="menu-content" mat-menu-item (click)="download(images[0].fileValue.fileUrl)">Download image</button>
-      <button class="menu-content" mat-menu-item (click)="openReplaceFileDialog()">Replace file</button>
+      <button class="menu-content" mat-menu-item [disabled]="!adminPermissions" (click)="openReplaceFileDialog()">
+        Replace file
+      </button>
     </mat-menu>
     <!-- empty placeholder to simulate two buttons; this helps to have the zoom buttons centered with fill-remaining-space setup -->
     <span class="empty-space"></span>
@@ -141,7 +143,7 @@
         mat-icon-button
         id="DSP_OSD_DRAW_REGION"
         matTooltip="Draw Region"
-        [disabled]="failedToLoad"
+        [disabled]="failedToLoad || !adminPermissions"
         (click)="drawButtonClicked()"
         [class.active]="regionDrawMode">
         <mat-icon svgIcon="draw_region_icon"></mat-icon>
