@@ -1,6 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, Input } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
@@ -8,9 +8,11 @@ import { MatChipInputEvent } from '@angular/material/chips';
   template: `
     <mat-form-field style="width: 100%">
       <mat-chip-grid #chipList>
-        <mat-chip-row *ngFor="let tag of keywords; trackBy: trackByFn" (removed)="removeKeyword(tag)">
+        <mat-chip-row
+          *ngFor="let tag of formArray.value; let index = index; trackBy: trackByFn"
+          (removed)="removeKeyword(index)">
           {{ tag }}
-          <mat-icon matChipRemove *ngIf="editable">cancel</mat-icon>
+          <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip-row>
 
         <input
@@ -21,55 +23,46 @@ import { MatChipInputEvent } from '@angular/material/chips';
           (matChipInputTokenEnd)="addKeyword($event)" />
       </mat-chip-grid>
     </mat-form-field>
-    <mat-error *ngIf="formControl.touched && formControl.errors as errors">{{ errors | humanReadableError }}</mat-error>
+    <mat-error *ngIf="formArray.touched && formArray.errors as errors">{{ errors | humanReadableError }}</mat-error>
+    <mat-error *ngIf="addChipFormError">New value: {{ addChipFormError | humanReadableError }}</mat-error>
   `,
 })
 export class ChipListInputComponent {
   @Input() formGroup: FormGroup;
   @Input() controlName: string;
-  @Input() keywords: string[];
-  @Input() editable = true;
   @Input() chipsRequired = true;
+  @Input() validators: ValidatorFn[];
 
   separatorKeyCodes = [ENTER, COMMA];
+  addChipFormError: ValidationErrors | null = null;
 
-  get formControl() {
-    return this.formGroup.controls[this.controlName] as FormControl;
-  }
+  constructor(private _fb: FormBuilder) {}
 
-  update() {
-    this.formControl.setValue(this.keywords);
-    this.formControl.markAsTouched();
+  get formArray() {
+    return this.formGroup.controls[this.controlName] as FormArray;
   }
 
   addKeyword(event: MatChipInputEvent): void {
+    this.addChipFormError = null;
     const input = event.chipInput.inputElement;
     const value = event.value;
 
-    if (!this.keywords) {
-      this.keywords = [];
-    }
-
     // add keyword
-    if ((value || '').trim()) {
-      this.keywords.push(value.trim());
-    }
+    const newValue = (value || '').trim();
+    if (!newValue) return;
 
-    // reset the input value
-    if (input) {
+    const newFormControl = this._fb.control(value, this.validators);
+
+    if (newFormControl.valid) {
+      this.formArray.push(newFormControl);
       input.value = '';
+    } else {
+      this.addChipFormError = newFormControl.errors;
     }
-
-    this.update();
   }
 
-  removeKeyword(keyword: any): void {
-    const index = this.keywords.indexOf(keyword);
-
-    if (index >= 0) {
-      this.keywords.splice(index, 1);
-    }
-    this.update();
+  removeKeyword(index: number): void {
+    this.formArray.removeAt(index);
   }
 
   trackByFn = (index: number, item: string) => `${index}-${item}`;
