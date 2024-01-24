@@ -40,7 +40,7 @@
   </div>
 
   <!-- In case of 0 result -->
-  <div class="list-view no-results" *ngIf="!loading && (numberOfAllResults >= 0 && !resources?.resources.length)">
+  <div class="list-view no-results" *ngIf="!loading && resources?.resources?.length === 0">
     <!-- Case A: user did a fulltext search -->
     <div *ngIf="search.mode === 'fulltext'">
       <p>Your search - <strong> {{search.query}}</strong> - did not match any documents.</p>
@@ -66,12 +66,12 @@
         </button>
       </div>
       <!-- Case B1: there is no resources created-->
-      <div *ngIf="hasPermission" class="no-results-container">
+      <div *ngIf="numberOfAllResults === 0" class="no-results-container">
         <mat-icon>warning</mat-icon>
         <div>No results were found for your query.</div>
       </div>
       <!-- Case B2: no permission-->
-      <div *ngIf="!hasPermission" class="no-results-container">
+      <div *ngIf="numberOfAllResults > 0" class="no-results-container">
         <mat-icon>warning</mat-icon>
         <div>
           It seems like you don’t have the necessary permissions.<br />
