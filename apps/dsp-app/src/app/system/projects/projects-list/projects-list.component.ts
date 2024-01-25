@@ -161,22 +161,15 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   }
 
   deactivateProject(id: string) {
-    this._projectApiService.delete(id).pipe(
-      tap(() => {
-        this.refreshParent.emit(); // TODO Soft or Hard refresh ?
-      })
-    );
+    this._projectApiService.delete(id).subscribe(() => {
+      this.refreshParent.emit();
+    });
   }
 
   activateProject(id: string) {
     // As there is no activate route implemented in the js lib, we use the update route to set the status to true
-    const data: UpdateProjectRequest = new UpdateProjectRequest();
-    data.status = true;
-
-    this._projectApiService.update(id, data).pipe(
-      tap(() => {
-        this.refreshParent.emit();
-      })
-    );
+    this._projectApiService.update(id, { status: true }).subscribe(() => {
+      this.refreshParent.emit();
+    });
   }
 }
