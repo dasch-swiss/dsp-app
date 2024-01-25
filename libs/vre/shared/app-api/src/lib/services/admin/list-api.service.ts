@@ -97,10 +97,6 @@ export class ListApiService extends BaseApi {
   }
 
   updateChildNode(iri: string, updatedNode: UpdateChildNodeRequest) {
-    // TODO this uses normal update endpoint. throwing an error here seems like bad api pattern.
-    if (updatedNode.name === undefined && updatedNode.labels === undefined && updatedNode.comments === undefined) {
-      throw new Error('At least one property is expected from the following properties: name, labels, comments.');
-    }
     return this._http.put<ChildNodeInfoResponse>(this._listRoute(iri), updatedNode);
   }
 
