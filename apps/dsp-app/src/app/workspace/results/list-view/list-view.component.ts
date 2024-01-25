@@ -21,8 +21,10 @@ import {
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { Subject, Subscription, of } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { OntologyClassSelectors } from '@dasch-swiss/vre/shared/app-state';
+import { Store } from '@ngxs/store';
+import { Subject, Subscription, combineLatest, of } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
@@ -45,6 +47,7 @@ export interface SearchParams {
   mode: 'fulltext' | 'gravsearch';
   filter?: IFulltextSearchParams;
   projectUuid?: string;
+  classId?: string;
 }
 
 export interface ShortResInfo {
@@ -133,7 +136,8 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     private _notification: NotificationService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private _cd: ChangeDetectorRef
+    private _cd: ChangeDetectorRef,
+    private _store: Store
   ) {}
 
   ngOnInit(): void {
@@ -292,76 +296,71 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
           }
         );
     } else if (this.search.mode === 'gravsearch') {
-      // emit 'gravSearchExecuted' event to the fulltext-search component in order to clear the input field
-      this._componentCommsService.emit(new EmitEvent(Events.gravSearchExecuted, true));
-
-      // request the count query if the page index is zero otherwise it is already stored in the numberOfAllResults
-      const numberOfAllResults$ =
-        index !== 0
-          ? of(this.numberOfAllResults)
-          : this._dspApiConnection.v2.search
-              .doExtendedSearchCountQuery(this.search.query)
-              .pipe(takeUntil(this.ngUnsubscribe))
-              .pipe(
-                map((count: CountQueryResponse) => {
-                  this.numberOfAllResults = count.numberOfResults;
-                  this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
-                  if (this.numberOfAllResults === 0) {
-                    this._notification.openSnackBar('No resources to display.');
-                    this.emitSelectedResources();
-                    this.resources = undefined;
-                    this.loading = false;
-                    this._cd.markForCheck();
-                  }
-
-                  return count.numberOfResults;
-                })
-              );
-
-      numberOfAllResults$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-        (numberOfAllResults: number) => {
-          if (this.search.query !== undefined) {
-            // build the gravsearch query
-            let gravsearch = this.search.query;
-            gravsearch = gravsearch.substring(0, gravsearch.search('OFFSET'));
-            gravsearch = `${gravsearch}OFFSET ${index}`;
-
-            this._dspApiConnection.v2.search
-              .doExtendedSearch(gravsearch)
-              .pipe(takeUntil(this.ngUnsubscribe))
-              .subscribe(
-                (response: ReadResourceSequence) => {
-                  // if the response does not contain any resources even the search count is greater than 0,
-                  // it means that the user does not have the permissions to see anything: emit an empty result
-                  if (response.resources.length === 0 && this.numberOfAllResults > 0) {
-                    this._notification.openSnackBar('No permission to display the resources.');
-                    this.emitSelectedResources();
-                  }
-
-                  this.resources = response;
-                  this.loading = false;
-                  this._cd.markForCheck();
-                },
-                (error: ApiResponseError) => {
-                  this.loading = false;
-                  this.resources = undefined;
-                  this._errorHandler.showMessage(error);
-                }
-              );
-          } else {
-            this._notification.openSnackBar('The gravsearch query is not set correctly');
-            this.resources = undefined;
-            this.loading = false;
-            this._cd.markForCheck();
-          }
-        },
-        (countError: ApiResponseError) => {
-          // if error is a timeout, keep the loading animation
-          this.loading = countError.status === 504;
-          this._errorHandler.showMessage(countError);
-          this._cd.markForCheck();
-        }
-      );
+      this.performGravSearch(index);
     }
+  }
+
+  performGravSearch(index: number) {
+    // emit 'gravSearchExecuted' event to the fulltext-search component in order to clear the input field
+    this._componentCommsService.emit(new EmitEvent(Events.gravSearchExecuted, true));
+
+    if (this.search.query === undefined) {
+      this._notification.openSnackBar('The gravsearch query is not set correctly');
+      this.resources = undefined;
+      this.loading = false;
+      this._cd.markForCheck();
+      return;
+    }
+
+    // request the count query if the page index is zero otherwise it is already stored in the numberOfAllResults
+    const numberOfAllResults$ =
+      index !== 0
+        ? of(this.numberOfAllResults)
+        : this._store.select(OntologyClassSelectors.classItems).pipe(
+            take(1),
+            map(classItems => {
+              this.numberOfAllResults = classItems[this.search.classId].classItemsCount;
+              this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
+              if (this.numberOfAllResults === 0) {
+                this._notification.openSnackBar('No resources to display.');
+                this.emitSelectedResources();
+                this.resources = undefined;
+                this.loading = false;
+                this._cd.markForCheck();
+              }
+
+              return this.numberOfAllResults;
+            })
+          );
+
+    let gravsearch = this.search.query;
+    gravsearch = gravsearch.substring(0, gravsearch.search('OFFSET'));
+    gravsearch = `${gravsearch}OFFSET ${index}`;
+
+    const graveSearchQuery$ = this._dspApiConnection.v2.search
+      .doExtendedSearch(gravsearch)
+      .pipe(takeUntil(this.ngUnsubscribe));
+
+    combineLatest([graveSearchQuery$, numberOfAllResults$]).subscribe(
+      ([response, numberOfAllResults]) => {
+        response = response as ReadResourceSequence;
+        // if the response does not contain any resources even the search count is greater than 0,
+        // it means that the user does not have the permissions to see anything: emit an empty result
+        if (response.resources.length === 0 && this.numberOfAllResults > 0) {
+          this._notification.openSnackBar('No permission to display the resources.');
+          this.emitSelectedResources();
+        }
+
+        this.resources = response;
+
+        this.loading = false;
+        this._cd.markForCheck();
+      },
+      (error: ApiResponseError) => {
+        this.loading = false;
+        this.resources = undefined;
+        this._errorHandler.showMessage(error);
+      }
+    );
   }
 }

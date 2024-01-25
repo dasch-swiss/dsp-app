@@ -110,6 +110,7 @@ export class OntologyClassInstanceComponent extends ProjectBase implements OnIni
           ? <SearchParams>{
               query: this._setGravsearch(classId),
               mode: 'gravsearch',
+              classId,
             }
           : null
       )
