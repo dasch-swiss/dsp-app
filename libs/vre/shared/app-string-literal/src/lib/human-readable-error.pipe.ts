@@ -17,7 +17,7 @@ export class HumanReadableErrorPipe implements PipeTransform {
     }
 
     if (error.hasOwnProperty('minlength')) {
-      return `Must be greater than or equal to ${
+      return `The length must be greater than or equal to ${
         (
           error['minlength'] as {
             requiredLength: number;
@@ -27,7 +27,9 @@ export class HumanReadableErrorPipe implements PipeTransform {
     }
 
     if (error.hasOwnProperty('maxlength')) {
-      return `Must be less than or equal to ${(error['maxlength'] as { requiredLength: number }).requiredLength}`;
+      return `The length must be less than or equal to ${
+        (error['maxlength'] as { requiredLength: number }).requiredLength
+      }`;
     }
 
     if (error.hasOwnProperty('existingName')) {
