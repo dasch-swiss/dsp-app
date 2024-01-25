@@ -51,6 +51,11 @@ export class ChipListInputComponent {
     const newValue = (value || '').trim();
     if (!newValue) return;
 
+    if (this.formArray.value.includes(newValue)) {
+      input.value = '';
+      return;
+    }
+
     const newFormControl = this._fb.control(value, this.validators);
 
     if (newFormControl.valid) {
