@@ -319,7 +319,9 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
         : this._store.select(OntologyClassSelectors.classItems).pipe(
             take(1),
             map(classItems => {
-              this.numberOfAllResults = classItems[this.search.classId].classItemsCount;
+              this.numberOfAllResults = classItems[this.search.classId]
+                ? classItems[this.search.classId].classItemsCount
+                : 0;
               this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
               if (this.numberOfAllResults === 0) {
                 this._notification.openSnackBar('No resources to display.');
