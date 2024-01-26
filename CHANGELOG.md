@@ -1,5 +1,86 @@
 # Changelog
 
+## [11.2.0](https://github.com/dasch-swiss/dsp-das/compare/v11.1.7...v11.2.0) (2024-01-26)
+
+
+### Enhancements
+
+* create api routes for /admin ([#1318](https://github.com/dasch-swiss/dsp-das/issues/1318)) ([da5f289](https://github.com/dasch-swiss/dsp-das/commit/da5f2894d24be67ec5106696ac11f2848062b0f5))
+* **dsp-app:** introduced ontology class item count from state ([#1358](https://github.com/dasch-swiss/dsp-das/issues/1358)) ([f8984e4](https://github.com/dasch-swiss/dsp-das/commit/f8984e4c2bb488043e71892e9a8e4ac9af315492))
+* **project form:** creating a new project with an existing short code (DEV-3204) ([#1368](https://github.com/dasch-swiss/dsp-das/issues/1368)) ([d231c51](https://github.com/dasch-swiss/dsp-das/commit/d231c519bc3d6e5d6429ea57ae55e9a128513432))
+* **projects:** caches projects loading, removed readProjects from state model. #DEV-2913 ([#1341](https://github.com/dasch-swiss/dsp-das/issues/1341)) ([7ebd126](https://github.com/dasch-swiss/dsp-das/commit/7ebd126e46ea2522351247a764eaa64f20a1a64c))
+* update @dasch-swiss/jdnconvertiblecalendar and @dasch-swiss/jdnconvertiblecalendardateadapter ([#1362](https://github.com/dasch-swiss/dsp-das/issues/1362)) ([cf1cd76](https://github.com/dasch-swiss/dsp-das/commit/cf1cd769740589cd4012d326661ba5c5276031dd))
+
+
+### Bug Fixes
+
+* #DEV-3111, #DEV-3108, #DEV-3118 project initialisation from url ([#1316](https://github.com/dasch-swiss/dsp-das/issues/1316)) ([4e5c19a](https://github.com/dasch-swiss/dsp-das/commit/4e5c19a992d00a7593534d72e3e96506b269c86c))
+* add icon to common input ([#1333](https://github.com/dasch-swiss/dsp-das/issues/1333)) ([7d58e69](https://github.com/dasch-swiss/dsp-das/commit/7d58e6987fd4b0fd7cd1a213e2e6cda4817eca76))
+* add min and max length to keywords validators ([#1379](https://github.com/dasch-swiss/dsp-das/issues/1379)) ([2c4852b](https://github.com/dasch-swiss/dsp-das/commit/2c4852b787667a7af56dd6733f9220f7972e7d44))
+* add tooltip on non accessible list ([#1345](https://github.com/dasch-swiss/dsp-das/issues/1345)) ([a96f40b](https://github.com/dasch-swiss/dsp-das/commit/a96f40bbac242efb497900d18364d052f616beb4))
+* adding new value for optional resource #DEV-3031 ([#1360](https://github.com/dasch-swiss/dsp-das/issues/1360)) ([420a564](https://github.com/dasch-swiss/dsp-das/commit/420a564a8371396f70c196a645e7a25d93a4c78d))
+* advanced search number of results bug ([#1388](https://github.com/dasch-swiss/dsp-das/issues/1388)) ([2ad2be0](https://github.com/dasch-swiss/dsp-das/commit/2ad2be011f7c3c0d16ecd78efbd212cff13a3a15))
+* api url loaded from environment ([#1332](https://github.com/dasch-swiss/dsp-das/issues/1332)) ([568f078](https://github.com/dasch-swiss/dsp-das/commit/568f07851d0d837a5ec6c9c93f7f7f4b0296f9bc))
+* audio slider moves on time change ([#1376](https://github.com/dasch-swiss/dsp-das/issues/1376)) ([0abdfc6](https://github.com/dasch-swiss/dsp-das/commit/0abdfc62a00edad7aa3ad1d7b60513b0e78d93ba))
+* cancel button in project form goes back to previous page ([#1385](https://github.com/dasch-swiss/dsp-das/issues/1385)) ([604b2f0](https://github.com/dasch-swiss/dsp-das/commit/604b2f03dd2c78e5fe862d458f504fa10dd602b5))
+* class instance adding and preview.  ([#1317](https://github.com/dasch-swiss/dsp-das/issues/1317)) ([3c1e684](https://github.com/dasch-swiss/dsp-das/commit/3c1e684f7b334f35724e13891d89badc81f6a35c))
+* close dialog after update ([#1352](https://github.com/dasch-swiss/dsp-das/issues/1352)) ([41d3bb0](https://github.com/dasch-swiss/dsp-das/commit/41d3bb059ccf22038f3008d00f537c12710200d2))
+* delete failing e2e test ([3dbca58](https://github.com/dasch-swiss/dsp-das/commit/3dbca58a0575e6f44c1f88530b7e4769656f0266))
+* **dsp-app:** handles project edit errors (#DEV-3205) ([#1369](https://github.com/dasch-swiss/dsp-das/issues/1369)) ([27f58b3](https://github.com/dasch-swiss/dsp-das/commit/27f58b3de4c7548c22d549f889e9a48b67412d1d))
+* **dsp-app:** manage user membership (#DEV-3218) ([#1373](https://github.com/dasch-swiss/dsp-das/issues/1373)) ([1c0ba4a](https://github.com/dasch-swiss/dsp-das/commit/1c0ba4afa5449bf4f3a2423c8e485b7db641ee1c))
+* **dsp-app:** new projects have 20 characters shortcode ([#1279](https://github.com/dasch-swiss/dsp-das/issues/1279)) ([cd3be0d](https://github.com/dasch-swiss/dsp-das/commit/cd3be0d7cafe4ba7c8c5783ba37afd877b82e2f9))
+* **dsp-app:** ontology loading, ontology clases refresh, reloads proj… ([#1346](https://github.com/dasch-swiss/dsp-das/issues/1346)) ([9e4fcd3](https://github.com/dasch-swiss/dsp-das/commit/9e4fcd331d739428fea44a017517f464c1d8b24e))
+* **dsp-app:** reloads resource list when resource is changed, separates projects and membership loading.. ([#1343](https://github.com/dasch-swiss/dsp-das/issues/1343)) ([b4bd34b](https://github.com/dasch-swiss/dsp-das/commit/b4bd34b3f3cf7f3eaf5c3089df94d7afba549bb5))
+* **dsp-app:** Resolves DEV-2687 ([#1336](https://github.com/dasch-swiss/dsp-das/issues/1336)) ([d6211f9](https://github.com/dasch-swiss/dsp-das/commit/d6211f91169d25e1edcbeefc1251b64acfb36616))
+* **dsp-app:** resource class form validation (#DEV-3132) ([#1370](https://github.com/dasch-swiss/dsp-das/issues/1370)) ([94e7a48](https://github.com/dasch-swiss/dsp-das/commit/94e7a482904f31347fc47b72a646eaddd67b3ed4))
+* **dsp-app:** resource link form (#DEV-3203) ([#1377](https://github.com/dasch-swiss/dsp-das/issues/1377)) ([a0f9afb](https://github.com/dasch-swiss/dsp-das/commit/a0f9afbbc3313c5ae2c9558a9fb7b31057b9ef6b))
+* fixed loading coumpound resources #DEV-3096 ([#1326](https://github.com/dasch-swiss/dsp-das/issues/1326)) ([490513e](https://github.com/dasch-swiss/dsp-das/commit/490513ee35a97db4c3446a01bedd694247de261f))
+* flickering button ([#1371](https://github.com/dasch-swiss/dsp-das/issues/1371)) ([ec0a850](https://github.com/dasch-swiss/dsp-das/commit/ec0a8500327d923c213d3426b086c65767f9bbc8))
+* geoname property lookup ([#1334](https://github.com/dasch-swiss/dsp-das/issues/1334)) ([a491062](https://github.com/dasch-swiss/dsp-das/commit/a491062ea97e617653a5712a555f0724ccfd1f95))
+* keywords chip inputs cannot be duplicated ([#1382](https://github.com/dasch-swiss/dsp-das/issues/1382)) ([ac5298a](https://github.com/dasch-swiss/dsp-das/commit/ac5298af507e6f4c157288adc775c9e1705d11b4))
+* links to incunabula project ([#1311](https://github.com/dasch-swiss/dsp-das/issues/1311)) ([31a6458](https://github.com/dasch-swiss/dsp-das/commit/31a6458477e1167a0d8e2be9f64c889dff47b7f7))
+* list item comment get updated ([#1386](https://github.com/dasch-swiss/dsp-das/issues/1386)) ([1bb85a7](https://github.com/dasch-swiss/dsp-das/commit/1bb85a7887c61a515eb3fd9b37852d1896f35af5))
+* **list-view:** correct display logic ([#1378](https://github.com/dasch-swiss/dsp-das/issues/1378)) ([b68f8db](https://github.com/dasch-swiss/dsp-das/commit/b68f8dbf64e4f15afdf5e5ba3fcaa18015054b61))
+* loaders, refactored project component getters ([#1361](https://github.com/dasch-swiss/dsp-das/issues/1361)) ([f87c96b](https://github.com/dasch-swiss/dsp-das/commit/f87c96ba8a19e682af44b0723addcbf722ed3ed3))
+* merge conflict ([#1308](https://github.com/dasch-swiss/dsp-das/issues/1308)) ([818dcd6](https://github.com/dasch-swiss/dsp-das/commit/818dcd6049171d4c0ff956bb3ff9f88b3bee54ff))
+* more readable error message ([#1383](https://github.com/dasch-swiss/dsp-das/issues/1383)) ([c426d92](https://github.com/dasch-swiss/dsp-das/commit/c426d923f9fc88589930076976d72f4bbcda6ab1))
+* multi language forms first selection bug ([#1344](https://github.com/dasch-swiss/dsp-das/issues/1344)) ([47a161c](https://github.com/dasch-swiss/dsp-das/commit/47a161c509a51a647f62504c0bba59ca5781fbd9))
+* multi-language form default language ([#1353](https://github.com/dasch-swiss/dsp-das/issues/1353)) ([e5fb2fe](https://github.com/dasch-swiss/dsp-das/commit/e5fb2fe1bc40d0d93040c1de6ebe2fddd6a304ee))
+* no retry in edit user form ([#1367](https://github.com/dasch-swiss/dsp-das/issues/1367)) ([1f03e7d](https://github.com/dasch-swiss/dsp-das/commit/1f03e7d2a3c1886a57d07f670dd8bb524b3ba858))
+* ontology resource create and display ([#1322](https://github.com/dasch-swiss/dsp-das/issues/1322)) ([adfc304](https://github.com/dasch-swiss/dsp-das/commit/adfc3042ccc83293b77e6aad602dc0c31fd8b2bf))
+* Project initialisation from url ([#1306](https://github.com/dasch-swiss/dsp-das/issues/1306)) ([6d8e1a3](https://github.com/dasch-swiss/dsp-das/commit/6d8e1a36e973489c5a25402e1cd3c4034ab982e3))
+* Project Member cannot add instances of resources #DEV-3121 ([#1327](https://github.com/dasch-swiss/dsp-das/issues/1327)) ([e0f57fe](https://github.com/dasch-swiss/dsp-das/commit/e0f57fe33db9c717e15404abe8576e94e4eb5e83))
+* **projects list:** deactivating-a-project-not-possible (DEV-3206) ([#1366](https://github.com/dasch-swiss/dsp-das/issues/1366)) ([ad76437](https://github.com/dasch-swiss/dsp-das/commit/ad76437e915e7400853d600df27187c125262015))
+* property value refresh #DEV-3106 ([#1329](https://github.com/dasch-swiss/dsp-das/issues/1329)) ([f41b375](https://github.com/dasch-swiss/dsp-das/commit/f41b375de5ec28dbc637c5186cd7fd4c99a39ad6))
+* redirection to home issue when session is not valid ([#1359](https://github.com/dasch-swiss/dsp-das/issues/1359)) ([45e0625](https://github.com/dasch-swiss/dsp-das/commit/45e0625ee24db55a51ed22b1fba9d8e36f61b4c0))
+* remove unused validator on project form ([#1339](https://github.com/dasch-swiss/dsp-das/issues/1339)) ([0b9ad0c](https://github.com/dasch-swiss/dsp-das/commit/0b9ad0c762142835dae8a790dab185811310c57c))
+* removeFromProjectMembership API http method, project membership … ([#1330](https://github.com/dasch-swiss/dsp-das/issues/1330)) ([c1ab00c](https://github.com/dasch-swiss/dsp-das/commit/c1ab00ca5b16bcd3b0ee3e6f4bf39b112a002fa1))
+* send gravsearch and search-count request simultaniously ([#1380](https://github.com/dasch-swiss/dsp-das/issues/1380)) ([89b91ec](https://github.com/dasch-swiss/dsp-das/commit/89b91ecb7a28fc46be5cd879b9204489f926d597))
+* shortcode issue gravsearch ([#1315](https://github.com/dasch-swiss/dsp-das/issues/1315)) ([814fb98](https://github.com/dasch-swiss/dsp-das/commit/814fb9839d76f9309f92f7e5c5122a8fe94ee962))
+* shortcode issue in gravsearch ([#1314](https://github.com/dasch-swiss/dsp-das/issues/1314)) ([1b69de4](https://github.com/dasch-swiss/dsp-das/commit/1b69de4832142aaff0209baddb65d288731daf22))
+* **still image:** User without permission can draw a region ([#1372](https://github.com/dasch-swiss/dsp-das/issues/1372)) ([7da5827](https://github.com/dasch-swiss/dsp-das/commit/7da582775c2d4e12908b0f2f5430853312801ed2))
+* various bugs ([#1312](https://github.com/dasch-swiss/dsp-das/issues/1312)) ([9f55ce1](https://github.com/dasch-swiss/dsp-das/commit/9f55ce15a8c12929e22041a46dbaaa6a2d4538f0))
+* various bugs ([#1313](https://github.com/dasch-swiss/dsp-das/issues/1313)) ([1d90cf7](https://github.com/dasch-swiss/dsp-das/commit/1d90cf7aea3f99a71ebf1a54a50b515b2e0174c7))
+
+
+### Maintenance
+
+* add confirm dialog service ([#1335](https://github.com/dasch-swiss/dsp-das/issues/1335)) ([3bc2b6c](https://github.com/dasch-swiss/dsp-das/commit/3bc2b6c6e9664e4a3b88f62ea52fd7b1526978b1))
+* add prettier basic configuration ([#1309](https://github.com/dasch-swiss/dsp-das/issues/1309)) ([99276a6](https://github.com/dasch-swiss/dsp-das/commit/99276a64c3247af424a0cadfea020c2ac0c3de8a))
+* add prettier general style ([#1310](https://github.com/dasch-swiss/dsp-das/issues/1310)) ([8567eda](https://github.com/dasch-swiss/dsp-das/commit/8567eda20202d58ab402fa3ab699b37b05214fa9))
+* add recommended linting rules again ([#1323](https://github.com/dasch-swiss/dsp-das/issues/1323)) ([2fb7c3f](https://github.com/dasch-swiss/dsp-das/commit/2fb7c3f09ec4f5ac0b36b99215a01fe13dfc0173))
+* add rule nx enforce-module-boundaries ([#1325](https://github.com/dasch-swiss/dsp-das/issues/1325)) ([1b1fd77](https://github.com/dasch-swiss/dsp-das/commit/1b1fd77abfb5bade3f738d8eff218fd64cf9ee00))
+* confirm dialog, multi language input, project-form, resource-form, list-info-form ([#1328](https://github.com/dasch-swiss/dsp-das/issues/1328)) ([4c520cd](https://github.com/dasch-swiss/dsp-das/commit/4c520cd4ba33d9eaf77dc5ec648b7e8e4970c215))
+* **dsp-api:** created api-entity-helper ([#1337](https://github.com/dasch-swiss/dsp-das/issues/1337)) ([3befc8e](https://github.com/dasch-swiss/dsp-das/commit/3befc8efc5c1472c6ad655958407a504d33bd6ce))
+* **linter:** use standard angular linter ([#1276](https://github.com/dasch-swiss/dsp-das/issues/1276)) ([e7251d1](https://github.com/dasch-swiss/dsp-das/commit/e7251d1e632a7bf4560faaec0897a3f350706ced))
+* make list forms files clearer ([#1338](https://github.com/dasch-swiss/dsp-das/issues/1338)) ([c5ac901](https://github.com/dasch-swiss/dsp-das/commit/c5ac901710fd4cf0e2ed7adac3b319c18744e506))
+* reinforce linter ([#1320](https://github.com/dasch-swiss/dsp-das/issues/1320)) ([5e60532](https://github.com/dasch-swiss/dsp-das/commit/5e605321b149468767ad4aa8c35e023e1f4d9f18))
+* remove dateAdapter app ([#1324](https://github.com/dasch-swiss/dsp-das/issues/1324)) ([28e8ee4](https://github.com/dasch-swiss/dsp-das/commit/28e8ee4f6c48d7e86cecf6e052467fe53b6f9fc6))
+* remove unused external-link-directive ([#1340](https://github.com/dasch-swiss/dsp-das/issues/1340)) ([bf9aecc](https://github.com/dasch-swiss/dsp-das/commit/bf9aecc697b38f258921e52eea8bd1a53d1fa957))
+* run prettier linter on apps and libs folders ([#1319](https://github.com/dasch-swiss/dsp-das/issues/1319)) ([786753d](https://github.com/dasch-swiss/dsp-das/commit/786753dc4200f0ffc7073fa3bf36169cf9ce6199))
+* set max line length to 120 characters ([#1321](https://github.com/dasch-swiss/dsp-das/issues/1321)) ([fa379d0](https://github.com/dasch-swiss/dsp-das/commit/fa379d0ea99f8c44787791947c8a67c56cfc449e))
+* Update dsp-js to v9.1.10 ([#1389](https://github.com/dasch-swiss/dsp-das/issues/1389)) ([f1489d6](https://github.com/dasch-swiss/dsp-das/commit/f1489d6acf1941f51f343c000c702a53b7d9089b))
+
 ## [11.1.7](https://github.com/dasch-swiss/dsp-das/compare/v11.1.6...v11.1.7) (2023-12-08)
 
 
