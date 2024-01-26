@@ -24,7 +24,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { NgxsStoreModule, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { Store } from '@ngxs/store';
 
 @Component({
@@ -40,7 +39,6 @@ import { Store } from '@ngxs/store';
     FormsModule,
     ReactiveFormsModule,
     NgxsStoreModule,
-    NgxsStoragePluginModule,
   ],
   templateUrl: './dasch-swiss-string-literal.component.html',
   styleUrls: ['./dasch-swiss-string-literal.component.scss'],

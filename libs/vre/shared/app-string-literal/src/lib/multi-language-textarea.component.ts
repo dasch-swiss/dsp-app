@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
-import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 import { MultiLanguageFormService } from './multi-language-form.service';
 
@@ -25,7 +24,6 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     FormsModule,
     ReactiveFormsModule,
     NgxsStoreModule,
-    NgxsStoragePluginModule,
     HumanReadableErrorPipe,
   ],
   template: `
