@@ -1,13 +1,13 @@
 import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { AuthService } from '@dasch-swiss/vre/shared/app-session';
+import { AccessTokenService } from '@dasch-swiss/vre/shared/app-session';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
-    private _authService: AuthService,
-    private _appConfigService: AppConfigService
+    private _appConfigService: AppConfigService,
+    private _accessTokenService: AccessTokenService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
@@ -15,11 +15,11 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    const authToken = this._authService.getAccessToken();
+    const authToken = this._accessTokenService.getAccessToken();
     if (!authToken) return next.handle(req);
 
     const authReq = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${this._authService.getAccessToken()}`),
+      headers: req.headers.set('Authorization', `Bearer ${this._accessTokenService.getAccessToken()}`),
     });
     return next.handle(authReq);
   }

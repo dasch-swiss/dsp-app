@@ -354,7 +354,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     MultiLanguageTextareaComponent,
     MutiLanguageInputComponent,
     NgxsStoreModule,
-    NgxsStoragePluginModule.forRoot(),
   ],
   providers: [
     AppConfigService,

@@ -5,7 +5,7 @@ import { User } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { MenuItem } from '../../main/declarations/menu-item';
 
@@ -23,9 +23,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  get isLoggedIn$(): Observable<boolean> {
-    return this._authService.isSessionValid$();
-  }
+  isLoggedIn$ = this._store.select(UserSelectors.isLoggedIn);
 
   @Select(UserSelectors.user) user$: Observable<User>;
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<User>;
@@ -34,7 +32,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private _authService: AuthService,
-    private _router: Router
+    private _store: Store
   ) {}
 
   ngOnInit() {

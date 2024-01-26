@@ -1,10 +1,9 @@
-import { DOCUMENT, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Inject,
   Input,
   OnDestroy,
   OnInit,
@@ -13,15 +12,8 @@ import {
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthError, AuthService } from '@dasch-swiss/vre/shared/app-session';
-import { LoadUserAction, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { take, takeLast } from 'rxjs/operators';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events,
-} from '../../services/component-communication-event.service';
+import { Subject } from 'rxjs';
+import { takeLast } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-form',
@@ -30,9 +22,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginFormComponent implements OnInit, OnDestroy {
-  get isLoggedIn$(): Observable<boolean> {
-    return this._authService.isSessionValid$();
-  }
   /**
    * set whether or not you want icons to display in the input fields
    *
@@ -98,16 +87,12 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   private destroyed$ = new Subject<void>();
 
   constructor(
-    private _componentCommsService: ComponentCommunicationEventService,
     private _fb: UntypedFormBuilder,
     private router: Router,
     private _authService: AuthService,
     private route: ActivatedRoute,
     private location: Location,
-    private cd: ChangeDetectorRef,
-    private _actions$: Actions,
-    private _store: Store,
-    @Inject(DOCUMENT) private document: Document
+    private cd: ChangeDetectorRef
   ) {}
 
   /**
@@ -144,32 +129,20 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     const password: string = this.form.get('password').value;
 
     this._authService
-      .apiLogin$(identifier, password)
+      .login$(identifier, password)
       .pipe(takeLast(1))
       .subscribe({
         next: loginResult => {
-          if (loginResult) {
-            this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, true));
-            this._store.dispatch(new LoadUserAction(identifier));
-            return combineLatest([
-              this._actions$.pipe(ofActionSuccessful(LoadUserAction)),
-              this._store.select(UserSelectors.user),
-            ])
-              .pipe(take(1))
-              .subscribe(([action, user]) => {
-                this.loading = false;
-                this._authService.loginSuccessfulEvent.emit(user);
-                this.cd.markForCheck();
-                if (this.returnUrl) {
-                  this.router.navigate([this.returnUrl]);
-                }
-              });
+          this.loginSuccess.emit(true);
+          this.loading = false;
+          this.cd.markForCheck();
+
+          if (this.returnUrl) {
+            this.router.navigate([this.returnUrl]);
           }
         },
         error: (error: AuthError) => {
           this.loginSuccess.emit(false);
-
-          this._componentCommsService.emit(new EmitEvent(Events.loginSuccess, false));
 
           this.loading = false;
           this.isError = true;

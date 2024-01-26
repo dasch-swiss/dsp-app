@@ -18,23 +18,21 @@ export class UserSelectors {
 
   @Selector([UserState])
   static activeUsers(state: UserStateModel): ReadUser[] {
-    return state.allUsers.filter((user: ReadUser) => user.status === true);
+    return state.allUsers.filter((user: ReadUser) => user.status);
   }
 
   @Selector([UserState])
   static inactiveUsers(state: UserStateModel): ReadUser[] {
-    return state.allUsers.filter((user: ReadUser) => user.status !== true);
+    return state.allUsers.filter((user: ReadUser) => !user.status);
   }
 
   @Selector([UserState])
-  static isLoggedIn(state: UserStateModel): boolean {
-    return (
-      !state.isLoading && !!localStorage.getItem(Auth.AccessToken) && state.user !== null && state.user?.username !== ''
-    );
+  static isLoggedIn(state: UserStateModel) {
+    return !state.isLoading && state.user !== null;
   }
 
   @Selector([UserState])
-  static user(state: UserStateModel): User | ReadUser | null | undefined {
+  static user(state: UserStateModel): ReadUser | null {
     return state.user;
   }
 

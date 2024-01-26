@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { AutoLoginService, LocalStorageWatcherService } from '@dasch-swiss/vre/shared/app-session';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +15,12 @@ export class AppComponent implements OnInit {
 
   constructor(
     private _router: Router,
-    private _titleService: Title
+    private _titleService: Title,
+    private _autoLoginService: AutoLoginService,
+    private _localStorageWatcher: LocalStorageWatcherService
   ) {
-    // set the page title
+    this._autoLoginService.setup();
+    this._localStorageWatcher.watchAccessToken();
     this._titleService.setTitle('DaSCH Service Platform');
   }
 

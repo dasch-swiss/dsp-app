@@ -1,21 +1,19 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { AppConfigService, RouteConstants, DspConfig } from '@dasch-swiss/vre/shared/app-config';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { AppConfigService, DspConfig, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { Subscription } from 'rxjs';
 import { SearchParams } from '../../workspace/results/list-view/list-view.component';
 import { DialogComponent } from '../dialog/dialog.component';
-import { ComponentCommunicationEventService, Events } from '../services/component-communication-event.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnDestroy {
   session = false;
   show = false;
   searchParams: SearchParams;
@@ -29,11 +27,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private _appConfigService: AppConfigService,
-    private _componentCommsService: ComponentCommunicationEventService,
     private _dialog: MatDialog,
     private _domSanitizer: DomSanitizer,
     private _matIconRegistry: MatIconRegistry,
-    private _notification: NotificationService,
     private _router: Router
   ) {
     // create own logo icon to use them in mat-icons
@@ -43,12 +39,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
 
     this.dsp = this._appConfigService.dspConfig;
-  }
-
-  ngOnInit() {
-    this.componentCommsSubscription = this._componentCommsService.on(Events.loginSuccess, () => {
-      this._notification.openSnackBar('Login successful');
-    });
   }
 
   ngOnDestroy() {
