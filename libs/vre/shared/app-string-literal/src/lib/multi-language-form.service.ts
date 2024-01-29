@@ -53,7 +53,13 @@ export class MultiLanguageFormService {
     return this.formArray.controls.find(control => control.value.language === lang && control.value.value !== '');
   }
 
-  changeLanguage(languageIndex: number) {
+  changeLanguage(languageIndex: number, deleteCurrentIfEmpty = true) {
+    const currentValidators = (this.formArray.controls[0].get('value') as FormControl).validator;
+
+    if (deleteCurrentIfEmpty && this.selectedFormControl.value.length === 0) {
+      this.formArray.removeAt(this.formArray.controls.indexOf(this.selectedFormControl));
+    }
+
     const language = this.availableLanguages[languageIndex];
     const languageFoundIndex = this.formArray.value.findIndex(array => array.language === language);
 
@@ -61,10 +67,10 @@ export class MultiLanguageFormService {
       this.formArray.push(
         this._fb.group({
           language,
-          value: ['', (this.formArray.controls[0].get('value') as FormControl).validator],
+          value: ['', currentValidators],
         })
       );
-      this.changeLanguage(languageIndex);
+      this.changeLanguage(languageIndex, false);
     } else {
       this.selectedLanguageIndex = languageIndex;
     }

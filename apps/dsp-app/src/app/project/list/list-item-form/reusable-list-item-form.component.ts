@@ -46,7 +46,7 @@ export class ReusableListItemFormComponent implements OnInit, OnDestroy {
         this.formData.labels.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.maxLength(2000)]],
+            value: [value, [Validators.required, Validators.maxLength(2000)]],
           })
         ),
         atLeastOneStringRequired('value')
@@ -55,7 +55,7 @@ export class ReusableListItemFormComponent implements OnInit, OnDestroy {
         this.formData.comments.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.maxLength(2000)]],
+            value: [value, [Validators.required, Validators.maxLength(2000)]],
           })
         )
       ),
