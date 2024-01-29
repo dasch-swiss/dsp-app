@@ -2,7 +2,10 @@ import { ReadUser, User } from '@dasch-swiss/dsp-js';
 
 export class LoadUserAction {
   static readonly type = '[User] Load User';
-  constructor(public username: string) {}
+  constructor(
+    public identifier: string,
+    public idType: 'iri' | 'username' = 'username'
+  ) {}
 }
 
 export class LoadUserContentByIriAction {

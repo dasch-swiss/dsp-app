@@ -35,9 +35,9 @@ export class UserState {
   constructor(private _userApiService: UserApiService) {}
 
   @Action(LoadUserAction)
-  loadUser(ctx: StateContext<UserStateModel>, { username }: LoadUserAction) {
+  loadUser(ctx: StateContext<UserStateModel>, { identifier, idType }: LoadUserAction) {
     ctx.patchState({ isLoading: true });
-    return this._userApiService.get(username, 'username').pipe(
+    return this._userApiService.get(identifier, idType).pipe(
       take(1),
       map(response => {
         ctx.setState({

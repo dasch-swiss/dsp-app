@@ -20,8 +20,6 @@ export class AutoLoginService {
   ) {}
 
   setup() {
-    this._dspApiConnection.v2.jsonWebToken = ''; // This is mandatory for the v2 api to works
-
     const encodedJWT = this._accessTokenService.getTokenUser();
     if (!encodedJWT) {
       return;
@@ -33,6 +31,8 @@ export class AutoLoginService {
       return;
     }
 
+    this._dspApiConnection.v2.jsonWebToken = encodedJWT;
+
     this._authService
       .isCredentialsValid$()
       .pipe(
@@ -41,22 +41,18 @@ export class AutoLoginService {
             throwError('Credentials not valid');
           }
 
-          const usernameRegex = /\/users\/(\w+)$/;
-          const match = decodedToken.sub?.match(usernameRegex);
-
-          if (!match || !match[1]) {
-            throwError('Decoded user in JWT token is not valid.');
+          const userIri = decodedToken.sub;
+          if (!userIri) {
+            return throwError('Decoded user in JWT token is not valid.');
           }
 
-          this._dspApiConnection.v2.jsonWebToken = encodedJWT;
-
-          const username = (match as RegExpMatchArray)[1];
-          return this._store.dispatch(new LoadUserAction(username));
+          return this._store.dispatch(new LoadUserAction(userIri, 'iri'));
         })
       )
       .subscribe({
         error: () => {
           this._accessTokenService.removeTokens();
+          this._dspApiConnection.v2.jsonWebToken = '';
         },
       });
   }
