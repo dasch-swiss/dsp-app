@@ -11,7 +11,6 @@ import {
   UpdateOntologyMetadata,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyService, ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   ClearProjectOntologiesAction,
@@ -23,9 +22,9 @@ import {
   SetCurrentOntologyAction,
   SetCurrentProjectOntologyPropertiesAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil, tap } from 'rxjs/operators';
 import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
 
@@ -115,7 +114,6 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _fb: UntypedFormBuilder,
     private _route: ActivatedRoute,
     private _router: Router,
@@ -247,21 +245,20 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
 
       this._dspApiConnection.v2.onto
         .updateOntology(ontologyData)
-        .pipe(take(1))
-        .subscribe(
-          (response: OntologyMetadata) => {
-            this.loadOntologies(response.id);
-            this.updateParent.emit(response.id);
-            this.closeDialog.emit(response.id);
-          },
-          (error: ApiResponseError) => {
-            // in case of an error
-            this.loading = false;
-            this.error = true;
-
-            this._errorHandler.showMessage(error);
-          }
-        );
+        .pipe(
+          take(1),
+          tap({
+            error: () => {
+              this.loading = false;
+              this.error = true;
+            },
+          })
+        )
+        .subscribe((response: OntologyMetadata) => {
+          this.loadOntologies(response.id);
+          this.updateParent.emit(response.id);
+          this.closeDialog.emit(response.id);
+        });
     } else {
       // create mode
       const ontologyData = new CreateOntology();
@@ -287,8 +284,6 @@ export class OntologyFormComponent implements OnInit, OnDestroy {
             // in case of an error... e.g. because the ontolog iri is not unique, rebuild the form including the error message
             this.formErrors['name'] += `${this.validationMessages['name']['existingName']} `;
             this.loading = false;
-
-            this._errorHandler.showMessage(error);
           }
         );
     }

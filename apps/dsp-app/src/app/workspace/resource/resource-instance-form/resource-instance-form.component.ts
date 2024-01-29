@@ -24,15 +24,15 @@ import {
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { DefaultClass, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
+import { tap } from 'rxjs/operators';
 import {
-  Events as CommsEvents,
   ComponentCommunicationEventService,
   EmitEvent,
+  Events as CommsEvents,
 } from '../../../main/services/component-communication-event.service';
 import { ResourceService } from '../services/resource.service';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
@@ -87,7 +87,6 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _fb: UntypedFormBuilder,
     private _resourceService: ResourceService,
     private _route: ActivatedRoute,
@@ -127,8 +126,17 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
     this.preparing = true;
     this.loading = true;
     this._dspApiConnection.v2.ontologyCache.reloadCachedItem(this.ontologyIri).subscribe(() => {
-      this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resourceClassIri).subscribe(
-        (onto: ResourceClassAndPropertyDefinitions) => {
+      this._dspApiConnection.v2.ontologyCache
+        .getResourceClassDefinition(resourceClassIri)
+        .pipe(
+          tap({
+            error: () => {
+              this.preparing = false;
+              this.loading = false;
+            },
+          })
+        )
+        .subscribe((onto: ResourceClassAndPropertyDefinitions) => {
           this.ontologyInfo = onto;
 
           this.resourceClass = onto.classes[resourceClassIri];
@@ -174,13 +182,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
           this.preparing = false;
           this.loading = false;
           this._cd.markForCheck();
-        },
-        (error: ApiResponseError) => {
-          this.preparing = false;
-          this.loading = false;
-          this._errorHandler.showMessage(error);
-        }
-      );
+        });
     });
   }
 
@@ -241,8 +243,17 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
       }
 
       createResource.properties = this.propertiesObj;
-      this._dspApiConnection.v2.res.createResource(createResource).subscribe(
-        (res: ReadResource) => {
+      this._dspApiConnection.v2.res
+        .createResource(createResource)
+        .pipe(
+          tap({
+            error: () => {
+              this.error = true;
+              this.loading = false;
+            },
+          })
+        )
+        .subscribe((res: ReadResource) => {
           this.resource = res;
 
           const uuid = this._resourceService.getResourceUuid(this.resource.id);
@@ -257,20 +268,7 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
               this._componentCommsService.emit(new EmitEvent(CommsEvents.resourceCreated));
               this._cd.markForCheck();
             });
-        },
-        (error: ApiResponseError) => {
-          this.error = true;
-          this.loading = false;
-          if (error.status === 400) {
-            this._notification.openSnackBar(
-              'Bad request(400): There was an issue with your request. Often this is due to duplicate values in one of your properties.',
-              'error'
-            );
-          } else {
-            this._errorHandler.showMessage(error);
-          }
-        }
-      );
+        });
     } else {
       this.propertiesParentForm.markAllAsTouched();
     }

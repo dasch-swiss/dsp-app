@@ -2,7 +2,6 @@ import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output }
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {
-  ApiResponseError,
   Constants,
   KnoraApiConnection,
   ReadAudioFileValue,
@@ -13,7 +12,6 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { mergeMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
 import {
@@ -47,7 +45,6 @@ export class AudioComponent implements OnInit, AfterViewInit {
     private _dspApiConnection: KnoraApiConnection,
     private _sanitizer: DomSanitizer,
     private _dialog: MatDialog,
-    private _errorHandler: AppErrorHandler,
     private _rs: RepresentationService,
     private _valueOperationEventService: ValueOperationEventService
   ) {}
@@ -172,36 +169,29 @@ export class AudioComponent implements OnInit, AfterViewInit {
           this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
-      .subscribe(
-        (res2: ReadResource) => {
-          this.src.fileValue.fileUrl = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).fileUrl;
-          this.src.fileValue.filename = (
-            res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue
-          ).filename;
-          this.src.fileValue.strval = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).strval;
-          this.src.fileValue.valueCreationDate = (
-            res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue
-          ).valueCreationDate;
+      .subscribe((res2: ReadResource) => {
+        this.src.fileValue.fileUrl = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).fileUrl;
+        this.src.fileValue.filename = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).filename;
+        this.src.fileValue.strval = (res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue).strval;
+        this.src.fileValue.valueCreationDate = (
+          res2.properties[Constants.HasAudioFileValue][0] as ReadAudioFileValue
+        ).valueCreationDate;
 
-          this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
+        this.audio = this._sanitizer.bypassSecurityTrustUrl(this.src.fileValue.fileUrl);
 
-          this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
-            this.originalFilename = res['originalFilename'];
-          });
+        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
+          this.originalFilename = res['originalFilename'];
+        });
 
-          this._valueOperationEventService.emit(
-            new EmitEvent(
-              Events.FileValueUpdated,
-              new UpdatedFileEventValue(res2.properties[Constants.HasAudioFileValue][0])
-            )
-          );
+        this._valueOperationEventService.emit(
+          new EmitEvent(
+            Events.FileValueUpdated,
+            new UpdatedFileEventValue(res2.properties[Constants.HasAudioFileValue][0])
+          )
+        );
 
-          const audioElem = document.getElementById('audio');
-          (audioElem as HTMLAudioElement).load();
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+        const audioElem = document.getElementById('audio');
+        (audioElem as HTMLAudioElement).load();
+      });
   }
 }

@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnIn
 import { FormBuilder } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
-  ApiResponseError,
   CreateListValue,
   KnoraApiConnection,
   ListNodeV2,
@@ -11,7 +10,6 @@ import {
   UpdateListValue,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 
 @Component({
@@ -36,7 +34,6 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     @Inject(FormBuilder) protected _fb: FormBuilder,
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _cd: ChangeDetectorRef
   ) {
     super();
@@ -65,14 +62,9 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
         const rootNodeIris = this.propertyDef.guiAttributes;
         for (const rootNodeIri of rootNodeIris) {
           const trimmedRootNodeIRI = rootNodeIri.substring(7, rootNodeIri.length - 1);
-          this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
-            (response: ListNodeV2) => {
-              this.listRootNode = response;
-            },
-            (error: ApiResponseError) => {
-              this._errorHandler.showMessage(error);
-            }
-          );
+          this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe((response: ListNodeV2) => {
+            this.listRootNode = response;
+          });
         }
       } else {
         this.valueFormControl.setValue(this.displayValue.listNodeLabel);
@@ -138,20 +130,15 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
     const rootNodeIris = this.propertyDef.guiAttributes;
     for (const rootNodeIri of rootNodeIris) {
       const trimmedRootNodeIRI = rootNodeIri.substring(7, rootNodeIri.length - 1);
-      this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe(
-        (response: ListNodeV2) => {
-          if (!response.children.length) {
-            // this shouldn't happen since users cannot select the root node
-            this.selectedNodeHierarchy.push(response.label);
-          } else {
-            this.selectedNodeHierarchy = this._getHierarchy(nodeIri, response.children);
-          }
-          this._cd.markForCheck();
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+      this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe((response: ListNodeV2) => {
+        if (!response.children.length) {
+          // this shouldn't happen since users cannot select the root node
+          this.selectedNodeHierarchy.push(response.label);
+        } else {
+          this.selectedNodeHierarchy = this._getHierarchy(nodeIri, response.children);
         }
-      );
+        this._cd.markForCheck();
+      });
     }
   }
 

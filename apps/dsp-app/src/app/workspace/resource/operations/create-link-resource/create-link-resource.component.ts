@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import {
-  ApiResponseError,
   Constants,
   CreateFileValue,
   CreateResource,
@@ -15,7 +14,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { DialogEvent } from '../../../../main/dialog/dialog.component';
 import { SelectPropertiesComponent } from '../../resource-instance-form/select-properties/select-properties.component';
 
@@ -49,8 +47,7 @@ export class CreateLinkResourceComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _projectApiService: ProjectApiService,
-    private _fb: UntypedFormBuilder,
-    private _errorHandler: AppErrorHandler
+    private _fb: UntypedFormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -144,14 +141,9 @@ export class CreateLinkResourceComponent implements OnInit {
 
         createResource.properties = this.propertiesObj;
 
-        this._dspApiConnection.v2.res.createResource(createResource).subscribe(
-          (res: ReadResource) => {
-            this.closeDialog.emit(res);
-          },
-          (error: ApiResponseError) => {
-            this._errorHandler.showMessage(error);
-          }
-        );
+        this._dspApiConnection.v2.res.createResource(createResource).subscribe((res: ReadResource) => {
+          this.closeDialog.emit(res);
+        });
       });
     } else {
       this.propertiesForm.markAllAsTouched();

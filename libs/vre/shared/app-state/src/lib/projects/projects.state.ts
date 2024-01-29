@@ -75,7 +75,6 @@ export class ProjectsState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true });
-          this.errorHandler.showMessage(error);
         },
       }),
       finalize(() => {
@@ -121,7 +120,6 @@ export class ProjectsState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true });
-          this.errorHandler.showMessage(error);
         },
       }),
       concatMap(() => {
@@ -176,9 +174,6 @@ export class ProjectsState {
           ctx.dispatch([new SetUserAction(response.body.user), new LoadProjectMembersAction(projectIri)]);
           ctx.patchState({ isMembershipLoading: false });
         },
-        error: error => {
-          this.errorHandler.showMessage(error);
-        },
       })
     );
   }
@@ -199,7 +194,6 @@ export class ProjectsState {
         },
         error: error => {
           ctx.patchState({ hasLoadingErrors: true });
-          this.errorHandler.showMessage(error);
         },
       })
     );
@@ -231,7 +225,6 @@ export class ProjectsState {
         },
         error: error => {
           ctx.patchState({ hasLoadingErrors: true });
-          this.errorHandler.showMessage(error);
         },
       })
     );
@@ -264,9 +257,6 @@ export class ProjectsState {
             projectGroups: groups,
           });
         },
-        error: error => {
-          this.errorHandler.showMessage(error);
-        },
       })
     );
   }
@@ -279,9 +269,8 @@ export class ProjectsState {
         next: response => {
           ctx.dispatch(new LoadProjectsAction());
         },
-        error: (error: ApiResponseError) => {
+        error: () => {
           ctx.patchState({ hasLoadingErrors: true });
-          this.errorHandler.showMessage(error);
         },
       }),
       finalize(() => {

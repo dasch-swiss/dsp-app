@@ -14,7 +14,6 @@ import {
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {
-  ApiResponseError,
   Constants,
   KnoraApiConnection,
   ReadMovingImageFileValue,
@@ -25,7 +24,6 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { mergeMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
@@ -122,7 +120,6 @@ export class VideoComponent implements OnChanges, AfterViewInit {
     private _dialog: MatDialog,
     private _sanitizer: DomSanitizer,
     private _rs: RepresentationService,
-    private _errorHandler: AppErrorHandler,
     private _notification: NotificationService,
     private _valueOperationEventService: ValueOperationEventService
   ) {}
@@ -249,6 +246,7 @@ export class VideoComponent implements OnChanges, AfterViewInit {
   updateTimeFromSlider(time: number) {
     this._navigate(time);
   }
+
   /**
    * video navigation from scroll event
    *
@@ -314,12 +312,8 @@ export class VideoComponent implements OnChanges, AfterViewInit {
   }
 
   async downloadVideo(url: string) {
-    try {
-      const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
-      this.downloadFile(res);
-    } catch (e) {
-      this._errorHandler.showMessage(e);
-    }
+    const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
+    this.downloadFile(res);
   }
 
   downloadFile(data) {
@@ -413,33 +407,28 @@ export class VideoComponent implements OnChanges, AfterViewInit {
           this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
-      .subscribe(
-        (res2: ReadResource) => {
-          this.src.fileValue.fileUrl = (
-            res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
-          ).fileUrl;
-          this.src.fileValue.filename = (
-            res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
-          ).filename;
-          this.src.fileValue.strval = (
-            res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
-          ).strval;
+      .subscribe((res2: ReadResource) => {
+        this.src.fileValue.fileUrl = (
+          res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
+        ).fileUrl;
+        this.src.fileValue.filename = (
+          res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
+        ).filename;
+        this.src.fileValue.strval = (
+          res2.properties[Constants.HasMovingImageFileValue][0] as ReadMovingImageFileValue
+        ).strval;
 
-          this.ngOnChanges();
+        this.ngOnChanges();
 
-          this.loadedMetadata();
+        this.loadedMetadata();
 
-          this._valueOperationEventService.emit(
-            new EmitEvent(
-              Events.FileValueUpdated,
-              new UpdatedFileEventValue(res2.properties[Constants.HasMovingImageFileValue][0])
-            )
-          );
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+        this._valueOperationEventService.emit(
+          new EmitEvent(
+            Events.FileValueUpdated,
+            new UpdatedFileEventValue(res2.properties[Constants.HasMovingImageFileValue][0])
+          )
+        );
+      });
   }
 
   /**

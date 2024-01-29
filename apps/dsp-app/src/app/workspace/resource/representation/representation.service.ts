@@ -1,17 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RepresentationService {
-  constructor(
-    private _errorHandler: AppErrorHandler,
-    private readonly _http: HttpClient
-  ) {}
+  constructor(private readonly _http: HttpClient) {}
 
   /**
    * returns info about a file
@@ -46,14 +41,7 @@ export class RepresentationService {
       pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     }
 
-    return this._http.get(pathToJson, requestOptions).pipe(
-      catchError(error => {
-        // handle error in app
-        this._errorHandler.showMessage(error);
-        // throw console & logging service
-        return throwError(error);
-      })
-    );
+    return this._http.get(pathToJson, requestOptions);
   }
 
   /**
@@ -64,30 +52,26 @@ export class RepresentationService {
   async downloadFile(url: string, imageFilename?: string) {
     let originalFilename;
 
-    try {
-      const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
+    const res = await this._http.get(url, { responseType: 'blob', withCredentials: true }).toPromise();
 
-      await this.getFileInfo(url, imageFilename).subscribe(response => {
-        originalFilename = response['originalFilename'];
+    await this.getFileInfo(url, imageFilename).subscribe(response => {
+      originalFilename = response['originalFilename'];
 
-        const objUrl = window.URL.createObjectURL(res);
-        const e = document.createElement('a');
-        e.href = objUrl;
+      const objUrl = window.URL.createObjectURL(res);
+      const e = document.createElement('a');
+      e.href = objUrl;
 
-        // set filename
-        if (originalFilename === undefined) {
-          e.download = url.substring(url.lastIndexOf('/') + 1);
-        } else {
-          e.download = originalFilename;
-        }
+      // set filename
+      if (originalFilename === undefined) {
+        e.download = url.substring(url.lastIndexOf('/') + 1);
+      } else {
+        e.download = originalFilename;
+      }
 
-        document.body.appendChild(e);
-        e.click();
-        document.body.removeChild(e);
-      });
-    } catch (e) {
-      this._errorHandler.showMessage(e);
-    }
+      document.body.appendChild(e);
+      e.click();
+      document.body.removeChild(e);
+    });
   }
 
   /**

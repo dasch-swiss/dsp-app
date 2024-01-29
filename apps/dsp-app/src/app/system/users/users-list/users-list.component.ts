@@ -9,10 +9,9 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ApiResponseError, Constants, Permissions, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
+import { Constants, Permissions, ReadProject, ReadUser } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   LoadProjectMembersAction,
@@ -124,7 +123,6 @@ export class UsersListComponent implements OnInit {
     private _userApiService: UserApiService,
     private _matDialog: MatDialog,
     private _dialog: DialogService,
-    private _errorHandler: AppErrorHandler,
     private _route: ActivatedRoute,
     private _router: Router,
     private _sortingService: SortingService,
@@ -189,51 +187,41 @@ export class UsersListComponent implements OnInit {
    */
   updateGroupsMembership(id: string, groups: string[]): void {
     const currentUserGroups: string[] = [];
-    this._userApiService.getGroupMembershipsForUser(id).subscribe(
-      response => {
-        for (const group of response.groups) {
-          currentUserGroups.push(group.id);
-        }
+    this._userApiService.getGroupMembershipsForUser(id).subscribe(response => {
+      for (const group of response.groups) {
+        currentUserGroups.push(group.id);
+      }
 
-        if (currentUserGroups.length === 0) {
-          // add user to group
-          // console.log('add user to group');
-          for (const newGroup of groups) {
+      if (currentUserGroups.length === 0) {
+        // add user to group
+        // console.log('add user to group');
+        for (const newGroup of groups) {
+          this.addUserToGroupMembership(id, newGroup);
+        }
+      } else {
+        // which one is deselected?
+        // find id in groups --> if not exists: remove from group
+        for (const oldGroup of currentUserGroups) {
+          if (groups.indexOf(oldGroup) === -1) {
+            // console.log('remove from group', oldGroup);
+            // the old group is not anymore one of the selected groups --> remove user from group
+            this._userApiService
+              .removeFromGroupMembership(id, oldGroup)
+              .pipe(take(1))
+              .subscribe(() => {
+                if (this.projectUuid) {
+                  this._store.dispatch(new LoadProjectMembershipAction(this.projectUuid));
+                }
+              });
+          }
+        }
+        for (const newGroup of groups) {
+          if (currentUserGroups.indexOf(newGroup) === -1) {
             this.addUserToGroupMembership(id, newGroup);
           }
-        } else {
-          // which one is deselected?
-          // find id in groups --> if not exists: remove from group
-          for (const oldGroup of currentUserGroups) {
-            if (groups.indexOf(oldGroup) === -1) {
-              // console.log('remove from group', oldGroup);
-              // the old group is not anymore one of the selected groups --> remove user from group
-              this._userApiService
-                .removeFromGroupMembership(id, oldGroup)
-                .pipe(take(1))
-                .subscribe(
-                  () => {
-                    if (this.projectUuid) {
-                      this._store.dispatch(new LoadProjectMembershipAction(this.projectUuid));
-                    }
-                  },
-                  (ngError: ApiResponseError) => {
-                    this._errorHandler.showMessage(ngError);
-                  }
-                );
-            }
-          }
-          for (const newGroup of groups) {
-            if (currentUserGroups.indexOf(newGroup) === -1) {
-              this.addUserToGroupMembership(id, newGroup);
-            }
-          }
         }
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
       }
-    );
+    });
   }
 
   /**
@@ -244,67 +232,57 @@ export class UsersListComponent implements OnInit {
     const userIsProjectAdmin = this.userIsProjectAdmin(permissions);
     if (userIsProjectAdmin) {
       // true = user is already project admin --> remove from admin rights
-      this._userApiService.removeFromProjectMembership(id, this.project.id, true).subscribe(
-        response => {
-          // if this user is not the logged-in user
-          if (currentUser.username !== response.user.username) {
-            this._store.dispatch(new SetUserAction(response.user));
-            this.refreshParent.emit();
-          } else {
-            // the logged-in user removed himself as project admin
-            // the list is not available anymore;
-            // open dialog to confirm and
-            // redirect to project page
-            // update the application state of logged-in user and the session
-            this._store.dispatch(new LoadUserAction(currentUser.username));
-            this._actions$
-              .pipe(ofActionSuccessful(LoadUserAction))
-              .pipe(take(1))
-              .subscribe(() => {
-                const isSysAdmin = ProjectService.IsMemberOfSystemAdminGroup(
-                  (currentUser as ReadUser).permissions.groupsPerProject
-                );
-                if (isSysAdmin) {
-                  this.refreshParent.emit();
-                } else {
-                  // logged-in user is NOT system admin:
-                  // go to project page and reload project admin interface
-                  this._router
-                    .navigateByUrl(RouteConstants.refreshRelative, {
-                      skipLocationChange: true,
-                    })
-                    .then(() => this._router.navigate([`${RouteConstants.projectRelative}/${this.projectUuid}`]));
-                }
-              });
-          }
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+      this._userApiService.removeFromProjectMembership(id, this.project.id, true).subscribe(response => {
+        // if this user is not the logged-in user
+        if (currentUser.username !== response.user.username) {
+          this._store.dispatch(new SetUserAction(response.user));
+          this.refreshParent.emit();
+        } else {
+          // the logged-in user removed himself as project admin
+          // the list is not available anymore;
+          // open dialog to confirm and
+          // redirect to project page
+          // update the application state of logged-in user and the session
+          this._store.dispatch(new LoadUserAction(currentUser.username));
+          this._actions$
+            .pipe(ofActionSuccessful(LoadUserAction))
+            .pipe(take(1))
+            .subscribe(() => {
+              const isSysAdmin = ProjectService.IsMemberOfSystemAdminGroup(
+                (currentUser as ReadUser).permissions.groupsPerProject
+              );
+              if (isSysAdmin) {
+                this.refreshParent.emit();
+              } else {
+                // logged-in user is NOT system admin:
+                // go to project page and reload project admin interface
+                this._router
+                  .navigateByUrl(RouteConstants.refreshRelative, {
+                    skipLocationChange: true,
+                  })
+                  .then(() => this._router.navigate([`${RouteConstants.projectRelative}/${this.projectUuid}`]));
+              }
+            });
         }
-      );
+      });
     } else {
       // false: user isn't project admin yet --> add admin rights
-      this._userApiService.addToProjectMembership(id, this.project.id, true).subscribe(
-        response => {
-          if (currentUser.username !== response.user.username) {
-            this._store.dispatch(new SetUserAction(response.user));
-            this.refreshParent.emit();
-          } else {
-            // the logged-in user (system admin) added himself as project admin
-            // update the application state of logged-in user and the session
-            this._store.dispatch(new LoadUserAction(currentUser.username));
-            this._actions$
-              .pipe(ofActionSuccessful(LoadUserAction))
-              .pipe(take(1))
-              .subscribe(() => {
-                this.refreshParent.emit();
-              });
-          }
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+      this._userApiService.addToProjectMembership(id, this.project.id, true).subscribe(response => {
+        if (currentUser.username !== response.user.username) {
+          this._store.dispatch(new SetUserAction(response.user));
+          this.refreshParent.emit();
+        } else {
+          // the logged-in user (system admin) added himself as project admin
+          // update the application state of logged-in user and the session
+          this._store.dispatch(new LoadUserAction(currentUser.username));
+          this._actions$
+            .pipe(ofActionSuccessful(LoadUserAction))
+            .pipe(take(1))
+            .subscribe(() => {
+              this.refreshParent.emit();
+            });
         }
-      );
+      });
     }
   }
 
@@ -312,17 +290,12 @@ export class UsersListComponent implements OnInit {
     this._userApiService
       .updateSystemAdminMembership(user.id, systemAdmin)
       .pipe(take(1))
-      .subscribe(
-        response => {
-          this._store.dispatch(new SetUserAction(response.user));
-          if (this._store.selectSnapshot(UserSelectors.username) !== user.username) {
-            this.refreshParent.emit();
-          }
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+      .subscribe(response => {
+        this._store.dispatch(new SetUserAction(response.user));
+        if (this._store.selectSnapshot(UserSelectors.username) !== user.username) {
+          this.refreshParent.emit();
         }
-      );
+      });
   }
 
   askToActivateUser(username: string, id: string) {
@@ -401,15 +374,10 @@ export class UsersListComponent implements OnInit {
     this._userApiService
       .delete(id)
       .pipe(take(1))
-      .subscribe(
-        response => {
-          this._store.dispatch(new SetUserAction(response.user));
-          this.refreshParent.emit();
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+      .subscribe(response => {
+        this._store.dispatch(new SetUserAction(response.user));
+        this.refreshParent.emit();
+      });
   }
 
   /**
@@ -421,15 +389,10 @@ export class UsersListComponent implements OnInit {
     this._userApiService
       .updateStatus(id, true)
       .pipe(take(1))
-      .subscribe(
-        response => {
-          this._store.dispatch(new SetUserAction(response.user));
-          this.refreshParent.emit();
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+      .subscribe(response => {
+        this._store.dispatch(new SetUserAction(response.user));
+        this.refreshParent.emit();
+      });
   }
 
   sortList(key: any) {

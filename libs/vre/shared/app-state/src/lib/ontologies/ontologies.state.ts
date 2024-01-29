@@ -15,10 +15,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { OntologyClassService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { Action, Actions, State, StateContext, ofActionSuccessful } from '@ngxs/store';
+import { Action, Actions, ofActionSuccessful, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { LoadListsInProjectAction } from '../lists/lists.actions';
@@ -60,7 +59,6 @@ export class OntologiesState {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _sortingService: SortingService,
     private _projectService: ProjectService,
     private _actions$: Actions,
@@ -162,7 +160,6 @@ export class OntologiesState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-          this._errorHandler.showMessage(error);
         },
       })
     );
@@ -207,7 +204,6 @@ export class OntologiesState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-          this._errorHandler.showMessage(error);
         },
       })
     );
@@ -229,7 +225,6 @@ export class OntologiesState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true });
-          this._errorHandler.showMessage(error);
         },
       })
     );
@@ -332,7 +327,6 @@ export class OntologiesState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-          this._errorHandler.showMessage(error);
         },
       })
     );
@@ -375,7 +369,6 @@ export class OntologiesState {
         next: () => {},
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true, isLoading: false });
-          this._errorHandler.showMessage(error);
         },
       })
     );
@@ -402,7 +395,6 @@ export class OntologiesState {
         },
         error: (error: ApiResponseError) => {
           ctx.patchState({ hasLoadingErrors: true });
-          this._errorHandler.showMessage(error);
         },
       })
     );

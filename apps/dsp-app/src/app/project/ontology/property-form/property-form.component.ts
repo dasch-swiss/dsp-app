@@ -24,7 +24,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   DefaultProperties,
   DefaultProperty,
@@ -42,7 +41,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { DialogEvent } from '../../../main/dialog/dialog.component';
 import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
@@ -180,7 +179,6 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _fb: UntypedFormBuilder,
     private _os: OntologyService,
     private _sortingService: SortingService,
@@ -452,17 +450,14 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
    * canEnableRequiredToggle: evaluate if the required toggle can be set for a newly assigned property of a class
    */
   canEnableRequiredToggle() {
-    this._dspApiConnection.v2.onto.canReplaceCardinalityOfResourceClass(this.resClassIri).subscribe(
-      (response: CanDoResponse) => {
+    this._dspApiConnection.v2.onto
+      .canReplaceCardinalityOfResourceClass(this.resClassIri)
+      .subscribe((response: CanDoResponse) => {
         if (response.canDo) {
           // enable the form
           this.propertyForm.controls['required'].enable();
         }
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
-      }
-    );
+      });
   }
 
   /**
@@ -484,19 +479,14 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
     const targetCardinality: Cardinality = this.getTargetCardinality(targetGuiCardinality);
     this._dspApiConnection.v2.onto
       .canReplaceCardinalityOfResourceClassWith(this.resClassIri, this.propertyInfo.propDef.id, targetCardinality)
-      .subscribe(
-        (response: CanDoResponse) => {
-          this.canSetCardinality = response.canDo;
-          if (!this.canSetCardinality) {
-            this.canNotSetCardinalityReason = response.cannotDoReason;
-            this.canNotSetCardinalityUiReason = this.getCanNotSetCardinalityUserReason();
-          }
-          this.canChangeCardinalityChecked = true;
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+      .subscribe((response: CanDoResponse) => {
+        this.canSetCardinality = response.canDo;
+        if (!this.canSetCardinality) {
+          this.canNotSetCardinalityReason = response.cannotDoReason;
+          this.canNotSetCardinalityUiReason = this.getCanNotSetCardinalityUserReason();
         }
-      );
+        this.canChangeCardinalityChecked = true;
+      });
   }
 
   /**
@@ -607,7 +597,6 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
       (error: ApiResponseError) => {
         this.error = true;
         this.loading = false;
-        this._errorHandler.showMessage(error);
       }
     );
   }
@@ -615,17 +604,20 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
   createNewPropertyAndAssignToClass() {
     const onto = this.getOntologyForNewProperty();
     // create new property and assign it to the class
-    this._dspApiConnection.v2.onto.createResourceProperty(onto).subscribe(
-      (response: ResourcePropertyDefinitionWithAllLanguages) => {
+    this._dspApiConnection.v2.onto
+      .createResourceProperty(onto)
+      .pipe(
+        tap({
+          error: () => {
+            this.error = true;
+            this.loading = false;
+          },
+        })
+      )
+      .subscribe((response: ResourcePropertyDefinitionWithAllLanguages) => {
         this.lastModificationDate = response.lastModificationDate;
         this.assignProperty(response);
-      },
-      (error: ApiResponseError) => {
-        this.error = true;
-        this.loading = false;
-        this._errorHandler.showMessage(error);
-      }
-    );
+      });
   }
 
   /**
@@ -911,7 +903,6 @@ export class PropertyFormComponent implements OnInit, OnDestroy {
   onError(err) {
     this.error = true;
     this.loading = false;
-    this._errorHandler.showMessage(err);
   }
 
   /**

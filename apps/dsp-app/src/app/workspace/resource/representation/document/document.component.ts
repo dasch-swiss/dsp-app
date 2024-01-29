@@ -2,7 +2,6 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
-  ApiResponseError,
   Constants,
   KnoraApiConnection,
   ReadDocumentFileValue,
@@ -13,7 +12,6 @@ import {
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { mergeMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
@@ -57,7 +55,6 @@ export class DocumentComponent implements OnInit, AfterViewInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _errorHandler: AppErrorHandler,
     private _rs: RepresentationService,
     private _valueOperationEventService: ValueOperationEventService
   ) {}
@@ -183,43 +180,38 @@ export class DocumentComponent implements OnInit, AfterViewInit {
           this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
-      .subscribe(
-        (res2: ReadResource) => {
-          this.src.fileValue.fileUrl = (
-            res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-          ).fileUrl;
-          this.src.fileValue.filename = (
-            res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-          ).filename;
-          this.src.fileValue.strval = (
-            res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-          ).strval;
-          this.src.fileValue.valueCreationDate = (
-            res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
-          ).valueCreationDate;
+      .subscribe((res2: ReadResource) => {
+        this.src.fileValue.fileUrl = (
+          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+        ).fileUrl;
+        this.src.fileValue.filename = (
+          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+        ).filename;
+        this.src.fileValue.strval = (
+          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+        ).strval;
+        this.src.fileValue.valueCreationDate = (
+          res2.properties[Constants.HasDocumentFileValue][0] as ReadDocumentFileValue
+        ).valueCreationDate;
 
-          this.fileType = this._getFileType(this.src.fileValue.filename);
-          if (this.fileType === 'pdf') {
-            this.elem = document.getElementsByClassName('pdf-viewer')[0];
-          }
-
-          this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
-            this.originalFilename = res['originalFilename'];
-          });
-
-          this.zoomFactor = 1.0;
-          this.pdfQuery = '';
-
-          this._valueOperationEventService.emit(
-            new EmitEvent(
-              Events.FileValueUpdated,
-              new UpdatedFileEventValue(res2.properties[Constants.HasDocumentFileValue][0])
-            )
-          );
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
+        this.fileType = this._getFileType(this.src.fileValue.filename);
+        if (this.fileType === 'pdf') {
+          this.elem = document.getElementsByClassName('pdf-viewer')[0];
         }
-      );
+
+        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
+          this.originalFilename = res['originalFilename'];
+        });
+
+        this.zoomFactor = 1.0;
+        this.pdfQuery = '';
+
+        this._valueOperationEventService.emit(
+          new EmitEvent(
+            Events.FileValueUpdated,
+            new UpdatedFileEventValue(res2.properties[Constants.HasDocumentFileValue][0])
+          )
+        );
+      });
   }
 }

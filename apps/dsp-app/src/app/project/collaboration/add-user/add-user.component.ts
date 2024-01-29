@@ -19,7 +19,6 @@ import {
   UsersResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
@@ -121,7 +120,6 @@ export class AddUserComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _errorHandler: AppErrorHandler,
     private _formBuilder: UntypedFormBuilder,
     private _projectService: ProjectService,
     private _store: Store,
@@ -139,64 +137,59 @@ export class AddUserComponent implements OnInit {
     this.users = [];
 
     // get all users
-    this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe(
-      (response: ApiResponseData<UsersResponse>) => {
-        // if a user is already member of the team, mark it in the list
-        const members: string[] = [];
+    this._dspApiConnection.admin.usersEndpoint.getUsers().subscribe((response: ApiResponseData<UsersResponse>) => {
+      // if a user is already member of the team, mark it in the list
+      const members: string[] = [];
 
-        // get all members of this project
-        const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers);
-        if (projectMembers[this.projectIri]) {
-          for (const m of projectMembers[this.projectIri].value) {
-            members.push(m.id);
+      // get all members of this project
+      const projectMembers = this._store.selectSnapshot(ProjectsSelectors.projectMembers);
+      if (projectMembers[this.projectIri]) {
+        for (const m of projectMembers[this.projectIri].value) {
+          members.push(m.id);
 
-            // if the user is already member of the project
-            // add the email to the list of existing
-            this.existingEmailInProject.push(new RegExp(`(?:^|W)${m.email.toLowerCase()}(?:$|W)`));
-            // add username to the list of existing
-            this.existingUsernameInProject.push(new RegExp(`(?:^|W)${m.username.toLowerCase()}(?:$|W)`));
-          }
-        }
-
-        let i = 0;
-        for (const u of response.body.users) {
           // if the user is already member of the project
           // add the email to the list of existing
-          this.existingEmails.push(new RegExp(`(?:^|W)${u.email.toLowerCase()}(?:$|W)`));
+          this.existingEmailInProject.push(new RegExp(`(?:^|W)${m.email.toLowerCase()}(?:$|W)`));
           // add username to the list of existing
-          this.existingUsernames.push(new RegExp(`(?:^|W)${u.username.toLowerCase()}(?:$|W)`));
+          this.existingUsernameInProject.push(new RegExp(`(?:^|W)${m.username.toLowerCase()}(?:$|W)`));
+        }
+      }
 
-          let existsInProject = '';
+      let i = 0;
+      for (const u of response.body.users) {
+        // if the user is already member of the project
+        // add the email to the list of existing
+        this.existingEmails.push(new RegExp(`(?:^|W)${u.email.toLowerCase()}(?:$|W)`));
+        // add username to the list of existing
+        this.existingUsernames.push(new RegExp(`(?:^|W)${u.username.toLowerCase()}(?:$|W)`));
 
-          if (members && members.indexOf(u.id) > -1) {
-            existsInProject = '* ';
-          }
+        let existsInProject = '';
 
-          this.users[i] = {
-            iri: u.id,
-            name: u.username,
-            label: `${existsInProject + u.username} | ${u.email} | ${u.givenName} ${u.familyName}`,
-          };
-          i++;
+        if (members && members.indexOf(u.id) > -1) {
+          existsInProject = '* ';
         }
 
-        this.users.sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
-          if (u1.label < u2.label) {
-            return -1;
-          } else if (u1.label > u2.label) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-
-        this.loading = false;
-        this._cd.markForCheck();
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
+        this.users[i] = {
+          iri: u.id,
+          name: u.username,
+          label: `${existsInProject + u.username} | ${u.email} | ${u.givenName} ${u.familyName}`,
+        };
+        i++;
       }
-    );
+
+      this.users.sort((u1: AutocompleteItem, u2: AutocompleteItem) => {
+        if (u1.label < u2.label) {
+          return -1;
+        } else if (u1.label > u2.label) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
+      this.loading = false;
+      this._cd.markForCheck();
+    });
 
     this.selectUserForm = this._formBuilder.group({
       username: new UntypedFormControl(
@@ -281,19 +274,14 @@ export class AddUserComponent implements OnInit {
           // add user to project
           this._dspApiConnection.admin.usersEndpoint
             .addUserToProjectMembership(this.selectedUser.id, this.projectIri)
-            .subscribe(
-              () => {
-                // successful post
-                // reload the component
-                this.buildForm();
-                this.refreshParent.emit();
+            .subscribe(() => {
+              // successful post
+              // reload the component
+              this.buildForm();
+              this.refreshParent.emit();
 
-                this.loading = false;
-              },
-              (error: ApiResponseError) => {
-                this._errorHandler.showMessage(error);
-              }
-            );
+              this.loading = false;
+            });
         }
       },
       (error: ApiResponseError) => {
@@ -303,9 +291,6 @@ export class AddUserComponent implements OnInit {
           this.selectedUser = new ReadUser();
 
           this.selectedUser.email = val;
-        } else {
-          // api error
-          this._errorHandler.showMessage(error);
         }
       }
     );

@@ -20,6 +20,7 @@ import {
 import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   AppProgressIndicatorComponent,
   CenteredLayoutComponent,
@@ -383,7 +384,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     {
       provide: ErrorHandler,
       useClass: AppErrorHandler,
-      deps: [AppLoggingService],
+      deps: [NotificationService],
     },
     {
       provide: HTTP_INTERCEPTORS,

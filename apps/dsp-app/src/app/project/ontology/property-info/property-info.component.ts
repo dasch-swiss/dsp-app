@@ -1,7 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
 import {
-  ApiResponseError,
   CanDoResponse,
   Constants,
   KnoraApiConnection,
@@ -10,7 +9,6 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   DefaultClass,
   DefaultProperties,
@@ -117,7 +115,6 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _errorHandler: AppErrorHandler,
     private _ontoService: OntologyService,
     private _store: Store
   ) {}
@@ -204,14 +201,9 @@ export class PropertyInfoComponent implements OnChanges, AfterContentInit {
    */
   canBeDeleted(): void {
     // check if the property can be deleted
-    this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe(
-      (canDoRes: CanDoResponse) => {
-        this.propCanBeDeleted = canDoRes.canDo;
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
-      }
-    );
+    this._dspApiConnection.v2.onto.canDeleteResourceProperty(this.propDef.id).subscribe((canDoRes: CanDoResponse) => {
+      this.propCanBeDeleted = canDoRes.canDo;
+    });
   }
 
   /**

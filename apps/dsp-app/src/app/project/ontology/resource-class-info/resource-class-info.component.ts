@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
-  ApiResponseError,
   CanDoResponse,
   ClassDefinition,
   Constants,
@@ -21,28 +20,27 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import {
   DefaultClass,
-  DefaultResourceClasses,
-  SortingService,
   DefaultProperties,
   DefaultProperty,
+  DefaultResourceClasses,
+  OntologyService,
   PropertyCategory,
   PropertyInfoObject,
-  OntologyService,
+  SortingService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   OntologiesSelectors,
   OntologyProperties,
+  PropertyAssignment,
   PropToAdd,
   PropToDisplay,
-  PropertyAssignment,
   RemovePropertyAction,
   ReplacePropertyAction,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { DialogComponent, DialogEvent } from '../../../main/dialog/dialog.component';
@@ -133,7 +131,6 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _errorHandler: AppErrorHandler,
     private _notification: NotificationService,
     private _sortingService: SortingService,
     private _store: Store,
@@ -282,14 +279,11 @@ export class ResourceClassInfoComponent implements OnInit, OnDestroy {
 
   canBeDeleted() {
     // check if the class can be deleted
-    this._dspApiConnection.v2.onto.canDeleteResourceClass(this.resourceClass.id).subscribe(
-      (response: CanDoResponse) => {
+    this._dspApiConnection.v2.onto
+      .canDeleteResourceClass(this.resourceClass.id)
+      .subscribe((response: CanDoResponse) => {
         this.classCanBeDeleted = response.canDo;
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
-      }
-    );
+      });
   }
 
   addNewProperty(propType: DefaultProperty, currentOntologyPropertiesToDisplay: PropToDisplay[]) {

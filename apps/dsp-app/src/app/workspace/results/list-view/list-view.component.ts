@@ -19,12 +19,11 @@ import {
   ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { OntologyClassSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { Subject, Subscription, combineLatest, of } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
+import { combineLatest, of, Subject, Subscription } from 'rxjs';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
@@ -132,7 +131,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _componentCommsService: ComponentCommunicationEventService,
-    private _errorHandler: AppErrorHandler,
     private _notification: NotificationService,
     private _route: ActivatedRoute,
     private _router: Router,
@@ -269,7 +267,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
               }
               this.loading = false;
               this._cd.markForCheck();
-              this._errorHandler.showMessage(countError);
             }
           );
       }
@@ -292,7 +289,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
           (error: ApiResponseError) => {
             this.loading = false;
             this.resources = undefined;
-            this._errorHandler.showMessage(error);
           }
         );
     } else if (this.search.mode === 'gravsearch') {
@@ -343,8 +339,16 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
       .doExtendedSearch(gravsearch)
       .pipe(takeUntil(this.ngUnsubscribe));
 
-    combineLatest([graveSearchQuery$, numberOfAllResults$]).subscribe(
-      ([response, numberOfAllResults]) => {
+    combineLatest([graveSearchQuery$, numberOfAllResults$])
+      .pipe(
+        tap({
+          error: () => {
+            this.loading = false;
+            this.resources = undefined;
+          },
+        })
+      )
+      .subscribe(([response, numberOfAllResults]) => {
         response = response as ReadResourceSequence;
         // if the response does not contain any resources even the search count is greater than 0,
         // it means that the user does not have the permissions to see anything: emit an empty result
@@ -357,12 +361,6 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
 
         this.loading = false;
         this._cd.markForCheck();
-      },
-      (error: ApiResponseError) => {
-        this.loading = false;
-        this.resources = undefined;
-        this._errorHandler.showMessage(error);
-      }
-    );
+      });
   }
 }

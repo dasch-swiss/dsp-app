@@ -1,13 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  ApiResponseData,
-  ApiResponseError,
-  HealthResponse,
-  KnoraApiConnection,
-  VersionResponse,
-} from '@dasch-swiss/dsp-js';
+import { ApiResponseData, HealthResponse, KnoraApiConnection, VersionResponse } from '@dasch-swiss/dsp-js';
 import { AppConfigService, DspApiConnectionToken, DspConfig } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { environment } from '../../../environments/environment';
 import { GridItem } from '../grid/grid.component';
 
@@ -95,8 +88,7 @@ export class HelpComponent implements OnInit {
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
-    private _appConfigService: AppConfigService,
-    private _errorHandler: AppErrorHandler
+    private _appConfigService: AppConfigService
   ) {}
 
   ngOnInit() {
@@ -106,8 +98,9 @@ export class HelpComponent implements OnInit {
 
     this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-das/releases/tag/v${this.appVersion}`;
 
-    this._dspApiConnection.system.versionEndpoint.getVersion().subscribe(
-      (response: ApiResponseData<VersionResponse>) => {
+    this._dspApiConnection.system.versionEndpoint
+      .getVersion()
+      .subscribe((response: ApiResponseData<VersionResponse>) => {
         this.apiVersion = response.body;
 
         // set dsp-app version
@@ -121,10 +114,6 @@ export class HelpComponent implements OnInit {
         // set dsp-sipi version
         this.tools[2].title += this.apiVersion.sipi;
         this.tools[2].url += this.apiVersion.sipi;
-      },
-      (error: ApiResponseError) => {
-        this._errorHandler.showMessage(error);
-      }
-    );
+      });
   }
 }

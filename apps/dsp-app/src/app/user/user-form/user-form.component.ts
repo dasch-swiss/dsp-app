@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Inject,
   Input,
   OnChanges,
   OnInit,
@@ -12,8 +11,6 @@ import {
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ApiResponseError, Constants, ReadUser, StringLiteral, UpdateUserRequest, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
@@ -25,7 +22,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
 import { existingNamesValidator } from '../../main/directive/existing-name/existing-names.validator';
 import { CustomRegex } from '../../workspace/resource/values/custom-regex';
@@ -148,7 +145,6 @@ export class UserFormComponent implements OnInit, OnChanges {
 
   constructor(
     private _userApiService: UserApiService,
-    private _errorHandler: AppErrorHandler,
     private _formBuilder: UntypedFormBuilder,
     private _notification: NotificationService,
     private _projectService: ProjectService,
@@ -314,8 +310,16 @@ export class UserFormComponent implements OnInit, OnChanges {
       // userData.email = this.userForm.value.email;
       userData.lang = this.userForm.value.lang;
 
-      this._userApiService.updateBasicInformation(this.user.id, userData).subscribe(
-        response => {
+      this._userApiService
+        .updateBasicInformation(this.user.id, userData)
+        .pipe(
+          tap({
+            error: () => {
+              this.loading = false;
+            },
+          })
+        )
+        .subscribe(response => {
           this.user = response.user;
           this.buildForm(this.user);
           const user = this._store.selectSnapshot(UserSelectors.user) as ReadUser;
@@ -329,12 +333,7 @@ export class UserFormComponent implements OnInit, OnChanges {
           this._notification.openSnackBar("You have successfully updated the user's profile data.");
           this.closeDialog.emit();
           this.loading = false;
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-          this.loading = false;
-        }
-      );
+        });
     } else {
       this.createNewUser(this.userForm.value);
     }

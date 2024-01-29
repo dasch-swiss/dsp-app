@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { DialogComponent } from '../../main/dialog/dialog.component';
 import { FilteredResources } from '../results/list-view/list-view.component';
 
@@ -24,10 +23,7 @@ export class IntermediateComponent {
     },
   };
 
-  constructor(
-    private _dialog: MatDialog,
-    private _errorHandler: AppErrorHandler
-  ) {}
+  constructor(private _dialog: MatDialog) {}
 
   /**
    * opens the dialog box with a form to create a link resource, to edit resources etc.

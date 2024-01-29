@@ -4,7 +4,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -15,13 +14,12 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { ApiResponseError, Constants, KnoraApiConnection, ReadProject } from '@dasch-swiss/dsp-js';
+import { ApiResponseError, Constants, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
   Events,
@@ -118,11 +116,8 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
   displayPhonePanel = false;
 
   constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection,
     private _projectsApiService: ProjectApiService,
     private _componentCommsService: ComponentCommunicationEventService,
-    private _errorHandler: AppErrorHandler,
     private _overlay: Overlay,
     private _sortingService: SortingService,
     private _viewContainerRef: ViewContainerRef,
@@ -189,8 +184,16 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
    * get all public projects from DSP-API
    */
   getAllProjects(): void {
-    this._projectsApiService.list().subscribe(
-      response => {
+    this._projectsApiService
+      .list()
+      .pipe(
+        tap({
+          error: (error: ApiResponseError) => {
+            this.error = error;
+          },
+        })
+      )
+      .subscribe(response => {
         // filter out deactivated projects and system projects
         this.projects = response.projects.filter(p => p.status === true && !this.hiddenProjects.includes(p.id));
 
@@ -198,12 +201,7 @@ export class FulltextSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.project = JSON.parse(localStorage.getItem('currentProject'));
         }
         this.projects = this._sortingService.keySortByAlphabetical(this.projects, 'shortname');
-      },
-      (error: ApiResponseError) => {
-        this.error = error;
-        this._errorHandler.showMessage(error);
-      }
-    );
+      });
   }
 
   /**

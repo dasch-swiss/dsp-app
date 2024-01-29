@@ -1,18 +1,16 @@
 import { AfterViewInit, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {
-  ApiResponseError,
   Constants,
   KnoraApiConnection,
-  ReadTextFileValue,
   ReadResource,
+  ReadTextFileValue,
   UpdateFileValue,
   UpdateResource,
   UpdateValue,
   WriteValueResponse,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { mergeMap } from 'rxjs/operators';
 import { DialogComponent } from '../../../../main/dialog/dialog.component';
 import {
@@ -44,7 +42,6 @@ export class TextComponent implements OnInit, AfterViewInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _dialog: MatDialog,
-    private _errorHandler: AppErrorHandler,
     private _rs: RepresentationService,
     private _valueOperationEventService: ValueOperationEventService
   ) {}
@@ -109,26 +106,21 @@ export class TextComponent implements OnInit, AfterViewInit {
           this._dspApiConnection.v2.values.getValue(this.parentResource.id, res.uuid)
         )
       )
-      .subscribe(
-        (res2: ReadResource) => {
-          this.src.fileValue.fileUrl = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).fileUrl;
-          this.src.fileValue.filename = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).filename;
-          this.src.fileValue.strval = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).strval;
+      .subscribe((res2: ReadResource) => {
+        this.src.fileValue.fileUrl = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).fileUrl;
+        this.src.fileValue.filename = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).filename;
+        this.src.fileValue.strval = (res2.properties[Constants.HasTextFileValue][0] as ReadTextFileValue).strval;
 
-          this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
-            this.originalFilename = res['originalFilename'];
-          });
+        this._rs.getFileInfo(this.src.fileValue.fileUrl).subscribe(res => {
+          this.originalFilename = res['originalFilename'];
+        });
 
-          this._valueOperationEventService.emit(
-            new EmitEvent(
-              Events.FileValueUpdated,
-              new UpdatedFileEventValue(res2.properties[Constants.HasTextFileValue][0])
-            )
-          );
-        },
-        (error: ApiResponseError) => {
-          this._errorHandler.showMessage(error);
-        }
-      );
+        this._valueOperationEventService.emit(
+          new EmitEvent(
+            Events.FileValueUpdated,
+            new UpdatedFileEventValue(res2.properties[Constants.HasTextFileValue][0])
+          )
+        );
+      });
   }
 }

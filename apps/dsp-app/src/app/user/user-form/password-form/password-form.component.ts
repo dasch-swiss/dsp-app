@@ -3,7 +3,6 @@ import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } 
 import { ApiResponseError, KnoraApiConnection, ReadUser, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
@@ -74,7 +73,6 @@ export class PasswordFormComponent implements OnInit {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _userApiService: UserApiService,
-    private _errorHandler: AppErrorHandler,
     private _fb: UntypedFormBuilder,
     private _notification: NotificationService,
     private store: Store
@@ -249,8 +247,6 @@ export class PasswordFormComponent implements OnInit {
           this.form.controls.requesterPassword.setErrors({
             incorrectPassword: true,
           });
-        } else {
-          this._errorHandler.showMessage(error);
         }
         this.loading = false;
         this.error = true;

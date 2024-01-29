@@ -17,7 +17,6 @@ import {
   UpdateStillImageFileValue,
   UpdateTextFileValue,
 } from '@dasch-swiss/dsp-js';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { UploadedFileResponse, UploadFileService } from './upload-file.service';
 
@@ -60,8 +59,7 @@ export class UploadComponent implements OnInit {
     private _fb: UntypedFormBuilder,
     private _notification: NotificationService,
     private _sanitizer: DomSanitizer,
-    private _upload: UploadFileService,
-    private _errorHandler: AppErrorHandler
+    private _upload: UploadFileService
   ) {}
 
   ngOnInit(): void {
@@ -132,7 +130,6 @@ export class UploadComponent implements OnInit {
             this.isLoading = false;
             this.file = null;
             this.thumbnailUrl = null;
-            this._errorHandler.handleError(e);
             this.forceReload.emit();
           }
         );
