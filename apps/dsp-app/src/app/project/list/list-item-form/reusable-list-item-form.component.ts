@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
-import { atLeastOneStringRequired } from '../../reusable-project-form/at-least-one-string-required.validator';
+import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
 
 @Component({
   selector: 'app-reusable-list-item-form',

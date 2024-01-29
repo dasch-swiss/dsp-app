@@ -7,8 +7,8 @@ import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
+import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
 import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
-import { atLeastOneStringRequired } from '../../reusable-project-form/at-least-one-string-required.validator';
 
 @Component({
   selector: 'app-resource-class-form',

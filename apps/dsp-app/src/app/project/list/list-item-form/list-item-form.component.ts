@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListInfoResponse, ListNode, ListNodeInfoResponse } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { atLeastOneStringRequired } from '../../reusable-project-form/at-least-one-string-required.validator';
+import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
 import { ListItemService } from '../list-item/list-item.service';
 
 export class ListNodeOperation {
