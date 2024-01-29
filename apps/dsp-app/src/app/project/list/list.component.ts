@@ -12,7 +12,7 @@ import {
   ProjectsSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
 import { DIALOG_LARGE } from '../../main/services/dialog-sizes.constant';
@@ -54,9 +54,11 @@ export class ListComponent extends ProjectBase implements OnInit, OnDestroy {
   // disable content on small devices
   disableContent = false;
 
-  get list$(): Observable<ListNodeInfo> {
-    return this.listsInProject$.pipe(map(lists => (this.listIri ? lists.find(i => i.id === this.listIri) : null)));
-  }
+  private readonly routeListIri$ = this._route.paramMap.pipe(map(params => params.get(RouteConstants.listParameter)));
+
+  list$ = combineLatest([this._store.select(ListsSelectors.listsInProject), this.routeListIri$]).pipe(
+    map(([lists, listIri]) => lists.find(i => i.id.includes(listIri)))
+  );
 
   @Select(ListsSelectors.isListsLoading) isListsLoading$: Observable<boolean>;
   @Select(ListsSelectors.listsInProject) listsInProject$: Observable<ListNodeInfo[]>;
