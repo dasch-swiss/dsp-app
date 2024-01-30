@@ -7,6 +7,7 @@ import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadProjectsAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-project-form-page',
@@ -64,10 +65,14 @@ export class CreateProjectFormPageComponent {
         selfjoin: true,
         status: true,
       })
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
       .subscribe(projectResponse => {
         const uuid = ProjectService.IriToUuid(projectResponse.project.id);
         this._store.dispatch(new LoadProjectsAction());
-        this.loading = false;
         this._router.navigate([RouteConstants.projectRelative, uuid]);
       });
   }

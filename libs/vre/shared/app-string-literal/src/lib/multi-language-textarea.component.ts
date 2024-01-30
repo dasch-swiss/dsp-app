@@ -27,16 +27,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     HumanReadableErrorPipe,
   ],
   template: `
-    <div style="display: flex">
-      <mat-button-toggle-group matPrefix #group="matButtonToggleGroup" vertical>
-        <mat-button-toggle
-          *ngFor="let lang of formService.availableLanguages; let index = index"
-          (click)="formService.changeLanguage(index); textInput.focus()"
-          [checked]="index === formService.selectedLanguageIndex"
-          [class.bold]="formService.getFormControlWithLanguage(lang) !== undefined">
-          <span>{{ lang }}</span>
-        </mat-button-toggle>
-      </mat-button-toggle-group>
+    <div style="display: flex; flex-direction: row-reverse">
       <mat-form-field style="flex: 1" subscriptSizing="dynamic" class="formfield">
         <textarea
           matInput
@@ -47,6 +38,15 @@ import { MultiLanguageFormService } from './multi-language-form.service';
           [ngModel]="formService.inputValue"
           (ngModelChange)="formService.onInputChange($event)"></textarea>
       </mat-form-field>
+      <mat-button-toggle-group matPrefix #group="matButtonToggleGroup" vertical>
+        <mat-button-toggle
+          *ngFor="let lang of formService.availableLanguages; let index = index"
+          (click)="formService.changeLanguage(index); textInput.focus()"
+          [checked]="index === formService.selectedLanguageIndex"
+          [class.bold]="formService.getFormControlWithLanguage(lang) !== undefined">
+          <span>{{ lang }}</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
     <mat-error *ngIf="formService.formArray.invalid && formService.formArray.touched">
       <ng-container *ngIf="formService.invalidErrors?.language"
