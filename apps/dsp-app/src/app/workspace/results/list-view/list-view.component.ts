@@ -20,10 +20,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { OntologyClassSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { combineLatest, of, Subject, Subscription } from 'rxjs';
-import { map, take, takeUntil, tap } from 'rxjs/operators';
+import { Subject, Subscription, combineLatest, of } from 'rxjs';
+import { map, takeUntil, tap } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
   EmitEvent,
@@ -46,7 +45,6 @@ export interface SearchParams {
   mode: 'fulltext' | 'gravsearch';
   filter?: IFulltextSearchParams;
   projectUuid?: string;
-  classId?: string;
 }
 
 export interface ShortResInfo {
@@ -312,24 +310,24 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
     const numberOfAllResults$ =
       index !== 0
         ? of(this.numberOfAllResults)
-        : this._store.select(OntologyClassSelectors.classItems).pipe(
-            take(1),
-            map(classItems => {
-              this.numberOfAllResults = classItems[this.search.classId]
-                ? classItems[this.search.classId].classItemsCount
-                : 0;
-              this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
-              if (this.numberOfAllResults === 0) {
-                this._notification.openSnackBar('No resources to display.');
-                this.emitSelectedResources();
-                this.resources = undefined;
-                this.loading = false;
-                this._cd.markForCheck();
-              }
+        : this._dspApiConnection.v2.search
+            .doExtendedSearchCountQuery(this.search.query)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .pipe(
+              map((count: CountQueryResponse) => {
+                this.numberOfAllResults = count.numberOfResults;
+                this.currentRangeEnd = this.numberOfAllResults > 25 ? 25 : this.numberOfAllResults;
+                if (this.numberOfAllResults === 0) {
+                  this._notification.openSnackBar('No resources to display.');
+                  this.emitSelectedResources();
+                  this.resources = undefined;
+                  this.loading = false;
+                  this._cd.markForCheck();
+                }
 
-              return this.numberOfAllResults;
-            })
-          );
+                return count.numberOfResults;
+              })
+            );
 
     let gravsearch = this.search.query;
     gravsearch = gravsearch.substring(0, gravsearch.search('OFFSET'));
@@ -350,6 +348,10 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
       )
       .subscribe(([response, numberOfAllResults]) => {
         response = response as ReadResourceSequence;
+        if (this.numberOfAllResults === 0) {
+          this.numberOfAllResults = response.resources.length;
+        }
+
         // if the response does not contain any resources even the search count is greater than 0,
         // it means that the user does not have the permissions to see anything: emit an empty result
         if (response.resources.length === 0 && this.numberOfAllResults > 0) {
