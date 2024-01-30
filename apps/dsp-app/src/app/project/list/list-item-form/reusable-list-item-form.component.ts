@@ -8,10 +8,18 @@ import { atLeastOneStringRequired } from '../../../main/form-validators/at-least
 @Component({
   selector: 'app-reusable-list-item-form',
   template: `
-    <dasch-swiss-multi-language-input placeholder="Child node label *" [formGroup]="form" controlName="labels">
+    <dasch-swiss-multi-language-input
+      placeholder="Child node label *"
+      [formGroup]="form"
+      controlName="labels"
+      [validators]="labelsValidators">
     </dasch-swiss-multi-language-input>
 
-    <dasch-swiss-multi-language-textarea placeholder="Child node description" [formGroup]="form" controlName="comments">
+    <dasch-swiss-multi-language-textarea
+      placeholder="Child node description"
+      [formGroup]="form"
+      controlName="comments"
+      [validators]="commentsValidators">
     </dasch-swiss-multi-language-textarea>
   `,
 })
@@ -25,6 +33,9 @@ export class ReusableListItemFormComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   subscription: Subscription;
+
+  readonly labelsValidators = [Validators.required, Validators.maxLength(2000)];
+  readonly commentsValidators = [Validators.required, Validators.maxLength(2000)];
 
   constructor(private _fb: FormBuilder) {}
 
@@ -46,7 +57,7 @@ export class ReusableListItemFormComponent implements OnInit, OnDestroy {
         this.formData.labels.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.required, Validators.maxLength(2000)]],
+            value: [value, this.labelsValidators],
           })
         ),
         atLeastOneStringRequired('value')
@@ -55,7 +66,7 @@ export class ReusableListItemFormComponent implements OnInit, OnDestroy {
         this.formData.comments.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.required, Validators.maxLength(2000)]],
+            value: [value, this.commentsValidators],
           })
         )
       ),

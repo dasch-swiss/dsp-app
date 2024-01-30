@@ -36,7 +36,8 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       <dasch-swiss-multi-language-textarea
         [placeholder]="('appLabels.form.project.general.description' | translate) + '*'"
         [formGroup]="form"
-        controlName="description">
+        controlName="description"
+        [validators]="descriptionValidators">
       </dasch-swiss-multi-language-textarea>
 
       <app-chip-list-input
@@ -60,6 +61,7 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
   shortcodePatternError = { errorKey: 'pattern', message: 'This field must contains letters from A to F and 0 to 9' };
   shortCodeExistsError = { errorKey: 'shortcodeExists', message: 'This shortcode already exists' };
   readonly keywordsValidators = [Validators.minLength(3), Validators.maxLength(64)];
+  readonly descriptionValidators = [Validators.maxLength(2000)];
   subscription: Subscription;
 
   constructor(
@@ -98,7 +100,7 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
         this.formData.description.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.maxLength(2000)]],
+            value: [value, this.descriptionValidators],
           })
         ),
         atLeastOneStringRequired('value')

@@ -1,5 +1,5 @@
-import { ElementRef, Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ChangeDetectorRef, ElementRef, Injectable } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 
@@ -9,16 +9,19 @@ import { Store } from '@ngxs/store';
  */
 @Injectable()
 export class MultiLanguageFormService {
-  readonly availableLanguages: string[] = ['de', 'fr', 'it', 'en', 'rm'];
+  readonly availableLanguages = ['de', 'fr', 'it', 'en', 'rm'];
   selectedLanguageIndex: number;
   formGroup: FormGroup;
   controlName: string;
+  validators: ValidatorFn[];
+
+  inputValue: string | null = null;
 
   get formArray() {
     return this.formGroup.controls[this.controlName] as FormArray;
   }
 
-  get selectedFormControl() {
+  get selectedFormControl(): FormControl {
     return (
       this.formArray.controls.find(
         control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
@@ -40,40 +43,58 @@ export class MultiLanguageFormService {
 
   constructor(
     private _store: Store,
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private _cd: ChangeDetectorRef
   ) {}
 
-  onInit(formGroup: FormGroup, controlName: string) {
+  onInit(formGroup: FormGroup, controlName: string, validators: ValidatorFn[]) {
     this.formGroup = formGroup;
     this.controlName = controlName;
     this.selectedLanguageIndex = this._setupLanguageIndex();
+    this.validators = validators;
+
+    this.formArray.valueChanges.subscribe(array => {
+      if (array.length === 0) {
+        this.inputValue = null;
+        this._cd.detectChanges(); // TODO remove later
+      }
+    });
+  }
+
+  onInputChange(newText: any) {
+    if (newText === '') {
+      if (this.inputValue && this.inputValue.length > 0) {
+        this.formArray.removeAt(this.formArray.controls.indexOf(this.selectedFormControl));
+        this.inputValue = null;
+      }
+      return;
+    }
+
+    if (this.inputValue === null) {
+      this.formArray.push(
+        this._fb.group({
+          language: this.availableLanguages[this.selectedLanguageIndex],
+          value: [newText, this.validators],
+        })
+      );
+    }
+
+    this.selectedFormControl.setValue(newText);
+    this.inputValue = newText;
   }
 
   getFormControlWithLanguage(lang: string) {
     return this.formArray.controls.find(control => control.value.language === lang && control.value.value !== '');
   }
 
-  changeLanguage(languageIndex: number, deleteCurrentIfEmpty = true) {
-    const currentValidators = (this.formArray.controls[0].get('value') as FormControl).validator;
+  changeLanguage(languageIndex: number) {
+    this.selectedLanguageIndex = languageIndex;
 
-    if (deleteCurrentIfEmpty && this.selectedFormControl.value.length === 0) {
-      this.formArray.removeAt(this.formArray.controls.indexOf(this.selectedFormControl));
-    }
+    const newFormControl = this.formArray.controls.find(
+      control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
+    );
 
-    const language = this.availableLanguages[languageIndex];
-    const languageFoundIndex = this.formArray.value.findIndex(array => array.language === language);
-
-    if (languageFoundIndex === -1) {
-      this.formArray.push(
-        this._fb.group({
-          language,
-          value: ['', currentValidators],
-        })
-      );
-      this.changeLanguage(languageIndex, false);
-    } else {
-      this.selectedLanguageIndex = languageIndex;
-    }
+    this.inputValue = newFormControl ? this.selectedFormControl.value : null;
   }
 
   private _setupLanguageIndex(): number {
@@ -90,11 +111,9 @@ export class MultiLanguageFormService {
 
       // with user favorite language
       if (indexFavoriteLanguage !== -1) {
-        this._addEmptyFormControl(userFavoriteLanguage);
         return indexFavoriteLanguage;
         // with default language
       } else {
-        this._addEmptyFormControl(this.availableLanguages[0]);
         return 0;
       }
     }
@@ -104,14 +123,5 @@ export class MultiLanguageFormService {
     }
 
     return this.availableLanguages.indexOf(responseLanguages[0]);
-  }
-
-  private _addEmptyFormControl(language: string) {
-    this.formArray.push(
-      this._fb.group({
-        language,
-        value: '',
-      })
-    );
   }
 }

@@ -17,7 +17,8 @@ import { ListItemService } from '../list-item/list-item.service';
             [placeholder]="node.labels | appStringifyStringLiteral: 'all' | appTruncate: 128"
             [editable]="false"
             [formGroup]="readOnlyForm"
-            controlName="labels">
+            controlName="labels"
+            [validators]="[]">
           </dasch-swiss-multi-language-input>
 
           <app-action-bubble

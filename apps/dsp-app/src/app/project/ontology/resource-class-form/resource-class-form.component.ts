@@ -21,14 +21,19 @@ import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
         placeholder="Class name *"
         prefixIcon="fingerprint"></app-common-input>
 
-      <dasch-swiss-multi-language-input placeholder="Label *" [formGroup]="form" controlName="labels">
+      <dasch-swiss-multi-language-input
+        placeholder="Label *"
+        [formGroup]="form"
+        controlName="labels"
+        [validators]="labelsValidators">
       </dasch-swiss-multi-language-input>
 
       <dasch-swiss-multi-language-textarea
         placeholder="Comment *"
         [formGroup]="form"
         controlName="comments"
-        [editable]="true">
+        [editable]="true"
+        [validators]="commentsValidators">
       </dasch-swiss-multi-language-textarea>
     </form>
   `,
@@ -46,6 +51,8 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
   existingNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
   ontology;
   subscription: Subscription;
+  readonly labelsValidators = [Validators.maxLength(2000)];
+  readonly commentsValidators = [Validators.maxLength(2000)];
 
   constructor(
     private _fb: FormBuilder,
@@ -92,7 +99,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
         this.formData.labels.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.maxLength(2000)]],
+            value: [value, this.labelsValidators],
           })
         ),
         atLeastOneStringRequired('value')
@@ -101,7 +108,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
         this.formData.comments.map(({ language, value }) =>
           this._fb.group({
             language,
-            value: [value, [Validators.maxLength(2000)]],
+            value: [value, this.commentsValidators],
           })
         ),
         atLeastOneStringRequired('value')

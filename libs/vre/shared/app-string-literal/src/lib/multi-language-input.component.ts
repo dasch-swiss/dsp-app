@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
@@ -48,8 +48,9 @@ import { MultiLanguageFormService } from './multi-language-form.service';
       <input
         matInput
         [placeholder]="placeholder"
-        [formControl]="formService.selectedFormControl"
         #textInput
+        [ngModel]="formService.inputValue"
+        (ngModelChange)="formService.onInputChange($event)"
         [readonly]="!editable" />
     </mat-form-field>
     <mat-error *ngIf="formService.formArray.invalid && formService.formArray.touched">
@@ -89,10 +90,11 @@ export class MutiLanguageInputComponent implements OnInit {
   @Input() controlName: string;
   @Input() editable = true;
   @Input() placeholder: string;
+  @Input() validators: ValidatorFn[];
 
   constructor(public formService: MultiLanguageFormService) {}
 
   ngOnInit() {
-    this.formService.onInit(this.formGroup, this.controlName);
+    this.formService.onInit(this.formGroup, this.controlName, this.validators);
   }
 }
