@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
-import { Faro, initializeFaro } from '@grafana/faro-web-sdk';
+import { Faro, getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
 
 @Injectable({ providedIn: 'root' })
 export class GrafanaFaroService {
@@ -16,6 +16,7 @@ export class GrafanaFaroService {
         version: this._appConfig.dspConfig.release,
         environment: this._appConfig.dspInstrumentationConfig.environment,
       },
+      instrumentations: [...getWebInstrumentations()],
     });
   }
 }
