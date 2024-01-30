@@ -1,5 +1,34 @@
 # Changelog
 
+## [11.3.0](https://github.com/dasch-swiss/dsp-das/compare/v11.2.0...v11.3.0) (2024-01-30)
+
+
+### Enhancements
+
+* add Grafana faro ([#1407](https://github.com/dasch-swiss/dsp-das/issues/1407)) ([67534ab](https://github.com/dasch-swiss/dsp-das/commit/67534abce0fec994358b1e9de049349e12cc36a6))
+
+
+### Bug Fixes
+
+* Add empty bearer token by default for JS LIB ([#1406](https://github.com/dasch-swiss/dsp-das/issues/1406)) ([f424623](https://github.com/dasch-swiss/dsp-das/commit/f4246231dca1409e19c26472becc9c175154ae4d))
+* add faro instrumentaton ([#1409](https://github.com/dasch-swiss/dsp-das/issues/1409)) ([25701c6](https://github.com/dasch-swiss/dsp-das/commit/25701c6e639a4cdb2e8cf0ac27b2f84815a1a887))
+* auth guard waits for autologin to happen ([#1399](https://github.com/dasch-swiss/dsp-das/issues/1399)) ([20eb7cf](https://github.com/dasch-swiss/dsp-das/commit/20eb7cfa9d9f4cfeca14db5de9ab0548f4d6e036))
+* autologin logs in with iri from jwt ([#1397](https://github.com/dasch-swiss/dsp-das/issues/1397)) ([d8314ea](https://github.com/dasch-swiss/dsp-das/commit/d8314eaf6854ae9ed2757c5b0de3a7e563bf3e51))
+* display error on error handler ([#1401](https://github.com/dasch-swiss/dsp-das/issues/1401)) ([d0d0ac4](https://github.com/dasch-swiss/dsp-das/commit/d0d0ac4f5632e046e226b743946711e3c670e171))
+* **dsp-app:** fixes no search results section (DEV-3240) ([#1398](https://github.com/dasch-swiss/dsp-das/issues/1398)) ([60def06](https://github.com/dasch-swiss/dsp-das/commit/60def061946d82bc584740603da8a18b0b2332df))
+* **dsp-app:** Moved reusable form validators to single place. (#DEV-3222) ([#1381](https://github.com/dasch-swiss/dsp-das/issues/1381)) ([1d0f53b](https://github.com/dasch-swiss/dsp-das/commit/1d0f53be56d45263996a210521939f990d91e529))
+* **dsp-app:** performs gravsearch count from advanced search ([#1404](https://github.com/dasch-swiss/dsp-das/issues/1404)) ([07a9686](https://github.com/dasch-swiss/dsp-das/commit/07a9686d85ce15b1eaf6eabcfc27391a161bab2b))
+* error handler display errors ([#1403](https://github.com/dasch-swiss/dsp-das/issues/1403)) ([e7f0ddd](https://github.com/dasch-swiss/dsp-das/commit/e7f0dddd18c5b7950faabfdc37f3c83a868b82a2))
+* language input bug for list item ([#1405](https://github.com/dasch-swiss/dsp-das/issues/1405)) ([79f6bd8](https://github.com/dasch-swiss/dsp-das/commit/79f6bd800b8afb689a38596042fcd4267d934a1e))
+* list item language can be changed ([#1402](https://github.com/dasch-swiss/dsp-das/issues/1402)) ([98d56bd](https://github.com/dasch-swiss/dsp-das/commit/98d56bd6a2f9452f9af88b52989e74882b7cd572))
+
+
+### Maintenance
+
+* authentication flow improved, watch localStorage for changes ([#1393](https://github.com/dasch-swiss/dsp-das/issues/1393)) ([edf4dfa](https://github.com/dasch-swiss/dsp-das/commit/edf4dfa2fa2909306791f410a97ba0f58d77e089))
+* new AppErrorHandler ([#1396](https://github.com/dasch-swiss/dsp-das/issues/1396)) ([b679646](https://github.com/dasch-swiss/dsp-das/commit/b679646bbfd5ce6f4a2dd0c29ce72a89accd07ec))
+* remove ngxs storage plugin package ([#1395](https://github.com/dasch-swiss/dsp-das/issues/1395)) ([7e44b14](https://github.com/dasch-swiss/dsp-das/commit/7e44b14c60b4c0c4d4b0b249f7ee9f15f2e0c06a))
+
 ## [11.2.0](https://github.com/dasch-swiss/dsp-das/compare/v11.1.7...v11.2.0) (2024-01-26)
 
 
