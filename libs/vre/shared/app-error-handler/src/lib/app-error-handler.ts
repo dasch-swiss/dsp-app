@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
-import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { AjaxError } from 'rxjs/ajax';
 
@@ -9,10 +8,7 @@ import { AjaxError } from 'rxjs/ajax';
   providedIn: 'root',
 })
 export class AppErrorHandler implements ErrorHandler {
-  constructor(
-    private _notification: NotificationService,
-    private _appConfig: AppConfigService
-  ) {}
+  constructor(private _notification: NotificationService) {}
 
   handleError(error: any): void {
     if (error instanceof ApiResponseError && error.error instanceof AjaxError) {
@@ -21,7 +17,8 @@ export class AppErrorHandler implements ErrorHandler {
     } else if (error instanceof HttpErrorResponse) {
       // ApiServices
       this.handleHttpError(error, error.url);
-    } else if (this._appConfig.dspConfig.environment !== 'prod') {
+    } else {
+      // TODO in future: only display if environment === 'prod', now even local is configured as 'prod'
       console.error(error);
     }
   }
