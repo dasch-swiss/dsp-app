@@ -15,23 +15,6 @@ export class RepresentationService {
    * @returns an object containing the knora.json file for the given file url
    */
   getFileInfo(url: string, imageFilename?: string): Observable<unknown> {
-    const token = this._getTokenFromLocalStorage();
-
-    const headersConfig: { [header: string]: string } = {
-      'Content-Type': 'application/json',
-    };
-
-    // if there is no token, we won't add any auth header, so sipi returns
-    // a json if the resource is not restricted
-    if (token) {
-      headersConfig['Authorization'] = `Bearer ${token}`;
-    }
-
-    const requestOptions = {
-      headers: new HttpHeaders(headersConfig),
-      withCredentials: true,
-    };
-
     let pathToJson = '';
 
     if (imageFilename) {
@@ -41,7 +24,7 @@ export class RepresentationService {
       pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     }
 
-    return this._http.get(pathToJson, requestOptions);
+    return this._http.get(pathToJson);
   }
 
   /**
