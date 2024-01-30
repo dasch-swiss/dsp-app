@@ -21,6 +21,8 @@ export class AutoLoginService {
   ) {}
 
   setup() {
+    this._dspApiConnection.v2.jsonWebToken = ''; // needed for JS-LIB to run
+
     const encodedJWT = this._accessTokenService.getTokenUser();
     if (!encodedJWT) {
       this.hasCheckedCredentials$.next(true);
