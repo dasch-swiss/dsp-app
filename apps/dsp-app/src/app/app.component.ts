@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { GrafanaFaroService } from '@dasch-swiss/vre/shared/app-analytics';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { AutoLoginService, LocalStorageWatcherService } from '@dasch-swiss/vre/shared/app-session';
 
@@ -17,8 +18,10 @@ export class AppComponent implements OnInit {
     private _router: Router,
     private _titleService: Title,
     private _autoLoginService: AutoLoginService,
-    private _localStorageWatcher: LocalStorageWatcherService
+    private _localStorageWatcher: LocalStorageWatcherService,
+    private _grafana: GrafanaFaroService
   ) {
+    this._grafana.setup();
     this._autoLoginService.setup();
     this._localStorageWatcher.watchAccessToken();
     this._titleService.setTitle('DaSCH Service Platform');
