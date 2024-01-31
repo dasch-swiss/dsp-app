@@ -26,7 +26,7 @@ describe('AppConfigService with dev config', () => {
     geonameToken: 'geoname_token',
     iriBase: 'http://rdfh.ch',
     instrumentation: {
-      environment: 'dev',
+      environment: 'local-dev',
       rollbar: {
         enabled: false,
       },
@@ -50,7 +50,7 @@ describe('AppConfigService with dev config', () => {
   });
 
   it('should process the fully specified config (dev mode)', async () => {
-    expect(service.dspConfig.environment).toEqual('dev');
+    expect(service.dspConfig.environment).toEqual('local-dev');
     expect(service.dspConfig.color).toEqual('accent');
     expect(service.dspConfig.production).toEqual(false);
     expect(service.dspApiConfig.apiProtocol).toEqual('http');
@@ -65,7 +65,7 @@ describe('AppConfigService with dev config', () => {
     expect(service.dspApiConfig.logErrors).toEqual(true);
     expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
     expect(service.dspAppConfig.iriBase).toEqual('http://rdfh.ch');
-    expect(service.dspInstrumentationConfig.environment).toEqual('dev');
+    expect(service.dspInstrumentationConfig.environment).toEqual('local-dev');
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(false);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toBeUndefined();
   });
@@ -115,7 +115,7 @@ describe('AppConfigService with prod config', () => {
 
   it('should process the fully specified config (prod mode)', async () => {
     expect(service.dspConfig.release).toEqual('2023.04.02');
-    expect(service.dspConfig.environment).toEqual('production');
+    expect(service.dspConfig.environment).toEqual('prod');
     expect(service.dspConfig.color).toEqual('primary');
     expect(service.dspConfig.production).toEqual(true);
     expect(service.dspApiConfig.apiProtocol).toEqual('https');
@@ -130,7 +130,7 @@ describe('AppConfigService with prod config', () => {
     expect(service.dspApiConfig.logErrors).toEqual(true);
     expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
     expect(service.dspAppConfig.iriBase).toEqual('http://rdfh.ch');
-    expect(service.dspInstrumentationConfig.environment).toEqual('production');
+    expect(service.dspInstrumentationConfig.environment).toEqual('prod');
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(true);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toEqual('rollbar_token');
   });

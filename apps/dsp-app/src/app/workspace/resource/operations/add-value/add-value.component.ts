@@ -107,6 +107,7 @@ export class AddValueComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.createModeActive = true;
+      this._cd.markForCheck();
     }, 0);
   }
 
