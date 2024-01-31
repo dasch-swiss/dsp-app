@@ -1,31 +1,4 @@
 import { z } from 'zod';
-
-/**
- * If enabled, then the following values are required:
- * - applicationId
- * - clientToken
- * - site
- * - service
- */
-export const Datadog = z.discriminatedUnion('enabled', [
-  z.object({
-    enabled: z.literal(true),
-    applicationId: z.string().nonempty(),
-    clientToken: z.string().nonempty(),
-    site: z.string().nonempty(),
-    service: z.string().nonempty(),
-  }),
-  z.object({
-    enabled: z.literal(false),
-    applicationId: z.string().optional(),
-    clientToken: z.string().optional(),
-    site: z.string().optional(),
-    service: z.string().optional(),
-  }),
-]);
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type Datadog = z.infer<typeof Datadog>;
-
 /**
  * If enabled, then the following values are required:
  * - accessToken
@@ -42,7 +15,6 @@ export type Rollbar = z.infer<typeof Rollbar>;
 
 export const Instrumentation = z.object({
   environment: z.string().nonempty("required 'environment' value missing in config"),
-  dataDog: Datadog,
   rollbar: Rollbar,
 });
 

@@ -19,7 +19,7 @@ export const DspApiConnectionToken = new InjectionToken<KnoraApiConnection>('DSP
 // config for dsp-js-lib (@dasch-swiss/dsp-js) config object
 export const DspAppConfigToken = new InjectionToken<DspAppConfig>('DSP app specific extended configuration');
 
-// config for instrumentation (datadog and rollbar)
+// config for instrumentation (rollbar)
 export const DspInstrumentationToken = new InjectionToken<DspInstrumentationConfig>(
   'DSP instrumentation configuration'
 );

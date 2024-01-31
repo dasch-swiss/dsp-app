@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
-import { DatadogRumService, PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
+import { PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
 import {
   AppConfigService,
   buildTagFactory,
@@ -19,7 +19,6 @@ import {
 } from '@dasch-swiss/vre/shared/app-config';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/shared/app-date-picker';
 import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
-import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import {
   AppProgressIndicatorComponent,
@@ -29,9 +28,9 @@ import {
 import { NgxsStoreModule } from '@dasch-swiss/vre/shared/app-state';
 import {
   AppStringLiteralComponent,
+  HumanReadableErrorPipe,
   MultiLanguageTextareaComponent,
   MutiLanguageInputComponent,
-  HumanReadableErrorPipe,
 } from '@dasch-swiss/vre/shared/app-string-literal';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -357,8 +356,6 @@ export function httpLoaderFactory(httpClient: HttpClient) {
   ],
   providers: [
     AppConfigService,
-    DatadogRumService,
-    AppLoggingService,
     PendoAnalyticsService,
     {
       provide: DspApiConfigToken,

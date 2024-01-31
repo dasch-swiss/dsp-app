@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QueryObject, PropertyFormItem } from '@dasch-swiss/vre/advanced-search';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { AppLoggingService } from '@dasch-swiss/vre/shared/app-logging';
 
 @Component({
   selector: 'app-advanced-search-container',
@@ -16,8 +15,7 @@ export class AdvancedSearchContainerComponent implements OnInit {
   constructor(
     private _router: Router,
     private _route: ActivatedRoute,
-    private _location: Location,
-    private _loggingService: AppLoggingService
+    private _location: Location
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +36,6 @@ export class AdvancedSearchContainerComponent implements OnInit {
     this._location.back();
   }
 
-  // send the list of properties searched for to Datadog
   // locally the logging service will just print to the console
   logProperties(propFormList: PropertyFormItem[]): void {
     // strip any irrelevant data from the PropertyFormList for logging
@@ -57,7 +54,5 @@ export class AdvancedSearchContainerComponent implements OnInit {
         value: valueObject || propertyForm.searchValue,
       };
     });
-
-    this._loggingService.info('Search properties', logObject);
   }
 }

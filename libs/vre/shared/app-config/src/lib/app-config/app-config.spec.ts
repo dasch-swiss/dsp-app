@@ -4,7 +4,7 @@
  */
 
 import { ZodError } from 'zod';
-import { AppConfig, Datadog, Rollbar } from './app-config';
+import { AppConfig, Rollbar } from './app-config';
 
 describe('app-config schema tests', () => {
   it('should parse valid config', () => {
@@ -24,13 +24,6 @@ describe('app-config schema tests', () => {
       iriBase: 'http://rdfh.ch',
       instrumentation: {
         environment: 'production',
-        dataDog: {
-          enabled: true,
-          applicationId: 'app_id',
-          clientToken: 'client_token',
-          site: 'site',
-          service: 'dsp-app',
-        },
         rollbar: {
           enabled: true,
           accessToken: 'rollbar_token',
@@ -60,9 +53,6 @@ describe('app-config schema tests', () => {
       iriBase: 'http://rdfh.ch',
       instrumentation: {
         environment: 'production',
-        dataDog: {
-          enabled: false,
-        },
         rollbar: {
           enabled: false,
         },
@@ -71,46 +61,6 @@ describe('app-config schema tests', () => {
 
     expect(() => {
       AppConfig.parse(invalidConfig);
-    }).toThrowError(ZodError);
-  });
-
-  it('should throw error for invalid datadog config', () => {
-    expect(() => {
-      const data = {
-        enabled: true,
-      };
-      Datadog.parse(data);
-    }).toThrow(ZodError);
-  });
-
-  it('should not throw error for valid Datadog config (1)', () => {
-    expect(() => {
-      const data = {
-        enabled: false,
-        applicationId: '1234',
-        clientToken: '1234',
-        site: '1234',
-        service: '1234',
-      };
-      Datadog.parse(data);
-    }).toBeTruthy();
-  });
-
-  it('should not throw error for valid Datadog config (2)', () => {
-    expect(() => {
-      const data = {
-        enabled: false,
-      };
-      Datadog.parse(data);
-    }).toBeTruthy();
-  });
-
-  it('should throw error for invalid Rollbar config (1)', () => {
-    expect(() => {
-      const data = {
-        enabled: true,
-      };
-      Datadog.parse(data);
     }).toThrowError(ZodError);
   });
 

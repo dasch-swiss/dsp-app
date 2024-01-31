@@ -14,13 +14,6 @@
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
     "environment": "ls-test-server",
-    "dataDog": {
-      "enabled": false,
-      "applicationId": "",
-      "clientToken": "",
-      "site": "",
-      "service": ""
-    },
     "rollbar": {
       "enabled": false,
       "accessToken": ""

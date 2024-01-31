@@ -27,9 +27,6 @@ describe('AppConfigService with dev config', () => {
     iriBase: 'http://rdfh.ch',
     instrumentation: {
       environment: 'dev',
-      dataDog: {
-        enabled: false,
-      },
       rollbar: {
         enabled: false,
       },
@@ -69,11 +66,6 @@ describe('AppConfigService with dev config', () => {
     expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
     expect(service.dspAppConfig.iriBase).toEqual('http://rdfh.ch');
     expect(service.dspInstrumentationConfig.environment).toEqual('dev');
-    expect(service.dspInstrumentationConfig.dataDog.enabled).toEqual(false);
-    expect(service.dspInstrumentationConfig.dataDog.applicationId).toBeUndefined();
-    expect(service.dspInstrumentationConfig.dataDog.clientToken).toBeUndefined();
-    expect(service.dspInstrumentationConfig.dataDog.site).toBeUndefined();
-    expect(service.dspInstrumentationConfig.dataDog.service).toBeUndefined();
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(false);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toBeUndefined();
   });
@@ -98,13 +90,6 @@ describe('AppConfigService with prod config', () => {
     iriBase: 'http://rdfh.ch',
     instrumentation: {
       environment: 'production',
-      dataDog: {
-        enabled: true,
-        applicationId: 'app_id',
-        clientToken: 'client_token',
-        site: 'datadoghq.eu',
-        service: 'dsp-app',
-      },
       rollbar: {
         enabled: true,
         accessToken: 'rollbar_token',
@@ -146,11 +131,6 @@ describe('AppConfigService with prod config', () => {
     expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
     expect(service.dspAppConfig.iriBase).toEqual('http://rdfh.ch');
     expect(service.dspInstrumentationConfig.environment).toEqual('production');
-    expect(service.dspInstrumentationConfig.dataDog.enabled).toEqual(true);
-    expect(service.dspInstrumentationConfig.dataDog.applicationId).toEqual('app_id');
-    expect(service.dspInstrumentationConfig.dataDog.clientToken).toEqual('client_token');
-    expect(service.dspInstrumentationConfig.dataDog.site).toEqual('datadoghq.eu');
-    expect(service.dspInstrumentationConfig.dataDog.service).toEqual('dsp-app');
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(true);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toEqual('rollbar_token');
   });

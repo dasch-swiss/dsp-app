@@ -1,10 +1,5 @@
 name: Publish from branch
 
-env:
-  # use during publishing to upload src maps to datadog
-  DATADOG_API_KEY: ${{secrets.DATADOG_API_KEY}}
-  DATADOG_SITE: ${{vars.DATADOG_SITE}}
-
 on:
   workflow_dispatch
 jobs:

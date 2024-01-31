@@ -10,7 +10,7 @@ import { AppConfigToken } from './dsp-api-tokens';
 import { DspAppConfig } from './dsp-app-config';
 import { DspConfig } from './dsp-config';
 import { DspIiifConfig } from './dsp-iiif-config';
-import { DspDataDogConfig, DspInstrumentationConfig, DspRollbarConfig } from './dsp-instrumentation-config';
+import { DspInstrumentationConfig, DspRollbarConfig } from './dsp-instrumentation-config';
 
 @Injectable({
   providedIn: 'root',
@@ -65,13 +65,6 @@ export class AppConfigService {
     // init instrumentation configuration
     this._dspInstrumentationConfig = new DspInstrumentationConfig(
       c.instrumentation.environment,
-      new DspDataDogConfig(
-        c.instrumentation.dataDog.enabled,
-        c.instrumentation.dataDog.applicationId,
-        c.instrumentation.dataDog.clientToken,
-        c.instrumentation.dataDog.site,
-        c.instrumentation.dataDog.service
-      ),
       new DspRollbarConfig(c.instrumentation.rollbar.enabled, c.instrumentation.rollbar.accessToken)
     );
   }

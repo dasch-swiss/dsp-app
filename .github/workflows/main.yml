@@ -6,9 +6,6 @@ on:
 env:
   # use the read-write access token so that build cache in nx-cloud can be updated
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  # use during publishing to upload src maps to datadog
-  DATADOG_API_KEY: ${{secrets.DATADOG_API_KEY}}
-  DATADOG_SITE: ${{vars.DATADOG_SITE}}
 
 jobs:
 
