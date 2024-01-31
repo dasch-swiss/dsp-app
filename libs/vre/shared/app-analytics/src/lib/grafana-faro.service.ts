@@ -9,6 +9,10 @@ export class GrafanaFaroService {
   constructor(private readonly _appConfig: AppConfigService) {}
 
   setup() {
+    if (this._appConfig.dspInstrumentationConfig.environment === 'local-dev') {
+      return;
+    }
+
     this.faro = initializeFaro({
       url: 'https://faro-collector-prod-eu-west-2.grafana.net/collect/66166d1b81448a1cca47cde470d9ec98',
       app: {

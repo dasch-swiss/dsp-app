@@ -3,6 +3,8 @@
  *  SPDX-License-Identifier: Apache-2.0
  */
 
+import { InstrumentationType } from './app-config';
+
 export class DspRollbarConfig {
   constructor(
     public enabled: boolean,
@@ -12,7 +14,7 @@ export class DspRollbarConfig {
 
 export class DspInstrumentationConfig {
   constructor(
-    public environment: string,
+    public environment: InstrumentationType['environment'],
     public rollbar: DspRollbarConfig
   ) {}
 }

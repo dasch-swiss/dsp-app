@@ -14,9 +14,11 @@ export const Rollbar = z.discriminatedUnion('enabled', [
 export type Rollbar = z.infer<typeof Rollbar>;
 
 export const Instrumentation = z.object({
-  environment: z.string().nonempty("required 'environment' value missing in config"),
+  environment: z.enum(['local-dev', 'dev-server', 'test-server', 'ls-test-server', 'staging-server', 'prod']),
   rollbar: Rollbar,
 });
+
+export type InstrumentationType = z.infer<typeof Instrumentation>;
 
 /**
  * Our codebase requires number | null. The config will contain either a number
