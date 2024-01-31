@@ -1,29 +1,15 @@
 @use "../../../../../styles/config" as *;
 
-.boolValue {
-  margin-top: 4px;
-}
-
 .read-mode-view {
   .mat-icon {
     align-self: center;
     font-size: 26pt;
     min-width: 50px;
-
-    .boolValue {
-      display: block;
-      color: $primary;
-
-      &.more-space {
-        margin-top: 16px;
-      }
-    }
   }
 }
 
 .toggle-container {
-  display: flex;
-  align-items: center;
+  margin-bottom: 16px;
 }
 
 .right-align {

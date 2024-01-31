@@ -1,7 +1,7 @@
 <span *ngIf="mode === 'read'; else showForm" class="read-mode-view">
   <span class="rm-value">
     <mat-icon [ngClass]="valueFormControl.value ? 'toggle-icon-on': 'toggle-icon-off'"
-      >{{ valueFormControl.value? 'toggle_on' : 'toggle_off' }}</mat-icon
+      >{{ valueFormControl.value ? 'toggle_on' : 'toggle_off' }}</mat-icon
     >
   </span>
   <span class="rm-comment" *ngIf="shouldShowComment">{{ commentFormControl.value }}</span>
@@ -20,17 +20,12 @@
     </span>
   </span>
   <span [formGroup]="form" *ngIf="!boolValIsUnset">
-    <span class="toggle-container">
-      <mat-slide-toggle
-        [formControlName]="'value'"
-        class="value boolValue child-value-component"
-        [class.more-space]="moreSpace">
-      </mat-slide-toggle>
-      <span class="right-align" *ngIf="!boolValIsUnset && newResource && !valueRequiredValidator">
-        <button mat-icon-button class="value-action cancel" title="cancel" (click)="boolValIsUnset = true">
-          <mat-icon>cancel</mat-icon>
-        </button>
-      </span>
+    <mat-slide-toggle class="toggle-container" [formControlName]="'value'" [class.more-space]="moreSpace">
+    </mat-slide-toggle>
+    <span class="right-align" *ngIf="!boolValIsUnset && newResource && !valueRequiredValidator">
+      <button mat-icon-button class="value-action cancel" title="cancel" (click)="boolValIsUnset = true">
+        <mat-icon>cancel</mat-icon>
+      </button>
     </span>
     <mat-error
       *ngIf="
