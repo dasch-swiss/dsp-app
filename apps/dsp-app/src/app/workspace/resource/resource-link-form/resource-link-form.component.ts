@@ -22,7 +22,7 @@ import {
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectsSelectors, UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { FilteredResources, ShortResInfo } from '../../results/list-view/list-view.component';
 import { ResourceService } from '../services/resource.service';
@@ -58,14 +58,14 @@ export class ResourceLinkFormComponent implements OnInit, OnDestroy {
   selectedProject: string;
 
   usersProjects$: Observable<StoredProject[]> = combineLatest([
+    this._store.select(ProjectsSelectors.currentProject),
     this._store.select(UserSelectors.userProjects),
     this._store.select(UserSelectors.isSysAdmin),
-    this._store.select(ProjectsSelectors.allNotSystemProjects),
   ]).pipe(
     takeUntil(this.ngUnsubscribe),
-    map(([currentUserProjects, isSysAdmin, allNotSystemProjects]) =>
-      isSysAdmin ? currentUserProjects : allNotSystemProjects
-    )
+    map(([currentProject, currentUserProjects, isSysAdmin]) => [
+      isSysAdmin ? currentProject : currentUserProjects.find(x => x.id === currentProject.id),
+    ])
   );
 
   @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
