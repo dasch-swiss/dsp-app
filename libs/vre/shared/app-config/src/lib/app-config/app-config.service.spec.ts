@@ -89,7 +89,7 @@ describe('AppConfigService with prod config', () => {
     geonameToken: 'geoname_token',
     iriBase: 'http://rdfh.ch',
     instrumentation: {
-      environment: 'production',
+      environment: 'prod',
       rollbar: {
         enabled: true,
         accessToken: 'rollbar_token',
