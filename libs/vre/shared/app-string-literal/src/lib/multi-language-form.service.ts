@@ -26,7 +26,8 @@ export class MultiLanguageFormService {
       this.formArray.controls.find(
         control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
       ) as FormControl
-    ).get('value') as FormControl;
+    ) // TODO as FormControl = bad pattern, should be refactored, also form should be with Typed values
+      .get('value') as FormControl;
   }
 
   get invalidErrors() {
@@ -52,6 +53,12 @@ export class MultiLanguageFormService {
     this.controlName = controlName;
     this.selectedLanguageIndex = this._setupLanguageIndex();
     this.validators = validators;
+
+    const newFormControl = this.formArray.controls.find(
+      control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
+    );
+
+    this.inputValue = newFormControl ? this.selectedFormControl.value : null;
 
     this.formArray.valueChanges.subscribe(array => {
       if (array.length === 0) {

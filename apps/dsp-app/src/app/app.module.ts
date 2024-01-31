@@ -381,7 +381,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     {
       provide: ErrorHandler,
       useClass: AppErrorHandler,
-      deps: [NotificationService],
+      deps: [NotificationService, AppConfigService],
     },
     {
       provide: HTTP_INTERCEPTORS,

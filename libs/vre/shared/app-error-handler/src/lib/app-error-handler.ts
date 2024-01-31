@@ -27,7 +27,11 @@ export class AppErrorHandler implements ErrorHandler {
   }
 
   private handleHttpErrorResponse(error: HttpErrorResponse) {
-    if (error.status >= 400 && error.status < 500) {
+    if (error.status === 400) {
+      const readableErrorMatch = error.error.error.match(/dsp\.errors\.BadRequestException:(.*)$/);
+      this.displayNotification(readableErrorMatch[1]);
+      return;
+    } else if (error.status >= 400 && error.status < 500) {
       const readableErrorMatch = error.error.error.match(/\((.*)\)$/);
       this.displayNotification(readableErrorMatch[1]);
       return;
