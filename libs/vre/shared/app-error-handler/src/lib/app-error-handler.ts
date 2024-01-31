@@ -28,12 +28,19 @@ export class AppErrorHandler implements ErrorHandler {
 
   private handleHttpErrorResponse(error: HttpErrorResponse) {
     if (error.status === 400) {
-      const readableErrorMatch = error.error.error.match(/dsp\.errors\.BadRequestException:(.*)$/);
-      this.displayNotification(readableErrorMatch[1]);
-      return;
-    } else if (error.status >= 400 && error.status < 500) {
-      const readableErrorMatch = error.error.error.match(/\((.*)\)$/);
-      this.displayNotification(readableErrorMatch[1]);
+      if (error.error?.error) {
+        const badRequestRegexMatch = error.error.error.match(/dsp\.errors\.BadRequestException:(.*)$/);
+
+        if (badRequestRegexMatch) {
+          this.displayNotification(badRequestRegexMatch[1]);
+        }
+
+        this.testInvalidRequest(error.error.error);
+      } else if (typeof error.error === 'string') {
+        this.testInvalidRequest(error.error);
+      } else if (error.error.message) {
+        this.displayNotification(error.error.message);
+      }
       return;
     }
 
@@ -62,5 +69,13 @@ export class AppErrorHandler implements ErrorHandler {
 
   private displayNotification(message: string) {
     this._notification.openSnackBar(message, 'error');
+  }
+
+  // TODO ask the backend to uniformize their response, so that this method is only called once.
+  private testInvalidRequest(error: string) {
+    const invalidRequestRegexMatch = error.match(/\((.*)\)$/);
+    if (invalidRequestRegexMatch) {
+      this.displayNotification(invalidRequestRegexMatch[1]);
+    }
   }
 }

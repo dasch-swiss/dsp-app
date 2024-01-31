@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
  * shortcodeValidator: Validate the shortcode value against
@@ -7,6 +7,8 @@ import { AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
  */
 export function shortcodeExistsValidator(shortcodes: string[]): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    return shortcodes.includes(control.value) ? { shortcodeExists: true } : null;
+    return shortcodes.some(e => e.toLowerCase().search(control.value.toLowerCase()) !== -1)
+      ? { shortcodeExists: true }
+      : null;
   };
 }
