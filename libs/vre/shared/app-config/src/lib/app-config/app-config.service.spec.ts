@@ -26,7 +26,7 @@ describe('AppConfigService with dev config', () => {
     geonameToken: 'geoname_token',
     iriBase: 'http://rdfh.ch',
     instrumentation: {
-      environment: 'local-dev',
+      environment: 'dev-server',
       rollbar: {
         enabled: false,
       },
@@ -50,7 +50,7 @@ describe('AppConfigService with dev config', () => {
   });
 
   it('should process the fully specified config (dev mode)', async () => {
-    expect(service.dspConfig.environment).toEqual('local-dev');
+    expect(service.dspConfig.environment).toEqual('dev-server');
     expect(service.dspConfig.color).toEqual('accent');
     expect(service.dspConfig.production).toEqual(false);
     expect(service.dspApiConfig.apiProtocol).toEqual('http');
@@ -65,7 +65,7 @@ describe('AppConfigService with dev config', () => {
     expect(service.dspApiConfig.logErrors).toEqual(true);
     expect(service.dspAppConfig.geonameToken).toEqual('geoname_token');
     expect(service.dspAppConfig.iriBase).toEqual('http://rdfh.ch');
-    expect(service.dspInstrumentationConfig.environment).toEqual('local-dev');
+    expect(service.dspInstrumentationConfig.environment).toEqual('dev-server');
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(false);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toBeUndefined();
   });

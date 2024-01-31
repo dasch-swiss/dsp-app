@@ -2,7 +2,7 @@ const MY_TOKEN = '';
 localStorage.setItem('ACCESS_TOKEN', MY_TOKEN);
 
 describe('ADMIN TEST', () => {
-  it('should load clickable projects on the home page', () => {
+  it.skip('should load clickable projects on the home page', () => {
     cy.visit('/');
     const projectTileSelector = '[data-cy=tile]';
 

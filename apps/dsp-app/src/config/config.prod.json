@@ -13,7 +13,7 @@
   "logErrors": false,
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
-    "environment": "prod",
+    "environment": "production",
     "rollbar": {
       "enabled": false,
       "accessToken": ""
