@@ -1,5 +1,27 @@
 # Changelog
 
+## [11.3.1](https://github.com/dasch-swiss/dsp-das/compare/v11.3.0...v11.3.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* display resource permission warning message ([#1414](https://github.com/dasch-swiss/dsp-das/issues/1414)) ([5a8d739](https://github.com/dasch-swiss/dsp-das/commit/5a8d7393ee164ee4a4bee4bb5b6d0a7f4596cdd8))
+* **dsp-app:** resource link permissions (DEV-3252) ([#1419](https://github.com/dasch-swiss/dsp-das/issues/1419)) ([72132f0](https://github.com/dasch-swiss/dsp-das/commit/72132f035b3ed7f269539d947c150d868bb6248c))
+* **dsp-das:** Enables rich text saving when creating new text value f… ([#1417](https://github.com/dasch-swiss/dsp-das/issues/1417)) ([f3c9204](https://github.com/dasch-swiss/dsp-das/commit/f3c92049d53668d2915313f37c61959fa7e91d73))
+* no bearer auth on iiif images ([#1410](https://github.com/dasch-swiss/dsp-das/issues/1410)) ([a5a00e9](https://github.com/dasch-swiss/dsp-das/commit/a5a00e9dbcdc5ee6d5a27948ac9da00f284ca73f))
+* no faro in dev ([#1412](https://github.com/dasch-swiss/dsp-das/issues/1412)) ([22ce0eb](https://github.com/dasch-swiss/dsp-das/commit/22ce0eb1c55de424f519a025d8b1b929a45471a6))
+* test pass instrumentation validation ([#1421](https://github.com/dasch-swiss/dsp-das/issues/1421)) ([36fd44a](https://github.com/dasch-swiss/dsp-das/commit/36fd44a56d4ba4b121b95dedb42185ae110c98a6))
+* testing passes ([#1422](https://github.com/dasch-swiss/dsp-das/issues/1422)) ([66fd88e](https://github.com/dasch-swiss/dsp-das/commit/66fd88e59f8f5e56e5b5e5a169c976326454aa1b))
+* various errors ([#1416](https://github.com/dasch-swiss/dsp-das/issues/1416)) ([534e96b](https://github.com/dasch-swiss/dsp-das/commit/534e96bd7b5140aa7e078c39140d2dd88e90e3a0))
+* various fixes ([#1418](https://github.com/dasch-swiss/dsp-das/issues/1418)) ([c2db7bf](https://github.com/dasch-swiss/dsp-das/commit/c2db7bf1adf64076f7f9897e56d0f37dab17b1c1))
+* various fixes ([#1420](https://github.com/dasch-swiss/dsp-das/issues/1420)) ([d88aa17](https://github.com/dasch-swiss/dsp-das/commit/d88aa175c1bf469eb265b044cbf0c0a0e24a5bc2))
+
+
+### Maintenance
+
+* **boolean-value:** assign class to get the same height as other forms ([#1415](https://github.com/dasch-swiss/dsp-das/issues/1415)) ([7768c2d](https://github.com/dasch-swiss/dsp-das/commit/7768c2d14d1f07614437c0aaa9fa4729e762574b))
+* remove datadog ([#1413](https://github.com/dasch-swiss/dsp-das/issues/1413)) ([bda4786](https://github.com/dasch-swiss/dsp-das/commit/bda4786bdb6ac96e2bf937c086e9adb7d89aac3d))
+
 ## [11.3.0](https://github.com/dasch-swiss/dsp-das/compare/v11.2.0...v11.3.0) (2024-01-30)
 
 
