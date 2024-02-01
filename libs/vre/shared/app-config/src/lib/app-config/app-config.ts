@@ -14,7 +14,7 @@ export const Rollbar = z.discriminatedUnion('enabled', [
 export type Rollbar = z.infer<typeof Rollbar>;
 
 export const Instrumentation = z.object({
-  environment: z.enum(['local-dev', 'dev-server', 'test-server', 'ls-test-server', 'staging-server', 'prod']),
+  environment: z.string(),
   rollbar: Rollbar,
 });
 
