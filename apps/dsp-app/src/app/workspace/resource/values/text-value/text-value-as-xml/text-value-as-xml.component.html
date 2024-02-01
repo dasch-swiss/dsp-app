@@ -14,7 +14,7 @@
 <ng-template #showForm>
   <div *ngIf="editor; else noConfig" [formGroup]="form">
     <span [formGroup]="form">
-      <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor"></ckeditor>
+      <ckeditor [formControlName]="'value'" [config]="editorConfig" [editor]="editor" (change)="onChange()"></ckeditor>
       <app-comment-form
         *ngIf="
                     !commentDisabled && valueFormControl && commentFormControl

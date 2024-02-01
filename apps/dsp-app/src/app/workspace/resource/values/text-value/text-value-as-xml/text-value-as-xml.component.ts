@@ -1,5 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Constants, CreateTextValueAsXml, ReadTextValueAsXml, UpdateTextValueAsXml } from '@dasch-swiss/dsp-js';
 import * as Editor from 'ckeditor5-custom-build';
@@ -40,7 +50,10 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
     '<br>': '<br/>',
   };
 
-  constructor(@Inject(FormBuilder) protected _fb: FormBuilder) {
+  constructor(
+    @Inject(FormBuilder) protected _fb: FormBuilder,
+    private _cd: ChangeDetectorRef
+  ) {
     super();
   }
 
@@ -71,6 +84,10 @@ export class TextValueAsXMLComponent extends BaseValueDirective implements OnIni
     // resets values and validators in form controls when input displayValue or mode changes
     // at the first call of ngOnChanges, form control elements are not initialized yet
     this.resetFormControl();
+  }
+
+  onChange(): void {
+    this._cd.markForCheck();
   }
 
   ngOnDestroy(): void {
