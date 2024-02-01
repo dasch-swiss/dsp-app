@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.2](https://github.com/dasch-swiss/dsp-das/compare/v11.3.1...v11.3.2) (2024-02-01)
+
+
+### Bug Fixes
+
+* string instead of enum for environment config ([#1423](https://github.com/dasch-swiss/dsp-das/issues/1423)) ([fc92eaa](https://github.com/dasch-swiss/dsp-das/commit/fc92eaa88f768338dcc1e2fa07295c93c03098b2))
+
 ## [11.3.1](https://github.com/dasch-swiss/dsp-das/compare/v11.3.0...v11.3.1) (2024-01-31)
 
 
