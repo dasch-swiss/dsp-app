@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.4](https://github.com/dasch-swiss/dsp-das/compare/v11.3.3...v11.3.4) (2024-02-01)
+
+
+### Bug Fixes
+
+* **dsp-das:** Enables rich text saving when creating new text value f…  d48bf85 …or property. (DEV-3247) ([#1427](https://github.com/dasch-swiss/dsp-das/issues/1427)) ([f8739ba](https://github.com/dasch-swiss/dsp-das/commit/f8739ba655c7bfbda2cdbb7946951efbcd069e06))
+
 ## [11.3.3](https://github.com/dasch-swiss/dsp-das/compare/v11.3.2...v11.3.3) (2024-02-01)
 
 
