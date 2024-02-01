@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.3.3](https://github.com/dasch-swiss/dsp-das/compare/v11.3.2...v11.3.3) (2024-02-01)
+
+
+### Bug Fixes
+
+* add cookie auth for iiif resources ([#1425](https://github.com/dasch-swiss/dsp-das/issues/1425)) ([dfeec97](https://github.com/dasch-swiss/dsp-das/commit/dfeec97c78ac0dcd5d262d09a67198e0854173d0))
+
 ## [11.3.2](https://github.com/dasch-swiss/dsp-das/compare/v11.3.1...v11.3.2) (2024-02-01)
 
 
