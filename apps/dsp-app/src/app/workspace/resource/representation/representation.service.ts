@@ -24,7 +24,7 @@ export class RepresentationService {
       pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     }
 
-    return this._http.get(pathToJson);
+    return this._http.get(pathToJson, { withCredentials: true });
   }
 
   /**
