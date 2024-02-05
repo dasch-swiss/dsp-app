@@ -21,7 +21,7 @@
     color: $bright;
     background-color: $dark;
     height: calc(100% - 64px);
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0 0;
 
     &.drawing {
       cursor: crosshair;
@@ -34,19 +34,15 @@
 
   .toolbar {
     color: $primary_50;
+  }
+
+  .toolbar-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: $bright;
     background-color: $dark;
-    height: 64px;
-
-    .action {
-      height: 40px;
-      bottom: 0;
-      padding: 8px 0;
-
-      .active {
-        background: rgba(128, 128, 128, 0.39);
-        font-weight: bolder;
-      }
-    }
+    border-radius: 0 0 8px 8px;
   }
 
   .navigation {
@@ -65,6 +61,7 @@
       &.next {
         right: 0;
       }
+
       .mat-mdc-button.full-size {
         height: 100% !important;
         width: $panel-height !important;
@@ -77,18 +74,15 @@
         color: $grey !important;
       }
     }
-
-    // horizontal navigation
-    // slider control container
-    &.horizontal {
-      width: 100%;
-
-      .mat-mdc-slider {
-        width: 100%;
-        bottom: 20px;
-      }
-    }
   }
+
+  .on-error {
+    height: 50%;
+  }
+}
+
+.mat-mdc-slider {
+  display: flex;
 }
 
 .annotation-tooltip {
@@ -116,7 +110,7 @@
  */
 
 ::ng-deep .openseadragon-container {
-  border-radius: 8px 8px 0px 0px;
+  border-radius: 8px 8px 0 0;
 }
 
 /*

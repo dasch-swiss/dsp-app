@@ -1,5 +1,5 @@
 <!-- openseadragon (osd) viewer -->
-<div class="osd-container" [class.drawing]="regionDrawMode">
+<div class="osd-container" [class.drawing]="regionDrawMode" [class.on-error]="failedToLoad">
   <!-- in case of an error -->
   <app-status
     [status]="404"
@@ -9,11 +9,7 @@
 
   <!-- navigation in case of compound object: previous and next page -->
   <div class="navigation vertical previous" *ngIf="compoundNavigation">
-    <button
-      mat-button
-      class="full-size"
-      [disabled]="compoundNavigation.page <= 1"
-      (click)="openPage(compoundNavigation.page - 1)">
+    <button mat-button [disabled]="compoundNavigation.page <= 1" (click)="openPage(compoundNavigation.page - 1)">
       <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
   </div>
@@ -30,10 +26,9 @@
   </div>
 </div>
 
-<div class="toolbar bottom">
+<div class="toolbar">
   <!-- navigation -->
-  <div class="navigation horizontal" *ngIf="compoundNavigation">
-    <!-- TODO: The 'tickInterval' property no longer exists -->
+  <div *ngIf="compoundNavigation">
     <mat-slider
       [color]="'primary'"
       [disabled]="compoundNavigation.totalPages < 2"
@@ -59,7 +54,7 @@
     </mat-slider>
   </div>
   <!-- toolbar -->
-  <div class="action horizontal">
+  <div class="toolbar-bottom">
     <!-- vertical more button with menu to open and copy iiif url -->
     <button mat-icon-button [matMenuTriggerFor]="more">
       <mat-icon>more_vert</mat-icon>
@@ -80,10 +75,6 @@
         Replace file
       </button>
     </mat-menu>
-    <!-- empty placeholder to simulate two buttons; this helps to have the zoom buttons centered with fill-remaining-space setup -->
-    <span class="empty-space"></span>
-    <span class="empty-space"></span>
-
     <span class="fill-remaining-space"></span>
 
     <!-- navigation in case of compound object: first page and previous page -->
