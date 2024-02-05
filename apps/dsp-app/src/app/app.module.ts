@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MatJDNConvertibleCalendarDateAdapterModule } from '@dasch-swiss/jdnconvertiblecalendardateadapter';
 import { AdvancedSearchComponent } from '@dasch-swiss/vre/advanced-search';
+import { BASE_PATH } from '@dasch-swiss/vre/open-api';
 import { PendoAnalyticsService } from '@dasch-swiss/vre/shared/app-analytics';
 import {
   AppConfigService,
@@ -378,6 +379,11 @@ export function httpLoaderFactory(httpClient: HttpClient) {
       provide: BuildTagToken,
       useFactory: buildTagFactory,
       deps: [HttpClient],
+    },
+    {
+      provide: BASE_PATH,
+      useFactory: (configService: AppConfigService) => configService.dspApiConfig.apiUrl,
+      deps: [AppConfigService],
     },
     {
       provide: ErrorHandler,
