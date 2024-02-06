@@ -1,5 +1,24 @@
 # Changelog
 
+## [11.4.0](https://github.com/dasch-swiss/dsp-das/compare/v11.3.4...v11.4.0) (2024-02-06)
+
+
+### Enhancements
+
+* add openApi generated code ([#1431](https://github.com/dasch-swiss/dsp-das/issues/1431)) ([0bffe04](https://github.com/dasch-swiss/dsp-das/commit/0bffe04bf47cff016499a4e6606caa690c1a70d1))
+
+
+### Bug Fixes
+
+* list node gets updated ([#1437](https://github.com/dasch-swiss/dsp-das/issues/1437)) ([6b8aa08](https://github.com/dasch-swiss/dsp-das/commit/6b8aa088dc959ba6ed0af68d3e6e89860c07a414))
+* login works with specific api errors  ([#1433](https://github.com/dasch-swiss/dsp-das/issues/1433)) ([bb60878](https://github.com/dasch-swiss/dsp-das/commit/bb60878e348a753aa53ab7578894508bd40298d8))
+
+
+### Maintenance
+
+* flex slider in parent element ([#1429](https://github.com/dasch-swiss/dsp-das/issues/1429)) ([e0279fd](https://github.com/dasch-swiss/dsp-das/commit/e0279fdecff98744e6cb0305106d8df7a7d63a01))
+* update eslint packages ([#1430](https://github.com/dasch-swiss/dsp-das/issues/1430)) ([64658ce](https://github.com/dasch-swiss/dsp-das/commit/64658ce054e1805bbf9514ffc8ec0ca93299c9a5))
+
 ## [11.3.4](https://github.com/dasch-swiss/dsp-das/compare/v11.3.3...v11.3.4) (2024-02-01)
 
 
