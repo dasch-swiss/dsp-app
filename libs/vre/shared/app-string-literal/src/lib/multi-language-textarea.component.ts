@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -51,11 +51,11 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     <mat-error *ngIf="formService.formArray.invalid && formService.formArray.touched">
       <ng-container *ngIf="formService.invalidErrors?.language"
         >Language {{ formService.invalidErrors.language }}:
-        {{ formService.invalidErrors.error | humanReadableError }}</ng-container
-      >
-      <ng-container *ngIf="!formService.invalidErrors?.language">{{
-        formService.invalidErrors.error | humanReadableError
-      }}</ng-container>
+        {{ formService.invalidErrors.error | humanReadableError }}
+      </ng-container>
+      <ng-container *ngIf="!formService.invalidErrors?.language"
+        >{{ formService.invalidErrors.error | humanReadableError }}
+      </ng-container>
     </mat-error>
   `,
   styles: [
@@ -71,7 +71,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     `,
   ],
 })
-export class MultiLanguageTextareaComponent implements OnInit {
+export class MultiLanguageTextareaComponent implements OnInit, OnChanges {
   @Input() formGroup: FormGroup;
   @Input() controlName: string;
   @Input() editable = true;
@@ -81,6 +81,14 @@ export class MultiLanguageTextareaComponent implements OnInit {
   constructor(public formService: MultiLanguageFormService) {}
 
   ngOnInit() {
+    this.initialize();
+  }
+
+  ngOnChanges() {
+    this.initialize();
+  }
+
+  private initialize() {
     this.formService.onInit(this.formGroup, this.controlName, this.validators);
   }
 }

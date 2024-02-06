@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ListNode } from '@dasch-swiss/dsp-js';
 import { ListItemService } from '../list-item/list-item.service';
@@ -8,7 +8,7 @@ import { ListItemService } from '../list-item/list-item.service';
   template: `
     <div style="display: flex">
       <button type="button" color="primary" mat-icon-button (click)="showChildren = !showChildren">
-        <mat-icon>{{ showChildren ? 'expand_more' : 'chevron_right' }} </mat-icon>
+        <mat-icon>{{ showChildren ? 'expand_more' : 'chevron_right' }}</mat-icon>
       </button>
 
       <div style="flex: 1">
@@ -39,7 +39,7 @@ import { ListItemService } from '../list-item/list-item.service';
   `,
   styles: [':host ::ng-deep dasch-swiss-multi-language-input .mat-mdc-form-field-bottom-align { display: none;}'],
 })
-export class ListItemElementComponent implements OnInit {
+export class ListItemElementComponent implements OnInit, OnChanges {
   @Input() node: ListNode;
   @Input() position: number;
   @Input() length: number;
@@ -59,6 +59,14 @@ export class ListItemElementComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.buildForm();
+  }
+
+  ngOnChanges() {
+    this.buildForm();
+  }
+
+  private buildForm() {
     this.readOnlyForm = this._fb.group({
       labels: this._fb.array(
         this.node.labels.map(({ language, value }) =>
@@ -76,6 +84,7 @@ export class ListItemElementComponent implements OnInit {
       this.showActionBubble = true;
     }
   }
+
   mouseLeave() {
     this.showActionBubble = false;
   }
