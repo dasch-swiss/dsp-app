@@ -45,9 +45,6 @@
 <ng-template #loginFormTemplate>
   <button mat-raised-button color="primary" [matMenuTriggerFor]="loginForm" class="login-button">LOGIN</button>
   <mat-menu #loginForm xPosition="before" class="form-menu">
-    <app-login-form
-      (click)="$event.stopPropagation()"
-      (keydown)="$event.stopPropagation()"
-      (loginSuccess)="closeMenu($event)"></app-login-form>
+    <app-login-form (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"></app-login-form>
   </mat-menu>
 </ng-template>

@@ -61,7 +61,8 @@
         "confirm": "Yes",
         "danger": "Danger zone",
         "deleted": "Already deleted",
-        "searchHelp": "Type 3 letters to search for an existing resource."
+        "searchHelp": "Type 3 letters to search for an existing resource.",
+        "login": "Login"
       },
       "user": {
         "general": {

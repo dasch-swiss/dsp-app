@@ -9,10 +9,8 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class IiifWithCredentialsInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log(request.url);
     if (request.url.startsWith('https://iiif')) {
       const modifiedRequest = request.clone({ withCredentials: true });
-      console.log('good for', request.url, modifiedRequest);
       return next.handle(modifiedRequest);
     }
 

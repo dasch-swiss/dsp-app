@@ -1,7 +1,7 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, NgZone } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -388,7 +388,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     {
       provide: ErrorHandler,
       useClass: AppErrorHandler,
-      deps: [NotificationService, AppConfigService],
+      deps: [NotificationService, AppConfigService, NgZone],
     },
     {
       provide: HTTP_INTERCEPTORS,
