@@ -1,16 +1,24 @@
-.add-to-project {
-  .select-project {
-    width: 80%;
-  }
+.mb-2 {
+  margin-bottom: 16px;
 }
 
-.item-container  {
+.my-2 {
+  margin: 16px 0;
+}
+
+.mr-2 {
+  margin-right: 16px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-center {
   display: flex;
   align-items: center;
 }
 
-.item-container h4 {
-  max-width: 85%;
-  text-overflow: ellipsis;
-  overflow: clip;
+.flex-1 {
+  flex: 1;
 }

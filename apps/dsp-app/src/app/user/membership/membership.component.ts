@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { Constants, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import {
@@ -9,51 +8,85 @@ import {
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { AutocompleteItem } from '../../workspace/search/operator';
 
-// --> TODO replace it by IPermissions from dsp-js
-export interface IPermissions {
-  groupsPerProject: any;
-  administrativePermissionsPerProject: any;
-}
-
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-membership',
-  templateUrl: './membership.component.html',
+  template: `
+    <dasch-swiss-app-progress-indicator *ngIf="isMembershipLoading$ | async"></dasch-swiss-app-progress-indicator>
+
+    <div *ngIf="(isMembershipLoading$ | async) === false">
+      <div class="mat-headline-6 mb-2">
+        This user is member of {{ (user$ | async)?.projects.length | i18nPlural: itemPluralMapping['project'] }}
+      </div>
+
+      <!-- list of projects where the user is member of -->
+      <div *ngFor="let project of (user$ | async)?.projects; trackBy: trackByFn" class="align-center">
+        <div class="flex-1">
+          <div>{{ project.longname }} ({{ project.shortname }})</div>
+          <div *ngIf="userIsProjectAdmin((user$ | async)?.permissions, project.id)">
+            User is <strong>Project admin</strong>
+          </div>
+        </div>
+
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="removeFromProject(project.id)"
+          aria-label="Button to remove user from project"
+          matTooltip="Remove user from project"
+          matTooltipPosition="above">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+
+      <mat-divider class="my-2"></mat-divider>
+
+      <div class="d-flex">
+        <mat-form-field class="flex-1 mr-2">
+          <mat-select placeholder="Add user to project" [(value)]="selectedValue">
+            <mat-option *ngFor="let project of projects$ | async; trackBy: trackByFn" [value]="project?.iri">
+              {{ project?.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="addToProject(selectedValue)"
+          [disabled]="selectedValue === null"
+          aria-label="Button to add user to project"
+          matTooltip="Add user to selected project"
+          matTooltipPosition="above">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+  `,
   styleUrls: ['./membership.component.scss'],
 })
 export class MembershipComponent implements OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private ngUnsubscribe = new Subject<void>();
 
-  selectedValue: string;
+  selectedValue: string | null = null;
 
   @Input() user: ReadUser;
+  @Output() closeDialog = new EventEmitter<any>();
 
-  @Output() closeDialog: EventEmitter<any> = new EventEmitter<any>();
-
-  user$: Observable<ReadUser> = this._store.select(UserSelectors.allUsers).pipe(
+  user$ = this._store.select(UserSelectors.allUsers).pipe(
     takeUntil(this.ngUnsubscribe),
     map(users => users.find(u => u.id === this.user.id))
   );
 
-  // get all projects and filter by projects where the user is already member of
-  projects$: Observable<AutocompleteItem[]> = combineLatest([
-    this._store.select(ProjectsSelectors.allProjects),
-    this.user$,
-  ]).pipe(
+  projects$ = combineLatest([this._store.select(ProjectsSelectors.allProjects), this.user$]).pipe(
     takeUntil(this.ngUnsubscribe),
     map(([projects, user]) => this.getProjects(projects, user))
   );
 
-  newProject = new UntypedFormControl();
-
-  // i18n plural mapping
-  itemPluralMapping = {
+  readonly itemPluralMapping = {
     project: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       '=1': '1 project',
       other: '# projects',
     },
@@ -68,14 +101,9 @@ export class MembershipComponent implements OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  /**
-   * remove user from project
-   *
-   * @param iri Project iri
-   */
   removeFromProject(iri: string) {
     this._store.dispatch(new RemoveUserFromProjectAction(this.user.id, iri));
-    this.selectedValue = '';
+    this.selectedValue = null;
   }
 
   addToProject(iri: string) {
@@ -84,16 +112,6 @@ export class MembershipComponent implements OnDestroy {
 
   trackByFn = (index: number, item: StoredProject) => `${index}-${item?.id}`;
 
-  /**
-   * returns true, when the user is project admin;
-   * when the parameter permissions is not set,
-   * it returns the value for the logged-in user
-   *
-   *
-   * @param  [permissions] user's permissions
-   * @param  [iri] project id
-   * @returns boolean
-   */
   userIsProjectAdmin(permissions: PermissionsData, iri: string): boolean {
     return permissions.groupsPerProject[iri].indexOf(Constants.ProjectAdminGroupIRI) > -1;
   }
