@@ -59,7 +59,7 @@ export class AuthService {
         }
         return throwError(error);
       }),
-      switchMap(() => this.store.dispatch(new LoadUserAction(identifier)))
+      switchMap(() => this.store.dispatch(new LoadUserAction(identifier, identifierType)))
     );
   }
 
