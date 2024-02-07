@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.4.1](https://github.com/dasch-swiss/dsp-das/compare/v11.4.0...v11.4.1) (2024-02-07)
+
+
+### Bug Fixes
+
+* authentication with email works ([#1438](https://github.com/dasch-swiss/dsp-das/issues/1438)) ([cbcdf30](https://github.com/dasch-swiss/dsp-das/commit/cbcdf30ae3847d29adc8d9056976594fc8f6210c))
+
 ## [11.4.0](https://github.com/dasch-swiss/dsp-das/compare/v11.3.4...v11.4.0) (2024-02-06)
 
 
