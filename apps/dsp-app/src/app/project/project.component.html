@@ -35,20 +35,18 @@
             <span matListItemTitle class="section-label">
               <mat-icon class="sidenav-prefix-icon">search</mat-icon>
               <p>Advanced Search</p>
-              <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
             </span>
           </mat-list-item>
 
           <!-- Description Section -->
           <mat-divider></mat-divider>
           <mat-list-item
-            [ngClass]="{ 'active': listItemSelected === routeConstants.projectRelative + '/' + projectUuid }"
+            [ngClass]="{ 'active': listItemSelected === routeConstants.project }"
             class="section-title"
             (click)="open(routeConstants.project, projectUuid)">
             <span matListItemTitle class="section-label">
               <mat-icon class="sidenav-prefix-icon">description</mat-icon>
               <p>Project Description</p>
-              <mat-icon class="sidenav-suffix-icon">chevron_right</mat-icon>
             </span>
           </mat-list-item>
 
@@ -61,7 +59,6 @@
             <span matListItemTitle class="section-label">
               <mat-icon class="sidenav-prefix-icon">bubble_chart</mat-icon>
               <p>Data Model</p>
-              <mat-icon>chevron_right</mat-icon>
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>

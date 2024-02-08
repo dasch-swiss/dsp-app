@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
 import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/ClassAndPropertyDefinitions';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
@@ -17,8 +17,8 @@ import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
-import { Observable, Subscription, combineLatest } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
 import { ComponentCommunicationEventService, Events } from '../main/services/component-communication-event.service';
 import { ProjectBase } from './project-base';
 
@@ -35,6 +35,8 @@ type AvailableRoute =
   styleUrls: ['./project.component.scss'],
 })
 export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
+  destroyed: Subject<void> = new Subject<void>();
+
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   routeConstants = RouteConstants;
@@ -110,24 +112,16 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
 
   ngOnInit() {
     super.ngOnInit();
-    switch (this._router.url) {
-      case `${RouteConstants.project}/${this.projectUuid}/${RouteConstants.advancedSearch}`: {
-        this.listItemSelected = RouteConstants.advancedSearch;
-        break;
-      }
-      case `${RouteConstants.project}/${this.projectUuid}`: {
-        this.listItemSelected = this._router.url;
-        break;
-      }
-      case `${RouteConstants.project}/${this.projectUuid}/${RouteConstants.dataModels}`: {
-        this.listItemSelected = RouteConstants.dataModels;
-        break;
-      }
-      case `${RouteConstants.project}/${this.projectUuid}/${RouteConstants.settings}/${RouteConstants.collaboration}`: {
-        this.listItemSelected = RouteConstants.settings;
-        break;
-      }
-    }
+    this._router.events
+      .pipe(
+        takeUntil(this.destroyed),
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.listItemSelected = ProjectComponent.GetListItemSelected(event.url, this.projectUuid);
+      });
+
+    this.listItemSelected = ProjectComponent.GetListItemSelected(this._router.url, this.projectUuid);
 
     this.componentCommsSubscription = this._componentCommsService.on(Events.unselectedListItem, () => {
       this.listItemSelected = '';
@@ -135,6 +129,8 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroyed.next();
+    this.destroyed.complete();
     // unsubscribe from the ValueOperationEventService when component is destroyed
     if (this.componentCommsSubscription !== undefined) {
       this.componentCommsSubscription.unsubscribe();
@@ -146,7 +142,7 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
   open(route: AvailableRoute, id = '') {
     const routeCommands = id ? [route, id] : [route];
     const extras = route === RouteConstants.project ? {} : { relativeTo: this._route };
-    this.listItemSelected = `/${route}/${id}`;
+    this.listItemSelected = route;
     this._router.navigate(routeCommands, extras);
   }
 
@@ -166,5 +162,26 @@ export class ProjectComponent extends ProjectBase implements OnInit, OnDestroy {
   toggleSidenav() {
     this.sideNavOpened = !this.sideNavOpened;
     this.sidenav.toggle();
+  }
+
+  static GetListItemSelected(url: string, projectUuid: string): string {
+    switch (true) {
+      case url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.advancedSearch}`): {
+        return RouteConstants.advancedSearch;
+      }
+      case url === `/${RouteConstants.project}/${projectUuid}`: {
+        return RouteConstants.project;
+      }
+      case url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.dataModels}`) ||
+        url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.ontology}`) ||
+        url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.addList}`) ||
+        url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.list}`) ||
+        url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.addOntology}`): {
+        return RouteConstants.dataModels;
+      }
+      case url.startsWith(`/${RouteConstants.project}/${projectUuid}/${RouteConstants.settings}`): {
+        return RouteConstants.settings;
+      }
+    }
   }
 }
