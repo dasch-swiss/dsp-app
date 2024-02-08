@@ -23,7 +23,7 @@
           mat-button
           *ngIf="(userHasPermission$ | async) && project.status"
           class="right"
-          [routerLink]="RouteConstants.edit"
+          [routerLink]="RouteConstants.projectEditRelative"
           color="primary">
           <mat-icon>edit_square</mat-icon>
           Edit project description

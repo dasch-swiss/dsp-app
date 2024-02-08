@@ -136,6 +136,12 @@
             "step_3": "Confirm",
             "more": "Add more projects"
           }
+        },
+        "imageSettings": {
+          "aspect": "Aspect",
+          "absolute-width": "Absolute width",
+          "percentage-value": "Percentage value",
+          "percentage": "Percentage"
         }
       },
       "member": {

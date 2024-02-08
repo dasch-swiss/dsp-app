@@ -25,10 +25,6 @@ import { map, switchMap, take } from 'rxjs/operators';
       (formValueChange)="form = $event"></app-reusable-project-form>
 
     <div style="display: flex; justify-content: space-between">
-      <button color="primary" mat-button type="reset" [routerLink]="['..']">
-        {{ 'appLabels.form.action.cancel' | translate }}
-      </button>
-
       <button
         mat-raised-button
         type="submit"
@@ -45,7 +41,7 @@ import { map, switchMap, take } from 'rxjs/operators';
 export class EditProjectFormPageComponent {
   form: FormGroup;
   loading = false;
-  project$ = this.route.parent.paramMap.pipe(
+  project$ = this.route.parent.parent.paramMap.pipe(
     map(params => params.get(RouteConstants.uuidParameter)),
     map(uuid => this._projectService.uuidToIri(uuid)),
     switchMap(iri => this._projectApiService.get(iri)),
@@ -63,7 +59,7 @@ export class EditProjectFormPageComponent {
   ) {}
 
   onSubmit() {
-    const projectUuid = this.route.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
+    const projectUuid = this.route.parent.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
 
     const projectData: UpdateProjectRequest = {
       longname: this.form.value.longname,

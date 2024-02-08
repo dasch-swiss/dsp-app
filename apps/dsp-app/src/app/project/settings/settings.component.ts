@@ -11,6 +11,18 @@ import { MenuItem } from '../../main/declarations/menu-item';
 export class SettingsComponent {
   navigation: MenuItem[] = [
     {
+      label: 'Description',
+      shortLabel: 'Description',
+      route: RouteConstants.edit,
+      icon: 'edit_square',
+    },
+    {
+      label: 'Image Settings',
+      shortLabel: 'Image Settings',
+      route: RouteConstants.imageSettings,
+      icon: 'branding_watermark',
+    },
+    {
       label: 'Project members',
       shortLabel: 'Members',
       route: RouteConstants.collaboration,

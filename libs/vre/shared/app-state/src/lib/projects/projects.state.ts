@@ -10,9 +10,9 @@ import {
   ReadUser,
   UserResponse,
 } from '@dasch-swiss/dsp-js';
+import { AdminProjectsApiService } from '@dasch-swiss/vre/open-api';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { AppErrorHandler } from '@dasch-swiss/vre/shared/app-error-handler';
+import { AppConfigService, DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Action, Actions, State, StateContext, Store, ofActionSuccessful } from '@ngxs/store';
 import { produce } from 'immer';
@@ -29,10 +29,12 @@ import {
   LoadProjectGroupsAction,
   LoadProjectMembersAction,
   LoadProjectMembershipAction,
+  LoadProjectRestrictedViewSettingsAction,
   LoadProjectsAction,
   RemoveUserFromProjectAction,
   SetProjectMemberAction,
   UpdateProjectAction,
+  UpdateProjectRestrictedViewSettingsAction,
 } from './projects.actions';
 import { ProjectsStateModel } from './projects.state-model';
 
@@ -43,6 +45,7 @@ const defaults: ProjectsStateModel = {
   allProjects: [],
   projectMembers: {},
   projectGroups: {},
+  projectRestrictedViewSettings: {},
 };
 
 @State<ProjectsStateModel>({
@@ -55,10 +58,11 @@ export class ProjectsState {
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private store: Store,
-    private errorHandler: AppErrorHandler,
+    private appConfig: AppConfigService,
     private projectService: ProjectService,
     private projectApiService: ProjectApiService,
-    private actions: Actions
+    private actions: Actions,
+    private adminProjectsApiService: AdminProjectsApiService
   ) {}
 
   @Action(LoadProjectsAction, { cancelUncompleted: true })
@@ -290,5 +294,52 @@ export class ProjectsState {
     });
 
     ctx.setState({ ...state });
+  }
+
+  @Action(LoadProjectRestrictedViewSettingsAction, { cancelUncompleted: true })
+  projectRestrictedViewSettings(
+    ctx: StateContext<ProjectsStateModel>,
+    { projectIri }: LoadProjectRestrictedViewSettingsAction
+  ) {
+    ctx.patchState({ isLoading: true });
+    return this.projectApiService.getRestrictedViewSettingsForProject(projectIri).pipe(
+      tap({
+        next: response => {
+          ctx.setState({
+            ...ctx.getState(),
+            projectRestrictedViewSettings: {
+              [ProjectService.IriToUuid(projectIri)]: { value: response.settings },
+            },
+          });
+        },
+      }),
+      finalize(() => {
+        ctx.patchState({ isLoading: false });
+      })
+    );
+  }
+
+  @Action(UpdateProjectRestrictedViewSettingsAction)
+  updateProjectRestrictedViewSettingsAction(
+    ctx: StateContext<ProjectsStateModel>,
+    { projectUuid, setRestrictedViewRequest }: UpdateProjectRestrictedViewSettingsAction
+  ) {
+    ctx.patchState({ isLoading: true });
+    return this.adminProjectsApiService
+      .postAdminProjectsIriProjectiriRestrictedviewsettings(
+        this.projectService.uuidToIri(projectUuid),
+        this.appConfig.dspApiConfig.jsonWebToken,
+        setRestrictedViewRequest
+      )
+      .pipe(
+        tap({
+          next: response => {
+            ctx.dispatch(new LoadProjectRestrictedViewSettingsAction(this.projectService.uuidToIri(projectUuid)));
+          },
+        }),
+        finalize(() => {
+          ctx.patchState({ isLoading: false });
+        })
+      );
   }
 }

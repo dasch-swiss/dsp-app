@@ -81,6 +81,7 @@ import { CreateProjectFormPageComponent } from './project/create-project-form-pa
 import { DataModelsComponent } from './project/data-models/data-models.component';
 import { DescriptionComponent } from './project/description/description.component';
 import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
+import { ImageSettingsComponent } from './project/image-settings/image-settings.component';
 import { ActionBubbleComponent } from './project/list/action-bubble/action-bubble.component';
 import { ListItemComponent } from './project/list/list-item/list-item.component';
 import { ListItemElementComponent } from './project/list/list-item-element/list-item-element.component';
@@ -263,6 +264,7 @@ export function httpLoaderFactory(httpClient: HttpClient) {
     CreateProjectFormPageComponent,
     ReusableProjectFormComponent,
     EditProjectFormPageComponent,
+    ImageSettingsComponent,
     ProjectsComponent,
     ProjectsListComponent,
     PropertiesComponent,

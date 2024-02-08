@@ -107,6 +107,12 @@
             "step_3": "Bestätgien",
             "more": "Ein weiteres Projekt erstellen"
           }
+        },
+        "imageSettings": {
+          "aspect": "Aspekt",
+          "absolute-width": "absolute Breite",
+          "percentage-value": "Prozentwert",
+          "percentage": "Prozentsatz"
         }
       },
       "member": {

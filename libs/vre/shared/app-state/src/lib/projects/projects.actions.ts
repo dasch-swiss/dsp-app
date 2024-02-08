@@ -1,4 +1,5 @@
 import { ReadUser, UpdateProjectRequest } from '@dasch-swiss/dsp-js';
+import { SetRestrictedViewRequest } from '@dasch-swiss/vre/open-api';
 
 export class LoadProjectsAction {
   static readonly type = '[Projects] Load Projects';
@@ -61,4 +62,17 @@ export class UpdateProjectAction {
 export class SetProjectMemberAction {
   static readonly type = '[Projects] Set Project Member';
   constructor(public member: ReadUser) {}
+}
+
+export class LoadProjectRestrictedViewSettingsAction {
+  static readonly type = '[Projects] Load Project Restricted View Settings';
+  constructor(public projectIri: string) {}
+}
+
+export class UpdateProjectRestrictedViewSettingsAction {
+  static readonly type = '[Projects] Update Project Restricted View Settings';
+  constructor(
+    public projectUuid: string,
+    public setRestrictedViewRequest: SetRestrictedViewRequest
+  ) {}
 }

@@ -18,6 +18,7 @@ export class RouteConstants {
   static readonly addOntology = 'add-ontology';
   static readonly ontology = 'ontology';
   static readonly dataModels = 'data-models';
+  static readonly imageSettings = 'imageSettings';
 
   static readonly resource = 'resource';
 
@@ -60,6 +61,7 @@ export class RouteConstants {
 
   static readonly projectsRelative = `/${RouteConstants.projects}`;
   static readonly projectRelative = `/${RouteConstants.project}`;
+  static readonly projectEditRelative = `${RouteConstants.settings}/${RouteConstants.edit}`;
   static readonly newProjectRelative = `/${RouteConstants.project}/${RouteConstants.createNew}`;
   static readonly ontologyRelative = `${RouteConstants.ontology}/:${RouteConstants.ontoParameter}`;
   static readonly projectUuidRelative = `${RouteConstants.project}/:${RouteConstants.uuidParameter}`;

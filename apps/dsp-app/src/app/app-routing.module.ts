@@ -11,9 +11,9 @@ import { CreateProjectFormPageComponent } from './project/create-project-form-pa
 import { DataModelsComponent } from './project/data-models/data-models.component';
 import { DescriptionComponent } from './project/description/description.component';
 import { EditProjectFormPageComponent } from './project/edit-project-form-page/edit-project-form-page.component';
+import { ImageSettingsComponent } from './project/image-settings/image-settings.component';
 import { ListComponent } from './project/list/list.component';
 import { CreateListInfoPageComponent } from './project/list/reusable-list-info-form/create-list-info-page.component';
-import { CreateResourceClassDialogComponent } from './project/ontology/create-resource-class-dialog/create-resource-class-dialog.component';
 import { OntologyFormComponent } from './project/ontology/ontology-form/ontology-form.component';
 import { OntologyComponent } from './project/ontology/ontology.component';
 import { OntologyClassInstanceComponent } from './project/ontology-classes/ontology-class-instance/ontology-class-instance.component';
@@ -102,7 +102,15 @@ const routes: Routes = [
           {
             path: RouteConstants.home,
             pathMatch: 'full',
-            redirectTo: RouteConstants.collaboration,
+            redirectTo: RouteConstants.edit,
+          },
+          {
+            path: RouteConstants.edit,
+            component: EditProjectFormPageComponent,
+          },
+          {
+            path: RouteConstants.imageSettings,
+            component: ImageSettingsComponent,
           },
           {
             path: RouteConstants.collaboration,

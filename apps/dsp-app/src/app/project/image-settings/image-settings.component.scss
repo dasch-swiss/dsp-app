@@ -1,0 +1,26 @@
+.content {
+  display: flex;
+  flex-direction: row;
+
+  .content-sidebar {
+    max-width: 389px;
+    flex: 389px;
+  }
+
+  .content-container {
+    padding-right: 32px;
+  }
+
+  .aspect {
+    padding-bottom: 32px;
+  }
+
+  .mat-mdc-slider {
+    width: 100%;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+}

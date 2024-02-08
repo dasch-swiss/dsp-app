@@ -1,5 +1,12 @@
 import { Params } from '@angular/router';
-import { Constants, ReadGroup, ReadProject, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  ProjectRestrictedViewSettings,
+  ReadGroup,
+  ReadProject,
+  ReadUser,
+  StoredProject,
+} from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Selector } from '@ngxs/store';
@@ -100,5 +107,16 @@ export class ProjectsSelectors {
     const projectId = params[`${RouteConstants.uuidParameter}`];
     const isProjectMember = ProjectService.IsProjectMember(user, userProjectGroups, projectId);
     return isProjectMember;
+  }
+
+  @Selector([ProjectsState, RouterSelectors.params])
+  static projectRestrictedViewSettings(
+    state: ProjectsStateModel,
+    params: Params
+  ): ProjectRestrictedViewSettings | undefined {
+    const projectUuid = params[`${RouteConstants.uuidParameter}`];
+    return state.projectRestrictedViewSettings[projectUuid]
+      ? state.projectRestrictedViewSettings[projectUuid].value
+      : undefined;
   }
 }
