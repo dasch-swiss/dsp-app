@@ -24,7 +24,9 @@ export class ListsState {
     ctx.patchState({ isLoading: true });
     return this._listApiService.listInProject(projectIri).pipe(
       take(1),
-      tap(response => ctx.patchState({ listsInProject: response.lists })),
+      tap(response => {
+        ctx.patchState({ listsInProject: response.lists });
+      }),
       finalize(() => ctx.patchState({ isLoading: false }))
     );
   }
@@ -36,7 +38,12 @@ export class ListsState {
       take(1),
       tap({
         next: () => {
-          ctx.patchState({ isLoading: false });
+          const state = ctx.getState();
+          state.listsInProject.splice(
+            state.listsInProject.findIndex(u => u.id === listIri),
+            1
+          );
+          ctx.setState({ ...state, isLoading: false });
         },
       })
     );

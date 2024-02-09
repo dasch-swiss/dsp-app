@@ -45,7 +45,7 @@
           </mat-toolbar>
 
           <app-list-item
-            *ngIf="(project$ | async) as project"
+            *ngIf="((isListsLoading$ | async) === false) && (project$ | async) as project"
             [rootNodeIri]="list.id"
             [projectUuid]="project.id"
             [isAdmin]="isAdmin$ | async">
