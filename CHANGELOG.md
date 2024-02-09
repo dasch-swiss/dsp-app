@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.5.1](https://github.com/dasch-swiss/dsp-das/compare/v11.5.0...v11.5.1) (2024-02-09)
+
+
+### Maintenance
+
+* update dsp-js to v9.1.11 ([#1447](https://github.com/dasch-swiss/dsp-das/issues/1447)) ([eb4dfa5](https://github.com/dasch-swiss/dsp-das/commit/eb4dfa5d3ba60ab6761e362dbb13e684d1939b2f))
+
 ## [11.5.0](https://github.com/dasch-swiss/dsp-das/compare/v11.4.1...v11.5.0) (2024-02-09)
 
 
