@@ -17,7 +17,7 @@ export interface ConfirmDialogProps {
     </div>
     <div mat-dialog-actions align="end">
       <button mat-button (click)="dialogRef.close(false)">No</button>
-      <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Yes</button>
+      <button mat-raised-button color="warn" (click)="dialogRef.close(true)" data-cy="confirmation-button">Yes</button>
     </div>
   `,
 })

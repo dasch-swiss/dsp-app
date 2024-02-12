@@ -26,7 +26,8 @@ import { Store } from '@ngxs/store';
           [disabled]="form.invalid"
           (click)="submitForm()"
           appLoadingButton
-          [isLoading]="loading">
+          [isLoading]="loading"
+          data-cy="submit-button">
           {{ 'appLabels.form.action.submit' | translate }}
         </button>
       </div>

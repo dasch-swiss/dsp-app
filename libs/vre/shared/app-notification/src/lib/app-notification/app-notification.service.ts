@@ -16,7 +16,7 @@ export class NotificationService {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: type,
+      panelClass: [type, 'data-cy-snackbar'], // add data-cy for testing purposes
     };
 
     this._snackBar.open(notification, 'x', conf);

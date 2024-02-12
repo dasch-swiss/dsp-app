@@ -11,9 +11,13 @@ import { finalize, takeLast, tap } from 'rxjs/operators';
   selector: 'app-login-form',
   template: `
     <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
-      <app-common-input [formGroup]="form" controlName="username" placeholder="Username"></app-common-input>
+      <app-common-input
+        [formGroup]="form"
+        controlName="username"
+        placeholder="Username"
+        data-cy="username-input"></app-common-input>
 
-      <mat-form-field>
+      <mat-form-field data-cy="password-input">
         <input
           placeholder="Password"
           autocomplete="current-password"
@@ -31,7 +35,8 @@ import { finalize, takeLast, tap } from 'rxjs/operators';
         mat-raised-button
         appLoadingButton
         [isLoading]="loading"
-        type="submit">
+        type="submit"
+        data-cy="submit-button">
         {{ isLoginError ? ('appLabels.form.action.retry' | translate) : ('appLabels.form.action.login' | translate) }}
       </button>
     </form>

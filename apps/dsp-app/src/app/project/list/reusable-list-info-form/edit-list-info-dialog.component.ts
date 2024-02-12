@@ -29,7 +29,8 @@ export class EditListInfoDialogProps {
         appLoadingButton
         [isLoading]="loading"
         [disabled]="form?.invalid"
-        (click)="submitForm()">
+        (click)="submitForm()"
+        data-cy="submit-button">
         Update
       </button>
     </div>

@@ -13,6 +13,7 @@ Cypress.Commands.add('login', (user: User) => {
         },
       }).then(response => {
         localStorage.setItem('cookieBanner', 'false');
+        localStorage.setItem('rnw-closed-banners', 'true');
         localStorage.setItem('ACCESS_TOKEN', response.body.token);
       });
     },

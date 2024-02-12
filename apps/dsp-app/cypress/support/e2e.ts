@@ -5,6 +5,13 @@ import { UserProfiles } from '../models/user-profiles';
 // All active session data (cookies, localStorage and sessionStorage) across all domains are cleared.
 beforeEach(() => {
   let users: UserProfiles;
+
+  // clear database
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('apiUrl')}/admin/store/ResetTriplestoreContent`,
+  });
+
   cy.readFile('cypress/fixtures/user_profiles.json').then((json: UserProfiles) => {
     // read JSON data file
     users = json;

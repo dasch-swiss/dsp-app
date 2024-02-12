@@ -30,7 +30,11 @@
 
   <!-- content: list -->
   <table class="table more-space-bottom" [class.deactivated]="!status">
-    <tr class="table-entry" *ngFor="let project of list; let last = last" [class.no-border]="last">
+    <tr
+      class="table-entry"
+      *ngFor="let project of list; let last = last"
+      [class.no-border]="last"
+      data-cy="project-row">
       <!-- logo -->
       <td class="avatar-cell">
         <mat-icon mat-list-icon>
@@ -55,15 +59,26 @@
         <button
           mat-icon-button
           [matMenuTriggerFor]="projectMenu"
-          [disabled]="(userHasPermission$(project.id) | async) === false || doNotDelete.includes(project.id)">
+          [disabled]="(userHasPermission$(project.id) | async) === false || doNotDelete.includes(project.id)"
+          data-cy="more-button">
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #projectMenu="matMenu" xPosition="before" class="menu">
-          <button mat-menu-item *ngIf="status" (click)="editProject(project.id)">Edit project information</button>
-          <button mat-menu-item *ngIf="status" (click)="askToDeactivateProject(project.shortname,project.id)">
+          <button mat-menu-item *ngIf="status" (click)="editProject(project.id)" data-cy="edit-button">
+            Edit project information
+          </button>
+          <button
+            mat-menu-item
+            *ngIf="status"
+            (click)="askToDeactivateProject(project.shortname,project.id)"
+            data-cy="deactivate-button">
             Deactivate project
           </button>
-          <button mat-menu-item *ngIf="!status" (click)="askToActivateProject(project.shortname,project.id)">
+          <button
+            mat-menu-item
+            *ngIf="!status"
+            (click)="askToActivateProject(project.shortname,project.id)"
+            data-cy="reactivate-button">
             Reactivate project
           </button>
         </mat-menu>

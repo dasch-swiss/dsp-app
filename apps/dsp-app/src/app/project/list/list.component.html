@@ -12,12 +12,17 @@
               <h3
                 class="mat-headline-6"
                 [matTooltip]="list.labels |appStringifyStringLiteral:'all'"
-                matTooltipPosition="above">
-                {{list.labels | appStringifyStringLiteral}}
+                matTooltipPosition="above"
+                data-cy="label-title">
+                {{ list.labels | appStringifyStringLiteral }}
               </h3>
               <span class="fill-remaining-space"></span>
-              <p class="mat-body" [matTooltip]="list.comments | appStringifyStringLiteral" matTooltipPosition="above">
-                {{list.comments | appStringifyStringLiteral | appTruncate:64}}
+              <p
+                class="mat-body"
+                [matTooltip]="list.comments | appStringifyStringLiteral"
+                matTooltipPosition="above"
+                data-cy="comment-title">
+                {{ list.comments | appStringifyStringLiteral | appTruncate:64 }}
               </p>
               <span class="fill-remaining-space"></span>
 
@@ -27,7 +32,8 @@
                   color="primary"
                   mat-button
                   (click)="$event.stopPropagation(); askToEditList(list)"
-                  matTooltip="Edit controlled vocabulary info">
+                  matTooltip="Edit controlled vocabulary info"
+                  data-cy="edit-button">
                   <mat-icon>edit</mat-icon>
                   Edit
                 </button>
@@ -36,7 +42,8 @@
                   mat-button
                   class="delete"
                   (click)="$event.stopPropagation(); askToDeleteList(list)"
-                  matTooltip="Delete controlled vocabulary">
+                  matTooltip="Delete controlled vocabulary"
+                  data-cy="delete-button">
                   <mat-icon>delete</mat-icon>
                   Delete
                 </button>
