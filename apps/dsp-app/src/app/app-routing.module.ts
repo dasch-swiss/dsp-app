@@ -47,11 +47,6 @@ const routes: Routes = [
     component: ProjectComponent,
     children: [
       {
-        path: RouteConstants.edit,
-        canActivate: [AuthGuard],
-        component: EditProjectFormPageComponent,
-      },
-      {
         path: RouteConstants.home,
         component: DescriptionComponent,
       },
