@@ -1,14 +1,19 @@
+@use '../../../styles/responsive' as *;
+
 .content {
-  display: flex;
-  flex-direction: row;
+  .form-content {
+    width: 298px;
+  }
 
   .content-sidebar {
-    max-width: 389px;
-    flex: 389px;
+    display: inline-block;
+    width: 50%;
   }
 
   .content-container {
+    display: inline-block;
     padding-right: 32px;
+    vertical-align: top;
   }
 
   .aspect {

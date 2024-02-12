@@ -1,7 +1,10 @@
 export class ProjectImageSettings {
+  static AbsoluteWidthSteps: number[] = [64, 128, 256, 512, 1024];
+
+  isWatermark: boolean = false;
   aspect: boolean = false;
-  absoluteWidth: number = 0;
-  percentage: number = 0;
+  absoluteWidth: number = ProjectImageSettings.AbsoluteWidthSteps[0];
+  percentage: number = 1;
 
   /*
     !d,d The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio.
@@ -14,13 +17,14 @@ export class ProjectImageSettings {
 
     const isPercentage = size.startsWith('pct');
     return <ProjectImageSettings>{
+      isWatermark: true,
       aspect: isPercentage,
-      absoluteWidth: !isPercentage ? size.substring(1).split(',').pop() : 0,
-      percentage: isPercentage ? size.split('pct:').pop() : 0,
+      absoluteWidth: !isPercentage ? size.substring(1).split(',').pop() : ProjectImageSettings.AbsoluteWidthSteps[0],
+      percentage: isPercentage ? size.split('pct:').pop() : 1,
     };
   }
 
-  static FormatToIiifSize(aspect: any, percentage: any, width: number): string {
+  static FormatToIiifSize(aspect: boolean, percentage: number, width: number): string {
     return aspect ? `pct:${percentage}` : `!${width},${width}`;
   }
 }

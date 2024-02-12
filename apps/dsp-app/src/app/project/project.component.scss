@@ -1,5 +1,5 @@
-@use "../../styles/config" as *;
-@use "../../styles/responsive" as *;
+@use '../../styles/config' as *;
+@use '../../styles/responsive' as *;
 
 .deactivated {
   color: $red;
@@ -14,7 +14,7 @@
 }
 
 .section-title {
-  height: 60px!important;
+  height: 60px !important;
 
   &.footer {
     padding-top: 4px;
@@ -51,7 +51,7 @@
 }
 
 .section-title:hover {
-  background-color: $primary_100!important;
+  background-color: $primary_100 !important;
 }
 
 .add-new {
@@ -80,15 +80,6 @@
   }
 }
 
-.sidenav-footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-  bottom: 0;
-  position: absolute;
-  width: 92%;
-  background-color: $white;
-}
-
 .sidenav-prefix-icon {
   font-size: 32px;
   width: 32px;
@@ -96,7 +87,7 @@
 }
 
 .mat-drawer.mat-drawer-side {
-  border-right: none !important
+  border-right: none !important;
 }
 
 mat-sidenav {

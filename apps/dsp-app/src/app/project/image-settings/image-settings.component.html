@@ -4,65 +4,60 @@
     <div class="content-container">
       <form *ngIf="form" class="form-content" [formGroup]="form">
         <div class="large-field aspect">
-          <mat-slide-toggle formControlName="aspect">
-            {{ 'appLabels.form.project.imageSettings.aspect' | translate }}
+          <mat-slide-toggle formControlName="isWatermark">
+            {{ 'appLabels.form.project.imageSettings.isWatermark' | translate }}
           </mat-slide-toggle>
         </div>
-        <div *ngIf="form.controls.aspect.value" [@replaceAnimation]>
-          <div class="large-field">
-            <mat-label>
-              {{ 'appLabels.form.project.imageSettings.percentage-value' | translate }}: {{ percentageSlider.value}}%
-            </mat-label>
+        <ng-container *ngIf="form.controls.isWatermark.value">
+          <div class="large-field aspect">
+            <mat-slide-toggle formControlName="aspect">
+              {{ 'appLabels.form.project.imageSettings.aspect' | translate }}
+            </mat-slide-toggle>
           </div>
-          <mat-slider
-            min="1"
-            max="100"
-            step="1"
-            showTickMarks
-            discrete
-            [displayWith]="formatPercentageLabel"
-            ngDefaultControl
-            formControlName="percentage">
-            <input #percentageSlider matSliderThumb [value]="form.controls.percentage.value" />
-          </mat-slider>
-        </div>
-        <div *ngIf="!form.controls.aspect.value" [@replaceAnimation]>
-          <div class="large-field">
-            <mat-label>
-              {{ 'appLabels.form.project.imageSettings.absolute-width' | translate }}: {{
-              projectImageSettings.absoluteWidth }} px
-            </mat-label>
+          <div *ngIf="form.controls.aspect.value" [@replaceAnimation]>
+            <div class="large-field">
+              <mat-label>
+                {{ 'appLabels.form.project.imageSettings.percentageValue' | translate }}: {{ percentageSlider.value}}%
+              </mat-label>
+            </div>
+            <mat-slider
+              min="1"
+              max="100"
+              step="1"
+              showTickMarks
+              discrete
+              [displayWith]="formatPercentageLabel"
+              ngDefaultControl
+              formControlName="percentage">
+              <input #percentageSlider matSliderThumb [value]="form.controls.percentage.value" />
+            </mat-slider>
           </div>
-          <mat-slider
-            [min]="0"
-            [max]="4"
-            [step]="1"
-            showTickMarks
-            [displayWith]="formatAbsoluteLabel"
-            discrete
-            ngDefaultControl
-            formControlName="absoluteWidthIndex">
-            <input
-              (valueChange)="absoluteSliderChange($event)"
-              [value]="absoluteWidthIndex(projectImageSettings.absoluteWidth)"
-              matSliderThumb />
-          </mat-slider>
-        </div>
+          <div *ngIf="!form.controls.aspect.value" [@replaceAnimation]>
+            <div class="large-field">
+              <mat-label>
+                {{ 'appLabels.form.project.imageSettings.absoluteWidth' | translate }}: {{
+                projectImageSettings.absoluteWidth }} px
+              </mat-label>
+            </div>
+            <mat-slider
+              [min]="0"
+              [max]="4"
+              [step]="1"
+              showTickMarks
+              [displayWith]="formatAbsoluteLabel"
+              discrete
+              ngDefaultControl
+              formControlName="absoluteWidthIndex">
+              <input
+                (valueChange)="absoluteSliderChange($event)"
+                [value]="absoluteWidthIndex(projectImageSettings.absoluteWidth)"
+                matSliderThumb />
+            </mat-slider>
+          </div>
+        </ng-container>
       </form>
-      <div class="action-buttons">
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          [disabled]="form?.invalid"
-          (click)="onSubmit()"
-          appLoadingButton
-          [isLoading]="isProjectsLoading$ | async">
-          {{ 'appLabels.form.action.submit' | translate }}
-        </button>
-      </div>
     </div>
-    <div class="content-sidebar">
+    <div class="content-sidebar" *ngIf="form.controls.isWatermark.value">
       <img
         [@replaceAnimation]
         *ngIf="!form.controls.aspect.value"
@@ -73,6 +68,18 @@
         *ngIf="form.controls.aspect.value"
         src="assets/images/image-setting-percentage.png"
         [alt]="'appLabels.form.project.imageSettings.percentage' | translate" />
+    </div>
+    <div class="action-buttons">
+      <button
+        mat-raised-button
+        type="submit"
+        color="primary"
+        [disabled]="form?.invalid"
+        (click)="onSubmit()"
+        appLoadingButton
+        [isLoading]="isProjectsLoading$ | async">
+        {{ 'appLabels.form.action.submit' | translate }}
+      </button>
     </div>
   </div>
 </dasch-swiss-centered-layout>

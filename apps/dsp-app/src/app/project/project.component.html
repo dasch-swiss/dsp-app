@@ -26,7 +26,6 @@
           </p>
         </div>
         <mat-list class="main-list">
-          <!-- Description Section -->
           <mat-divider></mat-divider>
           <mat-list-item
             [ngClass]="{ 'active': listItemSelected === routeConstants.advancedSearch}"
@@ -38,7 +37,6 @@
             </span>
           </mat-list-item>
 
-          <!-- Description Section -->
           <mat-divider></mat-divider>
           <mat-list-item
             [ngClass]="{ 'active': listItemSelected === routeConstants.project }"
@@ -50,7 +48,19 @@
             </span>
           </mat-list-item>
 
-          <!-- Ontology Section -->
+          <ng-container *ngIf="isAdmin$ | async">
+            <mat-divider></mat-divider>
+            <mat-list-item
+              [ngClass]="{ 'active': listItemSelected === settingsRoute}"
+              class="section-title footer"
+              (click)="open(settingsRoute)">
+              <span matListItemTitle class="section-label">
+                <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
+                <div>Project Settings</div>
+              </span>
+            </mat-list-item>
+          </ng-container>
+
           <mat-divider></mat-divider>
           <mat-list-item
             [ngClass]="{ 'active': listItemSelected === dataModelsRoute}"
@@ -91,18 +101,6 @@
             </mat-expansion-panel>
             <mat-divider></mat-divider>
           </mat-accordion>
-          <div class="sidenav-footer" *ngIf="isAdmin$ | async">
-            <mat-list-item
-              [ngClass]="{ 'active': listItemSelected === settingsRoute}"
-              class="section-title footer"
-              (click)="open(settingsRoute)">
-              <span matListItemTitle class="section-label">
-                <mat-icon class="sidenav-prefix-icon">settings</mat-icon>
-                <div>Project Settings</div>
-                <mat-icon>chevron_right</mat-icon>
-              </span>
-            </mat-list-item>
-          </div>
         </mat-list>
       </div>
     </mat-sidenav>

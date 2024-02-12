@@ -12,6 +12,7 @@ import {
   ProjectsSelectors,
   UpdateProjectRestrictedViewSettingsAction,
 } from '@dasch-swiss/vre/shared/app-state';
+import { TranslateService } from '@ngx-translate/core';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, combineLatest } from 'rxjs';
 import { map, switchMap, take, takeWhile } from 'rxjs/operators';
@@ -26,8 +27,6 @@ import { ProjectImageSettings } from './project-image-settings';
   animations: [ReplaceAnimation.animation],
 })
 export class ImageSettingsComponent implements OnInit {
-  readonly absoluteWidthSteps: number[] = [64, 128, 256, 512, 1024];
-
   projectImageSettings = new ProjectImageSettings();
   form: FormGroup;
   projectUuid: string;
@@ -51,7 +50,8 @@ export class ImageSettingsComponent implements OnInit {
     private _store: Store,
     private _notification: NotificationService,
     private _actions: Actions,
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit() {
@@ -61,33 +61,39 @@ export class ImageSettingsComponent implements OnInit {
 
   formatPercentageLabel = (value: number): string => `${value}%`;
 
-  formatAbsoluteLabel = (value: number): string => `${this.absoluteWidthSteps[value]}px`;
+  formatAbsoluteLabel = (value: number): string => `${ProjectImageSettings.AbsoluteWidthSteps[value]}px`;
 
   setFormData() {
     this.projectUuid = this.route.parent.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
     this._store.dispatch(new LoadProjectRestrictedViewSettingsAction(this._projectService.uuidToIri(this.projectUuid)));
     combineLatest([
       this._actions.pipe(ofActionSuccessful(LoadProjectRestrictedViewSettingsAction), take(1)),
-      this.projectRestrictedViewSettings$.pipe(takeWhile(settings => settings?.watermark === true)),
+      this.projectRestrictedViewSettings$.pipe(takeWhile(settings => settings?.watermark !== null)),
     ])
       .pipe(
         take(1),
         map(([action, settings]) => {
+          if (!settings?.size) {
+            return;
+          }
+
           this.projectImageSettings = ProjectImageSettings.GetProjectImageSettings(settings.size);
           this.form.patchValue({
+            isWatermark: settings.watermark,
             aspect: this.projectImageSettings.aspect,
             percentage: this.projectImageSettings.percentage,
-            absoluteWidthIndex: this.absoluteWidthSteps[this.projectImageSettings.absoluteWidth],
+            absoluteWidthIndex: this.absoluteWidthIndex(this.projectImageSettings.absoluteWidth),
           });
         })
       )
       .subscribe();
   }
 
-  absoluteWidthIndex = (value: number): number => this.absoluteWidthSteps.findIndex(step => step == value);
+  absoluteWidthIndex = (value: number): number =>
+    ProjectImageSettings.AbsoluteWidthSteps.findIndex(step => step == value);
 
   absoluteSliderChange(value: number) {
-    this.projectImageSettings.absoluteWidth = this.absoluteWidthSteps[value];
+    this.projectImageSettings.absoluteWidth = ProjectImageSettings.AbsoluteWidthSteps[value];
   }
 
   onSubmit() {
@@ -95,22 +101,25 @@ export class ImageSettingsComponent implements OnInit {
       size: ProjectImageSettings.FormatToIiifSize(
         this.form.value.aspect,
         this.form.value.percentage,
-        this.absoluteWidthSteps[this.form.value.absoluteWidthIndex]
+        ProjectImageSettings.AbsoluteWidthSteps[this.form.value.absoluteWidthIndex]
       ),
-      watermark: true,
+      watermark: this.form.value.isWatermark,
     };
 
     this._store.dispatch(new UpdateProjectRestrictedViewSettingsAction(this.projectUuid, request));
     this._actions.pipe(ofActionSuccessful(UpdateProjectRestrictedViewSettingsAction), take(1)).subscribe(() => {
-      this._notification.openSnackBar('You have successfully updated the project image settings.');
+      this._notification.openSnackBar(
+        this.translateService.instant('appLabels.form.project.imageSettings.updateConfirmation')
+      );
     });
   }
 
   private _buildForm() {
     this.form = this._fb.group({
-      aspect: ['', []],
-      absoluteWidthIndex: ['', []],
-      percentage: ['', []],
+      isWatermark: [false, []],
+      aspect: [false, []],
+      absoluteWidthIndex: [0, []],
+      percentage: [1, []],
     });
   }
 }

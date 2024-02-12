@@ -138,10 +138,12 @@
           }
         },
         "imageSettings": {
+          "isWatermark": "Apply watermark",
           "aspect": "Aspect",
-          "absolute-width": "Absolute width",
-          "percentage-value": "Percentage value",
-          "percentage": "Percentage"
+          "absoluteWidth": "Absolute width",
+          "percentageValue": "Percentage value",
+          "percentage": "Percentage",
+          "updateConfirmation": "You have successfully updated the project image settings."
         }
       },
       "member": {

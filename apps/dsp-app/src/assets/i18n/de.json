@@ -109,10 +109,12 @@
           }
         },
         "imageSettings": {
+          "isWatermark": "Wasserzeichen anwenden",
           "aspect": "Aspekt",
-          "absolute-width": "absolute Breite",
-          "percentage-value": "Prozentwert",
-          "percentage": "Prozentsatz"
+          "absoluteWidth": "absolute Breite",
+          "percentageValue": "Prozentwert",
+          "percentage": "Prozentsatz",
+          "updateConfirmation": "Sie haben die Projektbildeinstellungen erfolgreich aktualisiert."
         }
       },
       "member": {
