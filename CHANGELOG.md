@@ -1,5 +1,14 @@
 # Changelog
 
+## [11.6.1](https://github.com/dasch-swiss/dsp-das/compare/v11.6.0...v11.6.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* improve multi language input touched behavior, add validators ([#1463](https://github.com/dasch-swiss/dsp-das/issues/1463)) ([c70e1cf](https://github.com/dasch-swiss/dsp-das/commit/c70e1cf39ec31780183ebc08cc82193c185a7f01))
+* search result list item style (DEV-3280) ([#1464](https://github.com/dasch-swiss/dsp-das/issues/1464)) ([a36fee0](https://github.com/dasch-swiss/dsp-das/commit/a36fee02800d6740d459bd8d1d9b901a7124c514))
+* temporary remove image settings tab ([#1461](https://github.com/dasch-swiss/dsp-das/issues/1461)) ([6cbec6b](https://github.com/dasch-swiss/dsp-das/commit/6cbec6bd7317c115310eeff0d21fc3a323ea2c62))
+
 ## [11.6.0](https://github.com/dasch-swiss/dsp-das/compare/v11.5.1...v11.6.0) (2024-02-13)
 
 
