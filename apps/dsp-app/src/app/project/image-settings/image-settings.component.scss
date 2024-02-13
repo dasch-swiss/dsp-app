@@ -1,34 +1,27 @@
-@use '../../../styles/responsive' as *;
+.mat-mdc-slider {
+  width: 100%;
+}
 
-@use '../../../styles/responsive' as *;
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+}
 
-.content {
-  .form-content {
-    width: 100%;
-  }
-
-  .content-sidebar {
-    display: inline-block;
-    width: 50%;
-  }
-
-  .content-container {
-    display: inline-block;
-    padding-right: 32px;
-    vertical-align: top;
-    max-width: 298px;
-  }
-
-  .section {
-    padding-bottom: 32px;
-  }
-
-  .mat-mdc-slider {
-    width: 100%;
-  }
-
-  .action-buttons {
+@media (min-width: 1000px) {
+  .flex-with-gap {
     display: flex;
-    justify-content: space-between;
+    gap: 48px
   }
+}
+
+.mb-2 {
+  margin-bottom: 16px;
+}
+
+.mb-6 {
+  margin-bottom: 48px;
+}
+
+.mt-2 {
+  margin-top: 16px;
 }
