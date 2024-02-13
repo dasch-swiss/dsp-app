@@ -1,5 +1,5 @@
-@use "../../../../../styles/config" as *;
-@use "../../../../../styles/responsive";
+@use '../../../../../styles/config' as *;
+@use '../../../../../styles/responsive';
 
 :host {
   width: 100%;
@@ -45,6 +45,10 @@
     border-radius: 0 0 8px 8px;
   }
 
+  .mat-mdc-button {
+    color: $white;
+  }
+
   .navigation {
     position: absolute;
     z-index: 1;
@@ -57,6 +61,7 @@
       top: $panel-height;
       &.previous {
         left: 0;
+        top: calc(50% + 2px);
       }
       &.next {
         right: 0;
@@ -67,7 +72,6 @@
         width: $panel-height !important;
         padding: 0 !important;
         min-width: $panel-height !important;
-        color: $white
       }
 
       .mat-mdc-button.full-size:disabled {
