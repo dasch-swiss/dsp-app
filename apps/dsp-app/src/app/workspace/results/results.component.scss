@@ -1,5 +1,10 @@
-@use "../../../styles/config" as *;
+@use '../../../styles/config' as *;
 
 .content {
   height: calc(100vh - #{$header-height});
+}
+
+::ng-deep .shorten-long-text {
+  overflow: hidden;
+  max-height: 45px;
 }
