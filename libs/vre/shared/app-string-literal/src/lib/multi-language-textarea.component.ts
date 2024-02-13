@@ -36,6 +36,7 @@ import { MultiLanguageFormService } from './multi-language-form.service';
           #textInput
           [readonly]="!editable"
           [ngModel]="formService.inputValue"
+          (blur)="formService.formArray.markAsTouched()"
           (ngModelChange)="formService.onInputChange($event)"></textarea>
       </mat-form-field>
       <mat-button-toggle-group matPrefix #group="matButtonToggleGroup" vertical>
@@ -48,15 +49,17 @@ import { MultiLanguageFormService } from './multi-language-form.service';
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
-    <mat-error *ngIf="formService.formArray.invalid && formService.formArray.touched">
-      <ng-container *ngIf="formService.invalidErrors?.language"
-        >Language {{ formService.invalidErrors.language }}:
-        {{ formService.invalidErrors.error | humanReadableError }}
-      </ng-container>
-      <ng-container *ngIf="!formService.invalidErrors?.language"
-        >{{ formService.invalidErrors.error | humanReadableError }}
-      </ng-container>
-    </mat-error>
+    <div class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align ng-tns-c1205077789-8">
+      <mat-error *ngIf="formService.formArray.invalid && formService.formArray.touched">
+        <ng-container *ngIf="formService.invalidErrors?.language"
+          >Language {{ formService.invalidErrors.language }}:
+          {{ formService.invalidErrors.error | humanReadableError }}
+        </ng-container>
+        <ng-container *ngIf="!formService.invalidErrors?.language"
+          >{{ formService.invalidErrors.error | humanReadableError }}
+        </ng-container>
+      </mat-error>
+    </div>
   `,
   styles: [
     `

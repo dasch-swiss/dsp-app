@@ -64,7 +64,7 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
   shortcodePatternError = { errorKey: 'pattern', message: 'This field must contains letters from A to F and 0 to 9' };
   shortCodeExistsError = { errorKey: 'shortcodeExists', message: 'This shortcode already exists' };
   readonly keywordsValidators = [Validators.minLength(3), Validators.maxLength(64)];
-  readonly descriptionValidators = [Validators.maxLength(2000)];
+  readonly descriptionValidators = [Validators.minLength(3), Validators.maxLength(40960)];
   subscription: Subscription;
 
   constructor(
@@ -98,7 +98,7 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
         { value: this.formData.shortname, disabled: this.formData.shortname !== '' },
         [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[a-zA-Z]+\S*$/)],
       ],
-      longname: [this.formData.longname, [Validators.required]],
+      longname: [this.formData.longname, [Validators.required, Validators.minLength(3), Validators.maxLength(256)]],
       description: this._fb.array(
         this.formData.description.map(({ language, value }) =>
           this._fb.group({

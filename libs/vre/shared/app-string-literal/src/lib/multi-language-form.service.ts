@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, ElementRef, Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
