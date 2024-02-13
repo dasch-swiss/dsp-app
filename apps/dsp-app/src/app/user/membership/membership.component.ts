@@ -1,18 +1,28 @@
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { Constants, ReadUser, StoredProject } from '@dasch-swiss/dsp-js';
 import { PermissionsData } from '@dasch-swiss/dsp-js/src/models/admin/permissions-data';
 import {
   AddUserToProjectMembershipAction,
+  LoadProjectsAction,
   ProjectsSelectors,
   RemoveUserFromProjectAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { Select, Store } from '@ngxs/store';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { AutocompleteItem } from '../../workspace/search/operator';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-membership',
   template: `
     <dasch-swiss-app-progress-indicator *ngIf="isMembershipLoading$ | async"></dasch-swiss-app-progress-indicator>
@@ -67,7 +77,7 @@ import { AutocompleteItem } from '../../workspace/search/operator';
   `,
   styleUrls: ['./membership.component.scss'],
 })
-export class MembershipComponent implements OnDestroy {
+export class MembershipComponent implements AfterViewInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
 
   selectedValue: string | null = null;
@@ -95,6 +105,10 @@ export class MembershipComponent implements OnDestroy {
   @Select(ProjectsSelectors.isMembershipLoading) isMembershipLoading$: Observable<boolean>;
 
   constructor(private _store: Store) {}
+
+  ngAfterViewInit() {
+    this._store.dispatch(new LoadProjectsAction());
+  }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();

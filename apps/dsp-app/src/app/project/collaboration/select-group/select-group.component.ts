@@ -6,7 +6,6 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
-  OnInit,
   Output,
 } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
@@ -84,6 +83,9 @@ export class SelectGroupComponent implements OnDestroy, AfterViewInit {
   trackByFn = (index: number, item: AutocompleteItem) => `${index}-${item.label}`;
 
   onGroupChange() {
+    if (!this.groupCtrl.value) {
+      return;
+    }
     // get the selected values onOpen and onClose
     // and compare them with the current values from user profile
     // compare the selected data with the permissions data

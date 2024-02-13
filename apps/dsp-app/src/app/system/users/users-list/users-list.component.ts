@@ -22,8 +22,8 @@ import {
   SetUserAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, combineLatest } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 import { DialogComponent } from '../../../main/dialog/dialog.component';
 import { DialogService } from '../../../main/services/dialog.service';
@@ -116,7 +116,6 @@ export class UsersListComponent implements OnInit {
   @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
   @Select(ProjectsSelectors.isCurrentProjectAdminOrSysAdmin) isCurrentProjectAdminOrSysAdmin$: Observable<boolean>;
   @Select(ProjectsSelectors.currentProject) project$: Observable<ReadProject>;
-  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
   @Select(UserSelectors.isLoading) isUsersLoading$: Observable<boolean>;
 
   constructor(
@@ -186,6 +185,10 @@ export class UsersListComponent implements OnInit {
    * update user's group memebership
    */
   updateGroupsMembership(id: string, groups: string[]): void {
+    if (!groups) {
+      return;
+    }
+
     const currentUserGroups: string[] = [];
     this._userApiService.getGroupMembershipsForUser(id).subscribe(response => {
       for (const group of response.groups) {

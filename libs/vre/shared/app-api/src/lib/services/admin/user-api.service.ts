@@ -77,7 +77,7 @@ export class UserApiService extends BaseApi {
   }
 
   removeFromGroupMembership(userIri: string, groupIri: string) {
-    return this._http.post<UserResponse>(
+    return this._http.delete<UserResponse>(
       `${this._userRoute(userIri)}/group-memberships/${encodeURIComponent(groupIri)}`,
       {}
     );

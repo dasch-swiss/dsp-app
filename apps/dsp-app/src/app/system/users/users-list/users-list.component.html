@@ -1,4 +1,4 @@
-<div *ngIf="list && (((isProjectsLoading$ | async) === false) && ((isUsersLoading$ | async) === false))">
+<div *ngIf="list && (((isUsersLoading$ | async) === false))">
   <!-- header toolbar -->
   <div class="app-toolbar" *ngIf="list.length > 0">
     <div class="app-toolbar-row">
