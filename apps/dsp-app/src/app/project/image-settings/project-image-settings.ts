@@ -1,6 +1,7 @@
 export class ProjectImageSettings {
   static AbsoluteWidthSteps: number[] = [64, 128, 256, 512, 1024];
 
+  restrictImageSize = false;
   isWatermark: boolean = false;
   aspect: boolean = false;
   absoluteWidth: number = ProjectImageSettings.AbsoluteWidthSteps[0];
@@ -17,6 +18,7 @@ export class ProjectImageSettings {
 
     const isPercentage = size.startsWith('pct');
     return <ProjectImageSettings>{
+      restrictImageSize: !(isPercentage && size.split('pct:').pop() === '100'),
       isWatermark: true,
       aspect: isPercentage,
       absoluteWidth: !isPercentage ? size.substring(1).split(',').pop() : ProjectImageSettings.AbsoluteWidthSteps[0],
@@ -24,7 +26,11 @@ export class ProjectImageSettings {
     };
   }
 
-  static FormatToIiifSize(aspect: boolean, percentage: number, width: number): string {
+  static FormatToIiifSize(restrictImageSize: boolean, aspect: boolean, percentage: number, width: number): string {
+    if (!restrictImageSize) {
+      return 'pct:100';
+    }
+
     return aspect ? `pct:${percentage}` : `!${width},${width}`;
   }
 }

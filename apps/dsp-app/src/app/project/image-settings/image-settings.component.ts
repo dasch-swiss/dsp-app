@@ -79,6 +79,7 @@ export class ImageSettingsComponent implements OnInit {
 
           this.projectImageSettings = ProjectImageSettings.GetProjectImageSettings(settings.size);
           this.form.patchValue({
+            restrictImageSize: this.projectImageSettings.restrictImageSize,
             isWatermark: settings.watermark,
             aspect: this.projectImageSettings.aspect,
             percentage: this.projectImageSettings.percentage,
@@ -99,6 +100,7 @@ export class ImageSettingsComponent implements OnInit {
   onSubmit() {
     const request: SetRestrictedViewRequest = {
       size: ProjectImageSettings.FormatToIiifSize(
+        this.form.value.restrictImageSize,
         this.form.value.aspect,
         this.form.value.percentage,
         ProjectImageSettings.AbsoluteWidthSteps[this.form.value.absoluteWidthIndex]
@@ -117,6 +119,7 @@ export class ImageSettingsComponent implements OnInit {
   private _buildForm() {
     this.form = this._fb.group({
       isWatermark: [false, []],
+      restrictImageSize: [false, []],
       aspect: [false, []],
       absoluteWidthIndex: [0, []],
       percentage: [1, []],

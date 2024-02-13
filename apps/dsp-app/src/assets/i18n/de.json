@@ -110,7 +110,9 @@
         },
         "imageSettings": {
           "isWatermark": "Wasserzeichen anwenden",
-          "aspect": "Aspekt",
+          "ratio": "Verhältnis",
+          "fixed": "feste Breite",
+          "restrictImageSize": "Bildgröße einschränken",
           "absoluteWidth": "absolute Breite",
           "percentageValue": "Prozentwert",
           "percentage": "Prozentsatz",

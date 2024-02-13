@@ -1,8 +1,10 @@
 @use '../../../styles/responsive' as *;
 
+@use '../../../styles/responsive' as *;
+
 .content {
   .form-content {
-    width: 298px;
+    width: 100%;
   }
 
   .content-sidebar {
@@ -14,9 +16,10 @@
     display: inline-block;
     padding-right: 32px;
     vertical-align: top;
+    max-width: 298px;
   }
 
-  .aspect {
+  .section {
     padding-bottom: 32px;
   }
 

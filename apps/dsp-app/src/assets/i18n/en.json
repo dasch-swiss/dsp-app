@@ -139,7 +139,9 @@
         },
         "imageSettings": {
           "isWatermark": "Apply watermark",
-          "aspect": "Aspect",
+          "ratio": "Ratio",
+          "fixed": "Fixed width",
+          "restrictImageSize": "Restrict image size",
           "absoluteWidth": "Absolute width",
           "percentageValue": "Percentage value",
           "percentage": "Percentage",
