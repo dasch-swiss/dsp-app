@@ -9,7 +9,11 @@
 
   <!-- navigation in case of compound object: previous and next page -->
   <div class="navigation vertical previous" *ngIf="compoundNavigation">
-    <button mat-button [disabled]="compoundNavigation.page <= 1" (click)="openPage(compoundNavigation.page - 1)">
+    <button
+      mat-button
+      [disabled]="compoundNavigation.page <= 1"
+      (click)="openPage(compoundNavigation.page - 1)"
+      class="full-size">
       <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
   </div>
