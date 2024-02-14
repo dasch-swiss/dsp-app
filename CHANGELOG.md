@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.6.2](https://github.com/dasch-swiss/dsp-das/compare/v11.6.1...v11.6.2) (2024-02-14)
+
+
+### Bug Fixes
+
+* link to edit a project ([#1465](https://github.com/dasch-swiss/dsp-das/issues/1465)) ([0acda9e](https://github.com/dasch-swiss/dsp-das/commit/0acda9efd04d5670ee6f1b0ae5790a2702efbfea))
+* slider is accessible ([#1467](https://github.com/dasch-swiss/dsp-das/issues/1467)) ([0cd8f3d](https://github.com/dasch-swiss/dsp-das/commit/0cd8f3d789671bba88ba02d7d2140c9d900a7d72))
+
 ## [11.6.1](https://github.com/dasch-swiss/dsp-das/compare/v11.6.0...v11.6.1) (2024-02-13)
 
 
