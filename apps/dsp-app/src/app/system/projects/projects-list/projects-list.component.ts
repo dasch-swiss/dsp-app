@@ -136,7 +136,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
 
   editProject(iri: string) {
     const uuid = ProjectService.IriToUuid(iri);
-    this._router.navigate([RouteConstants.project, uuid, RouteConstants.edit]);
+    this._router.navigate([RouteConstants.project, uuid, RouteConstants.settings, RouteConstants.edit]);
   }
 
   askToDeactivateProject(name: string, id: string) {
