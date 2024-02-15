@@ -12,7 +12,12 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { ClassDefinition, Constants } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  ComponentCommunicationEventService,
+  EmitEvent,
+  Events,
+  OntologyService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   IClassItemsKeyValuePairs,
   LoadClassItemsCountAction,
@@ -21,11 +26,6 @@ import {
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events,
-} from '../../../main/services/component-communication-event.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

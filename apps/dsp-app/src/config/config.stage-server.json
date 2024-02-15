@@ -1,11 +1,11 @@
 {
   "dspRelease": "2023.05.03",
   "apiProtocol": "https",
-  "apiHost": "api.staging.dasch.swiss",
+  "apiHost": "api.stage.dasch.swiss",
   "apiPort": 443,
   "apiPath": "",
   "iiifProtocol": "https",
-  "iiifHost": "iiif.staging.dasch.swiss",
+  "iiifHost": "iiif.stage.dasch.swiss",
   "iiifPort": 443,
   "iiifPath": "",
   "geonameToken": "knora",
@@ -13,7 +13,7 @@
   "logErrors": true,
   "iriBase": "http://rdfh.ch",
   "instrumentation": {
-    "environment": "staging-server",
+    "environment": "stage-server",
     "rollbar": {
       "enabled": false,
       "accessToken": ""

@@ -19,15 +19,11 @@ import {
   ReadResourceSequence,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
+import { ComponentCommunicationEventService, EmitEvent, Events } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { Store } from '@ngxs/store';
 import { Subject, Subscription, combineLatest, of } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events,
-} from '../../../main/services/component-communication-event.service';
 
 /**
  * query: search query. It can be gravserch query or fulltext string query.
@@ -138,6 +134,7 @@ export class ListViewComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.componentCommsSubscriptions.push(
+      this._componentCommsService.on(Events.loginSuccess, () => this.initSearch()),
       this._componentCommsService.on(Events.resourceChanged, () => this._doSearch()),
       this._componentCommsService.on(Events.resourceDeleted, () => this._doSearch())
     );

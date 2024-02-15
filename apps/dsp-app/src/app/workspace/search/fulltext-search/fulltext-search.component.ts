@@ -16,14 +16,14 @@ import {
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ApiResponseError, Constants, ReadProject } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
-import { SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
-import { Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import {
   ComponentCommunicationEventService,
   Events,
-} from '../../../main/services/component-communication-event.service';
+  SortingService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { SearchParams } from '../../results/list-view/list-view.component';
 
 export interface PrevSearchItem {

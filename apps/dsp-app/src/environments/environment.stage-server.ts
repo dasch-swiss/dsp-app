@@ -7,7 +7,7 @@
 import packageJson from '../../../../package.json';
 
 export const environment = {
-  name: 'staging-server',
+  name: 'stage-server',
   production: false,
   version: packageJson.version,
 };

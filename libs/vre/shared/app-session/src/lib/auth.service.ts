@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-
 import { ApiResponseData, ApiResponseError, KnoraApiConnection, LoginResponse } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { AppError } from '@dasch-swiss/vre/shared/app-error-handler';
+import {
+  Events as CommsEvents,
+  ComponentCommunicationEventService,
+  EmitEvent,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   ClearListsAction,
   ClearOntologiesAction,
@@ -22,7 +26,8 @@ export class AuthService {
     private store: Store,
     private _accessTokenService: AccessTokenService,
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection
+    private _dspApiConnection: KnoraApiConnection,
+    private _componentCommsService: ComponentCommunicationEventService
   ) {}
 
   isCredentialsValid$() {
@@ -52,6 +57,7 @@ export class AuthService {
         const encodedJWT = (response as ApiResponseData<LoginResponse>).body.token;
         this._accessTokenService.storeToken(encodedJWT);
         this._dspApiConnection.v2.jsonWebToken = encodedJWT;
+        this._componentCommsService.emit(new EmitEvent(CommsEvents.loginSuccess));
       }),
       catchError(error => {
         if ((error instanceof ApiResponseError && error.status === 400) || error.status === 401) {

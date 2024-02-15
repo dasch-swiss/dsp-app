@@ -1,3 +1,4 @@
+export * from './lib/component-communication-event.service';
 export * from './lib/default-data/default-properties';
 export * from './lib/default-data/default-resource-classes';
 export * from './lib/ontology-class.service';

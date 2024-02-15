@@ -36,7 +36,7 @@ export class AppConfigService {
     const prodMode = env.includes('prod') || env.includes('production');
     let color = 'primary';
     if (!prodMode) {
-      if (env.includes('staging') || env.includes('dev')) {
+      if (env.includes('stage') || env.includes('dev')) {
         color = 'accent';
       } else if (env.includes('test')) {
         color = 'warn';

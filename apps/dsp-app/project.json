@@ -12,7 +12,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/dsp-app",
         "index": "apps/dsp-app/src/index.html",
@@ -37,7 +39,9 @@
             "output": "/assets/"
           }
         ],
-        "styles": ["apps/dsp-app/src/styles.scss"],
+        "styles": [
+          "apps/dsp-app/src/styles.scss"
+        ],
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
         ]
@@ -133,11 +137,11 @@
           "vendorChunk": false,
           "buildOptimizer": false
         },
-        "staging-server": {
+        "stage-server": {
           "fileReplacements": [
             {
               "replace": "apps/dsp-app/src/environments/environment.ts",
-              "with": "apps/dsp-app/src/environments/environment.staging-server.ts"
+              "with": "apps/dsp-app/src/environments/environment.stage-server.ts"
             }
           ],
           "optimization": false,
@@ -175,8 +179,8 @@
         "0845-test-server": {
           "browserTarget": "dsp-app:build:ls-test-server"
         },
-        "staging-server": {
-          "browserTarget": "dsp-app:build:staging-server"
+        "stage-server": {
+          "browserTarget": "dsp-app:build:stage-server"
         }
       }
     },
@@ -188,10 +192,14 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/dsp-app/**/*.{ts,html}"]
-          }
+        "lintFilePatterns": [
+          "apps/dsp-app/**/*.{ts,html}"
+        ]
+      }
     },
     "test": {
       "executor": "@angular-devkit/build-angular:karma",
@@ -201,7 +209,9 @@
         "tsConfig": "apps/dsp-app/tsconfig.spec.json",
         "inlineStyleLanguage": "scss",
         "karmaConfig": "apps/dsp-app/karma.conf.js",
-        "styles": ["apps/dsp-app/src/styles.scss"],
+        "styles": [
+          "apps/dsp-app/src/styles.scss"
+        ],
         "scripts": [
           "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
         ],

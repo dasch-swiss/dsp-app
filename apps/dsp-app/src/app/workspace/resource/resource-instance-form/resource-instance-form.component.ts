@@ -11,7 +11,6 @@ import {
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  ApiResponseError,
   Constants,
   CreateFileValue,
   CreateResource,
@@ -24,16 +23,17 @@ import {
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { DefaultClass, DefaultResourceClasses } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  Events as CommsEvents,
+  ComponentCommunicationEventService,
+  DefaultClass,
+  DefaultResourceClasses,
+  EmitEvent,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { tap } from 'rxjs/operators';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events as CommsEvents,
-} from '../../../main/services/component-communication-event.service';
 import { ResourceService } from '../services/resource.service';
 import { SelectPropertiesComponent } from './select-properties/select-properties.component';
 

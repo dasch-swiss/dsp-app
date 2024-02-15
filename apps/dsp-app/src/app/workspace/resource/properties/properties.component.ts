@@ -38,17 +38,19 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
-import { OntologyService, ProjectService, SortingService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  Events as CommsEvents,
+  ComponentCommunicationEventService,
+  EmitEvent,
+  OntologyService,
+  ProjectService,
+  SortingService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, forkJoin } from 'rxjs';
 import { ConfirmationWithComment, DialogComponent } from '../../../main/dialog/dialog.component';
-import {
-  ComponentCommunicationEventService,
-  EmitEvent,
-  Events as CommsEvents,
-} from '../../../main/services/component-communication-event.service';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
 import { IncomingService } from '../services/incoming.service';

@@ -14,12 +14,15 @@ import { ReadOntology, ReadProject } from '@dasch-swiss/dsp-js';
 import { ClassAndPropertyDefinitions } from '@dasch-swiss/dsp-js/src/models/v2/ontologies/ClassAndPropertyDefinitions';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
-import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  ComponentCommunicationEventService,
+  Events,
+  ProjectService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors, ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store } from '@ngxs/store';
 import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
-import { ComponentCommunicationEventService, Events } from '../main/services/component-communication-event.service';
 import { ProjectBase } from './project-base';
 
 type AvailableRoute =
