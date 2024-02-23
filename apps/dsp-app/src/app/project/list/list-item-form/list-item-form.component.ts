@@ -28,6 +28,13 @@ export class ListNodeOperation {
       </button>
     </form>
   `,
+  styles: [
+    `
+      :host ::ng-deep mat-error {
+        display: none;
+      }
+    `,
+  ],
 })
 export class ListItemFormComponent implements OnInit {
   loading = false;
