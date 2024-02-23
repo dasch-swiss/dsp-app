@@ -1,5 +1,18 @@
 # Changelog
 
+## [11.6.3](https://github.com/dasch-swiss/dsp-das/compare/v11.6.2...v11.6.3) (2024-02-23)
+
+
+### Bug Fixes
+
+* highlits section by clicked region in image viewer (DEV-3277) ([#1468](https://github.com/dasch-swiss/dsp-das/issues/1468)) ([50a5db5](https://github.com/dasch-swiss/dsp-das/commit/50a5db556f544f3beaf8b23a26caabd0d7328a85))
+* initiates new search when user is logged in sucessfully (DEV-3293) ([#1469](https://github.com/dasch-swiss/dsp-das/issues/1469)) ([70f7f25](https://github.com/dasch-swiss/dsp-das/commit/70f7f25f373e0e054c7cd4240ce969c07450efb0))
+
+
+### Maintenance
+
+* update dsp-js to v.9.1.12 ([#1478](https://github.com/dasch-swiss/dsp-das/issues/1478)) ([a99cfeb](https://github.com/dasch-swiss/dsp-das/commit/a99cfebbec6aeea49277a32ec6bc52486a564de5))
+
 ## [11.6.2](https://github.com/dasch-swiss/dsp-das/compare/v11.6.1...v11.6.2) (2024-02-14)
 
 
