@@ -24,11 +24,11 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import {
-  Events as CommsEvents,
   ComponentCommunicationEventService,
   DefaultClass,
   DefaultResourceClasses,
   EmitEvent,
+  Events as CommsEvents,
 } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { LoadClassItemsCountAction } from '@dasch-swiss/vre/shared/app-state';
@@ -191,9 +191,8 @@ export class ResourceInstanceFormComponent implements OnInit, OnChanges {
   }
 
   submitData() {
-    this.loading = true;
-
     if (this.propertiesParentForm.valid) {
+      this.loading = true;
       const createResource = new CreateResource();
 
       const resLabelVal = <CreateTextValueAsString>this.selectPropertiesComponent.createValueComponent.getNewValue();
