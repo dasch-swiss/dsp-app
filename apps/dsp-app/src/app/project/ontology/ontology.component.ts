@@ -6,8 +6,6 @@ import {
   Inject,
   OnDestroy,
   OnInit,
-  ViewChild,
-  ViewContainerRef,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -16,14 +14,11 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
   ClassDefinition,
   Constants,
-  DeleteResourceClass,
-  DeleteResourceProperty,
   KnoraApiConnection,
   PropertyDefinition,
   ReadOntology,
   ReadProject,
   ReadUser,
-  UpdateOntology,
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
@@ -53,8 +48,9 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
+import { map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { DialogComponent, DialogEvent } from '../../main/dialog/dialog.component';
+import { DialogService } from '../../main/services/dialog.service';
 import { ProjectBase } from '../project-base';
 import {
   CreateResourceClassDialogComponent,
@@ -72,7 +68,16 @@ import {
   styleUrls: ['./ontology.component.scss'],
 })
 export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy {
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  @Select(UserSelectors.user) user$: Observable<ReadUser>;
+  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
+  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
+  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
+  @Select(OntologiesSelectors.currentProjectOntologies) currentProjectOntologies$: Observable<ReadOntology[]>;
+  @Select(OntologiesSelectors.currentOntologyCanBeDeleted) currentOntologyCanBeDeleted$: Observable<boolean>;
+  isOntologiesLoading$ = this._store.select(OntologiesSelectors.isLoading);
+  currentOntology$ = this._store.select(OntologiesSelectors.currentOntology);
+
+  private ngUnsubscribe = new Subject<void>();
 
   // all resource classes in the current ontology
   ontoClasses: ClassDefinition[];
@@ -101,45 +106,29 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
   /**
    * list of all default resource classes (subclass of)
    */
-  defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
-  defaultProperties: PropertyCategory[] = DefaultProperties.data;
+  readonly defaultClasses: DefaultClass[] = DefaultResourceClasses.data;
+  readonly defaultProperties: PropertyCategory[] = DefaultProperties.data;
 
   // disable content on small devices
   disableContent = false;
 
   // route to classes view
-  classesLink = `../${RouteConstants.classes}`;
-  propertiesLink = `../${RouteConstants.properties}`;
+  readonly classesLink = `../${RouteConstants.classes}`;
+  readonly propertiesLink = `../${RouteConstants.properties}`;
 
-  @ViewChild('ontologyEditor', { read: ViewContainerRef })
-  ontologyEditor: ViewContainerRef;
-
-  updatePropertyAssignment$: Subject<any> = new Subject();
+  updatePropertyAssignment$ = new Subject<void>();
 
   // the lastModificationDate is the most important key
   // when updating something inside the ontology
-  get lastModificationDate$(): Observable<string> {
-    return this.currentOntology$.pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(x => x?.lastModificationDate)
-    );
-  }
+  lastModificationDate$ = this.currentOntology$.pipe(
+    takeUntil(this.ngUnsubscribe),
+    map(x => x?.lastModificationDate)
+  );
 
-  get isLoading$(): Observable<boolean> {
-    return combineLatest([this.isOntologiesLoading$, this.isProjectsLoading$]).pipe(
-      takeUntil(this.ngUnsubscribe),
-      map(([isOntologiesLoading, isProjectsLoading]) => isOntologiesLoading === true || isProjectsLoading === true)
-    );
-  }
-
-  @Select(UserSelectors.user) user$: Observable<ReadUser>;
-  @Select(UserSelectors.userProjectAdminGroups) userProjectAdminGroups$: Observable<string[]>;
-  @Select(UserSelectors.isSysAdmin) isSysAdmin$: Observable<boolean>;
-  @Select(ProjectsSelectors.isProjectsLoading) isProjectsLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.isLoading) isOntologiesLoading$: Observable<boolean>;
-  @Select(OntologiesSelectors.currentProjectOntologies) currentProjectOntologies$: Observable<ReadOntology[]>;
-  @Select(OntologiesSelectors.currentOntology) currentOntology$: Observable<ReadOntology>;
-  @Select(OntologiesSelectors.currentOntologyCanBeDeleted) currentOntologyCanBeDeleted$: Observable<boolean>;
+  isLoading$ = combineLatest([this.isOntologiesLoading$, this.isProjectsLoading$]).pipe(
+    takeUntil(this.ngUnsubscribe),
+    map(([isOntologiesLoading, isProjectsLoading]) => isOntologiesLoading === true || isProjectsLoading === true)
+  );
 
   constructor(
     @Inject(DspApiConnectionToken)
@@ -154,7 +143,8 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     protected _store: Store,
     protected _titleService: Title,
     protected _projectService: ProjectService,
-    protected _cd: ChangeDetectorRef
+    protected _cd: ChangeDetectorRef,
+    private _dialogService: DialogService
   ) {
     super(_store, _route, _projectService, _titleService, _router, _cd, _actions$);
   }
@@ -189,7 +179,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     // TODO temporary solution to replace eventemitter with subject because emitter loses subscriber after child component
     // subscription responsible for emitting event is triggered
     this.updatePropertyAssignment$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      this.onUpdatePropertyAssignment();
+      this.initOntologiesList();
     });
 
     this._cd.markForCheck();
@@ -220,7 +210,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     this._store.dispatch(new ClearCurrentOntologyAction());
   }
 
-  initView(ontology: ReadOntology): void {
+  private initView(ontology: ReadOntology): void {
     this.disableContent = window.innerWidth <= 768;
 
     // set the page title
@@ -234,7 +224,13 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       }),
     });
 
-    this.ontologyForm.valueChanges.subscribe(val => this.onValueChanged(val.ontology));
+    this.ontologyForm.valueChanges.subscribe(val => {
+      if (!this.ontologyForm) {
+        return;
+      }
+      // reset and open selected ontology
+      this.resetOntology(val.ontology);
+    });
   }
 
   /**
@@ -292,7 +288,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     }
   }
 
-  initOntoClasses(allOntoClasses: ClassDefinition[]) {
+  private initOntoClasses(allOntoClasses: ClassDefinition[]) {
     // reset the ontology classes
     this.ontoClasses = [];
 
@@ -339,19 +335,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
 
   trackByElementFn = (index: number) => `${index}`;
 
-  /**
-   * update view after selecting an ontology from dropdown
-   * @param id
-   */
-  onValueChanged(id: string) {
-    if (!this.ontologyForm) {
-      return;
-    }
-    // reset and open selected ontology
-    this.resetOntology(id);
-  }
-
-  onLastModificationDateChange(lastModificationDate): void {
+  onLastModificationDateChange(): void {
     const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
     // TODO reload or just update lastModificationDate in the state?
     this._store.dispatch(new LoadOntologyAction(ontology.id, this.projectUuid, true));
@@ -362,7 +346,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
    * @param id ontology id/iri
    * @param view 'classes' | 'properties' | ' graph'
    */
-  openOntologyRoute(id: string, view: 'classes' | 'properties' | 'graph' = 'classes') {
+  private openOntologyRoute(id: string, view: 'classes' | 'properties' | 'graph' = 'classes') {
     this.view = view;
 
     this._router.navigate(
@@ -375,7 +359,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
    * resets the current view and the selected ontology
    * @param id
    */
-  resetOntology(id: string) {
+  private resetOntology(id: string) {
     this._store.dispatch([new SetCurrentOntologyAction(null), new CurrentOntologyCanBeDeletedAction()]);
     this.ontoClasses = [];
     this.openOntologyRoute(id, this.view);
@@ -395,14 +379,6 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       new SetCurrentProjectOntologyPropertiesAction(this.projectIri),
       new CurrentOntologyCanBeDeletedAction(),
     ]);
-  }
-
-  /**
-   * filters owl class
-   * @param owlClass
-   */
-  filterOwlClass(owlClass: any) {
-    return owlClass['@type'] === 'owl:class';
   }
 
   /**
@@ -434,7 +410,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
 
     const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
 
-    dialogRef.afterClosed().subscribe((ontologyId: string) => {
+    dialogRef.afterClosed().subscribe(() => {
       this.initOntologiesList();
     });
   }
@@ -516,89 +492,65 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
     });
   }
 
-  onUpdatePropertyAssignment() {
-    this.initOntologiesList();
+  deleteOntology() {
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+
+    this._dialogService
+      .afterConfirmation('Do you want to delete this data model ?')
+      .pipe(
+        switchMap(() =>
+          this._dspApiConnection.v2.onto.deleteOntology({
+            id: ontology.id,
+            lastModificationDate: ontology.lastModificationDate,
+          })
+        )
+      )
+      .subscribe(() => {
+        this._store.dispatch(new ClearProjectOntologiesAction(this.projectUuid));
+        this.initOntologiesList();
+        this._router.navigateByUrl(`/project/${this.projectUuid}`, {
+          skipLocationChange: false,
+        });
+      });
   }
 
-  /**
-   * delete either ontology, resource class or property
-   *
-   * @param mode Can be 'Ontology' or 'ResourceClass'
-   * @param info
-   */
-  delete(mode: 'Ontology' | 'ResourceClass' | 'Property', info: DefaultClass) {
-    const dialogConfig: MatDialogConfig = {
-      width: '560px',
-      maxHeight: '80vh',
-      position: {
-        top: '112px',
-      },
-      data: { mode: `delete${mode}`, title: info.label },
-    };
+  deleteResourceClass(resClassIri: string) {
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+    this._dialogService
+      .afterConfirmation('Do you want to delete this resource class?')
+      .pipe(
+        switchMap(() =>
+          this._dspApiConnection.v2.onto.deleteResourceClass({
+            id: resClassIri,
+            lastModificationDate: ontology.lastModificationDate,
+          })
+        )
+      )
+      .subscribe(() => {
+        this.ontoClasses = [];
+        this.initOntologiesList();
+      });
+  }
 
-    const dialogRef = this._dialog.open(DialogComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(answer => {
-      if (answer === true) {
-        const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
-        // delete and refresh the view
-        switch (mode) {
-          case 'Ontology':
-            const updateOntology = new UpdateOntology();
-            updateOntology.id = ontology.id;
-            updateOntology.lastModificationDate = ontology.lastModificationDate;
-            this._dspApiConnection.v2.onto
-              .deleteOntology(updateOntology)
-              .pipe(take(1))
-              .subscribe(() => {
-                this._store.dispatch(new ClearProjectOntologiesAction(this.projectUuid));
-                // reset current ontology
-                // this._store.dispatch([
-                //     new SetCurrentOntologyAction(null),
-                //     new RemoveProjectOntologyAction(updateOntology.id, this.projectUuid)
-                // ]);
-                // get the ontologies for this project
-                this.initOntologiesList();
-                // go to project ontology page
-                const goto = `/project/${this.projectUuid}`;
-                this._router.navigateByUrl(goto, {
-                  skipLocationChange: false,
-                });
-              });
-            break;
-
-          case 'ResourceClass':
-            // delete resource class and refresh the view
-            const resClass: DeleteResourceClass = new DeleteResourceClass();
-            resClass.id = info.iri;
-            resClass.lastModificationDate = ontology.lastModificationDate;
-            this._dspApiConnection.v2.onto
-              .deleteResourceClass(resClass)
-              .pipe(take(1))
-              .subscribe(() => {
-                this.ontoClasses = [];
-                this.initOntologiesList();
-              });
-            break;
-          case 'Property':
-            // delete resource property and refresh the view
-            const resProp: DeleteResourceProperty = new DeleteResourceProperty();
-            resProp.id = info.iri;
-            resProp.lastModificationDate = ontology.lastModificationDate;
-            this._dspApiConnection.v2.onto
-              .deleteResourceProperty(resProp)
-              .pipe(take(1))
-              .subscribe(() => {
-                this._store.dispatch(new ClearCurrentOntologyAction());
-                // get the ontologies for this project
-                this.initOntologiesList();
-                // update the view of resource class or list of properties
-                this.initOntology();
-              });
-            break;
-        }
-      }
-    });
+  deleteProperty(iri: string) {
+    const ontology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
+    this._dialogService
+      .afterConfirmation('Do you want to delete this property?')
+      .pipe(
+        switchMap(() =>
+          this._dspApiConnection.v2.onto.deleteResourceProperty({
+            id: iri,
+            lastModificationDate: ontology.lastModificationDate,
+          })
+        )
+      )
+      .subscribe(() => {
+        this._store.dispatch(new ClearCurrentOntologyAction());
+        // get the ontologies for this project
+        this.initOntologiesList();
+        // update the view of resource class or list of properties
+        this.initOntology();
+      });
   }
 
   private setTitle() {

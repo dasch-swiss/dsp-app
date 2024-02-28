@@ -10,14 +10,14 @@
             class="mat-headline-6"
             [matTooltip]="(currentOntology$ | async).label + ((currentOntology$ | async).comment ? ' &mdash; ' + (currentOntology$ | async).comment : '')"
             matTooltipPosition="above">
-            {{(currentOntology$ | async)?.label}}
+            {{ (currentOntology$ | async)?.label }}
           </h3>
           <p
             class="mat-caption"
             [matTooltip]="'Last modification date: ' + (lastModificationDate$ | async)"
             matTooltipPosition="above">
             <span *ngIf="(lastModificationDate$ | async); else noModificationDate">
-              Updated on: {{(lastModificationDate$ | async) | date:'medium'}}
+              Updated on: {{ (lastModificationDate$ | async) | date:'medium' }}
             </span>
             <ng-template #noModificationDate>
               <span class="note warning">
@@ -51,7 +51,7 @@
               mat-button
               *ngIf="(currentOntology$ | async) as currentOntology"
               [disabled]="((lastModificationDate$ | async | isFalsy) || (currentOntologyCanBeDeleted$ | async) === false) || ((isAdmin$ | async) === false)"
-              (click)="$event.stopPropagation(); delete('Ontology', {iri: currentOntology.id, label: currentOntology.label})">
+              (click)="$event.stopPropagation(); deleteOntology()">
               <mat-icon>delete</mat-icon>
               Delete
             </button>
@@ -61,7 +61,6 @@
     </mat-toolbar>
 
     <mat-sidenav-container
-      #ontologyEditor
       *ngIf="(isLoading$ | async) === false && (view === 'classes' || view === 'properties')"
       class="ontology-editor-container">
       <mat-sidenav class="ontology-editor-sidenav" mode="side" position="end" opened>
@@ -72,8 +71,8 @@
               mat-button
               (click)="expandClasses = !expandClasses"
               [disabled]="!ontoClasses || !ontoClasses.length">
-              <mat-icon>{{expandClasses ? 'compress' : 'expand'}}</mat-icon>
-              {{expandClasses ? "Collapse all" : "Expand all"}}
+              <mat-icon>{{ expandClasses ? 'compress' : 'expand' }}</mat-icon>
+              {{ expandClasses ? "Collapse all" : "Expand all" }}
             </button>
             <span
               mat-list-item
@@ -92,7 +91,8 @@
                   mat-menu-item
                   *ngFor="let type of defaultClasses; trackBy: trackByDefaultClassFn"
                   (click)="createResourceClass(type)">
-                  <mat-icon>{{type.icons[0]}}</mat-icon> {{ type.label }}
+                  <mat-icon>{{ type.icons[0] }}</mat-icon>
+                  {{ type.label }}
                 </button>
               </mat-menu>
             </span>
@@ -116,7 +116,7 @@
             </button>
             <mat-menu #addPropertyMenu="matMenu" xPosition="before" class="switch-nested-menu">
               <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropertyCategoryFn">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
+                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ type.group }}</button>
                 <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
                   <button
                     mat-menu-item
@@ -125,7 +125,8 @@
                     [matTooltip]="ele.description"
                     matTooltipPosition="before"
                     (click)="openPropertyForm('createProperty', {propType: ele})">
-                    <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
+                    <mat-icon>{{ ele.icon }}</mat-icon>
+                    {{ ele.label }}
                   </button>
                 </mat-menu>
               </ng-container>
@@ -145,8 +146,8 @@
             [expanded]="expandClasses"
             [userCanEdit]="isAdmin$ | async"
             (editResourceClass)="updateResourceClass($event)"
-            (deleteResourceClass)="delete('ResourceClass', $event)"
-            (updatePropertyAssignment)="onUpdatePropertyAssignment()"
+            (deleteResourceClass)="deleteResourceClass($event.iri)"
+            (updatePropertyAssignment)="initOntologiesList()"
             [updatePropertyAssignment$]="updatePropertyAssignment$">
           </app-resource-class-info>
         </div>
@@ -158,16 +159,16 @@
               *ngFor="let prop of ontoProperties?.properties; trackBy: trackByPropertyDefinitionFn; let odd = odd"
               [class.odd]="odd">
               <!-- display only properties with guiOrder and if they exist in list of properties;
-                                 if objectType is a linkValue hide it (otherwise we have the property twice) -->
+                                                                                                                     if objectType is a linkValue hide it (otherwise we have the property twice) -->
               <app-property-info
                 [propDef]="(currentOntology$ | async)?.properties[prop.id]"
                 [projectUuid]="projectUuid"
                 [projectStatus]="(project$ | async)?.status"
                 [lastModificationDate]="lastModificationDate$ | async"
-                (lastModificationDate)="onLastModificationDateChange($event)"
+                (lastModificationDate)="onLastModificationDateChange()"
                 [userCanEdit]="isAdmin$ | async"
                 (editResourceProperty)="openPropertyForm('editProperty', $event)"
-                (deleteResourceProperty)="delete('Property', $event)">
+                (deleteResourceProperty)="deleteProperty($event.iri)">
               </app-property-info>
             </mat-list-item>
           </mat-list>
