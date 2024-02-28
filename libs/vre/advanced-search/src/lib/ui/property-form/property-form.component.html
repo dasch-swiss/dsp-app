@@ -9,11 +9,16 @@
             (selectionChange)="onSelectedPropertyChanged($event)"
             placeholder="Select a value"
             name="properties"
+            data-cy="property-select"
             [compareWith]="compareObjects">
             <mat-option *ngIf="propertiesLoading" disabled="true">Loading...</mat-option>
             <ng-container *ngIf="!propertiesLoading">
-              <mat-option [value]="resourceLabelObj">{{ resourceLabelObj.label }}</mat-option>
-              <mat-option *ngFor="let prop of properties" [value]="prop"> {{ prop.label }} </mat-option>
+              <mat-option [value]="resourceLabelObj" [attr.data-cy]="resourceLabelObj.label"
+                >{{ resourceLabelObj.label }}</mat-option
+              >
+              <mat-option *ngFor="let prop of properties" [value]="prop" [attr.data-cy]="prop.label">
+                {{ prop.label }}
+              </mat-option>
             </ng-container>
           </mat-select>
         </mat-form-field>
@@ -27,8 +32,12 @@
             #operatorsList
             (selectionChange)="onSelectedOperatorChanged($event)"
             placeholder="Select a value"
+            data-cy="comparison-operator-select"
             name="operators">
-            <mat-option *ngFor="let operator of propertyFormItem?.operators" [value]="operator">
+            <mat-option
+              *ngFor="let operator of propertyFormItem?.operators"
+              [value]="operator"
+              [attr.data-cy]="operator">
               {{ operator }}
             </mat-option>
           </mat-select>
@@ -52,13 +61,13 @@
                         "
             placeholder="Select a value"
             name="resource-classes"
+            data-cy="resource-class-select"
             [compareWith]="compareObjects">
             <mat-option *ngIf="matchResourceClassesLoading" disabled="true">Loading...</mat-option>
             <ng-container *ngIf="!matchResourceClassesLoading">
               <mat-option
-                *ngFor="
-                                    let resClass of propertyFormItem?.matchPropertyResourceClasses
-                                "
+                *ngFor="let resClass of propertyFormItem?.matchPropertyResourceClasses"
+                [attr.data-cy]="resClass.label"
                 [value]="resClass">
                 {{ resClass.label }}
               </mat-option>

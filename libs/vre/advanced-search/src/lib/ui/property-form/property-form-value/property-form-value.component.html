@@ -2,19 +2,19 @@
   <!-- property label -->
   <mat-form-field *ngSwitchCase="resourceLabel">
     <mat-label>Property Label</mat-label>
-    <input matInput type="text" [formControl]="inputControl" />
+    <input matInput type="text" [formControl]="inputControl" data-cy="label-input" />
   </mat-form-field>
 
   <!-- text value -->
   <mat-form-field *ngSwitchCase="constants.TextValue">
     <mat-label>Text Value</mat-label>
-    <input matInput type="text" [formControl]="inputControl" />
+    <input matInput type="text" [formControl]="inputControl" data-cy="text-value-input" />
   </mat-form-field>
 
   <!-- boolean value -->
   <mat-form-field *ngSwitchCase="constants.BooleanValue">
     <mat-label>Value</mat-label>
-    <mat-select [formControl]="inputControl">
+    <mat-select [formControl]="inputControl" data-cy="value-select">
       <mat-option value="true"> True </mat-option>
       <mat-option value="false"> False </mat-option>
     </mat-select>
@@ -23,7 +23,7 @@
   <!-- uri value -->
   <mat-form-field *ngSwitchCase="constants.UriValue">
     <mat-label>URI Value</mat-label>
-    <input matInput [formControl]="inputControl" [errorStateMatcher]="matcher" />
+    <input matInput [formControl]="inputControl" [errorStateMatcher]="matcher" data-cy="uri-value-input" />
     <mat-error *ngIf="inputControl.hasError('pattern')">
       <span class="custom-error-message"> Value must be a URI value. </span>
     </mat-error>
@@ -32,7 +32,7 @@
   <!-- integer value -->
   <mat-form-field *ngSwitchCase="constants.IntValue">
     <mat-label>Integer Value</mat-label>
-    <input matInput type="number" [formControl]="inputControl" [errorStateMatcher]="matcher" />
+    <input matInput type="number" [formControl]="inputControl" [errorStateMatcher]="matcher" data-cy="integer-input" />
     <mat-error *ngIf="inputControl.hasError('pattern')">
       <span class="custom-error-message"> Value must be an integer value. </span>
     </mat-error>
@@ -41,7 +41,7 @@
   <!-- decimal value -->
   <mat-form-field *ngSwitchCase="constants.DecimalValue">
     <mat-label>Decimal Value</mat-label>
-    <input matInput type="number" [formControl]="inputControl" [errorStateMatcher]="matcher" />
+    <input matInput type="number" [formControl]="inputControl" [errorStateMatcher]="matcher" data-cy="decimal-input" />
     <mat-error *ngIf="inputControl.hasError('pattern')">
       <span class="custom-error-message"> Value must be a decimal value. </span>
     </mat-error>

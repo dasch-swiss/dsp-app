@@ -13,7 +13,7 @@
         [matTooltip]="propDef.comment"
         matTooltipPosition="above"
         matTooltipClass="multi-line-tooltip">
-        <span>{{propDef.label ? propDef.label : propDef.id}}</span>
+        <span data-cy="property-label">{{propDef.label ? propDef.label : propDef.id}}</span>
       </span>
       <!-- property is linked to a class or to a list: display connected class or list -->
       <span

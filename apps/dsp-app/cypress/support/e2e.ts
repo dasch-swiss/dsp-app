@@ -1,5 +1,15 @@
-import './commands/login';
 import { UserProfiles } from '../models/user-profiles';
+import './commands/data-model-class-command';
+import './commands/login';
+import './commands/ontology-command';
+
+const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
+Cypress.on('uncaught:exception', err => {
+  /* returning false here prevents Cypress from failing the test */
+  if (resizeObserverLoopErrRe.test(err.message)) {
+    return false;
+  }
+});
 
 // do things here before each test if needed
 // All active session data (cookies, localStorage and sessionStorage) across all domains are cleared.

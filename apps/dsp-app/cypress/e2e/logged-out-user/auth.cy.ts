@@ -19,6 +19,7 @@ describe('Authentication', () => {
       cy.get(po.submitButton).click();
 
       cy.get(po.loginButton).should('not.be.visible');
+      cy.get('[data-cy=user-button]').should('be.visible');
     });
   });
 

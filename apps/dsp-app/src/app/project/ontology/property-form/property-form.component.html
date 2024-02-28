@@ -13,7 +13,7 @@
       </span>
       <mat-label>Property type</mat-label>
       <!-- in case of edit property, the user can change the property type within the same group -->
-      <mat-select formControlName="propType">
+      <mat-select formControlName="propType" data-cy="property-type-select">
         <mat-select-trigger>
           {{ propertyForm.controls['propType'].value.group }}:&nbsp; {{ propertyForm.controls['propType'].value.label }}
         </mat-select-trigger>
@@ -25,7 +25,7 @@
                         propertyForm.controls['propType'].value.group !==
                         type.group
                     ">
-          <mat-option *ngFor="let ele of type.elements" [value]="ele">
+          <mat-option *ngFor="let ele of type.elements" [value]="ele" [attr.data-cy]="ele.label">
             <mat-icon>{{ ele.icon }}</mat-icon> {{ ele.label }}
           </mat-option>
         </mat-optgroup>
@@ -39,7 +39,7 @@
     <mat-form-field class="large-field ontology-form-field">
       <span matPrefix class="ontology-prefix-icon"> <mat-icon>fingerprint</mat-icon>&nbsp; </span>
       <mat-label>Property name</mat-label>
-      <input matInput formControlName="name" />
+      <input matInput formControlName="name" data-cy="name-input" />
       <mat-hint class="ontology-error-with-prefix" *ngIf="formErrors.name"> {{ formErrors.name }} </mat-hint>
     </mat-form-field>
 
@@ -50,6 +50,7 @@
         [value]="labels"
         [disabled]="editMode === 'assignExistingProperty'"
         (touched)="labelsTouched = $event"
+        data-cy="property-label"
         (dataChanged)="handleData($event, 'label')">
       </dasch-swiss-app-string-literal>
       <mat-hint class="string-literal-error" *ngIf="formErrors.label"> {{ formErrors.label }} </mat-hint>
@@ -62,6 +63,7 @@
         [value]="comments"
         [disabled]="editMode === 'assignExistingProperty'"
         [textarea]="true"
+        data-cy="property-comment"
         (dataChanged)="handleData($event, 'comment')">
       </dasch-swiss-app-string-literal>
     </div>
@@ -72,8 +74,10 @@
       <mat-form-field class="large-field property-type ontology-form-field" *ngSwitchCase="dspConstants.ListValue">
         <span matPrefix class="ontology-prefix-icon"> <mat-icon>{{ guiAttrIcon }}</mat-icon>&nbsp; </span>
         <mat-label>Select list</mat-label>
-        <mat-select formControlName="guiAttr">
-          <mat-option *ngFor="let item of lists" [value]="item.id"> {{ item.labels[0].value }} </mat-option>
+        <mat-select formControlName="guiAttr" data-cy="property-select">
+          <mat-option *ngFor="let item of lists" [value]="item.id" [attr.data-cy]="item.labels[0].value">
+            {{ item.labels[0].value }}
+          </mat-option>
         </mat-select>
         <mat-hint *ngIf="formErrors.guiAttr"> {{ formErrors.guiAttr }} </mat-hint>
       </mat-form-field>
@@ -82,9 +86,11 @@
       <mat-form-field class="large-field property-type ontology-form-field" *ngSwitchCase="dspConstants.LinkValue">
         <span matPrefix class="ontology-prefix-icon"> <mat-icon>{{ guiAttrIcon }}</mat-icon>&nbsp; </span>
         <mat-label>Select resource class</mat-label>
-        <mat-select formControlName="guiAttr">
+        <mat-select formControlName="guiAttr" data-cy="resource-class-select">
           <mat-optgroup *ngFor="let onto of ontologyClasses" [label]="onto.ontologyLabel">
-            <mat-option *ngFor="let oClass of onto.classes" [value]="oClass.id"> {{ oClass.label }} </mat-option>
+            <mat-option *ngFor="let oClass of onto.classes" [value]="oClass.id" [attr.data-cy]="oClass.label">
+              {{ oClass.label }}
+            </mat-option>
           </mat-optgroup>
         </mat-select>
         <mat-hint *ngIf="formErrors.guiAttr"> {{ formErrors.guiAttr }} </mat-hint>
@@ -101,8 +107,8 @@
                 ">
         <span matPrefix class="ontology-prefix-icon"> <mat-icon>{{ guiAttrIcon }}</mat-icon>&nbsp; </span>
         <mat-label>Define range</mat-label>
-        <input matInput placeholder="min" />
-        <input matInput placeholder="max" />
+        <input matInput placeholder="min" data-cy="min-input" />
+        <input matInput placeholder="max" data-cy="max-input" />
         <!-- <mat-select formControlName="guiAttr">
                             <mat-option *ngFor="let item of resourceClasses" [value]="item.id">
                                 {{item.label}}
@@ -125,6 +131,7 @@
                     'The property in this class can have multiple values'
                 "
         [matTooltipPosition]="'above'"
+        data-cy="multiple-values-toggle"
         [checked]="propertyForm.get('multiple').value">
         Multiple values?
       </mat-slide-toggle>
@@ -133,6 +140,7 @@
         formControlName="required"
         [matTooltip]="'The property in this class must have one value'"
         [matTooltipPosition]="'above'"
+        data-cy="required-toggle"
         [checked]="propertyForm.get('required').value">
         Required field?
       </mat-slide-toggle>
@@ -147,6 +155,7 @@
       mat-raised-button
       type="button"
       color="primary"
+      data-cy="submit-button"
       [disabled]="
                 !labels?.length || (propertyForm.enabled && !propertyForm.valid)
             "
@@ -189,6 +198,7 @@
         mat-raised-button
         type="button"
         color="primary"
+        data-cy="submit-button"
         [disabled]="!canSetCardinality"
         (click)="submitData()"
         class="submit">

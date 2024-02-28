@@ -16,12 +16,14 @@ import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
     <form [formGroup]="form">
       <app-common-input
         class="name-input"
+        data-cy="name-input"
         [formGroup]="form"
         controlName="name"
         placeholder="Class name *"
         prefixIcon="fingerprint"></app-common-input>
 
       <dasch-swiss-multi-language-input
+        data-cy="label-input"
         placeholder="Label *"
         [formGroup]="form"
         controlName="labels"
@@ -29,6 +31,7 @@ import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
       </dasch-swiss-multi-language-input>
 
       <dasch-swiss-multi-language-textarea
+        data-cy="comment-textarea"
         placeholder="Comment *"
         [formGroup]="form"
         controlName="comments"

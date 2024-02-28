@@ -6,6 +6,7 @@
         matInput
         class="ontology-name"
         autocomplete="off"
+        data-cy="name-input"
         [maxlength]="nameMaxLength"
         [formControl]="ontologyForm.controls['name']"
         [placeholder]="'Set a unique name'" />
@@ -22,13 +23,19 @@
 
     <mat-form-field class="large-field ontology-label">
       <span *ngIf="!iri" matPrefix>{{ project.shortname }}:&nbsp;</span>
-      <input matInput placeholder="Label" [formControl]="ontologyForm.controls['label']" [value]="ontologyLabel" />
+      <input
+        matInput
+        data-cy="label-input"
+        placeholder="Label"
+        [formControl]="ontologyForm.controls['label']"
+        [value]="ontologyLabel" />
       <mat-hint *ngIf="formErrors.label"> {{ formErrors.label }} </mat-hint>
     </mat-form-field>
 
     <mat-form-field class="large-field ontology-comment">
       <textarea
         matInput
+        data-cy="comment-textarea"
         placeholder="Comment"
         [value]="ontologyComment"
         [formControl]="ontologyForm.controls['comment']"
@@ -41,7 +48,12 @@
     <div class="form-panel form-action">
       <span class="fill-remaining-space"></span>
       <span>
-        <button mat-raised-button type="submit" [color]="error ? 'warn' : 'primary'" [disabled]="!ontologyForm.valid">
+        <button
+          mat-raised-button
+          data-cy="submit-button"
+          type="submit"
+          [color]="error ? 'warn' : 'primary'"
+          [disabled]="!ontologyForm.valid">
           <div class="progress-button-content">
             <dasch-swiss-app-progress-indicator
               *ngIf="loading"

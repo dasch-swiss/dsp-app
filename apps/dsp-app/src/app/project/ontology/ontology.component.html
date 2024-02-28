@@ -7,6 +7,7 @@
       <mat-toolbar-row>
         <span class="ontology-info">
           <h3
+            data-cy="ontology-label"
             class="mat-headline-6"
             [matTooltip]="(currentOntology$ | async).label + ((currentOntology$ | async).comment ? ' &mdash; ' + (currentOntology$ | async).comment : '')"
             matTooltipPosition="above">
@@ -37,6 +38,7 @@
             <button
               *ngIf="(currentOntology$ | async) as currentOntology"
               color="primary"
+              data-cy="edit-ontology-button"
               mat-button
               [disabled]="(lastModificationDate$ | async | isFalsy) || (isAdmin$ | async) === false"
               (click)="$event.stopPropagation(); openOntologyForm('editOntology', currentOntology.id)">
@@ -81,6 +83,7 @@
               [matTooltipDisabled]="lastModificationDate$ | async">
               <button
                 mat-button
+                data-cy="create-class-button"
                 [matMenuTriggerFor]="addResClassMenu"
                 [disabled]="lastModificationDate$ | async | isFalsy">
                 <mat-icon>add</mat-icon>
@@ -88,6 +91,7 @@
               </button>
               <mat-menu #addResClassMenu="matMenu" xPosition="before">
                 <button
+                  [attr.data-cy]="type.iri.split('#').pop()"
                   mat-menu-item
                   *ngFor="let type of defaultClasses; trackBy: trackByDefaultClassFn"
                   (click)="createResourceClass(type)">
@@ -98,7 +102,12 @@
             </span>
           </span>
           <mat-divider></mat-divider>
-          <a mat-list-item routerLinkActive="active" [routerLink]="propertiesLink" (click)="view = 'properties'"
+          <a
+            mat-list-item
+            routerLinkActive="active"
+            data-cy="properties-button"
+            [routerLink]="propertiesLink"
+            (click)="view = 'properties'"
             >Properties</a
           >
           <span
@@ -108,6 +117,7 @@
             [matTooltipDisabled]="lastModificationDate$ | async">
             <button
               mat-button
+              data-cy="create-property-button"
               *ngIf="view === 'properties'"
               [matMenuTriggerFor]="addPropertyMenu"
               [disabled]="lastModificationDate$ | async | isFalsy">
@@ -116,11 +126,14 @@
             </button>
             <mat-menu #addPropertyMenu="matMenu" xPosition="before" class="switch-nested-menu">
               <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropertyCategoryFn">
-                <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{ type.group }}</button>
+                <button mat-menu-item [matMenuTriggerFor]="sub_menu" [attr.data-cy]="type.group">
+                  {{ type.group }}
+                </button>
                 <mat-menu #sub_menu="matMenu" class="switch-nested-sub-menu">
                   <button
                     mat-menu-item
                     *ngFor="let ele of type.elements; trackBy: trackByElementFn"
+                    [attr.data-cy]="ele.label"
                     [value]="ele"
                     [matTooltip]="ele.description"
                     matTooltipPosition="before"

@@ -1,4 +1,9 @@
-<div class="property-info" [class.standalone]="true" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+<div
+  data-cy="property-info"
+  class="property-info"
+  [class.standalone]="true"
+  (mouseenter)="mouseEnter()"
+  (mouseleave)="mouseLeave()">
   <div class="upper-prop-container">
     <div mat-line class="title" [class.with-line-break]="true">
       <span
@@ -12,7 +17,8 @@
         class="label"
         [matTooltip]="propDef.comment"
         matTooltipPosition="above"
-        matTooltipClass="multi-line-tooltip">
+        matTooltipClass="multi-line-tooltip"
+        data-cy="property-label">
         {{!propDef.labels.length ? propDef?.label : propDef.labels | appStringifyStringLiteral:'all'}}
       </span>
       <!-- property is linked to a class or to a list: display connected class or list -->

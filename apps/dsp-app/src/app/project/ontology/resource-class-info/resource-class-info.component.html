@@ -1,4 +1,4 @@
-<mat-card appearance="outlined" class="resource-class" cdkDrag cdkDragBoundary=".drag-drop-stop">
+<mat-card data-cy="class-card" appearance="outlined" class="resource-class" cdkDrag cdkDragBoundary=".drag-drop-stop">
   <!-- class card header -->
   <mat-card-header class="resource-class-header" cdkDragHandle>
     <!-- TODO: the res class icon is missing in ClassDefinition from DSP-JS-Lib; DSP-JS has to be updated first (s. DSP-1366) -->
@@ -72,6 +72,7 @@
       cdkDropList
       class="resource-class-properties"
       (cdkDropListDropped)="drop($event, currentOntologyPropertiesToDisplay)"
+      data-cy="resource-class-properties-list"
       *ngIf="currentOntologyPropertiesToDisplay?.length; else noProperties">
       <div
         cdkDrag
@@ -112,11 +113,12 @@
       <p>There are no properties assigned to this class yet.</p>
     </ng-template>
     <!-- button to assign new property to class -->
-    <mat-list>
+    <mat-list data-cy="resource-class-properties-empty-list">
       <!-- here we have to know if the class has values or not -->
       <mat-list-item
         *ngIf="(lastModificationDate$ | async) && projectStatus && userCanEdit"
         class="property link"
+        data-cy="add-property-button"
         [matMenuTriggerFor]="addPropertyMenu">
         <mat-icon matListItemIcon class="list-icon">add</mat-icon>
         <span matListItemTitle>Add property</span>
@@ -124,12 +126,16 @@
     </mat-list>
 
     <mat-menu #addPropertyMenu="matMenu" xPosition="after">
-      <button mat-menu-item [matMenuTriggerFor]="newFromPropType">Create new from type</button>
-      <button mat-menu-item [matMenuTriggerFor]="addExistingProp">Add existing property</button>
+      <button data-cy="create-new-property-from-type-button" mat-menu-item [matMenuTriggerFor]="newFromPropType">
+        Create new from type
+      </button>
+      <button data-cy="add-existing-property-button" mat-menu-item [matMenuTriggerFor]="addExistingProp">
+        Add existing property
+      </button>
     </mat-menu>
     <mat-menu #newFromPropType="matMenu">
       <ng-container *ngFor="let type of defaultProperties; trackBy: trackByPropCategoryFn">
-        <button mat-menu-item [matMenuTriggerFor]="sub_menu">{{type.group}}</button>
+        <button mat-menu-item [matMenuTriggerFor]="sub_menu" [attr.data-cy]="type.group">{{type.group}}</button>
         <mat-menu #sub_menu="matMenu" class="default-nested-sub-menu">
           <button
             mat-menu-item
@@ -137,6 +143,8 @@
             [value]="ele"
             [matTooltip]="ele.description"
             matTooltipPosition="after"
+            data-cy="add-new-property-button"
+            [attr.data-cy]="ele.label"
             (click)="addNewProperty(ele, currentOntologyPropertiesToDisplay)">
             <mat-icon>{{ele.icon}}</mat-icon> {{ele.label}}
           </button>
@@ -154,6 +162,7 @@
             *ngFor="let prop of onto.properties; trackBy: trackByPropFn"
             [matTooltip]="prop.propDef.comment"
             matTooltipPosition="after"
+            data-cy="add-existing-property-button"
             (click)="addExistingProperty(prop, currentOntologyPropertiesToDisplay)">
             <mat-icon>{{prop.propType?.icon}}</mat-icon> {{prop.propDef.label}}
           </button>
