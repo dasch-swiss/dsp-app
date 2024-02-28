@@ -2,24 +2,30 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-image-display-ratio',
-  template: ` <div class="frame">
-    <div [ngStyle]="{ width: ratio * 300 + 'px', height: ratio * 200 + 'px' }" class="back-rectangle">
-      <div class="arrow left-arrow"></div>
-      <div class="arrow right-arrow"></div>
+  template: `
+    <div class="frame">
+      <div
+        [ngStyle]="{
+          width: ratio * 330 + 'px',
+          height: ratio * 390 + 'px'
+        }"
+        [style.filter]="!isWatermark ? 'blur(' + Math.ceil((1 - ratio) * 4) + 'px)' : null"
+        class="back-rectangle"></div>
       <div class="helper">Ratio: {{ Math.ceil(ratio * 100) }}%</div>
+      <div class="watermark" *ngIf="isWatermark"></div>
     </div>
-  </div>`,
+  `,
   styles: [
     `
       .frame {
         background: gray;
-        width: 300px;
-        height: 200px;
+        width: 330px;
+        height: 390px;
         position: relative;
       }
 
       .back-rectangle {
-        background: darkgray;
+        background: no-repeat center/100% url('../../../assets/images/image-settings.jpg');
         bottom: 0;
         right: 0;
         position: absolute;
@@ -34,41 +40,20 @@ import { Component, Input } from '@angular/core';
         width: 100%;
       }
 
-      .arrow {
+      .watermark {
         position: absolute;
-        height: 1px; /* Adjust the height of the stick */
-        background-color: red; /* Adjust the color of the stick */
-        right: 0;
-        bottom: 0px;
-        width: 119%;
-        transform: rotate(33deg);
-        transform-origin: bottom right;
-      }
-
-      .left-arrow::before,
-      .right-arrow::before {
-        content: '';
-        position: absolute;
-        top: -5px;
-        width: 0;
-        height: 0;
-        border-top: 5px solid transparent; /* Adjust the height of the arrow */
-        border-bottom: 5px solid transparent; /* Adjust the height of the arrow */
-      }
-
-      .left-arrow::before {
-        right: 0;
-        border-left: 10px solid red; /* Adjust the width and color of the arrow */
-      }
-
-      .right-arrow::before {
-        left: 0;
-        border-right: 10px solid red; /* Adjust the width and color of the arrow */
+        top: 0;
+        background: no-repeat center/100% url('../../../assets/images/image-settings-watermark.png');
+        background-repeat: repeat-y;
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;
       }
     `,
   ],
 })
 export class ImageDisplayRatioComponent {
   @Input() ratio: number;
+  @Input() isWatermark: boolean = false;
   protected readonly Math = Math;
 }

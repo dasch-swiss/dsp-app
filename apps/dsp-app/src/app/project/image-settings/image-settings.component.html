@@ -1,78 +1,37 @@
 <dasch-swiss-centered-layout>
   <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
-  <div class="content large middle" *ngIf="(isProjectsLoading$ | async) === false">
-    <div>
+  <div class="content small middle" *ngIf="(isProjectsLoading$ | async) === false">
+    <div class="mb-6">
       <div class="mb-6">
         <mat-slide-toggle [(ngModel)]="isWatermark">
           {{ 'appLabels.form.project.imageSettings.isWatermark' | translate }}
         </mat-slide-toggle>
       </div>
       <div class="mb-2">
-        <mat-slide-toggle [(ngModel)]="allowRestriction">
+        <mat-slide-toggle [(ngModel)]="isWatermark ? false : allowRestriction" [disabled]="isWatermark">
           {{ 'appLabels.form.project.imageSettings.restrictImageSize' | translate }}
         </mat-slide-toggle>
       </div>
-      <div *ngIf="allowRestriction">
-        <div style="margin-bottom: 16px">
-          <mat-radio-group [(ngModel)]="isPercentageSize" [ngModelOptions]="{standalone: true}">
-            <mat-radio-button [value]="true">
-              {{ 'appLabels.form.project.imageSettings.ratio' | translate }}
-            </mat-radio-button>
-            <mat-radio-button [value]="false">
-              {{ 'appLabels.form.project.imageSettings.fixed' | translate }}
-            </mat-radio-button>
-          </mat-radio-group>
-        </div>
-
-        <div *ngIf="isPercentageSize" [@replaceAnimation] class="flex-with-gap">
-          <section class="child">
-            <div class="large-field">
-              <mat-label>
-                {{ 'appLabels.form.project.imageSettings.percentageValue' | translate }} : {{ percentageSlider.value }}%
-              </mat-label>
-            </div>
-
+      <div [@replaceAnimation]>
+        <section class="child">
+          <div class="large-field">
             <mat-slider
-              min="10"
-              max="90"
-              step="10"
+              [disabled]="isWatermark || !allowRestriction"
+              min="1"
+              max="99"
+              step="1"
               showTickMarks
               discrete
               [displayWith]="formatPercentageLabel"
               ngDefaultControl>
               <input #percentageSlider matSliderThumb [(value)]="percentage" />
             </mat-slider>
-          </section>
-          <app-image-display-ratio
-            *ngIf="isPercentageSize"
-            [ratio]="percentage/100"
-            class="child"></app-image-display-ratio>
-        </div>
-
-        <div *ngIf="!isPercentageSize" [@replaceAnimation] class="flex-with-gap">
-          <section>
-            <div class="large-field">
-              <mat-label>
-                {{ 'appLabels.form.project.imageSettings.absoluteWidth' | translate }}: {{ fixedWidth }} px
-              </mat-label>
-            </div>
-            <mat-slider
-              [min]="0"
-              [max]="4"
-              [step]="1"
-              showTickMarks
-              [displayWith]="formatAbsoluteLabel"
-              discrete
-              ngDefaultControl>
-              <input
-                (valueChange)="absoluteSliderChange($event)"
-                [value]="absoluteWidthIndex(fixedWidth)"
-                matSliderThumb />
-            </mat-slider>
-          </section>
-          <app-image-display-absolute *ngIf="!isPercentageSize" [widthPx]="fixedWidth"></app-image-display-absolute>
-        </div>
+          </div>
+        </section>
       </div>
+      <app-image-display-ratio
+        [isWatermark]="isWatermark"
+        [ratio]="(!allowRestriction || isWatermark) ? 1 : percentageSlider.value/100"></app-image-display-ratio>
     </div>
     <div class="action-buttons mt-2">
       <button
