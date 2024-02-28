@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -15,7 +15,7 @@ export class AddRegionFormComponent implements OnInit {
   ngOnInit(): void {
     this.regionForm = this._fb.group({
       color: ['#ff3333', [Validators.required, Validators.pattern(this.colorPattern)]],
-      comment: [null, Validators.required],
+      comment: [null],
       label: [null, Validators.required],
     });
   }
