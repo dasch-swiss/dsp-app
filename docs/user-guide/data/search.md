@@ -2,7 +2,6 @@
 
 DSP-APP offers the possibility for the user to search in 3 different ways: **full-text** search, **advanced** search, and **expert** search (Gravsearch query). The search bar is always available in the header of each page, whether logged in or out.
 
-
 ## Full-text search
 
 DSP offers a full-text search that searches through all text values and labels of resources based on one or several terms (or phrase) entered in the search bar.
@@ -17,19 +16,16 @@ When clicking on the search bar, the search history panel is displayed. The last
 
 ### Search rules
 
-* A search value must have a minimum length of **3** characters. If your search term has less than three characters (e.g. `is`), please add two asterisks (`*is*`).
-
-* All terms are interpreted as **lowercase** characters. E.g. *My dearest Maria* is interpreted as *my dearest maria*.
-
-* By default, the logical operator `OR` is used when submitting several search terms. I.e. the name `George Sand` is searched as `george` OR `sand`. The database will return all results that include the terms `George Sand`, `george`, or `sand`. To find the exact name `George Sand`, the term must be surrounded by quotes: `"George Sand"`.
-
-* Each term separated by a **whitespace** is considered a single term. E.g. the term `mon petit chat` will be searched as `mon` OR `petit` OR `chat`. To find the exact phrase `mon petit chat`, the phrase must be surrounded by quotes: `"mon petit chat"`.
+- A search value must have a minimum length of **3** characters. If your search term has less than three characters (e.g. `is`), please add two asterisks (`*is*`).
+- All terms are interpreted as **lowercase** characters. E.g. *My dearest Maria* is interpreted as *my dearest maria*.
+- By default, the logical operator `OR` is used when submitting several search terms. I.e. the name `George Sand` is searched as `george` OR `sand`. The database will return all results that include the terms `George Sand`, `george`, or `sand`. To find the exact name `George Sand`, the term must be surrounded by quotes: `"George Sand"`.
+- Each term separated by a **whitespace** is considered a single term. E.g. the term `mon petit chat` will be searched as `mon` OR `petit` OR `chat`. To find the exact phrase `mon petit chat`, the phrase must be surrounded by quotes: `"mon petit chat"`.
 
 ### Special syntax
 
 Special characters can be used in order to search for specific text patterns.
 
-Here is the list of characters with special meaning: +, -, &&, ||, !, (, ), [, ], {, }, ^, ", ~, *, ?, :, \, /
+Here is the list of characters with special meaning: `+, -, &&, ||, !, (, ), [, ], {, }, ^, ", ~, *, ?, :, \, /`
 
 For more information about them, please read the [Lucene documentation](https://lucene.apache.org/core/7_7_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html).
 
@@ -38,9 +34,9 @@ Another example: If you search for the term `(1995)` that includes parenthesis i
 
 **Focus on the most common used characters:**
 
-* `*`: The **askerisk** can be used as a wildcard symbol for **zero, one, or multiple characters**. E.g. `pari*` will yield results such as `Paris`, `Parisian`, `parity`, `parish`, etc.
-* `?`: The **question mark** can be used as a wildcard symbol for a **single character**. E.g. `Bern?` will yield results such as `Berne`, `Bernt`, etc.
-* `""`: **Quotation marks** allow searches for the **whole pattern**. E.g. `"vittāni agne"` yields a result for the exact term `vittāni agne`. If your search term consists of more than one word and you intend to do an `AND` search, please use quotation marks.
+- `*`: The **askerisk** can be used as a wildcard symbol for **zero, one, or multiple characters**. E.g. `pari*` will yield results such as `Paris`, `Parisian`, `parity`, `parish`, etc.
+- `?`: The **question mark** can be used as a wildcard symbol for a **single character**. E.g. `Bern?` will yield results such as `Berne`, `Bernt`, etc.
+- `""`: **Quotation marks** allow searches for the **whole pattern**. E.g. `"vittāni agne"` yields a result for the exact term `vittāni agne`. If your search term consists of more than one word and you intend to do an `AND` search, please use quotation marks.
 
 In order to make searching easier and independent of special characters, we recommand to use the advanced search. It will narrow down the search and accept special letters or characters. E.g. the exact writing `rāmāyaṇī` will be accepted and found.
 
@@ -61,12 +57,10 @@ Such an example is `r̥tasya`, where the `r̥` must be replaced either by `rr` o
 
 ## Advanced search
 
-
-
 ![search-advanced-link Advanced search link is findable in the search menu at the right of the full-text search field.](https://github.com/dasch-swiss/dsp-das/assets/136320187/a550b36a-3de9-4788-8fb9-13bd575c1199)
 
-The advanced search allows the creation of complex queries using a form. The advanced search can be accessed from the data browser of any project. 
-The form creates a string representing a Gravsearch (SPARQL) query to be sent to DSP-API. 
+The advanced search allows the creation of complex queries using a form. The advanced search can be accessed from the data browser of any project.
+The form creates a string representing a Gravsearch (SPARQL) query to be sent to DSP-API.
 
 A query consists of the following elements:
 
@@ -82,28 +76,25 @@ Although the selection of a resource or a property or both are optional, either 
 
 You can open the "Order by" dropdown, by selecting the checkboy of the property, you specify that it will be sorted by. The order of the entries determines which criterion should be used for sorting first. You can reorder them by clicking and dragging them.
 
-
-https://github.com/dasch-swiss/dsp-das/assets/136320187/e43bb484-91b9-48ad-a59d-0e7c79a4df1b
-
-
+<https://github.com/dasch-swiss/dsp-das/assets/136320187/e43bb484-91b9-48ad-a59d-0e7c79a4df1b>
 
 ### Comparison Operators
 
 Depending on the value type of the chosen property,
 one or more of the following comparison operators can be selected:
 
-* `is equal to`: value equality: same number, exact same string, an overlap of date periods, same target resource.
-* `is not equal to`: value inequality: not same number, not exact same string, no overlap of date periods, not same target resource.
-* `is greater than`: value comparison: number is greater than search value, date period begins after search value.
-* `is greater than or equal to` value equality/value comparison: number is equal to or greater than search value, an overlap of date periods or date period begins after search value.
-* `is less than`: value comparison: number is less than search value, date period ends before search value.
-* `is less than or equal to`: value equality/value comparison: number is equal to or less than search value, an overlap of date periods or date period ends before search value.
-* `exists`: value for the given property exists.
-* `not exists`: value for the given property doesn't exist.
-* `is like`: search value is contained in a text using the SPARQL [REGEX](https://www.w3.org/TR/sparql11-query/#func-regex) function (supports regular expressions).
-* `matches`:
-  * text property: search value matches the text ([Lucene Query Parser Syntax](https://docs.dasch.swiss/latest/DSP-API/07-lucene/lucene-query-parser-syntax/)).
-  * linking property: matches the specified linked resource.
+- `is equal to`: value equality: same number, exact same string, an overlap of date periods, same target resource.
+- `is not equal to`: value inequality: not same number, not exact same string, no overlap of date periods, not same target resource.
+- `is greater than`: value comparison: number is greater than search value, date period begins after search value.
+- `is greater than or equal to` value equality/value comparison: number is equal to or greater than search value, an overlap of date periods or date period begins after search value.
+- `is less than`: value comparison: number is less than search value, date period ends before search value.
+- `is less than or equal to`: value equality/value comparison: number is equal to or less than search value, an overlap of date periods or date period ends before search value.
+- `exists`: value for the given property exists.
+- `not exists`: value for the given property doesn't exist.
+- `is like`: search value is contained in a text using the SPARQL [REGEX](https://www.w3.org/TR/sparql11-query/#func-regex) function (supports regular expressions).
+- `matches`:
+    - text property: search value matches the text ([Lucene Query Parser Syntax](https://docs.dasch.swiss/latest/DSP-API/07-lucene/lucene-query-parser-syntax/)).
+    - linking property: matches the specified linked resource.
 
 ### Search Examples
 
@@ -116,8 +107,6 @@ For general information about regular expressions, see this [interactive tutoria
 ![is-like-operator](https://github.com/dasch-swiss/dsp-das/assets/136320187/d3d18b82-c5a3-4d8c-902f-813d1dac9296)
 
 ![is-like-search-results](https://github.com/dasch-swiss/dsp-das/assets/136320187/89a5d664-a75a-4b5e-867e-56e0c5347610)
-
-
 
 #### matches (Lucene Parser Syntax)
 
@@ -144,15 +133,11 @@ This is different from the "is equal to" operator that lets the user specify a c
 
 ![Specified-linked-resource](https://github.com/dasch-swiss/dsp-das/assets/136320187/739e7584-bd2d-4e84-839c-61dbf7fe05bd)
 
-
-
-
 ---
 
 ## Expert search
 
 ![Expert-link](https://github.com/dasch-swiss/dsp-das/assets/136320187/7a12ded5-0eac-4cb7-8ca0-ef53e3821f4b)
-
 
 The expert search can be more powerful than the advanced search, but requires knowing how to use the query language Gravsearch (based on SparQL and developed by the DaSCH team). With Gravsearch, expert users can build searches by combining text-related criteria with any other criteria.
 

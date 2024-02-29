@@ -25,13 +25,13 @@ Everything about the resource is displayed below the media viewer (when there is
 
 ![Resource toolbar description.](../../assets/images/resource-toolbar.png)
 
-##### Audio file
+#### Audio file
 
 Supported file types: **mp3**, **wav**
 
 ![Audio viewer](../../assets/images/audio-file.png)
 
-##### Image file
+#### Image file
 
 Supported file types: **jpeg**, **jp2**, **jpg**, **tiff**, **tif**, **png**
 
@@ -49,25 +49,25 @@ To access the regions, go to the **annotation** panel. You can **click on an exi
 
 ![Access the annotation panel](../../assets/images/access_annotation_panel.png)*Access the annotation panel from the resource toolbar.*
 
-##### Document file
+#### Document file
 
 Supported file types: **pdf**, **doc**, **docx**, **xls**, **xlsx**, **ppt**, **pptx**
 
 ![PDF viewer](../../assets/images/pdf-file.png)
 
-##### Text file
+#### Text file
 
 Supported file types: **csv**, **txt**, **xml**, **xsd**, **xsl**
 
 ![Text viewer](../../assets/images/text-doc-file.png)
 
-##### Video file
+#### Video file
 
 Supported file types: **mp4**
 
 ![Video viewer](../../assets/images/video-file.png)
 
-##### Archive file
+#### Archive file
 
 Supported file types: **7z**, **gz**, **gzip**, **tar**, **tgz**, **z**, **zip**
 
@@ -173,7 +173,6 @@ It is the same process to add, edit or delete a comment to the value.
 To delete a resource, there are 2 possibilities:
 
 1. **Delete** resource: the resource is not searchable or findable in DSP-APP anymore but the data still exists in the database.
-
 2. **Erase** resource: the resource is **permanently** deleted from the database, it will be impossible to get it back.
 
 ![Delete or erase a resource.](../../assets/images/delete-erase-resource.png)*Delete or erase a resource.*

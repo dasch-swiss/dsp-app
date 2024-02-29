@@ -2,7 +2,7 @@
     "default": true,
     "no-hard-tabs": false,
     "line-length": false,
-    "list-indent": false,
+    "list-indent": true,
     "no-multiple-blanks": {
         "maximum": 1
     },
@@ -10,17 +10,21 @@
         "style": "atx"
     },
     "blanks-around-headings": {
-        "lines_below": 0
+        "lines_below": 1,
+        "lines_above": 1
     },
-    "indentation": false,
+    "ul-style": {
+        "style": "consistent"
+    },
     "ul-indent": {
-        "indent": 0
+        "indent": 4,
+        "start_indented": false
     },
     "list-marker-space": {
         "ul_single": 1,
         "ol_single": 1
     },
     "ol-prefix": {
-        "style": "one"
+        "style": "one_or_ordered"
     }
 }

@@ -6,11 +6,11 @@ Once you are [logged in](index.md#login), the projects overview page displays al
 
 Active projects are tagged with the status "Active". Projects tagged as "Deactivated" can no longer be edited. Only a system admin is allowed to change the project status.
 
- The setting icon on the top right of each project tile is displayed only for projects and system admins. It leads to the project settings page.
+The setting icon on the top right of each project tile is displayed only for projects and system admins. It leads to the project settings page.
 
 ![Project list and project menu](../assets/images/dashboard.png)*<https://app.dasch.swiss/> - DSP-APP projects overview page.*
 
- By clicking on the button `Browse Data`, you go to the **project workspace**. You get access to the project information, the data model (if you are logged in), and the project settings (if you are logged in as a project admin or a system admin).
+By clicking on the button `Browse Data`, you go to the **project workspace**. You get access to the project information, the data model (if you are logged in), and the project settings (if you are logged in as a project admin or a system admin).
 
 ### Create a new project
 
@@ -24,10 +24,10 @@ This currently requires essential information such as the project name, a short 
 
 From the side panel of the project workspace, as a project admin (or a system admin), you can access:
 
-* **Project Description**: define your project information or edit it
-* **Data Model**: define your data model and the lists of controlled vocabulary
-* **List of Resources**: view all resource classes, search by resource class, and create new resource instances
-* **Project Settings**: add users as project members
+- **Project Description**: define your project information or edit it
+- **Data Model**: define your data model and the lists of controlled vocabulary
+- **List of Resources**: view all resource classes, search by resource class, and create new resource instances
+- **Project Settings**: add users as project members
 
 > Project members and logged-in users from other projects can also view the project description, the data model, and the list of resource classes.
 
@@ -43,10 +43,10 @@ As a project admin (or a system admin), you can add users as project members. Th
 
 From the project workspace, as a project member, you can:
 
-* View the project information
-* View the data model
-* Get the list of resource classes with the number of entries, and click on the tiles to make a search by resource class
-* Create or edit resources
+- View the project information
+- View the data model
+- Get the list of resource classes with the number of entries, and click on the tiles to make a search by resource class
+- Create or edit resources
 
 ---
 
@@ -56,8 +56,8 @@ The definition of the data model (*ontology*) is the most important step. The da
 
 The question which you have to answer before you create your data model is **according to which criteria do you organize your data**? In this respect it may be useful to ask yourself:
 
-* *How are your data organized?*
-* *What are the goals you want to achieve, which research questions do you want to answer?*
+- *How are your data organized?*
+- *What are the goals you want to achieve, which research questions do you want to answer?*
 
 As soon as you have come to a conclusion concerning the structure of your data, you're all set to create your data model.
 
@@ -77,20 +77,20 @@ From the data model overview page, click on the button `Create New`. You can fil
 
 Now you have to set a unique name (*please consider the NOTE*) and you can add a comment. Push the button `Create` to create your data model.
 
-> **_NOTE:_***There are some rules for the unique name:*
+> **NOTE: There are some rules for the unique name:**
 >
-> - *must be at least 3 characters long*
-> - *shouldn't start with a number*
-> - *shouldn't start with the letter v and a number*
-> - *spaces or special characters are not allowed*
-> - *may not contain these reserved terms:*
->   - *knora*
->   - *ontology*
->   - *salsah*
->   - *shared*
->   - *simple*
->   - *standoff*
-> - *the unique name can't be changed afterward!*
+> - must be at least 3 characters long
+> - shouldn't start with a number
+> - shouldn't start with the letter v and a number
+> - spaces or special characters are not allowed
+> - may not contain these reserved terms:
+>     - knora
+>     - ontology
+>     - salsah
+>     - shared
+>     - simple
+>     - standoff
+> - the unique name can't be changed afterward!
 
 *The label is a combination of the project's short name and the unique name. You can replace it with any other string.*
 ![Define the name of your data model.](../assets/images/Fig4.png)
@@ -113,7 +113,6 @@ Which type you choose depends on the data type which you need to describe. Let's
 
 For the label you could write *Book*, and you should add a preferably meaningful comment in at least one of the predefined languages English (en), German (de), French (fr) or Italian (it). Then click the `Submit` button:
 ![Give a label and a description.](../assets/images/Fig9.png)
-
 
 Now you have created your first class *Book*, as seen below:
 ![Layout after the creation of the resource class.](../assets/images/Fig10.png)
@@ -175,14 +174,19 @@ If you want to confirm the change, click "Continue" and the toggle will now be a
 ![Changing a cardinality of a property without data](../assets/images/changing_without_data_3.png)
 
 ### Widening or restricting a cardinality of a property with data
+
 If data is already present, widening and restricting the cardinality of a property is possible if e.g., in a required property in every resource the values are available. In this case the same procedure applies as described in the sections above.
 
 ### Widening or restricting a cardinality of a property if a resource does not contain all the values
+
 If values are missing in the resources and you want to adjust the cardinality so that the resources do not match the selected cardinality (e.g. set a property to required, but the field is empty), an error message is displayed. In this case, all resources must be corrected first, then the desired cardinality can be set.
 
 ### Widening or restricting a cardinality of a property: Special cases
+
 #### Superclasses and subclasses
+
 Changing the cardinality of a superclass and a subclass and reversing it does not work if the properties are in a subproperty relationship or the changed property in the superclass does not exist in the subclass.
+
 ### Correct property selection in case of special classes
 
 #### Book class with pages as individual classes
@@ -193,6 +197,7 @@ This is how a book and the page class could look like:
 ![Page class as part of Book class](../assets/images/Fig42.png)
 
 ### Define Controlled Vocabularies
+
 One of the possible property types to choose from is *List* (= Controlled Vocabulary). Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields. Typical examples are keywords. In your book example, it may be useful to define a property that describes to which category of literature your pdf of a book belongs. **Before** you can add a property of type *List* to your data model, you have to define this controlled vocabulary. For its definition, you go to the data model overview page from your project workspace (Step 1):
 ![List tab.](../assets/images/controlled-voca-create.png)
 
@@ -206,6 +211,7 @@ A new window opens up and as in the case of other properties you have to add a l
 ![Select list for list property.](../assets/images/Fig41.png)
 
 #### How to define items in a controlled vocabulary
+
 In our example, we have created a controlled vocabulary named *Category*. Now, it is time to define the items. We will list some main literary genres as the first hierarchy in our controlled vocabulary. Enter the name of the node and click the `+` as shown below:
 ![Define main nodes.](../assets/images/Fig36.png)
 
@@ -216,6 +222,7 @@ It is possible to add controlled vocabulary items at any time. You may rearrange
 ![Define further list nodes.](../assets/images/Fig39.png)
 
 ### Remove PROPERTIES from a resource class
+
 To remove a property, hover over the property which you want to remove. By doing so you see a white x with a black background (remove button) appearing, it is highlighted in yellow in the image below:
 ![Remove properties from resource class.](../assets/images/Fig18.png)
 
@@ -224,11 +231,13 @@ If you click the remove button, the property is removed and a green box pops up 
 ![Confirmation of the remove.](../assets/images/Fig19.png)
 
 ### Delete a property
+
 In order to really delete a property you have to go to the `Properties` section as shown below. Click on `Properties`, and afterwards click on the waste basket sign of the property which you intend to delete.
 ![Delete a property.](../assets/images/Fig38.png)
 *Be aware, you can only delete properties which are NOT used in a resource class and if they were never used! This means an already used properties even with deleted values cannot be deleted!*
 
 ### Delete a CLASS
+
 To delete a resource class, click on the three dots in the box of the class which you want to delete.
 ![Delete a resource class.](../assets/images/Fig20.png)
 
@@ -238,15 +247,18 @@ The following box appears and you then have to click `Delete resource class`.
 In the alert window popping up, you click the red button `Delete`. Afterwards, the resource class is deleted.
 
 ### Delete a data model
+
 To delete a whole data model, you have to click the button `Delete` on the right-hand side in the section `Data model configuration`.
 ![Delete data model.](../assets/images/Fig22.png)
 
 In the alert window appearing, you click the red button `Delete`. The data model is now deleted.
 
 ## An example
+
 In the following example we focus on how we can reflect about our data before building our model and how a data model can relate classes to each other.
 
 ### Preparing a data model
+
 You have interviewed 20 people and recorded the interviews. During these interviews you talked about photographs. Among all the data collected during the project, the most important are:
 
 -	audio-files of the interview

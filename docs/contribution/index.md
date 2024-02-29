@@ -3,7 +3,7 @@
 <!-- TODO: the following section is moved from the main README and has to be updated -->
 ## Development server
 
-DSP-APP is built with [Angular](https://angular.io/) and uses [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm). 
+DSP-APP is built with [Angular](https://angular.io/) and uses [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 
 You have to install the corresponding packages with `npm i`. Now you have to possibilites to run the application in developer mode:
 
