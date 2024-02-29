@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ListNode } from '@dasch-swiss/dsp-js';
+import { MultiLanguageFormArray } from '@dasch-swiss/vre/shared/app-string-literal';
 import { ListItemService } from '../list-item/list-item.service';
 
 @Component({
@@ -16,8 +17,7 @@ import { ListItemService } from '../list-item/list-item.service';
           <dasch-swiss-multi-language-input
             [placeholder]="node.labels | appStringifyStringLiteral: 'all' | appTruncate: 128"
             [editable]="false"
-            [formGroup]="readOnlyForm"
-            controlName="labels"
+            [formArray]="labelsControl"
             [validators]="[]">
           </dasch-swiss-multi-language-input>
 
@@ -52,6 +52,11 @@ export class ListItemElementComponent implements OnInit, OnChanges {
   showActionBubble = false;
 
   readOnlyForm: FormGroup;
+
+  // TODO remove with typed forms
+  get labelsControl() {
+    return this.readOnlyForm.get('labels') as MultiLanguageFormArray;
+  }
 
   constructor(
     private _fb: FormBuilder,

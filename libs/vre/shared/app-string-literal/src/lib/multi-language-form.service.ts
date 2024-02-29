@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { FormBuilder, ValidatorFn } from '@angular/forms';
 import { UserSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
+import { DaschLanguage, isDaschLanguage } from './dash-language.type';
+import { MultiLanguageFormArray } from './multi-language-form-array.type';
 
 /** Component Provider used in combination with
  * MultiLanguageInputComponent and MultiLanguageTextareaComponent.
@@ -9,35 +11,32 @@ import { Store } from '@ngxs/store';
  */
 @Injectable()
 export class MultiLanguageFormService {
-  readonly availableLanguages = ['de', 'fr', 'it', 'en', 'rm'];
+  readonly availableLanguages: DaschLanguage[] = ['de', 'fr', 'it', 'en', 'rm'];
   selectedLanguageIndex: number;
-  formGroup: FormGroup;
-  controlName: string;
+  formArray: MultiLanguageFormArray;
   validators: ValidatorFn[];
 
   inputValue: string | null = null;
 
-  get formArray() {
-    return this.formGroup.controls[this.controlName] as FormArray;
+  get selectedFormControl() {
+    const index = this.formArray
+      .getRawValue()
+      .findIndex(v => v.language === this.availableLanguages[this.selectedLanguageIndex]);
+    return this.formArray.controls[index];
   }
 
-  get selectedFormControl(): FormControl {
-    return (
-      this.formArray.controls.find(
-        control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
-      ) as FormControl
-    ) // TODO as FormControl = bad pattern, should be refactored, also form should be with Typed values
-      .get('value') as FormControl;
+  get selectedLanguageControl() {
+    return this.selectedFormControl.controls.value;
   }
 
   get invalidErrors() {
     for (const control of this.formArray.controls) {
-      if (control.get('value')?.errors) {
-        return { language: control.value.language, error: control.get('value')?.errors };
+      if (control.controls.value.errors) {
+        return { language: control.getRawValue().language, error: control.controls.value.errors };
       }
     }
     if (this.formArray.errors) {
-      return { error: this.formArray.errors };
+      return { error: this.formArray.errors, language: undefined };
     }
     return undefined;
   }
@@ -48,9 +47,8 @@ export class MultiLanguageFormService {
     private _cd: ChangeDetectorRef
   ) {}
 
-  onInit(formGroup: FormGroup, controlName: string, validators: ValidatorFn[]) {
-    this.formGroup = formGroup;
-    this.controlName = controlName;
+  onInit(formArray: MultiLanguageFormArray, validators: ValidatorFn[]) {
+    this.formArray = formArray;
     this.selectedLanguageIndex = this._setupLanguageIndex();
     this.validators = validators;
 
@@ -58,7 +56,7 @@ export class MultiLanguageFormService {
       control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
     );
 
-    this.inputValue = newFormControl ? this.selectedFormControl.value : null;
+    this.inputValue = newFormControl ? this.selectedLanguageControl.value : null;
 
     this.formArray.valueChanges.subscribe(array => {
       if (array.length === 0) {
@@ -68,7 +66,7 @@ export class MultiLanguageFormService {
     });
   }
 
-  onInputChange(newText: any) {
+  onInputChange(newText: string) {
     if (newText === '') {
       if (this.inputValue && this.inputValue.length > 0) {
         this.formArray.removeAt(this.formArray.controls.indexOf(this.selectedFormControl));
@@ -79,14 +77,14 @@ export class MultiLanguageFormService {
 
     if (this.inputValue === null) {
       this.formArray.push(
-        this._fb.group({
+        this._fb.nonNullable.group({
           language: this.availableLanguages[this.selectedLanguageIndex],
           value: [newText, this.validators],
         })
       );
     }
 
-    this.selectedFormControl.setValue(newText);
+    this.selectedLanguageControl.setValue(newText);
     this.inputValue = newText;
   }
 
@@ -97,15 +95,16 @@ export class MultiLanguageFormService {
   changeLanguage(languageIndex: number) {
     this.selectedLanguageIndex = languageIndex;
 
-    const newFormControl = this.formArray.controls.find(
+    const existingControl = this.formArray.controls.find(
       control => control.value.language === this.availableLanguages[this.selectedLanguageIndex]
     );
 
-    this.inputValue = newFormControl ? this.selectedFormControl.value : null;
+    this.inputValue = existingControl ? this.selectedLanguageControl.value : null;
   }
 
   private _setupLanguageIndex(): number {
-    const responseLanguages = (this.formArray.value as { language: string }[])
+    const responseLanguages = this.formArray
+      .getRawValue()
       .map(v => v.language)
       .filter(language => this.availableLanguages.includes(language));
 
@@ -113,6 +112,9 @@ export class MultiLanguageFormService {
       (this._store.selectSnapshot(UserSelectors.language) as string) || navigator.language.substring(0, 2);
 
     if (responseLanguages.length === 0) {
+      if (!isDaschLanguage(userFavoriteLanguage)) {
+        return 0;
+      }
       // form is empty, push a new value
       const indexFavoriteLanguage = this.availableLanguages.indexOf(userFavoriteLanguage);
 
@@ -125,7 +127,11 @@ export class MultiLanguageFormService {
       }
     }
 
-    if (responseLanguages.includes(userFavoriteLanguage) && this.availableLanguages.includes(userFavoriteLanguage)) {
+    if (
+      isDaschLanguage(userFavoriteLanguage) &&
+      responseLanguages.includes(userFavoriteLanguage) &&
+      this.availableLanguages.includes(userFavoriteLanguage)
+    ) {
       return this.availableLanguages.indexOf(userFavoriteLanguage);
     }
 

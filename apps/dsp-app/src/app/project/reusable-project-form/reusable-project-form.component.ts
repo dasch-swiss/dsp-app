@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectsSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { MultiLanguageFormArray, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
@@ -38,9 +38,8 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
 
       <dasch-swiss-multi-language-textarea
         [placeholder]="('appLabels.form.project.general.description' | translate) + '*'"
-        [formGroup]="form"
+        [formArray]="descriptionControl"
         data-cy="description-input"
-        controlName="description"
         [validators]="descriptionValidators">
       </dasch-swiss-multi-language-textarea>
 
@@ -59,6 +58,11 @@ export class ReusableProjectFormComponent implements OnInit, OnDestroy {
     keywords: string[];
   };
   @Output() formValueChange = new EventEmitter<FormGroup>();
+
+  // TODO remove with typed forms
+  get descriptionControl() {
+    return this.form.get('description') as MultiLanguageFormArray;
+  }
 
   form: FormGroup;
   shortcodePatternError = { errorKey: 'pattern', message: 'This field must contains letters from A to F and 0 to 9' };

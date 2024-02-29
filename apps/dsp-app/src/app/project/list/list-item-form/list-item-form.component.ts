@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListInfoResponse, ListNode, ListNodeInfoResponse } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { MultiLanguageFormArray } from '@dasch-swiss/vre/shared/app-string-literal';
 import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
 import { ListItemService } from '../list-item/list-item.service';
 
@@ -18,8 +19,7 @@ export class ListNodeOperation {
     <form [formGroup]="form" (ngSubmit)="createChildNode()" style="display: flex">
       <dasch-swiss-multi-language-input
         style="flex: 1"
-        [formGroup]="form"
-        controlName="labels"
+        [formArray]="labelsControl"
         [placeholder]="placeholder"
         [validators]="labelsValidators">
       </dasch-swiss-multi-language-input>
@@ -41,7 +41,13 @@ export class ListItemFormComponent implements OnInit {
   placeholder: string;
   form: FormGroup;
 
+  // TODO remove with typed forms
+  get labelsControl() {
+    return this.form.get('labels') as MultiLanguageFormArray;
+  }
+
   readonly labelsValidators = [Validators.maxLength(2000)];
+
   constructor(
     private _listApiService: ListApiService,
     private _fb: FormBuilder,
