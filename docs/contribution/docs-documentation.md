@@ -22,7 +22,7 @@ The documentation consists of three main topics with subordinate themes:
 
 1. **contribution** contains all information for people who wants to contribute to DSP-APP
 
-- Index = How to contribute incl. link to the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/dsp/contribution/)
+- Index = How to contribute incl. link to the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/)
 - Release Notes = Contains the CHANGELOG file of DSP-APP
 
 Images like screenshots and so on have to be stored in `assets/images`.

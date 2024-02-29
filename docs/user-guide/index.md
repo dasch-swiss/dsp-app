@@ -1,6 +1,6 @@
 # User Guide
 
-This is the documentation for the generic DSP Web Application of the Data and Service Center for the Humanities DaSCH. You can reach the app on **[admin.dasch.swiss](https://admin.dasch.swiss)**.
+This is the documentation for the generic DSP Web Application of the Data and Service Center for the Humanities DaSCH. You can reach the app on **[app.dasch.swiss](https://app.dasch.swiss)**.
 
 ---
 

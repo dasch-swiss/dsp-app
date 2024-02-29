@@ -1,8 +1,8 @@
 # DaSCH Applications and Libraries Monorepo
 
-[![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-app?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-app)
+[![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-app?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-das)
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
-[![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
+[![CI](https://github.com/dasch-swiss/dsp-das/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-das/actions?query=workflow%3ACI)
 
 This monorepo host different applications and libraries of the DaSCH Service Platform.
 
@@ -96,9 +96,9 @@ The most common commands are defined in `package.json`.
 ## Contribution
 
 If you would like to contribute to the development of the DSP-APP alongside us,
-please consult the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/dsp/contribution/).
+please consult the [general DSP contribution guidelines](https://docs.dasch.swiss/latest/developers/contribution/).
 
 ### Documentation / User guidelines
 
 We built the user guidelines and developer documentation with [MkDocs](https://www.mkdocs.org/).
-Get more information in the appropriate [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/README.md).
+Get more information in the appropriate [README](https://github.com/dasch-swiss/dsp-app/blob/main/docs/contribution/docs-documentation.md).

@@ -8,7 +8,7 @@ DSP offers a full-text search that searches through all text values and labels o
 It returns data that matches the search conditions.
 By default, the search is performed in all projects stored in DSP. However, it is possible to filter by project using the "Filter by project" menu on the left side of the search bar.
 
-![Filter your full-text search by specific project](../../assets/images/search-fulltext-filterByProject.png)*<https://admin.dasch.swiss> - Search 1: Search in one specific project or all projects*
+![Filter your full-text search by specific project](../../assets/images/search-fulltext-filterByProject.png)*<https://app.dasch.swiss> - Search 1: Search in one specific project or all projects*
 
 When clicking on the search bar, the search history panel is displayed. The last **10** searches are registered. Click on one search item to perform the same full-text search again. It is also possible to clear the search history list (*Clear list* button at the bottom of the panel or the *x* at the end of each line).
 
@@ -143,6 +143,6 @@ The expert search can be more powerful than the advanced search, but requires kn
 
 **For example**: you could search for a page in a manuscript that contains a certain element and also mentions a person, who lived in the same country as another person, who is the author of another work.
 
-![Expert search is a text area in which you can create Gravsearch queries.](../../assets/images/search-expert.png)*<https://admin.dasch.swiss> - Search 3: Expert search is a text area in which you can create Gravsearch queries. Here is the default example you can find in the app.*
+![Expert search is a text area in which you can create Gravsearch queries.](../../assets/images/search-expert.png)*<https://app.dasch.swiss> - Search 3: Expert search is a text area in which you can create Gravsearch queries. Here is the default example you can find in the app.*
 
 To learn Gravsearch, go to the DSP-API documentation [&rarr; Gravsearch](https://docs.dasch.swiss/latest/DSP-API/03-endpoints/api-v2/query-language/)
