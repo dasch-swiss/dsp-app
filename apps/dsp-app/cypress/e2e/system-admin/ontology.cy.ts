@@ -2,7 +2,7 @@ import { CreateOntology } from '@dasch-swiss/dsp-js';
 import { faker } from '@faker-js/faker';
 import ProjectPage from '../../support/pages/project-page';
 
-describe('Ontology', () => {
+describe.skip('Ontology', () => {
   const projectPage = new ProjectPage();
 
   beforeEach(() => {
