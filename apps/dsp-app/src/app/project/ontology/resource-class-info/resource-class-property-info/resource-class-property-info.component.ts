@@ -1,4 +1,13 @@
-import { AfterContentInit, Component, EventEmitter, Inject, Input, OnChanges, Output } from '@angular/core';
+import {
+  AfterContentInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
 import {
   CanDoResponse,
   Constants,
@@ -82,7 +91,8 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
     private _ontoService: OntologyService,
-    private _store: Store
+    private _store: Store,
+    private _cd: ChangeDetectorRef
   ) {}
 
   ngOnChanges(): void {
@@ -179,6 +189,7 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
 
     this._dspApiConnection.v2.onto.canDeleteCardinalityFromResourceClass(onto).subscribe((canDoRes: CanDoResponse) => {
       this.propCanBeRemovedFromClass = canDoRes.canDo;
+      this._cd.markForCheck();
     });
   }
 }

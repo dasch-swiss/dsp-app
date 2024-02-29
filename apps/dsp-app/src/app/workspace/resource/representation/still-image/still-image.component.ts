@@ -534,6 +534,9 @@ export class StillImageComponent implements OnChanges, OnDestroy, AfterViewInit 
     }
 
     this._dspApiConnection.v2.res.createResource(createResource).subscribe((res: ReadResource) => {
+      this._viewer.destroy();
+      this._setupViewer();
+      this.loadImages();
       this.regionAdded.emit(res.id);
     });
   }
