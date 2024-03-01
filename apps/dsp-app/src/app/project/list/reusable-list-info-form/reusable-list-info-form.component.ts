@@ -1,80 +1,52 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MultiLanguageFormArray, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
-import { Subscription } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
+import { ListInfoForm } from './list-info-form.type';
 
 @Component({
   selector: 'app-reusable-list-info-form',
   template: `
     <dasch-swiss-multi-language-input
-      [formArray]="labelsControl"
+      [formArray]="form.controls.labels"
       placeholder="Controlled vocabulary label *"
       data-cy="labels-input">
     </dasch-swiss-multi-language-input>
 
     <dasch-swiss-multi-language-textarea
-      [formArray]="commentsControl"
+      [formArray]="form.controls.comments"
       placeholder="Controlled vocabulary description *"
       data-cy="comments-input">
     </dasch-swiss-multi-language-textarea>
   `,
 })
-export class ReusableListInfoFormComponent implements OnInit, OnDestroy {
+export class ReusableListInfoFormComponent implements OnInit {
   @Input() formData: {
     labels: MultiLanguages;
     comments: MultiLanguages;
   };
+  @Output() afterFormInit = new EventEmitter<ListInfoForm>();
 
-  @Output() formValueChange = new EventEmitter<FormGroup>();
-
-  form: FormGroup;
-  subscription: Subscription;
-
-  // TODO remove with typed forms
-  get labelsControl() {
-    return this.form.get('labels') as MultiLanguageFormArray;
-  }
-
-  // TODO remove with typed forms
-  get commentsControl() {
-    return this.form.get('comments') as MultiLanguageFormArray;
-  }
+  form: ListInfoForm;
 
   constructor(private _fb: FormBuilder) {}
 
   ngOnInit() {
     this._buildForm();
-
-    this.subscription = this.form.valueChanges.pipe(startWith(<FormGroup>null)).subscribe(z => {
-      this.formValueChange.emit(this.form);
-    });
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.afterFormInit.emit(this.form);
   }
 
   _buildForm() {
     this.form = this._fb.group({
-      labels: this._fb.array(
-        this.formData.labels.map(({ language, value }) =>
-          this._fb.group({
-            language,
-            value: [value, [Validators.maxLength(2000)]],
-          })
-        ),
-        atLeastOneStringRequired('value')
+      labels: DEFAULT_MULTILANGUAGE_FORM(
+        this.formData.labels,
+        [Validators.maxLength(2000)],
+        [atLeastOneStringRequired('value')]
       ),
-      comments: this._fb.array(
-        this.formData.comments.map(({ language, value }) =>
-          this._fb.group({
-            language,
-            value: [value, [Validators.maxLength(2000)]],
-          })
-        ),
-        atLeastOneStringRequired('value')
+      comments: DEFAULT_MULTILANGUAGE_FORM(
+        this.formData.comments,
+        [Validators.maxLength(2000)],
+        [atLeastOneStringRequired('value')]
       ),
     });
   }

@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ListNodeInfo, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
+import { ListNodeInfo, StringLiteral, UpdateListInfoRequest } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Store } from '@ngxs/store';
+import { ListInfoForm } from './list-info-form.type';
 
 export class EditListInfoDialogProps {
   projectIri: string;
@@ -17,9 +17,7 @@ export class EditListInfoDialogProps {
   template: `
     <app-dialog-header title="" subtitle="Edit controlled vocabulary info"></app-dialog-header>
     <div mat-dialog-content>
-      <app-reusable-list-info-form
-        [formData]="formData"
-        (formValueChange)="form = $event"></app-reusable-list-info-form>
+      <app-reusable-list-info-form [formData]="formData" (afterFormInit)="form = $event"></app-reusable-list-info-form>
     </div>
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
@@ -37,7 +35,7 @@ export class EditListInfoDialogProps {
   `,
 })
 export class EditListInfoDialogComponent {
-  form: FormGroup;
+  form: ListInfoForm;
   loading = false;
 
   formData = { labels: this.data.list.labels as MultiLanguages, comments: this.data.list.comments as MultiLanguages };
@@ -54,8 +52,8 @@ export class EditListInfoDialogComponent {
     const listInfoUpdateData: UpdateListInfoRequest = new UpdateListInfoRequest();
     listInfoUpdateData.projectIri = this.data.projectIri;
     listInfoUpdateData.listIri = this.data.list.id;
-    listInfoUpdateData.labels = this.form.value.labels;
-    listInfoUpdateData.comments = this.form.value.comments;
+    listInfoUpdateData.labels = this.form.value.labels as StringLiteral[];
+    listInfoUpdateData.comments = this.form.value.comments as StringLiteral[];
 
     this._listApiService.updateInfo(listInfoUpdateData.listIri, listInfoUpdateData).subscribe(response => {
       this._store.dispatch(new LoadListsInProjectAction(this.data.projectIri));

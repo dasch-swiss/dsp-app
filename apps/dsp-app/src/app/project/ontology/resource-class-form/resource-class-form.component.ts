@@ -1,15 +1,15 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ClassDefinition, PropertyDefinition } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
-import { MultiLanguageFormArray } from '@dasch-swiss/vre/shared/app-string-literal';
+import { DEFAULT_MULTILANGUAGE_FORM, MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Store } from '@ngxs/store';
-import { Subscription } from 'rxjs';
 import { existingNamesValidator } from '../../../main/directive/existing-name/existing-names.validator';
 import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
 import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
+import { ResourceClassForm } from './resource-class-form.type';
 
 @Component({
   selector: 'app-resource-class-form',
@@ -26,14 +26,14 @@ import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
       <dasch-swiss-multi-language-input
         data-cy="label-input"
         placeholder="Label *"
-        [formArray]="labelsControl"
+        [formArray]="form.controls.labels"
         [validators]="labelsValidators">
       </dasch-swiss-multi-language-input>
 
       <dasch-swiss-multi-language-textarea
         data-cy="comment-textarea"
         placeholder="Comment *"
-        [formArray]="commentsControl"
+        [formArray]="form.controls.comments"
         [editable]="true"
         [validators]="commentsValidators">
       </dasch-swiss-multi-language-textarea>
@@ -41,27 +41,17 @@ import { CustomRegex } from '../../../workspace/resource/values/custom-regex';
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],
 })
-export class ResourceClassFormComponent implements OnInit, OnDestroy {
+export class ResourceClassFormComponent implements OnInit {
   @Input() formData: {
     name: string;
-    labels: { language: string; value: string }[];
-    comments: { language: string; value: string }[];
+    labels: MultiLanguages;
+    comments: MultiLanguages;
   };
-  @Output() formValueChange = new EventEmitter<FormGroup>();
+  @Output() afterFormInit = new EventEmitter<ResourceClassForm>();
 
-  // TODO remove with typed forms
-  get commentsControl() {
-    return this.form.get('comments') as MultiLanguageFormArray;
-  }
-
-  get labelsControl() {
-    return this.form.get('labels') as MultiLanguageFormArray;
-  }
-
-  form: FormGroup;
-  existingNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
+  form: ResourceClassForm;
   ontology;
-  subscription: Subscription;
+  readonly existingNames: [RegExp] = [new RegExp('anEmptyRegularExpressionWasntPossible')];
   readonly labelsValidators = [Validators.maxLength(2000)];
   readonly commentsValidators = [Validators.maxLength(2000)];
 
@@ -90,10 +80,7 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
 
     this.buildForm();
 
-    this.subscription = this.form.valueChanges.subscribe(z => {
-      this.formValueChange.emit(this.form);
-    });
-    this.formValueChange.emit(this.form);
+    this.afterFormInit.emit(this.form);
   }
 
   buildForm() {
@@ -106,28 +93,12 @@ export class ResourceClassFormComponent implements OnInit, OnDestroy {
           Validators.pattern(CustomRegex.ID_NAME_REGEX),
         ],
       ],
-      labels: this._fb.array(
-        this.formData.labels.map(({ language, value }) =>
-          this._fb.group({
-            language,
-            value: [value, this.labelsValidators],
-          })
-        ),
-        atLeastOneStringRequired('value')
-      ),
-      comments: this._fb.array(
-        this.formData.comments.map(({ language, value }) =>
-          this._fb.group({
-            language,
-            value: [value, this.commentsValidators],
-          })
-        ),
-        atLeastOneStringRequired('value')
-      ),
+      labels: DEFAULT_MULTILANGUAGE_FORM(this.formData.labels, this.labelsValidators, [
+        atLeastOneStringRequired('value'),
+      ]),
+      comments: DEFAULT_MULTILANGUAGE_FORM(this.formData.comments, this.commentsValidators, [
+        atLeastOneStringRequired('value'),
+      ]),
     });
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 }

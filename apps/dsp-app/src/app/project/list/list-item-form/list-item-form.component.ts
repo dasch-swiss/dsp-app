@@ -1,25 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ListInfoResponse, ListNode, ListNodeInfoResponse } from '@dasch-swiss/dsp-js';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ListInfoResponse, ListNodeInfoResponse } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { MultiLanguageFormArray } from '@dasch-swiss/vre/shared/app-string-literal';
+import { DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/shared/app-string-literal';
 import { atLeastOneStringRequired } from '../../../main/form-validators/at-least-one-string-required.validator';
 import { ListItemService } from '../list-item/list-item.service';
-
-export class ListNodeOperation {
-  operation: 'create' | 'insert' | 'update' | 'delete' | 'reposition';
-  listNode: ListNode;
-}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-item-form',
   template: `
-    <form [formGroup]="form" (ngSubmit)="createChildNode()" style="display: flex">
+    <form [formGroup]="form" style="display: flex" (ngSubmit)="createChildNode()">
       <dasch-swiss-multi-language-input
         style="flex: 1"
-        [formArray]="labelsControl"
+        [formArray]="form.controls.labels"
         [placeholder]="placeholder"
         [validators]="labelsValidators">
       </dasch-swiss-multi-language-input>
@@ -39,25 +34,18 @@ export class ListNodeOperation {
 export class ListItemFormComponent implements OnInit {
   loading = false;
   placeholder: string;
-  form: FormGroup;
-
-  // TODO remove with typed forms
-  get labelsControl() {
-    return this.form.get('labels') as MultiLanguageFormArray;
-  }
+  form = this._fb.group({ labels: DEFAULT_MULTILANGUAGE_FORM([], [], [atLeastOneStringRequired('value')]) });
 
   readonly labelsValidators = [Validators.maxLength(2000)];
 
   constructor(
     private _listApiService: ListApiService,
-    private _fb: FormBuilder,
     private _cd: ChangeDetectorRef,
-    private _listItemService: ListItemService
+    private _listItemService: ListItemService,
+    private _fb: FormBuilder
   ) {}
 
   ngOnInit() {
-    this._buildForm();
-
     this._listApiService.getNodeInfo(this._listItemService.projectInfos.rootNodeIri).subscribe(response => {
       if (response['listinfo']) {
         // root node
@@ -77,7 +65,7 @@ export class ListItemFormComponent implements OnInit {
     const data = {
       parentNodeIri: this._listItemService.projectInfos.rootNodeIri,
       projectIri: this._listItemService.projectInfos.projectIri,
-      labels: this.form.value.labels,
+      labels: this.form.controls.labels.getRawValue(),
       name: `${ProjectService.IriToUuid(this._listItemService.projectInfos.projectIri)}-${Math.random()
         .toString(36)
         .substring(2)}${Math.random().toString(36).substring(2)}`,
@@ -85,18 +73,8 @@ export class ListItemFormComponent implements OnInit {
 
     this._listApiService.createChildNode(data.parentNodeIri, data).subscribe(() => {
       this.loading = false;
-      this._resetForm();
+      this.form.controls.labels.clear();
       this._listItemService.onUpdate$.next();
     });
-  }
-
-  private _buildForm() {
-    this.form = this._fb.group({
-      labels: this._fb.array([], atLeastOneStringRequired('value')),
-    });
-  }
-
-  private _resetForm() {
-    (this.form.get('labels') as FormArray).clear();
   }
 }

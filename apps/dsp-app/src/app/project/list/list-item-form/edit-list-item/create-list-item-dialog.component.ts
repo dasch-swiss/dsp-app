@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
+import { ListItemForm } from '../list-item-form.type';
 
 export interface CreateListItemDialogProps {
   nodeIri: string;
@@ -11,6 +12,7 @@ export interface CreateListItemDialogProps {
   projectIri: string;
   position: number;
 }
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-create-list-item-dialog',
@@ -20,7 +22,7 @@ export interface CreateListItemDialogProps {
     <div mat-dialog-content>
       <app-reusable-list-item-form
         [formData]="initialFormValue"
-        (formValueChange)="form = $event"></app-reusable-list-item-form>
+        (afterFormInit)="form = $event"></app-reusable-list-item-form>
     </div>
 
     <div mat-dialog-actions align="end">
@@ -39,7 +41,7 @@ export interface CreateListItemDialogProps {
   `,
 })
 export class CreateListItemDialogComponent {
-  form: FormGroup;
+  form: ListItemForm;
   loading = false;
   initialFormValue = { labels: [] as MultiLanguages, comments: [] as MultiLanguages };
 
@@ -56,8 +58,8 @@ export class CreateListItemDialogComponent {
     const payload = {
       parentNodeIri: this.data.parentIri,
       projectIri: this.data.projectIri,
-      labels: this.form.value.labels,
-      comments: this.form.value.descriptions,
+      labels: this.form.value.labels as StringLiteral[],
+      comments: this.form.value.comments as StringLiteral[],
       position: this.data.position,
       name: `${ProjectService.IriToUuid(this.data.projectIri)}-${Math.random().toString(36).substring(2)}${Math.random()
         .toString(36)

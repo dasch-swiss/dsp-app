@@ -1,6 +1,5 @@
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
@@ -8,6 +7,7 @@ import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadProjectsAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
 import { finalize } from 'rxjs/operators';
+import { ProjectForm } from '../reusable-project-form/project-form.type';
 
 @Component({
   selector: 'app-create-project-form-page',
@@ -21,7 +21,7 @@ import { finalize } from 'rxjs/operators';
           description: [],
           keywords: []
         }"
-        (formValueChange)="form = $event"></app-reusable-project-form>
+        (afterFormInit)="form = $event"></app-reusable-project-form>
 
       <div style="display: flex; justify-content: space-between">
         <button color="primary" mat-button type="reset" (click)="goBack()">
@@ -44,7 +44,7 @@ import { finalize } from 'rxjs/operators';
   `,
 })
 export class CreateProjectFormPageComponent {
-  form: FormGroup;
+  form: ProjectForm;
   loading = false;
 
   constructor(
@@ -58,11 +58,11 @@ export class CreateProjectFormPageComponent {
     this.loading = true;
     this._projectApiService
       .create({
-        shortcode: this.form.get('shortcode').value,
-        shortname: this.form.get('shortname').value,
-        longname: this.form.get('longname').value,
-        description: this.form.get('description').value,
-        keywords: this.form.get('keywords').value,
+        shortcode: this.form.getRawValue().shortcode,
+        shortname: this.form.getRawValue().shortname,
+        longname: this.form.getRawValue().longname,
+        description: this.form.getRawValue().description,
+        keywords: this.form.getRawValue().keywords,
         selfjoin: true,
         status: true,
       })

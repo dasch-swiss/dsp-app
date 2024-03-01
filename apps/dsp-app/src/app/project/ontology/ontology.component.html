@@ -158,7 +158,7 @@
             [projectStatus]="(project$ | async)?.status"
             [expanded]="expandClasses"
             [userCanEdit]="isAdmin$ | async"
-            (editResourceClass)="updateResourceClass($event)"
+            (editResourceClass)="updateResourceClass($event, resClass)"
             (deleteResourceClass)="deleteResourceClass($event.iri)"
             (updatePropertyAssignment)="initOntologiesList()"
             [updatePropertyAssignment$]="updatePropertyAssignment$">

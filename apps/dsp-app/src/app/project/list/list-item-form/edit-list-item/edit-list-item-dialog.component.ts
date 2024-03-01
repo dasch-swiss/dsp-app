@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { of } from 'rxjs';
 import { finalize, switchMap } from 'rxjs/operators';
+import { ListItemForm } from '../list-item-form.type';
 
 export interface EditListItemDialogProps {
   nodeIri: string;
@@ -20,7 +21,7 @@ export interface EditListItemDialogProps {
     <div mat-dialog-content>
       <app-reusable-list-item-form
         [formData]="data.formData"
-        (formValueChange)="form = $event"></app-reusable-list-item-form>
+        (afterFormInit)="form = $event"></app-reusable-list-item-form>
     </div>
 
     <div mat-dialog-actions align="end">
@@ -39,7 +40,7 @@ export interface EditListItemDialogProps {
   `,
 })
 export class EditListItemDialogComponent {
-  form: FormGroup;
+  form: ListItemForm;
   loading = false;
 
   constructor(
@@ -52,20 +53,20 @@ export class EditListItemDialogComponent {
   updateChildNode() {
     this.loading = true;
 
-    const data = {
+    const payload = {
       projectIri: this.data.projectIri,
       listIri: this.data.nodeIri,
-      labels: this.form.value.labels,
-      comments: this.form.value.comments.length > 0 ? this.form.value.comments : null, // TODO: improve form to avoir this ?
+      labels: this.form.getRawValue().labels as StringLiteral[],
+      comments: this.form.getRawValue().comments.length > 0 ? (this.form.value.comments as StringLiteral[]) : null, // TODO: improve form to avoir this ?
     };
 
     this._listApiService
-      .updateChildNode(data.listIri, data)
+      .updateChildNode(payload.listIri, payload)
       .pipe(
         switchMap(() => {
           // if initial comments Length is not equal to 0 and the comment is now empty, send request to delete comment
           if (this.data.formData.comments.length > 0 && this.form.value.comments.length === 0) {
-            return this._listApiService.deleteChildComments(data.listIri);
+            return this._listApiService.deleteChildComments(payload.listIri);
           }
           return of(true);
         }),

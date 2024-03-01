@@ -1,22 +1,27 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   DeleteResourceClassComment,
   KnoraApiConnection,
   ResourceClassDefinitionWithAllLanguages,
+  StringLiteral,
   UpdateOntology,
   UpdateResourceClassComment,
   UpdateResourceClassLabel,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
+import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { switchMap, tap } from 'rxjs/operators';
+import { ResourceClassForm } from '../resource-class-form/resource-class-form.type';
 
 export interface EditResourceClassDialogProps {
   id: string;
   title: string;
   ontologyId: string;
   lastModificationDate: string;
+  name: string;
+  labels: MultiLanguages;
+  comments: MultiLanguages;
 }
 
 @Component({
@@ -25,8 +30,8 @@ export interface EditResourceClassDialogProps {
     <app-dialog-header [title]="data.title" subtitle="Customize resource class"></app-dialog-header>
     <div mat-dialog-content>
       <app-resource-class-form
-        [formData]="{ name: '', labels: [], comments: [] }"
-        (formValueChange)="form = $event"></app-resource-class-form>
+        [formData]="{ name: data.name, labels: data.labels, comments: data.comments }"
+        (afterFormInit)="form = $event"></app-resource-class-form>
     </div>
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
@@ -45,7 +50,7 @@ export interface EditResourceClassDialogProps {
 })
 export class EditResourceClassDialogComponent implements OnInit {
   loading = false;
-  form: FormGroup;
+  form: ResourceClassForm;
   lastModificationDate: string;
 
   constructor(
@@ -71,7 +76,7 @@ export class EditResourceClassDialogComponent implements OnInit {
 
     const updateLabel = new UpdateResourceClassLabel();
     updateLabel.id = this.data.id;
-    updateLabel.labels = this.form.value.labels;
+    updateLabel.labels = this.form.value.labels as StringLiteral[];
     onto4Label.entity = updateLabel;
 
     // comment
@@ -80,7 +85,7 @@ export class EditResourceClassDialogComponent implements OnInit {
 
     const updateComment = new UpdateResourceClassComment();
     updateComment.id = this.data.id;
-    updateComment.comments = this.form.value.comments;
+    updateComment.comments = this.form.value.comments as StringLiteral[];
     onto4Comment.entity = updateComment;
 
     this._dspApiConnection.v2.onto

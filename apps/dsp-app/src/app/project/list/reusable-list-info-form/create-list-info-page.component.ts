@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/shared/app-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadListsInProjectAction } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
+import { ListInfoForm } from './list-info-form.type';
 
 @Component({
   selector: 'app-create-list-info-page',
@@ -16,7 +17,7 @@ import { Store } from '@ngxs/store';
           labels: [],
           comments: []
         }"
-        (formValueChange)="form = $event"></app-reusable-list-info-form>
+        (afterFormInit)="form = $event"></app-reusable-list-info-form>
 
       <div style="display: flex; justify-content: flex-end">
         <button
@@ -35,7 +36,7 @@ import { Store } from '@ngxs/store';
   `,
 })
 export class CreateListInfoPageComponent {
-  form: FormGroup;
+  form: ListInfoForm;
   loading = false;
 
   constructor(
@@ -53,8 +54,8 @@ export class CreateListInfoPageComponent {
     this._listApiService
       .create({
         projectIri,
-        labels: this.form.value.labels,
-        comments: this.form.value.comments,
+        labels: this.form.value.labels as StringLiteral[],
+        comments: this.form.value.comments as StringLiteral[],
       })
       .subscribe(response => {
         this._store.dispatch(new LoadListsInProjectAction(projectIri));

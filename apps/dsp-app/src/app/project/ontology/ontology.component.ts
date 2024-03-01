@@ -19,6 +19,7 @@ import {
   ReadOntology,
   ReadProject,
   ReadUser,
+  ResourceClassDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { getAllEntityDefinitionsAsArray } from '@dasch-swiss/vre/shared/app-api';
 import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/shared/app-config';
@@ -46,6 +47,7 @@ import {
   SetCurrentProjectOntologyPropertiesAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
+import { MultiLanguages } from '@dasch-swiss/vre/shared/app-string-literal';
 import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { map, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -438,7 +440,7 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
       });
   }
 
-  updateResourceClass(resClassInfo: DefaultClass): void {
+  updateResourceClass(resClassInfo: DefaultClass, resClass: ResourceClassDefinitionWithAllLanguages): void {
     const currentOntology = this._store.selectSnapshot(OntologiesSelectors.currentOntology);
 
     this._dialog
@@ -448,6 +450,9 @@ export class OntologyComponent extends ProjectBase implements OnInit, OnDestroy 
           title: resClassInfo.label,
           ontologyId: currentOntology.id,
           lastModificationDate: currentOntology.lastModificationDate,
+          name: resClass.label,
+          comments: resClass.comments as MultiLanguages,
+          labels: resClass.labels as MultiLanguages,
         },
       })
       .afterClosed()
