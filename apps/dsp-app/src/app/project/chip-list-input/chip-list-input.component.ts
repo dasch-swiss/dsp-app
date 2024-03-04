@@ -1,6 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
@@ -28,8 +28,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
   `,
 })
 export class ChipListInputComponent {
-  @Input() formGroup: FormGroup;
-  @Input() controlName: string;
+  @Input() formArray: FormArray<FormControl<string>>;
   @Input() chipsRequired = true;
   @Input() validators: ValidatorFn[];
 
@@ -37,10 +36,6 @@ export class ChipListInputComponent {
   addChipFormError: ValidationErrors | null = null;
 
   constructor(private _fb: FormBuilder) {}
-
-  get formArray() {
-    return this.formGroup.controls[this.controlName] as FormArray;
-  }
 
   addKeyword(event: MatChipInputEvent): void {
     this.addChipFormError = null;

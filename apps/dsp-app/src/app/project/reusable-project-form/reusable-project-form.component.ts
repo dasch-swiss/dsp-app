@@ -40,8 +40,7 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
       </dasch-swiss-multi-language-textarea>
 
       <app-chip-list-input
-        [formGroup]="form"
-        controlName="keywords"
+        [formArray]="form.controls.keywords"
         data-cy="keywords-input"
         [validators]="keywordsValidators">
       </app-chip-list-input>
