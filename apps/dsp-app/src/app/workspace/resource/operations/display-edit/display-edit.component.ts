@@ -26,7 +26,6 @@ import {
 } from '../../../../main/action/confirmation-dialog/confirmation-dialog.component';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 import { PropertyInfoValues } from '../../properties/properties.component';
-import { UserService } from '../../services/user.service';
 import {
   DeletedEventValue,
   EmitEvent,
@@ -68,60 +67,38 @@ export class DisplayEditComponent implements OnInit {
   @ViewChild('displayVal') displayValueComponent: BaseValueDirective;
 
   @Input() displayValue: ReadValue;
-
   @Input() propArray: PropertyInfoValues[];
-
   @Input() parentResource: ReadResource;
-
   @Input() configuration?: object;
-
   @Input() canDelete: boolean;
-
   @Input() cantDeleteReason: string;
-
   @Input() projectStatus: boolean;
-
   @Input() valueUuidToHighlight: string;
+  @Input() user: ReadUser;
 
   @Output() referredResourceClicked: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
-
   @Output() referredResourceHovered: EventEmitter<ReadLinkValue> = new EventEmitter<ReadLinkValue>();
 
   constants = Constants;
 
   mode: 'read' | 'update' | 'create' | 'search';
-
   canModify: boolean;
-
   editModeActive = false;
-
   submittingValue = false;
-
   shouldShowCommentToggle: boolean;
-
   // type of given displayValue
   // or knora-api-js-lib class representing the value
   valueTypeOrClass: string;
-
   // indicates if value can be edited
   readOnlyValue: boolean;
-
   // indicates if the action bubble with the CRUD buttons should be shown
   showActionBubble = false;
-
   // string used as class name to add add to value-component element on hover
   valueHovered: boolean;
-
   dateDisplayOptions: 'era' | 'calendar' | 'all';
-
   showDateLabels = false;
-
   textArea = false;
-
   dateFormat: string;
-
-  user: ReadUser;
-
   ontoIri: string;
 
   constructor(
@@ -129,7 +106,6 @@ export class DisplayEditComponent implements OnInit {
     private _dspApiConnection: KnoraApiConnection,
     private _valueOperationEventService: ValueOperationEventService,
     private _dialog: MatDialog,
-    private _userService: UserService,
     private _valueService: ValueService,
     private _cd: ChangeDetectorRef
   ) {}
@@ -168,13 +144,6 @@ export class DisplayEditComponent implements OnInit {
     }
 
     this.readOnlyValue = this._valueService.isReadOnly(this.valueTypeOrClass, this.displayValue, resPropDef[0]);
-
-    // prevent getting info about system user (standoff link values are managed by the system)
-    if (this.displayValue.attachedToUser !== 'http://www.knora.org/ontology/knora-admin#SystemUser') {
-      this._userService.getUser(this.displayValue.attachedToUser).subscribe(user => {
-        this.user = user.user;
-      });
-    }
   }
 
   getTooltipText(): string {

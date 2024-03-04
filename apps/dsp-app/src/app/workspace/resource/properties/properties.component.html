@@ -1,5 +1,5 @@
 <!-- toolbar -->
-<div class="toolbar" *ngIf="project" [class.deleted]="deletedResource || resource.res.isDeleted">
+<div class="toolbar" *ngIf="project$ | async" [class.deleted]="deletedResource || resource.res.isDeleted">
   <!-- resource info -->
   <h3 class="label mat-headline-6">{{resource.res.label}} <span *ngIf="deletedResource">(deleted)</span></h3>
 
@@ -78,7 +78,7 @@
     <!-- more menu with: delete, erase resource -->
     <button
       color="primary"
-      *ngIf="userCanEdit && project?.status"
+      *ngIf="userCanEdit && (project$ | async)?.status"
       mat-icon-button
       class="more-menu"
       matTooltip="More"
@@ -120,7 +120,7 @@
 </div>
 
 <!-- additional line with project and user information -->
-<div class="infobar mat-caption" *ngIf="project && user">
+<div class="infobar mat-caption" *ngIf="(project$ | async) as project">
   <span *ngIf="displayProjectInfo"
     >This resource {{ resource.res.isDeleted ? 'belonged' : 'belongs' }} to the project
     <span class="project link" (click)="openProject(project)" (mouseover)="previewProject()">
@@ -140,7 +140,7 @@
 <div class="properties-container">
   <div class="properties" *ngIf="resource.resProps.length > 0; else noProperties">
     <!-- list of properties -->
-    <div *ngFor="let prop of resource.resProps; let last = last">
+    <div *ngFor="let prop of resource.resProps; let last = last; trackBy: trackByPropertyInfoFn">
       <!-- show property; all in case of showAll === true or only the ones with prop.values -->
       <div
         *ngIf="(showAllProps || ( prop.values && prop.values.length > 0 ) || (prop.propDef.id === hasIncomingLinkIri && numberOffAllIncomingLinkRes > 0)) && (
@@ -170,7 +170,7 @@
         </div>
         <div class="property-value">
           <!-- the value(s) of the property -->
-          <div *ngFor="let val of prop.values">
+          <div *ngFor="let val of prop.values; trackBy: trackByValuesFn">
             <app-display-edit
               *ngIf="val"
               #displayEdit
@@ -179,14 +179,15 @@
               [propArray]="resource.resProps"
               [canDelete]="deleteValueIsAllowed(prop)"
               [cantDeleteReason]="cantDeleteReason"
-              [projectStatus]="project?.status"
+              [projectStatus]="(project$ | async)?.status"
+              [user]="user"
               [valueUuidToHighlight]="valueUuidToHighlight"
               (referredResourceClicked)="openResource($event)"
               (referredResourceHovered)="previewResource()">
             </app-display-edit>
           </div>
           <!-- Add value form -->
-          <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id && project?.status">
+          <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id && (project$ | async)?.status">
             <app-add-value
               #addValue
               class="add-value"
@@ -196,7 +197,7 @@
             </app-add-value>
           </div>
           <!-- Add button -->
-          <div *ngIf="addValueIsAllowed(prop) && project?.status">
+          <div *ngIf="addValueIsAllowed(prop) && (project$ | async)?.status">
             <button
               mat-icon-button
               type="button"
@@ -213,7 +214,7 @@
               <!-- the value(s) of the incoming links -->
               <a
                 class="link link-value"
-                *ngFor="let inRes of displayedIncomingLinkResources"
+                *ngFor="let inRes of displayedIncomingLinkResources; trackBy: trackByFn"
                 (click)="openResource(inRes.id)"
                 >{{inRes.resourceClassLabel}}: <strong>{{inRes.label}}</strong></a
               >

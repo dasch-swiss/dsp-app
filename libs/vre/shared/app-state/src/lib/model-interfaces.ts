@@ -1,4 +1,12 @@
-import { ClassDefinition, IHasProperty, OntologyMetadata, PropertyDefinition, ReadOntology } from '@dasch-swiss/dsp-js';
+import {
+  ClassDefinition,
+  IHasProperty,
+  OntologyMetadata,
+  PropertyDefinition,
+  ReadOntology,
+  ReadProject,
+  ReadUser,
+} from '@dasch-swiss/dsp-js';
 import { PropertyInfoObject } from '@dasch-swiss/vre/shared/app-helper-services';
 
 export interface IKeyValuePairs<T> {
@@ -43,5 +51,12 @@ export interface IClassItemsKeyValuePairs {
   [key: string]: {
     ontologyIri: string;
     classItemsCount: number;
+  };
+}
+
+export interface IResourceKeyValuePairs {
+  [key: string]: {
+    attachedUsers: ReadUser[];
+    attachedProjects: ReadProject[];
   };
 }
