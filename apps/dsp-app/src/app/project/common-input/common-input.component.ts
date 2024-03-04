@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-common-input',
   template: `
     <mat-form-field style="width: 100%">
       <mat-icon matIconPrefix *ngIf="prefixIcon">{{ prefixIcon }}</mat-icon>
-      <input matInput [placeholder]="placeholder" [formControl]="formControl" />
-      <mat-error *ngIf="formControl.errors as errors">
+      <input matInput [placeholder]="placeholder" [formControl]="control" />
+      <mat-error *ngIf="control.errors as errors">
         {{ errors | humanReadableError: validatorErrors }}
       </mat-error>
     </mat-form-field>
@@ -15,15 +15,8 @@ import { FormControl, FormGroup } from '@angular/forms';
   styles: [':host { display: block;}'],
 })
 export class CommonInputComponent {
-  @Input() formGroup: FormGroup;
-  @Input() controlName: string;
+  @Input() control: FormControl<string>;
   @Input() placeholder: string;
   @Input() prefixIcon: string | null = null;
   @Input() validatorErrors: { errorKey: string; message: string }[] | null = null;
-
-  get formControl() {
-    return this.formGroup.controls[this.controlName] as FormControl;
-  }
-
-  protected readonly FormGroup = FormGroup;
 }

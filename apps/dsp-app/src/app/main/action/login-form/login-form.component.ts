@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
 import { AuthService } from '@dasch-swiss/vre/shared/app-session';
@@ -12,8 +12,7 @@ import { finalize, takeLast, tap } from 'rxjs/operators';
   template: `
     <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
       <app-common-input
-        [formGroup]="form"
-        controlName="username"
+        [control]="form.controls.username"
         placeholder="Username"
         data-cy="username-input"></app-common-input>
 
@@ -21,10 +20,10 @@ import { finalize, takeLast, tap } from 'rxjs/operators';
         <input
           placeholder="Password"
           autocomplete="current-password"
-          formControlName="password"
+          [formControl]="form.controls.password"
           matInput
           type="password" />
-        <mat-error *ngIf="form.get('password').errors as errors">
+        <mat-error *ngIf="form.controls.password.errors as errors">
           {{ errors | humanReadableError }}
         </mat-error>
       </mat-form-field>
@@ -63,7 +62,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    private _fb: UntypedFormBuilder,
+    private _fb: FormBuilder,
     private router: Router,
     private _authService: AuthService,
     private route: ActivatedRoute,

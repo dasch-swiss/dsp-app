@@ -14,16 +14,14 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
     <form *ngIf="form" [formGroup]="form">
       <div style="display: flex">
         <app-common-input
-          [formGroup]="form"
-          controlName="shortcode"
+          [control]="form.controls.shortcode"
           [placeholder]="'appLabels.form.project.general.shortcode' | translate"
           [validatorErrors]="[shortcodePatternError, shortCodeExistsError]"
           data-cy="shortcode-input"
           style="flex: 1; margin-right: 16px"></app-common-input>
 
         <app-common-input
-          [formGroup]="form"
-          controlName="shortname"
+          [control]="form.controls.shortname"
           [placeholder]="'appLabels.form.project.general.shortname' | translate"
           data-cy="shortname-input"
           style="flex: 1"></app-common-input>
@@ -31,9 +29,8 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
 
       <app-common-input
         [placeholder]="'appLabels.form.project.general.longname' | translate"
-        controlName="longname"
-        data-cy="longname-input"
-        [formGroup]="form"></app-common-input>
+        [control]="form.controls.longname"
+        data-cy="longname-input"></app-common-input>
 
       <dasch-swiss-multi-language-textarea
         [placeholder]="('appLabels.form.project.general.description' | translate) + '*'"
@@ -42,7 +39,10 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
         data-cy="description-input">
       </dasch-swiss-multi-language-textarea>
 
-      <app-chip-list-input [formGroup]="form" controlName="keywords" data-cy="keywords-input" editable="true">
+      <app-chip-list-input
+        [formGroup]="form"
+        controlName="keywords"
+        data-cy="keywords-input"
         [validators]="keywordsValidators">
       </app-chip-list-input>
     </form>

@@ -18,8 +18,7 @@ import { ResourceClassForm } from './resource-class-form.type';
       <app-common-input
         class="name-input"
         data-cy="name-input"
-        [formGroup]="form"
-        controlName="name"
+        [control]="form.controls.name"
         placeholder="Class name *"
         prefixIcon="fingerprint"></app-common-input>
 
