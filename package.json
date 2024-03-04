@@ -18,6 +18,7 @@
     "e2e-local": "cd apps/dsp-app && npx cypress open",
     "e2e-ci-dev": "nx run dsp-app:e2e:development",
     "e2e-ci": "nx run dsp-app:e2e:production",
+    "e2e-cloud": "nx run dsp-app:e2e:cypress-cloud",
     "build": "nx run dsp-app:build",
     "build-prod": "nx run dsp-app:build:production",
     "test-ci": "nx run dsp-app:test:ci",

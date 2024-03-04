@@ -249,6 +249,13 @@
           "env": {
             "API_URL": "http://0.0.0.0:3333/api"
           }
+        },
+        "cypress-cloud": {
+          "devServerTarget": "dsp-app:serve:development",
+          "record": true,
+          "env": {
+            "API_URL": "http://0.0.0.0:3333/api"
+          }
         }
       }
     }

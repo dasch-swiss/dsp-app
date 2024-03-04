@@ -48,7 +48,7 @@ jobs:
           echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: npm install
       - run: npx nx run dsp-app:lint
-      # - run: npx nx run dsp-app:test:ci
+        # - run: npx nx run dsp-app:test:ci
         env:
           TZ: Europe/Zurich
 
@@ -78,10 +78,21 @@ jobs:
           make init-db-test
           docker compose -f docker-compose.yml up -d sipi ingest api
           ./webapi/scripts/wait-for-api.sh
-      - name: run e2e tests
+      - name: run e2e tests in ci
+        if: github.event_name != 'push'
         run: |
           cd ../dsp-das
           npm run e2e-ci
+      - name: run e2e tests on cypress cloud on push
+        if: github.event_name == 'pull_request'
+        run: |
+          cd ../dsp-das
+          export CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY_SECRET
+          npm run e2e-cloud
+        env:
+          CYPRESS_RECORD_KEY_SECRET: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+
 
   jdnconvertiblecalendar-tests:
     name: JDNConvertibleCalendar
@@ -206,7 +217,7 @@ jobs:
             {"type": "docs", "section": "Documentation", "hidden": false }
             ]'
 
-# build documentation
+  # build documentation
   docs-build-test:
     name: Docs Build Test
     runs-on: ubuntu-latest

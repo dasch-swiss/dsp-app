@@ -2,6 +2,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+  projectId: 'n5b5id',
   e2e: {
     specPattern: 'cypress/**/**/**/*.cy.ts',
     excludeSpecPattern: ['*.spec.js', '*.spec.ts'],
