@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { AbstractControl, FormBuilder } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -27,6 +39,7 @@ export function resourceValidator(control: AbstractControl) {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-link-value',
   templateUrl: './link-value.component.html',
   styleUrls: ['./link-value.component.scss'],
@@ -61,7 +74,8 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     private _dialog: MatDialog,
     @Inject(FormBuilder) protected _fb: FormBuilder,
     @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection
+    private _dspApiConnection: KnoraApiConnection,
+    private _cd: ChangeDetectorRef
   ) {
     super();
   }
@@ -86,7 +100,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
    */
   searchByLabel(searchTerm: string) {
     this.showNoResultsMessage = false;
-
+    this._cd.markForCheck();
     // at least 3 characters are required
     if (typeof searchTerm === 'string' && searchTerm.length >= 3) {
       this.loadingResults = true;
@@ -98,6 +112,7 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
           this.resources = response.resources;
           this.loadingResults = false;
           this.showNoResultsMessage = this.resources.length <= 0;
+          this._cd.markForCheck();
         });
     } else {
       this.resources = [];
@@ -188,6 +203,10 @@ export class LinkValueComponent extends BaseValueDirective implements OnInit, On
     }
     super.ngOnDestroy();
   }
+
+  trackByFn = (index: number, item: ResourceClassDefinition) => `${index}-${item.id}`;
+
+  trackByResourceFn = (index: number, item: ReadResource) => `${index}-${item.id}`;
 
   getNewValue(): CreateLinkValue | false {
     if (this.mode !== 'create' || !this.form.valid || this.isEmptyVal()) {

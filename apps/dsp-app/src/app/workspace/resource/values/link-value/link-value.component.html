@@ -25,13 +25,15 @@
       <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayResource">
         <mat-option *ngIf="showNoResultsMessage" disabled="true"> No results were found. </mat-option>
         <mat-option
-          *ngFor="let rc of resourceClasses"
+          *ngFor="let rc of resourceClasses; trackBy: trackByFn"
           (click)="
                         openDialog('createLinkResource', $event, propIri, rc)
                     ">
           Create New: {{ rc?.label }}
         </mat-option>
-        <mat-option *ngFor="let res of resources" [value]="res"> {{ res?.label }} </mat-option>
+        <mat-option *ngFor="let res of resources; trackBy: trackByResourceFn" [value]="res">
+          {{ res?.label }}
+        </mat-option>
       </mat-autocomplete>
       <mat-error *ngIf="valueFormControl.hasError('valueNotChanged')">
         <span class="custom-error-message">New value must be different than the current value.</span>
