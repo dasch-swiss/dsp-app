@@ -109,8 +109,12 @@
           }
         },
         "imageSettings": {
+          "off": "Aus",
           "isWatermark": "Wasserzeichen anwenden",
-          "restrictImageSize": "Bildgröße und Schärfe einschränken",
+          "ratio": "Verhältnis",
+          "fixed": "feste Breite",
+          "restrictImageSize": "Bildgröße einschränken",
+          "absoluteWidth": "Absolute Breite in Pixel von: {{min}} bis: {{max}}",
           "percentageValue": "Prozentwert",
           "percentage": "Prozentsatz",
           "updateConfirmation": "Sie haben die Projektbildeinstellungen erfolgreich aktualisiert."

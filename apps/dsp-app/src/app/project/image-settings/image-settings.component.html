@@ -1,43 +1,61 @@
 <dasch-swiss-centered-layout>
   <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
-  <div class="content small middle" *ngIf="(isProjectsLoading$ | async) === false">
-    <div class="mb-6">
-      <div class="mb-6">
-        <mat-slide-toggle [(ngModel)]="isWatermark">
-          {{ 'appLabels.form.project.imageSettings.isWatermark' | translate }}
-        </mat-slide-toggle>
+  <div class="content large middle" *ngIf="(isProjectsLoading$ | async) === false">
+    <div>
+      <div>
+        <div class="mb-2">
+          <mat-radio-group class="radio-group" [(ngModel)]="imageSettings" [ngModelOptions]="{standalone: true}">
+            <mat-radio-button [value]="imageSettingsEnum.Off">
+              {{ 'appLabels.form.project.imageSettings.off' | translate }}
+            </mat-radio-button>
+            <mat-radio-button [value]="imageSettingsEnum.Watermark">
+              {{ 'appLabels.form.project.imageSettings.isWatermark' | translate }}
+            </mat-radio-button>
+            <mat-radio-button [value]="imageSettingsEnum.RestrictImageSize">
+              {{ 'appLabels.form.project.imageSettings.restrictImageSize' | translate }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
       </div>
-      <div class="mb-2">
-        <mat-slide-toggle [(ngModel)]="isWatermark ? false : allowRestriction" [disabled]="isWatermark">
-          {{ 'appLabels.form.project.imageSettings.restrictImageSize' | translate }}
-        </mat-slide-toggle>
+      <div *ngIf="imageSettings === imageSettingsEnum.RestrictImageSize" class="mb-6">
+        <div class="mb-2">
+          <mat-form-field>
+            <input
+              [imask]="inputMasks.minMaxInputMask(1, 99)"
+              (ngModelChange)="onPercentageInputChange()"
+              matInput
+              [(ngModel)]="percentage" />
+            <mat-label>{{ 'appLabels.form.project.imageSettings.percentage' | translate }} </mat-label>
+          </mat-form-field>
+          <mat-label> %</mat-label>
+        </div>
+        <div class="mb-2">
+          <mat-form-field [floatLabel]="'always'" class="large-field">
+            <input
+              [imask]="inputMasks.minMaxInputMask(minWidth, maxWidth)"
+              (ngModelChange)="onFixedWidthInputChange()"
+              matInput
+              [(ngModel)]="fixedWidth" />
+            <mat-label>
+              {{ 'appLabels.form.project.imageSettings.absoluteWidth' | translate: {min: minWidth, max: maxWidth} }}
+            </mat-label>
+          </mat-form-field>
+          <mat-label class="nowrap"> x {{ fixedWidth }} Px</mat-label>
+        </div>
+        <app-image-display-ratio [@replaceAnimation] *ngIf="isPercentageSize" [ratio]="ratio" class="child">
+        </app-image-display-ratio>
+        <app-image-display-absolute [@replaceAnimation] *ngIf="!isPercentageSize" [widthPx]="fixedWidth">
+        </app-image-display-absolute>
       </div>
-      <div [@replaceAnimation]>
-        <section class="child">
-          <div class="large-field">
-            <mat-slider
-              [disabled]="isWatermark || !allowRestriction"
-              min="1"
-              max="99"
-              step="1"
-              showTickMarks
-              discrete
-              [displayWith]="formatPercentageLabel"
-              ngDefaultControl>
-              <input #percentageSlider matSliderThumb [(value)]="percentage" />
-            </mat-slider>
-          </div>
-        </section>
-      </div>
-      <app-image-display-ratio
-        [isWatermark]="isWatermark"
-        [ratio]="(!allowRestriction || isWatermark) ? 1 : percentageSlider.value/100"></app-image-display-ratio>
     </div>
     <div class="action-buttons mt-2">
       <button
         mat-raised-button
         type="submit"
         color="primary"
+        [disabled]="
+          imageSettings === imageSettingsEnum.RestrictImageSize 
+          && ((isPercentageSize && ratio <= 0) || (!isPercentageSize && !fixedWidth))"
         (click)="onSubmit()"
         appLoadingButton
         [isLoading]="isProjectsLoading$ | async">
