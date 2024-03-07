@@ -9,8 +9,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Group } from './group';
 import { PermissionsDataADM } from './permissions-data-adm';
-import { GroupADM } from './group-adm';
 import { ProjectADM } from './project-adm';
 
 
@@ -23,8 +23,7 @@ export interface User {
     status: boolean;
     lang: string;
     password?: string;
-    token?: string;
-    groups?: Array<GroupADM>;
+    groups?: Array<Group>;
     projects?: Array<ProjectADM>;
     permissions: PermissionsDataADM;
 }

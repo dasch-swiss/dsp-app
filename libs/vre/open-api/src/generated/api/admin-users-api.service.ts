@@ -21,13 +21,27 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { BadCredentialsException } from '../model/bad-credentials-exception';
 // @ts-ignore
+import { BasicUserInformationChangeRequest } from '../model/basic-user-information-change-request';
+// @ts-ignore
 import { ForbiddenException } from '../model/forbidden-exception';
 // @ts-ignore
 import { GravsearchException } from '../model/gravsearch-exception';
 // @ts-ignore
 import { NotFoundException } from '../model/not-found-exception';
 // @ts-ignore
-import { UserOperationResponseADM } from '../model/user-operation-response-adm';
+import { PasswordChangeRequest } from '../model/password-change-request';
+// @ts-ignore
+import { StatusChangeRequest } from '../model/status-change-request';
+// @ts-ignore
+import { SystemAdminChangeRequest } from '../model/system-admin-change-request';
+// @ts-ignore
+import { UserCreateRequest } from '../model/user-create-request';
+// @ts-ignore
+import { UserGroupMembershipsGetResponseADM } from '../model/user-group-memberships-get-response-adm';
+// @ts-ignore
+import { UserProjectAdminMembershipsGetResponseADM } from '../model/user-project-admin-memberships-get-response-adm';
+// @ts-ignore
+import { UserProjectMembershipsGetResponseADM } from '../model/user-project-memberships-get-response-adm';
 // @ts-ignore
 import { UserResponseADM } from '../model/user-response-adm';
 // @ts-ignore
@@ -105,17 +119,17 @@ export class AdminUsersApiService {
 
     /**
      * Delete a user identified by IRI (change status to false).
-     * @param p1 The user IRI. Must be URL-encoded.
+     * @param userIri The user IRI. Must be URL-encoded.
      * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserOperationResponseADM>;
-    public deleteAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserOperationResponseADM>>;
-    public deleteAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserOperationResponseADM>>;
-    public deleteAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        if (p1 === null || p1 === undefined) {
-            throw new Error('Required parameter p1 was null or undefined when calling deleteAdminUsersIriP1.');
+    public deleteAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public deleteAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public deleteAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public deleteAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling deleteAdminUsersIriUseriri.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -162,8 +176,236 @@ export class AdminUsersApiService {
             }
         }
 
-        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "p1", value: p1, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<UserOperationResponseADM>('delete', `${this.configuration.basePath}${localVarPath}`,
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('delete', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Remove a user form an group membership identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param groupIri The IRI of a group. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public deleteAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public deleteAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public deleteAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling deleteAdminUsersIriUseririGroupMembershipsGroupiri.');
+        }
+        if (groupIri === null || groupIri === undefined) {
+            throw new Error('Required parameter groupIri was null or undefined when calling deleteAdminUsersIriUseririGroupMembershipsGroupiri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/group-memberships/${this.configuration.encodeParam({name: "groupIri", value: groupIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('delete', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Remove a user form an admin project membership identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param projectIri The IRI of a project. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public deleteAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public deleteAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public deleteAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling deleteAdminUsersIriUseririProjectAdminMembershipsProjectiri.');
+        }
+        if (projectIri === null || projectIri === undefined) {
+            throw new Error('Required parameter projectIri was null or undefined when calling deleteAdminUsersIriUseririProjectAdminMembershipsProjectiri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/project-admin-memberships/${this.configuration.encodeParam({name: "projectIri", value: projectIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('delete', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Remove a user from a project membership identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param projectIri The IRI of a project. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public deleteAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public deleteAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public deleteAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public deleteAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling deleteAdminUsersIriUseririProjectMembershipsProjectiri.');
+        }
+        if (projectIri === null || projectIri === undefined) {
+            throw new Error('Required parameter projectIri was null or undefined when calling deleteAdminUsersIriUseririProjectMembershipsProjectiri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/project-memberships/${this.configuration.encodeParam({name: "projectIri", value: projectIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -244,18 +486,18 @@ export class AdminUsersApiService {
     }
 
     /**
-     * Returns a user identified by IRI.
-     * @param p1 The user IRI. Must be URL-encoded.
+     * Returns a user identified by their Email.
+     * @param email The user email. Must be URL-encoded.
      * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
-    public getAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
-    public getAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
-    public getAdminUsersIriP1(p1: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        if (p1 === null || p1 === undefined) {
-            throw new Error('Required parameter p1 was null or undefined when calling getAdminUsersIriP1.');
+    public getAdminUsersEmailEmail(email: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public getAdminUsersEmailEmail(email: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public getAdminUsersEmailEmail(email: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public getAdminUsersEmailEmail(email: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (email === null || email === undefined) {
+            throw new Error('Required parameter email was null or undefined when calling getAdminUsersEmailEmail.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -302,10 +544,982 @@ export class AdminUsersApiService {
             }
         }
 
-        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "p1", value: p1, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/admin/users/email/${this.configuration.encodeParam({name: "email", value: email, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<UserResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns a user identified by their IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public getAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public getAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public getAdminUsersIriUseriri(userIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling getAdminUsersIriUseriri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns the user\&#39;s group memberships for a user identified by their IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAdminUsersIriUseririGroupMemberships(userIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserGroupMembershipsGetResponseADM>;
+    public getAdminUsersIriUseririGroupMemberships(userIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserGroupMembershipsGetResponseADM>>;
+    public getAdminUsersIriUseririGroupMemberships(userIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserGroupMembershipsGetResponseADM>>;
+    public getAdminUsersIriUseririGroupMemberships(userIri: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling getAdminUsersIriUseririGroupMemberships.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/group-memberships`;
+        return this.httpClient.request<UserGroupMembershipsGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns the user\&#39;s project admin memberships for a user identified by their IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAdminUsersIriUseririProjectAdminMemberships(userIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserProjectAdminMembershipsGetResponseADM>;
+    public getAdminUsersIriUseririProjectAdminMemberships(userIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserProjectAdminMembershipsGetResponseADM>>;
+    public getAdminUsersIriUseririProjectAdminMemberships(userIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserProjectAdminMembershipsGetResponseADM>>;
+    public getAdminUsersIriUseririProjectAdminMemberships(userIri: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling getAdminUsersIriUseririProjectAdminMemberships.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/project-admin-memberships`;
+        return this.httpClient.request<UserProjectAdminMembershipsGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns the user\&#39;s project memberships for a user identified by their IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAdminUsersIriUseririProjectMemberships(userIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserProjectMembershipsGetResponseADM>;
+    public getAdminUsersIriUseririProjectMemberships(userIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserProjectMembershipsGetResponseADM>>;
+    public getAdminUsersIriUseririProjectMemberships(userIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserProjectMembershipsGetResponseADM>>;
+    public getAdminUsersIriUseririProjectMemberships(userIri: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling getAdminUsersIriUseririProjectMemberships.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/project-memberships`;
+        return this.httpClient.request<UserProjectMembershipsGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Returns a user identified by their Username.
+     * @param username The user name. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAdminUsersUsernameUsername(username: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public getAdminUsersUsernameUsername(username: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public getAdminUsersUsernameUsername(username: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public getAdminUsersUsernameUsername(username: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (username === null || username === undefined) {
+            throw new Error('Required parameter username was null or undefined when calling getAdminUsersUsernameUsername.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/username/${this.configuration.encodeParam({name: "username", value: username, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Create a new user.
+     * @param userCreateRequest 
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public postAdminUsers(userCreateRequest: UserCreateRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public postAdminUsers(userCreateRequest: UserCreateRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public postAdminUsers(userCreateRequest: UserCreateRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public postAdminUsers(userCreateRequest: UserCreateRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userCreateRequest === null || userCreateRequest === undefined) {
+            throw new Error('Required parameter userCreateRequest was null or undefined when calling postAdminUsers.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users`;
+        return this.httpClient.request<UserResponseADM>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: userCreateRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Add a user to a group identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param groupIri The IRI of a group. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public postAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public postAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public postAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public postAdminUsersIriUseririGroupMembershipsGroupiri(userIri: string, groupIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling postAdminUsersIriUseririGroupMembershipsGroupiri.');
+        }
+        if (groupIri === null || groupIri === undefined) {
+            throw new Error('Required parameter groupIri was null or undefined when calling postAdminUsersIriUseririGroupMembershipsGroupiri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/group-memberships/${this.configuration.encodeParam({name: "groupIri", value: groupIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Add a user as an admin to a project identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param projectIri The IRI of a project. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public postAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public postAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public postAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public postAdminUsersIriUseririProjectAdminMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling postAdminUsersIriUseririProjectAdminMembershipsProjectiri.');
+        }
+        if (projectIri === null || projectIri === undefined) {
+            throw new Error('Required parameter projectIri was null or undefined when calling postAdminUsersIriUseririProjectAdminMembershipsProjectiri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/project-admin-memberships/${this.configuration.encodeParam({name: "projectIri", value: projectIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Add a user to a project identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param projectIri The IRI of a project. Must be URL-encoded.
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public postAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public postAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public postAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public postAdminUsersIriUseririProjectMembershipsProjectiri(userIri: string, projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling postAdminUsersIriUseririProjectMembershipsProjectiri.');
+        }
+        if (projectIri === null || projectIri === undefined) {
+            throw new Error('Required parameter projectIri was null or undefined when calling postAdminUsersIriUseririProjectMembershipsProjectiri.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/project-memberships/${this.configuration.encodeParam({name: "projectIri", value: projectIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<UserResponseADM>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Update a user\&#39;s basic information identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param basicUserInformationChangeRequest 
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public putAdminUsersIriUseririBasicuserinformation(userIri: string, basicUserInformationChangeRequest: BasicUserInformationChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public putAdminUsersIriUseririBasicuserinformation(userIri: string, basicUserInformationChangeRequest: BasicUserInformationChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public putAdminUsersIriUseririBasicuserinformation(userIri: string, basicUserInformationChangeRequest: BasicUserInformationChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public putAdminUsersIriUseririBasicuserinformation(userIri: string, basicUserInformationChangeRequest: BasicUserInformationChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling putAdminUsersIriUseririBasicuserinformation.');
+        }
+        if (basicUserInformationChangeRequest === null || basicUserInformationChangeRequest === undefined) {
+            throw new Error('Required parameter basicUserInformationChangeRequest was null or undefined when calling putAdminUsersIriUseririBasicuserinformation.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/BasicUserInformation`;
+        return this.httpClient.request<UserResponseADM>('put', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: basicUserInformationChangeRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Change a user\&#39;s password identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param passwordChangeRequest 
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public putAdminUsersIriUseririPassword(userIri: string, passwordChangeRequest: PasswordChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public putAdminUsersIriUseririPassword(userIri: string, passwordChangeRequest: PasswordChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public putAdminUsersIriUseririPassword(userIri: string, passwordChangeRequest: PasswordChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public putAdminUsersIriUseririPassword(userIri: string, passwordChangeRequest: PasswordChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling putAdminUsersIriUseririPassword.');
+        }
+        if (passwordChangeRequest === null || passwordChangeRequest === undefined) {
+            throw new Error('Required parameter passwordChangeRequest was null or undefined when calling putAdminUsersIriUseririPassword.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/Password`;
+        return this.httpClient.request<UserResponseADM>('put', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: passwordChangeRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Change a user\&#39;s status identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param statusChangeRequest 
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public putAdminUsersIriUseririStatus(userIri: string, statusChangeRequest: StatusChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public putAdminUsersIriUseririStatus(userIri: string, statusChangeRequest: StatusChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public putAdminUsersIriUseririStatus(userIri: string, statusChangeRequest: StatusChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public putAdminUsersIriUseririStatus(userIri: string, statusChangeRequest: StatusChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling putAdminUsersIriUseririStatus.');
+        }
+        if (statusChangeRequest === null || statusChangeRequest === undefined) {
+            throw new Error('Required parameter statusChangeRequest was null or undefined when calling putAdminUsersIriUseririStatus.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/Status`;
+        return this.httpClient.request<UserResponseADM>('put', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: statusChangeRequest,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Change a user\&#39;s SystemAdmin status identified by IRI.
+     * @param userIri The user IRI. Must be URL-encoded.
+     * @param systemAdminChangeRequest 
+     * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public putAdminUsersIriUseririSystemadmin(userIri: string, systemAdminChangeRequest: SystemAdminChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<UserResponseADM>;
+    public putAdminUsersIriUseririSystemadmin(userIri: string, systemAdminChangeRequest: SystemAdminChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<UserResponseADM>>;
+    public putAdminUsersIriUseririSystemadmin(userIri: string, systemAdminChangeRequest: SystemAdminChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<UserResponseADM>>;
+    public putAdminUsersIriUseririSystemadmin(userIri: string, systemAdminChangeRequest: SystemAdminChangeRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (userIri === null || userIri === undefined) {
+            throw new Error('Required parameter userIri was null or undefined when calling putAdminUsersIriUseririSystemadmin.');
+        }
+        if (systemAdminChangeRequest === null || systemAdminChangeRequest === undefined) {
+            throw new Error('Required parameter systemAdminChangeRequest was null or undefined when calling putAdminUsersIriUseririSystemadmin.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (httpAuth1) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth1');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        // authentication (httpAuth) required
+        localVarCredential = this.configuration.lookupCredential('httpAuth');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/admin/users/iri/${this.configuration.encodeParam({name: "userIri", value: userIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/SystemAdmin`;
+        return this.httpClient.request<UserResponseADM>('put', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: systemAdminChangeRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

@@ -9,10 +9,16 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Group } from './group';
+import { ProjectADM } from './project-adm';
+import { StringLiteralV2 } from './string-literal-v2';
 
 
-export interface GroupsGetResponseADM { 
-    groups?: Array<Group>;
+export interface Group { 
+    id: string;
+    name: string;
+    descriptions?: Array<StringLiteralV2>;
+    project: ProjectADM;
+    status: boolean;
+    selfjoin: boolean;
 }
 

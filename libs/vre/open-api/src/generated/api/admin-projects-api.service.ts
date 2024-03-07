@@ -33,11 +33,11 @@ import { ProjectCreateRequest } from '../model/project-create-request';
 // @ts-ignore
 import { ProjectExportInfoResponse } from '../model/project-export-info-response';
 // @ts-ignore
-import { ProjectGetResponseADM } from '../model/project-get-response-adm';
+import { ProjectGetResponse } from '../model/project-get-response';
 // @ts-ignore
 import { ProjectImportResponse } from '../model/project-import-response';
 // @ts-ignore
-import { ProjectKeywordsGetResponseADM } from '../model/project-keywords-get-response-adm';
+import { ProjectKeywordsGetResponse } from '../model/project-keywords-get-response';
 // @ts-ignore
 import { ProjectMembersGetResponseADM } from '../model/project-members-get-response-adm';
 // @ts-ignore
@@ -47,9 +47,9 @@ import { ProjectRestrictedViewSettingsGetResponseADM } from '../model/project-re
 // @ts-ignore
 import { ProjectUpdateRequest } from '../model/project-update-request';
 // @ts-ignore
-import { ProjectsGetResponseADM } from '../model/projects-get-response-adm';
+import { ProjectsGetResponse } from '../model/projects-get-response';
 // @ts-ignore
-import { ProjectsKeywordsGetResponseADM } from '../model/projects-keywords-get-response-adm';
+import { ProjectsKeywordsGetResponse } from '../model/projects-keywords-get-response';
 // @ts-ignore
 import { RestrictedViewResponse } from '../model/restricted-view-response';
 // @ts-ignore
@@ -202,9 +202,9 @@ export class AdminProjectsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminProjects(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectsGetResponseADM>;
-    public getAdminProjects(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectsGetResponseADM>>;
-    public getAdminProjects(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectsGetResponseADM>>;
+    public getAdminProjects(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectsGetResponse>;
+    public getAdminProjects(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectsGetResponse>>;
+    public getAdminProjects(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectsGetResponse>>;
     public getAdminProjects(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -239,7 +239,7 @@ export class AdminProjectsApiService {
         }
 
         let localVarPath = `/admin/projects`;
-        return this.httpClient.request<ProjectsGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ProjectsGetResponse>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -325,9 +325,9 @@ export class AdminProjectsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminProjectsIriProjectiri(projectIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectGetResponseADM>;
-    public getAdminProjectsIriProjectiri(projectIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectGetResponseADM>>;
-    public getAdminProjectsIriProjectiri(projectIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectGetResponseADM>>;
+    public getAdminProjectsIriProjectiri(projectIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectGetResponse>;
+    public getAdminProjectsIriProjectiri(projectIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectGetResponse>>;
+    public getAdminProjectsIriProjectiri(projectIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectGetResponse>>;
     public getAdminProjectsIriProjectiri(projectIri: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (projectIri === null || projectIri === undefined) {
             throw new Error('Required parameter projectIri was null or undefined when calling getAdminProjectsIriProjectiri.');
@@ -365,7 +365,7 @@ export class AdminProjectsApiService {
         }
 
         let localVarPath = `/admin/projects/iri/${this.configuration.encodeParam({name: "projectIri", value: projectIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<ProjectGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ProjectGetResponse>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -516,9 +516,9 @@ export class AdminProjectsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectKeywordsGetResponseADM>;
-    public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectKeywordsGetResponseADM>>;
-    public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectKeywordsGetResponseADM>>;
+    public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectKeywordsGetResponse>;
+    public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectKeywordsGetResponse>>;
+    public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectKeywordsGetResponse>>;
     public getAdminProjectsIriProjectiriKeywords(projectIri: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (projectIri === null || projectIri === undefined) {
             throw new Error('Required parameter projectIri was null or undefined when calling getAdminProjectsIriProjectiriKeywords.');
@@ -556,7 +556,7 @@ export class AdminProjectsApiService {
         }
 
         let localVarPath = `/admin/projects/iri/${this.configuration.encodeParam({name: "projectIri", value: projectIri, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/Keywords`;
-        return this.httpClient.request<ProjectKeywordsGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ProjectKeywordsGetResponse>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -703,9 +703,9 @@ export class AdminProjectsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminProjectsKeywords(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectsKeywordsGetResponseADM>;
-    public getAdminProjectsKeywords(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectsKeywordsGetResponseADM>>;
-    public getAdminProjectsKeywords(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectsKeywordsGetResponseADM>>;
+    public getAdminProjectsKeywords(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectsKeywordsGetResponse>;
+    public getAdminProjectsKeywords(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectsKeywordsGetResponse>>;
+    public getAdminProjectsKeywords(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectsKeywordsGetResponse>>;
     public getAdminProjectsKeywords(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -740,7 +740,7 @@ export class AdminProjectsApiService {
         }
 
         let localVarPath = `/admin/projects/Keywords`;
-        return this.httpClient.request<ProjectsKeywordsGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ProjectsKeywordsGetResponse>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -758,9 +758,9 @@ export class AdminProjectsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectGetResponseADM>;
-    public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectGetResponseADM>>;
-    public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectGetResponseADM>>;
+    public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectGetResponse>;
+    public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectGetResponse>>;
+    public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectGetResponse>>;
     public getAdminProjectsShortcodeProjectshortcode(projectShortcode: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (projectShortcode === null || projectShortcode === undefined) {
             throw new Error('Required parameter projectShortcode was null or undefined when calling getAdminProjectsShortcodeProjectshortcode.');
@@ -798,7 +798,7 @@ export class AdminProjectsApiService {
         }
 
         let localVarPath = `/admin/projects/shortcode/${this.configuration.encodeParam({name: "projectShortcode", value: projectShortcode, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<ProjectGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ProjectGetResponse>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1018,9 +1018,9 @@ export class AdminProjectsApiService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectGetResponseADM>;
-    public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectGetResponseADM>>;
-    public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectGetResponseADM>>;
+    public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProjectGetResponse>;
+    public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProjectGetResponse>>;
+    public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProjectGetResponse>>;
     public getAdminProjectsShortnameProjectshortname(projectShortname: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (projectShortname === null || projectShortname === undefined) {
             throw new Error('Required parameter projectShortname was null or undefined when calling getAdminProjectsShortnameProjectshortname.');
@@ -1058,7 +1058,7 @@ export class AdminProjectsApiService {
         }
 
         let localVarPath = `/admin/projects/shortname/${this.configuration.encodeParam({name: "projectShortname", value: projectShortname, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<ProjectGetResponseADM>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ProjectGetResponse>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1357,17 +1357,20 @@ export class AdminProjectsApiService {
     /**
      * Sets the project\&#39;s restricted view settings identified by the IRI.
      * @param projectIri The IRI of a project. Must be URL-encoded.
+     * @param setRestrictedViewRequest Set how all still image resources of a projects should be displayed when viewed as restricted. This can be either a size restriction or a watermark. For that, we support two of the (IIIF size)[https://iiif.io/api/image/3.0/#42-size] forms: * &#x60;!d,d&#x60; The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio. * &#x60;pct:n&#x60; The width and height of the returned image is scaled to n percent of the width and height of the extracted region. 1&lt;&#x3D; n &lt;&#x3D; 100.  If the watermark is set to &#x60;true&#x60;, the returned image will be watermarked, otherwise the default size !128,128 is set.  It is only possible to set either the size or the watermark, not both at the same time.
      * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
-     * @param setRestrictedViewRequest The restricted view settings to be set. The image restrictions support two of the (IIIF size)[https://iiif.io/api/image/3.0/#42-size] forms: * &#x60;!d,d&#x60; The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio. * &#x60;pct:n&#x60; The width and height of the returned image is scaled to n percent of the width and height of the extracted region. 1&lt;&#x3D; n &lt;&#x3D; 100.  If the watermark is set to &#x60;true&#x60;, the returned image will be watermarked.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<RestrictedViewResponse>;
-    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<RestrictedViewResponse>>;
-    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<RestrictedViewResponse>>;
-    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<RestrictedViewResponse>;
+    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<RestrictedViewResponse>>;
+    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<RestrictedViewResponse>>;
+    public postAdminProjectsIriProjectiriRestrictedviewsettings(projectIri: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (projectIri === null || projectIri === undefined) {
             throw new Error('Required parameter projectIri was null or undefined when calling postAdminProjectsIriProjectiriRestrictedviewsettings.');
+        }
+        if (setRestrictedViewRequest === null || setRestrictedViewRequest === undefined) {
+            throw new Error('Required parameter setRestrictedViewRequest was null or undefined when calling postAdminProjectsIriProjectiriRestrictedviewsettings.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1584,17 +1587,20 @@ export class AdminProjectsApiService {
     /**
      * Sets the project\&#39;s restricted view settings identified by the shortcode.
      * @param projectShortcode The shortcode of a project. Must be a 4 digit hexadecimal String.
+     * @param setRestrictedViewRequest Set how all still image resources of a projects should be displayed when viewed as restricted. This can be either a size restriction or a watermark. For that, we support two of the (IIIF size)[https://iiif.io/api/image/3.0/#42-size] forms: * &#x60;!d,d&#x60; The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio. * &#x60;pct:n&#x60; The width and height of the returned image is scaled to n percent of the width and height of the extracted region. 1&lt;&#x3D; n &lt;&#x3D; 100.  If the watermark is set to &#x60;true&#x60;, the returned image will be watermarked, otherwise the default size !128,128 is set.  It is only possible to set either the size or the watermark, not both at the same time.
      * @param knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999 
-     * @param setRestrictedViewRequest The restricted view settings to be set. The image restrictions support two of the (IIIF size)[https://iiif.io/api/image/3.0/#42-size] forms: * &#x60;!d,d&#x60; The returned image is scaled so that the width and height of the returned image are not greater than d, while maintaining the aspect ratio. * &#x60;pct:n&#x60; The width and height of the returned image is scaled to n percent of the width and height of the extracted region. 1&lt;&#x3D; n &lt;&#x3D; 100.  If the watermark is set to &#x60;true&#x60;, the returned image will be watermarked.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<RestrictedViewResponse>;
-    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<RestrictedViewResponse>>;
-    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<RestrictedViewResponse>>;
-    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, setRestrictedViewRequest?: SetRestrictedViewRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<RestrictedViewResponse>;
+    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<RestrictedViewResponse>>;
+    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<RestrictedViewResponse>>;
+    public postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings(projectShortcode: string, setRestrictedViewRequest: SetRestrictedViewRequest, knoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (projectShortcode === null || projectShortcode === undefined) {
             throw new Error('Required parameter projectShortcode was null or undefined when calling postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings.');
+        }
+        if (setRestrictedViewRequest === null || setRestrictedViewRequest === undefined) {
+            throw new Error('Required parameter setRestrictedViewRequest was null or undefined when calling postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings.');
         }
 
         let localVarHeaders = this.defaultHeaders;

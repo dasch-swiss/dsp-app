@@ -9,10 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Group } from './group';
+import { ProjectADM } from './project-adm';
 
 
-export interface GroupsGetResponseADM { 
-    groups?: Array<Group>;
+export interface ProjectGetResponse { 
+    project: ProjectADM;
 }
 

@@ -328,13 +328,17 @@ export class ProjectsState {
     return this.adminProjectsApiService
       .postAdminProjectsIriProjectiriRestrictedviewsettings(
         this.projectService.uuidToIri(projectUuid),
-        this.appConfig.dspApiConfig.jsonWebToken,
         setRestrictedViewRequest
       )
       .pipe(
         tap({
           next: response => {
-            ctx.dispatch(new LoadProjectRestrictedViewSettingsAction(this.projectService.uuidToIri(projectUuid)));
+            ctx.setState({
+              ...ctx.getState(),
+              projectRestrictedViewSettings: {
+                [projectUuid]: { value: response },
+              },
+            });
           },
         }),
         finalize(() => {

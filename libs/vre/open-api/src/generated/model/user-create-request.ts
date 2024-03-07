@@ -9,10 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Group } from './group';
 
 
-export interface GroupsGetResponseADM { 
-    groups?: Array<Group>;
+export interface UserCreateRequest { 
+    id?: string;
+    username: string;
+    email: string;
+    givenName: string;
+    familyName: string;
+    password: string;
+    status: boolean;
+    lang: string;
+    systemAdmin: boolean;
 }
 

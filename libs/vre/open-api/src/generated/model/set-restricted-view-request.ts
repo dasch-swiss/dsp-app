@@ -9,10 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Size } from './size';
+import { Watermark } from './watermark';
 
 
 export interface SetRestrictedViewRequest { 
-    size: string;
-    watermark?: boolean;
+    size?: Size;
+    watermark?: Watermark;
 }
 

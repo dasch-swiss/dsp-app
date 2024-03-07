@@ -12,7 +12,7 @@
 import { Group } from './group';
 
 
-export interface GroupsGetResponseADM { 
+export interface UserGroupMembershipsGetResponseADM { 
     groups?: Array<Group>;
 }
 

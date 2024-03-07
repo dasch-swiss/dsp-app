@@ -16,12 +16,13 @@ export class SettingsComponent {
       route: RouteConstants.edit,
       icon: 'edit_square',
     },
-    /* {
-               label: 'Image Settings',
-               shortLabel: 'Image Settings',
-               route: RouteConstants.imageSettings,
-               icon: 'branding_watermark',
-             } */ {
+    {
+      label: 'Image Settings',
+      shortLabel: 'Image Settings',
+      route: RouteConstants.imageSettings,
+      icon: 'branding_watermark',
+    },
+    {
       label: 'Project Members',
       shortLabel: 'Members',
       route: RouteConstants.collaboration,

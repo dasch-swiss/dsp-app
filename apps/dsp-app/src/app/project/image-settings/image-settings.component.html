@@ -18,7 +18,8 @@
         </div>
       </div>
       <div *ngIf="imageSettings === imageSettingsEnum.RestrictImageSize" class="mb-6">
-        <div class="mb-2">
+        <mat-label>{{ 'appLabels.form.project.imageSettings.info' | translate }}</mat-label>
+        <div class="mb-2 mt-2">
           <mat-form-field>
             <input
               [imask]="inputMasks.minMaxInputMask(1, 99)"
@@ -53,9 +54,9 @@
         mat-raised-button
         type="submit"
         color="primary"
-        [disabled]="
-          imageSettings === imageSettingsEnum.RestrictImageSize 
-          && ((isPercentageSize && ratio <= 0) || (!isPercentageSize && !fixedWidth))"
+        [disabled]="!hasChanges
+          || (imageSettings === imageSettingsEnum.RestrictImageSize 
+            && ((isPercentageSize && ratio <= 0) || (!isPercentageSize && !fixedWidth)))"
         (click)="onSubmit()"
         appLoadingButton
         [isLoading]="isProjectsLoading$ | async">
