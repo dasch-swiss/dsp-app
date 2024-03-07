@@ -179,6 +179,9 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_GITHUB_PACKAGES_PAT }}" > ~/.npmrc
           echo "registry=https://npm.pkg.github.com/dasch-swiss" >> ~/.npmrc
       - run: make docker-publish
+      - run: npm run sentry:sourcemaps
+        env:
+          SECRET_VARIABLE: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
   trigger-dev-deployment:
     name: Trigger deployment to DEV

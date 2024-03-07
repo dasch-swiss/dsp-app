@@ -27,6 +27,7 @@
     "lint-ci": "nx run dsp-app:lint",
     "lint-ci-all": "nx run-many --all --target=lint",
     "lint-local": "nx run dsp-app:lint --fix",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dasch --project javascript-angular ./dist/apps/dsp-app && sentry-cli sourcemaps upload --org dasch --project javascript-angular ./dist/apps/dsp-app",
     "webdriver-update": "webdriver-manager update --standalone false --gecko",
     "yalc-add-lib": "rm -rf .yalc/@dasch-swiss && yalc add @dasch-swiss/dsp-js && npm install"
   },
@@ -56,6 +57,8 @@
     "@ngxs/router-plugin": "^3.8.1",
     "@ngxs/store": "^3.8.1",
     "@nx/angular": "16.5.3",
+    "@sentry/angular-ivy": "^7.105.0",
+    "@sentry/cli": "^2.29.1",
     "angular-imask": "^7.5.0",
     "angular-split": "^14.0.0",
     "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.0.0",

@@ -3,6 +3,8 @@ import { ErrorHandler, Injectable, NgZone } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';
 import { AppConfigService } from '@dasch-swiss/vre/shared/app-config';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
+import * as Sentry from '@sentry/angular-ivy';
+import { SentryErrorHandler } from '@sentry/angular-ivy';
 import { AjaxError } from 'rxjs/ajax';
 import { AppError } from './app-error';
 
@@ -25,8 +27,11 @@ export class AppErrorHandler implements ErrorHandler {
       this.handleHttpErrorResponse(error);
     } else if (error instanceof AppError) {
       this.displayNotification(error.message);
-    } else if (this._appConfig.dspInstrumentationConfig.environment !== 'prod') {
-      console.error(error);
+    } else {
+      if (this._appConfig.dspInstrumentationConfig.environment !== 'prod') {
+        console.error(error);
+      }
+      this.sendErrorToSentry(error);
     }
   }
 
@@ -84,5 +89,9 @@ export class AppErrorHandler implements ErrorHandler {
     if (invalidRequestRegexMatch) {
       this.displayNotification(invalidRequestRegexMatch[1]);
     }
+  }
+
+  private sendErrorToSentry(error: any) {
+    Sentry.captureException(error);
   }
 }

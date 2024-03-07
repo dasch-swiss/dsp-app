@@ -60,3 +60,6 @@ Thumbs.db
 #E2E
 /.nx
 apps/dsp-app/cypress/screenshots
+
+# Sentry Config File
+.sentryclirc
