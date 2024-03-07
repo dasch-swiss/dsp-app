@@ -6,6 +6,7 @@ import {
   Inject,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
 } from '@angular/core';
 import {
@@ -21,6 +22,8 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ListsSelectors, OntologiesSelectors } from '@dasch-swiss/vre/shared/app-state';
 import { Store } from '@ngxs/store';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 // property data structure
 export class Property {
@@ -53,7 +56,7 @@ type CardinalityKey = 'multiple' | 'required';
   templateUrl: './resource-class-property-info.component.html',
   styleUrls: ['./resource-class-property-info.component.scss'],
 })
-export class ResourceClassPropertyInfoComponent implements OnChanges, AfterContentInit {
+export class ResourceClassPropertyInfoComponent implements OnChanges, AfterContentInit, OnDestroy {
   @Input() propDef: ResourcePropertyDefinitionWithAllLanguages;
 
   @Input() propCard: IHasProperty;
@@ -78,6 +81,8 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
     targetCardinality: GuiCardinality;
   }>();
 
+  isDestroyed = new Subject<void>();
+
   propInfo: Property = new Property();
 
   propType: DefaultProperty;
@@ -86,7 +91,6 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
   propAttributeComment: string;
 
   propCanBeRemovedFromClass: boolean;
-
   constructor(
     @Inject(DspApiConnectionToken)
     private _dspApiConnection: KnoraApiConnection,
@@ -143,16 +147,22 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
     }
 
     // get current ontology lists to get linked list information
-    const currentOntologyLists = this._store.selectSnapshot(ListsSelectors.listsInProject);
-    if (currentOntologyLists && this.propDef.objectType === Constants.ListValue) {
-      // this property is a list property
-      const re = /\<([^)]+)\>/;
-      const listIri = this.propDef.guiAttributes[0].match(re)[1];
-      const listUrl = `/project/${this.projectUuid}/list/${listIri.split('/').pop()}`;
-      const list = currentOntologyLists.find(i => i.id === listIri);
-      this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
-      this.propAttributeComment = list.comments.length ? list.comments[0].value : null;
-    }
+    this._store
+      .select(ListsSelectors.listsInProject)
+      .pipe(takeUntil(this.isDestroyed))
+      .subscribe(currentOntologyLists => {
+        if (currentOntologyLists && this.propDef.objectType === Constants.ListValue) {
+          // this property is a list property
+          const re = /\<([^)]+)\>/;
+          const listIri = this.propDef.guiAttributes[0].match(re)[1];
+          const listUrl = `/project/${this.projectUuid}/list/${listIri.split('/').pop()}`;
+          const list = currentOntologyLists.find(i => i.id === listIri);
+          if (list) {
+            this.propAttribute = `<a href="${listUrl}">${list.labels[0].value}</a>`;
+            this.propAttributeComment = list.comments.length ? list.comments[0].value : null;
+          }
+        }
+      });
   }
 
   /**
@@ -191,5 +201,10 @@ export class ResourceClassPropertyInfoComponent implements OnChanges, AfterConte
       this.propCanBeRemovedFromClass = canDoRes.canDo;
       this._cd.markForCheck();
     });
+  }
+
+  ngOnDestroy() {
+    this.isDestroyed.next();
+    this.isDestroyed.complete();
   }
 }
