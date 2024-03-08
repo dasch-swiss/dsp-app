@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.7.2](https://github.com/dasch-swiss/dsp-das/compare/v11.7.1...v11.7.2) (2024-03-08)
+
+
+### Bug Fixes
+
+* remove sentry sourcemap on deploy ([#1513](https://github.com/dasch-swiss/dsp-das/issues/1513)) ([8a753f8](https://github.com/dasch-swiss/dsp-das/commit/8a753f8c94eec7ae91c12fe618c9e123623dce98))
+
 ## [11.7.1](https://github.com/dasch-swiss/dsp-das/compare/v11.7.0...v11.7.1) (2024-03-08)
 
 
