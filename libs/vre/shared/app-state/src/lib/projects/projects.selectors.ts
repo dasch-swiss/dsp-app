@@ -7,6 +7,7 @@ import {
   ReadUser,
   StoredProject,
 } from '@dasch-swiss/dsp-js';
+import { RestrictedViewResponse } from '@dasch-swiss/vre/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { Selector } from '@ngxs/store';
@@ -113,7 +114,7 @@ export class ProjectsSelectors {
   static projectRestrictedViewSettings(
     state: ProjectsStateModel,
     params: Params
-  ): ProjectRestrictedViewSettings | undefined {
+  ): ProjectRestrictedViewSettings | RestrictedViewResponse | undefined {
     const projectUuid = params[`${RouteConstants.uuidParameter}`];
     return state.projectRestrictedViewSettings[projectUuid]
       ? state.projectRestrictedViewSettings[projectUuid].value

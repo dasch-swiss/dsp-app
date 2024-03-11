@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectRestrictedViewSettings } from '@dasch-swiss/dsp-js';
+import { RestrictedViewResponse } from '@dasch-swiss/vre/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/shared/app-config';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -34,7 +35,7 @@ export class ImageSettingsComponent implements OnInit {
   readonly inputMasks = InputMasks;
   readonly imageSettingsEnum = ImageSettingsEnum;
 
-  currentSettings: ProjectRestrictedViewSettings;
+  currentSettings: ProjectRestrictedViewSettings | RestrictedViewResponse;
   imageSettings: ImageSettingsEnum = ImageSettingsEnum.Off;
   projectUuid = this.route.parent.parent.snapshot.paramMap.get(RouteConstants.uuidParameter);
   percentage: string = '99';

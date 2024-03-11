@@ -50,10 +50,11 @@ knora-api:hasGeometry knora-api:objectType knora-api:Geom .
 
 ?geom a knora-api:Geom .
 
-?region knora-api:hasComment ?comment .
-knora-api:hasComment knora-api:objectType xsd:string .
-
-?comment a xsd:string .
+OPTIONAL {
+  ?region knora-api:hasComment ?comment . 
+  knora-api:hasComment knora-api:objectType xsd:string . 
+  ?comment a xsd:string .
+}
 
 ?region knora-api:hasColor ?color .
 knora-api:hasColor knora-api:objectType knora-api:Color .
