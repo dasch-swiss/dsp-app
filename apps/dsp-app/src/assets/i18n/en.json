@@ -147,7 +147,8 @@
           "percentageValue": "Percentage value",
           "percentage": "Percentage",
           "updateConfirmation": "You have successfully updated the project image settings.",
-          "info": "To limit the size of your image, input either a percentage or an absolute pixel width. You cannot provide values for both options."
+          "info": "To limit the size of your image, input either a percentage or an absolute pixel width. You cannot provide values for both options.",
+          "restrictions": "Image settings can only be applied for the resources which have the restricted view permissions set."
         }
       },
       "member": {

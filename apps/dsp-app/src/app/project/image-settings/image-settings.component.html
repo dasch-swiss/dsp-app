@@ -2,6 +2,7 @@
   <dasch-swiss-app-progress-indicator *ngIf="isProjectsLoading$ | async"></dasch-swiss-app-progress-indicator>
   <div class="content large middle" *ngIf="(isProjectsLoading$ | async) === false">
     <div>
+      <p>{{ 'appLabels.form.project.imageSettings.restrictions' | translate }}</p>
       <div>
         <div class="mb-2">
           <mat-radio-group class="radio-group" [(ngModel)]="imageSettings" [ngModelOptions]="{standalone: true}">

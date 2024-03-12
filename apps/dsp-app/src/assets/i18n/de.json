@@ -118,7 +118,8 @@
           "percentageValue": "Prozentwert",
           "percentage": "Prozentsatz",
           "updateConfirmation": "Sie haben die Projektbildeinstellungen erfolgreich aktualisiert.",
-          "info": "Um die Größe Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht für beide Optionen Werte angeben."
+          "info": "Um die Größe Ihres Bildes zu begrenzen, geben Sie entweder einen Prozentsatz oder eine absolute Pixelbreite ein. Sie können nicht für beide Optionen Werte angeben.",
+          "restrictions": "Bildeinstellungen können nur auf die Ressourcen angewendet werden, für die eingeschränkte Ansichtsberechtigungen festgelegt sind."
         }
       },
       "member": {
