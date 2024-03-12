@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.7.3](https://github.com/dasch-swiss/dsp-das/compare/v11.7.2...v11.7.3) (2024-03-12)
+
+
+### Bug Fixes
+
+* image settings restriction note ([#1518](https://github.com/dasch-swiss/dsp-das/issues/1518)) ([c486dcb](https://github.com/dasch-swiss/dsp-das/commit/c486dcb944e489d0464ede2feed6323e71e60fa6))
+* incoming resource gravsearch query comment field set as optional (DEV-3315) ([#1509](https://github.com/dasch-swiss/dsp-das/issues/1509)) ([4695b8b](https://github.com/dasch-swiss/dsp-das/commit/4695b8b9ac0d6a6f33589f89ed7f6eb6d6107dac))
+
 ## [11.7.2](https://github.com/dasch-swiss/dsp-das/compare/v11.7.1...v11.7.2) (2024-03-08)
 
 
