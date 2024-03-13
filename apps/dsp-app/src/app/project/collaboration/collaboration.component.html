@@ -4,7 +4,7 @@
   <div *ngIf="isCurrentProjectAdminOrSysAdmin$ | async" class="content large middle">
     <!-- add user to the project -->
     <app-add-user
-      *ngIf="(project$ | async)?.status && ((isSysAdmin$ | async) === true)"
+      *ngIf="(project$ | async)?.status && ((isCurrentProjectAdminOrSysAdmin$ | async) === true)"
       [projectUuid]="projectUuid"
       (refreshParent)="refresh()"
       #addUserComponent></app-add-user>

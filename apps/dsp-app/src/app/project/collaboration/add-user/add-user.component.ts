@@ -80,7 +80,7 @@ export class AddUserComponent implements OnInit {
   /**
    * filter users while typing (autocomplete)
    */
-  filteredUsers: Observable<AutocompleteItem[]>;
+  filteredUsers$: Observable<AutocompleteItem[]>;
 
   /**
    * list of usernames to prevent duplicate entries
@@ -156,7 +156,7 @@ export class AddUserComponent implements OnInit {
       }
 
       let i = 0;
-      for (const u of response.body.users) {
+      for (const u of response.body.users.filter(user => user.username.length > 0)) {
         // if the user is already member of the project
         // add the email to the list of existing
         this.existingEmails.push(new RegExp(`(?:^|W)${u.email.toLowerCase()}(?:$|W)`));
@@ -169,10 +169,20 @@ export class AddUserComponent implements OnInit {
           existsInProject = '* ';
         }
 
+        let usernameLabel = existsInProject + u.username;
+        if (usernameLabel.length > 0) {
+          usernameLabel += ' | ';
+        }
+
+        let emailLabel = u.email;
+        if (emailLabel.length > 0) {
+          emailLabel += ' | ';
+        }
+
         this.users[i] = {
           iri: u.id,
           name: u.username,
-          label: `${existsInProject + u.username} | ${u.email} | ${u.givenName} ${u.familyName}`,
+          label: `${usernameLabel} ${emailLabel} ${u.givenName} ${u.familyName}`,
         };
         i++;
       }
@@ -206,7 +216,7 @@ export class AddUserComponent implements OnInit {
       ),
     });
 
-    this.filteredUsers = this.selectUserForm.controls['username'].valueChanges.pipe(
+    this.filteredUsers$ = this.selectUserForm.controls['username'].valueChanges.pipe(
       startWith(''),
       map(user => (user.length >= 2 ? this.filter(this.users, user) : []))
     );
@@ -321,4 +331,6 @@ export class AddUserComponent implements OnInit {
     ev.preventDefault();
     this.selectUserForm.controls['username'].reset('');
   }
+
+  trackByFn = (index: number, item: AutocompleteItem) => `${index}-${item.label}`;
 }

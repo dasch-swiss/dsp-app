@@ -9,7 +9,7 @@ import {
   Output,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { ApiResponseError, Constants, ReadUser, StringLiteral, UpdateUserRequest, User } from '@dasch-swiss/dsp-js';
+import { Constants, ReadUser, StringLiteral, UpdateUserRequest, User } from '@dasch-swiss/dsp-js';
 import { UserApiService } from '@dasch-swiss/vre/shared/app-api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/shared/app-notification';
@@ -20,8 +20,8 @@ import {
   SetUserAction,
   UserSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
-import { Actions, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { combineLatest, Observable } from 'rxjs';
+import { Actions, Select, Store, ofActionSuccessful } from '@ngxs/store';
+import { Observable, combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { AppGlobal } from '../../app-global';
 import { existingNamesValidator } from '../../main/directive/existing-name/existing-names.validator';
@@ -354,7 +354,11 @@ export class UserFormComponent implements OnInit, OnChanges {
     combineLatest([this._actions$.pipe(ofActionSuccessful(CreateUserAction)), this.allUsers$])
       .pipe(take(1))
       .subscribe(([loadUsersAction, allUsers]) => {
-        this.user = allUsers.find(user => user.username === loadUsersAction.userData.username);
+        this.user = allUsers.find(
+          user =>
+            user.familyName === loadUsersAction.userData.familyName &&
+            user.givenName === loadUsersAction.userData.givenName
+        );
         this.buildForm(this.user);
         if (this.projectUuid) {
           // if a projectUuid exists, add the user to the project

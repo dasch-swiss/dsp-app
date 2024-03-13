@@ -34,7 +34,7 @@
             </button>
 
             <mat-autocomplete #user="matAutocomplete" (optionSelected)="addUser($event.option.value)">
-              <mat-option *ngFor="let user of filteredUsers | async" [value]="user?.name">
+              <mat-option *ngFor="let user of filteredUsers$ | async; trackBy: trackByFn" [value]="user?.name">
                 {{ user?.label }}
               </mat-option>
             </mat-autocomplete>
