@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Component, Inject, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
@@ -13,6 +23,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/shared/app-config';
 import { BaseValueDirective } from '../../../../main/directive/base-value.directive';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-value',
   templateUrl: './list-value.component.html',
   styleUrls: ['./list-value.component.scss'],
@@ -64,6 +75,7 @@ export class ListValueComponent extends BaseValueDirective implements OnInit, On
           const trimmedRootNodeIRI = rootNodeIri.substring(7, rootNodeIri.length - 1);
           this._dspApiConnection.v2.list.getList(trimmedRootNodeIRI).subscribe((response: ListNodeV2) => {
             this.listRootNode = response;
+            this._cd.markForCheck();
           });
         }
       } else {
