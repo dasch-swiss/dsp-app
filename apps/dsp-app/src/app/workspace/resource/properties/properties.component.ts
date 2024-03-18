@@ -53,7 +53,7 @@ import {
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, Subscription, forkJoin } from 'rxjs';
-import { map, take, takeUntil, takeWhile } from 'rxjs/operators';
+import { map, takeUntil, takeWhile } from 'rxjs/operators';
 import { ConfirmationWithComment, DialogComponent } from '../../../main/dialog/dialog.component';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
@@ -258,7 +258,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     ]);
     this._actions$
       .pipe(ofActionSuccessful(GetAttachedUserAction))
-      .pipe(take(1))
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
         this.user = attachedUsers[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToUser);
@@ -274,6 +274,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
     if (this.valueOperationEventSubscriptions !== undefined) {
       this.valueOperationEventSubscriptions.forEach(sub => sub.unsubscribe());
     }
+
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   trackByFn = (index: number, item: ReadResource) => `${index}-${item.id}`;
@@ -454,6 +457,10 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
    * @param valueToAdd the value to add to the end of the values array of the filtered property
    */
   addValueToResource(valueToAdd: ReadValue): void {
+    if (!valueToAdd.id.includes(this.resource.res.id)) {
+      return;
+    }
+
     if (this.resource.resProps) {
       this.resource.resProps
         .filter(propInfoValueArray => propInfoValueArray.propDef.id === valueToAdd.property) // filter to the correct property
