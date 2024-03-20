@@ -1,5 +1,5 @@
 <!-- toolbar -->
-<div class="toolbar" *ngIf="project$ | async" [class.deleted]="deletedResource || resource.res.isDeleted">
+<div class="toolbar" *ngIf="project" [class.deleted]="deletedResource || resource.res.isDeleted">
   <!-- resource info -->
   <h3 class="label mat-headline-6">{{resource.res.label}} <span *ngIf="deletedResource">(deleted)</span></h3>
 
@@ -78,7 +78,7 @@
     <!-- more menu with: delete, erase resource -->
     <button
       color="primary"
-      *ngIf="userCanEdit && (project$ | async)?.status"
+      *ngIf="userCanEdit && project?.status"
       mat-icon-button
       class="more-menu"
       matTooltip="More"
@@ -120,7 +120,7 @@
 </div>
 
 <!-- additional line with project and user information -->
-<div class="infobar mat-caption" *ngIf="(project$ | async) as project">
+<div class="infobar mat-caption" *ngIf="project">
   <span *ngIf="displayProjectInfo"
     >This resource {{ resource.res.isDeleted ? 'belonged' : 'belongs' }} to the project
     <span class="project link" (click)="openProject(project)" (mouseover)="previewProject()">
@@ -179,7 +179,7 @@
               [propArray]="resource.resProps"
               [canDelete]="deleteValueIsAllowed(prop)"
               [cantDeleteReason]="cantDeleteReason"
-              [projectStatus]="(project$ | async)?.status"
+              [projectStatus]="project?.status"
               [user]="user"
               [valueUuidToHighlight]="valueUuidToHighlight"
               (referredResourceClicked)="openResource($event)"
@@ -187,7 +187,7 @@
             </app-display-edit>
           </div>
           <!-- Add value form -->
-          <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id && (project$ | async)?.status">
+          <div *ngIf="addValueFormIsVisible && propID === prop.propDef.id && project?.status">
             <app-add-value
               #addValue
               class="add-value"
@@ -197,7 +197,7 @@
             </app-add-value>
           </div>
           <!-- Add button -->
-          <div *ngIf="addValueIsAllowed(prop) && (project$ | async)?.status">
+          <div *ngIf="addValueIsAllowed(prop) && project?.status">
             <button
               mat-icon-button
               type="button"

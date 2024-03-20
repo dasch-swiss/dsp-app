@@ -32,6 +32,7 @@ import {
   ReadUser,
   ReadValue,
   ResourcePropertyDefinition,
+  StoredProject,
   UpdateResourceMetadata,
   UpdateResourceMetadataResponse,
 } from '@dasch-swiss/dsp-js';
@@ -49,11 +50,12 @@ import {
   GetAttachedProjectAction,
   GetAttachedUserAction,
   LoadClassItemsCountAction,
+  ProjectsSelectors,
   ResourceSelectors,
 } from '@dasch-swiss/vre/shared/app-state';
 import { Actions, Store, ofActionSuccessful } from '@ngxs/store';
 import { Observable, Subject, Subscription, forkJoin } from 'rxjs';
-import { map, takeUntil, takeWhile } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ConfirmationWithComment, DialogComponent } from '../../../main/dialog/dialog.component';
 import { DspResource } from '../dsp-resource';
 import { RepresentationConstants } from '../representation/file-representation';
@@ -159,15 +161,9 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   displayedIncomingLinkResources: ReadResource[] = [];
   hasIncomingLinkIri = Constants.HasIncomingLinkValue;
 
-  project$ = this._store.select(ResourceSelectors.attachedProjects).pipe(
-    takeWhile(attachedProjects => this.resource !== undefined && attachedProjects[this.resource.res.id] !== undefined),
-    takeUntil(this.ngUnsubscribe),
-    map(attachedProjects =>
-      attachedProjects[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToProject)
-    )
-  );
-
+  project: ReadProject | StoredProject;
   user: ReadUser;
+
   pageEvent: PageEvent;
   loading = false;
 
@@ -252,17 +248,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
       localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
     }
 
-    this._store.dispatch([
-      new GetAttachedUserAction(this.resource.res.id, this.resource.res.attachedToUser),
-      new GetAttachedProjectAction(this.resource.res.id, this.resource.res.attachedToProject),
-    ]);
-    this._actions$
-      .pipe(ofActionSuccessful(GetAttachedUserAction))
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => {
-        const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
-        this.user = attachedUsers[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToUser);
-      });
+    this._getResourceAttachedData();
   }
 
   ngOnChanges(): void {
@@ -287,7 +273,7 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
    * opens project
    * @param project
    */
-  openProject(project: ReadProject) {
+  openProject(project: ReadProject | StoredProject) {
     const uuid = ProjectService.IriToUuid(project.id);
     window.open(`/project/${uuid}`, '_blank');
   }
@@ -565,6 +551,34 @@ export class PropertiesComponent implements OnInit, OnChanges, OnDestroy {
   toggleAllProps(status: boolean) {
     this.showAllProps = !status;
     localStorage.setItem('showAllProps', JSON.stringify(this.showAllProps));
+  }
+
+  private _getResourceAttachedData() {
+    this._store.dispatch([
+      new GetAttachedUserAction(this.resource.res.id, this.resource.res.attachedToUser),
+      new GetAttachedProjectAction(this.resource.res.id, this.resource.res.attachedToProject),
+    ]);
+
+    this.project = this._store
+      .selectSnapshot(ProjectsSelectors.allProjects)
+      .find(p => p.id === this.resource.res.attachedToProject);
+    this._actions$
+      .pipe(ofActionSuccessful(GetAttachedProjectAction))
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        const attachedProjects = this._store.selectSnapshot(ResourceSelectors.attachedProjects);
+        this.project = attachedProjects[this.resource.res.id].value.find(
+          u => u.id === this.resource.res.attachedToProject
+        );
+      });
+
+    this._actions$
+      .pipe(ofActionSuccessful(GetAttachedUserAction))
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        const attachedUsers = this._store.selectSnapshot(ResourceSelectors.attachedUsers);
+        this.user = attachedUsers[this.resource.res.id].value.find(u => u.id === this.resource.res.attachedToUser);
+      });
   }
 
   private _onResourceDeleted(response: DeleteResourceResponse) {
