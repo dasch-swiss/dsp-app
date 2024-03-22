@@ -1,5 +1,20 @@
 # Changelog
 
+## [11.7.4](https://github.com/dasch-swiss/dsp-das/compare/v11.7.3...v11.7.4) (2024-03-22)
+
+
+### Bug Fixes
+
+* add user by project admin (DEV-3414) ([#1519](https://github.com/dasch-swiss/dsp-das/issues/1519)) ([bc7160d](https://github.com/dasch-swiss/dsp-das/commit/bc7160dac22d43a6b821bea44217857e8ca33c34))
+* resource attached project retrieving (#DEV-3424) ([#1525](https://github.com/dasch-swiss/dsp-das/issues/1525)) ([f603c00](https://github.com/dasch-swiss/dsp-das/commit/f603c00b6b5e47aeaf30fbfbf938004e1fa3be9b))
+* resource item list value (DEV-3248) ([#1517](https://github.com/dasch-swiss/dsp-das/issues/1517)) ([a415410](https://github.com/dasch-swiss/dsp-das/commit/a415410e395986affc9b7195dd761dea592777c4))
+* resource item properties update (DEV-3393) ([#1512](https://github.com/dasch-swiss/dsp-das/issues/1512)) ([da48b72](https://github.com/dasch-swiss/dsp-das/commit/da48b72eb761e0f0e41a984db20cbac80e82689f))
+
+
+### Maintenance
+
+* update dsp-js to v9.1.14 ([#1530](https://github.com/dasch-swiss/dsp-das/issues/1530)) ([7c8d761](https://github.com/dasch-swiss/dsp-das/commit/7c8d7610af2887e253197e030dfa7309ee76d81b))
+
 ## [11.7.3](https://github.com/dasch-swiss/dsp-das/compare/v11.7.2...v11.7.3) (2024-03-12)
 
 
