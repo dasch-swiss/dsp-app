@@ -1,0 +1,36 @@
+.third-party-iiif-preview {
+  width: 100%;
+  min-height: 248px;
+  border: 2px solid #000;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2f2f2;
+}
+
+.third-party-iiif-preview-placeholder {
+  height: 100%;
+  width: 100%;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+}
+
+.iiif-preview-icon {
+  margin-top: 1em;
+  height:auto;
+  width: auto;
+  font-size: 48px;
+}
+
+.iiif-url-explanation > div {
+  margin-top: 1em;
+}
+
+.third-party-iiif-field {
+  width: 100%;
+}
+
+

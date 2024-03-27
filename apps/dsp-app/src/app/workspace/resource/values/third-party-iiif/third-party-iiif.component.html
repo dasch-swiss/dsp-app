@@ -1,0 +1,45 @@
+<div class="third-party-iiif-preview">
+  <div
+    *ngIf="(!previewImageUrl || !iiifUrlControl.valid) && formStatus === 'IDLE'"
+    class="third-party-iiif-preview-placeholder">
+    <mat-icon class="iiif-preview-icon">preview</mat-icon>
+    <div>[ preview ]</div>
+    <div class="iiif-url-explanation mat-subtitle-2">
+      <div>The url must point to be a valid iiif image (jpg, tif, jp2, png).</div>
+      <div>Example: "{{exampleString}}"</div>
+    </div>
+  </div>
+  <dasch-swiss-app-progress-indicator *ngIf="formStatus !=='IDLE'"></dasch-swiss-app-progress-indicator>
+  <img
+    *ngIf="previewImageUrl && iiifUrlControl.valid"
+    [src]="previewImageUrl"
+    (loadstart)="formStatus='LOADING'"
+    (loadeddata)="formStatus='IDLE'"
+    (error)="formStatus='IDLE'"
+    alt="IIIF Preview"
+    height="240" />
+</div>
+<mat-form-field class="third-party-iiif-field">
+  <mat-label>IIIF Image URL</mat-label>
+  <input matInput [formControl]="iiifUrlControl" placeholder="Enter IIIF image URL" />
+  <mat-error *ngIf="iiifUrlControl.errors as errors"> {{ errors | humanReadableError: validatorErrors }} </mat-error>
+  <button
+    *ngIf="iiifUrlControl.value"
+    [disabled]="iiifUrlControl.valid"
+    (click)="resetIfInvalid()"
+    mat-icon-button
+    matSuffix
+    type="button"
+    color="primary">
+    <mat-icon>{{ iiifUrlControl.valid ? 'check' : 'close'}}</mat-icon>
+  </button>
+  <button
+    type="button"
+    color="primary"
+    mat-icon-button
+    matSuffix
+    matTooltip="Paste from clipboard"
+    (click)="pasteFromClipboard()">
+    <mat-icon>content_paste</mat-icon>
+  </button>
+</mat-form-field>
