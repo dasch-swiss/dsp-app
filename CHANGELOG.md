@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.7.5](https://github.com/dasch-swiss/dsp-das/compare/v11.7.4...v11.7.5) (2024-03-27)
+
+
+### Bug Fixes
+
+* initialize pendo on app start ([#1535](https://github.com/dasch-swiss/dsp-das/issues/1535)) ([76e5356](https://github.com/dasch-swiss/dsp-das/commit/76e5356b3fd48f1359c51b7fc28bb329fb8c93ad))
+
 ## [11.7.4](https://github.com/dasch-swiss/dsp-das/compare/v11.7.3...v11.7.4) (2024-03-22)
 
 
