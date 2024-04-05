@@ -1,5 +1,17 @@
 # Changelog
 
+## [11.8.0](https://github.com/dasch-swiss/dsp-das/compare/v11.7.5...v11.8.0) (2024-04-05)
+
+
+### Enhancements
+
+* IIIf image edit component ([#1534](https://github.com/dasch-swiss/dsp-das/issues/1534)) ([bc4c95c](https://github.com/dasch-swiss/dsp-das/commit/bc4c95ce080996dfd0cf2bec5907ea13139dd30d))
+
+
+### Maintenance
+
+* update dsp-js to v9.1.15 ([#1541](https://github.com/dasch-swiss/dsp-das/issues/1541)) ([85ebd69](https://github.com/dasch-swiss/dsp-das/commit/85ebd6994238d91c063d7e1b3d3a36fa269172a8))
+
 ## [11.7.5](https://github.com/dasch-swiss/dsp-das/compare/v11.7.4...v11.7.5) (2024-03-27)
 
 
